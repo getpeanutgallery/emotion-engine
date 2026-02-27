@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenTruth Emotion Engine — Prototype</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .landing {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .landing h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        .landing p {
+            color: var(--color-text-secondary);
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+        }
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .report-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .report-card:hover {
+            border-color: var(--color-accent-primary);
+            transform: translateY(-2px);
+        }
+        .report-card h3 {
+            color: var(--color-accent-primary);
+            margin-bottom: 0.5rem;
+        }
+        .report-card p {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+        .status-badge.ready {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--color-accent-success);
+        }
+        .status-badge.pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--color-accent-warning);
+        }
+        .divider {
+            height: 1px;
+            background: var(--color-border);
+            margin: 2rem 0;
+        }
+        .footer {
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="landing">
+        <h1>🎯 OpenTruth Emotion Engine</h1>
+        <p>AI-powered video validation for synthetic personas<br>
+        <strong>Prototype v0.2.0 — Week 1-2 Complete</strong></p>
+        
+        <div class="report-grid">
+            <a href="report-radar-test.html" class="report-card">
+                <h3>📊 Radar Visualization Test</h3>
+                <p>3-frame analysis of Call of Duty trailer with working 5-axis radar chart</p>
+                <span class="status-badge ready">✅ Ready</span>
+            </a>
+            
+            <a href="report-partial-30s.html" class="report-card">
+                <h3>📈 First 30 Seconds Report</h3>
+                <p>Partial analysis results showing critical hook failure in opening</p>
+                <span class="status-badge ready">✅ Ready</span>
+            </a>
+            
+            <a href="test-slicer.html" class="report-card">
+                <h3>🎬 Frame Slicer Test</h3>
+                <p>Test browser-based ffmpeg.wasm frame extraction pipeline</p>
+                <span class="status-badge ready">✅ Ready</span>
+            </a>
+            
+            <a href="#" class="report-card" onclick="alert('Full app integration coming Week 3-4'); return false;">
+                <h3>🔮 Live Demo (Coming Soon)</h3>
+                <p>Full application with drag-drop, real-time analysis, and recommendations</p>
+                <span class="status-badge pending">🚧 Week 3-4</span>
+            </a>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div style="text-align: left; max-width: 600px; margin: 0 auto;">
+            <h3 style="color: var(--color-text-primary); margin-bottom: 1rem;">🧪 Test Results Summary</h3>
+            <ul style="color: var(--color-text-secondary); line-height: 1.8; text-align: left;">
+                <li><strong>Frame extraction:</strong> ✅ Working (70 frames, 2s interval)</li>
+                <li><strong>OpenRouter API:</strong> ✅ Connected ($0.003/frame)</li>
+                <li><strong>Vision analysis:</strong> ✅ Kimi K2.5 responding</li>
+                <li><strong>Persona engine:</strong> ✅ Impatient Teen validated</li>
+                <li><strong>Radar chart:</strong> ✅ Canvas visualization working</li>
+                <li><strong>Report generation:</strong> ✅ Auto-generated HTML</li>
+                <li><strong>Lambda handler:</strong> 🚧 Ready to deploy</li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            <p>Built with vanilla JS + Web Components + OpenRouter</p>
+            <p style="margin-top: 0.5rem;">View <a href="PROJECT_SUMMARY.md" style="color: var(--color-accent-primary);">full project summary</a> or <a href="README.md" style="color: var(--color-accent-primary);">README</a></p>
+        </div>
+    </div>
+</body>
+</html>

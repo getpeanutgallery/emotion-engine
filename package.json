@@ -1,0 +1,27 @@
+{
+  "name": "opentruth-emotion-engine",
+  "version": "0.1.0",
+  "description": "OpenTruth Emotion Engine — AI-powered video validation for synthetic personas",
+  "type": "module",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 8080",
+    "lint": "echo 'No linter configured for vanilla JS'",
+    "test": "echo 'No tests yet'"
+  },
+  "keywords": [
+    "opentruth",
+    "emotion-engine",
+    "ai-validation",
+    "video-analysis"
+  ],
+  "author": "Gambit Games LLC",
+  "license": "MIT",
+  "dependencies": {
+    "@openrouter/sdk": "^0.9.11",
+    "tesseract.js": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

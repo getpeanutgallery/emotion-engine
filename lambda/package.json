@@ -1,0 +1,13 @@
+{
+  "name": "opentruth-lambda",
+  "version": "0.1.0",
+  "description": "OpenTruth Emotion Engine — AWS Lambda Functions",
+  "main": "index.js",
+  "dependencies": {
+    "aws-sdk": "^2.1500.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

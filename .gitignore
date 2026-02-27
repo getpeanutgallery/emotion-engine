@@ -1,0 +1,65 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+config/keys.json
+config/secrets.json
+
+# Cache & Temp Files
+.dev-cache/
+*.tmp
+*.temp
+/tmp/
+temp/
+.tmp/
+
+# Test Outputs - keep structure, ignore generated content
+reports/*/audio-output/*
+reports/*/image-output/*
+reports/*/narrative-*/
+reports/*/dialogue-*/
+reports/*/audio-peaks/
+reports/*/chunked-analysis/
+reports/*/qwen-*.txt
+!reports/*/.gitkeep
+!reports/*/README.md
+
+# Build Outputs
+dist/
+build/
+*.tsbuildinfo
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Whisper & Audio Models
+*.bin
+*.pth
+*.onnx
+models/
+
+# Video Processing Temp
+*.mp4.tmp
+*.wav.tmp
+frames/
