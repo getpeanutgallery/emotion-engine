@@ -1,0 +1,49 @@
+cat > visualization/index.html << 'EOF'
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenTruth Emotion Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #333; text-align: center; }
+        .chart-container { background: white; padding: 20px; border-radius: 8px; }
+        canvas { max-height: 400px; }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .stat-box { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; }
+        .stat-box h3 { font-size: 2em; margin: 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 OpenTruth Emotion Analysis</h1>
+        <div class="stats">
+                    <div class="stat-box"><h3 id="ap">--</h3><p>Patience</p></div>
+            <div class="stat-box"><h3 id="ab">--</h3><p>Boredom</p></div>
+            <div class="stat-box"><h3 id="ae">--</h3><p>Excitement</p></div>
+        </div>
+        <div class="chart-container"><canvas id="chart"></canvas></div>
+    </div>
+    <script>
+        fetch('data.json').then(r => r.json()).then(d => {
+            const data = d.per_second_data;
+            document.getElementById('ap').textContent = (data.reduce((a,x) => a + x.patience, 0) / data.length).toFixed(1);
+            document.getElementById('ab').textContent = (data.reduce((a,x) => a + x.boredom, 0) / data.length).toFixed(1);
+            document.getElementById('ae').textContent = (data.reduce((a,x) => a + x.excitement, 0) / data.length).toFixed(1);
+            new Chart(document.getElementById('chart'), {
+                type: 'line',
+                data: {
+                    labels: data.map(x => x.timestamp + 's'),
+                    datasets: [
+                        { label: 'Patience', data: data.map(x => x.patience), borderColor: '#667eea', fill: false },
+                        { label: 'Boredom', data: data.map(x => x.boredom), borderColor: '#f5576c', fill: false },
+                        { label: 'Excitement', data: data.map(x => x.excitement), borderColor: '#6bcb77', fill: false }
+                    ]
+                },
+                options: { scales: { y: { min: 0, max: 10 } } }
+            });
+        });
+    </script>
+</body>
+</html>
