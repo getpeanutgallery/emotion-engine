@@ -1,0 +1,40 @@
+{
+  "video": ".dev-cache/9txkGBj_trg.mp4",
+  "duration": 139.981,
+  "persona": {
+    "name": "The Impatient Teenager",
+    "description": "17yo Gen Z, scrolls if bored"
+  },
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "startTime": 0,
+      "endTime": 8,
+      "analysis": "{\n  \"visuals\": \"Glitchy text and red voids, then underwater ruins and a soldier in a destroyed LA city with smoke everywhere. Fast cuts, chaotic energy, looks like a dystopian mess.\",\n  \"patience\": 5,\n  \"boredom\": 4,\n  \"excitement\": 7,\n  \"scroll_intent\": \"Staying for the hype, but if it drags I'm scrolling.\",\n  \"summary\": \"This looks like a high-octane shooter trailer set in a dystopian future. The glitchy editing is intense, but the destroyed city visuals are actually pretty cool.\"\n}",
+      "tokens": 6084
+    },
+    {
+      "chunkIndex": 1,
+      "startTime": 8,
+      "endTime": 16,
+      "analysis": "```json\n{\n  \"visuals\": \"Total chaos on the highway with cars flying everywhere, then a massive city collapse with smoke billowing into the sky. The logo slams in: 'Call of Duty: Black Ops 7'. Finally, a glitchy broken screen showing a creepy old man's face in the rubble.\",\n  \"patience\": 2,\n  \"boredom\": 7,\n  \"excitement\": 3,\n  \"scroll_intent\": true,\n  \"summary\": \"Standard CoD apocalypse vibes, nothing new here. The glitchy face is the only thing keeping me from scrolling immediately.\"\n}\n```",
+      "tokens": 5695
+    },
+    {
+      "chunkIndex": 2,
+      "startTime": 16,
+      "endTime": 24,
+      "analysis": "{\n  \"visuals\": \"Creepy glitchy face on a broken screen, a map showing 258 MILLION dead, military tanks, and a skyscraper collapsing before the year 2035 appears in flames.\",\n  \"patience\": 3,\n  \"boredom\": 6,\n  \"excitement\": 5,\n  \"scroll_intent\": \"If this is just a long intro cutscene I'm dropping.\",\n  \"summary\": \"Looks like a dystopian future where the world ends in 2035 with massive casualties and explosions. The glitchy vibe is cool but it's getting pretty depressing fast.\"\n}",
+      "tokens": 7327
+    },
+    {
+      "chunkIndex": 3,
+      "startTime": 24,
+      "endTime": 32,
+      "analysis": "```json\n{\n  \"visuals\": \"A briefing lady talking, then a massive army of 'GUILD' mechs marching out. Two guys having a serious walk-and-talk in a field. Then soldiers on a carrier deck with a VTOL hovering.\",\n  \"patience\": 7,\n  \"boredom\": 5,\n  \"excitement\": 7,\n  \"scroll_intent\": false,\n  \"summary\": \"The Guild robots are deploying for war while some guys walk in a field talking about it. Finally seeing the human military prepping on a carrier deck.\"\n}\n```",
+      "tokens": 5684
+    }
+  ],
+  "totalTokens": 24790,
+  "generatedAt": "2026-02-28T00:34:35.994Z"
+}

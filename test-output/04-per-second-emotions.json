@@ -1,0 +1,256 @@
+{
+  "video": ".dev-cache/9txkGBj_trg.mp4",
+  "duration": 139.981,
+  "persona": {
+    "name": "The Impatient Teenager",
+    "description": "17yo Gen Z, scrolls if bored"
+  },
+  "total_seconds": 27,
+  "totalTokens": 25331,
+  "per_second_data": [
+    {
+      "timestamp": 0,
+      "visuals": "Glitchy text 'RISING TENSIONS' and dark abstract shapes.",
+      "patience": 8,
+      "boredom": 2,
+      "excitement": 5,
+      "thought": "Another CoD trailer? Fr? Okay, let's see if this is actually fire or just more mid marketing.",
+      "scroll_risk": "low"
+    },
+    {
+      "timestamp": 1,
+      "visuals": "Dark red abstract tunnel, very hard to see anything.",
+      "patience": 5,
+      "boredom": 7,
+      "excitement": 2,
+      "thought": "Bro, why is it so dark? Is my phone broken? I can't see sh*t. Get to the point.",
+      "scroll_risk": "high"
+    },
+    {
+      "timestamp": 2,
+      "visuals": "Blue underwater scene with floating debris and tech.",
+      "patience": 4,
+      "boredom": 8,
+      "excitement": 2,
+      "thought": "Underwater? Why? Where's the gun? This is dragging. I'm about to scroll.",
+      "scroll_risk": "high"
+    },
+    {
+      "timestamp": 3,
+      "visuals": "Large orange mech/robot in a blue room.",
+      "patience": 7,
+      "boredom": 3,
+      "excitement": 7,
+      "thought": "Wait, a mech? Okay, that's actually kinda sick. Finally some action. Don't bore me now.",
+      "scroll_risk": "low"
+    },
+    {
+      "timestamp": 4,
+      "visuals": "Close-up of a male character's face, looking serious.",
+      "patience": 6,
+      "boredom": 5,
+      "excitement": 4,
+      "thought": "Who is this guy? He looks like he has a bad hair day. Hope he's not another generic protagonist.",
+      "scroll_risk": "medium"
+    },
+    {
+      "timestamp": 5,
+      "visuals": "Wide shot of a destroyed city street, character kneeling.",
+      "patience": 6,
+      "boredom": 4,
+      "excitement": 5,
+      "thought": "LA in shambles. Typical CoD vibes. Graphics are actually clean though.",
+      "scroll_risk": "medium"
+    },
+    {
+      "timestamp": 6,
+      "visuals": "Face with black ink/liquid glitching effect over it.",
+      "patience": 7,
+      "boredom": 2,
+      "excitement": 6,
+      "thought": "His face is melting? That's actually trippy. What is happening? I'm watching.",
+      "scroll_risk": "low"
+    },
+    {
+      "timestamp": 7,
+      "visuals": "Fast movement/shooting in a bright futuristic city.",
+      "patience": 8,
+      "boredom": 1,
+      "excitement": 8,
+      "thought": "Okay, now we're talking. Movement looks smooth. Bet. This might be W.",
+      "scroll_risk": "low"
+    },
+    {
+      "timestamp": 8,
+      "visuals": "End of the fast-paced action sequence.",
+      "patience": 8,
+      "boredom": 1,
+      "excitement": 7,
+      "thought": "Alright, keep going. Don't bore me. I'm invested now.",
+      "scroll_risk": "low"
+    },
+    {
+      "timestamp": 8,
+      "visuals": "Video cuts to black/static after the creepy face close-up. No gameplay shown.",
+      "patience": 4,
+      "boredom": 6,
+      "excitement": 2,
+      "thought": "Wait... is that it? Bro, 7 seconds? Where's the actual gameplay??",
+      "scroll_risk": "high"
+    },
+    {
+      "timestamp": 9,
+      "visuals": "Still just the black screen/looping logo. Nothing happening.",
+      "patience": 2,
+      "boredom": 8,
+      "excitement": 1,
+      "thought": "Lmao clickbait. Thought BO7 was dropping soon but this is just a teaser? Cringe.",
+      "scroll_risk": "high"
+    },
+    {
+      "timestamp": 10,
+      "visuals": "Silence/Black screen.",
+      "patience": 1,
+      "boredom": 9,
+      "excitement": 0,
+      "thought": "I'm literally wasting my data for this? Next.",
+      "scroll_risk": "extreme"
+    },
+    {
+      "timestamp": 11,
+      "visuals": "Nothing.",
+      "patience": 0,
+      "boredom": 10,
+      "excitement": 0,
+      "thought": "Why are you still buffering? I'm out.",
+      "scroll_risk": "extreme"
+    },
+    {
+      "timestamp": 12,
+      "visuals": "Nothing.",
+      "patience": 0,
+      "boredom": 10,
+      "excitement": 0,
+      "thought": "Skipping.",
+      "scroll_risk": "extreme"
+    },
+    {
+      "timestamp": 13,
+      "visuals": "Nothing.",
+      "patience": 0,
+      "boredom": 10,
+      "excitement": 0,
+      "thought": "Wasted 5 seconds of my life.",
+      "scroll_risk": "extreme"
+    },
+    {
+      "timestamp": 14,
+      "visuals": "Nothing.",
+      "patience": 0,
+      "boredom": 10,
+      "excitement": 0,
+      "thought": "Unsubscribed.",
+      "scroll_risk": "extreme"
+    },
+    {
+      "timestamp": 15,
+      "visuals": "Nothing.",
+      "patience": 0,
+      "boredom": 10,
+      "excitement": 0,
+      "thought": "Why am I still here?",
+      "scroll_risk": "extreme"
+    },
+    {
+      "timestamp": 16,
+      "visuals": "Nothing.",
+      "patience": 0,
+      "boredom": 10,
+      "excitement": 0,
+      "thought": "Scrolling to the next video immediately.",
+      "scroll_risk": "extreme"
+    },
+    {
+      "timestamp": 16,
+      "visuals": "Glitchy, distorted close-up of a face on a screen, looks like a bad deepfake.",
+      "patience": 0,
+      "boredom": 10,
+      "excitement": 0,
+      "thought": "Bruh, is my wifi buffering? This looks like a corrupted file. Why am I watching this?",
+      "scroll_risk": "high"
+    },
+    {
+      "timestamp": 17,
+      "visuals": "Same glitchy face, slightly clearer but still distorted.",
+      "patience": 0,
+      "boredom": 10,
+      "excitement": 0,
+      "thought": "Still staring at this? Bro, move on. This is so mid. I'm already reaching for the thumb.",
+      "scroll_risk": "high"
+    },
+    {
+      "timestamp": 18,
+      "visuals": "Digital map with 'GLOBAL ESTD. DEATH TALLY 258,121,000' in red.",
+      "patience": 1,
+      "boredom": 9,
+      "excitement": 1,
+      "thought": "Wait, 258 million dead? That's... actually kinda dark. Okay, maybe it's not total trash. But still, numbers on a map?",
+      "scroll_risk": "medium"
+    },
+    {
+      "timestamp": 19,
+      "visuals": "Huge cloud of black smoke rising, looks like an explosion aftermath.",
+      "patience": 1,
+      "boredom": 8,
+      "excitement": 2,
+      "thought": "Oh, an explosion. Cool I guess. But where's the action? Just smoke? Boring.",
+      "scroll_risk": "medium"
+    },
+    {
+      "timestamp": 20,
+      "visuals": "Military tank/truck driving through a field.",
+      "patience": 1,
+      "boredom": 8,
+      "excitement": 2,
+      "thought": "Tank rolling. Standard military stuff. Seen this a million times in Call of Duty. Nothing new here.",
+      "scroll_risk": "medium"
+    },
+    {
+      "timestamp": 21,
+      "visuals": "Tall building collapsing into dust and fire.",
+      "patience": 1,
+      "boredom": 7,
+      "excitement": 3,
+      "thought": "Building crumbles. CGI is okay, but I've seen better destruction in Fortnite. Still, kinda epic.",
+      "scroll_risk": "low"
+    },
+    {
+      "timestamp": 22,
+      "visuals": "Text '2035' appears over fire.",
+      "patience": 0,
+      "boredom": 9,
+      "excitement": 1,
+      "thought": "2035? Future war? Cliché plot alert. Why is the text so big? Just tell me what's happening.",
+      "scroll_risk": "high"
+    },
+    {
+      "timestamp": 23,
+      "visuals": "Text '2035' still on screen, background shifting.",
+      "patience": 0,
+      "boredom": 10,
+      "excitement": 0,
+      "thought": "Still 2035. Make it move. I'm losing my attention span. This is dragging.",
+      "scroll_risk": "high"
+    },
+    {
+      "timestamp": 24,
+      "visuals": "Woman in a white suit looking serious.",
+      "patience": 1,
+      "boredom": 9,
+      "excitement": 1,
+      "thought": "Finally a human. She looks like a generic sci-fi villain or a CEO. Who is she? At least there's a face.",
+      "scroll_risk": "high"
+    }
+  ],
+  "generatedAt": "2026-02-28T00:56:59.728Z"
+}
