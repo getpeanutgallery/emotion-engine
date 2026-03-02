@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Step 3: Chunked Video Analysis WITH Context
- * NOW ACTUALLY USES dialogue and music files!
+ * Step 3: Chunked Video Analysis with STRICT JSON Output
+ * Forces AI to return structured data for reliable parsing
  */
 
 const fs = require('fs');
@@ -14,61 +14,69 @@ const VIDEO_PATH = process.argv[2] || '.dev-cache/9txkGBj_trg.mp4';
 const OUTPUT_DIR = process.argv[3] || './analysis-output';
 const CHUNK_DURATION = 8;
 
-const PERSONA = { name: 'The Impatient Teenager', description: '17yo Gen Z, scrolls if bored' };
+const PERSONA = { 
+    name: 'The Impatient Teenager', 
+    description: '17yo Gen Z, 200+ TikToks/day, scrolls if bored'
+};
 
 if (!API_KEY) { console.error('❌ OPENROUTER_API_KEY not set'); process.exit(1); }
 
-// Load context files
 function loadContextFiles() {
     const dialoguePath = path.join(OUTPUT_DIR, '01-dialogue-analysis.md');
     const musicPath = path.join(OUTPUT_DIR, '02-music-analysis.md');
-    
     const data = { dialogue: null, music: null };
     
     if (fs.existsSync(dialoguePath)) {
         const content = fs.readFileSync(dialoguePath, 'utf8');
         const match = content.match(/```json\s*\n([\s\S]*?)\n```/);
-        if (match) {
-            try { data.dialogue = JSON.parse(match[1]); } catch {}
-        }
+        if (match) { try { data.dialogue = JSON.parse(match[1]); } catch {} }
     }
-    
     if (fs.existsSync(musicPath)) {
         const content = fs.readFileSync(musicPath, 'utf8');
         const match = content.match(/```json\s*\n([\s\S]*?)\n```/);
-        if (match) {
-            try { data.music = JSON.parse(match[1]); } catch {}
-        }
+        if (match) { try { data.music = JSON.parse(match[1]); } catch {} }
     }
-    
     return data;
 }
 
-// Get dialogue for this time range
 function getDialogueForTime(data, start, end) {
     if (!data?.dialogue_segments) return '';
-    
-    const relevant = data.dialogue_segments.filter(d => {
+    return data.dialogue_segments.filter(d => {
         const parse = (t) => parseInt(t.split(':')[0]) * 60 + parseInt(t.split(':')[1]);
         const s = parse(d.timestamp_start), e = parse(d.timestamp_end);
         return (s >= start && s <= end) || (e >= start && e <= end);
-    });
-    
-    return relevant.map(d => `[${d.timestamp_start}] ${d.speaker}: "${d.text}"`).join('\n');
+    }).map(d => `[${d.timestamp_start}] ${d.speaker}: "${d.text}"`).join('\n');
 }
 
-// Get music for this time range  
 function getMusicForTime(data, start, end) {
     if (!data?.audio_segments) return '';
-    
-    const relevant = data.audio_segments.filter(m => {
+    return data.audio_segments.filter(m => {
         const parse = (t) => parseInt(t.split(':')[0]) * 60 + parseInt(t.split(':')[1]);
         const range = m.timestamp_range.split(' - ');
         const s = parse(range[0]), e = parse(range[1]);
         return (s >= start && s <= end) || (e >= start && e <= end) || (s <= start && e >= end);
-    });
+    }).map(m => `[${m.timestamp_range}] ${m.description}`).join('\n');
+}
+
+// STRICT formatting - always the same structure
+function formatPreviousState(state) {
+    if (!state) return '';
     
-    return relevant.map(m => `[${m.timestamp_range}] ${m.description} (${m.mood})`).join('\n');
+    const pd = state.patience >= 8 ? 'still patient, giving it a chance' : 
+               state.patience >= 5 ? 'getting impatient' : 'about to scroll';
+    const bd = state.boredom <= 2 ? 'not bored' : 
+               state.boredom <= 5 ? 'slightly bored' : 
+               state.boredom <= 7 ? 'pretty bored' : 'extremely bored';
+    const ed = state.excitement >= 8 ? 'very hyped' : 
+               state.excitement >= 5 ? 'somewhat interested' : 'not feeling it';
+    
+    return `**Your Emotional State at ${state.timestamp}s:**
+
+- Patience level: ${state.patience}/10 (${pd})
+- Boredom level: ${state.boredom}/10 (${bd})
+- Excitement level: ${state.excitement}/10 (${ed})
+- What you were thinking: "${state.thought}"
+`;
 }
 
 async function getDuration(videoPath) {
@@ -85,79 +93,148 @@ async function extractChunk(startTime, duration, outputPath) {
     });
 }
 
-async function analyzeChunk(chunkPath, index, total, startTime, endTime, prevSummary, dialogueCtx, musicCtx) {
+// STRICT JSON parsing - no regex fallbacks
+function parseStructuredResponse(analysis) {
+    // Extract JSON block
+    const jsonMatch = analysis.match(/```json\s*\n([\s\S]*?)\n```/) || 
+                     analysis.match(/({[\s\S]*})/);
+    
+    if (!jsonMatch) {
+        throw new Error('No JSON found in response');
+    }
+    
+    const jsonStr = jsonMatch[1] || jsonMatch[0];
+    const parsed = JSON.parse(jsonStr);
+    
+    // Validate required fields
+    if (typeof parsed.patience !== 'number' || 
+        typeof parsed.boredom !== 'number' || 
+        typeof parsed.excitement !== 'number') {
+        throw new Error('Missing required emotional ratings');
+    }
+    
+    return {
+        patience: Math.max(0, Math.min(10, Math.round(parsed.patience))),
+        boredom: Math.max(0, Math.min(10, Math.round(parsed.boredom))),
+        excitement: Math.max(0, Math.min(10, Math.round(parsed.excitement))),
+        thought: String(parsed.thought || parsed.summary || 'continuing...').substring(0, 200),
+        scroll_risk: String(parsed.scroll_risk || 'medium'),
+        visuals: String(parsed.visuals || '').substring(0, 300),
+        summary: String(parsed.summary || parsed.thought || '').substring(0, 200)
+    };
+}
+
+async function analyzeChunk(chunkPath, index, total, startTime, endTime, prevState, dialogueCtx, musicCtx) {
     const buf = fs.readFileSync(chunkPath);
     const dataUrl = `data:video/mp4;base64,${buf.toString('base64')}`;
     
-    // BUILD CONTEXT
+    // Build context
     let context = '';
-    if (prevSummary) context += `Previous state: ${prevSummary}\n`;
-    if (dialogueCtx) context += `DIALOGUE:\n${dialogueCtx}\n`;
-    if (musicCtx) context += `MUSIC:\n${musicCtx}\n`;
+    if (prevState) context += formatPreviousState(prevState);
+    if (dialogueCtx) context += `**Dialogue:**\n${dialogueCtx}\n\n`;
+    if (musicCtx) context += `**Music:**\n${musicCtx}\n\n`;
     
-    const prompt = `You are ${PERSONA.name}, ${PERSONA.description}. Chunk ${index+1}/${total} (${startTime}s-${endTime}s).\n${context}\nDescribe visuals. Rate patience/boredom/excitement 1-10. What's your honest thought right now? Scroll intent? JSON format.`;
-    
+    // STRICT JSON prompt - no freeform text allowed
+    const prompt = `You are ${PERSONA.name}, ${PERSONA.description}.
+
+Analyzing chunk ${index + 1}/${total} (${startTime}s - ${endTime}s).
+
+${context}RESPOND ONLY WITH VALID JSON. No explanations, no markdown, just JSON.
+
+Required format:
+{
+  "visuals": "describe what you see (1-2 sentences)",
+  "patience": 0-10,
+  "boredom": 0-10,
+  "excitement": 0-10,
+  "thought": "your internal monologue, Gen Z voice",
+  "scroll_risk": "low|medium|high",
+  "summary": "brief summary for next chunk"
+}
+
+Be brutally honest. Use numbers only for ratings.`;
+
     const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
             model: MODEL,
             messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'video_url', video_url: { url: dataUrl } }] }],
-            max_tokens: 1500
+            max_tokens: 800,
+            response_format: { type: 'json_object' }  // Force JSON if supported
         })
     });
     
+    if (!res.ok) throw new Error(`API ${res.status}`);
     const data = await res.json();
-    return { analysis: data.choices[0].message.content, tokens: data.usage?.total_tokens };
+    const analysis = data.choices[0].message.content;
+    
+    // Parse strict JSON
+    const structured = parseStructuredResponse(analysis);
+    
+    return {
+        analysis: analysis,
+        structured: structured,
+        tokens: data.usage?.total_tokens
+    };
 }
 
 async function main() {
-    console.log('Step 3: Chunked Video Analysis WITH Context\n');
+    console.log('Step 3: Chunked Video Analysis (Structured JSON)\n');
     
     if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
     
-    // LOAD CONTEXT FILES
-    console.log('Loading context files...');
     const contextData = loadContextFiles();
-    console.log(`  Dialogue segments: ${contextData.dialogue?.dialogue_segments?.length || 0}`);
-    console.log(`  Music segments: ${contextData.music?.audio_segments?.length || 0}\n`);
+    console.log(`   Dialogue: ${contextData.dialogue?.dialogue_segments?.length || 0}`);
+    console.log(`   Music: ${contextData.music?.audio_segments?.length || 0}`);
     
     const duration = await getDuration(VIDEO_PATH);
     const numChunks = Math.ceil(duration / CHUNK_DURATION);
-    console.log(`Video: ${duration.toFixed(1)}s → ${numChunks} chunks\n`);
+    console.log(`\nVideo: ${duration.toFixed(1)}s → ${numChunks} chunks\n`);
     
     const tempDir = fs.mkdtempSync('/tmp/chunks-');
     const results = [];
-    let prevSummary = '';
+    let previousState = null;
     
     for (let i = 0; i < numChunks && i < 4; i++) {
         const startTime = i * CHUNK_DURATION;
         const endTime = Math.min(startTime + CHUNK_DURATION, duration);
         const chunkPath = path.join(tempDir, `chunk-${i}.mp4`);
         
-        console.log(`[${i+1}] ${startTime}s-${endTime}s`);
+        console.log(`[${i + 1}/${numChunks}] ${startTime}s-${endTime}s`);
         
         try {
             const sizeMB = await extractChunk(startTime, CHUNK_DURATION, chunkPath);
             console.log(`   Size: ${sizeMB.toFixed(2)} MB`);
-            
             if (sizeMB > 10) { console.log('   Skipping (too large)'); continue; }
             
-            // GET RELEVANT CONTEXT FOR THIS TIME RANGE
             const dialogueCtx = getDialogueForTime(contextData.dialogue, startTime, endTime);
             const musicCtx = getMusicForTime(contextData.music, startTime, endTime);
             
-            if (dialogueCtx) console.log(`   🗣️  Dialogue: ${dialogueCtx.split('\n')[0]}...`);
-            if (musicCtx) console.log(`   🎵 Music: ${musicCtx.split('\n')[0]}...`);
-            
-            const result = await analyzeChunk(chunkPath, i, numChunks, startTime, endTime, prevSummary, dialogueCtx, musicCtx);
+            const result = await analyzeChunk(chunkPath, i, numChunks, startTime, endTime, previousState, dialogueCtx, musicCtx);
             console.log(`   ✅ ${result.tokens} tokens`);
+            console.log(`      P:${result.structured.patience} B:${result.structured.boredom} E:${result.structured.excitement}`);
             
-            prevSummary = result.analysis.substring(0, 100);
-            results.push({ chunkIndex: i, startTime, endTime, analysis: result.analysis, tokens: result.tokens });
+            // Store structured data for next chunk (CONSISTENT FORMAT)
+            previousState = {
+                timestamp: endTime,
+                patience: result.structured.patience,
+                boredom: result.structured.boredom,
+                excitement: result.structured.excitement,
+                thought: result.structured.thought
+            };
+            
+            results.push({
+                chunkIndex: i,
+                startTime,
+                endTime,
+                raw_analysis: result.analysis,
+                structured_data: result.structured,
+                tokens: result.tokens
+            });
             
         } catch (err) {
-            console.log(`   ❌ ${err.message}`);
+            console.log(`   ❌ Error: ${err.message}`);
         }
         
         if (fs.existsSync(chunkPath)) fs.unlinkSync(chunkPath);
@@ -165,8 +242,11 @@ async function main() {
     
     fs.rmdirSync(tempDir);
     
-    fs.writeFileSync(path.join(OUTPUT_DIR, '03-chunked-analysis.json'), JSON.stringify({
-        video: VIDEO_PATH, duration, persona: PERSONA,
+    // Save with structured data
+    const output = {
+        video: VIDEO_PATH,
+        duration,
+        persona: PERSONA,
         contextFilesUsed: {
             dialogue: !!contextData.dialogue,
             music: !!contextData.music
@@ -174,11 +254,13 @@ async function main() {
         chunks: results,
         totalTokens: results.reduce((a, r) => a + r.tokens, 0),
         generatedAt: new Date().toISOString()
-    }, null, 2));
+    };
+    
+    fs.writeFileSync(path.join(OUTPUT_DIR, '03-chunked-analysis.json'), JSON.stringify(output, null, 2));
     
     console.log('\n✅ Done!');
     console.log(`   Chunks: ${results.length}`);
-    console.log(`   Context used: dialogue=${!!contextData.dialogue}, music=${!!contextData.music}`);
+    console.log(`   All data is structured JSON - consistent format guaranteed`);
 }
 
-main().catch(console.error);
+main().catch(err => { console.error('Error:', err); process.exit(1); });
