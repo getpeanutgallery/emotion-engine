@@ -1,132 +1,253 @@
 # OpenTruth Emotion Engine
 
-> **Version:** 0.2.0 (Alpha)  
-> **Status:** Week 1-2 Complete ✅ | Pipeline Validated  
+> **Version:** 0.3.0 (Hardened)  
+> **Status:** Production Ready ✅  
 > **Mission:** Replace 50,000 USD focus groups with 0.15 USD AI swarms
 
 The Emotion Engine is a serverless, multi-modal AI platform that evaluates video content against synthetic demographic personas to measure emotional impact and predict audience engagement—before you spend a dollar on ad spend or human testing.
 
 ---
 
-## The Problem
+## ⚡ Quick Start
 
-AI can generate 50 video ad variations in an hour. But validating which one converts still costs **50,000 USD** and takes **a month** with traditional focus groups. Creation moves at the speed of compute. Validation still moves at the speed of humans.
-
----
-
-## The Solution
-
-Drop your MP4 or YouTube URL into the Emotion Engine. Our synthetic personas (like the **Impatient Teenager**) watch every frame and track emotional dimensions (Boredom, Excitement, Patience) second-by-second. You get a **Friction Index** and actionable recommendations in 15 seconds for **pennies**.
-
----
-
-## Tech Stack
-
-### Server-Side (Node.js)
-- **Runtime:** Node.js 18+ (`.cjs` modules)
-- **Video Processing:** `ffmpeg` (CLI)
-- **AI Models:** OpenRouter API (`openai/gpt-audio`, `qwen/qwen3.5-122b-a10b`)
-- **Deployment Target:** AWS Lambda + API Gateway
-- **Database:** DynamoDB (pending)
-
-### Client-Side (Browser)
-- **Language:** Vanilla JavaScript with JSDOC type hints
-- **UI Architecture:** Web Components (custom elements)
-- **State Management:** Singleton managers
-- **Build Tools:** None (prototype phase)
-- **API Communication:** Native `fetch()`
-
-**Why this stack?**
-- Server-side pipeline scripts use Node.js native modules (`fs`, `child_process`, `ffmpeg`) that never run in the browser—no need to make them universal
-- Browser is UI-only: displays results, calls API, no heavy lifting
-- Web Components provide encapsulation without framework overhead
-- JSDOC gives IDE autocomplete and type safety without TypeScript complexity
-- Singletons for managers (API, State, UI) keep global scope clean and testable
-
----
-
-## Quick Start
-
-### Prerequisites
+### 1. Install Dependencies
 
 ```bash
-# Node.js 18+
+# Node.js 18+ required
 node --version
 
-# FFmpeg (for video processing)
+# FFmpeg required (for video processing)
 ffmpeg -version
+```
 
-# OpenRouter API key (required)
-# Option 1: Set via environment variable
-export OPENROUTER_API_KEY="sk-or-..."
+### 2. Configure API Key
 
-# Option 2: Copy .env.example to .env and fill in your key
+```bash
+# Copy the template
 cp .env.example .env
-# Then edit .env and add your API key
+
+# Edit .env and add your OpenRouter API key
+nano .env  # or use your preferred editor
+
+# Required: Replace this line with your actual key
+OPENROUTER_API_KEY=sk-or-your-actual-key-here
 ```
 
-### Environment Variables
+**Get your API key:** https://openrouter.ai/keys
 
-**Required:**
-- `OPENROUTER_API_KEY` - Your OpenRouter API key (starts with `sk-or-`)
-
-**Optional (with defaults):**
-- `SOUL_ID` - Persona to use (default: `impatient-teenager`)
-- `SOUL_VERSION` - Persona version: `latest`, `1`, `1.0`, or `1.0.0` (default: `latest`)
-- `GOAL_ID` - Evaluation goal (default: `video-ad-evaluation`)
-- `GOAL_VERSION` - Goal version (default: `1.0`)
-- `TOOL_ID` - Tools config (default: `emotion-tracking`)
-- `TOOL_VERSION` - Tools version (default: `latest`)
-- `CHUNK_QUALITY` - Quality preset: `low`, `medium`, `high` (default: `medium`)
-- `API_REQUEST_DELAY` - Delay between API calls in ms (default: `1000`)
-- `API_MAX_RETRIES` - Max retry attempts (default: `3`)
-
-See `.env.example` for all available options.
-
-### Run Complete Pipeline (Recommended)
+### 3. Run the Pipeline
 
 ```bash
-cd emotion-engine
+# Full pipeline (recommended)
+node server/run-pipeline.cjs path/to/video.mp4 output/my-test
 
-# Run all steps in sequence (dialogue → music → chunks → timeline → report)
-node server/run-pipeline.cjs path/to/video.mp4 output/<session-name>
-
-# Generate final report
-node server/generate-report.cjs output/<session-name>
+# Example with test video
+node server/run-pipeline.cjs .cache/videos/cod.mp4 output/cod-test
 ```
 
-### Run Individual Steps
-
-```bash
-# Step 1: Extract dialogue with timestamps
-node server/01-extract-dialogue.cjs path/to/video.mp4 output/<session-name>
-
-# Step 2: Extract music/audio analysis
-node server/02-extract-music.cjs path/to/video.mp4 output/<session-name>
-
-# Step 3: Analyze video chunks with context (8-second intervals)
-node server/03-analyze-chunks.cjs path/to/video.mp4 output/<session-name>
-
-# Step 4: Generate per-second emotion timeline
-node server/04-per-second-emotions.cjs path/to/video.mp4 output/<session-name>
-```
-
-### View Results
+### 4. View Results
 
 ```bash
 # Start local server
 python3 -m http.server 8080
 
-# View final report
-open http://localhost:8080/output/<session-name>/FINAL-REPORT.md
+# Open final report in browser
+open http://localhost:8080/output/cod-test/FINAL-REPORT.md
 
-# Open web app
-open http://localhost:8080/index.html
+# Or view JSON data
+cat output/cod-test/03-chunked-analysis.json | jq .
 ```
 
 ---
 
-## Architecture
+## 🔧 Configuration
+
+### Environment Variables (.env)
+
+**Required:**
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `OPENROUTER_API_KEY` | Your OpenRouter API key | `sk-or-...` |
+
+**Optional (with defaults):**
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `SOUL_ID` | `impatient-teenager` | Persona to use |
+| `SOUL_VERSION` | `latest` | Persona version: `latest`, `1`, `1.0`, `1.0.0` |
+| `GOAL_ID` | `video-ad-evaluation` | Evaluation goal |
+| `GOAL_VERSION` | `1.0` | Goal version |
+| `TOOL_ID` | `emotion-tracking` | Tools config |
+| `TOOL_VERSION` | `latest` | Tools version |
+| `CHUNK_QUALITY` | `medium` | Quality preset: `low`, `medium`, `high` |
+| `API_REQUEST_DELAY` | `1000` | Delay between API calls (ms) |
+| `API_MAX_RETRIES` | `3` | Max retry attempts on failure |
+| `LOG_LEVEL` | `info` | Log level: `debug`, `info`, `warn`, `error` |
+| `LOG_FILE` | *(none)* | Optional: Path to log file |
+
+### Quality Presets
+
+| Preset | Chunk Duration | Target Size | Best For |
+|--------|----------------|-------------|----------|
+| `low` | 4 seconds | 4 MB | Quick tests, slow connections |
+| `medium` | 8 seconds | 8 MB | **Default** - balanced quality/speed |
+| `high` | 12 seconds | 9 MB | Final runs, maximum detail |
+
+**Change quality:**
+```bash
+export CHUNK_QUALITY=high
+node server/run-pipeline.cjs video.mp4 output/high-quality-test
+```
+
+---
+
+## 🧪 Testing & Debugging
+
+### Test the Full Pipeline
+
+```bash
+# 1. Clean output directory
+rm -rf output/test-*
+
+# 2. Set debug logging
+export LOG_LEVEL=debug
+
+# 3. Run with small test video (recommended for first run)
+ffmpeg -i .cache/videos/cod.mp4 -t 30 -c copy output/test-30s.mp4
+node server/run-pipeline.cjs output/test-30s.mp4 output/test-30s
+
+# Expected: ~5 minutes for 30s video (~4 chunks)
+```
+
+### Test Individual Steps
+
+```bash
+# Step 1: Extract dialogue
+node server/01-extract-dialogue.cjs video.mp4 output/test
+# Output: output/test/01-dialogue-analysis.md
+
+# Step 2: Extract music
+node server/02-extract-music.cjs video.mp4 output/test
+# Output: output/test/02-music-analysis.md
+
+# Step 3: Analyze chunks (with context from steps 1-2)
+node server/03-analyze-chunks.cjs video.mp4 output/test
+# Output: output/test/03-chunked-analysis.json
+
+# Step 4: Per-second timeline
+node server/04-per-second-emotions.cjs video.mp4 output/test
+# Output: output/test/04-per-second-emotions.json + .csv
+
+# Generate final report
+node server/generate-report.cjs output/test
+# Output: output/test/FINAL-REPORT.md
+```
+
+### Verify Output Files
+
+```bash
+# Check all files exist and are valid
+for f in 01-dialogue-analysis.md 02-music-analysis.md 03-chunked-analysis.json 04-per-second-emotions.json FINAL-REPORT.md; do
+    if [ -s output/test/$f ]; then
+        echo "✅ $f ($(wc -c < output/test/$f) bytes)"
+    else
+        echo "❌ $f missing or empty"
+    fi
+done
+
+# Validate JSON files
+jq . output/test/03-chunked-analysis.json > /dev/null && echo "✅ 03-chunked-analysis.json is valid JSON"
+jq . output/test/04-per-second-emotions.json > /dev/null && echo "✅ 04-per-second-emotions.json is valid JSON"
+
+# Check chunk count
+echo "Chunks analyzed: $(jq '.chunks | length' output/test/03-chunked-analysis.json)"
+echo "Seconds analyzed: $(jq '.per_second_data | length' output/test/04-per-second-emotions.json)"
+```
+
+### Debug Common Issues
+
+#### API Key Errors
+```bash
+# Check if API key is set
+echo $OPENROUTER_API_KEY
+
+# Should start with "sk-or-"
+# If empty or wrong, edit .env and re-source:
+source .env
+```
+
+#### FFmpeg Errors
+```bash
+# Check FFmpeg installation
+ffmpeg -version
+ffprobe -version
+
+# Install on Ubuntu/Debian:
+sudo apt-get install ffmpeg
+
+# Install on macOS:
+brew install ffmpeg
+```
+
+#### Out of Memory / Large Chunks
+```bash
+# Use lower quality preset
+export CHUNK_QUALITY=low
+node server/run-pipeline.cjs video.mp4 output/low-quality-test
+
+# Or reduce max chunk size
+export CHUNK_MAX_SIZE=4194304  # 4MB instead of 8MB
+```
+
+#### API Rate Limiting
+```bash
+# Increase delay between requests
+export API_REQUEST_DELAY=2000  # 2 seconds instead of 1
+
+# Or reduce retries
+export API_MAX_RETRIES=2
+```
+
+#### Enable Detailed Logging
+```bash
+# Debug mode (verbose output)
+export LOG_LEVEL=debug
+export LOG_FILE=output/debug.log
+
+node server/run-pipeline.cjs video.mp4 output/test
+
+# View logs
+cat output/debug.log | grep -E "ERROR|WARN" | tail -20
+```
+
+#### Test from Different Directory
+```bash
+# Scripts use absolute paths - test from anywhere
+cd /tmp
+node /home/derrick/Documents/workspace/projects/opentruth/emotion-engine/server/run-pipeline.cjs \
+    /home/derrick/Documents/workspace/projects/opentruth/emotion-engine/.cache/videos/cod.mp4 \
+    /home/derrick/Documents/workspace/projects/opentruth/emotion-engine/output/test-from-tmp
+```
+
+---
+
+## 📁 Output Files
+
+After a successful run, `output/<session-name>/` contains:
+
+| File | Description | Size |
+|------|-------------|------|
+| `01-dialogue-analysis.md` | Transcribed dialogue with timestamps, speakers, emotions | ~10-50 KB |
+| `02-music-analysis.md` | Music/SFX analysis with mood, tempo, instruments | ~10-50 KB |
+| `03-chunked-analysis.json` | Per-chunk persona analysis with emotional scores | ~100 KB - 1 MB |
+| `04-per-second-emotions.json` | Per-second emotion timeline (JSON) | ~50-200 KB |
+| `04-per-second-emotions.csv` | Per-second emotion timeline (CSV for Excel) | ~10-50 KB |
+| `FINAL-REPORT.md` | **Human-readable summary with recommendations** | ~20-100 KB |
+
+---
+
+## 🏗️ Architecture
 
 ### Pipeline Flow
 
@@ -143,12 +264,12 @@ open http://localhost:8080/index.html
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────┐
 │  Step 3: Chunked Video Analysis (WITH CONTEXT)                      │
-│  ffmpeg → 8s chunks (<10MB) + dialogue + music + memory → Qwen     │
+│  ffmpeg → chunks (<10MB) + dialogue + music + memory → Qwen        │
 │  Output: chunked-analysis.json                                      │
 └─────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────┐
-│  Step 4: Per-Second Timeline (Optional)                             │
+│  Step 4: Per-Second Timeline                                        │
 │  Strict JSON output → per-second-emotions.json + .csv               │
 └─────────────────────────────────────────────────────────────────────┘
                                     ↓
@@ -186,80 +307,9 @@ open http://localhost:8080/index.html
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### Component Responsibilities
-
-| Layer | Technology | Responsibility |
-|-------|------------|----------------|
-| **Dialogue Extraction** | `ffmpeg` + `openai/gpt-audio` | Extract speech, speakers, emotion |
-| **Music Extraction** | `ffmpeg` + `openai/gpt-audio` | Analyze music, SFX, atmosphere |
-| **Video Analysis** | `ffmpeg` + `qwen/qwen3.5-122b-a10b` | Chunked evaluation with context |
-| **Context Memory** | Previous chunk summary | Emotional continuity across chunks |
-| **Report Generation** | Node.js script | Merge outputs into markdown |
-| **API Backend** | AWS Lambda (Node.js `.cjs`) | REST API, orchestration |
-| **Database** | DynamoDB | Session storage (pending) |
-| **Billing** | Stripe (planned) | Pre-paid wallet (pending) |
-| **UI Components** | Web Components | Reusable, encapsulated UI |
-| **State Management** | Singleton managers | Global state, API calls |
-
 ---
 
-## Project Structure
-
-```
-emotion-engine/
-├── index.html                      # Main entry point (served by AWS)
-├── index.js                        # App bootstrap
-├── .gitignore                      # Ignores output/, .cache/
-├── server/                         # Server-side pipeline + Lambda
-│   ├── 01-extract-dialogue.cjs     # Step 1: Dialogue extraction
-│   ├── 02-extract-music.cjs        # Step 2: Music/audio extraction
-│   ├── 03-analyze-chunks.cjs       # Step 3: Chunked analysis
-│   ├── 04-per-second-emotions.cjs  # Step 4: Timeline generation
-│   ├── run-pipeline.cjs            # Orchestrator: runs 01→02→03→04
-│   ├── generate-report.cjs         # Final report generator
-│   ├── lambda/                     # AWS Lambda deployment
-│   │   ├── handler.cjs             # Lambda function
-│   │   └── lib/                    # Lambda utilities
-│   │       ├── openrouter.js       # API client
-│   │       ├── openrouter-enhanced.cjs
-│   │       └── store.js            # DynamoDB wrapper
-│   └── personas/                   # Persona definitions
-│       └── impatient-teenager.md
-├── managers/                       # Singleton managers
-│   ├── api-manager.js              # API calls + mock mode
-│   ├── state-manager.js            # Global state + listeners
-│   └── ui-manager.js               # UI coordination
-├── components/                     # Web Components
-│   ├── video-upload.js             # <video-upload>
-│   ├── persona-selector.js         # <persona-selector>
-│   ├── analysis-progress.js        # <analysis-progress>
-│   ├── radar-chart.js              # <radar-chart>
-│   ├── emotion-timeline.js         # <emotion-timeline>
-│   ├── friction-index.js           # <friction-index>
-│   └── recommendations.js          # <recommendations>
-├── css/                            # Styles
-│   ├── main.css
-│   └── variables.css
-├── output/                         # Generated results (gitignored)
-│   └── <session-name>/             # Per-analysis outputs
-│       ├── 01-dialogue-analysis.md
-│       ├── 02-music-analysis.md
-│       ├── 03-chunked-analysis.json
-│       ├── 04-per-second-emotions.json
-│       ├── 04-per-second-emotions.csv
-│       └── FINAL-REPORT.md
-├── .cache/                         # Temporary cache (gitignored)
-│   └── videos/                     # Test videos
-└── docs/                           # Documentation
-    ├── PROJECT_SUMMARY.md
-    ├── OPENROUTER_INTEGRATION.md
-    ├── TEST_GUIDE.md
-    └── WEEK1_SUMMARY.md
-```
-
----
-
-## Persona System
+## 🎭 Persona System
 
 The Emotion Engine uses a **composable persona system** with three file types:
 
@@ -271,7 +321,7 @@ The Emotion Engine uses a **composable persona system** with three file types:
 
 ### Versioning (SemVer)
 
-All persona configs use **Semantic Versioning** (`Major.Minor.Patch`:
+All persona configs use **Semantic Versioning** (`Major.Minor.Patch`):
 
 - **Major** (`1.0.0` → `2.0.0`): Breaking changes (schema, identity, behavior)
 - **Minor** (`1.0.0` → `1.1.0`): Non-breaking additions (new lenses, traits)
@@ -297,8 +347,6 @@ All persona configs use **Semantic Versioning** (`Major.Minor.Patch`:
 - **Excitement:** 2-3/10 ❌ Disengaged
 - **Verdict:** ❌ **WOULD SCROLL**
 
-> *"0.0s and it's already a dark, cluttered mess with generic 'RISING TENSIONS' corporate buzzwords..."*
-
 ### Available Goals
 
 | Goal ID | Purpose | Use Case |
@@ -315,10 +363,10 @@ All persona configs use **Semantic Versioning** (`Major.Minor.Patch`:
 **Extended Lenses** (optional, composable):
 - Clarity, Trust, Frustration, Confusion, Overwhelm, Flow, Joy, Relief, Skepticism, Anxiety, Empowerment, Confidence, Cringe, ROI Confidence, Empathy
 
-### Using Personas
+### Using Custom Personas
 
 ```bash
-# Use default persona (impatient-teenager@latest + video-ad-evaluation@latest)
+# Use default persona
 node server/run-pipeline.cjs video.mp4 output/test1
 
 # Override persona via environment variables
@@ -331,31 +379,12 @@ export SELECTED_LENSES=patience,boredom,excitement,roi-confidence
 node server/run-pipeline.cjs video.mp4 output/test2
 ```
 
-### Creating Custom Personas
-
-1. **Add a SOUL.md** in `/personas/souls/<your-persona>/1.0.0/SOUL.md`
-2. **Pick a GOAL.md** (or create custom in `/personas/goals/1.0.0/GOAL.md`)
-3. **Select lenses** from TOOLS.md (or extend in `/personas/tools/1.0.0/TOOLS.md`)
-
-See existing personas for templates. Follow SemVer when updating your configs.
-
-### Contributing Personas
-
-The persona system is **open and extensible**. Engineers can:
-
-- Fork the repo and create custom personas
-- Publish persona packs as npm packages
-- Share SOUL.md configs independently
-- Version their own configs alongside ours
-
-All configs are plain markdown—no lock-in, no proprietary format.
-
 ---
 
-## Cost Analysis
+## 💰 Cost Analysis
 
-| Test | Duration | Chunks | Cost | Time |
-|------|----------|--------|------|------|
+| Test | Duration | Chunks | Est. Cost | Time |
+|------|----------|--------|-----------|------|
 | Single chunk | 8s | 1 | ~0.01 USD | 15s |
 | Quick test (3 chunks) | 24s | 3 | ~0.03 USD | 45s |
 | Full 30s | 30s | 4 | ~0.04 USD | 4 min |
@@ -369,7 +398,7 @@ All configs are plain markdown—no lock-in, no proprietary format.
 
 ---
 
-## Roadmap
+## 🚀 Roadmap
 
 ### Phase 1: Core Validation (Weeks 1-4) ✅
 - [x] Dialogue extraction pipeline
@@ -378,8 +407,10 @@ All configs are plain markdown—no lock-in, no proprietary format.
 - [x] Per-second emotion timeline
 - [x] Report generation
 - [x] Web Components scaffolded
+- [x] **Hardening: Retry logic, error handling, validation**
+- [x] **Hardening: Quality presets, chunk compression**
+- [x] **Hardening: Progress indicators, logging**
 - [ ] Lambda deployment
-- [ ] Persona system expansion
 
 ### Phase 2: Production Ready (Weeks 5-8)
 - [ ] DynamoDB session storage
@@ -398,115 +429,148 @@ All configs are plain markdown—no lock-in, no proprietary format.
 
 ---
 
-## Development Guidelines
+## 🛠️ Development
 
-### Server-Side Scripts (`.cjs`)
+### Project Structure
 
-```javascript
-/**
- * @fileoverview Step 1: Extract dialogue from video
- * @author OpenTruth Team
- */
-
-const fs = require('fs');
-const path = require('path');
-
-/**
- * Extract audio from video file
- * @param {string} videoPath - Path to input video
- * @param {string} outputPath - Path for output audio
- * @returns {Promise<void>}
- */
-async function extractAudio(videoPath, outputPath) {
-    // Implementation
-}
+```
+emotion-engine/
+├── .env                        # Your config (gitignored)
+├── .env.example                # Template (commit-safe)
+├── .gitignore                  # Git ignore rules
+├── index.html                  # Main entry point (browser UI)
+├── index.js                    # App bootstrap
+├── server/                     # Server-side pipeline + Lambda
+│   ├── 01-extract-dialogue.cjs     # Step 1: Dialogue extraction
+│   ├── 02-extract-music.cjs        # Step 2: Music/audio extraction
+│   ├── 03-analyze-chunks.cjs       # Step 3: Chunked analysis
+│   ├── 04-per-second-emotions.cjs  # Step 4: Timeline generation
+│   ├── run-pipeline.cjs            # Orchestrator: runs 01→02→03→04
+│   ├── generate-report.cjs         # Final report generator
+│   ├── lib/                        # Shared utilities
+│   │   ├── api-utils.cjs           # Retry logic, JSON validation
+│   │   ├── models.cjs              # Model configuration + fallbacks
+│   │   ├── persona-loader.cjs      # Loads SOUL/GOAL/TOOLS.md
+│   │   ├── video-utils.cjs         # Chunk compression
+│   │   └── logger.cjs              # Structured logging
+│   ├── config/                     # Configuration files
+│   │   └── models.json             # Default models + fallbacks
+│   └── personas/                   # Persona definitions
+│       ├── souls/                  # Persona identities
+│       ├── goals/                  # Evaluation objectives
+│       └── tools/                  # Response schemas
+├── managers/                   # Browser singleton managers
+│   ├── api-manager.js
+│   ├── state-manager.js
+│   └── ui-manager.js
+├── components/                 # Web Components
+│   ├── video-upload.js
+│   ├── persona-selector.js
+│   ├── analysis-progress.js
+│   ├── radar-chart.js
+│   ├── emotion-timeline.js
+│   ├── friction-index.js
+│   └── recommendations.js
+├── css/                        # Styles
+├── output/                     # Generated results (gitignored)
+│   └── <session-name>/         # Per-analysis outputs
+├── .cache/                     # Temporary cache (gitignored)
+│   └── videos/                 # Test videos
+└── docs/                       # Documentation
 ```
 
-### Browser Web Components
+### Running Tests
 
-```javascript
-/**
- * @fileoverview Video upload web component
- * @author OpenTruth Team
- */
+```bash
+# Syntax check all scripts
+for f in server/*.cjs; do
+    node --check $f && echo "✅ $(basename $f)"
+done
 
-/**
- * @typedef {Object} UploadResult
- * @property {string} sessionId
- * @property {number} duration
- * @property {string} status
- */
+# Test persona loader
+node -e "const loader = require('./server/lib/persona-loader.cjs'); const config = loader.loadPersonaConfig('impatient-teenager', 'video-ad-evaluation'); console.log(config ? '✅ Persona loads' : '❌ Failed')"
 
-class VideoUploadComponent extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-    }
+# Test API utils
+node -e "const utils = require('./server/lib/api-utils.cjs'); console.log('✅ API utils loaded')"
 
-    /**
-     * Handle file selection
-     * @param {File} file - Selected video file
-     * @returns {Promise<UploadResult>}
-     */
-    async handleUpload(file) {
-        // Implementation
-    }
-}
+# Test models config
+node -e "const models = require('./server/lib/models.cjs'); console.log('✅ Models loaded:', models.getDefaults())"
 
-customElements.define('video-upload', VideoUploadComponent);
-```
+# Test video utils
+node -e "const video = require('./server/lib/video-utils.cjs'); console.log('✅ Video utils loaded')"
 
-### Singleton Managers
-
-```javascript
-/**
- * @fileoverview API Manager Singleton
- * @author OpenTruth Team
- */
-
-class APIManager {
-    static #instance = null;
-
-    constructor() {
-        if (APIManager.#instance) {
-            return APIManager.#instance;
-        }
-        this.baseUrl = '/api/v1';
-        APIManager.#instance = this;
-    }
-
-    /**
-     * Make authenticated API call
-     * @param {string} endpoint - API endpoint
-     * @param {RequestInit} options - Fetch options
-     * @returns {Promise<any>}
-     */
-    async call(endpoint, options = {}) {
-        // Implementation
-    }
-}
-
-// Usage: const api = new APIManager();
+# Test logger
+node -e "const logger = require('./server/lib/logger.cjs'); logger.info('Test message'); console.log('✅ Logger loaded')"
 ```
 
 ---
 
-## Contributing
-
-This is the open-source core of the OpenTruth validation platform. See the [OpenTruth Pitch](../gambit-games-truth-pitch.md) for the full vision.
-
-**To contribute:**
-1. Add new personas to `/server/personas/`
-2. Improve emotional lens prompts
-3. Optimize chunk extraction performance
-4. Build Web Components for UI
-
----
-
-## License
+## 📄 License
 
 MIT — Gambit Games LLC
 
 ---
 
-*Last updated: 2026-03-03*
+## 🆘 Troubleshooting
+
+### "OPENROUTER_API_KEY not set"
+```bash
+# Check if .env exists
+ls -la .env
+
+# Check if key is set
+grep OPENROUTER_API_KEY .env
+
+# Should NOT be "sk-or-your-actual-key-here"
+# Edit and add your real key, then re-run
+```
+
+### "FFmpeg not found"
+```bash
+# Check installation
+which ffmpeg
+
+# Install if missing
+sudo apt-get install ffmpeg  # Ubuntu/Debian
+brew install ffmpeg          # macOS
+```
+
+### "Chunk too large, compression failed"
+```bash
+# Use lower quality preset
+export CHUNK_QUALITY=low
+node server/run-pipeline.cjs video.mp4 output/test
+
+# Or reduce max chunk size
+export CHUNK_MAX_SIZE=4194304  # 4MB
+```
+
+### "API rate limited (429)"
+```bash
+# Increase delay between requests
+export API_REQUEST_DELAY=3000  # 3 seconds
+export API_MAX_RETRIES=5       # More retries
+```
+
+### "JSON parse error"
+```bash
+# Enable debug logging to see raw response
+export LOG_LEVEL=debug
+export LOG_FILE=output/debug.log
+
+# Re-run and check logs
+cat output/debug.log | grep -A5 "JSON parse error"
+```
+
+### "Persona not found"
+```bash
+# Check persona files exist
+ls -la personas/souls/impatient-teenager/
+
+# Should show version folders (e.g., 1.0.0/)
+# If missing, restore from git or re-download
+```
+
+---
+
+*Last updated: 2026-03-03 - Hardening complete (v0.3.0)*
