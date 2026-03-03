@@ -10,9 +10,26 @@ const fs = require('fs');
 const path = require('path');
 
 const API_KEY = process.env.OPENROUTER_API_KEY;
-const MODEL = 'openai/gpt-audio';  // Audio input model
-const VIDEO_PATH = process.argv[2] || '../.cache/videos/cod.mp4';
-const OUTPUT_DIR = process.argv[3] || '../output/default';
+
+// Convert relative paths to absolute
+const VIDEO_PATH = process.argv[2] ? path.resolve(process.argv[2]) : path.resolve(__dirname, '../.cache/videos/cod.mp4');
+const OUTPUT_DIR = process.argv[3] ? path.resolve(process.argv[3]) : path.resolve(__dirname, '../output/default');
+
+// Log working directory and resolved paths
+console.log(`📁 Working directory: ${process.cwd()}`);
+console.log(`📁 Script directory: ${__dirname}`);
+console.log(`📁 Resolved video path: ${VIDEO_PATH}`);
+console.log(`📁 Resolved output dir: ${OUTPUT_DIR}\n`);
+
+// Load utilities
+const utils = require('./lib/api-utils.cjs');
+const models = require('./lib/models.cjs');
+
+// Model selection with fallback
+const MODEL = models.getModel('dialogue', 0);
+
+// Rate limiting delay (default 1000ms)
+const delay = parseInt(process.env.API_REQUEST_DELAY) || 1000;
 
 if (!API_KEY) { 
     console.error('❌ OPENROUTER_API_KEY not set');
@@ -63,7 +80,10 @@ Format as JSON:
 
 Be precise with timestamps. If multiple speakers overlap, note this.`;
 
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    // Rate limiting delay
+    await new Promise(r => setTimeout(r, delay));
+    
+    const res = await utils.fetchWithRetry('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${API_KEY}`,
@@ -86,9 +106,15 @@ Be precise with timestamps. If multiple speakers overlap, note this.`;
             }],
             max_tokens: 4000
         })
-    });
+    }, { maxRetries: 3, baseDelay: 1000 });
     
-    const data = await res.json();
+    const result = utils.validateJSON(res);
+    if (!result.success) {
+        console.error('Failed to parse API response:', result.error);
+        throw new Error('Invalid JSON response from API');
+    }
+    
+    const data = result.data;
     if (!res.ok) throw new Error(data.error?.message || 'API failed');
     return data.choices[0].message.content;
 }

@@ -10,11 +10,20 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const VIDEO_PATH = process.argv[2] || '../.cache/videos/cod.mp4';
-const OUTPUT_DIR = process.argv[3] || '../output/default';
+const logger = require('./lib/logger.cjs');
+
+// Convert relative paths to absolute
+const VIDEO_PATH = process.argv[2] || path.resolve(__dirname, '../.cache/videos/cod.mp4');
+const OUTPUT_DIR = process.argv[3] || path.resolve(__dirname, '../output/default');
+
+// Log working directory and resolved paths
+logger.info(`Starting Emotion Engine Pipeline`);
+logger.info(`Working directory: ${process.cwd()}`);
+logger.info(`Video path: ${VIDEO_PATH}`);
+logger.info(`Output directory: ${OUTPUT_DIR}`);
 
 if (!fs.existsSync(VIDEO_PATH)) {
-    console.error(`❌ Video not found: ${VIDEO_PATH}`);
+    logger.error(`Video not found: ${VIDEO_PATH}`);
     process.exit(1);
 }
 
@@ -50,15 +59,57 @@ const STEPS = [
     }
 ];
 
-function runStep(step, index) {
+/**
+ * Validate output file after each step
+ * @param {string} filePath - Path to the output file
+ * @param {string} stepName - Name of the step for error messages
+ * @returns {{valid: boolean, error?: string, size?: number}}
+ */
+function validateOutputFile(filePath, stepName) {
+    const result = { valid: false };
+    
+    // Check file exists
+    if (!fs.existsSync(filePath)) {
+        result.error = `Output file missing: ${path.basename(filePath)}`;
+        return result;
+    }
+    
+    // Check file size > 0
+    const stats = fs.statSync(filePath);
+    if (stats.size === 0) {
+        result.error = `Output file is empty: ${path.basename(filePath)}`;
+        return result;
+    }
+    
+    result.size = stats.size;
+    
+    // For JSON files: validate JSON syntax
+    if (filePath.endsWith('.json')) {
+        try {
+            const content = fs.readFileSync(filePath, 'utf8');
+            JSON.parse(content);
+        } catch (e) {
+            result.error = `Invalid JSON syntax in ${path.basename(filePath)}: ${e.message}`;
+            return result;
+        }
+    }
+    
+    result.valid = true;
+    return result;
+}
+
+function runStep(step, index, totalSteps) {
     return new Promise((resolve, reject) => {
-        console.log(`\n${'='.repeat(70)}`);
-        console.log(`  Step ${index + 1}/3: ${step.name}`);
-        console.log(`  ${step.description}`);
-        console.log(`${'='.repeat(70)}\n`);
+        const progress = ((index + 1) / totalSteps * 100).toFixed(0);
+        logger.info(`═══════════════════════════════════════════════════════════`);
+        logger.info(`Step ${index + 1}/${totalSteps} (${progress}%): ${step.name}`);
+        logger.info(`Description: ${step.description}`);
+        logger.info(`═══════════════════════════════════════════════════════════`);
         
         const startTime = Date.now();
-        const scriptPath = path.join(__dirname, step.script);
+        const scriptPath = path.resolve(__dirname, step.script);
+        
+        logger.info(`Running: ${step.script}`);
         
         const child = spawn('node', [scriptPath, VIDEO_PATH, OUTPUT_DIR], {
             stdio: 'inherit'
@@ -68,65 +119,99 @@ function runStep(step, index) {
             const duration = ((Date.now() - startTime) / 1000).toFixed(1);
             
             if (code === 0) {
-                console.log(`\n✅ Step ${index + 1} complete (${duration}s)`);
+                // Validate output file
+                const outputPath = path.resolve(OUTPUT_DIR, step.output);
+                const validation = validateOutputFile(outputPath, step.name);
                 
-                // Verify output was created
-                const outputPath = path.join(OUTPUT_DIR, step.output);
-                if (fs.existsSync(outputPath)) {
-                    const stats = fs.statSync(outputPath);
-                    console.log(`   Output: ${step.output} (${(stats.size / 1024).toFixed(1)} KB)`);
-                    resolve();
-                } else {
-                    reject(new Error(`Output file missing: ${step.output}`));
+                if (!validation.valid) {
+                    logger.error(`Step ${index + 1} validation failed: ${validation.error}`);
+                    reject(new Error(validation.error));
+                    return;
                 }
+                
+                logger.info(`Step ${index + 1} complete in ${duration}s`);
+                logger.info(`Output: ${step.output} (${(validation.size / 1024).toFixed(1)} KB)`);
+                resolve();
             } else {
+                logger.error(`Step ${index + 1} failed with code ${code}`);
                 reject(new Error(`Step ${index + 1} failed with code ${code}`));
             }
         });
         
         child.on('error', (err) => {
+            logger.error(`Failed to run step ${index + 1}: ${err.message}`);
             reject(new Error(`Failed to run step ${index + 1}: ${err.message}`));
         });
     });
 }
 
 async function main() {
-    console.log('╔═══════════════════════════════════════════════════════════════════════╗');
-    console.log('║         Emotion Engine - Complete Analysis Pipeline                   ║');
-    console.log('╚═══════════════════════════════════════════════════════════════════════╝');
-    console.log(`\nVideo: ${VIDEO_PATH}`);
-    console.log(`Output: ${OUTPUT_DIR}\n`);
+    logger.info('╔═══════════════════════════════════════════════════════════════════════╗');
+    logger.info('║         Emotion Engine - Complete Analysis Pipeline                   ║');
+    logger.info('╚═══════════════════════════════════════════════════════════════════════╝');
     
     const pipelineStart = Date.now();
+    const validationReport = [];
     
     try {
         // Run each step sequentially
         for (let i = 0; i < STEPS.length; i++) {
-            await runStep(STEPS[i], i);
+            await runStep(STEPS[i], i, STEPS.length);
+            validationReport.push({
+                step: STEPS[i].name,
+                output: STEPS[i].output,
+                status: 'passed'
+            });
         }
         
         const totalDuration = ((Date.now() - pipelineStart) / 1000).toFixed(1);
         
-        console.log('\n' + '='.repeat(70));
-        console.log('  🎉 PIPELINE COMPLETE!');
-        console.log('='.repeat(70));
-        console.log(`\n  Total time: ${totalDuration}s`);
-        console.log(`  Output directory: ${OUTPUT_DIR}/`);
-        console.log('\n  Files generated:');
-        STEPS.forEach(step => {
-            console.log(`    • ${step.output}`);
+        // Generate validation report
+        logger.info('═══════════════════════════════════════════════════════════');
+        logger.info('VALIDATION REPORT');
+        logger.info('═══════════════════════════════════════════════════════════');
+        validationReport.forEach((item, idx) => {
+            logger.info(`  ${idx + 1}. ${item.step}: ✅ ${item.status}`);
         });
-        console.log('\n  Ready for final report generation:');
-        console.log(`    node generate-report.cjs ${OUTPUT_DIR}`);
-        console.log('='.repeat(70) + '\n');
+        logger.info('═══════════════════════════════════════════════════════════');
+        
+        logger.info('PIPELINE COMPLETE!');
+        logger.info(`Total time: ${totalDuration}s`);
+        logger.info(`Output directory: ${OUTPUT_DIR}/`);
+        logger.info('Files generated:');
+        STEPS.forEach(step => {
+            const outputPath = path.join(OUTPUT_DIR, step.output);
+            const stats = fs.statSync(outputPath);
+            logger.info(`  • ${step.output} (${(stats.size / 1024).toFixed(1)} KB)`);
+        });
+        logger.info(`Ready for final report generation: node generate-report.cjs ${OUTPUT_DIR}`);
+        logger.info('═══════════════════════════════════════════════════════════');
         
         process.exit(0);
         
     } catch (error) {
-        console.error('\n' + '='.repeat(70));
-        console.error('  ❌ PIPELINE FAILED');
-        console.error('='.repeat(70));
-        console.error(`\n  Error: ${error.message}\n`);
+        logger.error('PIPELINE FAILED');
+        logger.error(`Error: ${error.message}`);
+        
+        // Add failed step to validation report
+        const failedStep = STEPS.find((_, idx) => idx === validationReport.length);
+        if (failedStep) {
+            validationReport.push({
+                step: failedStep.name,
+                output: failedStep.output,
+                status: 'failed',
+                error: error.message
+            });
+        }
+        
+        // Generate failure report
+        logger.info('Validation Report (up to failure):');
+        validationReport.forEach((item, idx) => {
+            const status = item.status === 'passed' ? '✅' : '❌';
+            logger.info(`  ${idx + 1}. ${item.step}: ${status} ${item.status}${item.error ? ` - ${item.error}` : ''}`);
+        });
+        logger.info('═══════════════════════════════════════════════════════════');
+        
         process.exit(1);
     }
 }

@@ -3,29 +3,109 @@
  * Final Report Generator
  * Merges all pipeline outputs into comprehensive emotion analysis report
  * 
- * Usage: node scripts/generate-report.cjs [analysis-output-dir]
+ * Usage: node server/generate-report.cjs [analysis-output-dir]
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const OUTPUT_DIR = process.argv[2] || '../output/default';
+// Convert relative paths to absolute
+const OUTPUT_DIR = process.argv[2] ? path.resolve(process.argv[2]) : path.resolve(__dirname, '../output/default');
 const REPORT_PATH = path.join(OUTPUT_DIR, 'FINAL-REPORT.md');
 
-// Verify all inputs exist
-const requiredFiles = [
-    '01-dialogue-analysis.md',
-    '02-music-analysis.md',
-    '03-chunked-analysis.json'
-];
+// Log working directory and resolved paths
+console.log(`📁 Working directory: ${process.cwd()}`);
+console.log(`📁 Script directory: ${__dirname}`);
+console.log(`📁 Resolved output dir: ${OUTPUT_DIR}`);
+console.log(`📁 Resolved report path: ${REPORT_PATH}\n`);
 
-for (const file of requiredFiles) {
-    const filePath = path.join(OUTPUT_DIR, file);
-    if (!fs.existsSync(filePath)) {
-        console.error(`❌ Missing required file: ${file}`);
-        console.error(`   Run pipeline first: node scripts/run-pipeline.cjs`);
-        process.exit(1);
+/**
+ * Validate input files before generating report
+ * @returns {{valid: boolean, errors: string[]}}
+ */
+function validateInputs() {
+    const errors = [];
+    
+    const requiredFiles = [
+        '01-dialogue-analysis.md',
+        '02-music-analysis.md',
+        '03-chunked-analysis.json'
+    ];
+    
+    console.log('🔍 Validating input files...\n');
+    
+    for (const file of requiredFiles) {
+        const filePath = path.join(OUTPUT_DIR, file);
+        
+        // Check file exists
+        if (!fs.existsSync(filePath)) {
+            errors.push(`Missing required file: ${file}`);
+            console.error(`   ❌ ${file} - NOT FOUND`);
+            continue;
+        }
+        
+        // Check file size > 0
+        const stats = fs.statSync(filePath);
+        if (stats.size === 0) {
+            errors.push(`File is empty: ${file}`);
+            console.error(`   ❌ ${file} - EMPTY FILE`);
+            continue;
+        }
+        
+        // Validate JSON files have expected structure
+        if (file.endsWith('.json')) {
+            try {
+                const content = fs.readFileSync(filePath, 'utf8');
+                const data = JSON.parse(content);
+                
+                // Validate expected structure for chunked-analysis.json
+                if (file === '03-chunked-analysis.json') {
+                    if (!data.chunks || !Array.isArray(data.chunks)) {
+                        errors.push(`Invalid structure in ${file}: missing 'chunks' array`);
+                        console.error(`   ❌ ${file} - INVALID STRUCTURE (no chunks array)`);
+                        continue;
+                    }
+                    if (!data.persona || !data.video || !data.duration) {
+                        errors.push(`Invalid structure in ${file}: missing required fields`);
+                        console.error(`   ❌ ${file} - INVALID STRUCTURE (missing fields)`);
+                        continue;
+                    }
+                }
+                
+                console.log(`   ✅ ${file} - Valid (${(stats.size / 1024).toFixed(1)} KB)`);
+            } catch (e) {
+                errors.push(`Invalid JSON syntax in ${file}: ${e.message}`);
+                console.error(`   ❌ ${file} - INVALID JSON: ${e.message}`);
+            }
+        } else {
+            console.log(`   ✅ ${file} - Valid (${(stats.size / 1024).toFixed(1)} KB)`);
+        }
     }
+    
+    if (errors.length > 0) {
+        console.log('\n');
+        return { valid: false, errors };
+    }
+    
+    console.log('\n✅ All input files validated successfully\n');
+    return { valid: true, errors: [] };
+}
+
+// Run validation first
+const validation = validateInputs();
+
+if (!validation.valid) {
+    console.error('\n❌ VALIDATION FAILED');
+    console.error('='.repeat(70));
+    console.error('\n  Errors found:');
+    validation.errors.forEach((err, idx) => {
+        console.error(`    ${idx + 1}. ${err}`);
+    });
+    console.error('\n');
+    console.error('  Run the pipeline first:');
+    console.error(`    node run-pipeline.cjs <video-path> [output-dir]`);
+    console.error('='.repeat(70) + '\n');
+    process.exit(1);
 }
 
 // Load all data

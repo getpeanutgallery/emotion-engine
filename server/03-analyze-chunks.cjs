@@ -14,13 +14,40 @@ const path = require('path');
 const { spawn } = require('child_process');
 
 const API_KEY = process.env.OPENROUTER_API_KEY;
-const MODEL = 'qwen/qwen3.5-122b-a10b';
-const VIDEO_PATH = process.argv[2] || '../.cache/videos/cod.mp4';
-const OUTPUT_DIR = process.argv[3] || '../output/default';
-const CHUNK_DURATION = 8;
 
-// Load persona system
+// Convert relative paths to absolute
+const VIDEO_PATH = process.argv[2] ? path.resolve(process.argv[2]) : path.resolve(__dirname, '../.cache/videos/cod.mp4');
+const OUTPUT_DIR = process.argv[3] ? path.resolve(process.argv[3]) : path.resolve(__dirname, '../output/default');
+
+// Log working directory and resolved paths
+console.log(`📁 Working directory: ${process.cwd()}`);
+console.log(`📁 Script directory: ${__dirname}`);
+console.log(`📁 Resolved video path: ${VIDEO_PATH}`);
+console.log(`📁 Resolved output dir: ${OUTPUT_DIR}\n`);
+
+// Load utilities
+const logger = require('./lib/logger.cjs');
+const utils = require('./lib/api-utils.cjs');
+const models = require('./lib/models.cjs');
 const personaLoader = require('./lib/persona-loader.cjs');
+const videoUtils = require('./lib/video-utils.cjs');
+
+// Quality presets
+const QUALITY_PRESETS = {
+    low: { maxDuration: 4, targetSize: 4 * 1024 * 1024 },
+    medium: { maxDuration: 8, targetSize: 8 * 1024 * 1024 },
+    high: { maxDuration: 12, targetSize: 9 * 1024 * 1024 }
+};
+
+const CHUNK_QUALITY = process.env.CHUNK_QUALITY || 'medium';
+const CHUNK_DURATION = QUALITY_PRESETS[CHUNK_QUALITY]?.maxDuration || 8;
+const TARGET_SIZE = QUALITY_PRESETS[CHUNK_QUALITY]?.targetSize || 8 * 1024 * 1024;
+
+// Model selection with fallback
+const MODEL = models.getModel('video', 0);
+
+// Rate limiting delay (default 1000ms)
+const delay = parseInt(process.env.API_REQUEST_DELAY) || 1000;
 
 // Load persona configuration (user can override via env vars)
 const SOUL_ID = process.env.SOUL_ID || 'impatient-teenager';
@@ -30,17 +57,25 @@ const TOOL_ID = process.env.TOOL_ID || 'emotion-tracking';
 const personaConfig = personaLoader.loadPersonaConfig(SOUL_ID, GOAL_ID, TOOL_ID);
 
 if (!personaConfig) {
-    console.error('❌ Failed to load persona configuration');
+    logger.error('Failed to load persona configuration');
     process.exit(1);
 }
 
-console.log(`🎭 Loaded persona: ${SOUL_ID} (goal: ${GOAL_ID}, tools: ${TOOL_ID})`);
+logger.info(`Loaded persona: ${SOUL_ID} (goal: ${GOAL_ID}, tools: ${TOOL_ID})`);
 
 if (!API_KEY) { 
-    console.error('❌ OPENROUTER_API_KEY not set');
-    console.error('   Set it via: export OPENROUTER_API_KEY=sk-or-...');
-    console.error('   Or copy .env.example to .env and fill in your key');
+    logger.error('OPENROUTER_API_KEY not set. Set via: export OPENROUTER_API_KEY=sk-or-...');
     process.exit(1); 
+}
+
+// Hardened timestamp parsing (supports MM:SS, H:MM:SS, SS.mmm, SS)
+function parseTimestamp(t) {
+    if (!t) return 0;
+    const str = t.toString();
+    const parts = str.split(':').map(p => parseFloat(p) || 0);
+    if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    if (parts.length === 2) return parts[0] * 60 + parts[1];
+    return parseFloat(str) || 0;
 }
 
 // Load context files from steps 1 & 2
@@ -52,35 +87,35 @@ function loadContextFiles() {
     let musicData = null;
     
     if (fs.existsSync(dialoguePath)) {
-        console.log('   📚 Loading dialogue context...');
+        logger.debug('Loading dialogue context...');
         const content = fs.readFileSync(dialoguePath, 'utf8');
         const jsonMatch = content.match(/```json\s*\n([\s\S]*?)\n```/);
         if (jsonMatch) {
             try {
                 dialogueData = JSON.parse(jsonMatch[1]);
-                console.log(`      ✓ ${dialogueData.dialogue_segments?.length || 0} dialogue segments`);
+                logger.debug(`Loaded ${dialogueData.dialogue_segments?.length || 0} dialogue segments`);
             } catch (e) {
-                console.log('      ⚠️  Failed to parse dialogue JSON');
+                logger.warn('Failed to parse dialogue JSON');
             }
         }
     } else {
-        console.log('   ⚠️  No dialogue file found (run step 1 first)');
+        logger.warn('No dialogue file found (run step 1 first)');
     }
     
     if (fs.existsSync(musicPath)) {
-        console.log('   📚 Loading music context...');
+        logger.debug('Loading music context...');
         const content = fs.readFileSync(musicPath, 'utf8');
         const jsonMatch = content.match(/```json\s*\n([\s\S]*?)\n```/);
         if (jsonMatch) {
             try {
                 musicData = JSON.parse(jsonMatch[1]);
-                console.log(`      ✓ ${musicData.audio_segments?.length || 0} music segments`);
+                logger.debug(`Loaded ${musicData.audio_segments?.length || 0} music segments`);
             } catch (e) {
-                console.log('      ⚠️  Failed to parse music JSON');
+                logger.warn('Failed to parse music JSON');
             }
         }
     } else {
-        console.log('   ⚠️  No music file found (run step 2 first)');
+        logger.warn('No music file found (run step 2 first)');
     }
     
     return { dialogueData, musicData };
@@ -91,13 +126,8 @@ function getRelevantDialogue(dialogueData, startTime, endTime) {
     if (!dialogueData?.dialogue_segments) return '';
     
     const relevant = dialogueData.dialogue_segments.filter(d => {
-        // Parse timestamp like "00:07" to seconds
-        const parseTime = (t) => {
-            const parts = t.split(':');
-            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
-        };
-        const segStart = parseTime(d.timestamp_start);
-        const segEnd = parseTime(d.timestamp_end);
+        const segStart = parseTimestamp(d.timestamp_start);
+        const segEnd = parseTimestamp(d.timestamp_end);
         return (segStart >= startTime && segStart <= endTime) ||
                (segEnd >= startTime && segEnd <= endTime) ||
                (segStart <= startTime && segEnd >= endTime);
@@ -115,12 +145,12 @@ function getRelevantMusic(musicData, startTime, endTime) {
     if (!musicData?.audio_segments) return '';
     
     const relevant = musicData.audio_segments.filter(m => {
-        // Parse timestamp range like "00:28 - 00:42"
+        // Parse timestamp range like "00:28 - 00:42" or "0:28-0:42"
         const parseRange = (range) => {
-            const times = range.split(' - ');
+            const times = range.split('-').map(t => t.trim());
             return {
-                start: parseInt(times[0].split(':')[0]) * 60 + parseInt(times[0].split(':')[1]),
-                end: parseInt(times[1].split(':')[0]) * 60 + parseInt(times[1].split(':')[1])
+                start: parseTimestamp(times[0]),
+                end: parseTimestamp(times[1] || times[0])
             };
         };
         const range = parseRange(m.timestamp_range);
@@ -173,8 +203,12 @@ ${context.musicContext ? `**What You're Hearing (Music/Audio):**\n${context.musi
         videoContext
     });
 
-    console.log('   Sending to Qwen (with persona context)...');
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    logger.debug(`Sending chunk ${index + 1} to Qwen (with persona context)`);
+    
+    // Rate limiting delay
+    await new Promise(r => setTimeout(r, delay));
+    
+    const res = await utils.fetchWithRetry('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -185,18 +219,22 @@ ${context.musicContext ? `**What You're Hearing (Music/Audio):**\n${context.musi
             ],
             max_tokens: 2000
         })
-    });
+    }, { maxRetries: 3, baseDelay: 1000 });
     
+    const result = utils.validateJSON(res);
+    if (!result.success) {
+        console.error('Failed to parse API response:', result.error);
+        throw new Error('Invalid JSON response from API');
+    }
+    
+    const data = result.data;
     if (!res.ok) throw new Error(`API ${res.status}`);
-    const data = await res.json();
     return { analysis: data.choices[0].message.content, tokens: data.usage?.total_tokens };
 }
 
 async function main() {
-    console.log('╔══════════════════════════════════════════════════════════╗');
-    console.log('║  Step 3: Chunked Video Analysis WITH Context             ║');
-    console.log('║  Uses: Dialogue + Music + Memory + Persona             ║');
-    console.log('╚══════════════════════════════════════════════════════════╝\n');
+    logger.info('Starting Step 3: Chunked Video Analysis WITH Context');
+    logger.info('Uses: Dialogue + Music + Memory + Persona');
     
     if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
     
@@ -205,7 +243,7 @@ async function main() {
     
     const duration = await getDuration(VIDEO_PATH);
     const numChunks = Math.ceil(duration / CHUNK_DURATION);
-    console.log(`\n🎬 Video: ${duration.toFixed(1)}s → ${numChunks} chunks\n`);
+    logger.info(`Video duration: ${duration.toFixed(1)}s, Total chunks: ${numChunks}`);
     
     const tempDir = fs.mkdtempSync('/tmp/chunks-ctx-');
     const results = [];
@@ -213,21 +251,40 @@ async function main() {
     
     // Process chunks (limit for testing)
     const maxChunks = process.env.MAX_CHUNKS ? parseInt(process.env.MAX_CHUNKS) : 4;
+    const startTimeTotal = Date.now();
     
     for (let i = 0; i < numChunks && i < maxChunks; i++) {
+        const chunkStartTime = Date.now();
         const startTime = i * CHUNK_DURATION;
         const endTime = Math.min(startTime + CHUNK_DURATION, duration);
         const chunkPath = path.join(tempDir, `chunk-${i}.mp4`);
         
-        console.log(`[${i + 1}/${Math.min(numChunks, maxChunks)}] ${startTime}s-${endTime}s`);
+        // Progress indicator
+        const progress = ((i + 1) / Math.min(numChunks, maxChunks) * 100).toFixed(1);
+        const elapsedTotal = ((Date.now() - startTimeTotal) / 1000).toFixed(0);
+        const avgTimePerChunk = elapsedTotal / (i + 1);
+        const remainingChunks = Math.min(numChunks, maxChunks) - (i + 1);
+        const eta = (avgTimePerChunk * remainingChunks / 60).toFixed(1);
+        
+        logger.info(`Progress: ${i + 1}/${Math.min(numChunks, maxChunks)} (${progress}%) - ETA: ${eta}m`);
+        logger.info(`Chunk ${i + 1}: ${startTime}s-${endTime}s | Size: pending`);
         
         try {
             const sizeMB = await extractChunk(startTime, CHUNK_DURATION, chunkPath);
-            console.log(`   File size: ${sizeMB.toFixed(2)} MB`);
+            logger.debug(`Chunk ${i + 1} extracted: ${sizeMB.toFixed(2)} MB in ${((Date.now() - chunkStartTime) / 1000).toFixed(1)}s`);
             
-            if (sizeMB > 10) {
-                console.log('   ⚠️  Chunk too large (>10MB), skipping');
-                continue;
+            // Compress if over target size (never skip)
+            let finalChunkPath = chunkPath;
+            if (sizeMB * 1024 * 1024 > TARGET_SIZE) {
+                logger.info(`Chunk ${i + 1}: Compressing (target: ${(TARGET_SIZE / 1024 / 1024).toFixed(1)} MB)`);
+                const compressedPath = path.join(tempDir, `chunk-${i}-compressed.mp4`);
+                const result = await videoUtils.compressChunk(chunkPath, compressedPath, TARGET_SIZE);
+                if (result.success) {
+                    logger.info(`Chunk ${i + 1}: Compressed ${(result.originalSize / 1024 / 1024).toFixed(2)} MB → ${(result.compressedSize / 1024 / 1024).toFixed(2)} MB (${Math.round(result.compressedSize / result.originalSize * 100)}%)`);
+                    finalChunkPath = compressedPath;
+                } else {
+                    logger.warn(`Chunk ${i + 1}: Compression failed, using original`);
+                }
             }
             
             // Get context for this timestamp range
@@ -235,19 +292,21 @@ async function main() {
             const musicContext = getRelevantMusic(musicData, startTime, endTime);
             
             if (dialogueContext) {
-                console.log(`   🗣️  ${dialogueContext.split('\n').length} dialogue lines in range`);
+                logger.debug(`Chunk ${i + 1}: ${dialogueContext.split('\n').length} dialogue lines in range`);
             }
             if (musicContext) {
-                console.log(`   🎵 ${musicContext.split('\n').length} music segments in range`);
+                logger.debug(`Chunk ${i + 1}: ${musicContext.split('\n').length} music segments in range`);
             }
             
             // Analyze with full context
+            const analyzeStart = Date.now();
+            logger.info(`Chunk ${i + 1}: Sending to API (model: ${MODEL})...`);
             const result = await analyzeChunkWithContext(
-                chunkPath, i, Math.min(numChunks, maxChunks), startTime, endTime,
+                finalChunkPath, i, Math.min(numChunks, maxChunks), startTime, endTime,
                 { previousSummary, dialogueContext, musicContext }
             );
             
-            console.log(`   ✅ ${result.tokens} tokens`);
+            logger.info(`Chunk ${i + 1}: Complete - ${result.tokens} tokens in ${((Date.now() - analyzeStart) / 1000).toFixed(1)}s`);
             
             // Extract summary for next chunk
             const summaryMatch = result.analysis.match(/"summary"\s*:\s*"([^"]+)"/) ||
@@ -267,7 +326,7 @@ async function main() {
             });
             
         } catch (err) {
-            console.log(`   ❌ Error: ${err.message}`);
+            logger.error(`Chunk ${i + 1}: Error - ${err.message}`);
         }
         
         if (fs.existsSync(chunkPath)) fs.unlinkSync(chunkPath);
@@ -298,16 +357,16 @@ async function main() {
     const outPath = path.join(OUTPUT_DIR, '03-chunked-analysis.json');
     fs.writeFileSync(outPath, JSON.stringify(output, null, 2));
     
-    console.log('\n' + '═'.repeat(60));
-    console.log('  ✅ ANALYSIS COMPLETE');
-    console.log('═'.repeat(60));
-    console.log(`   Chunks: ${results.length}`);
-    console.log(`   Total tokens: ${output.totalTokens.toLocaleString()}`);
-    console.log(`   Context loaded:`);
-    console.log(`      • Dialogue: ${output.contextFiles.dialogueSegments} segments`);
-    console.log(`      • Music: ${output.contextFiles.musicSegments} segments`);
-    console.log(`   Output: ${outPath}`);
-    console.log('═'.repeat(60) + '\n');
+    const totalTime = ((Date.now() - startTimeTotal) / 1000).toFixed(1);
+    logger.info('═══════════════════════════════════════════════════════════');
+    logger.info('ANALYSIS COMPLETE');
+    logger.info('═══════════════════════════════════════════════════════════');
+    logger.info(`Chunks processed: ${results.length}`);
+    logger.info(`Total tokens: ${output.totalTokens.toLocaleString()}`);
+    logger.info(`Total time: ${totalTime}s`);
+    logger.info(`Context loaded: Dialogue=${output.contextFiles.dialogueSegments} segments, Music=${output.contextFiles.musicSegments} segments`);
+    logger.info(`Output: ${outPath}`);
+    logger.info('═══════════════════════════════════════════════════════════');
 }
 
 main().catch(err => { console.error('Error:', err); process.exit(1); });

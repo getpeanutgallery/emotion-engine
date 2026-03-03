@@ -1,0 +1,14 @@
+{
+  "dialogue": {
+    "default": "openai/gpt-audio",
+    "fallbacks": ["openai/whisper-large", "alternative/audio-model"]
+  },
+  "music": {
+    "default": "openai/gpt-audio",
+    "fallbacks": ["alternative/audio-model"]
+  },
+  "video": {
+    "default": "qwen/qwen3.5-122b-a10b",
+    "fallbacks": ["kimi/kimi-k2-0905", "alternative/vision-model"]
+  }
+}
