@@ -23,19 +23,75 @@ const PERSONAS_ROOT = path.join(__dirname, '../../personas');
  */
 
 /**
+ * Resolve SemVer version to actual folder
+ * Supports: 'latest', '1', '1.0', '1.0.0', '^1.0.0', '~1.0.0'
+ * @param {string} baseDir - Base directory to search
+ * @param {string} version - Version string
+ * @returns {string|null} Resolved version folder name or null
+ */
+function resolveVersion(baseDir, version = 'latest') {
+    if (!fs.existsSync(baseDir)) return null;
+    
+    // Get all version folders
+    const folders = fs.readdirSync(baseDir)
+        .filter(f => fs.statSync(path.join(baseDir, f)).isDirectory())
+        .filter(f => /^\d+\.\d+\.\d+$/.test(f)); // Only SemVer folders
+    
+    if (folders.length === 0) return null;
+    
+    // Sort by SemVer (descending)
+    folders.sort((a, b) => {
+        const [aMajor, aMinor, aPatch] = a.split('.').map(Number);
+        const [bMajor, bMinor, bPatch] = b.split('.').map(Number);
+        if (aMajor !== bMajor) return bMajor - aMajor;
+        if (aMinor !== bMinor) return bMinor - aMinor;
+        return bPatch - aPatch;
+    });
+    
+    if (version === 'latest') {
+        return folders[0];
+    }
+    
+    // Exact match
+    if (folders.includes(version)) {
+        return version;
+    }
+    
+    // Major only (e.g., '1' → latest 1.x.x)
+    const majorMatch = version.match(/^(\d+)$/);
+    if (majorMatch) {
+        const major = parseInt(majorMatch[1]);
+        return folders.find(f => f.startsWith(`${major}.`)) || null;
+    }
+    
+    // Major.Minor (e.g., '1.0' → latest 1.0.x)
+    const minorMatch = version.match(/^(\d+)\.(\d+)$/);
+    if (minorMatch) {
+        const prefix = `${minorMatch[1]}.${minorMatch[2]}.`;
+        return folders.find(f => f.startsWith(prefix)) || null;
+    }
+    
+    // TODO: Support semver ranges (^, ~) if needed
+    
+    return null;
+}
+
+/**
  * Load SOUL.md for a persona
  * @param {string} soulId - Persona ID (e.g., 'impatient-teenager')
- * @param {string} version - Version (e.g., 'v1', defaults to latest)
+ * @param {string} version - SemVer version (e.g., '1.0.0', '1', 'latest')
  * @returns {Object|null} Parsed SOUL.md or null if not found
  */
 function loadSoul(soulId, version = 'latest') {
-    const soulPath = path.join(PERSONAS_ROOT, 'souls', soulId, version === 'latest' ? 'v1' : version, 'SOUL.md');
+    const baseDir = path.join(PERSONAS_ROOT, 'souls', soulId);
+    const resolvedVersion = resolveVersion(baseDir, version);
     
-    if (!fs.existsSync(soulPath)) {
-        console.error(`❌ SOUL.md not found: ${soulPath}`);
+    if (!resolvedVersion) {
+        console.error(`❌ SOUL.md version not found for: ${soulId}@${version}`);
         return null;
     }
     
+    const soulPath = path.join(baseDir, resolvedVersion, 'SOUL.md');
     const content = fs.readFileSync(soulPath, 'utf8');
     return parseMarkdown(content);
 }
@@ -43,17 +99,19 @@ function loadSoul(soulId, version = 'latest') {
 /**
  * Load GOAL.md for a goal
  * @param {string} goalId - Goal ID (e.g., 'video-ad-evaluation')
- * @param {string} version - Version (defaults to latest)
+ * @param {string} version - SemVer version (defaults to latest)
  * @returns {Object|null} Parsed GOAL.md or null if not found
  */
 function loadGoal(goalId, version = 'latest') {
-    const goalPath = path.join(PERSONAS_ROOT, 'goals', goalId, version === 'latest' ? 'v1' : version, 'GOAL.md');
+    const baseDir = path.join(PERSONAS_ROOT, 'goals', goalId);
+    const resolvedVersion = resolveVersion(baseDir, version);
     
-    if (!fs.existsSync(goalPath)) {
-        console.error(`❌ GOAL.md not found: ${goalPath}`);
+    if (!resolvedVersion) {
+        console.error(`❌ GOAL.md version not found for: ${goalId}@${version}`);
         return null;
     }
     
+    const goalPath = path.join(baseDir, resolvedVersion, 'GOAL.md');
     const content = fs.readFileSync(goalPath, 'utf8');
     return parseMarkdown(content);
 }
@@ -61,17 +119,19 @@ function loadGoal(goalId, version = 'latest') {
 /**
  * Load TOOLS.md
  * @param {string} toolId - Tool ID (e.g., 'emotion-tracking')
- * @param {string} version - Version (defaults to latest)
+ * @param {string} version - SemVer version (defaults to latest)
  * @returns {Object|null} Parsed TOOLS.md or null if not found
  */
 function loadTools(toolId, version = 'latest') {
-    const toolsPath = path.join(PERSONAS_ROOT, 'tools', toolId, version === 'latest' ? 'v1' : version, 'TOOLS.md');
+    const baseDir = path.join(PERSONAS_ROOT, 'tools', toolId);
+    const resolvedVersion = resolveVersion(baseDir, version);
     
-    if (!fs.existsSync(toolsPath)) {
-        console.error(`❌ TOOLS.md not found: ${toolsPath}`);
+    if (!resolvedVersion) {
+        console.error(`❌ TOOLS.md version not found for: ${toolId}@${version}`);
         return null;
     }
     
+    const toolsPath = path.join(baseDir, resolvedVersion, 'TOOLS.md');
     const content = fs.readFileSync(toolsPath, 'utf8');
     return parseMarkdown(content);
 }

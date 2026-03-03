@@ -56,7 +56,15 @@ let report = `# Emotion Analysis Report
 `;
 report += `# ${path.basename(chunksData.video, path.extname(chunksData.video))}\n\n`;
 report += `**Generated:** ${new Date().toISOString()}\n\n`;
-report += `**Persona:** ${chunksData.persona.name} — ${chunksData.persona.description}\n\n`;
+// Extract persona name from new structure
+const personaName = chunksData.persona?.config?.soul?.Name || 
+                    chunksData.persona?.config?.soul?.['Name'] || 
+                    chunksData.persona?.id || 
+                    'Unknown Persona';
+const personaDesc = chunksData.persona?.config?.soul?.['Core Truth'] || '';
+report += `**Persona:** ${personaName}`;
+if (personaDesc) report += ` — ${personaDesc.substring(0, 100)}`;
+report += `\n\n`;
 report += `**Total Duration:** ${chunksData.duration}s  \n`;
 report += `**Total Tokens Used:** ${chunksData.totalTokens.toLocaleString()}\n\n`;
 

@@ -3,7 +3,7 @@
 > **Version:** 1.0.0  
 > **Status:** Active  
 > **Last Updated:** 2026-03-03  
-> **Applies To:** All personas, all goals
+> **SemVer:** Major.Minor.Patch (breaking.feature.fix)
 
 ---
 
@@ -108,12 +108,12 @@ Personas can track any combination of these lenses. Select based on your use cas
   "persona": {
     "id": "string",
     "name": "string",
-    "soul_version": "string"
+    "soul_version": "1.0.0"
   },
   "goal": {
     "id": "string",
     "name": "string",
-    "version": "string"
+    "version": "1.0.0"
   },
   "tools_version": "1.0.0",
   "summary_metrics": {
@@ -247,21 +247,28 @@ function calculateFrictionIndex(perSecondData) {
 
 ## Version Compatibility
 
-| Persona System Version | TOOLS.md Version | Compatible |
-|------------------------|------------------|------------|
-| 1.0.x | 1.0.x | ✅ Yes |
-| 1.0.x | 2.0.x | ⚠️ Check breaking changes |
-| 2.0.x | 1.0.x | ❌ No (newer persona, older tools) |
+| Persona System Version | TOOLS.md Version | Compatible | Notes |
+|------------------------|------------------|------------|-------|
+| 1.0.x | 1.0.x | ✅ Yes | Same major version |
+| 1.x.x | 1.y.x | ✅ Yes | Minor version compatible |
+| 2.0.x | 1.0.x | ⚠️ Check | Newer persona, older tools—test first |
+| 1.0.x | 2.0.x | ❌ No | Breaking changes in tools |
 
-**Default behavior:** Use latest TOOLS.md version unless explicitly overridden.
+**Default behavior:** Use latest compatible TOOLS.md version unless explicitly pinned.
+
+### Versioning Policy
+
+- **Major (1.0.0 → 2.0.0):** Breaking changes to schema, lens definitions, or prompt templates
+- **Minor (1.0.0 → 1.1.0):** Non-breaking additions (new lenses, extended schemas)
+- **Patch (1.0.0 → 1.0.1):** Typos, clarifications, no behavioral impact
 
 ---
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-03-03 | Initial TOOLS.md format with 15 emotional lenses |
+| Version | Date | Type | Changes |
+|---------|------|------|---------|
+| 1.0.0 | 2026-03-03 | Major | Initial TOOLS.md release with 15 emotional lenses |
 
 ---
 

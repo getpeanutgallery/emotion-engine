@@ -14,7 +14,12 @@ const MODEL = 'openai/gpt-audio';
 const VIDEO_PATH = process.argv[2] || '../.cache/videos/cod.mp4';
 const OUTPUT_DIR = process.argv[3] || '../output/default';
 
-if (!API_KEY) { console.error('❌ OPENROUTER_API_KEY not set'); process.exit(1); }
+if (!API_KEY) { 
+    console.error('❌ OPENROUTER_API_KEY not set');
+    console.error('   Set it via: export OPENROUTER_API_KEY=sk-or-...');
+    console.error('   Or copy .env.example to .env and fill in your key');
+    process.exit(1); 
+}
 
 async function extractAudio(videoPath, outputPath) {
     const { spawn } = require('child_process');

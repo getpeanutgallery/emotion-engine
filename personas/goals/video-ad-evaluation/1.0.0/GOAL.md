@@ -3,7 +3,7 @@
 > **Version:** 1.0.0  
 > **Status:** Active  
 > **Last Updated:** 2026-03-03  
-> **Applies To:** All personas in evaluation mode
+> **SemVer:** Major.Minor.Patch (breaking.feature.fix)
 
 ---
 
@@ -116,9 +116,15 @@ Provide 3-5 actionable recommendations:
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-03-03 | Initial GOAL.md format |
+| Version | Date | Type | Changes |
+|---------|------|------|---------|
+| 1.0.0 | 2026-03-03 | Major | Initial GOAL.md release |
+
+### Versioning Policy
+
+- **Major (1.0.0 → 2.0.0):** Breaking changes to evaluation criteria, output schema, or success metrics
+- **Minor (1.0.0 → 1.1.0):** Non-breaking additions (new dimensions, expanded use cases)
+- **Patch (1.0.0 → 1.0.1):** Typos, clarifications, no behavioral impact
 
 ---
 

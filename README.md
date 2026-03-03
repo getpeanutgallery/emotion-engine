@@ -56,9 +56,32 @@ node --version
 # FFmpeg (for video processing)
 ffmpeg -version
 
-# OpenRouter API key (set in environment)
-export OPENROUTER_API_KEY="your-key-here"
+# OpenRouter API key (required)
+# Option 1: Set via environment variable
+export OPENROUTER_API_KEY="sk-or-..."
+
+# Option 2: Copy .env.example to .env and fill in your key
+cp .env.example .env
+# Then edit .env and add your API key
 ```
+
+### Environment Variables
+
+**Required:**
+- `OPENROUTER_API_KEY` - Your OpenRouter API key (starts with `sk-or-`)
+
+**Optional (with defaults):**
+- `SOUL_ID` - Persona to use (default: `impatient-teenager`)
+- `SOUL_VERSION` - Persona version: `latest`, `1`, `1.0`, or `1.0.0` (default: `latest`)
+- `GOAL_ID` - Evaluation goal (default: `video-ad-evaluation`)
+- `GOAL_VERSION` - Goal version (default: `1.0`)
+- `TOOL_ID` - Tools config (default: `emotion-tracking`)
+- `TOOL_VERSION` - Tools version (default: `latest`)
+- `CHUNK_QUALITY` - Quality preset: `low`, `medium`, `high` (default: `medium`)
+- `API_REQUEST_DELAY` - Delay between API calls in ms (default: `1000`)
+- `API_MAX_RETRIES` - Max retry attempts (default: `3`)
+
+See `.env.example` for all available options.
 
 ### Run Complete Pipeline (Recommended)
 
@@ -242,9 +265,23 @@ The Emotion Engine uses a **composable persona system** with three file types:
 
 | File Type | Location | Purpose | Example |
 |-----------|----------|---------|---------|
-| **SOUL.md** | `/personas/souls/<id>/v1/` | "Who" - persona identity, demographics, voice | `impatient-teenager` |
-| **GOAL.md** | `/personas/goals/<id>/v1/` | "What" - evaluation objective, success criteria | `video-ad-evaluation` |
-| **TOOLS.md** | `/personas/tools/<id>/v1/` | "How" - emotional lenses, JSON schemas, prompts | `emotion-tracking` |
+| **SOUL.md** | `/personas/souls/<id>/<semver>/` | "Who" - persona identity, demographics, voice | `impatient-teenager/1.0.0` |
+| **GOAL.md** | `/personas/goals/<id>/<semver>/` | "What" - evaluation objective, success criteria | `video-ad-evaluation/1.0.0` |
+| **TOOLS.md** | `/personas/tools/<id>/<semver>/` | "How" - emotional lenses, JSON schemas, prompts | `emotion-tracking/1.0.0` |
+
+### Versioning (SemVer)
+
+All persona configs use **Semantic Versioning** (`Major.Minor.Patch`:
+
+- **Major** (`1.0.0` → `2.0.0`): Breaking changes (schema, identity, behavior)
+- **Minor** (`1.0.0` → `1.1.0`): Non-breaking additions (new lenses, traits)
+- **Patch** (`1.0.0` → `1.0.1`): Typos, clarifications
+
+**Version resolution:**
+- `latest` → Highest available version
+- `1` → Latest `1.x.x`
+- `1.0` → Latest `1.0.x`
+- `1.0.0` → Exact match
 
 ### Available Personas
 
@@ -281,23 +318,37 @@ The Emotion Engine uses a **composable persona system** with three file types:
 ### Using Personas
 
 ```bash
-# Use default persona (impatient-teenager + video-ad-evaluation)
+# Use default persona (impatient-teenager@latest + video-ad-evaluation@latest)
 node server/run-pipeline.cjs video.mp4 output/test1
 
 # Override persona via environment variables
 export SOUL_ID=skeptical-cfo
 export GOAL_ID=video-ad-evaluation
+export SOUL_VERSION=1      # Use latest 1.x.x
+export GOAL_VERSION=1.0    # Use latest 1.0.x
+export TOOLS_VERSION=latest # Use highest available
 export SELECTED_LENSES=patience,boredom,excitement,roi-confidence
 node server/run-pipeline.cjs video.mp4 output/test2
 ```
 
 ### Creating Custom Personas
 
-1. **Add a SOUL.md** in `/personas/souls/<your-persona>/v1/SOUL.md`
-2. **Pick a GOAL.md** (or create custom in `/personas/goals/`)
-3. **Select lenses** from TOOLS.md (or extend in `/personas/tools/`)
+1. **Add a SOUL.md** in `/personas/souls/<your-persona>/1.0.0/SOUL.md`
+2. **Pick a GOAL.md** (or create custom in `/personas/goals/1.0.0/GOAL.md`)
+3. **Select lenses** from TOOLS.md (or extend in `/personas/tools/1.0.0/TOOLS.md`)
 
-See existing personas for templates.
+See existing personas for templates. Follow SemVer when updating your configs.
+
+### Contributing Personas
+
+The persona system is **open and extensible**. Engineers can:
+
+- Fork the repo and create custom personas
+- Publish persona packs as npm packages
+- Share SOUL.md configs independently
+- Version their own configs alongside ours
+
+All configs are plain markdown—no lock-in, no proprietary format.
 
 ---
 

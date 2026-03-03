@@ -13,9 +13,28 @@ const VIDEO_PATH = process.argv[2] || '../.cache/videos/cod.mp4';
 const OUTPUT_DIR = process.argv[3] || '../output/default';
 const CHUNK_DURATION = 8;
 
-const PERSONA = { name: 'The Impatient Teenager', description: '17yo Gen Z, scrolls if bored' };
+// Load persona system
+const personaLoader = require('./lib/persona-loader.cjs');
+const SOUL_ID = process.env.SOUL_ID || 'impatient-teenager';
+const GOAL_ID = process.env.GOAL_ID || 'video-ad-evaluation';
+const TOOL_ID = process.env.TOOL_ID || 'emotion-tracking';
 
-if (!API_KEY) { console.error('❌ OPENROUTER_API_KEY not set'); process.exit(1); }
+const personaConfig = personaLoader.loadPersonaConfig(SOUL_ID, GOAL_ID, TOOL_ID);
+
+if (!API_KEY) { 
+    console.error('❌ OPENROUTER_API_KEY not set');
+    console.error('   Set it via: export OPENROUTER_API_KEY=sk-or-...');
+    console.error('   Or copy .env.example to .env and fill in your key');
+    process.exit(1); 
+}
+if (!personaConfig) { 
+    console.error('❌ Failed to load persona configuration');
+    console.error(`   Checked: SOUL_ID=${SOUL_ID}, GOAL_ID=${GOAL_ID}, TOOL_ID=${TOOL_ID}`);
+    console.error('   Verify persona files exist in /personas/ directory');
+    process.exit(1); 
+}
+
+console.log(`🎭 Loaded persona: ${SOUL_ID} (goal: ${GOAL_ID}, tools: ${TOOL_ID})`);
 
 function loadContextFiles() {
     const d = path.join(OUTPUT_DIR, '01-dialogue-analysis.md');
@@ -116,34 +135,28 @@ async function analyzeChunk(chunkPath, start, end, prevState, ctxData) {
     if (dCtx) context += `**Dialogue:**\n${dCtx}\n\n`;
     if (mCtx) context += `**Music:**\n${mCtx}\n\n`;
     
-    // STRICT JSON ONLY
-    const prompt = `You are ${PERSONA.name}, ${PERSONA.description}. Track emotions EVERY SECOND for ${start}s-${end}s.
+    // Build system prompt using persona loader
+    const selectedLenses = ['patience', 'boredom', 'excitement'];
+    const videoContext = `
+Analyze this video chunk from ${start}s to ${end}s. Track emotions EVERY SECOND.
 
-${context}RESPOND ONLY WITH VALID JSON. No other text.
-
-Required format:
-{
-  "per_second_analysis": [
-    {
-      "timestamp": ${start},
-      "visuals": "describe what you see",
-      "patience": 0-10,
-      "boredom": 0-10,
-      "excitement": 0-10,
-      "thought": "internal monologue",
-      "scroll_risk": "low|medium|high"
-    }
-  ]
-}
-
-Include EVERY SECOND from ${start} to ${end}. Be brutally honest. Gen Z voice.`;
+${context}RESPOND ONLY WITH VALID JSON. No other text.`;
+    
+    const systemPrompt = personaLoader.buildSystemPrompt(personaConfig, {
+        duration: end - start,
+        selectedLenses,
+        videoContext
+    });
 
     const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
             model: MODEL,
-            messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'video_url', video_url: { url: dataUrl } }] }],
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: [{ type: 'text', text: 'Analyze this video chunk using the persona instructions above. Respond with JSON only.' }, { type: 'video_url', video_url: { url: dataUrl } }] }
+            ],
             max_tokens: 4000
         })
     });

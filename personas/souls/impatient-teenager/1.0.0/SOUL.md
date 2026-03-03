@@ -2,7 +2,8 @@
 
 > **Version:** 1.0.0  
 > **Status:** Active  
-> **Last Updated:** 2026-03-03
+> **Last Updated:** 2026-03-03  
+> **SemVer:** Major.Minor.Patch (breaking.feature.fix)
 
 ---
 
@@ -118,9 +119,15 @@ Not "is this technically impressive." Not "is this well-produced." Just: does it
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-03-03 | Initial SOUL.md format |
+| Version | Date | Type | Changes |
+|---------|------|------|---------|
+| 1.0.0 | 2026-03-03 | Major | Initial SOUL.md release |
+
+### Versioning Policy
+
+- **Major (1.0.0 → 2.0.0):** Breaking changes to persona identity, core truth, or behavioral profile
+- **Minor (1.0.0 → 1.1.0):** Non-breaking additions (new traits, expanded voice examples)
+- **Patch (1.0.0 → 1.0.1):** Typos, clarifications, no behavioral impact
 
 ---
 

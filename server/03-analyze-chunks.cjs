@@ -36,7 +36,12 @@ if (!personaConfig) {
 
 console.log(`🎭 Loaded persona: ${SOUL_ID} (goal: ${GOAL_ID}, tools: ${TOOL_ID})`);
 
-if (!API_KEY) { console.error('❌ OPENROUTER_API_KEY not set'); process.exit(1); }
+if (!API_KEY) { 
+    console.error('❌ OPENROUTER_API_KEY not set');
+    console.error('   Set it via: export OPENROUTER_API_KEY=sk-or-...');
+    console.error('   Or copy .env.example to .env and fill in your key');
+    process.exit(1); 
+}
 
 // Load context files from steps 1 & 2
 function loadContextFiles() {
@@ -162,7 +167,7 @@ ${context.dialogueContext ? `**What You're Hearing (Dialogue):**\n${context.dial
 ${context.musicContext ? `**What You're Hearing (Music/Audio):**\n${context.musicContext}\n` : ''}
 `;
     
-    const prompt = personaLoader.buildSystemPrompt(personaConfig, {
+    const systemPrompt = personaLoader.buildSystemPrompt(personaConfig, {
         duration: endTime - startTime,
         selectedLenses,
         videoContext
@@ -174,7 +179,10 @@ ${context.musicContext ? `**What You're Hearing (Music/Audio):**\n${context.musi
         headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
             model: MODEL,
-            messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'video_url', video_url: { url: dataUrl } }] }],
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: [{ type: 'text', text: 'Analyze this video chunk using the persona instructions above. Respond with JSON only.' }, { type: 'video_url', video_url: { url: dataUrl } }] }
+            ],
             max_tokens: 2000
         })
     });
