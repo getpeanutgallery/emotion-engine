@@ -80,33 +80,69 @@ async function fetchWithRetry(url, options = {}, config = {}) {
 /**
  * Safely validate and parse JSON from a response
  * @param {Response} response - The fetch response to parse
- * @returns {Promise<object>} - The parsed JSON data
- * @throws {Error} - Throws error with details if parsing fails
+ * @returns {Promise<{success: boolean, data?: object, error?: string}>} - Result object with success flag
  * 
  * @example
  * const response = await fetch('https://api.example.com/data');
- * const data = await validateJSON(response);
+ * const result = await validateJSON(response);
+ * if (!result.success) { console.error(result.error); }
  */
 async function validateJSON(response) {
+  // Handle null/undefined response
   if (!response) {
-    throw new Error('Invalid response: response is null or undefined');
+    return {
+      success: false,
+      error: 'Invalid response: response is null or undefined'
+    };
   }
+
+  // Log response status and headers for debugging
+  console.log(`🔍 API Response Status: ${response.status} ${response.statusText}`);
+  console.log(`🔍 API Response Headers:`, Object.fromEntries(response.headers.entries()));
 
   const contentType = response.headers.get('content-type') || '';
-  if (!contentType.includes('application/json')) {
-    throw new Error(`Invalid content-type: ${contentType || '(none)'}`);
-  }
+  console.log(`🔍 Content-Type: ${contentType || '(none)'}`);
 
-  const text = await response.text();
-
-  if (!text || text.trim() === '') {
-    throw new Error('Empty response body');
-  }
-
+  // Get response text first to handle all cases
+  let text;
   try {
-    return JSON.parse(text);
+    text = await response.text();
+  } catch (err) {
+    return {
+      success: false,
+      error: `Failed to read response body: ${err.message}`
+    };
+  }
+
+  // Log raw response for debugging (truncated if too long)
+  const truncatedText = text.length > 500 ? text.substring(0, 500) + '... [truncated]' : text;
+  console.log(`🔍 Raw API Response (${text.length} bytes):`, truncatedText);
+
+  // Check for empty response
+  if (!text || text.trim() === '') {
+    return {
+      success: false,
+      error: 'Empty response body'
+    };
+  }
+
+  // Check content-type (warning only, don't fail)
+  if (!contentType.includes('application/json')) {
+    console.warn(`⚠️  Warning: Response is not JSON (content-type: ${contentType || '(none)'})`);
+  }
+
+  // Try to parse JSON
+  try {
+    const data = JSON.parse(text);
+    return {
+      success: true,
+      data: data
+    };
   } catch (error) {
-    throw new Error(`JSON parse error: ${error.message}. Body: ${text.substring(0, 200)}${text.length > 200 ? '...' : ''}`);
+    return {
+      success: false,
+      error: `JSON parse error: ${error.message}\nResponse body: ${truncatedText}`
+    };
   }
 }
 

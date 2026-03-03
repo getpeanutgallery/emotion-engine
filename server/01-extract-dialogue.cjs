@@ -6,6 +6,8 @@
  * Output: dialogue-analysis.md with JSON data
  */
 
+require('dotenv').config();
+
 const fs = require('fs');
 const path = require('path');
 
@@ -108,14 +110,27 @@ Be precise with timestamps. If multiple speakers overlap, note this.`;
         })
     }, { maxRetries: 3, baseDelay: 1000 });
     
+    // Debug: Log raw response before parsing
+    console.log('\n🔍 DEBUG: Raw API response received');
+    console.log(`   Status: ${res.status} ${res.statusText}`);
+    console.log(`   Headers:`, Object.fromEntries(res.headers.entries()));
+    
     const result = utils.validateJSON(res);
     if (!result.success) {
-        console.error('Failed to parse API response:', result.error);
-        throw new Error('Invalid JSON response from API');
+        console.error('\n❌ Failed to parse API response:');
+        console.error(`   Error: ${result.error}`);
+        console.error(`   Response OK: ${res.ok}`);
+        console.error(`   Status: ${res.status}`);
+        throw new Error(`Invalid JSON response from API: ${result.error}`);
     }
     
     const data = result.data;
-    if (!res.ok) throw new Error(data.error?.message || 'API failed');
+    console.log('✅ API response parsed successfully');
+    
+    if (!res.ok) {
+        console.error('❌ API returned error status:', data.error);
+        throw new Error(data.error?.message || 'API failed');
+    }
     return data.choices[0].message.content;
 }
 
