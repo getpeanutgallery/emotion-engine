@@ -3,6 +3,8 @@
  * Per-Second Emotion Analysis with STRICT JSON Output
  */
 
+require('dotenv').config();
+
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
@@ -106,10 +108,30 @@ function getDialogue(data, s, e) {
 function getMusic(data, s, e) {
     if (!data?.audio_segments) return '';
     return data.audio_segments.filter(m => {
-        const r = m.timestamp_range.split('-').map(t => t.trim());
-        const a = parseTimestamp(r[0]), b = parseTimestamp(r[1] || r[0]);
-        return (a >= s && a <= e) || (b >= s && b <= e) || (a <= s && b >= e);
-    }).map(m => `[${m.timestamp_range}] ${m.description}`).join('\n');
+        // Support both timestamp_range format AND timestamp_start/timestamp_end format
+        let timestampStr, start, end;
+        
+        if (m.timestamp_range && typeof m.timestamp_range === 'string') {
+            // Old format: "00:00-00:08"
+            timestampStr = m.timestamp_range;
+            const r = timestampStr.split('-').map(t => t.trim());
+            start = parseTimestamp(r[0]);
+            end = parseTimestamp(r[1] || r[0]);
+        } else if (m.timestamp_start && m.timestamp_end) {
+            // New format: separate fields
+            timestampStr = `${m.timestamp_start}-${m.timestamp_end}`;
+            start = parseTimestamp(m.timestamp_start);
+            end = parseTimestamp(m.timestamp_end);
+        } else {
+            logger.debug(`Invalid timestamp format in music segment: ${JSON.stringify(m)}`);
+            return false; // Skip segments without valid timestamps
+        }
+        
+        return (start >= s && start <= e) || (end >= s && end <= e) || (start <= s && end >= e);
+    }).map(m => {
+        const ts = m.timestamp_range || `${m.timestamp_start}-${m.timestamp_end}`;
+        return `[${ts}] ${m.description}`;
+    }).join('\n');
 }
 
 function parsePerSecondJSON(analysis) {
@@ -184,7 +206,7 @@ ${context}RESPOND ONLY WITH VALID JSON. No other text.`;
         })
     }, { maxRetries: 3, baseDelay: 1000 });
     
-    const result = utils.validateJSON(res);
+    const result = await utils.validateJSON(res);
     if (!result.success) {
         console.error('Failed to parse API response:', result.error);
         throw new Error('Invalid JSON response from API');
