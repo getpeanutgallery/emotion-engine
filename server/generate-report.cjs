@@ -1220,11 +1220,11 @@ async function generatePerSecondAppendix(outputDir, chunksData, perSecondData, d
     generateScatterPlot(data, 'excitement', 'boredom', 'Boredom vs Excitement', beScatterPath, beCorr);
 
     // Add visual reference to appendix
-    appendix += `![Correlation Matrix](../visualizations/correlation-matrix.png)\n\n`;
+    appendix += `![Correlation Matrix](../../visualizations/correlation-matrix.png)\n\n`;
     appendix += `**Scatter Plots**:\n`;
-    appendix += `- ![Patience vs Boredom](../visualizations/patience-vs-boredom.png)\n`;
-    appendix += `- ![Patience vs Excitement](../visualizations/patience-vs-excitement.png)\n`;
-    appendix += `- ![Boredom vs Excitement](../visualizations/boredom-vs-excitement.png)\n\n`;
+    appendix += `- ![Patience vs Boredom](../../visualizations/patience-vs-boredom.png)\n`;
+    appendix += `- ![Patience vs Excitement](../../visualizations/patience-vs-excitement.png)\n`;
+    appendix += `- ![Boredom vs Excitement](../../visualizations/boredom-vs-excitement.png)\n\n`;
 
     appendix += `| Emotion Pair | Correlation | Interpretation |\n`;
     appendix += `|--------------|-------------|----------------|\n`;
