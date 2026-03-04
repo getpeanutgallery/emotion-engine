@@ -1,13 +1,32 @@
 {
 	"name": "emotion-engine",
-	"version": "1.0.0",
+	"version": "8.0.0",
 	"type": "commonjs",
-	"dependencies": {
-		"chart.js": "^4.5.1",
-		"chartjs-node-canvas": "^5.0.0",
-		"dotenv": "^17.3.1"
+	"description": "Modular, tool-agnostic AI workflow engine for multi-modal emotion analysis",
+	"main": "server/run-pipeline.cjs",
+	"bin": {
+		"emotion-engine": "./bin/run-pipeline.js"
 	},
 	"scripts": {
+		"pipeline": "node server/run-pipeline.cjs",
+		"test": "node --test test/*.test.js",
 		"test:validate-json": "node test-validate-json.cjs"
-	}
+	},
+	"dependencies": {
+		"dotenv": "^17.3.1",
+		"js-yaml": "^4.1.0"
+	},
+	"devDependencies": {},
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"keywords": [
+		"ai",
+		"emotion-analysis",
+		"multi-modal",
+		"pipeline",
+		"workflow"
+	],
+	"author": "OpenTruth",
+	"license": "MIT"
 }
