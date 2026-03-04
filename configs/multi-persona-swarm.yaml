@@ -5,6 +5,16 @@ name: "Multi-Persona Swarm Analysis"
 description: "Same video analyzed by 3 different personas simultaneously"
 version: "1.0"
 
+# Asset configuration (self-contained - no CLI args needed)
+asset:
+  inputPath: ".cache/videos/cod.mp4"
+  outputDir: "output/swarm-test"
+
+# AI provider configuration (git-safe - secrets injected via env vars)
+ai:
+  provider: openrouter
+  model: qwen/qwen-3.5-397b-a17b
+
 # Phase 1: Gather context from video
 gather_context:
   - scripts/get-context/get-dialogue.cjs
@@ -16,17 +26,34 @@ gather_context:
 process:
   parallel:
     - script: scripts/process/video-chunks.cjs
-      soulPath: /home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/impatient-teenager/1.0.0/SOUL.md
-      toolVariables:
-        lenses: ["patience", "boredom"]
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+        goalPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+        variables:
+          lenses:
+            - patience
+            - boredom
     - script: scripts/process/video-chunks.cjs
-      soulPath: /home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/skeptical-cfo/1.0.0/SOUL.md
-      toolVariables:
-        lenses: ["patience", "boredom", "skepticism"]
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/skeptical-cfo/1.0.0/SOUL.md"
+        goalPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+        variables:
+          lenses:
+            - patience
+            - boredom
+            - skepticism
     - script: scripts/process/video-chunks.cjs
-      soulPath: /home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/optimistic-gen-z/1.0.0/SOUL.md
-      toolVariables:
-        lenses: ["excitement", "fomo", "joy"]
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/optimistic-gen-z/1.0.0/SOUL.md"
+        goalPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+        variables:
+          lenses:
+            - excitement
+            - fomo
+            - joy
 
 # Phase 3: Generate reports
 report:

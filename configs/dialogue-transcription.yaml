@@ -1,0 +1,34 @@
+# Dialogue Transcription Pipeline
+# Transcribe audio and generate summary (no persona evaluation)
+
+name: "Dialogue Transcription Pipeline"
+description: "Transcribe audio and generate summary (no persona evaluation)"
+version: "1.0"
+
+# Asset configuration (self-contained - no CLI args needed)
+asset:
+  inputPath: ".cache/audio/meeting.mp3"
+  outputDir: "output/transcription"
+
+# AI provider configuration (git-safe - secrets injected via env vars)
+ai:
+  provider: openrouter
+  model: qwen/qwen-3.5-397b-a17b
+
+# Gather dialogue from audio/video
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+
+# Skip persona-based processing
+process: []
+
+# Generate transcription summary report
+report:
+  - scripts/report/dialogue-summary.cjs
+
+# Global settings
+settings:
+  api_request_delay: 1000
+
+# Use case: Transcribe meetings, interviews, or podcasts without persona evaluation.
+# Outputs clean dialogue transcript with speaker identification and summary.

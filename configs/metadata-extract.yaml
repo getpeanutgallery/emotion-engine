@@ -1,0 +1,29 @@
+# Metadata Extraction Pipeline
+# Extract video/audio metadata only (no analysis, no report)
+
+name: "Metadata Extraction Pipeline"
+description: "Extract video/audio metadata only (no analysis, no report)"
+version: "1.0"
+
+# Asset configuration (self-contained - no CLI args needed)
+asset:
+  inputPath: ".cache/videos/sample.mp4"
+  outputDir: "output/metadata"
+
+# AI provider configuration (git-safe - secrets injected via env vars)
+ai:
+  provider: openrouter
+  model: qwen/qwen-3.5-397b-a17b
+
+# Extract metadata only
+gather_context:
+  - scripts/get-context/get-metadata.cjs
+
+# Skip processing
+process: []
+
+# Skip report generation
+report: []
+
+# Use case: Quick metadata extraction for cataloging, indexing,
+# or validation purposes. Outputs duration, resolution, codec, fps, etc.

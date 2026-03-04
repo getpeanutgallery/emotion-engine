@@ -1,0 +1,40 @@
+# Image Analysis Pipeline
+# Analyze static images (no dialogue or music)
+
+name: "Image Analysis Pipeline"
+description: "Analyze static images (no dialogue or music)"
+version: "1.0"
+
+# Asset configuration (self-contained - no CLI args needed)
+asset:
+  inputPath: ".cache/images/sample.png"
+  outputDir: "output/image-test"
+
+# AI provider configuration (git-safe - secrets injected via env vars)
+ai:
+  provider: openrouter
+  model: qwen/qwen-3.5-397b-a17b
+
+# No context gathering for images
+gather_context: []
+
+process:
+  sequential:
+    - script: scripts/process/image-frames.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+        goalPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/goals/image-evaluation/1.0.0/GOAL.md"
+        variables:
+          lenses:
+            - patience
+            - boredom
+            - excitement
+
+report:
+  - scripts/report/evaluation.cjs
+  - scripts/report/graphs.cjs
+
+# Global settings
+settings:
+  api_request_delay: 1000

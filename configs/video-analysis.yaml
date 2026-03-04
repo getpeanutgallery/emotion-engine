@@ -5,6 +5,19 @@ name: "Full Video Analysis Pipeline"
 description: "Complete emotion analysis with dialogue, music, and video processing"
 version: "1.0"
 
+# Asset configuration (self-contained - no CLI args needed)
+asset:
+  inputPath: ".cache/videos/cod.mp4"
+  outputDir: "output/cod-test"
+
+# AI provider configuration (git-safe - secrets injected via env vars)
+# Set environment variables: AI_PROVIDER, AI_API_KEY, AI_MODEL, AI_BASE_URL
+ai:
+  provider: openrouter  # Provider name (openrouter, anthropic, gemini, openai)
+  model: qwen/qwen-3.5-397b-a17b  # Model identifier
+  # apiKey: NEVER put API keys in YAML - use environment variables
+  # baseUrl: Optional, defaults to provider's standard endpoint
+
 # Phase 1: Gather context from video
 gather_context:
   - scripts/get-context/get-dialogue.cjs
@@ -13,8 +26,27 @@ gather_context:
 # Phase 2: Process video (SEQUENTIAL - default)
 # Each script receives output from the previous script
 process:
-  - scripts/process/video-chunks.cjs
-  - scripts/process/per-second.cjs
+  sequential:
+    - script: scripts/process/video-chunks.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+        goalPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+        variables:
+          lenses:
+            - patience
+            - boredom
+            - excitement
+    - script: scripts/process/video-per-second.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+        goalPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+        variables:
+          lenses:
+            - patience
+            - boredom
+            - excitement
 
 # Phase 3: Generate reports
 report:
@@ -29,16 +61,6 @@ settings:
   api_request_delay: 1000    # milliseconds between API calls
   chunk_quality: "medium"    # low|medium|high
 
-# Tool/persona configuration
-tool_variables:
-  soulId: "impatient-teenager"
-  goalId: "video-ad-evaluation"
-  toolId: "emotion-tracking"
-  selectedLenses:
-    - patience
-    - boredom
-    - excitement
-
 ---
 # ALTERNATIVE: Parallel Multi-Persona Swarm (Uncomment to use)
 # All personas analyze the same video simultaneously
@@ -46,6 +68,10 @@ tool_variables:
 # name: "Multi-Persona Swarm Analysis"
 # description: "Same video analyzed by 3 different personas in parallel"
 # version: "1.0"
+#
+# asset:
+#   inputPath: ".cache/videos/cod.mp4"
+#   outputDir: "output/cod-test"
 #
 # gather_context:
 #   - scripts/get-context/get-dialogue.cjs

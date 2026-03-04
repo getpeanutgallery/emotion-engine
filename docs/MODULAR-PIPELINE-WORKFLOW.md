@@ -11,23 +11,25 @@
 The pipeline should be a **workflow orchestrator** with three phases, each accepting 0-N pluggable scripts:
 
 ```
-Phase 1: Gather Context (0-N scripts)
+Phase 1: Gather Context (0-N scripts, OPTIONAL)
   - scripts/get-context/get-dialogue.cjs
   - scripts/get-context/get-music.cjs
   - scripts/get-context/get-metadata.cjs
   - (or none, for silent video)
-  
-Phase 2: Process (1-N scripts, REQUIRED)
+
+Phase 2: Process (0-N scripts, OPTIONAL)
   - scripts/process/video-chunks.cjs
-  - scripts/process/per-second.cjs
+  - scripts/process/video-per-second.cjs
   - scripts/process/image-frames.cjs (for images)
   - scripts/process/audio-segments.cjs (for audio)
-  
-Phase 3: Report (1-N scripts)
+
+Phase 3: Report (0-N scripts, OPTIONAL)
   - scripts/report/evaluation.cjs
   - scripts/report/graphs.cjs
   - scripts/report/assets.cjs
 ```
+
+**Key Rule:** At least 1 script must exist somewhere in the pipeline (across all phases combined).
 
 ---
 
@@ -53,20 +55,20 @@ Phase 3: Report (1-N scripts)
 ┌───────────────────┐     ┌───────────────────┐     ┌───────────────────┐
 │   PHASE 1         │     │   PHASE 2         │     │   PHASE 3         │
 │   Gather Context  │────▶│   Process         │────▶│   Report          │
-│   (0-N scripts)   │     │   (1-N scripts)   │     │   (1-N scripts)   │
+│   (0-N scripts)   │     │   (0-N scripts)   │     │   (0-N scripts)   │
 │                   │     │                   │     │                   │
 │ • get-dialogue    │     │ • video-chunks    │     │ • evaluation      │
-│ • get-music       │     │ • per-second      │     │ • graphs          │
+│ • get-music       │     │ • video-per-second│     │ • graphs          │
 │ • get-metadata    │     │ • image-frames    │     │ • assets          │
 └───────────────────┘     └───────────────────┘     └───────────────────┘
         │                           │                           │
         │                           │                           │
         ▼                           ▼                           ▼
 ┌───────────────────┐     ┌───────────────────┐     ┌───────────────────┐
-│ contextArtifacts  │     │ processArtifacts  │     │   reportFiles     │
-│ • dialogueData    │     │ • chunkAnalysis   │     │ • FINAL-REPORT.md │
-│ • musicData       │     │ • perSecondData   │     │ • charts/         │
-│ • metadata        │     │ • emotionTimeline │     │ • assets/         │
+│    artifacts      │     │    artifacts      │     │    artifacts      │
+│  (script-defined) │────▶│  (script-defined) │────▶│  (script-defined) │
+│                   │     │                   │     │                   │
+│  [accumulates]    │     │  [accumulates]    │     │  [final output]   │
 └───────────────────┘     └───────────────────┘     └───────────────────┘
 ```
 
@@ -75,12 +77,23 @@ Phase 3: Report (1-N scripts)
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │                         PHASE CONTRACTS                                  │
+│                                                                          │
+│  ⚠️  IMPORTANT: The pipeline does not validate or enforce specific      │
+│  field names in artifacts. Each script documents its own input/output   │
+│  contract. Scripts are responsible for validating that required         │
+│  artifacts are present.                                                  │
 └──────────────────────────────────────────────────────────────────────────┘
 
 Phase 1: Gather Context
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  INPUT:  { assetPath, outputDir }                                       │
-│  OUTPUT: { contextArtifacts: { dialogueData, musicData, metadata } }    │
+│  INPUT:  {                                                              │
+│            assetPath: string,      // Path to source asset              │
+│            outputDir: string,      // Where to write artifacts          │
+│            config: object          // Pipeline config (optional)        │
+│          }                                                              │
+│  OUTPUT: {                                                              │
+│            artifacts: object       // Script-defined structure          │
+│          }                                                              │
 │                                                                         │
 │  Scripts run: 0-N (can skip entirely for silent video)                  │
 │  Execution: Sequential or Parallel (no dependencies between scripts)    │
@@ -90,15 +103,18 @@ Phase 1: Gather Context
 Phase 2: Process
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  INPUT:  {                                                              │
-│            assetPath,                                                   │
-│            contextArtifacts,      ← from Phase 1                        │
-│            toolPath,              ← persona/tool config                 │
-│            toolVariables,         ← lens selections                     │
-│            outputDir                                                    │
+│            assetPath: string,                                           │
+│            outputDir: string,                                           │
+│            artifacts: object,      // From previous phases              │
+│            toolPath?: string,      // Optional: path to tool script     │
+│            toolVariables?: object, // Optional: tool config             │
+│            config: object                                               │
 │          }                                                              │
-│  OUTPUT: { processArtifacts: { chunkAnalysis, perSecondData, ... } }    │
+│  OUTPUT: {                                                              │
+│            artifacts: object       // Script-defined structure          │
+│          }                                                              │
 │                                                                         │
-│  Scripts run: 1-N (REQUIRED, at least one)                              │
+│  Scripts run: 0-N (OPTIONAL)                                            │
 │  Execution: Sequential (default) or Parallel                            │
 │                                                                         │
 │  Sequential: Each script receives { ...previousOutput }                 │
@@ -109,13 +125,14 @@ Phase 2: Process
 Phase 3: Report
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  INPUT:  {                                                              │
-│            processArtifacts,      ← from Phase 2                        │
-│            contextArtifacts,      ← from Phase 1                        │
-│            outputDir                                                    │
+│            artifacts: object,      // From previous phases              │
+│            outputDir: string                                            │
 │          }                                                              │
-│  OUTPUT: { reportFiles: ['FINAL-REPORT.md', 'charts/', 'assets/'] }     │
+│  OUTPUT: {                                                              │
+│            artifacts: object       // Script-defined structure          │
+│          }                                                              │
 │                                                                         │
-│  Scripts run: 1-N (REQUIRED)                                            │
+│  Scripts run: 0-N (OPTIONAL)                                            │
 │  Execution: Sequential or Parallel                                      │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
@@ -140,12 +157,12 @@ gather_context:
   - scripts/get-context/get-music.cjs
   # - scripts/get-context/get-metadata.cjs
 
-# Phase 2: Process (REQUIRED, 1-N scripts)
+# Phase 2: Process (optional, 0-N scripts)
 process:
   - scripts/process/video-chunks.cjs
-  - scripts/process/per-second.cjs
+  - scripts/process/video-per-second.cjs
 
-# Phase 3: Report (REQUIRED, 1-N scripts)
+# Phase 3: Report (optional, 0-N scripts)
 report:
   - scripts/report/evaluation.cjs
   - scripts/report/graphs.cjs
@@ -172,7 +189,7 @@ settings:
   ],
   "process": [
     "scripts/process/video-chunks.cjs",
-    "scripts/process/per-second.cjs"
+    "scripts/process/video-per-second.cjs"
   ],
   "report": [
     "scripts/report/evaluation.cjs",
@@ -196,17 +213,17 @@ interface PipelineConfig {
   name?: string;
   description?: string;
   version?: string;
-  
+
   // Phase 1: Gather Context (optional, 0-N scripts)
   gather_context?: string[] | { parallel: GatherContextItem[] };
-  
-  // Phase 2: Process (REQUIRED, 1-N scripts)
+
+  // Phase 2: Process (optional, 0-N scripts)
   // Can be sequential (array) or parallel (object with parallel array)
-  process: string[] | { parallel: ProcessItem[] };
-  
-  // Phase 3: Report (REQUIRED, 1-N scripts)
+  process?: string[] | { parallel: ProcessItem[] };
+
+  // Phase 3: Report (optional, 0-N scripts)
   report?: string[] | { parallel: ReportItem[] };
-  
+
   // Global settings (optional)
   settings?: {
     chunk_duration?: number;
@@ -245,11 +262,61 @@ interface ReportItem {
 
 ### Required vs Optional Phases
 
-| Phase | Required | Min Scripts | Max Scripts | Notes |
-|-------|----------|-------------|-------------|-------|
-| `gather_context` | ❌ Optional | 0 | N | Can be omitted for silent video |
-| `process` | ✅ REQUIRED | 1 | N | Must have at least 1 script |
-| `report` | ✅ REQUIRED | 1 | N | Must have at least 1 script |
+| Phase            | Required   | Min Scripts | Max Scripts | Notes                                                   |
+| ---------------- | ---------- | ----------- | ----------- | ------------------------------------------------------- |
+| `gather_context` | ❌ Optional | 0           | N           | Can be omitted for silent video                         |
+| `process`        | ❌ Optional | 0           | N           | Can be omitted for gather-only or report-only pipelines |
+| `report`         | ❌ Optional | 0           | N           | Can be omitted for raw analysis output                  |
+
+**Validation Rule:** The pipeline must have at least 1 script across all phases combined.
+
+```javascript
+// Validation logic in run-pipeline.cjs
+const totalScripts = 
+  (config.gather_context?.length || 0) +
+  (config.process?.length || 0) +
+  (config.report?.length || 0);
+
+if (totalScripts < 1) {
+  throw new Error('Pipeline must have at least 1 script in any phase');
+}
+```
+
+### Valid Phase-Skipping Use Case Examples
+
+**1. Gather + Report (skip Process):**
+
+```yaml
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+process: []  # Skip
+report:
+  - scripts/report/dialogue-summary.cjs
+```
+
+→ Transcribe audio, generate dialogue summary (no persona evaluation)
+
+**2. Process Only (skip Gather + Report):**
+
+```yaml
+gather_context: []  # Skip
+process:
+  - scripts/process/video-chunks.cjs
+report: []  # Skip
+```
+
+→ Just run analysis, output raw JSON
+
+**3. Gather Only (skip Process + Report):**
+
+```yaml
+gather_context:
+  - scripts/get-context/get-metadata.cjs
+process: []  # Skip
+report: []  # Skip
+```
+
+→ Just extract metadata, done
 
 ### Script Ordering
 
@@ -261,13 +328,15 @@ interface ReportItem {
 ### Parallel Execution Syntax
 
 **Sequential (default):**
+
 ```yaml
 process:
   - scripts/process/video-chunks.cjs
-  - scripts/process/per-second.cjs  # Receives output from video-chunks
+  - scripts/process/video-per-second.cjs  # Receives output from video-chunks
 ```
 
 **Parallel:**
+
 ```yaml
 process:
   parallel:
@@ -282,11 +351,13 @@ process:
 ```
 
 **Parallel Use Cases:**
+
 - **Multi-persona swarm:** Same video, different personas analyzing simultaneously
 - **Multi-model analysis:** Same persona, different AI models
 - **Independent analyses:** Emotion + brand detection + OCR extraction
 
 **Phase Contracts:**
+
 - **Sequential:** Each script receives `{ ...previousOutput }` from prior script
 - **Parallel:** Each script receives base input only; outputs are merged after all complete
 
@@ -324,7 +395,7 @@ if (require.main === module) {
   // Parse CLI args and call run()
   const assetPath = process.argv[2];
   const outputDir = process.argv[3];
-  
+
   run({ assetPath, outputDir })
     .then(result => console.log('Complete:', result))
     .catch(console.error);
@@ -333,51 +404,28 @@ if (require.main === module) {
 
 ### Phase 1: Gather Context Scripts
 
-**Input Contract:**
+**Input Contract (Generic):**
+
 ```javascript
 {
-  assetPath: string,      // Absolute path to video/audio/image file
-  outputDir: string,      // Absolute path to output directory
-  settings?: object       // Global settings from config
+  assetPath: string,      // Path to source asset
+  outputDir: string,      // Where to write artifacts
+  config: object          // Pipeline config (optional metadata)
 }
 ```
 
-**Output Contract:**
+**Output Contract (Generic):**
+
 ```javascript
 {
-  contextArtifacts: {
-    dialogueData?: {      // From get-dialogue.cjs
-      dialogue_segments: Array<{
-        timestamp_start: string,
-        timestamp_end: string,
-        speaker: string,
-        text: string,
-        emotion: string,
-        delivery: string,
-        confidence: number
-      }>,
-      summary: string
-    },
-    musicData?: {         // From get-music.cjs
-      audio_segments: Array<{
-        timestamp_range: string,
-        description: string,
-        mood: string,
-        genre: string,
-        sfx: string[]
-      }>
-    },
-    metadata?: {          // From get-metadata.cjs
-      duration: number,
-      resolution: string,
-      codec: string,
-      fps: number
-    }
-  }
+  artifacts: object       // Script-defined structure (pipeline doesn't validate)
 }
 ```
+
+> **Note:** The specific structure of `artifacts` is defined by each script. See the "Example Script Contracts" section below for concrete examples.
 
 **Example: `scripts/get-context/get-dialogue.cjs`**
+
 ```javascript
 #!/usr/bin/env node
 
@@ -386,24 +434,24 @@ const path = require('path');
 const { spawn } = require('child_process');
 
 async function run(input) {
-  const { assetPath, outputDir, settings } = input;
-  
+  const { assetPath, outputDir, config } = input;
+
   console.log('🎤 Extracting dialogue from:', assetPath);
-  
+
   // Extract audio from video
   const tempDir = fs.mkdtempSync('/tmp/dialogue-');
   const audioPath = path.join(tempDir, 'audio.wav');
-  
+
   await extractAudio(assetPath, audioPath);
-  
+
   // Call API for transcription
   const dialogueData = await analyzeDialogue(audioPath);
-  
+
   // Cleanup
   fs.rmSync(tempDir, { recursive: true, force: true });
-  
+
   return {
-    contextArtifacts: {
+    artifacts: {
       dialogueData
     }
   };
@@ -433,64 +481,31 @@ module.exports = { run };
 
 ### Phase 2: Process Scripts
 
-**Input Contract:**
+**Input Contract (Generic):**
+
 ```javascript
 {
-  assetPath: string,          // Absolute path to video/audio/image file
-  contextArtifacts: {         // Output from Phase 1
-    dialogueData?: object,
-    musicData?: object,
-    metadata?: object
-  },
-  toolPath: string,           // Path to persona/tool config
-  toolVariables: {            // Selected lenses, persona settings
-    soulId: string,
-    goalId: string,
-    toolId: string,
-    selectedLenses: string[]
-  },
-  outputDir: string,          // Absolute path to output directory
-  settings?: object,          // Global settings from config
-  processArtifacts?: {        // Output from previous process script (if any)
-    chunkAnalysis?: object,
-    // ... other artifacts
-  }
+  assetPath: string,
+  outputDir: string,
+  artifacts: object,      // From previous phases (structure unknown to pipeline)
+  toolPath?: string,      // Optional: path to tool script
+  toolVariables?: object, // Optional: tool config
+  config: object
 }
 ```
 
-**Output Contract:**
+**Output Contract (Generic):**
+
 ```javascript
 {
-  processArtifacts: {
-    chunkAnalysis?: {       // From video-chunks.cjs
-      chunks: Array<{
-        chunkIndex: number,
-        startTime: number,
-        endTime: number,
-        analysis: string,
-        tokens: number,
-        contextUsed: object
-      }>,
-      totalTokens: number,
-      persona: object
-    },
-    perSecondData?: {       // From per-second.cjs
-      per_second_data: Array<{
-        timestamp: number,
-        patience: number,
-        boredom: number,
-        excitement: number,
-        scroll_risk: string,
-        visuals: string,
-        thought: string
-      }>,
-      totalTokens: number
-    }
-  }
+  artifacts: object       // Script-defined structure (pipeline doesn't validate)
 }
 ```
+
+> **Note:** The specific structure of `artifacts` is defined by each script. See the "Example Script Contracts" section below for concrete examples.
 
 **Example: `scripts/process/video-chunks.cjs`**
+
 ```javascript
 #!/usr/bin/env node
 
@@ -502,48 +517,47 @@ const videoUtils = require('../lib/video-utils.cjs');
 async function run(input) {
   const { 
     assetPath, 
-    contextArtifacts, 
+    artifacts,        // Generic: contains output from previous phases
     toolPath, 
     toolVariables,
     outputDir, 
-    settings,
-    processArtifacts 
+    config
   } = input;
-  
+
   console.log('🎬 Processing video chunks...');
-  
-  // Load persona configuration
+
+  // Load persona configuration (using paths, not IDs)
   const personaConfig = personaLoader.loadPersonaConfig(
-    toolVariables.soulId,
-    toolVariables.goalId,
-    toolVariables.toolId
+    toolVariables.soulPath,
+    toolVariables.goalPath
   );
-  
+
   // Get video duration
   const duration = await getDuration(assetPath);
-  const chunkDuration = settings?.chunk_duration || 8;
+  const chunkDuration = config?.chunk_duration || 8;
   const numChunks = Math.ceil(duration / chunkDuration);
-  
+
   const results = [];
   let previousSummary = '';
-  
+
   // Process each chunk
-  for (let i = 0; i < numChunks && i < (settings?.max_chunks || numChunks); i++) {
+  for (let i = 0; i < numChunks && i < (config?.max_chunks || numChunks); i++) {
     const startTime = i * chunkDuration;
     const endTime = Math.min(startTime + chunkDuration, duration);
-    
+
     // Extract relevant context for this chunk
+    // Note: Script validates that required artifacts exist
     const dialogueContext = getRelevantDialogue(
-      contextArtifacts.dialogueData, 
+      artifacts.dialogueData, 
       startTime, 
       endTime
     );
     const musicContext = getRelevantMusic(
-      contextArtifacts.musicData, 
+      artifacts.musicData, 
       startTime, 
       endTime
     );
-    
+
     // Analyze chunk with context
     const result = await analyzeChunk(
       assetPath, 
@@ -557,18 +571,18 @@ async function run(input) {
         toolVariables
       }
     );
-    
+
     results.push(result);
     previousSummary = result.summary;
   }
-  
+
   return {
-    processArtifacts: {
+    artifacts: {
       chunkAnalysis: {
         chunks: results,
         totalTokens: results.reduce((sum, r) => sum + r.tokens, 0),
         persona: {
-          id: toolVariables.soulId,
+          soulPath: toolVariables.soulPath,
           config: personaConfig
         }
       }
@@ -581,41 +595,118 @@ module.exports = { run };
 
 ### Phase 3: Report Scripts
 
-**Input Contract:**
+**Input Contract (Generic):**
+
 ```javascript
 {
-  processArtifacts: {       // Output from Phase 2
-    chunkAnalysis?: object,
-    perSecondData?: object
-  },
-  contextArtifacts: {       // Output from Phase 1
-    dialogueData?: object,
-    musicData?: object,
-    metadata?: object
-  },
-  outputDir: string,        // Absolute path to output directory
-  settings?: object         // Global settings from config
+  artifacts: object,      // From previous phases (structure unknown to pipeline)
+  outputDir: string
 }
 ```
 
-**Output Contract:**
+**Output Contract (Generic):**
+
 ```javascript
 {
-  reportFiles: {
-    main: string,           // Path to main report file
-    appendix?: string,      // Path to appendix file
-    charts?: string[],      // Paths to chart files
-    assets?: string[]       // Paths to asset files
-  },
-  summary: {
-    totalTokens: number,
-    duration: number,
-    keyMetrics: object
-  }
+  artifacts: object       // Script-defined structure (pipeline doesn't validate)
 }
 ```
+
+> **Note:** The specific structure of `artifacts` is defined by each script. See the "Example Script Contracts" section below for concrete examples.
+
+---
+
+## 📝 Example Script Contracts
+
+The pipeline uses generic contracts (shown above). Each script defines its own specific input/output structure. Below are examples of how scripts should document their contracts.
+
+### Example: Video Analysis Scripts
+
+**`scripts/get-context/get-dialogue.cjs`**
+
+```javascript
+// scripts/get-context/get-dialogue.cjs
+/**
+ * @input
+ * @property {string} assetPath - Video/audio file path
+ * @property {string} outputDir - Output directory path
+ * @property {object} config - Pipeline config (optional)
+ * 
+ * @output
+ * @property {object} artifacts.dialogueData - Transcription results
+ * @property {Array} artifacts.dialogueData.dialogue_segments - Dialogue segments
+ * @property {string} artifacts.dialogueData.summary - Summary text
+ */
+```
+
+**`scripts/process/video-chunks.cjs`**
+
+```javascript
+// scripts/process/video-chunks.cjs
+/**
+ * @input
+ * @property {string} assetPath - Video file path
+ * @property {string} outputDir - Output directory path
+ * @property {object} artifacts - Must include dialogueData from get-dialogue.cjs
+ * @property {string} toolPath - Path to emotion-lenses-tool.cjs
+ * @property {object} toolVariables - Must include lenses array
+ * @property {object} config - Pipeline config
+ * 
+ * @output
+ * @property {object} artifacts.chunkAnalysis - Array of chunk analysis results
+ * @property {Array} artifacts.chunkAnalysis.chunks - Chunk results
+ * @property {number} artifacts.chunkAnalysis.totalTokens - Token count
+ * @property {object} artifacts.chunkAnalysis.persona - Persona info
+ */
+```
+
+**`scripts/process/video-per-second.cjs`**
+
+```javascript
+// scripts/process/video-per-second.cjs
+/**
+ * @input
+ * @property {string} assetPath - Video file path
+ * @property {string} outputDir - Output directory path
+ * @property {object} artifacts - Must include chunkAnalysis from video-chunks.cjs
+ * @property {object} config - Pipeline config
+ * 
+ * @output
+ * @property {object} artifacts.perSecondData - Per-second emotion data
+ * @property {Array} artifacts.perSecondData.per_second_data - Second-by-second data
+ * @property {number} artifacts.perSecondData.totalTokens - Token count
+ */
+```
+
+### Script Documentation Pattern
+
+Scripts should document their contracts using JSDoc-style comments at the top of the file:
+
+```javascript
+// scripts/process/video-chunks.cjs
+/**
+ * @input
+ * @property {string} assetPath - Video file path
+ * @property {object} artifacts - Must include dialogueSummary from get-dialogue.cjs
+ * @property {string} toolPath - Path to emotion-lenses-tool.cjs
+ * @property {object} toolVariables - Must include lenses array
+ * 
+ * @output
+ * @property {object} artifacts.chunkAnalysis - Array of chunk analysis results
+ */
+```
+
+**Key Points:**
+
+- Scripts document their **own** input/output contracts
+- Scripts specify which artifacts they **require** from previous phases
+- The pipeline does **not** validate artifact structure — scripts do
+- Use clear `@property` annotations for each expected field
+
+---
 
 **Example: `scripts/report/evaluation.cjs`**
+
 ```javascript
 #!/usr/bin/env node
 
@@ -623,18 +714,19 @@ const fs = require('fs');
 const path = require('path');
 
 async function run(input) {
-  const { processArtifacts, contextArtifacts, outputDir, settings } = input;
-  
+  const { artifacts, outputDir, config } = input;
+
   console.log('📊 Generating evaluation report...');
-  
-  const { chunkAnalysis } = processArtifacts;
-  const { dialogueData, musicData } = contextArtifacts;
-  
+
+  // Extract artifacts from previous phases
+  const { chunkAnalysis } = artifacts;
+  const { dialogueData, musicData } = artifacts;
+
   // Calculate metrics
   const avgPatience = calculateAverage(chunkAnalysis, 'patience');
   const avgBoredom = calculateAverage(chunkAnalysis, 'boredom');
   const avgExcitement = calculateAverage(chunkAnalysis, 'excitement');
-  
+
   // Build report
   let report = `# Emotion Analysis Report\n\n`;
   report += `## Executive Summary\n\n`;
@@ -643,14 +735,16 @@ async function run(input) {
   report += `| Patience | ${avgPatience.toFixed(1)}/10 |\n`;
   report += `| Boredom | ${avgBoredom.toFixed(1)}/10 |\n`;
   report += `| Excitement | ${avgExcitement.toFixed(1)}/10 |\n`;
-  
+
   // Save report
   const reportPath = path.join(outputDir, 'FINAL-REPORT.md');
   fs.writeFileSync(reportPath, report);
-  
+
   return {
-    reportFiles: {
-      main: reportPath,
+    artifacts: {
+      reportFiles: {
+        main: reportPath
+      },
       summary: {
         totalTokens: chunkAnalysis.totalTokens,
         duration: chunkAnalysis.duration,
@@ -680,7 +774,7 @@ emotion-engine/
 │   │   │
 │   │   ├── process/               # ← Phase 2 scripts
 │   │   │   ├── video-chunks.cjs   # (from 03-analyze-chunks.cjs)
-│   │   │   ├── per-second.cjs     # (from 04-per-second-emotions.cjs)
+│   │   │   ├── video-per-second.cjs     # (from 04-per-second-emotions.cjs)
 │   │   │   ├── image-frames.cjs   # (new, for images)
 │   │   │   └── audio-segments.cjs # (new, for audio)
 │   │   │
@@ -714,17 +808,18 @@ emotion-engine/
 
 ### Script Mapping
 
-| Current Script | New Location | Phase | Notes |
-|----------------|--------------|-------|-------|
-| `server/01-extract-dialogue.cjs` | `server/scripts/get-context/get-dialogue.cjs` | Gather Context | Refactor to use `run(input)` interface |
-| `server/02-extract-music.cjs` | `server/scripts/get-context/get-music.cjs` | Gather Context | Refactor to use `run(input)` interface |
-| `server/03-analyze-chunks.cjs` | `server/scripts/process/video-chunks.cjs` | Process | Refactor to use `run(input)` interface |
-| `server/04-per-second-emotions.cjs` | `server/scripts/process/per-second.cjs` | Process | Refactor to use `run(input)` interface |
-| `server/generate-report.cjs` | `server/scripts/report/evaluation.cjs` | Report | Refactor to use `run(input)` interface |
+| Current Script                      | New Location                                  | Phase          | Notes                                  |
+| ----------------------------------- | --------------------------------------------- | -------------- | -------------------------------------- |
+| `server/01-extract-dialogue.cjs`    | `server/scripts/get-context/get-dialogue.cjs` | Gather Context | Refactor to use `run(input)` interface |
+| `server/02-extract-music.cjs`       | `server/scripts/get-context/get-music.cjs`    | Gather Context | Refactor to use `run(input)` interface |
+| `server/03-analyze-chunks.cjs`      | `server/scripts/process/video-chunks.cjs`     | Process        | Refactor to use `run(input)` interface |
+| `server/04-per-second-emotions.cjs` | `server/scripts/process/video-per-second.cjs`       | Process        | Refactor to use `run(input)` interface |
+| `server/generate-report.cjs`        | `server/scripts/report/evaluation.cjs`        | Report         | Refactor to use `run(input)` interface |
 
 ### Migration Steps
 
 1. **Create new directory structure:**
+   
    ```bash
    mkdir -p server/scripts/get-context
    mkdir -p server/scripts/process
@@ -733,45 +828,83 @@ emotion-engine/
    ```
 
 2. **Copy and refactor each script:**
+   
    - Move file to new location
    - Wrap main logic in `async function run(input) { ... }`
    - Update path resolution to use `input.assetPath` and `input.outputDir`
    - Export: `module.exports = { run }`
 
 3. **Update `run-pipeline.cjs`:**
+   
    - Replace hardcoded step array with config loading
    - Implement phase execution logic
    - Add artifact passing between phases
 
 4. **Create config files:**
+   
    - `configs/video-analysis.yaml`
    - `configs/image-analysis.yaml`
    - `configs/audio-analysis.yaml`
    - `configs/quick-test.yaml`
 
 5. **Test migration:**
-   ```bash
-   # Old way (still works during transition)
-   node server/run-pipeline.cjs video.mp4 output/
    
-   # New way
+   ```bash
+   # Old way (v5.0 - no longer supported in v6.0)
    node server/run-pipeline.cjs --config configs/video-analysis.yaml video.mp4 output/
+   
+   # New way (v6.0 - asset paths are in the YAML file)
+   node server/run-pipeline.cjs --config configs/video-analysis.yaml
    ```
 
 ---
 
 ## 🖥️ CLI Interface
 
-### YAML-Only Configuration (v3.0+)
+### YAML-Only Configuration (v4.0+)
 
-**The pipeline accepts ONLY a config file.** Inline CLI flags have been removed to simplify the interface and ensure reproducibility.
+**The pipeline accepts ONLY a config file.** The YAML file contains ALL configuration including asset paths and output directory. CLI arguments for asset-path and output-dir have been removed.
 
 ```bash
-# Pipeline (YAML only)
-node server/run-pipeline.cjs --config configs/video-analysis.yaml video.mp4 output/
+# Pipeline (YAML only - asset paths are IN the YAML file)
+node server/run-pipeline.cjs --config configs/video-analysis.yaml
+```
+
+**Example YAML with asset paths:**
+```yaml
+# configs/video-analysis.yaml
+asset:
+  inputPath: ".cache/videos/cod.mp4"
+  outputDir: "output/cod-test"
+
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+  - scripts/get-context/get-music.cjs
+
+process:
+  sequential:
+    - script: scripts/process/video-chunks.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: /path/to/SOUL.md
+        goalPath: /path/to/GOAL.md
+        variables:
+          lenses: [patience, boredom, excitement]
+    - script: scripts/process/video-per-second.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: /path/to/SOUL.md
+        goalPath: /path/to/GOAL.md
+        variables:
+          lenses: [patience, boredom, excitement]
+
+report:
+  - scripts/report/evaluation.cjs
+  - scripts/report/graphs.cjs
 ```
 
 **Benefits of YAML-Only:**
+
 - ✅ Single configuration interface (no sync hell between CLI and config)
 - ✅ YAML configs are reproducible (commit to git)
 - ✅ YAML handles complex nested structures better than flags
@@ -795,48 +928,46 @@ node bin/run-analysis.js \
   --tool emotion-lenses \
   --lens patience \
   --lens boredom \
-  --chunks 4 \
-  video.mp4 output/
+  --chunks 4
 
-# Wrapper generates YAML and calls pipeline:
-# node server/run-pipeline.cjs --config /tmp/generated-config.yaml video.mp4 output/
+# Wrapper generates YAML (with asset paths) and calls pipeline:
+# node server/run-pipeline.cjs --config /tmp/generated-config.yaml
 ```
 
 ### CLI Arguments
 
 ```
-Usage: node server/run-pipeline.cjs --config <config-file> <asset-path> <output-dir>
+Usage: node server/run-pipeline.cjs --config <config-file>
 
 Options:
   --config <path>           Path to YAML/JSON config file (REQUIRED)
   --verbose                 Enable verbose logging
   --dry-run                 Validate config without executing
 
-Arguments:
-  <asset-path>              Path to video/image/audio file
-  <output-dir>              Output directory for results
+Note: Asset paths (inputPath and outputDir) are specified in the YAML config file,
+not as CLI arguments. This ensures reproducible, source-controllable pipeline runs.
 ```
 
 ### Example Commands
 
 ```bash
-# Full video analysis
-node server/run-pipeline.cjs --config configs/video-analysis.yaml video.mp4 output/
+# Full video analysis (asset paths are in the YAML file)
+node server/run-pipeline.cjs --config configs/video-analysis.yaml
 
 # Image analysis
-node server/run-pipeline.cjs --config configs/image-analysis.yaml image.png output/
+node server/run-pipeline.cjs --config configs/image-analysis.yaml
 
 # Audio analysis
-node server/run-pipeline.cjs --config configs/audio-analysis.yaml audio.mp3 output/
+node server/run-pipeline.cjs --config configs/audio-analysis.yaml
 
 # Quick test (minimal pipeline)
-node server/run-pipeline.cjs --config configs/quick-test.yaml video.mp4 output/
+node server/run-pipeline.cjs --config configs/quick-test.yaml
 
 # Multi-persona swarm (parallel execution)
-node server/run-pipeline.cjs --config configs/multi-persona-swarm.yaml video.mp4 output/
+node server/run-pipeline.cjs --config configs/multi-persona-swarm.yaml
 
 # Multi-analysis (parallel independent analyses)
-node server/run-pipeline.cjs --config configs/multi-analysis.yaml video.mp4 output/
+node server/run-pipeline.cjs --config configs/multi-analysis.yaml
 ```
 
 ### CLI Implementation Sketch
@@ -854,7 +985,7 @@ const yaml = require('js-yaml');
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  
+
   // Load config from file or build from CLI args
   let config;
   if (args.config) {
@@ -862,55 +993,53 @@ async function main() {
   } else {
     config = buildConfigFromArgs(args);
   }
-  
+
   // Validate config
   validateConfig(config);
-  
+
   const assetPath = path.resolve(args._[0]);
   const outputDir = path.resolve(args._[1]);
-  
+
   // Ensure output directory exists
   fs.mkdirSync(outputDir, { recursive: true });
-  
-  // Initialize artifacts
-  let contextArtifacts = {};
-  let processArtifacts = {};
-  
+
+  // Initialize artifacts (generic, accumulates across phases)
+  let artifacts = {};
+
   // Phase 1: Gather Context (0-N scripts)
   if (config.gather_context) {
     console.log('📥 Phase 1: Gather Context');
     for (const scriptPath of config.gather_context) {
-      const result = await runScript(scriptPath, { assetPath, outputDir, settings: config.settings });
-      contextArtifacts = { ...contextArtifacts, ...result.contextArtifacts };
+      const result = await runScript(scriptPath, { assetPath, outputDir, config });
+      artifacts = { ...artifacts, ...result.artifacts };
     }
   }
-  
+
   // Phase 2: Process (1-N scripts, sequential)
   console.log('⚙️  Phase 2: Process');
   for (const scriptPath of config.process) {
     const result = await runScript(scriptPath, {
       assetPath,
-      contextArtifacts,
+      artifacts,              // Generic: all previous artifacts
       toolPath: config.tool_path,
       toolVariables: config.tool_variables,
       outputDir,
-      settings: config.settings,
-      processArtifacts  // Pass previous output
+      config
     });
-    processArtifacts = { ...processArtifacts, ...result.processArtifacts };
+    artifacts = { ...artifacts, ...result.artifacts };
   }
-  
+
   // Phase 3: Report (1-N scripts)
   console.log('📊 Phase 3: Report');
   for (const scriptPath of config.report) {
-    await runScript(scriptPath, {
-      processArtifacts,
-      contextArtifacts,
+    const result = await runScript(scriptPath, {
+      artifacts,
       outputDir,
-      settings: config.settings
+      config
     });
+    artifacts = { ...artifacts, ...result.artifacts };
   }
-  
+
   console.log('✅ Pipeline complete!');
 }
 
@@ -942,11 +1071,24 @@ function buildConfigFromArgs(args) {
 }
 
 function validateConfig(config) {
-  if (!config.process || config.process.length === 0) {
-    throw new Error('At least one process script is required');
-  }
-  if (!config.report || config.report.length === 0) {
-    throw new Error('At least one report script is required');
+  // Count total scripts across all phases
+  const gatherCount = Array.isArray(config.gather_context) 
+    ? config.gather_context.length 
+    : config.gather_context?.parallel?.length || 0;
+
+  const processCount = Array.isArray(config.process) 
+    ? config.process.length 
+    : config.process?.parallel?.length || 0;
+
+  const reportCount = Array.isArray(config.report) 
+    ? config.report.length 
+    : config.report?.parallel?.length || 0;
+
+  const totalScripts = gatherCount + processCount + reportCount;
+
+  // Only validation: at least 1 script somewhere in the pipeline
+  if (totalScripts < 1) {
+    throw new Error('Pipeline must have at least 1 script in any phase');
   }
 }
 
@@ -992,7 +1134,7 @@ gather_context:
 # Sequential process (default): each script receives output from previous
 process:
   - scripts/process/video-chunks.cjs
-  - scripts/process/per-second.cjs
+  - scripts/process/video-per-second.cjs
 
 report:
   - scripts/report/evaluation.cjs
@@ -1005,14 +1147,18 @@ settings:
   api_request_delay: 1000
   chunk_quality: "medium"
 
+asset:
+  inputPath: ".cache/videos/cod.mp4"
+  outputDir: "output/cod-test"
+
 tool_variables:
-  soulId: "impatient-teenager"
-  goalId: "video-ad-evaluation"
-  toolId: "emotion-tracking"
-  selectedLenses:
-    - patience
-    - boredom
-    - excitement
+  soulPath: "/absolute/path/to/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+  goalPath: "/absolute/path/to/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+  variables:
+    lenses:
+      - patience
+      - boredom
+      - excitement
 ```
 
 ### `configs/video-analysis.yaml` — Parallel Multi-Persona Swarm (Example)
@@ -1070,14 +1216,18 @@ report:
 settings:
   api_request_delay: 1000
 
+asset:
+  inputPath: ".cache/images/sample.png"
+  outputDir: "output/image-test"
+
 tool_variables:
-  soulId: "impatient-teenager"
-  goalId: "image-evaluation"
-  toolId: "emotion-tracking"
-  selectedLenses:
-    - patience
-    - boredom
-    - excitement
+  soulPath: "/absolute/path/to/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+  goalPath: "/absolute/path/to/personas/goals/image-evaluation/1.0.0/GOAL.md"
+  variables:
+    lenses:
+      - patience
+      - boredom
+      - excitement
 ```
 
 ### `configs/audio-analysis.yaml` — Audio-Only Pipeline
@@ -1100,13 +1250,17 @@ settings:
   segment_duration: 30
   api_request_delay: 1000
 
+asset:
+  inputPath: ".cache/audio/podcast.mp3"
+  outputDir: "output/audio-test"
+
 tool_variables:
-  soulId: "impatient-teenager"
-  goalId: "audio-evaluation"
-  toolId: "emotion-tracking"
-  selectedLenses:
-    - patience
-    - boredom
+  soulPath: "/absolute/path/to/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+  goalPath: "/absolute/path/to/personas/goals/audio-evaluation/1.0.0/GOAL.md"
+  variables:
+    lenses:
+      - patience
+      - boredom
 ```
 
 ### `configs/quick-test.yaml` — Minimal Pipeline
@@ -1169,6 +1323,7 @@ settings:
 ```
 
 **Use Case:** Compare how different personas react to the same content. Useful for:
+
 - Testing content against multiple audience archetypes
 - Getting diverse perspectives on the same video
 - A/B testing persona responses
@@ -1208,11 +1363,94 @@ settings:
 ```
 
 **Use Case:** Run multiple independent analysis types on the same video:
+
 - **Emotion analysis:** How does the persona feel?
 - **Brand detection:** What brands/logos appear?
 - **OCR extraction:** What text is visible on screen?
 
 **Benefit:** 3x faster than running sequentially (no dependencies between analyses).
+
+### `configs/dialogue-transcription.yaml` — Gather + Report (Skip Process)
+
+```yaml
+name: "Dialogue Transcription Pipeline"
+description: "Transcribe audio and generate summary (no persona evaluation)"
+version: "1.0"
+
+# Gather dialogue from audio/video
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+
+# Skip persona-based processing
+process: []
+
+# Generate transcription summary report
+report:
+  - scripts/report/dialogue-summary.cjs
+
+settings:
+  api_request_delay: 1000
+```
+
+**Use Case:** Transcribe meetings, interviews, or podcasts without persona evaluation. Outputs clean dialogue transcript with speaker identification and summary.
+
+### `configs/raw-analysis.yaml` — Process Only (Skip Gather + Report)
+
+```yaml
+name: "Raw Analysis Pipeline"
+description: "Run analysis and output raw JSON (no context gathering, no report)"
+version: "1.0"
+
+# Skip context gathering
+gather_context: []
+
+# Run analysis only
+process:
+  - scripts/process/video-chunks.cjs
+
+# Skip report generation (raw JSON output only)
+report: []
+
+settings:
+  chunk_duration: 8
+  max_chunks: 4
+  api_request_delay: 1000
+
+asset:
+  inputPath: ".cache/videos/cod.mp4"
+  outputDir: "output/raw-test"
+
+tool_variables:
+  soulPath: "/absolute/path/to/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+  goalPath: "/absolute/path/to/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+  variables:
+    lenses:
+      - patience
+      - boredom
+      - excitement
+```
+
+**Use Case:** Generate raw analysis data for downstream processing, integration with other tools, or custom reporting pipelines.
+
+### `configs/metadata-extract.yaml` — Gather Only (Skip Process + Report)
+
+```yaml
+name: "Metadata Extraction Pipeline"
+description: "Extract video/audio metadata only (no analysis, no report)"
+version: "1.0"
+
+# Extract metadata only
+gather_context:
+  - scripts/get-context/get-metadata.cjs
+
+# Skip processing
+process: []
+
+# Skip report generation
+report: []
+```
+
+**Use Case:** Quick metadata extraction for cataloging, indexing, or validation purposes. Outputs duration, resolution, codec, fps, etc.
 
 ---
 
@@ -1221,16 +1459,31 @@ settings:
 ### 1. Asset Agnostic Pipeline
 
 The pipeline orchestrator doesn't know if it's processing video, image, audio, or text. It just:
+
 - Passes `assetPath` to scripts
 - Scripts decide what to do with the asset
 
 **Benefit:** Easy to add new asset types without changing orchestrator.
 
-### 2. Sequential Process Phase
+### 2. Minimal Validation
 
-Process scripts run sequentially (not parallel), allowing each script to use output from previous scripts.
+Pipeline requires only 1 script total (in any phase). All phases are optional.
 
-**Example:** `per-second.cjs` can use `chunkAnalysis` from `video-chunks.cjs`.
+**Example:** You can run a pipeline with just a Process script, or just Gather + Report, or any combination.
+
+**Validation Rule:**
+```javascript
+const totalScripts = 
+  (config.gather_context?.length || 0) +
+  (config.process?.length || 0) +
+  (config.report?.length || 0);
+
+if (totalScripts < 1) {
+  throw new Error('Pipeline must have at least 1 script in any phase');
+}
+```
+
+**Benefit:** Maximum flexibility for specialized workflows (transcription-only, analysis-only, metadata-only, etc.).
 
 ### 3. Flexible Context Gathering
 
@@ -1250,6 +1503,32 @@ Pipeline behavior is defined in YAML/JSON config files, not hardcoded.
 
 **Benefit:** Easy to create custom pipelines without code changes.
 
+### 6. AI Provider Abstraction
+
+Tools use a provider-agnostic interface for AI completions. API keys are injected at runtime via environment variables (never in YAML).
+
+**Interface:**
+```javascript
+const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js');
+
+const response = await aiProvider.complete({
+  prompt: buildPrompt(input),
+  model: process.env.AI_MODEL,
+  apiKey: process.env.AI_API_KEY,  // Injected at runtime
+  baseUrl: process.env.AI_BASE_URL,
+});
+```
+
+**Providers:** OpenRouter, Anthropic, Gemini, OpenAI, Azure OpenAI (planned)
+
+**Benefits:**
+- ✅ Git-safe configs (no API keys in YAML)
+- ✅ Easy provider switching (change env var)
+- ✅ Provider-agnostic tools
+- ✅ Standardized interface across all AI operations
+
+**See:** [`docs/AI-PROVIDER-ARCHITECTURE.md`](AI-PROVIDER-ARCHITECTURE.md) for full specification.
+
 ---
 
 ## 🧪 Testing Strategy
@@ -1263,13 +1542,14 @@ const { run } = require('../../server/scripts/get-context/get-dialogue.cjs');
 test('get-dialogue extracts dialogue from video', async () => {
   const input = {
     assetPath: '/path/to/test-video.mp4',
-    outputDir: '/tmp/test-output'
+    outputDir: '/tmp/test-output',
+    config: {}
   };
-  
+
   const result = await run(input);
-  
-  expect(result.contextArtifacts.dialogueData).toBeDefined();
-  expect(result.contextArtifacts.dialogueData.dialogue_segments).toBeInstanceOf(Array);
+
+  expect(result.artifacts.dialogueData).toBeDefined();
+  expect(result.artifacts.dialogueData.dialogue_segments).toBeInstanceOf(Array);
 });
 ```
 

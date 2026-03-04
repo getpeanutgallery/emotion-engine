@@ -1,7 +1,7 @@
-# MIGRATION GUIDE: v1.0 → v2.0 → v3.0 → v4.0
+# MIGRATION GUIDE: v1.0 → v2.0 → v3.0 → v4.0 → v5.0 → v6.0
 
 **Date:** 2026-03-04  
-**Breaking Change:** Yes (v1.0→v2.0, v2.0→v3.0, and v3.0→v4.0)  
+**Breaking Change:** Yes (v1.0→v2.0, v2.0→v3.0, v3.0→v4.0, v4.0→v5.0, and v5.0→v6.0)  
 **Estimated Migration Time:** 30-60 minutes per version
 
 ---
@@ -14,6 +14,362 @@
 | v2.0 | Pluggable tools | `TOOL_ID` (required) | 30-60 min |
 | v3.0 | Path-based | `SOUL_PATH`, `GOAL_PATH`, `TOOL_PATH` | 30-60 min |
 | v4.0 | YAML-only + Parallel | `--config` only | 15-30 min |
+| v5.0 | All phases optional | `--config` only | 5-10 min |
+| v6.0 | Self-contained YAML + script naming | `asset.inputPath`, `asset.outputDir` in YAML | 15-30 min |
+| v7.0 | AI Provider Abstraction | `AI_PROVIDER`, `AI_API_KEY`, `AI_MODEL` | 15-30 min |
+
+---
+
+## v5.0 → v6.0 Migration (Self-Contained YAML + Script Naming)
+
+**Date:** 2026-03-04  
+**Breaking Change:** Yes (CLI arguments removed, YAML structure changed)  
+**Estimated Migration Time:** 15-30 minutes
+
+### What Changed
+
+#### v5.0 (Old Architecture)
+
+- CLI accepted asset path and output dir as arguments: `node server/run-pipeline.cjs --config config.yaml video.mp4 output/`
+- `tool_variables` used ID-based references: `soulId`, `goalId`, `toolId`, `selectedLenses`
+- Script names were ambiguous: `per-second.cjs` (what asset type?)
+- YAML configs were not fully self-contained
+
+#### v6.0 (New Architecture)
+
+- **YAML is completely self-contained**: Asset paths are in the YAML file, not CLI arguments
+- **CLI is simplified**: `node server/run-pipeline.cjs --config config.yaml` (no additional args)
+- **`tool_variables` uses paths, not IDs**: `soulPath`, `goalPath`, `variables.lenses`
+- **Script names are explicit**: `video-per-second.cjs`, `audio-segments.cjs`, `image-frames.cjs`
+- **Process phase uses `sequential:` or `parallel:` keys** for clarity
+
+### Step-by-Step Migration
+
+#### Step 1: Update Config Files - Add Asset Section
+
+**OLD (v5.0):**
+```yaml
+# configs/video-analysis.yaml
+name: "Full Video Analysis Pipeline"
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+process:
+  - scripts/process/video-chunks.cjs
+  - scripts/process/per-second.cjs
+report:
+  - scripts/report/evaluation.cjs
+settings:
+  chunk_duration: 8
+tool_variables:
+  soulId: "impatient-teenager"
+  goalId: "video-ad-evaluation"
+  toolId: "emotion-tracking"
+  selectedLenses:
+    - patience
+    - boredom
+    - excitement
+```
+
+**NEW (v6.0):**
+```yaml
+# configs/video-analysis.yaml
+name: "Full Video Analysis Pipeline"
+
+# Asset configuration (self-contained - no CLI args needed)
+asset:
+  inputPath: ".cache/videos/cod.mp4"
+  outputDir: "output/cod-test"
+
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+
+process:
+  sequential:
+    - script: scripts/process/video-chunks.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: "/absolute/path/to/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+        goalPath: "/absolute/path/to/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+        variables:
+          lenses:
+            - patience
+            - boredom
+            - excitement
+    - script: scripts/process/video-per-second.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: "/absolute/path/to/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+        goalPath: "/absolute/path/to/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+        variables:
+          lenses:
+            - patience
+            - boredom
+            - excitement
+
+report:
+  - scripts/report/evaluation.cjs
+
+settings:
+  chunk_duration: 8
+```
+
+#### Step 2: Update CLI Usage
+
+**OLD (v5.0):**
+```bash
+node server/run-pipeline.cjs --config configs/video-analysis.yaml video.mp4 output/
+```
+
+**NEW (v6.0):**
+```bash
+node server/run-pipeline.cjs --config configs/video-analysis.yaml
+```
+
+**Note:** The asset path and output directory are now specified in the YAML file under the `asset:` key.
+
+#### Step 3: Rename Scripts
+
+Rename the following scripts for clarity:
+
+```bash
+# Video processing scripts
+mv server/scripts/process/per-second.cjs server/scripts/process/video-per-second.cjs
+
+# (Future: audio and image scripts follow same pattern)
+# mv server/scripts/process/per-second.cjs server/scripts/process/audio-per-second.cjs
+# mv server/scripts/process/frames.cjs server/scripts/process/image-frames.cjs
+```
+
+Update all references in config files and documentation.
+
+#### Step 4: Update tool_variables Structure
+
+**OLD (v5.0):**
+```yaml
+tool_variables:
+  soulId: "impatient-teenager"
+  goalId: "video-ad-evaluation"
+  toolId: "emotion-tracking"
+  selectedLenses:
+    - patience
+    - boredom
+    - excitement
+```
+
+**NEW (v6.0):**
+```yaml
+tool_variables:
+  soulPath: "/absolute/path/to/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+  goalPath: "/absolute/path/to/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+  variables:
+    lenses:
+      - patience
+      - boredom
+      - excitement
+```
+
+**Key changes:**
+- `soulId` → `soulPath` (absolute path to SOUL.md file)
+- `goalId` → `goalPath` (absolute path to GOAL.md file)
+- `toolId` → **removed** (tool is specified via `toolPath` in each process script)
+- `selectedLenses` → `variables.lenses` (nested under `variables` key)
+
+#### Step 5: Update Process Phase Syntax
+
+**OLD (v5.0):**
+```yaml
+process:
+  - scripts/process/video-chunks.cjs
+  - scripts/process/per-second.cjs
+```
+
+**NEW (v6.0):**
+```yaml
+process:
+  sequential:
+    - script: scripts/process/video-chunks.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: /path/to/SOUL.md
+        goalPath: /path/to/GOAL.md
+        variables:
+          lenses: [patience, boredom, excitement]
+    - script: scripts/process/video-per-second.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: /path/to/SOUL.md
+        goalPath: /path/to/GOAL.md
+        variables:
+          lenses: [patience, boredom, excitement]
+```
+
+**For parallel execution:**
+```yaml
+process:
+  parallel:
+    - script: scripts/process/video-chunks.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: /path/to/SOUL.md
+        goalPath: /path/to/GOAL.md
+        variables:
+          lenses: [patience, boredom]
+    - script: scripts/process/video-chunks.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: /path/to/other/SOUL.md
+        goalPath: /path/to/other/GOAL.md
+        variables:
+          lenses: [excitement, joy]
+```
+
+### Migration Checklist
+
+- [ ] Add `asset.inputPath` and `asset.outputDir` to all config files
+- [ ] Remove asset path and output dir from CLI commands
+- [ ] Rename `per-second.cjs` → `video-per-second.cjs`
+- [ ] Update all `tool_variables` to use `soulPath`, `goalPath`, `variables`
+- [ ] Remove `toolId` from configs (use `toolPath` in each process script instead)
+- [ ] Add `sequential:` or `parallel:` key to process phase
+- [ ] Add `script:` and `toolPath:` keys to each process script entry
+- [ ] Update documentation and examples
+
+### Benefits of v6.0
+
+- ✅ **Fully reproducible runs** — Commit the config, re-run anytime with identical results
+- ✅ **No CLI args to forget** — Everything is in the YAML file
+- ✅ **Clear script naming** — `video-per-second.cjs` vs `audio-per-second.cjs`
+- ✅ **Path-based configuration** — No ID resolution, explicit file paths
+- ✅ **CI/CD friendly** — Configs are source-controllable and environment-agnostic
+- ✅ **Easy to share** — Send a config file, not a config + CLI command
+
+### Breaking Changes Summary
+
+| Aspect | v5.0 | v6.0 | Migration Action |
+|--------|------|------|------------------|
+| CLI args | `--config file.yaml video.mp4 output/` | `--config file.yaml` | Move paths to YAML |
+| Asset paths | CLI arguments | `asset.inputPath`, `asset.outputDir` in YAML | Update configs |
+| `soulId` | Used | **Removed** | Replace with `soulPath` |
+| `goalId` | Used | **Removed** | Replace with `goalPath` |
+| `toolId` | Used | **Removed** | Use `toolPath` in each script |
+| `selectedLenses` | Top-level | `variables.lenses` | Nest under `variables` |
+| Script names | `per-second.cjs` | `video-per-second.cjs` | Rename files and update references |
+| Process syntax | Array of strings | `sequential:` or `parallel:` with objects | Update structure |
+
+---
+
+## v4.0 → v5.0 Migration (All Phases Optional)
+
+**Date:** 2026-03-04  
+**Breaking Change:** No (backward compatible)  
+**Estimated Migration Time:** 5-10 minutes
+
+### What Changed
+
+#### v4.0 (Old Architecture)
+
+- Process phase was REQUIRED (1-N scripts)
+- Report phase was REQUIRED (1-N scripts)
+- Gather Context phase was optional (0-N scripts)
+- Validation: Each required phase must have at least 1 script
+
+#### v5.0 (New Architecture)
+
+- **All phases are optional** (0-N scripts each)
+- **Only validation:** At least 1 script somewhere in the pipeline
+- Enables flexible pipeline configurations
+
+### Step-by-Step Migration
+
+#### Step 1: Update Existing Configs (Optional)
+
+Existing configs continue to work without changes. You can now skip phases:
+
+```yaml
+# OLD (v4.0): Required to have process and report
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+process:
+  - scripts/process/video-chunks.cjs
+report:
+  - scripts/report/evaluation.cjs
+
+# NEW (v5.0): Can skip phases
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+process: []  # Skip
+report:
+  - scripts/report/dialogue-summary.cjs
+```
+
+#### Step 2: New Config Files Available
+
+Use the new example configs as starting points:
+
+1. **`configs/dialogue-transcription.yaml`** — Gather + Report (skip Process)
+2. **`configs/raw-analysis.yaml`** — Process only (skip Gather + Report)
+3. **`configs/metadata-extract.yaml`** — Gather only (skip Process + Report)
+
+#### Step 3: Update Validation Logic (If Customizing Pipeline)
+
+If you've customized `run-pipeline.cjs`, update the validation:
+
+```javascript
+// OLD (v4.0):
+if (!config.process || config.process.length === 0) {
+  throw new Error('At least one process script is required');
+}
+if (!config.report || config.report.length === 0) {
+  throw new Error('At least one report script is required');
+}
+
+// NEW (v5.0):
+const totalScripts = 
+  (config.gather_context?.length || 0) +
+  (config.process?.length || 0) +
+  (config.report?.length || 0);
+
+if (totalScripts < 1) {
+  throw new Error('Pipeline must have at least 1 script in any phase');
+}
+```
+
+### Valid Use Cases
+
+**1. Gather + Report (skip Process):**
+```yaml
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+process: []
+report:
+  - scripts/report/dialogue-summary.cjs
+```
+→ Transcribe audio, generate dialogue summary (no persona evaluation)
+
+**2. Process Only (skip Gather + Report):**
+```yaml
+gather_context: []
+process:
+  - scripts/process/video-chunks.cjs
+report: []
+```
+→ Just run analysis, output raw JSON
+
+**3. Gather Only (skip Process + Report):**
+```yaml
+gather_context:
+  - scripts/get-context/get-metadata.cjs
+process: []
+report: []
+```
+→ Just extract metadata, done
+
+### Benefits
+
+- ✅ **Flexible pipelines** — Skip phases you don't need
+- ✅ **Simpler configs** — Only include what you use
+- ✅ **Specialized workflows** — Transcription-only, analysis-only, metadata-only
+- ✅ **Backward compatible** — Existing configs work unchanged
 
 ---
 
@@ -538,6 +894,208 @@ If you encounter issues:
 - `docs/PLUGGABLE-TOOL-ARCHITECTURE.md` — Full architecture spec
 - `tools/lib/tool-interface.js` — Tool contract definitions
 - `tools/emotion-lenses-tool.cjs` — Example tool implementation
+
+---
+
+## v6.0 → v7.0 Migration (AI Provider Abstraction)
+
+**Date:** 2026-03-04  
+**Breaking Change:** No (backward compatible, but recommended)  
+**Estimated Migration Time:** 15-30 minutes
+
+### What Changed
+
+#### v6.0 (Old Architecture)
+
+- Tools implemented provider-specific API logic directly
+- API keys sometimes stored in YAML configs (insecure)
+- Hard to switch between AI providers (OpenRouter, Anthropic, Gemini, etc.)
+- No standardized AI interface
+
+#### v7.0 (New Architecture)
+
+- **AI Provider Abstraction Layer**: Standardized interface for all AI providers
+- **Git-safe configs**: API keys injected via environment variables (never in YAML)
+- **Provider-agnostic tools**: Tools use `ai-provider-interface.js`, not provider-specific code
+- **Easy provider switching**: Change `AI_PROVIDER` env var to switch providers
+
+### Step-by-Step Migration
+
+#### Step 1: Add AI Provider Section to Configs
+
+**OLD (v6.0):**
+```yaml
+# configs/video-analysis.yaml
+asset:
+  inputPath: ".cache/videos/cod.mp4"
+  outputDir: "output/cod-test"
+
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+
+process:
+  sequential:
+    - script: scripts/process/video-chunks.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: /path/to/SOUL.md
+        goalPath: /path/to/GOAL.md
+        variables:
+          lenses: [patience, boredom, excitement]
+```
+
+**NEW (v7.0):**
+```yaml
+# configs/video-analysis.yaml
+asset:
+  inputPath: ".cache/videos/cod.mp4"
+  outputDir: "output/cod-test"
+
+# AI provider configuration (git-safe - secrets injected via env vars)
+ai:
+  provider: openrouter  # Provider name
+  model: qwen/qwen-3.5-397b-a17b  # Model identifier
+  # apiKey: NEVER put in YAML - use environment variables
+  # baseUrl: Optional, defaults to provider's standard endpoint
+
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+
+process:
+  sequential:
+    - script: scripts/process/video-chunks.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: /path/to/SOUL.md
+        goalPath: /path/to/GOAL.md
+        variables:
+          lenses: [patience, boredom, excitement]
+```
+
+#### Step 2: Set Environment Variables
+
+**Development (.env file):**
+```bash
+# .env (add to .gitignore)
+AI_PROVIDER=openrouter
+AI_API_KEY=sk-or-your-api-key-here
+AI_MODEL=qwen/qwen-3.5-397b-a17b
+AI_BASE_URL=https://openrouter.ai/api/v1  # Optional
+```
+
+**Production (GitHub Actions):**
+```yaml
+# .github/workflows/analyze.yml
+- name: Run Emotion Engine
+  env:
+    AI_PROVIDER: openrouter
+    AI_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+    AI_MODEL: qwen/qwen-3.5-397b-a17b
+    AI_BASE_URL: https://openrouter.ai/api/v1
+  run: |
+    node server/run-pipeline.cjs --config configs/video-analysis.yaml
+```
+
+#### Step 3: Update Tool Scripts (If Customizing)
+
+**OLD (v6.0 - provider-specific logic in tool):**
+```javascript
+// tools/emotion-lenses-tool.cjs
+const axios = require('axios');
+
+async function analyze(input) {
+  const response = await axios.post(
+    'https://openrouter.ai/api/v1/chat/completions',
+    {
+      model: 'qwen/qwen-3.5-397b-a17b',
+      messages: [{ role: 'user', content: buildPrompt(input) }],
+    },
+    {
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      },
+    }
+  );
+  
+  return parseResponse(response.data.choices[0].message.content);
+}
+```
+
+**NEW (v7.0 - provider-agnostic):**
+```javascript
+// tools/emotion-lenses-tool.cjs
+const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js');
+
+async function analyze(input) {
+  const response = await aiProvider.complete({
+    prompt: buildPrompt(input),
+    model: process.env.AI_MODEL || 'qwen/qwen-3.5-397b-a17b',
+    apiKey: process.env.AI_API_KEY,  // Injected at runtime
+    baseUrl: process.env.AI_BASE_URL,
+  });
+  
+  return parseResponse(response.content);
+}
+```
+
+#### Step 4: Update .gitignore
+
+Add runtime config files to `.gitignore`:
+
+```gitignore
+# .gitignore
+
+# Runtime configs with secrets
+.pipeline-runtime.yaml
+*.runtime.yaml
+.runtime-config.json
+
+# Environment files with secrets
+.env.local
+.env.*.local
+```
+
+### Migration Checklist
+
+- [ ] Add `ai:` section to all config files
+- [ ] Set `AI_PROVIDER`, `AI_API_KEY`, `AI_MODEL` environment variables
+- [ ] Update custom tool scripts to use `ai-provider-interface.js`
+- [ ] Remove any hardcoded API keys from YAML configs
+- [ ] Update `.gitignore` to exclude secret-containing files
+- [ ] Update CI/CD pipelines to inject secrets via environment variables
+- [ ] Test with different provider (optional): `AI_PROVIDER=anthropic`
+
+### Benefits of v7.0
+
+- ✅ **Git-safe configs** — No API keys in YAML, safe to commit
+- ✅ **Easy provider switching** — Change `AI_PROVIDER` env var
+- ✅ **Provider-agnostic tools** — Tools work with any provider
+- ✅ **Standardized interface** — All providers implement same contract
+- ✅ **Multi-provider support** — OpenRouter, Anthropic, Gemini, OpenAI, Azure (planned)
+
+### Breaking Changes Summary
+
+| Aspect | v6.0 | v7.0 | Migration Action |
+|--------|------|------|------------------|
+| AI logic location | In tools | In `ai-providers/` | Update tools to use interface |
+| API key storage | Sometimes in YAML | Environment variables only | Move to env vars |
+| Provider switching | Code changes | Change env var | Update `.env` or CI config |
+| Config structure | No `ai:` section | `ai:` section added | Add to configs |
+
+### Available Providers
+
+| Provider | Env Var | Model Format | Example |
+|----------|---------|--------------|---------|
+| OpenRouter | `AI_PROVIDER=openrouter` | `publisher/model` | `qwen/qwen-3.5-397b-a17b` |
+| Anthropic | `AI_PROVIDER=anthropic` | `model-name-date` | `claude-3-5-sonnet-20241022` |
+| Gemini | `AI_PROVIDER=gemini` | `model-name` | `gemini-1.5-pro` |
+| OpenAI | `AI_PROVIDER=openai` | `model-name` | `gpt-4-turbo` |
+
+### Documentation
+
+- **Full Specification**: [`docs/AI-PROVIDER-ARCHITECTURE.md`](AI-PROVIDER-ARCHITECTURE.md)
+- **Interface Definition**: `server/lib/ai-providers/ai-provider-interface.js`
+- **Provider Implementations**: `server/lib/ai-providers/providers/*.cjs`
 
 ---
 

@@ -5,6 +5,16 @@ name: "Multi-Analysis Pipeline"
 description: "Run independent analyses (emotion + brand + OCR) simultaneously"
 version: "1.0"
 
+# Asset configuration (self-contained - no CLI args needed)
+asset:
+  inputPath: ".cache/videos/cod.mp4"
+  outputDir: "output/multi-test"
+
+# AI provider configuration (git-safe - secrets injected via env vars)
+ai:
+  provider: openrouter
+  model: qwen/qwen-3.5-397b-a17b
+
 # Phase 1: Gather context from video
 gather_context:
   - scripts/get-context/get-dialogue.cjs
@@ -16,9 +26,15 @@ process:
   parallel:
     # Emotion analysis with persona
     - script: scripts/process/video-chunks.cjs
-      soulPath: /home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/impatient-teenager/1.0.0/SOUL.md
-      toolVariables:
-        lenses: ["patience", "boredom", "excitement"]
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+        goalPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+        variables:
+          lenses:
+            - patience
+            - boredom
+            - excitement
     
     # Brand detection (no persona needed)
     - script: scripts/process/brand-detection.cjs

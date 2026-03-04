@@ -1,0 +1,41 @@
+# Quick Test Pipeline
+# Minimal pipeline for testing (1 process script only)
+
+name: "Quick Test Pipeline"
+description: "Minimal pipeline for testing (1 process script only)"
+version: "1.0"
+
+# Asset configuration (self-contained - no CLI args needed)
+asset:
+  inputPath: ".cache/videos/test.mp4"
+  outputDir: "output/quick-test"
+
+# AI provider configuration (git-safe - secrets injected via env vars)
+ai:
+  provider: openrouter
+  model: qwen/qwen-3.5-397b-a17b
+
+# Skip context gathering for speed
+gather_context: []
+
+process:
+  sequential:
+    - script: scripts/process/video-chunks.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+        goalPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+        variables:
+          lenses:
+            - patience
+            - boredom
+            - excitement
+
+report:
+  - scripts/report/evaluation.cjs
+
+# Global settings
+settings:
+  chunk_duration: 8
+  max_chunks: 2  # Only 2 chunks for fast testing
+  api_request_delay: 500
