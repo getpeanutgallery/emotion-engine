@@ -287,6 +287,11 @@ async function main(outputDir) {
     // Build comprehensive report
     console.log('📝 Generating final report...\n');
 
+    // Check if analyzed data is a subset of total video duration
+    const analyzedDuration = perSecondData ? perSecondData.per_second_data?.length || 0 : chunksData.chunks?.length || 0;
+    const totalDuration = chunksData.duration;
+    const isPartialAnalysis = analyzedDuration > 0 && analyzedDuration < totalDuration;
+
     let report = `# Emotion Analysis Report
 `;
     report += `# ${path.basename(chunksData.video, path.extname(chunksData.video))}\n\n`;
@@ -301,6 +306,15 @@ async function main(outputDir) {
     if (personaDesc) report += ` — ${personaDesc}`;
     report += `\n\n`;
     report += `**Total Duration:** ${chunksData.duration}s  \n`;
+
+    // Add subset warning if analysis covers less than full video
+    if (isPartialAnalysis) {
+        report += `\n⚠️ **Note:** Analysis covers ${analyzedDuration}s of ${totalDuration}s total video`;
+        if (analyzedDuration < totalDuration * 0.5) {
+            report += ` _(less than 50% of video analyzed)_`;
+        }
+        report += `\n`;
+    }
 
     // Calculate total tokens from all pipeline steps
     const perSecondTokens = perSecondData?.totalTokens || 0;
@@ -461,6 +475,13 @@ async function main(outputDir) {
     // Emotional Journey Timeline
     report += `---\n\n`;
     report += `## 📈 Emotional Journey Timeline\n\n`;
+    
+    // Add subset warning near timeline if analysis is partial
+    if (isPartialAnalysis) {
+        report += `> ⚠️ **Partial Data:** This timeline shows ${analyzedDuration}s of ${totalDuration}s total video. `;
+        report += `Some portions may not be included due to MAX_CHUNKS limits or testing mode.\n\n`;
+    }
+    
     report += `| Time | Patience | Boredom | Excitement | Notes |\n`;
     report += `|------|----------|---------|------------|-------|\n`;
 
@@ -893,6 +914,18 @@ async function generatePerSecondAppendix(outputDir, chunksData, perSecondData, d
     appendix += `**Video:** ${path.basename(chunksData.video, path.extname(chunksData.video))}\n\n`;
     appendix += `**Generated:** ${new Date().toISOString()}\n\n`;
     appendix += `**Total Duration:** ${duration} seconds\n\n`;
+    
+    // Add subset warning if per-second data covers less than full video
+    const analyzedSeconds = data.length;
+    const isPartialPerSecond = analyzedSeconds < duration;
+    
+    if (isPartialPerSecond) {
+        appendix += `⚠️ **Partial Analysis:** This appendix covers ${analyzedSeconds} seconds of ${duration}s total video.\n\n`;
+        appendix += `> **Why is this incomplete?** The analysis was limited by MAX_CHUNKS settings or testing mode. `;
+        appendix += `Only the first ${analyzedSeconds} seconds were analyzed to reduce token costs and processing time.\n\n`;
+        appendix += `---\n\n`;
+    }
+    
     appendix += `---\n\n`;
 
     // Summary Statistics
