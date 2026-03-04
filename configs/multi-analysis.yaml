@@ -1,0 +1,47 @@
+# Multi-Analysis Pipeline
+# Run independent analyses (emotion + brand + OCR) in parallel
+
+name: "Multi-Analysis Pipeline"
+description: "Run independent analyses (emotion + brand + OCR) simultaneously"
+version: "1.0"
+
+# Phase 1: Gather context from video
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+  - scripts/get-context/get-music.cjs
+
+# Phase 2: Process video (PARALLEL - Independent Analyses)
+# Each analysis runs independently, outputs merged after completion
+process:
+  parallel:
+    # Emotion analysis with persona
+    - script: scripts/process/video-chunks.cjs
+      soulPath: /home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/impatient-teenager/1.0.0/SOUL.md
+      toolVariables:
+        lenses: ["patience", "boredom", "excitement"]
+    
+    # Brand detection (no persona needed)
+    - script: scripts/process/brand-detection.cjs
+    
+    # OCR text extraction (no persona needed)
+    - script: scripts/process/ocr-extraction.cjs
+
+# Phase 3: Generate reports
+report:
+  - scripts/report/evaluation.cjs
+  - scripts/report/graphs.cjs
+  - scripts/report/assets.cjs
+
+# Global settings
+settings:
+  chunk_duration: 8          # seconds per chunk
+  max_chunks: 4              # limit chunks for testing
+  api_request_delay: 1000    # milliseconds between API calls
+  chunk_quality: "medium"    # low|medium|high
+
+# Use Case: Run multiple independent analysis types on the same video
+# - Emotion analysis: How does the persona feel?
+# - Brand detection: What brands/logos appear?
+# - OCR extraction: What text is visible on screen?
+#
+# Benefit: 3x faster than running sequentially (no dependencies between analyses)

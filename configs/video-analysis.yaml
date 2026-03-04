@@ -1,0 +1,77 @@
+# Full Video Analysis Pipeline (Sequential)
+# This is the default configuration - scripts run one after another
+
+name: "Full Video Analysis Pipeline"
+description: "Complete emotion analysis with dialogue, music, and video processing"
+version: "1.0"
+
+# Phase 1: Gather context from video
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+  - scripts/get-context/get-music.cjs
+
+# Phase 2: Process video (SEQUENTIAL - default)
+# Each script receives output from the previous script
+process:
+  - scripts/process/video-chunks.cjs
+  - scripts/process/per-second.cjs
+
+# Phase 3: Generate reports
+report:
+  - scripts/report/evaluation.cjs
+  - scripts/report/graphs.cjs
+  - scripts/report/assets.cjs
+
+# Global settings
+settings:
+  chunk_duration: 8          # seconds per chunk
+  max_chunks: 4              # limit chunks for testing
+  api_request_delay: 1000    # milliseconds between API calls
+  chunk_quality: "medium"    # low|medium|high
+
+# Tool/persona configuration
+tool_variables:
+  soulId: "impatient-teenager"
+  goalId: "video-ad-evaluation"
+  toolId: "emotion-tracking"
+  selectedLenses:
+    - patience
+    - boredom
+    - excitement
+
+---
+# ALTERNATIVE: Parallel Multi-Persona Swarm (Uncomment to use)
+# All personas analyze the same video simultaneously
+#
+# name: "Multi-Persona Swarm Analysis"
+# description: "Same video analyzed by 3 different personas in parallel"
+# version: "1.0"
+#
+# gather_context:
+#   - scripts/get-context/get-dialogue.cjs
+#   - scripts/get-context/get-music.cjs
+#
+# # PARALLEL execution - all scripts run simultaneously
+# process:
+#   parallel:
+#     - script: scripts/process/video-chunks.cjs
+#       soulPath: /path/to/impatient-teenager/SOUL.md
+#       toolVariables:
+#         lenses: ["patience", "boredom"]
+#     - script: scripts/process/video-chunks.cjs
+#       soulPath: /path/to/skeptical-cfo/SOUL.md
+#       toolVariables:
+#         lenses: ["patience", "boredom", "skepticism"]
+#     - script: scripts/process/video-chunks.cjs
+#       soulPath: /path/to/optimistic-gen-z/SOUL.md
+#       toolVariables:
+#         lenses: ["excitement", "fomo", "joy"]
+#
+# report:
+#   - scripts/report/evaluation.cjs
+#   - scripts/report/graphs.cjs
+#
+# settings:
+#   chunk_duration: 8
+#   max_chunks: 4
+#   api_request_delay: 1000
