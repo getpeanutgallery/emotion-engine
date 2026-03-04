@@ -12,6 +12,10 @@ const fs = require('fs');
 const path = require('path');
 const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 
+// Access canvas through pnpm structure
+const canvasPath = path.join(__dirname, '..', 'node_modules', '.pnpm', 'canvas@3.2.1', 'node_modules', 'canvas');
+const { createCanvas } = require(canvasPath);
+
 // Get repo root (parent of server/ directory)
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -764,7 +768,7 @@ async function generateLineChartPng(data, labels, title, color, width = 800, hei
 
 /**
  * Generate PNG bar chart for scroll risk using Chart.js and chartjs-node-canvas
- * @param {Array} data - Array of risk values (0-4)
+ * @param {Array} data - Array of risk values (0-3)
  * @param {Array} labels - Array of labels (timestamps)
  * @param {string} title - Chart title
  * @param {number} width - Chart width
@@ -807,6 +811,50 @@ async function generateBarChartPng(data, labels, title, width = 800, height = 40
                 },
                 legend: {
                     display: false
+                },
+                annotation: {
+                    annotations: {
+                        // Green band for Low risk zone (0-0.99)
+                        lowZone: {
+                            type: 'box',
+                            yMin: 0,
+                            yMax: 1,
+                            backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                            borderColor: 'rgba(0, 255, 0, 0.3)',
+                            borderWidth: 1,
+                            drawTime: 'beforeDatasetsDraw'
+                        },
+                        // Yellow band for Medium risk zone (1-1.99)
+                        mediumZone: {
+                            type: 'box',
+                            yMin: 1,
+                            yMax: 2,
+                            backgroundColor: 'rgba(255, 255, 0, 0.1)',
+                            borderColor: 'rgba(255, 255, 0, 0.3)',
+                            borderWidth: 1,
+                            drawTime: 'beforeDatasetsDraw'
+                        },
+                        // Orange band for High risk zone (2-2.99)
+                        highZone: {
+                            type: 'box',
+                            yMin: 2,
+                            yMax: 3,
+                            backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                            borderColor: 'rgba(255, 165, 0, 0.3)',
+                            borderWidth: 1,
+                            drawTime: 'beforeDatasetsDraw'
+                        },
+                        // Red band for SCROLLING zone (3-3.5)
+                        scrollingZone: {
+                            type: 'box',
+                            yMin: 3,
+                            yMax: 3.5,
+                            backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                            borderColor: 'rgba(255, 0, 0, 0.3)',
+                            borderWidth: 1,
+                            drawTime: 'beforeDatasetsDraw'
+                        }
+                    }
                 }
             },
             scales: {
@@ -822,15 +870,22 @@ async function generateBarChartPng(data, labels, title, width = 800, height = 40
                 },
                 y: {
                     min: 0,
-                    max: 4,
+                    max: 3,
                     title: {
                         display: true,
-                        text: 'Risk Level'
+                        text: 'Risk Level (Severity)'
                     },
                     ticks: {
                         stepSize: 1,
                         callback: function(value) {
-                            return riskLabels[value] || value;
+                            // Show categorical labels at each integer level
+                            const labels = {
+                                0: 'Low',
+                                1: 'Medium',
+                                2: 'High',
+                                3: 'SCROLLING'
+                            };
+                            return labels[value] || '';
                         }
                     }
                 }
@@ -872,16 +927,17 @@ async function generatePngCharts(outputDir, data, duration) {
         console.log('   ✅ patience-timeline.png generated');
         
         // 4. Scroll Risk Timeline (Bar Chart)
+        // Map risk levels to numeric values: low=0, medium=1, high=2, SCROLLING=3
         const scrollRiskData = data.map(s => {
             switch(s.scroll_risk) {
-                case 'SCROLLING': return 3;
+                case 'SCROLLING': return 3;  // Highest severity
                 case 'high': return 2;
                 case 'medium': return 1;
                 case 'low': return 0;
                 default: return 0;
             }
         });
-        const scrollRiskPng = await generateBarChartPng(scrollRiskData, labels, 'Scroll Risk Timeline (Red = Critical Risk)');
+        const scrollRiskPng = await generateBarChartPng(scrollRiskData, labels, 'Scroll Risk Timeline');
         fs.writeFileSync(path.join(outputDir, 'scroll-risk-timeline.png'), scrollRiskPng);
         console.log('   ✅ scroll-risk-timeline.png generated');
         
@@ -1109,6 +1165,19 @@ async function generatePerSecondAppendix(outputDir, chunksData, perSecondData, d
 
     // Correlation Analysis
     appendix += `## 🔍 Correlation Analysis\n\n`;
+    
+    // Add explanatory text before correlations
+    appendix += `### How to Read Correlations\n\n`;
+    appendix += `Correlation measures how two emotions move together:\n\n`;
+    appendix += `- **Negative correlation** (-1.0): When one goes UP, the other goes DOWN\n`;
+    appendix += `  - Example: Patience ↔ Boredom should be negative (bored = impatient)\n\n`;
+    appendix += `- **Positive correlation** (+1.0): Both move in same direction\n`;
+    appendix += `  - Example: Patience ↔ Excitement should be positive (excited = patient)\n\n`;
+    appendix += `- **Near zero** (0): No relationship - emotions are independent\n\n`;
+    appendix += `**Strength guide**:\n`;
+    appendix += `- ±0.7 to ±1.0 = Strong correlation\n`;
+    appendix += `- ±0.3 to ±0.7 = Moderate correlation\n`;
+    appendix += `- 0 to ±0.3 = Weak or no correlation\n\n`;
     appendix += `### Emotion Correlations\n\n`;
 
     // Calculate simple correlations
@@ -1131,15 +1200,86 @@ async function generatePerSecondAppendix(outputDir, chunksData, perSecondData, d
     const peCorr = patienceExcitementSum / (n * 10 * 10);
     const beCorr = boredomExcitementSum / (n * 10 * 10);
 
+    // Generate correlation visualizations
+    const visualizationsDir = path.join(REPO_ROOT, 'visualizations');
+    if (!fs.existsSync(visualizationsDir)) {
+        fs.mkdirSync(visualizationsDir, { recursive: true });
+    }
+
+    // Generate correlation matrix heatmap
+    const matrixImagePath = path.join(visualizationsDir, 'correlation-matrix.png');
+    generateCorrelationMatrix(pbCorr, peCorr, beCorr, matrixImagePath);
+
+    // Generate scatter plots
+    const pbScatterPath = path.join(visualizationsDir, 'patience-vs-boredom.png');
+    const peScatterPath = path.join(visualizationsDir, 'patience-vs-excitement.png');
+    const beScatterPath = path.join(visualizationsDir, 'boredom-vs-excitement.png');
+    
+    generateScatterPlot(data, 'boredom', 'patience', 'Patience vs Boredom', pbScatterPath, pbCorr);
+    generateScatterPlot(data, 'excitement', 'patience', 'Patience vs Excitement', peScatterPath, peCorr);
+    generateScatterPlot(data, 'excitement', 'boredom', 'Boredom vs Excitement', beScatterPath, beCorr);
+
+    // Add visual reference to appendix
+    appendix += `![Correlation Matrix](../visualizations/correlation-matrix.png)\n\n`;
+    appendix += `**Scatter Plots**:\n`;
+    appendix += `- ![Patience vs Boredom](../visualizations/patience-vs-boredom.png)\n`;
+    appendix += `- ![Patience vs Excitement](../visualizations/patience-vs-excitement.png)\n`;
+    appendix += `- ![Boredom vs Excitement](../visualizations/boredom-vs-excitement.png)\n\n`;
+
     appendix += `| Emotion Pair | Correlation | Interpretation |\n`;
     appendix += `|--------------|-------------|----------------|\n`;
     appendix += `| Patience ↔ Boredom | ${pbCorr.toFixed(2)} | ${pbCorr < -0.5 ? 'Strong negative (expected)' : pbCorr < 0 ? 'Weak negative' : 'Positive (unexpected)'} |\n`;
     appendix += `| Patience ↔ Excitement | ${peCorr.toFixed(2)} | ${peCorr > 0.5 ? 'Strong positive' : peCorr > 0 ? 'Weak positive' : 'No correlation'} |\n`;
     appendix += `| Boredom ↔ Excitement | ${beCorr.toFixed(2)} | ${beCorr < -0.5 ? 'Strong negative (expected)' : beCorr < 0 ? 'Weak negative' : 'No correlation'} |\n\n`;
 
+    // Add interpretation guide after the table
+    appendix += `### What These Correlations Mean\n\n`;
+    
+    // Interpret patience-boredom correlation
+    const pbStrength = Math.abs(pbCorr) >= 0.7 ? 'Strong' : Math.abs(pbCorr) >= 0.3 ? 'Moderate' : 'Weak';
+    const pbDirection = pbCorr < 0 ? 'negative' : 'positive';
+    const pbExpected = pbCorr < -0.5 ? '✅ Expected' : pbCorr < 0 ? '⚠️ Weak but expected' : '❌ Unexpected';
+    appendix += `- **Patience ↔ Boredom: ${pbCorr.toFixed(2)}** (${pbStrength} ${pbDirection}) ${pbExpected}\n`;
+    if (pbCorr < 0) {
+        appendix += `  - As boredom increases, patience crashes\n`;
+        appendix += `  - Shows consistent persona scoring\n`;
+    } else {
+        appendix += `  - Unexpected: patience should decrease with boredom\n`;
+    }
+    appendix += `\n`;
+
+    // Interpret patience-excitement correlation
+    const peStrength = Math.abs(peCorr) >= 0.7 ? 'Strong' : Math.abs(peCorr) >= 0.3 ? 'Moderate' : 'Weak';
+    const peDirection = peCorr < 0 ? 'negative' : 'positive';
+    const peExpected = peCorr > 0.5 ? '✅ Expected' : peCorr > 0 ? '⚠️ Weak but expected' : '❌ Unexpected';
+    appendix += `- **Patience ↔ Excitement: ${peCorr.toFixed(2)}** (${peStrength} ${peDirection}) ${peExpected}\n`;
+    if (peCorr > 0) {
+        appendix += `  - Excited moments make persona more patient\n`;
+        appendix += `  - Content engagement drives tolerance\n`;
+    } else {
+        appendix += `  - Unexpected: excitement should increase patience\n`;
+    }
+    appendix += `\n`;
+
+    // Interpret boredom-excitement correlation
+    const beStrength = Math.abs(beCorr) >= 0.7 ? 'Strong' : Math.abs(beCorr) >= 0.3 ? 'Moderate' : 'Weak';
+    const beDirection = beCorr < 0 ? 'negative' : 'positive';
+    const beExpected = beCorr < -0.5 ? '✅ Expected' : beCorr < 0 ? '⚠️ Weak but expected' : '❌ Unexpected';
+    appendix += `- **Boredom ↔ Excitement: ${beCorr.toFixed(2)}** (${beStrength} ${beDirection}) ${beExpected}\n`;
+    if (beCorr < 0) {
+        appendix += `  - High excitement = low boredom (opposite ends)\n`;
+        appendix += `  - Shows clear emotional differentiation\n`;
+    } else {
+        appendix += `  - Unexpected: boredom and excitement should be opposites\n`;
+    }
+    appendix += `\n`;
+
     appendix += `### Key Insights\n\n`;
 
     const insights = [];
+
+    // Add insight about correlation visuals
+    insights.push(`📊 **Visual Analysis:** Correlation matrix and scatter plots generated in \`visualizations/\` folder - see charts above for intuitive understanding of emotion relationships.`);
 
     if (avgBoredom > 6) {
         insights.push(`⚠️ **High overall boredom** (${avgBoredom.toFixed(1)}/10) suggests pacing issues throughout the video.`);
@@ -1193,6 +1333,364 @@ async function generatePerSecondAppendix(outputDir, chunksData, perSecondData, d
     console.log('✅ Per-second appendix generated!');
     console.log(`   Location: ${appendixPath}`);
     console.log(`   Size: ${(fs.statSync(appendixPath).size / 1024).toFixed(1)} KB\n`);
+}
+
+/**
+ * Generate correlation matrix heatmap
+ */
+function generateCorrelationMatrix(pbCorr, peCorr, beCorr, outputPath) {
+    const width = 400;
+    const height = 400;
+    const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height });
+
+    const correlationData = {
+        labels: ['Patience', 'Boredom', 'Excitement'],
+        datasets: [{
+            label: 'Correlation Matrix',
+            data: [
+                // Patience row
+                { x: 0, y: 0, v: 1.00 },
+                { x: 1, y: 0, v: pbCorr },
+                { x: 2, y: 0, v: peCorr },
+                // Boredom row
+                { x: 0, y: 1, v: pbCorr },
+                { x: 1, y: 1, v: 1.00 },
+                { x: 2, y: 1, v: beCorr },
+                // Excitement row
+                { x: 0, y: 2, v: peCorr },
+                { x: 1, y: 2, v: beCorr },
+                { x: 2, y: 2, v: 1.00 }
+            ],
+            backgroundColor: (context) => {
+                const value = context.raw?.v;
+                if (value === undefined) return '#ffffff';
+                if (value === 1.00) return '#e0e0e0'; // Diagonal
+                if (value > 0.7) return '#2ecc71';     // Strong positive
+                if (value > 0.3) return '#58d68d';     // Moderate positive
+                if (value > 0) return '#f9e79f';       // Weak positive
+                if (value > -0.3) return '#f9e79f';    // Weak negative
+                if (value > -0.7) return '#e74c3c';    // Moderate negative
+                return '#c0392b';                       // Strong negative
+            }
+        }]
+    };
+
+    const configuration = {
+        type: 'matrix',
+        data: correlationData,
+        options: {
+            responsive: false,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => {
+                            const labels = ['Patience', 'Boredom', 'Excitement'];
+                            const xLabel = labels[context.raw?.x || 0];
+                            const yLabel = labels[context.raw?.y || 0];
+                            return `${xLabel} vs ${yLabel}: ${context.raw?.v?.toFixed(2)}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    type: 'linear',
+                    min: -0.5,
+                    max: 2.5,
+                    ticks: {
+                        stepSize: 1,
+                        callback: (value) => ['Patience', 'Boredom', 'Excitement'][value]
+                    },
+                    title: { display: true, text: 'X Axis' }
+                },
+                y: {
+                    type: 'linear',
+                    min: -0.5,
+                    max: 2.5,
+                    ticks: {
+                        stepSize: 1,
+                        callback: (value) => ['Patience', 'Boredom', 'Excitement'][value]
+                    },
+                    title: { display: true, text: 'Y Axis' },
+                    reverse: true
+                }
+            }
+        },
+        plugins: [{
+            id: 'textAnnotation',
+            afterDatasetDraw: (chart) => {
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                chart.data.datasets[0].data.forEach(point => {
+                    const xScale = chart.scales.x;
+                    const yScale = chart.scales.y;
+                    const x = xScale.getPixelForValue(point.x);
+                    const y = yScale.getPixelForValue(point.y);
+                    
+                    ctx.fillStyle = point.v === 1.00 ? '#333333' : '#ffffff';
+                    ctx.fillText(point.v.toFixed(2), x, y);
+                });
+                
+                ctx.restore();
+            }
+        }]
+    };
+
+    // Fallback: Create simple heatmap using canvas drawing
+    const canvas = { width, height };
+    const imageBuffer = createSimpleCorrelationMatrix(pbCorr, peCorr, beCorr, width, height);
+    fs.writeFileSync(outputPath, imageBuffer);
+}
+
+/**
+ * Create simple correlation matrix using raw canvas operations
+ */
+function createSimpleCorrelationMatrix(pbCorr, peCorr, beCorr, width, height) {
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    const labels = ['Patience', 'Boredom', 'Excitement'];
+    const cellSize = Math.min(width, height) / 3;
+    const padding = 60;
+    const matrixSize = cellSize * 3;
+    const offsetX = (width - matrixSize) / 2;
+    const offsetY = (height - matrixSize) / 2;
+
+    // Background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+
+    // Title
+    ctx.font = 'bold 18px Arial';
+    ctx.fillStyle = '#2c3e50';
+    ctx.textAlign = 'center';
+    ctx.fillText('Emotion Correlation Matrix', width / 2, 30);
+
+    // Draw cells
+    const correlations = [
+        [1.00, pbCorr, peCorr],
+        [pbCorr, 1.00, beCorr],
+        [peCorr, beCorr, 1.00]
+    ];
+
+    for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) {
+            const x = offsetX + col * cellSize;
+            const y = offsetY + row * cellSize;
+            const value = correlations[row][col];
+
+            // Cell background color
+            if (value === 1.00) {
+                ctx.fillStyle = '#e0e0e0';
+            } else if (value > 0.7) {
+                ctx.fillStyle = '#2ecc71';
+            } else if (value > 0.3) {
+                ctx.fillStyle = '#58d68d';
+            } else if (value > 0) {
+                ctx.fillStyle = '#f9e79f';
+            } else if (value > -0.3) {
+                ctx.fillStyle = '#f9e79f';
+            } else if (value > -0.7) {
+                ctx.fillStyle = '#e74c3c';
+            } else {
+                ctx.fillStyle = '#c0392b';
+            }
+
+            ctx.fillRect(x + 2, y + 2, cellSize - 4, cellSize - 4);
+
+            // Text value
+            ctx.font = 'bold 16px Arial';
+            ctx.fillStyle = value === 1.00 ? '#333333' : '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(value.toFixed(2), x + cellSize / 2, y + cellSize / 2);
+        }
+    }
+
+    // Axis labels
+    ctx.font = '14px Arial';
+    ctx.fillStyle = '#2c3e50';
+    
+    // X-axis labels
+    labels.forEach((label, i) => {
+        ctx.save();
+        ctx.translate(offsetX + i * cellSize + cellSize / 2, offsetY + matrixSize + 20);
+        ctx.rotate(-Math.PI / 4);
+        ctx.textAlign = 'right';
+        ctx.fillText(label, 0, 0);
+        ctx.restore();
+    });
+
+    // Y-axis labels
+    labels.forEach((label, i) => {
+        ctx.textAlign = 'right';
+        ctx.fillText(label, offsetX - 10, offsetY + i * cellSize + cellSize / 2);
+    });
+
+    // Legend
+    const legendX = width - 120;
+    const legendY = 60;
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Legend:', legendX, legendY);
+    
+    const legendItems = [
+        { color: '#c0392b', label: 'Strong -' },
+        { color: '#e74c3c', label: 'Moderate -' },
+        { color: '#f9e79f', label: 'Weak' },
+        { color: '#58d68d', label: 'Moderate +' },
+        { color: '#2ecc71', label: 'Strong +' }
+    ];
+
+    legendItems.forEach((item, i) => {
+        ctx.fillStyle = item.color;
+        ctx.fillRect(legendX, legendY + 15 + i * 20, 15, 15);
+        ctx.fillStyle = '#333333';
+        ctx.fillText(item.label, legendX + 20, legendY + 27 + i * 20);
+    });
+
+    return canvas.toBuffer('image/png');
+}
+
+/**
+ * Generate scatter plot for two emotions
+ */
+function generateScatterPlot(data, xKey, yKey, title, outputPath, correlation) {
+    const width = 400;
+    const height = 400;
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    const padding = 50;
+    const plotWidth = width - padding * 2;
+    const plotHeight = height - padding * 2;
+
+    // Background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+
+    // Title
+    ctx.font = 'bold 16px Arial';
+    ctx.fillStyle = '#2c3e50';
+    ctx.textAlign = 'center';
+    ctx.fillText(title, width / 2, 25);
+
+    // Add correlation value
+    ctx.font = '12px Arial';
+    ctx.fillStyle = '#7f8c8d';
+    ctx.fillText(`r = ${correlation.toFixed(2)}`, width / 2, 42);
+
+    // Find min/max for scaling
+    const xValues = data.map(d => d[xKey]);
+    const yValues = data.map(d => d[yKey]);
+    const xMin = Math.min(...xValues);
+    const xMax = Math.max(...xValues);
+    const yMin = Math.min(...yValues);
+    const yMax = Math.max(...yValues);
+
+    // Draw axes
+    ctx.strokeStyle = '#95a5a6';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, height - padding);
+    ctx.lineTo(width - padding, height - padding);
+    ctx.stroke();
+
+    // Axis labels
+    ctx.font = '12px Arial';
+    ctx.fillStyle = '#2c3e50';
+    ctx.textAlign = 'center';
+    ctx.fillText(xKey.charAt(0).toUpperCase() + xKey.slice(1), width / 2, height - 15);
+    
+    ctx.save();
+    ctx.translate(15, height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.fillText(yKey.charAt(0).toUpperCase() + yKey.slice(1), 0, 0);
+    ctx.restore();
+
+    // Draw grid lines
+    ctx.strokeStyle = '#ecf0f1';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 5; i++) {
+        const x = padding + (i / 5) * plotWidth;
+        const y = padding + (i / 5) * plotHeight;
+        
+        ctx.beginPath();
+        ctx.moveTo(x, padding);
+        ctx.lineTo(x, height - padding);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+
+        // Axis ticks
+        ctx.fillStyle = '#7f8c8d';
+        ctx.textAlign = 'center';
+        ctx.fillText((xMin + (i / 5) * (xMax - xMin)).toFixed(0), x, height - padding + 15);
+        ctx.textAlign = 'right';
+        ctx.fillText((yMin + (i / 5) * (yMax - yMin)).toFixed(0), padding - 5, y + 4);
+    }
+
+    // Calculate trend line
+    const xAvg = xValues.reduce((a, b) => a + b, 0) / xValues.length;
+    const yAvg = yValues.reduce((a, b) => a + b, 0) / yValues.length;
+    
+    let numerator = 0;
+    let denominator = 0;
+    for (let i = 0; i < data.length; i++) {
+        numerator += (xValues[i] - xAvg) * (yValues[i] - yAvg);
+        denominator += Math.pow(xValues[i] - xAvg, 2);
+    }
+    
+    const slope = denominator !== 0 ? numerator / denominator : 0;
+    const intercept = yAvg - slope * xAvg;
+
+    // Draw trend line
+    const x1 = 0;
+    const y1 = slope * x1 + intercept;
+    const x2 = 10;
+    const y2 = slope * x2 + intercept;
+
+    const screenX1 = padding + (x1 - xMin) / (xMax - xMin) * plotWidth;
+    const screenY1 = height - padding - (y1 - yMin) / (yMax - yMin) * plotHeight;
+    const screenX2 = padding + (x2 - xMin) / (xMax - xMin) * plotWidth;
+    const screenY2 = height - padding - (y2 - yMin) / (yMax - yMin) * plotHeight;
+
+    ctx.strokeStyle = correlation > 0 ? '#27ae60' : '#c0392b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(screenX1, screenY1);
+    ctx.lineTo(screenX2, screenY2);
+    ctx.stroke();
+
+    // Draw data points
+    data.forEach((point, i) => {
+        const x = padding + (point[xKey] - xMin) / (xMax - xMin) * plotWidth;
+        const y = height - padding - (point[yKey] - yMin) / (yMax - yMin) * plotHeight;
+
+        ctx.fillStyle = correlation > 0 ? 'rgba(39, 174, 96, 0.6)' : 'rgba(192, 57, 43, 0.6)';
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    // Border
+    ctx.strokeStyle = '#bdc3c7';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(padding, padding, plotWidth, plotHeight);
+
+    const buffer = canvas.toBuffer('image/png');
+    fs.writeFileSync(outputPath, buffer);
 }
 
 // Export for programmatic use
