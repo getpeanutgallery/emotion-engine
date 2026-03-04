@@ -1,7 +1,7 @@
-# MIGRATION GUIDE: v1.0 → v2.0 → v3.0 → v4.0 → v5.0 → v6.0
+# MIGRATION GUIDE: v1.0 → v2.0 → v3.0 → v4.0 → v5.0 → v6.0 → v7.0 → v8.0
 
 **Date:** 2026-03-04  
-**Breaking Change:** Yes (v1.0→v2.0, v2.0→v3.0, v3.0→v4.0, v4.0→v5.0, and v5.0→v6.0)  
+**Breaking Change:** Yes (v1.0→v2.0, v2.0→v3.0, v3.0→v4.0, v4.0→v5.0, v5.0→v6.0, v6.0→v7.0, v7.0→v8.0)  
 **Estimated Migration Time:** 30-60 minutes per version
 
 ---
@@ -17,10 +17,233 @@
 | v5.0 | All phases optional | `--config` only | 5-10 min |
 | v6.0 | Self-contained YAML + script naming | `asset.inputPath`, `asset.outputDir` in YAML | 15-30 min |
 | v7.0 | AI Provider Abstraction | `AI_PROVIDER`, `AI_API_KEY`, `AI_MODEL` | 15-30 min |
+| v8.0 | Multi-Modal + Storage Abstraction | `ATTACHMENTS`, `STORAGE_PROVIDER` | 30-60 min |
 
 ---
 
-## v5.0 → v6.0 Migration (Self-Contained YAML + Script Naming)
+## v7.0 → v8.0 Migration (Multi-Modal AI + Storage Abstraction)
+
+**Date:** 2026-03-04  
+**Breaking Change:** No (backward compatible, new features added)  
+**Estimated Migration Time:** 30-60 minutes
+
+### What Changed
+
+#### v7.0 (Old Architecture)
+
+- AI providers only supported text prompts
+- No multi-modal input support (video, audio, images)
+- Scripts wrote directly to filesystem (tight coupling)
+- No storage abstraction layer
+- Hard to switch between local and cloud storage
+
+#### v8.0 (New Architecture)
+
+- **Multi-modal AI support**: All providers support images, video, audio, files
+- **Storage abstraction**: Pluggable storage interface (local-fs, aws-s3, gcs, azure-blob)
+- **Provider-agnostic scripts**: Scripts don't know which storage backend they're using
+- **Enhanced AI interface**: `attachments` array for multi-modal inputs
+- **Git-safe configs**: Storage credentials in environment, not YAML
+
+### Step-by-Step Migration
+
+#### Step 1: Update AI Provider Calls (Optional - Backward Compatible)
+
+**OLD (v7.0 - Text Only):**
+```javascript
+const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js');
+
+const response = await aiProvider.complete({
+  prompt: 'Analyze this video chunk',
+  model: 'qwen/qwen-3.5-397b-a17b',
+  apiKey: process.env.AI_API_KEY,
+});
+```
+
+**NEW (v8.0 - Multi-Modal):**
+```javascript
+const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js');
+
+const response = await aiProvider.complete({
+  prompt: 'Analyze this video for emotional content',
+  model: 'openai/gpt-4o',
+  apiKey: process.env.OPENROUTER_API_KEY,
+  attachments: [
+    {
+      type: 'video',
+      path: 'https://example.com/video.mp4',
+      mimeType: 'video/mp4'
+    }
+  ]
+});
+```
+
+**Note:** Existing text-only calls continue to work without changes.
+
+#### Step 2: Add Storage Interface to Scripts
+
+**OLD (v7.0 - Direct Filesystem):**
+```javascript
+// scripts/process/video-chunks.cjs
+const fs = require('fs');
+const path = require('path');
+
+async function run(input) {
+  const { outputDir } = input;
+  
+  // Write directly to filesystem
+  const filePath = path.join(outputDir, 'chunk-1.json');
+  fs.writeFileSync(filePath, JSON.stringify(data));
+  
+  return { artifacts: { chunkAnalysis: [...] } };
+}
+```
+
+**NEW (v8.0 - Storage Abstraction):**
+```javascript
+// scripts/process/video-chunks.cjs
+const storage = require('../../server/lib/storage/storage-interface.js');
+
+async function run(input) {
+  const { outputDir } = input;
+  
+  // Write to storage (doesn't know if local or S3)
+  const artifactPath = await storage.write(
+    `output/${outputDir}/chunk-1.json`,
+    JSON.stringify(data)
+  );
+  
+  return { artifacts: { chunkAnalysis: [...] } };
+}
+```
+
+#### Step 3: Update Configuration Files
+
+**OLD (v7.0 - No Storage Config):**
+```yaml
+# configs/video-analysis.yaml
+asset:
+  inputPath: ".cache/videos/cod.mp4"
+  outputDir: "output/cod-test"
+
+ai:
+  provider: openrouter
+  model: qwen/qwen-3.5-397b-a17b
+```
+
+**NEW (v8.0 - With Storage Config):**
+```yaml
+# configs/video-analysis.yaml
+asset:
+  inputPath: ".cache/videos/cod.mp4"
+  outputDir: "output/cod-test"
+
+# Storage configuration (git-safe, no secrets)
+storage:
+  provider: aws-s3  # or local-fs, gcs, azure-blob
+  bucket: my-emotion-engine-bucket
+  region: us-east-1
+
+ai:
+  provider: openrouter
+  model: qwen/qwen-3.5-397b-a17b
+```
+
+#### Step 4: Set Environment Variables
+
+**Local Development:**
+```bash
+# .env file
+
+# Storage (default: local-fs)
+STORAGE_PROVIDER=local-fs
+
+# AI Provider
+AI_PROVIDER=openrouter
+AI_API_KEY=$OPENROUTER_API_KEY
+AI_MODEL=qwen/qwen-3.5-397b-a17b
+```
+
+**Production (AWS S3):**
+```bash
+# Environment variables (injected via secrets manager)
+
+# Storage
+STORAGE_PROVIDER=aws-s3
+AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+AWS_REGION=us-east-1
+S3_BUCKET=my-emotion-engine-bucket
+
+# AI Provider
+AI_PROVIDER=openrouter
+AI_API_KEY=$OPENROUTER_API_KEY
+AI_MODEL=qwen/qwen-3.5-397b-a17b
+```
+
+### New Files Created
+
+```
+server/lib/storage/
+├── storage-interface.js        # Contract definition
+├── providers/
+│   ├── local-fs.cjs            # Local filesystem (default)
+│   ├── aws-s3.cjs              # AWS S3
+│   ├── gcs.cjs                 # Google Cloud Storage (template)
+│   └── azure-blob.cjs          # Azure Blob Storage (template)
+```
+
+### Updated Files
+
+```
+server/lib/ai-providers/
+├── ai-provider-interface.js    # Added attachments support
+├── providers/
+│   ├── openrouter.cjs          # Multi-modal support
+│   ├── anthropic.cjs           # Multi-modal support
+│   ├── gemini.cjs              # Multi-modal support
+│   └── openai.cjs              # Multi-modal support
+```
+
+### Provider Capabilities Matrix
+
+| Provider | Images | Video | Audio | Files | Notes |
+|----------|--------|-------|-------|-------|-------|
+| **OpenRouter** | ✅ | ✅ (URL) | ✅ (URL) | ✅ (URL) | Video/audio via URL only |
+| **Anthropic** | ✅ | ❌ | ❌ | ✅ (PDF, TXT) | Claude 3+ only |
+| **Gemini** | ✅ | ✅ | ✅ | ✅ | Best multi-modal support |
+| **OpenAI** | ✅ | ❌ | ❌ | ❌ | GPT-4 Vision only |
+
+### Storage Provider Comparison
+
+| Provider | Best For | Cost | Setup |
+|----------|----------|------|-------|
+| **local-fs** | Development | Free | ⭐ Easy |
+| **aws-s3** | Production | Pay-per-use | ⭐⭐ Medium |
+| **gcs** | GCP ecosystems | Pay-per-use | ⭐⭐ Medium |
+| **azure-blob** | Azure ecosystems | Pay-per-use | ⭐⭐ Medium |
+
+### Backward Compatibility
+
+✅ **Fully backward compatible** - All v7.0 code continues to work:
+
+- Text-only AI calls work without changes
+- Direct filesystem writes still work (but consider migrating to storage interface)
+- Existing configs work without storage section (defaults to local-fs)
+
+### Migration Checklist
+
+- [ ] Review AI provider calls - consider adding attachments for multi-modal
+- [ ] Update scripts to use storage interface (recommended for new code)
+- [ ] Add storage configuration to YAML files (optional, defaults to local-fs)
+- [ ] Set STORAGE_PROVIDER environment variable (optional, defaults to local-fs)
+- [ ] For cloud storage: set provider-specific env vars (AWS, GCP, Azure)
+- [ ] Test with local-fs first, then migrate to cloud storage
+- [ ] Update CI/CD pipelines to inject storage credentials
+
+---
+
+## v6.0 → v7.0 Migration (AI Provider Abstraction)
 
 **Date:** 2026-03-04  
 **Breaking Change:** Yes (CLI arguments removed, YAML structure changed)  

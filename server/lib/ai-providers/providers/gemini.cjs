@@ -9,6 +9,7 @@
  */
 
 const axios = require('axios');
+const { processAttachment } = require('../utils/file-utils.cjs');
 
 /**
  * Provider name identifier
@@ -99,80 +100,35 @@ async function complete(options) {
     parts.push({ text: prompt });
   }
   
-  // Add attachments (multi-modal support)
+  // Add attachments (multi-modal support - three patterns: URL, path, data)
   if (attachments && attachments.length > 0) {
     for (const attachment of attachments) {
-      const { type, path, mimeType } = attachment;
+      // Process attachment (handles URL, path, or data patterns)
+      const processed = await processAttachment(attachment);
+      const { type, mimeType, isUrl, base64Data, url } = processed;
       
-      if (!type || !path) {
-        throw new Error('Gemini: Each attachment must have type and path');
-      }
-      
-      const fileMimeType = mimeType || detectMimeType(path);
-      
-      // Handle different attachment types
-      if (type === 'image') {
-        // Gemini supports images via base64 or URL
-        if (path.startsWith('http://') || path.startsWith('https://')) {
-          // For URLs, we need to fetch and convert to base64
-          const axios = require('axios');
-          const response = await axios.get(path, { responseType: 'arraybuffer' });
-          const base64Data = Buffer.from(response.data).toString('base64');
-          
-          parts.push({
-            inline_data: {
-              mime_type: fileMimeType,
-              data: base64Data
-            }
-          });
-        } else {
-          // Local file
-          const fs = require('fs');
-          const base64Data = fs.readFileSync(path).toString('base64');
-          
-          parts.push({
-            inline_data: {
-              mime_type: fileMimeType,
-              data: base64Data
-            }
-          });
+      // Gemini 1.5 supports all types via base64 inline_data
+      // For URLs, we fetch and convert to base64
+      if (type === 'image' || type === 'video' || type === 'audio' || type === 'file') {
+        let dataToUse = base64Data;
+        
+        // If it's a URL, fetch and convert to base64
+        if (isUrl) {
+          try {
+            const response = await axios.get(url, { responseType: 'arraybuffer' });
+            dataToUse = Buffer.from(response.data).toString('base64');
+          } catch (error) {
+            throw new Error(
+              `Gemini: Failed to fetch URL ${url}: ${error.message}. ` +
+              'Ensure the URL is publicly accessible.'
+            );
+          }
         }
-      } else if (type === 'video' || type === 'audio') {
-        // Gemini 1.5 supports video and audio natively
-        if (path.startsWith('http://') || path.startsWith('https://')) {
-          // For remote files, fetch and convert
-          const axios = require('axios');
-          const response = await axios.get(path, { responseType: 'arraybuffer' });
-          const base64Data = Buffer.from(response.data).toString('base64');
-          
-          parts.push({
-            inline_data: {
-              mime_type: fileMimeType,
-              data: base64Data
-            }
-          });
-        } else {
-          // Local file
-          const fs = require('fs');
-          const base64Data = fs.readFileSync(path).toString('base64');
-          
-          parts.push({
-            inline_data: {
-              mime_type: fileMimeType,
-              data: base64Data
-            }
-          });
-        }
-      } else if (type === 'file') {
-        // Gemini supports various file types (PDF, TXT, etc.)
-        const fs = require('fs');
-        const fileContent = fs.readFileSync(path);
-        const base64Data = fileContent.toString('base64');
         
         parts.push({
           inline_data: {
-            mime_type: fileMimeType,
-            data: base64Data
+            mime_type: mimeType,
+            data: dataToUse
           }
         });
       }
@@ -261,40 +217,6 @@ async function complete(options) {
     
     throw new Error(`Gemini request failed: ${error.message}`);
   }
-}
-
-/**
- * Detect MIME type from file path
- * @param {string} filePath - File path
- * @param {string} defaultType - Default type if not detected
- * @returns {string} - MIME type
- */
-function detectMimeType(filePath, defaultType = 'application/octet-stream') {
-  const ext = filePath.split('.').pop().toLowerCase();
-  const mimeTypes = {
-    // Images
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
-    'png': 'image/png',
-    'gif': 'image/gif',
-    'webp': 'image/webp',
-    'bmp': 'image/bmp',
-    // Video
-    'mp4': 'video/mp4',
-    'webm': 'video/webm',
-    'mov': 'video/quicktime',
-    'avi': 'video/x-msvideo',
-    // Audio
-    'mp3': 'audio/mpeg',
-    'wav': 'audio/wav',
-    'ogg': 'audio/ogg',
-    'm4a': 'audio/mp4',
-    // Files
-    'pdf': 'application/pdf',
-    'txt': 'text/plain',
-    'json': 'application/json',
-  };
-  return mimeTypes[ext] || defaultType;
 }
 
 /**

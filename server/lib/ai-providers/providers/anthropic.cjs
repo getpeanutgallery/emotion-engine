@@ -9,6 +9,7 @@
  */
 
 const axios = require('axios');
+const { processAttachment } = require('../utils/file-utils.cjs');
 
 /**
  * Provider name identifier
@@ -99,54 +100,50 @@ async function complete(options) {
     contentParts.push({ type: 'text', text: prompt });
   }
   
-  // Add attachments (multi-modal support)
+  // Add attachments (multi-modal support - three patterns: URL, path, data)
   if (attachments && attachments.length > 0) {
-    const fs = require('fs');
-    
     for (const attachment of attachments) {
-      const { type, path, mimeType } = attachment;
-      
-      if (!type || !path) {
-        throw new Error('Anthropic: Each attachment must have type and path');
-      }
+      // Process attachment (handles URL, path, or data patterns)
+      const processed = await processAttachment(attachment);
+      const { type, mimeType, isUrl, base64Data, url } = processed;
       
       // Handle different attachment types
       if (type === 'image') {
-        // Claude supports images via base64
-        const base64Data = fs.readFileSync(path).toString('base64');
-        const imageMimeType = mimeType || detectMimeType(path, 'image');
+        // Claude supports images via base64 (both URL and local files work)
         contentParts.push({
           type: 'image',
           source: {
             type: 'base64',
-            media_type: imageMimeType,
+            media_type: mimeType,
             data: base64Data
           }
         });
       } else if (type === 'file') {
         // Claude supports PDF and TXT documents
-        const ext = path.split('.').pop().toLowerCase();
-        const fileMimeType = mimeType || detectMimeType(path);
+        const ext = mimeType.split('/')[1] || '';
         
-        if (ext === 'pdf' || ext === 'txt') {
-          const fileContent = fs.readFileSync(path);
-          const base64Data = fileContent.toString('base64');
-          
+        if (ext === 'pdf' || ext === 'plain' || mimeType === 'application/pdf' || mimeType === 'text/plain') {
           contentParts.push({
             type: 'document',
             source: {
               type: 'base64',
-              media_type: fileMimeType,
+              media_type: mimeType,
               data: base64Data
             }
           });
         } else {
-          throw new Error(`Anthropic: Unsupported file type ${ext}. Supported: pdf, txt`);
+          throw new Error(
+            `Anthropic: Unsupported file type ${mimeType}. ` +
+            'Supported: application/pdf, text/plain. ' +
+            'For other file types, extract text content first.'
+          );
         }
       } else if (type === 'video' || type === 'audio') {
         // Claude doesn't directly support video/audio, but can process frames
-        console.warn(`Anthropic: ${type} attachments not directly supported. Extract frames first.`);
-        throw new Error(`Anthropic: ${type} attachments not directly supported. Extract frames as images first.`);
+        throw new Error(
+          `Anthropic: ${type} attachments not directly supported. ` +
+          'Extract frames as images first, or use a provider like Gemini that supports video/audio natively.'
+        );
       }
     }
   }
@@ -232,40 +229,6 @@ async function complete(options) {
     
     throw new Error(`Anthropic request failed: ${error.message}`);
   }
-}
-
-/**
- * Detect MIME type from file path
- * @param {string} filePath - File path
- * @param {string} defaultType - Default type if not detected
- * @returns {string} - MIME type
- */
-function detectMimeType(filePath, defaultType = 'application/octet-stream') {
-  const ext = filePath.split('.').pop().toLowerCase();
-  const mimeTypes = {
-    // Images
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
-    'png': 'image/png',
-    'gif': 'image/gif',
-    'webp': 'image/webp',
-    'bmp': 'image/bmp',
-    // Video
-    'mp4': 'video/mp4',
-    'webm': 'video/webm',
-    'mov': 'video/quicktime',
-    'avi': 'video/x-msvideo',
-    // Audio
-    'mp3': 'audio/mpeg',
-    'wav': 'audio/wav',
-    'ogg': 'audio/ogg',
-    'm4a': 'audio/mp4',
-    // Files
-    'pdf': 'application/pdf',
-    'txt': 'text/plain',
-    'json': 'application/json',
-  };
-  return mimeTypes[ext] || defaultType;
 }
 
 /**

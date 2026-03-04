@@ -9,6 +9,7 @@
  */
 
 const axios = require('axios');
+const { processAttachment } = require('../utils/file-utils.cjs');
 
 /**
  * Provider name identifier
@@ -99,42 +100,41 @@ async function complete(options) {
     contentParts.push({ type: 'text', text: prompt });
   }
   
-  // Add attachments (multi-modal support for GPT-4 Vision)
+  // Add attachments (multi-modal support - three patterns: URL, path, data)
   if (attachments && attachments.length > 0) {
-    const fs = require('fs');
-    
     for (const attachment of attachments) {
-      const { type, path, mimeType } = attachment;
-      
-      if (!type || !path) {
-        throw new Error('OpenAI: Each attachment must have type and path');
-      }
+      // Process attachment (handles URL, path, or data patterns)
+      const processed = await processAttachment(attachment);
+      const { type, mimeType, isUrl, base64Data, url } = processed;
       
       // Handle different attachment types
       if (type === 'image') {
-        // OpenAI supports images via URL or base64
-        if (path.startsWith('http://') || path.startsWith('https://')) {
+        // OpenAI supports images via URL or base64 data URI
+        if (isUrl) {
           contentParts.push({
             type: 'image_url',
-            image_url: { url: path }
+            image_url: { url }
           });
         } else {
-          // Local file - read and convert to base64
-          const base64Data = fs.readFileSync(path).toString('base64');
-          const imageMimeType = mimeType || detectMimeType(path, 'image');
+          // Base64 data (from path or direct data)
           contentParts.push({
             type: 'image_url',
-            image_url: { url: `data:${imageMimeType};base64,${base64Data}` }
+            image_url: { url: `data:${mimeType};base64,${base64Data}` }
           });
         }
       } else if (type === 'video' || type === 'audio') {
         // OpenAI doesn't directly support video/audio in chat completions
         // (GPT-4o can process video frames extracted as images)
-        console.warn(`OpenAI: ${type} attachments not directly supported. Extract frames first.`);
-        throw new Error(`OpenAI: ${type} attachments not directly supported. Extract frames as images first.`);
+        throw new Error(
+          `OpenAI: ${type} attachments not directly supported in chat completions. ` +
+          'Extract frames as images first, or use a provider like Gemini that supports video/audio natively.'
+        );
       } else if (type === 'file') {
         // File attachments via Assistants API (not chat completions)
-        throw new Error('OpenAI: File attachments require Assistants API, not chat completions');
+        throw new Error(
+          'OpenAI: File attachments require Assistants API, not chat completions. ' +
+          'Use the Assistants API for file uploads, or extract text content and send as text.'
+        );
       }
     }
   }
@@ -219,40 +219,6 @@ async function complete(options) {
     
     throw new Error(`OpenAI request failed: ${error.message}`);
   }
-}
-
-/**
- * Detect MIME type from file path
- * @param {string} filePath - File path
- * @param {string} defaultType - Default type if not detected
- * @returns {string} - MIME type
- */
-function detectMimeType(filePath, defaultType = 'application/octet-stream') {
-  const ext = filePath.split('.').pop().toLowerCase();
-  const mimeTypes = {
-    // Images
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
-    'png': 'image/png',
-    'gif': 'image/gif',
-    'webp': 'image/webp',
-    'bmp': 'image/bmp',
-    // Video
-    'mp4': 'video/mp4',
-    'webm': 'video/webm',
-    'mov': 'video/quicktime',
-    'avi': 'video/x-msvideo',
-    // Audio
-    'mp3': 'audio/mpeg',
-    'wav': 'audio/wav',
-    'ogg': 'audio/ogg',
-    'm4a': 'audio/mp4',
-    // Files
-    'pdf': 'application/pdf',
-    'txt': 'text/plain',
-    'json': 'application/json',
-  };
-  return mimeTypes[ext] || defaultType;
 }
 
 /**

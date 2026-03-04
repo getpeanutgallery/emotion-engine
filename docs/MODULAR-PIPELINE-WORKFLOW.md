@@ -1526,8 +1526,167 @@ const response = await aiProvider.complete({
 - ✅ Easy provider switching (change env var)
 - ✅ Provider-agnostic tools
 - ✅ Standardized interface across all AI operations
+- ✅ Multi-modal support (video, audio, images, files)
 
 **See:** [`docs/AI-PROVIDER-ARCHITECTURE.md`](AI-PROVIDER-ARCHITECTURE.md) for full specification.
+
+---
+
+## 💾 Storage Abstraction
+
+### Overview
+
+The Emotion Engine uses a pluggable storage interface that allows scripts to be storage-agnostic. Scripts write to and read from storage without knowing whether they're using local filesystem, AWS S3, Google Cloud Storage, or Azure Blob Storage.
+
+### Architecture
+
+```
+┌─────────────────────────────────────────┐
+│           Script Layer                  │
+│  (scripts/process/video-chunks.cjs)     │
+│                                         │
+│  const storage = require(               │
+│    '../../server/lib/storage/           │
+│    storage-interface.js'                │
+│  );                                     │
+│                                         │
+│  await storage.write(                   │
+│    'output/chunk-1.json',               │
+│    JSON.stringify(data)                 │
+│  );                                     │
+└─────────────────────────────────────────┘
+                    │
+                    ▼
+┌─────────────────────────────────────────┐
+│      Storage Interface                  │
+│  (storage-interface.js)                 │
+│                                         │
+│  - write(path, data, options)           │
+│  - read(path)                           │
+│  - exists(path)                         │
+│  - list(prefix)                         │
+│  - getUrl(path)                         │
+│  - delete(path)                         │
+└─────────────────────────────────────────┘
+          │           │           │
+          ▼           ▼           ▼
+    ┌──────────┐ ┌──────────┐ ┌──────────┐
+    │ local-fs │ │  aws-s3  │ │   gcs    │
+    └──────────┘ └──────────┘ └──────────┘
+```
+
+### Configuration
+
+**YAML Config (git-safe, no secrets):**
+
+```yaml
+# configs/video-analysis.yaml
+asset:
+  inputPath: ".cache/videos/cod.mp4"
+  outputDir: "output/cod-test"
+
+# Storage configuration
+storage:
+  provider: aws-s3  # or local-fs, gcs, azure-blob
+  bucket: my-emotion-engine-bucket
+  region: us-east-1
+
+ai:
+  provider: openrouter
+  model: qwen/qwen-3.5-397b-a17b
+```
+
+**Environment Variables:**
+
+```bash
+# Local (default)
+STORAGE_PROVIDER=local-fs
+
+# AWS S3
+STORAGE_PROVIDER=aws-s3
+AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+AWS_REGION=us-east-1
+S3_BUCKET=my-emotion-engine-bucket
+
+# Google Cloud Storage
+STORAGE_PROVIDER=gcs
+GOOGLE_APPLICATION_CREDENTIALS=$GCP_CREDENTIALS_JSON
+GCS_BUCKET=my-emotion-engine-bucket
+```
+
+### Usage in Scripts
+
+**Write Artifact:**
+
+```javascript
+const storage = require('../../server/lib/storage/storage-interface.js');
+
+async function run(input) {
+  const { outputDir } = input;
+  
+  // Write artifact (doesn't know if local or S3)
+  const artifactPath = await storage.write(
+    `output/${outputDir}/chunk-1.json`,
+    JSON.stringify(chunkData, null, 2)
+  );
+  
+  return { artifacts: { chunkAnalysis: [{ path: artifactPath }] } };
+}
+```
+
+**Read Artifact:**
+
+```javascript
+// Check if exists
+if (await storage.exists('output/metadata.json')) {
+  // Read artifact
+  const data = await storage.read('output/metadata.json');
+  const metadata = JSON.parse(data.toString());
+  
+  // Process metadata...
+}
+```
+
+**List Artifacts:**
+
+```javascript
+// List all chunk files
+const chunks = await storage.list('output/chunk-');
+// ['output/chunk-1.json', 'output/chunk-2.json', ...]
+
+for (const chunkPath of chunks) {
+  const data = await storage.read(chunkPath);
+  // Process each chunk...
+}
+```
+
+**Get Public URL:**
+
+```javascript
+// Get shareable URL for report
+const reportUrl = await storage.getUrl('output/FINAL-REPORT.md');
+console.log(`Report available at: ${reportUrl}`);
+```
+
+### Provider Comparison
+
+| Provider | Best For | Cost | Setup |
+|----------|----------|------|-------|
+| **local-fs** | Development, local testing | Free | ⭐ Easy |
+| **aws-s3** | Production, large scale | Pay-per-use | ⭐⭐ Medium |
+| **gcs** | GCP ecosystems, ML workloads | Pay-per-use | ⭐⭐ Medium |
+| **azure-blob** | Azure ecosystems, enterprise | Pay-per-use | ⭐⭐ Medium |
+
+### Benefits
+
+- ✅ **Pluggable Storage**: Switch between local, S3, GCS, Azure without code changes
+- ✅ **Provider-agnostic Scripts**: Scripts don't know which storage backend they're using
+- ✅ **Git-safe Configs**: Storage configuration in YAML, credentials in environment
+- ✅ **Standardized Interface**: All storage providers implement the same contract
+- ✅ **Easy Testing**: Use local-fs for development, S3 for production
+
+**See:** [`docs/STORAGE-ARCHITECTURE.md`](STORAGE-ARCHITECTURE.md) for full specification.
 
 ---
 

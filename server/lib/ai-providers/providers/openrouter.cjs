@@ -9,6 +9,7 @@
  */
 
 const axios = require('axios');
+const { processAttachment, detectMimeType } = require('../utils/file-utils.cjs');
 
 /**
  * Provider name identifier
@@ -105,55 +106,70 @@ async function complete(options) {
       contentParts.push({ type: 'text', text: prompt });
     }
     
-    // Add attachments (multi-modal support)
+    // Add attachments (multi-modal support - three patterns: URL, path, data)
     if (attachments && attachments.length > 0) {
       for (const attachment of attachments) {
-        const { type, path, mimeType } = attachment;
-        
-        if (!type || !path) {
-          throw new Error('OpenRouter: Each attachment must have type and path');
-        }
+        // Process attachment (handles URL, path, or data patterns)
+        const processed = await processAttachment(attachment);
+        const { type, mimeType, isUrl, base64Data, url } = processed;
         
         // Handle different attachment types
         if (type === 'image') {
-          // Image can be URL or base64
-          if (path.startsWith('http://') || path.startsWith('https://')) {
+          // Image: URL or base64 data URI
+          if (isUrl) {
             contentParts.push({
               type: 'image_url',
-              image_url: { url: path }
+              image_url: { url }
             });
           } else {
-            // Local file - read and convert to base64
-            const fs = require('fs');
-            const base64Data = fs.readFileSync(path).toString('base64');
-            const imageMimeType = mimeType || detectMimeType(path, 'image');
+            // Base64 data (from path or direct data)
             contentParts.push({
               type: 'image_url',
-              image_url: { url: `data:${imageMimeType};base64,${base64Data}` }
+              image_url: { url: `data:${mimeType};base64,${base64Data}` }
             });
           }
-        } else if (type === 'video' || type === 'audio') {
-          // Video/audio via URL (OpenRouter supports video URLs for compatible models)
-          if (path.startsWith('http://') || path.startsWith('https://')) {
+        } else if (type === 'video') {
+          // Video: URL only (OpenRouter doesn't support base64 video)
+          if (isUrl) {
             contentParts.push({
-              type: type === 'video' ? 'video_url' : 'audio_url',
-              [`${type}_url`]: { url: path }
+              type: 'video_url',
+              video_url: { url }
             });
           } else {
-            // Local file - for now, warn that it needs to be uploaded first
-            console.warn(`OpenRouter: Local ${type} file must be uploaded to a URL first. Path: ${path}`);
-            // Alternative: could upload to temp storage and use URL
-            throw new Error(`OpenRouter: Local ${type} files must be provided as URLs. Upload ${path} first.`);
+            // Local file converted to base64 - not supported by OpenRouter
+            throw new Error(
+              'OpenRouter: Video attachments must be URLs. ' +
+              'Local video files must be uploaded to a publicly accessible URL first. ' +
+              'Alternatively, extract frames as images and send those.'
+            );
+          }
+        } else if (type === 'audio') {
+          // Audio: URL only (OpenRouter doesn't support base64 audio)
+          if (isUrl) {
+            contentParts.push({
+              type: 'audio_url',
+              audio_url: { url }
+            });
+          } else {
+            // Local file converted to base64 - not supported by OpenRouter
+            throw new Error(
+              'OpenRouter: Audio attachments must be URLs. ' +
+              'Local audio files must be uploaded to a publicly accessible URL first. ' +
+              'Alternatively, use a provider like Gemini that supports base64 audio.'
+            );
           }
         } else if (type === 'file') {
-          // File attachments (for models that support it)
-          if (path.startsWith('http://') || path.startsWith('https://')) {
+          // File attachments: URL only
+          if (isUrl) {
             contentParts.push({
               type: 'file_url',
-              file_url: { url: path }
+              file_url: { url }
             });
           } else {
-            throw new Error(`OpenRouter: Local file attachments must be provided as URLs. Upload ${path} first.`);
+            throw new Error(
+              'OpenRouter: File attachments must be URLs. ' +
+              'Local files must be uploaded to a publicly accessible URL first.'
+            );
           }
         }
       }
@@ -243,40 +259,6 @@ async function complete(options) {
     
     throw new Error(`OpenRouter request failed: ${error.message}`);
   }
-}
-
-/**
- * Detect MIME type from file path
- * @param {string} filePath - File path
- * @param {string} defaultType - Default type if not detected
- * @returns {string} - MIME type
- */
-function detectMimeType(filePath, defaultType = 'application/octet-stream') {
-  const ext = filePath.split('.').pop().toLowerCase();
-  const mimeTypes = {
-    // Images
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
-    'png': 'image/png',
-    'gif': 'image/gif',
-    'webp': 'image/webp',
-    'bmp': 'image/bmp',
-    // Video
-    'mp4': 'video/mp4',
-    'webm': 'video/webm',
-    'mov': 'video/quicktime',
-    'avi': 'video/x-msvideo',
-    // Audio
-    'mp3': 'audio/mpeg',
-    'wav': 'audio/wav',
-    'ogg': 'audio/ogg',
-    'm4a': 'audio/mp4',
-    // Files
-    'pdf': 'application/pdf',
-    'txt': 'text/plain',
-    'json': 'application/json',
-  };
-  return mimeTypes[ext] || defaultType;
 }
 
 /**

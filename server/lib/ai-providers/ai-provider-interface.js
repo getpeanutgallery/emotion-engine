@@ -23,10 +23,38 @@ const fs = require('fs');
 
 /**
  * Attachment for multi-modal inputs
+ * 
+ * Supports three input patterns:
+ * 
+ * **Pattern 1: URL (Publicly Accessible)**
+ * @example
+ * {
+ *   type: 'video',
+ *   url: 'https://s3.amazonaws.com/bucket/video.mp4'
+ * }
+ * 
+ * **Pattern 2: Local Path (Auto-convert to Base64)**
+ * @example
+ * {
+ *   type: 'video',
+ *   path: '/local/path/to/video.mp4'
+ *   // mimeType auto-detected from extension
+ * }
+ * 
+ * **Pattern 3: Direct Base64 Data (Already Converted)**
+ * @example
+ * {
+ *   type: 'video',
+ *   data: 'base64-encoded-string-here',
+ *   mimeType: 'video/mp4'  // Required for data pattern
+ * }
+ * 
  * @typedef {Object} Attachment
  * @property {'video' | 'audio' | 'image' | 'file'} type - Attachment type
- * @property {string} path - Local path or URL
- * @property {string} [mimeType] - MIME type (optional, auto-detect if not provided)
+ * @property {string} [url] - Publicly accessible URL (Pattern 1)
+ * @property {string} [path] - Local file path or URL (Pattern 2)
+ * @property {string} [data] - Base64-encoded data (Pattern 3)
+ * @property {string} [mimeType] - MIME type (auto-detected for path, required for data)
  */
 
 /**

@@ -1,8 +1,9 @@
 # AI Provider Abstraction Layer
 
-**Version:** 1.0  
+**Version:** 2.0  
 **Date:** 2026-03-04  
-**Status:** Implementation Specification
+**Status:** Implementation Specification  
+**Changes in v2.0:** Added multi-modal support (video, audio, images, files)
 
 ---
 
@@ -130,9 +131,56 @@ module.exports = {
 ### Completion Options
 
 ```typescript
+/**
+ * Attachment for multi-modal inputs
+ * 
+ * Supports three input patterns:
+ * 
+ * Pattern 1: URL (Publicly Accessible)
+ * {
+ *   type: 'video',
+ *   url: 'https://s3.amazonaws.com/bucket/video.mp4'
+ * }
+ * 
+ * Pattern 2: Local Path (Auto-convert to Base64)
+ * {
+ *   type: 'video',
+ *   path: '/local/path/to/video.mp4'
+ *   // mimeType auto-detected from extension
+ * }
+ * 
+ * Pattern 3: Direct Base64 Data (Already Converted)
+ * {
+ *   type: 'video',
+ *   data: 'base64-encoded-string-here',
+ *   mimeType: 'video/mp4'  // Required for data pattern
+ * }
+ */
+interface Attachment {
+  /** Attachment type */
+  type: 'video' | 'audio' | 'image' | 'file';
+  
+  /** Pattern 1: Publicly accessible URL (passed directly to API) */
+  url?: string;
+  
+  /** Pattern 2: Local file path (auto-converted to base64 by provider) */
+  path?: string;
+  
+  /** Pattern 3: Direct base64-encoded data (already converted) */
+  data?: string;
+  
+  /** 
+   * MIME type 
+   * - Auto-detected from file extension for `path` pattern
+   * - Required for `data` pattern
+   * - Auto-detected from URL for `url` pattern
+   */
+  mimeType?: string;
+}
+
 interface CompletionOptions {
-  /** System/user prompt */
-  prompt: string;
+  /** System/user prompt (can be text string or messages array) */
+  prompt: string | Array;
   
   /** Model identifier (e.g., 'qwen/qwen-3.5-397b-a17b', 'claude-3-5-sonnet-20241022') */
   model: string;
@@ -142,6 +190,9 @@ interface CompletionOptions {
   
   /** API base URL (optional, provider-specific) */
   baseUrl?: string;
+  
+  /** Multi-modal attachments (video, audio, images, files) */
+  attachments?: Attachment[];
   
   /** Additional provider-specific options */
   options?: {
@@ -182,6 +233,474 @@ interface CompletionResult {
     total?: number;
   };
 }
+```
+
+---
+
+## 🎥 Multi-Modal Support
+
+### Overview
+
+As of v2.0, the AI Provider Interface supports multi-modal inputs including:
+
+- **Images**: JPEG, PNG, GIF, WebP, BMP
+- **Video**: MP4, WebM, MOV, AVI (provider-dependent)
+- **Audio**: MP3, WAV, OGG, M4A (provider-dependent)
+- **Files**: PDF, TXT, JSON (provider-dependent)
+
+### Provider Capabilities
+
+| Provider | Images | Video | Audio | Files | Notes |
+|----------|--------|-------|-------|-------|-------|
+| **OpenRouter** | ✅ | ✅ (URL) | ✅ (URL) | ✅ (URL) | Video/audio via URL only for compatible models |
+| **Anthropic** | ✅ | ❌ | ❌ | ✅ (PDF, TXT) | Claude 3+ supports images and documents |
+| **Gemini** | ✅ | ✅ | ✅ | ✅ | Gemini 1.5 has best multi-modal support |
+| **OpenAI** | ✅ | ❌ | ❌ | ❌ | GPT-4 Vision supports images only |
+
+### Usage Examples
+
+#### Text-Only Request (Backward Compatible)
+
+```javascript
+const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js');
+
+const response = await aiProvider.complete({
+  prompt: 'Analyze this video chunk for emotional content...',
+  model: 'qwen/qwen-3.5-397b-a17b',
+  apiKey: process.env.AI_API_KEY,
+});
+
+console.log(response.content);
+```
+
+#### Multi-Modal Request with Images
+
+```javascript
+const response = await aiProvider.complete({
+  prompt: 'Describe this image and identify emotions',
+  model: 'openai/gpt-4o',
+  apiKey: process.env.OPENROUTER_API_KEY,
+  attachments: [
+    {
+      type: 'image',
+      path: '/path/to/frame.jpg',
+      mimeType: 'image/jpeg'
+    }
+  ]
+});
+
+console.log(response.content);
+```
+
+#### Multi-Modal Request with Video (Gemini 1.5)
+
+```javascript
+const response = await aiProvider.complete({
+  prompt: 'Analyze this video for emotional content throughout',
+  model: 'gemini-1.5-pro',
+  apiKey: process.env.GEMINI_API_KEY,
+  attachments: [
+    {
+      type: 'video',
+      path: 'https://example.com/video.mp4',
+      mimeType: 'video/mp4'
+    }
+  ]
+});
+
+console.log(response.content);
+```
+
+#### Multi-Modal Request with Multiple Attachments
+
+```javascript
+const response = await aiProvider.complete({
+  prompt: 'Analyze this scene using the video frames and audio',
+  model: 'openai/gpt-4o',
+  apiKey: process.env.OPENROUTER_API_KEY,
+  attachments: [
+    {
+      type: 'image',
+      path: '/path/to/frame1.jpg',
+      mimeType: 'image/jpeg'
+    },
+    {
+      type: 'image',
+      path: '/path/to/frame2.jpg',
+      mimeType: 'image/jpeg'
+    },
+    {
+      type: 'audio',
+      url: 'https://example.com/audio.mp3',  // URL for audio
+      mimeType: 'audio/mpeg'
+    }
+  ]
+});
+
+console.log(response.content);
+```
+
+---
+
+### Complete Examples: All Three Patterns
+
+#### Example 1: Pattern 1 - URL (Publicly Accessible)
+
+```javascript
+const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js');
+
+// Video hosted on S3 (public URL)
+const response = await aiProvider.complete({
+  prompt: 'Analyze this product demo video for key features',
+  model: 'gemini-1.5-pro',
+  apiKey: process.env.GEMINI_API_KEY,
+  attachments: [
+    {
+      type: 'video',
+      url: 'https://my-bucket.s3.amazonaws.com/product-demo.mp4'
+      // mimeType auto-detected from URL extension
+    }
+  ]
+});
+
+console.log(response.content);
+```
+
+#### Example 2: Pattern 2 - Local Path (Auto-convert to Base64)
+
+```javascript
+const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js');
+
+// Local video file (auto-converted to base64 by provider)
+const response = await aiProvider.complete({
+  prompt: 'Analyze emotions in this video clip',
+  model: 'gemini-1.5-pro',
+  apiKey: process.env.GEMINI_API_KEY,
+  attachments: [
+    {
+      type: 'video',
+      path: '/home/user/videos/clip.mp4'
+      // mimeType auto-detected as 'video/mp4'
+    }
+  ]
+});
+
+console.log(response.content);
+
+// Works with images too (all providers)
+const imageResponse = await aiProvider.complete({
+  prompt: 'Describe this image',
+  model: 'claude-3-5-sonnet-20241022',
+  apiKey: process.env.ANTHROPIC_API_KEY,
+  attachments: [
+    {
+      type: 'image',
+      path: '/home/user/screenshots/frame.jpg'
+      // mimeType auto-detected as 'image/jpeg'
+    }
+  ]
+});
+```
+
+#### Example 3: Pattern 3 - Direct Base64 Data (Already Converted)
+
+```javascript
+const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js');
+const fs = require('fs');
+
+// Pre-convert file to base64 (e.g., from stream, database, or cache)
+const imageData = fs.readFileSync('/path/to/image.jpg').toString('base64');
+
+const response = await aiProvider.complete({
+  prompt: 'What emotions are expressed in this face?',
+  model: 'gpt-4o',
+  apiKey: process.env.OPENAI_API_KEY,
+  attachments: [
+    {
+      type: 'image',
+      data: imageData,  // Already base64-encoded
+      mimeType: 'image/jpeg'  // Required!
+    }
+  ]
+});
+
+console.log(response.content);
+
+// Or from a buffer/stream
+const buffer = await getBufferFromSomewhere();
+const base64Data = buffer.toString('base64');
+
+const response2 = await aiProvider.complete({
+  prompt: 'Analyze this audio clip',
+  model: 'gemini-1.5-pro',
+  apiKey: process.env.GEMINI_API_KEY,
+  attachments: [
+    {
+      type: 'audio',
+      data: base64Data,
+      mimeType: 'audio/mp3'  // Required!
+    }
+  ]
+});
+```
+
+#### Example 4: Mixed Patterns (URL + Path + Data)
+
+You can mix different patterns in a single request:
+
+```javascript
+const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js');
+const fs = require('fs');
+
+// Pre-convert one file to base64
+const logoData = fs.readFileSync('/path/to/logo.png').toString('base64');
+
+const response = await aiProvider.complete({
+  prompt: 'Compare these three images and describe the differences',
+  model: 'gpt-4o',
+  apiKey: process.env.OPENAI_API_KEY,
+  attachments: [
+    // Pattern 1: URL
+    {
+      type: 'image',
+      url: 'https://example.com/reference.jpg'
+    },
+    // Pattern 2: Local path
+    {
+      type: 'image',
+      path: '/home/user/screenshots/comparison.png'
+    },
+    // Pattern 3: Direct base64 data
+    {
+      type: 'image',
+      data: logoData,
+      mimeType: 'image/png'
+    }
+  ]
+});
+
+console.log(response.content);
+```
+
+#### Using Messages Array (Advanced)
+
+```javascript
+const response = await aiProvider.complete({
+  prompt: [
+    {
+      role: 'user',
+      content: [
+        { type: 'text', text: 'What do you see in these images?' },
+        {
+          type: 'image_url',
+          image_url: { url: 'https://example.com/image1.jpg' }
+        },
+        {
+          type: 'image_url',
+          image_url: { url: 'https://example.com/image2.jpg' }
+        }
+      ]
+    }
+  ],
+  model: 'openai/gpt-4o',
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
+
+console.log(response.content);
+```
+
+### Three Attachment Patterns
+
+The AI Provider Interface supports **three** input patterns for attachments:
+
+#### Pattern 1: URL (Publicly Accessible)
+
+Use when files are already hosted on a publicly accessible URL (S3, CDN, etc.).
+
+```javascript
+// Image URL
+attachments: [{
+  type: 'image',
+  url: 'https://example.com/image.jpg'
+}]
+
+// Video URL (OpenRouter, Gemini)
+attachments: [{
+  type: 'video',
+  url: 'https://s3.amazonaws.com/bucket/video.mp4'
+}]
+
+// Audio URL (Gemini)
+attachments: [{
+  type: 'audio',
+  url: 'https://cdn.example.com/audio.mp3'
+}]
+```
+
+**Benefits:**
+- ✅ No base64 conversion overhead
+- ✅ Smaller request payload
+- ✅ Works well for large files
+
+**Limitations:**
+- ❌ File must be publicly accessible
+- ❌ Some providers may need to fetch the URL (adds latency)
+
+---
+
+#### Pattern 2: Local Path (Auto-convert to Base64)
+
+Use for local files on your filesystem. The provider automatically reads and converts to base64.
+
+```javascript
+// Local image file (auto-converted to base64)
+attachments: [{
+  type: 'image',
+  path: '/path/to/local/image.jpg'
+  // mimeType auto-detected as 'image/jpeg'
+}]
+
+// Local video file (Gemini only - converts to base64)
+attachments: [{
+  type: 'video',
+  path: '/path/to/local/video.mp4'
+  // mimeType auto-detected as 'video/mp4'
+}]
+
+// Local PDF file (Anthropic, Gemini)
+attachments: [{
+  type: 'file',
+  path: '/path/to/document.pdf'
+  // mimeType auto-detected as 'application/pdf'
+}]
+```
+
+**Benefits:**
+- ✅ Simple - just provide the file path
+- ✅ MIME type auto-detected from extension
+- ✅ Works with any local file
+
+**Limitations:**
+- ❌ File is read and converted to base64 (memory usage)
+- ❌ Larger request payload
+- ❌ Some providers don't support base64 for certain types (e.g., OpenRouter video/audio)
+
+---
+
+#### Pattern 3: Direct Base64 Data (Already Converted)
+
+Use when you've already converted the file to base64 (e.g., from a previous operation, or streaming data).
+
+```javascript
+// Pre-converted image data
+attachments: [{
+  type: 'image',
+  data: 'iVBORw0KGgoAAAANSUhEUgAA...',  // Base64 string
+  mimeType: 'image/jpeg'  // Required!
+}]
+
+// Pre-converted video data (Gemini)
+attachments: [{
+  type: 'video',
+  data: 'AAAAIGZ0eXBpc29tAAACAGlzb21pc28y...',  // Base64 string
+  mimeType: 'video/mp4'  // Required!
+}]
+```
+
+**Benefits:**
+- ✅ Full control over data
+- ✅ Useful for streaming or pre-processed data
+- ✅ No file I/O needed
+
+**Limitations:**
+- ❌ MIME type is **required** (not auto-detected)
+- ❌ You're responsible for base64 encoding
+
+---
+
+### Provider Support Matrix
+
+| Provider | Pattern 1 (URL) | Pattern 2 (Path) | Pattern 3 (Data) | Notes |
+|----------|-----------------|------------------|------------------|-------|
+| **OpenRouter** | ✅ All types | ✅ Images only | ✅ Images only | Video/audio must be URLs |
+| **Anthropic** | ✅ Images, Files | ✅ Images, Files | ✅ Images, Files | No video/audio support |
+| **Gemini** | ✅ All types | ✅ All types | ✅ All types | **Best multi-modal support** |
+| **OpenAI** | ✅ Images | ✅ Images | ✅ Images | No video/audio/file support |
+
+---
+
+### When to Use Each Pattern
+
+**Use Pattern 1 (URL) when:**
+- Files are already hosted on S3, CDN, or public URL
+- Working with large video/audio files
+- Want to minimize request payload size
+- Using OpenRouter for video/audio (requires URLs)
+
+**Use Pattern 2 (Path) when:**
+- Files are on your local filesystem
+- Want simple, straightforward code
+- Don't want to manually handle base64 conversion
+- Using Gemini for video/audio (supports base64)
+
+**Use Pattern 3 (Data) when:**
+- You've already converted files to base64
+- Working with streaming data or buffers
+- Files are in memory (not on disk)
+- Need fine-grained control over encoding
+
+### Provider-Specific Notes
+
+#### OpenRouter
+
+- Supports multi-modal via OpenAI, Anthropic, Google models
+- Video/audio must be URLs (not local files)
+- Images can be local (base64) or URLs
+
+#### Anthropic (Claude)
+
+- Claude 3+ supports images and documents (PDF, TXT)
+- No direct video/audio support (extract frames first)
+- Local files converted to base64
+
+#### Google Gemini
+
+- **Best multi-modal support**
+- Gemini 1.5 Pro supports video, audio, images, files natively
+- Local files automatically uploaded as base64
+- Long context (up to 1M tokens for Gemini 1.5)
+
+#### OpenAI
+
+- GPT-4 Vision supports images only
+- No video/audio support (extract frames first)
+- Local images converted to base64
+
+### MIME Type Detection
+
+MIME types are auto-detected from file extensions:
+
+```javascript
+// Auto-detected MIME types
+{
+  'jpg': 'image/jpeg',
+  'jpeg': 'image/jpeg',
+  'png': 'image/png',
+  'mp4': 'video/mp4',
+  'mp3': 'audio/mpeg',
+  'pdf': 'application/pdf',
+  // ... and more
+}
+```
+
+Override if needed:
+
+```javascript
+attachments: [{
+  type: 'image',
+  path: '/path/to/file',
+  mimeType: 'image/jpeg'  // Explicit override
+}]
 ```
 
 ---
