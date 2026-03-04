@@ -243,7 +243,7 @@ async function main() {
     let previousState = null;
     let totalTokens = 0;
     const startTimeTotal = Date.now();
-    const maxChunks = Math.min(numChunks, 3);
+    const maxChunks = process.env.MAX_CHUNKS ? Math.min(numChunks, parseInt(process.env.MAX_CHUNKS)) : numChunks;
     
     for (let i = 0; i < maxChunks; i++) {
         const chunkStartTime = Date.now();

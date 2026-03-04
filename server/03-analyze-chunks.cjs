@@ -9,6 +9,8 @@
  * - Persona definition
  */
 
+require('dotenv').config();
+
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
@@ -147,6 +149,11 @@ function getRelevantMusic(musicData, startTime, endTime) {
     const relevant = musicData.audio_segments.filter(m => {
         // Parse timestamp range like "00:28 - 00:42" or "0:28-0:42"
         const parseRange = (range) => {
+            // Defensive check: ensure range is a string before splitting
+            if (!range || typeof range !== 'string') {
+                logger.debug(`Invalid timestamp_range: ${JSON.stringify(range)}`);
+                return { start: -1, end: -1 }; // Invalid range won't match
+            }
             const times = range.split('-').map(t => t.trim());
             return {
                 start: parseTimestamp(times[0]),
@@ -221,7 +228,7 @@ ${context.musicContext ? `**What You're Hearing (Music/Audio):**\n${context.musi
         })
     }, { maxRetries: 3, baseDelay: 1000 });
     
-    const result = utils.validateJSON(res);
+    const result = await utils.validateJSON(res);
     if (!result.success) {
         console.error('Failed to parse API response:', result.error);
         throw new Error('Invalid JSON response from API');

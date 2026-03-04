@@ -7,6 +7,8 @@
  * @version 0.2.0
  */
 
+require('dotenv').config();
+
 const { OpenRouterClient } = require('./lib/openrouter-enhanced.cjs');
 
 // CORS headers for all responses

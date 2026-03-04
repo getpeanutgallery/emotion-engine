@@ -6,6 +6,8 @@
  * Usage: node server/run-pipeline.cjs <video-path> [output-dir]
  */
 
+require('dotenv').config();
+
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -175,17 +177,56 @@ async function main() {
         });
         logger.info('═══════════════════════════════════════════════════════════');
         
-        logger.info('PIPELINE COMPLETE!');
-        logger.info(`Total time: ${totalDuration}s`);
-        logger.info(`Output directory: ${OUTPUT_DIR}/`);
-        logger.info('Files generated:');
-        STEPS.forEach(step => {
-            const outputPath = path.join(OUTPUT_DIR, step.output);
-            const stats = fs.statSync(outputPath);
-            logger.info(`  • ${step.output} (${(stats.size / 1024).toFixed(1)} KB)`);
-        });
-        logger.info(`Ready for final report generation: node generate-report.cjs ${OUTPUT_DIR}`);
-        logger.info('═══════════════════════════════════════════════════════════');
+        // Generate final report automatically
+        logger.info('Generating final report...');
+        try {
+            const generateReport = require('./generate-report.cjs');
+            const reportResult = generateReport.main(OUTPUT_DIR);
+            
+            if (reportResult.success) {
+                logger.info('PIPELINE COMPLETE!');
+                logger.info(`Total time: ${totalDuration}s`);
+                logger.info(`Output directory: ${OUTPUT_DIR}/`);
+                logger.info('Files generated:');
+                STEPS.forEach(step => {
+                    const outputPath = path.join(OUTPUT_DIR, step.output);
+                    const stats = fs.statSync(outputPath);
+                    logger.info(`  • ${step.output} (${(stats.size / 1024).toFixed(1)} KB)`);
+                });
+                logger.info(`  • FINAL-REPORT.md (auto-generated)`);
+                logger.info('═══════════════════════════════════════════════════════════');
+            } else {
+                logger.warn(`Report generation failed: ${reportResult.error}`);
+                logger.warn('Pipeline completed successfully, but final report was not generated.');
+                logger.info('');
+                logger.info('PIPELINE COMPLETE! (report generation skipped)');
+                logger.info(`Total time: ${totalDuration}s`);
+                logger.info(`Output directory: ${OUTPUT_DIR}/`);
+                logger.info('Files generated:');
+                STEPS.forEach(step => {
+                    const outputPath = path.join(OUTPUT_DIR, step.output);
+                    const stats = fs.statSync(outputPath);
+                    logger.info(`  • ${step.output} (${(stats.size / 1024).toFixed(1)} KB)`);
+                });
+                logger.info(`Manual report generation: node generate-report.cjs ${OUTPUT_DIR}`);
+                logger.info('═══════════════════════════════════════════════════════════');
+            }
+        } catch (reportError) {
+            logger.warn(`Report generation failed: ${reportError.message}`);
+            logger.warn('Pipeline completed successfully, but final report was not generated.');
+            logger.info('');
+            logger.info('PIPELINE COMPLETE! (report generation skipped)');
+            logger.info(`Total time: ${totalDuration}s`);
+            logger.info(`Output directory: ${OUTPUT_DIR}/`);
+            logger.info('Files generated:');
+            STEPS.forEach(step => {
+                const outputPath = path.join(OUTPUT_DIR, step.output);
+                const stats = fs.statSync(outputPath);
+                logger.info(`  • ${step.output} (${(stats.size / 1024).toFixed(1)} KB)`);
+            });
+            logger.info(`Manual report generation: node generate-report.cjs ${OUTPUT_DIR}`);
+            logger.info('═══════════════════════════════════════════════════════════');
+        }
         
         process.exit(0);
         

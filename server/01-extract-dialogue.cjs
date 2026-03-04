@@ -115,7 +115,7 @@ Be precise with timestamps. If multiple speakers overlap, note this.`;
     console.log(`   Status: ${res.status} ${res.statusText}`);
     console.log(`   Headers:`, Object.fromEntries(res.headers.entries()));
     
-    const result = utils.validateJSON(res);
+    const result = await utils.validateJSON(res);
     if (!result.success) {
         console.error('\n❌ Failed to parse API response:');
         console.error(`   Error: ${result.error}`);
@@ -131,7 +131,12 @@ Be precise with timestamps. If multiple speakers overlap, note this.`;
         console.error('❌ API returned error status:', data.error);
         throw new Error(data.error?.message || 'API failed');
     }
-    return data.choices[0].message.content;
+    
+    // Return both content and token usage
+    return {
+        content: data.choices[0].message.content,
+        tokens: data.usage?.total_tokens || 0
+    };
 }
 
 async function main() {
@@ -152,7 +157,9 @@ async function main() {
         console.log(`   ✅ Audio extracted: ${(fs.statSync(audioPath).size / 1024).toFixed(0)} KB\n`);
         
         console.log('🤖 Analyzing with gpt-audio...');
-        const analysis = await analyzeDialogue(audioPath);
+        const result = await analyzeDialogue(audioPath);
+        const analysis = result.content;
+        const tokensUsed = result.tokens;
         
         // Parse JSON from response
         const jsonMatch = analysis.match(/```json\s*\n([\s\S]*?)\n```/) || 
@@ -165,6 +172,7 @@ async function main() {
 
 **Generated:** ${new Date().toISOString()}  
 **Model:** ${MODEL}  
+**Tokens Used:** ${tokensUsed.toLocaleString()}  
 **Source:** ${VIDEO_PATH}
 
 ## Extracted Dialogue

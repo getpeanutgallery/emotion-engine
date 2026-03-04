@@ -6,6 +6,8 @@
  * Output: music-analysis.md with timestamped tags
  */
 
+require('dotenv').config();
+
 const fs = require('fs');
 const path = require('path');
 
@@ -118,7 +120,7 @@ Focus on how the audio enhances the visual experience.`;
         })
     }, { maxRetries: 3, baseDelay: 1000 });
     
-    const result = utils.validateJSON(res);
+    const result = await utils.validateJSON(res);
     if (!result.success) {
         console.error('Failed to parse API response:', result.error);
         throw new Error('Invalid JSON response from API');
@@ -126,7 +128,12 @@ Focus on how the audio enhances the visual experience.`;
     
     const data = result.data;
     if (!res.ok) throw new Error(data.error?.message || 'API failed');
-    return data.choices[0].message.content;
+    
+    // Return both content and token usage
+    return {
+        content: data.choices[0].message.content,
+        tokens: data.usage?.total_tokens || 0
+    };
 }
 
 async function main() {
@@ -147,7 +154,9 @@ async function main() {
         console.log(`   ✅ Audio extracted\n`);
         
         console.log('🤖 Analyzing music with gpt-audio...');
-        const analysis = await analyzeMusic(audioPath);
+        const result = await analyzeMusic(audioPath);
+        const analysis = result.content;
+        const tokensUsed = result.tokens;
         
         // Parse JSON
         const jsonMatch = analysis.match(/```json\s*\n([\s\S]*?)\n```/) || 
@@ -160,6 +169,7 @@ async function main() {
 
 **Generated:** ${new Date().toISOString()}  
 **Model:** ${MODEL}  
+**Tokens Used:** ${tokensUsed.toLocaleString()}  
 **Source:** ${VIDEO_PATH}
 
 ## Audio Segments

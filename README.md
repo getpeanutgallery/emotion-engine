@@ -60,9 +60,47 @@ cat output/cod-test/03-chunked-analysis.json | jq .
 
 ---
 
+## 🔐 Environment Setup
+
+### Required: Configure Your .env File
+
+The Emotion Engine uses `dotenv` to automatically load environment variables from a `.env` file at runtime. **You must create this file before running the pipeline.**
+
+**Setup Steps:**
+
+1. **Copy the example template:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Edit the `.env` file:**
+   ```bash
+   nano .env  # or use your preferred editor (vim, code, etc.)
+   ```
+
+3. **Add your OpenRouter API key:**
+   ```bash
+   # Replace this line with your actual key
+   OPENROUTER_API_KEY=sk-or-your-actual-key-here
+   ```
+
+4. **Save and close the file.**
+
+**Get your API key:** https://openrouter.ai/keys
+
+**Important:**
+- The `.env` file is **gitignored** and will never be committed to version control
+- Never share your `.env` file or commit it to Git
+- The `dotenv` package automatically loads these variables when the pipeline runs
+- All other configuration options in `.env.example` have sensible defaults and are optional
+
+---
+
 ## 🔧 Configuration
 
 ### Environment Variables (.env)
+
+See the **Environment Setup** section above for setup instructions. The `.env` file is automatically loaded by `dotenv` when the pipeline runs.
 
 **Required:**
 
@@ -522,7 +560,9 @@ ls -la .env
 grep OPENROUTER_API_KEY .env
 
 # Should NOT be "sk-or-your-actual-key-here"
-# Edit and add your real key, then re-run
+# If .env doesn't exist, create it:
+cp .env.example .env
+nano .env  # Add your real OPENROUTER_API_KEY
 ```
 
 ### "FFmpeg not found"

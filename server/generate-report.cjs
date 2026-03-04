@@ -10,6 +10,7 @@ require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
+const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 
 // Get repo root (parent of server/ directory)
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -666,176 +667,188 @@ async function main(outputDir) {
 }
 
 /**
- * Generate SVG line chart
+ * Generate PNG line chart using Chart.js and chartjs-node-canvas
  * @param {Array} data - Array of values
  * @param {Array} labels - Array of labels (timestamps)
  * @param {string} title - Chart title
- * @param {string} color - Line color
+ * @param {string} color - Line color (hex)
  * @param {number} width - Chart width
  * @param {number} height - Chart height
- * @returns {string} SVG string
+ * @returns {Promise<Buffer>} PNG buffer
  */
-function generateLineChart(data, labels, title, color, width = 800, height = 400) {
-    const padding = { top: 60, right: 30, bottom: 60, left: 60 };
-    const chartWidth = width - padding.left - padding.right;
-    const chartHeight = height - padding.top - padding.bottom;
+async function generateLineChartPng(data, labels, title, color, width = 800, height = 400) {
+    const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height });
     
-    const maxValue = 10;
-    const minValue = 0;
-    
-    // Calculate points
-    const points = data.map((value, index) => {
-        const x = padding.left + (index / (data.length - 1)) * chartWidth;
-        const y = padding.top + chartHeight - ((value - minValue) / (maxValue - minValue)) * chartHeight;
-        return { x, y, value, label: labels[index] };
-    });
-    
-    // Build SVG
-    let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">\n`;
-    
-    // Background
-    svg += `  <rect width="${width}" height="${height}" fill="#ffffff"/>\n`;
-    
-    // Title
-    svg += `  <text x="${width/2}" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333">${title}</text>\n`;
-    
-    // Grid lines and Y-axis labels
-    for (let i = 0; i <= 10; i += 2) {
-        const y = padding.top + chartHeight - (i / 10) * chartHeight;
-        svg += `  <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="#e0e0e0" stroke-width="1"/>\n`;
-        svg += `  <text x="${padding.left - 10}" y="${y + 4}" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#666">${i}</text>\n`;
-    }
-    
-    // X-axis labels (show every Nth label to avoid crowding)
+    // Sample labels to avoid crowding (show every Nth label)
     const labelStep = Math.ceil(labels.length / 10);
-    points.forEach((point, i) => {
-        if (i % labelStep === 0 || i === points.length - 1) {
-            svg += `  <text x="${point.x}" y="${height - 20}" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">${point.label}s</text>\n`;
+    const sampledLabels = labels.map((label, i) => (i % labelStep === 0 || i === labels.length - 1) ? `${label}s` : '');
+    
+    const configuration = {
+        type: 'line',
+        data: {
+            labels: sampledLabels,
+            datasets: [{
+                label: title,
+                data: data,
+                borderColor: color,
+                backgroundColor: color + '33', // 20% opacity for area fill
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 3,
+                pointHoverRadius: 5
+            }]
+        },
+        options: {
+            responsive: false,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: title,
+                    font: { size: 16, weight: 'bold' }
+                },
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time (seconds)'
+                    },
+                    ticks: {
+                        maxRotation: 0,
+                        autoSkip: true
+                    }
+                },
+                y: {
+                    min: 0,
+                    max: 10,
+                    title: {
+                        display: true,
+                        text: 'Score'
+                    },
+                    ticks: {
+                        stepSize: 2
+                    }
+                }
+            }
         }
-    });
+    };
     
-    // X-axis title
-    svg += `  <text x="${width/2}" y="${height - 5}" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#333">Time (seconds)</text>\n`;
-    
-    // Y-axis title
-    svg += `  <text x="15" y="${height/2}" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#333" transform="rotate(-90, 15, ${height/2})">Score</text>\n`;
-    
-    // Area fill
-    const areaPath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-    const areaClose = `L ${points[points.length - 1].x} ${padding.top + chartHeight} L ${points[0].x} ${padding.top + chartHeight} Z`;
-    svg += `  <path d="${areaPath} ${areaClose}" fill="${color}20" stroke="none"/>\n`;
-    
-    // Line
-    const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-    svg += `  <path d="${linePath}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>\n`;
-    
-    // Data points
-    points.forEach(point => {
-        svg += `  <circle cx="${point.x}" cy="${point.y}" r="3" fill="${color}" stroke="#fff" stroke-width="1.5"/>\n`;
-    });
-    
-    svg += `</svg>`;
-    return svg;
+    return await chartJSNodeCanvas.renderToBuffer(configuration);
 }
 
 /**
- * Generate SVG bar chart for scroll risk
+ * Generate PNG bar chart for scroll risk using Chart.js and chartjs-node-canvas
  * @param {Array} data - Array of risk values (0-4)
  * @param {Array} labels - Array of labels (timestamps)
  * @param {string} title - Chart title
  * @param {number} width - Chart width
  * @param {number} height - Chart height
- * @returns {string} SVG string
+ * @returns {Promise<Buffer>} PNG buffer
  */
-function generateBarChart(data, labels, title, width = 800, height = 400) {
-    const padding = { top: 60, right: 30, bottom: 60, left: 60 };
-    const chartWidth = width - padding.left - padding.right;
-    const chartHeight = height - padding.top - padding.bottom;
+async function generateBarChartPng(data, labels, title, width = 800, height = 400) {
+    const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height });
     
-    const maxValue = 4;
-    const barWidth = chartWidth / data.length;
-    
-    const riskColors = ['#00ff00', '#ffff00', '#ffa500', '#ff0000', '#ff0000']; // low, medium, high, SCROLLING
+    // Map risk values to colors and labels
+    const riskColors = ['#00ff00', '#ffff00', '#ffa500', '#ff0000'];
     const riskLabels = ['Low', 'Medium', 'High', 'SCROLLING'];
     
-    // Build SVG
-    let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">\n`;
-    
-    // Background
-    svg += `  <rect width="${width}" height="${height}" fill="#ffffff"/>\n`;
-    
-    // Title
-    svg += `  <text x="${width/2}" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333">${title}</text>\n`;
-    
-    // Grid lines and Y-axis labels
-    for (let i = 0; i <= 4; i++) {
-        const y = padding.top + chartHeight - (i / 4) * chartHeight;
-        svg += `  <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="#e0e0e0" stroke-width="1"/>\n`;
-        svg += `  <text x="${padding.left - 10}" y="${y + 4}" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#666">${riskLabels[i] || i}</text>\n`;
-    }
-    
-    // X-axis labels (show every Nth label)
+    // Sample labels to avoid crowding
     const labelStep = Math.ceil(labels.length / 10);
-    data.forEach((value, i) => {
-        if (i % labelStep === 0 || i === data.length - 1) {
-            const x = padding.left + i * barWidth + barWidth / 2;
-            svg += `  <text x="${x}" y="${height - 20}" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">${labels[i]}s</text>\n`;
+    const sampledLabels = labels.map((label, i) => (i % labelStep === 0 || i === labels.length - 1) ? `${label}s` : '');
+    
+    const backgroundColors = data.map(value => riskColors[Math.min(value, riskColors.length - 1)]);
+    
+    const configuration = {
+        type: 'bar',
+        data: {
+            labels: sampledLabels,
+            datasets: [{
+                label: 'Risk Level',
+                data: data,
+                backgroundColor: backgroundColors,
+                borderColor: '#333',
+                borderWidth: 0.5
+            }]
+        },
+        options: {
+            responsive: false,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: title,
+                    font: { size: 16, weight: 'bold' }
+                },
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time (seconds)'
+                    },
+                    ticks: {
+                        maxRotation: 0,
+                        autoSkip: true
+                    }
+                },
+                y: {
+                    min: 0,
+                    max: 4,
+                    title: {
+                        display: true,
+                        text: 'Risk Level'
+                    },
+                    ticks: {
+                        stepSize: 1,
+                        callback: function(value) {
+                            return riskLabels[value] || value;
+                        }
+                    }
+                }
+            }
         }
-    });
+    };
     
-    // X-axis title
-    svg += `  <text x="${width/2}" y="${height - 5}" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#333">Time (seconds)</text>\n`;
-    
-    // Y-axis title
-    svg += `  <text x="15" y="${height/2}" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#333" transform="rotate(-90, 15, ${height/2})">Risk Level</text>\n`;
-    
-    // Bars
-    data.forEach((value, i) => {
-        const x = padding.left + i * barWidth + 1;
-        const barHeight = (value / 4) * chartHeight;
-        const y = padding.top + chartHeight - barHeight;
-        const color = riskColors[Math.min(value, riskColors.length - 1)];
-        svg += `  <rect x="${x}" y="${y}" width="${barWidth - 2}" height="${barHeight}" fill="${color}" stroke="#333" stroke-width="0.5" opacity="0.8"/>\n`;
-    });
-    
-    svg += `</svg>`;
-    return svg;
+    return await chartJSNodeCanvas.renderToBuffer(configuration);
 }
 
 /**
- * Generate PNG charts for emotion metrics (using SVG format)
+ * Generate PNG charts for emotion metrics (using Chart.js + chartjs-node-canvas)
  * @param {string} outputDir - Output directory path
  * @param {Array} data - Per-second emotion data
  * @param {number} duration - Video duration in seconds
  */
 async function generatePngCharts(outputDir, data, duration) {
-    console.log('📊 Generating SVG charts...\n');
+    console.log('📊 Generating PNG charts with Chart.js...\n');
     
     try {
         const labels = data.map(s => s.timestamp);
         
         // 1. Boredom Timeline (Line Chart)
         const boredomData = data.map(s => s.boredom);
-        const boredomSvg = generateLineChart(boredomData, labels, 'Boredom Over Time (Higher = Worse)', '#ff6384');
-        fs.writeFileSync(path.join(outputDir, 'boredom-timeline.svg'), boredomSvg);
-        console.log('   ✅ boredom-timeline.svg generated');
-        
-        // Also save as .png extension for markdown compatibility (it's actually SVG)
-        fs.writeFileSync(path.join(outputDir, 'boredom-timeline.png'), boredomSvg);
+        const boredomPng = await generateLineChartPng(boredomData, labels, 'Boredom Over Time (Higher = Worse)', '#ff6384');
+        fs.writeFileSync(path.join(outputDir, 'boredom-timeline.png'), boredomPng);
+        console.log('   ✅ boredom-timeline.png generated');
         
         // 2. Excitement Timeline (Line Chart)
         const excitementData = data.map(s => s.excitement);
-        const excitementSvg = generateLineChart(excitementData, labels, 'Excitement Over Time (Higher = Better)', '#36a2eb');
-        fs.writeFileSync(path.join(outputDir, 'excitement-timeline.svg'), excitementSvg);
-        console.log('   ✅ excitement-timeline.svg generated');
-        fs.writeFileSync(path.join(outputDir, 'excitement-timeline.png'), excitementSvg);
+        const excitementPng = await generateLineChartPng(excitementData, labels, 'Excitement Over Time (Higher = Better)', '#36a2eb');
+        fs.writeFileSync(path.join(outputDir, 'excitement-timeline.png'), excitementPng);
+        console.log('   ✅ excitement-timeline.png generated');
         
         // 3. Patience Timeline (Line Chart)
         const patienceData = data.map(s => s.patience);
-        const patienceSvg = generateLineChart(patienceData, labels, 'Patience Over Time (Higher = Better)', '#4bc0c0');
-        fs.writeFileSync(path.join(outputDir, 'patience-timeline.svg'), patienceSvg);
-        console.log('   ✅ patience-timeline.svg generated');
-        fs.writeFileSync(path.join(outputDir, 'patience-timeline.png'), patienceSvg);
+        const patiencePng = await generateLineChartPng(patienceData, labels, 'Patience Over Time (Higher = Better)', '#4bc0c0');
+        fs.writeFileSync(path.join(outputDir, 'patience-timeline.png'), patiencePng);
+        console.log('   ✅ patience-timeline.png generated');
         
         // 4. Scroll Risk Timeline (Bar Chart)
         const scrollRiskData = data.map(s => {
@@ -847,15 +860,14 @@ async function generatePngCharts(outputDir, data, duration) {
                 default: return 0;
             }
         });
-        const scrollRiskSvg = generateBarChart(scrollRiskData, labels, 'Scroll Risk Timeline (Red = Critical Risk)');
-        fs.writeFileSync(path.join(outputDir, 'scroll-risk-timeline.svg'), scrollRiskSvg);
-        console.log('   ✅ scroll-risk-timeline.svg generated');
-        fs.writeFileSync(path.join(outputDir, 'scroll-risk-timeline.png'), scrollRiskSvg);
+        const scrollRiskPng = await generateBarChartPng(scrollRiskData, labels, 'Scroll Risk Timeline (Red = Critical Risk)');
+        fs.writeFileSync(path.join(outputDir, 'scroll-risk-timeline.png'), scrollRiskPng);
+        console.log('   ✅ scroll-risk-timeline.png generated');
         
-        console.log('\n✅ All SVG charts generated successfully\n');
+        console.log('\n✅ All PNG charts generated successfully\n');
         return true;
     } catch (error) {
-        console.error('❌ Error generating SVG charts:', error.message);
+        console.error('❌ Error generating PNG charts:', error.message);
         console.error('   Falling back to ASCII charts\n');
         return false;
     }
@@ -874,7 +886,7 @@ async function generatePerSecondAppendix(outputDir, chunksData, perSecondData, d
     const data = perSecondData.per_second_data;
     const duration = Math.floor(perSecondData.duration);
 
-    // Generate SVG charts first
+    // Generate PNG charts first
     await generatePngCharts(outputDir, data, duration);
 
     let appendix = `# Per-Second Emotion Analysis Appendix\n\n`;
