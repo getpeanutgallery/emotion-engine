@@ -84,8 +84,12 @@ async function run(input) {
   );
   const chunkBoundaries = strategy.calculateChunkBoundaries(duration, strategyConfig?.config || {});
 
-  const numChunks = chunkBoundaries.length;
-  console.log(`   📦 Processing ${numChunks} chunks...`);
+  // Apply max_chunks limit from config
+  const maxChunks = config?.settings?.max_chunks || chunkBoundaries.length;
+  const numChunks = Math.min(chunkBoundaries.length, maxChunks);
+  const limitedBoundaries = chunkBoundaries.slice(0, numChunks);
+  
+  console.log(`   📦 Processing ${numChunks} chunks (max_chunks: ${maxChunks})`);
 
   // Get context from previous phases
   const dialogueData = artifacts.dialogueData || { dialogue_segments: [], summary: '' };
@@ -105,7 +109,7 @@ async function run(input) {
   try {
     // Process each chunk
     for (let chunkIndex = 0; chunkIndex < numChunks; chunkIndex++) {
-      const boundary = chunkBoundaries[chunkIndex];
+      const boundary = limitedBoundaries[chunkIndex];
       const startTime = boundary.startTime;
       const endTime = boundary.endTime;
       const chunkDurationActual = endTime - startTime;

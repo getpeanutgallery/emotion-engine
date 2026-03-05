@@ -13,6 +13,7 @@ const fs = require('fs');
 const path = require('path');
 const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js');
 const personaLoader = require('../server/lib/persona-loader.cjs');
+const retryStrategy = require('../server/lib/retry-strategy.cjs');
 
 /**
  * Convert file to base64 data URL
@@ -196,31 +197,66 @@ async function analyze(input) {
     throw new Error('EmotionLensesTool: AI_API_KEY environment variable is required');
   }
 
-  // Call AI provider
+  // Get retry strategy from config
+  const retryConfig = toolVariables.variables?.retry_strategy || {
+    type: 'exponential-backoff',
+    config: { maxRetries: 3, initialDelayMs: 1000, maxDelayMs: 10000, exponentialBase: 2, jitter: true }
+  };
+
+  const strategy = retryStrategy.getRetryStrategy(retryConfig.type, retryConfig.config);
+
+  console.log(`   🔄 Retry strategy: ${retryConfig.type} (maxRetries: ${retryConfig.config.maxRetries})`);
+
+  // Call AI provider with retry logic
   let response;
-  if (Array.isArray(messageContent)) {
-    // Video input mode (OpenRouter format) - pass as prompt array
-    response = await provider.complete({
-      prompt: messageContent,
-      model,
-      apiKey,
-      options: {
-        temperature: 0.7,
-        maxTokens: 2048
-      }
-    });
-  } else {
-    // Backward compatibility mode (image attachments)
-    response = await provider.complete({
-      prompt: messageContent.prompt,
-      model,
-      apiKey,
-      attachments: messageContent.attachments,
-      options: {
-        temperature: 0.7,
-        maxTokens: 2048
-      }
-    });
+  try {
+    if (Array.isArray(messageContent)) {
+      // Video input mode (OpenRouter format) - pass as prompt array
+      const result = await strategy.execute(async () => {
+        return await provider.complete({
+          prompt: messageContent,
+          model,
+          apiKey,
+          options: {
+            temperature: 0.7,
+            maxTokens: 2048
+          }
+        });
+      }, { 
+        operation: 'AI completion', 
+        context: { 
+          model, 
+          chunkIndex: videoContext.chunkIndex,
+          splitIndex: videoContext.splitIndex || 0
+        } 
+      });
+      response = result;
+    } else {
+      // Backward compatibility mode (image attachments)
+      const result = await strategy.execute(async () => {
+        return await provider.complete({
+          prompt: messageContent.prompt,
+          model,
+          apiKey,
+          attachments: messageContent.attachments,
+          options: {
+            temperature: 0.7,
+            maxTokens: 2048
+          }
+        });
+      }, { 
+        operation: 'AI completion', 
+        context: { 
+          model, 
+          chunkIndex: videoContext.chunkIndex,
+          splitIndex: videoContext.splitIndex || 0
+        } 
+      });
+      response = result;
+    }
+  } catch (error) {
+    console.error(`❌ AI completion failed after retries: ${error.message}`);
+    throw error;
   }
 
   // Parse response into structured state

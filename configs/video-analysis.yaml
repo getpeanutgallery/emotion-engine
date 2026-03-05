@@ -60,6 +60,14 @@ settings:
   max_chunks: 4              # limit chunks for testing
   api_request_delay: 1000    # milliseconds between API calls
   chunk_quality: "medium"    # low|medium|high
+  retry_strategy:
+    type: "exponential-backoff"  # Options: "none", "fixed-delay", "exponential-backoff", "adaptive"
+    config:
+      maxRetries: 3
+      initialDelayMs: 1000
+      maxDelayMs: 10000
+      exponentialBase: 2
+      jitter: true
 
 # Tool variables (paths must be absolute or relative to workspace)
 tool_variables:
