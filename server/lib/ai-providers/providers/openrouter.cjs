@@ -96,7 +96,19 @@ async function complete(options) {
   // Build messages array - support both string prompt and messages array
   let messages;
   if (Array.isArray(prompt)) {
-    messages = prompt;
+    // Check if it's already a properly formatted messages array
+    if (prompt.length > 0 && prompt[0].role) {
+      // Already has role, use as-is
+      messages = prompt;
+    } else {
+      // It's a content array (text + attachments), wrap it with role: 'user'
+      messages = [
+        {
+          role: 'user',
+          content: prompt
+        }
+      ];
+    }
   } else {
     // Build content array - text + attachments
     const contentParts = [];
@@ -106,70 +118,35 @@ async function complete(options) {
       contentParts.push({ type: 'text', text: prompt });
     }
     
-    // Add attachments (multi-modal support - three patterns: URL, path, data)
-    if (attachments && attachments.length > 0) {
+    // Add attachments (images)
+    if (attachments && Array.isArray(attachments)) {
       for (const attachment of attachments) {
-        // Process attachment (handles URL, path, or data patterns)
-        const processed = await processAttachment(attachment);
-        const { type, mimeType, isUrl, base64Data, url } = processed;
-        
-        // Handle different attachment types
-        if (type === 'image') {
-          // Image: URL or base64 data URI
-          if (isUrl) {
+        if (attachment.type === 'image') {
+          // Image: support both base64 and URL
+          if (attachment.base64) {
             contentParts.push({
               type: 'image_url',
-              image_url: { url }
+              image_url: { url: `data:${attachment.mimeType || 'image/jpeg'};base64,${attachment.base64}` }
             });
-          } else {
-            // Base64 data (from path or direct data)
+          } else if (attachment.url) {
             contentParts.push({
               type: 'image_url',
-              image_url: { url: `data:${mimeType};base64,${base64Data}` }
+              image_url: { url: attachment.url }
             });
           }
-        } else if (type === 'video') {
-          // Video: URL only (OpenRouter doesn't support base64 video)
-          if (isUrl) {
+        } else if (attachment.type === 'video') {
+          // Video: support both base64 and URL
+          // OpenRouter DOES support base64 video per official docs
+          if (attachment.base64) {
             contentParts.push({
               type: 'video_url',
-              video_url: { url }
+              video_url: { url: `data:${attachment.mimeType || 'video/mp4'};base64,${attachment.base64}` }
             });
-          } else {
-            // Local file converted to base64 - not supported by OpenRouter
-            throw new Error(
-              'OpenRouter: Video attachments must be URLs. ' +
-              'Local video files must be uploaded to a publicly accessible URL first. ' +
-              'Alternatively, extract frames as images and send those.'
-            );
-          }
-        } else if (type === 'audio') {
-          // Audio: URL only (OpenRouter doesn't support base64 audio)
-          if (isUrl) {
+          } else if (attachment.url) {
             contentParts.push({
-              type: 'audio_url',
-              audio_url: { url }
+              type: 'video_url',
+              video_url: { url: attachment.url }
             });
-          } else {
-            // Local file converted to base64 - not supported by OpenRouter
-            throw new Error(
-              'OpenRouter: Audio attachments must be URLs. ' +
-              'Local audio files must be uploaded to a publicly accessible URL first. ' +
-              'Alternatively, use a provider like Gemini that supports base64 audio.'
-            );
-          }
-        } else if (type === 'file') {
-          // File attachments: URL only
-          if (isUrl) {
-            contentParts.push({
-              type: 'file_url',
-              file_url: { url }
-            });
-          } else {
-            throw new Error(
-              'OpenRouter: File attachments must be URLs. ' +
-              'Local files must be uploaded to a publicly accessible URL first.'
-            );
           }
         }
       }
@@ -178,7 +155,7 @@ async function complete(options) {
     messages = [
       {
         role: 'user',
-        content: contentParts.length > 1 ? contentParts : prompt
+        content: contentParts
       }
     ];
   }
