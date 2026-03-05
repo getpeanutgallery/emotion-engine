@@ -50,9 +50,11 @@ process:
 
 # Phase 3: Generate reports
 report:
-  - scripts/report/evaluation.cjs
-  - scripts/report/graphs.cjs
-  - scripts/report/assets.cjs
+  - scripts/report/metrics.cjs
+  - scripts/report/recommendation.cjs
+  - scripts/report/emotional-analysis.cjs
+  - scripts/report/summary.cjs
+  - scripts/report/final-report.cjs
 
 # Global settings
 settings:

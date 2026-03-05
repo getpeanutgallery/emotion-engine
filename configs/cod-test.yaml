@@ -17,9 +17,13 @@ gather_context: []
 process:
   - server/scripts/process/video-chunks.cjs
 
-# Generate evaluation report
+# Generate reports
 report:
-  - server/scripts/report/evaluation.cjs
+  - server/scripts/report/metrics.cjs
+  - server/scripts/report/recommendation.cjs
+  - server/scripts/report/emotional-analysis.cjs
+  - server/scripts/report/summary.cjs
+  - server/scripts/report/final-report.cjs
 
 # Settings for quick testing
 settings:
