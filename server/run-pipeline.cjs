@@ -15,6 +15,9 @@
 const fs = require('fs');
 const path = require('path');
 
+// Load environment variables from .env file (if exists)
+require('dotenv').config();
+
 // Import pipeline components
 const { loadConfig, validateConfig, getScriptsFromPhase } = require('./lib/config-loader.cjs');
 const { createArtifactContext, mergeArtifacts, serializeArtifacts } = require('./lib/artifact-manager.cjs');
