@@ -1,0 +1,44 @@
+# Quick Test Pipeline - cod.mp4
+# Minimal pipeline for testing with cod.mp4 video
+
+name: "COD Test Pipeline"
+description: "Test pipeline for cod.mp4 video (2 chunks max)"
+version: "1.0"
+
+# Asset configuration
+asset:
+  inputPath: ".cache/videos/cod.mp4"
+  outputDir: "output/cod-test"
+
+# Skip context gathering for speed
+gather_context: []
+
+# Process with video-chunks (limited to 2 chunks for fast testing)
+process:
+  - server/scripts/process/video-chunks.cjs
+
+# Generate evaluation report
+report:
+  - server/scripts/report/evaluation.cjs
+
+# Settings for quick testing
+settings:
+  chunk_duration: 8
+  max_chunks: 2  # Only 2 chunks for fast testing
+  api_request_delay: 500
+
+# Tool variables (paths must be absolute or relative to workspace)
+tool_variables:
+  soulPath: "impatient-teenager"
+  goalPath: "video-ad-evaluation"
+  variables:
+    lenses:
+      - patience
+      - boredom
+      - excitement
+
+# AI provider configuration (API key injected via environment)
+ai:
+  provider: openrouter
+  model: qwen/qwen3.5-27b
+  # apiKey: injected via AI_API_KEY environment variable

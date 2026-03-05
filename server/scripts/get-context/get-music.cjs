@@ -1,0 +1,361 @@
+#!/usr/bin/env node
+/**
+ * Get Music Script
+ * 
+ * Extracts and analyzes music/audio from video to identify mood, intensity, and segments.
+ * This script runs in Phase 1 (Gather Context) of the pipeline.
+ * 
+ * @module scripts/get-context/get-music
+ */
+
+const fs = require('fs');
+const path = require('path');
+const { exec } = require('child_process');
+const { promisify } = require('util');
+const aiProvider = require('../../lib/ai-providers/ai-provider-interface.js');
+
+const execAsync = promisify(exec);
+
+/**
+ * Script Input Contract
+ * @typedef {Object} GetMusicInput
+ * @property {string} assetPath - Path to video/audio file
+ * @property {string} outputDir - Output directory
+ * @property {Object} [config] - Pipeline config
+ */
+
+/**
+ * Script Output Contract
+ * @typedef {Object} GetMusicOutput
+ * @property {Object} artifacts - Script artifacts
+ * @property {Object} artifacts.musicData - Music analysis results
+ * @property {Array} artifacts.musicData.segments - Music segments
+ * @property {string} artifacts.musicData.summary - Brief summary
+ * @property {boolean} artifacts.musicData.hasMusic - True if music detected
+ */
+
+/**
+ * Main entry point
+ * 
+ * @async
+ * @function run
+ * @param {GetMusicInput} input - Script input
+ * @returns {Promise<GetMusicOutput>} - Script output
+ */
+async function run(input) {
+  const { assetPath, outputDir, config } = input;
+
+  console.log('   🎵 Extracting and analyzing music/audio from:', assetPath);
+
+  // Ensure output directory exists
+  fs.mkdirSync(outputDir, { recursive: true });
+
+  // Create temp directory for audio extraction
+  const tempDir = path.join(outputDir, '.temp-music');
+  fs.mkdirSync(tempDir, { recursive: true });
+
+  try {
+    // Extract audio from video (if needed)
+    const audioPath = await extractAudio(assetPath, tempDir);
+
+    // Get audio duration
+    const duration = getAudioDuration(audioPath);
+
+    // Segment audio (e.g., every 30 seconds)
+    const segmentDuration = config?.settings?.music_segment_duration || 30;
+    const numSegments = Math.ceil(duration / segmentDuration);
+
+    console.log(`   📊 Audio duration: ${duration.toFixed(1)}s (${numSegments} segments)`);
+
+    const segments = [];
+    let hasMusic = false;
+
+    // Analyze each segment
+    for (let i = 0; i < numSegments; i++) {
+      const startTime = i * segmentDuration;
+      const endTime = Math.min(startTime + segmentDuration, duration);
+      const segmentDurationActual = endTime - startTime;
+
+      console.log(`   Analyzing segment ${i + 1}/${numSegments} (${startTime.toFixed(1)}s - ${endTime.toFixed(1)}s)...`);
+
+      // Extract segment
+      const segmentPath = path.join(tempDir, `segment-${i}.wav`);
+      await extractAudioSegment(audioPath, startTime, segmentDurationActual, segmentPath);
+
+      // Convert to base64
+      const audioBase64 = fs.readFileSync(segmentPath).toString('base64');
+
+      // Get AI provider from environment
+      const provider = aiProvider.getProviderFromEnv();
+      const model = process.env.AI_MODEL || 'qwen/qwen-3.5-397b-a17b';
+      const apiKey = process.env.AI_API_KEY;
+
+      if (!apiKey) {
+        throw new Error('GetMusic: AI_API_KEY environment variable is required');
+      }
+
+      // Build analysis prompt
+      const prompt = buildAnalysisPrompt(startTime, endTime);
+
+      // Call AI provider for analysis
+      const response = await provider.complete({
+        prompt,
+        model,
+        apiKey,
+        attachments: [
+          {
+            type: 'audio',
+            data: audioBase64,
+            mimeType: 'audio/wav'
+          }
+        ],
+        options: {
+          temperature: 0.5,
+          maxTokens: 512
+        }
+      });
+
+      // Parse segment analysis
+      const segmentAnalysis = parseSegmentResponse(response.content, startTime, endTime);
+      segments.push(segmentAnalysis);
+
+      if (segmentAnalysis.type === 'music' || segmentAnalysis.mood) {
+        hasMusic = true;
+      }
+    }
+
+    // Build music data
+    const musicData = {
+      segments,
+      summary: generateSummary(segments),
+      hasMusic
+    };
+
+    // Write intermediate artifact
+    const artifactPath = path.join(outputDir, 'music-data.json');
+    fs.writeFileSync(artifactPath, JSON.stringify(musicData, null, 2));
+
+    console.log('   ✅ Music/audio analysis complete');
+    console.log(`      Found ${segments.length} segments`);
+    console.log(`      Music detected: ${hasMusic ? 'Yes' : 'No'}`);
+
+    return {
+      artifacts: {
+        musicData
+      }
+    };
+  } catch (error) {
+    console.error('   ❌ Error analyzing music:', error.message);
+    throw error;
+  } finally {
+    // Cleanup temp directory
+    try {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    } catch (e) {
+      // Ignore cleanup errors
+    }
+  }
+}
+
+/**
+ * Extract audio from video using ffmpeg
+ * 
+ * @async
+ * @function extractAudio
+ * @param {string} videoPath - Path to video file
+ * @param {string} outputDir - Output directory for audio file
+ * @returns {Promise<string>} - Path to extracted audio file
+ */
+async function extractAudio(videoPath, outputDir) {
+  const audioPath = path.join(outputDir, 'audio.wav');
+
+  // Check if input is already audio
+  const ext = path.extname(videoPath).toLowerCase();
+  const isAudio = ['.mp3', '.wav', '.ogg', '.m4a', '.flac'].includes(ext);
+
+  if (isAudio) {
+    // Copy audio file directly
+    fs.copyFileSync(videoPath, audioPath);
+    return audioPath;
+  }
+
+  // Extract audio from video using ffmpeg
+  try {
+    await execAsync(
+      `ffmpeg -i "${videoPath}" -vn -acodec pcm_s16le -ar 16000 -ac 1 -y "${audioPath}" 2>/dev/null`
+    );
+    return audioPath;
+  } catch (error) {
+    throw new Error(`Failed to extract audio: ${error.message}`);
+  }
+}
+
+/**
+ * Extract audio segment using ffmpeg
+ * 
+ * @async
+ * @function extractAudioSegment
+ * @param {string} audioPath - Path to audio file
+ * @param {number} startTime - Start time in seconds
+ * @param {number} duration - Duration in seconds
+ * @param {string} outputPath - Output path for segment
+ * @returns {Promise<void>}
+ */
+async function extractAudioSegment(audioPath, startTime, duration, outputPath) {
+  try {
+    await execAsync(
+      `ffmpeg -i "${audioPath}" -ss ${startTime} -t ${duration} -acodec pcm_s16le -ar 16000 -ac 1 -y "${outputPath}" 2>/dev/null`
+    );
+  } catch (error) {
+    throw new Error(`Failed to extract audio segment: ${error.message}`);
+  }
+}
+
+/**
+ * Get audio duration using ffprobe
+ * 
+ * @function getAudioDuration
+ * @param {string} audioPath - Path to audio file
+ * @returns {number} - Duration in seconds
+ */
+function getAudioDuration(audioPath) {
+  try {
+    const cmd = `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${audioPath}"`;
+    const { stdout } = require('child_process').execSync(cmd);
+    return parseFloat(stdout.trim()) || 0;
+  } catch (e) {
+    return 0;
+  }
+}
+
+/**
+ * Build analysis prompt for AI
+ * 
+ * @function buildAnalysisPrompt
+ * @param {number} startTime - Segment start time
+ * @param {number} endTime - Segment end time
+ * @returns {string} - Analysis prompt
+ */
+function buildAnalysisPrompt(startTime, endTime) {
+  return `Analyze the audio in this segment (${startTime.toFixed(1)}s to ${endTime.toFixed(1)}s).
+
+Identify:
+1. Type of audio: music, speech, silence, ambient noise, sound effects
+2. If music: describe the mood (upbeat, calm, tense, sad, energetic, etc.)
+3. Intensity level from 1-10
+4. Brief description
+
+Respond with a JSON object in the following format:
+
+\`\`\`json
+{
+  "type": "music|speech|silence|ambient|sfx",
+  "description": "Brief description of the audio",
+  "mood": "upbeat|calm|tense|sad|energetic|neutral",
+  "intensity": 5
+}
+\`\`\`
+
+IMPORTANT:
+- Respond ONLY with valid JSON (no markdown, no explanation)
+- Be specific about the mood and characteristics
+- If it's speech, set type to "speech" and mood to "neutral"`;
+}
+
+/**
+ * Parse AI segment analysis response
+ * 
+ * @function parseSegmentResponse
+ * @param {string} responseContent - AI response content
+ * @param {number} startTime - Segment start time
+ * @param {number} endTime - Segment end time
+ * @returns {Object} - Parsed segment analysis
+ */
+function parseSegmentResponse(responseContent, startTime, endTime) {
+  // Try to extract JSON from response
+  let jsonData = null;
+
+  try {
+    jsonData = JSON.parse(responseContent.trim());
+  } catch (e) {
+    const jsonMatch = responseContent.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (jsonMatch) {
+      try {
+        jsonData = JSON.parse(jsonMatch[1].trim());
+      } catch (e2) {
+        // Fallback
+      }
+    }
+  }
+
+  // Fallback if parsing fails
+  if (!jsonData) {
+    return {
+      start: startTime,
+      end: endTime,
+      type: 'unknown',
+      description: 'Analysis failed',
+      mood: null,
+      intensity: 0
+    };
+  }
+
+  return {
+    start: startTime,
+    end: endTime,
+    type: jsonData.type || 'unknown',
+    description: jsonData.description || 'No description',
+    mood: jsonData.mood || null,
+    intensity: typeof jsonData.intensity === 'number' ? jsonData.intensity : 0
+  };
+}
+
+/**
+ * Generate summary from all segments
+ * 
+ * @function generateSummary
+ * @param {Array} segments - All segment analyses
+ * @returns {string} - Summary text
+ */
+function generateSummary(segments) {
+  const musicSegments = segments.filter(s => s.type === 'music' && s.mood);
+  const speechSegments = segments.filter(s => s.type === 'speech');
+
+  if (musicSegments.length === 0 && speechSegments.length === 0) {
+    return 'No significant music or speech detected in the audio.';
+  }
+
+  let summary = '';
+
+  if (musicSegments.length > 0) {
+    const moods = [...new Set(musicSegments.map(s => s.mood).filter(Boolean))];
+    summary += `Music detected with moods: ${moods.join(', ')}. `;
+  }
+
+  if (speechSegments.length > 0) {
+    const speechDuration = speechSegments.reduce((sum, s) => sum + (s.end - s.start), 0);
+    summary += `Speech present for approximately ${speechDuration.toFixed(0)} seconds. `;
+  }
+
+  return summary.trim();
+}
+
+module.exports = { run };
+
+// Allow standalone execution for testing
+if (require.main === module) {
+  const assetPath = process.argv[2] || 'test-audio.wav';
+  const outputDir = process.argv[3] || 'output/test-music';
+
+  console.log('Get Music Script - Test Mode');
+  console.log('Asset:', assetPath);
+  console.log('Output:', outputDir);
+  console.log('');
+  console.log('⚠️  This script requires:');
+  console.log('   - AI_API_KEY environment variable');
+  console.log('   - ffmpeg installed for audio extraction');
+  console.log('   - A model that supports audio analysis');
+  console.log('');
+  console.log('Example usage:');
+  console.log('  AI_API_KEY=your-key node get-music.cjs video.mp4 output/');
+}

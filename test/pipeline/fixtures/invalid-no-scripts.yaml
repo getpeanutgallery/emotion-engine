@@ -1,0 +1,13 @@
+# Invalid config - no scripts
+name: "Invalid Config"
+description: "Test config with no scripts (should fail validation)"
+version: "1.0.0"
+
+asset:
+  inputPath: "test.mp4"
+  outputDir: "output/test"
+
+# No scripts in any phase - should fail validation
+gather_context: []
+process: []
+report: []

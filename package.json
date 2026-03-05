@@ -9,14 +9,15 @@
 	},
 	"scripts": {
 		"pipeline": "node server/run-pipeline.cjs",
-		"test": "node --test test/*.test.js",
+		"test": "node --test test/**/*.test.js",
 		"test:validate-json": "node test-validate-json.cjs"
 	},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.1002.0",
+		"axios": "^1.13.6",
 		"dotenv": "^17.3.1",
 		"js-yaml": "^4.1.0"
 	},
-	"devDependencies": {},
 	"engines": {
 		"node": ">=18.0.0"
 	},

@@ -1,0 +1,20 @@
+# Test pipeline for orchestrator tests
+name: "Pipeline Test"
+description: "Test configuration for orchestrator unit tests"
+version: "1.0.0"
+
+asset:
+  inputPath: ".cache/videos/test.mp4"
+  outputDir: "output/pipeline-test"
+
+gather_context:
+  - server/scripts/get-context/example-gather.cjs
+
+process:
+  - server/scripts/process/example-process.cjs
+
+report:
+  - server/scripts/report/example-report.cjs
+
+settings:
+  test_mode: true

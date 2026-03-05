@@ -1,0 +1,27 @@
+# Example Pipeline Configuration
+# Uses example scripts to test the full pipeline flow
+
+name: "Example Pipeline Test"
+description: "Test configuration using example scripts (no AI calls)"
+version: "1.0.0"
+
+# Asset configuration
+asset:
+  inputPath: ".cache/videos/test.mp4"
+  outputDir: "output/example-pipeline"
+
+# Phase 1: Gather Context
+gather_context:
+  - server/scripts/get-context/example-gather.cjs
+
+# Phase 2: Process (sequential)
+process:
+  - server/scripts/process/example-process.cjs
+
+# Phase 3: Report
+report:
+  - server/scripts/report/example-report.cjs
+
+# Global settings
+settings:
+  test_mode: true

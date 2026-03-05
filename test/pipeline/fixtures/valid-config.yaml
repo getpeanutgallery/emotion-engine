@@ -1,0 +1,20 @@
+# Valid test configuration
+name: "Test Pipeline"
+description: "Test config for unit tests"
+version: "1.0.0"
+
+asset:
+  inputPath: "test.mp4"
+  outputDir: "output/test"
+
+gather_context:
+  - scripts/get-context/example-gather.cjs
+
+process:
+  - scripts/process/example-process.cjs
+
+report:
+  - scripts/report/example-report.cjs
+
+settings:
+  test_mode: true

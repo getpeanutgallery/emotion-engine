@@ -1,0 +1,25 @@
+# Test parallel execution
+name: "Parallel Test"
+description: "Test parallel script execution"
+version: "1.0.0"
+
+asset:
+  inputPath: ".cache/videos/test.mp4"
+  outputDir: "output/parallel-test"
+
+gather_context:
+  parallel:
+    - script: server/scripts/get-context/example-gather.cjs
+      customVar: "value1"
+    - script: server/scripts/get-context/example-gather.cjs
+      customVar: "value2"
+
+process:
+  - server/scripts/process/example-process.cjs
+
+report:
+  - server/scripts/report/example-report.cjs
+
+settings:
+  test_mode: true
+  parallel_test: true

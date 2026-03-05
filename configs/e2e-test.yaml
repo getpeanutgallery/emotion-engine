@@ -1,0 +1,37 @@
+# End-to-End Test Configuration
+# Tests full pipeline with parallel execution
+
+name: "E2E Test Pipeline"
+description: "End-to-end test with parallel script execution"
+version: "1.0.0"
+
+# Asset configuration
+asset:
+  inputPath: ".cache/videos/e2e-test.mp4"
+  outputDir: "output/e2e-test"
+
+# Phase 1: Gather Context (parallel)
+gather_context:
+  parallel:
+    - script: server/scripts/get-context/example-gather.cjs
+
+# Phase 2: Process (parallel - simulating multi-persona swarm)
+process:
+  parallel:
+    - script: server/scripts/process/example-process.cjs
+      toolVariables:
+        persona: "persona-1"
+        lenses: ["patience", "boredom"]
+    - script: server/scripts/process/example-process.cjs
+      toolVariables:
+        persona: "persona-2"
+        lenses: ["excitement", "joy"]
+
+# Phase 3: Report
+report:
+  - server/scripts/report/example-report.cjs
+
+# Global settings
+settings:
+  test_mode: true
+  e2e_test: true

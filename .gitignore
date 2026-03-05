@@ -1,15 +1,31 @@
-# Git Ignore for Emotion Engine
+# Git Ignore for Emotion Engine v8.0
+
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
+
+# Runtime configs with secrets
+.pipeline-runtime.yaml
+*.runtime.yaml
+.runtime-config.json
+
+# Output directories
+/output/
+.cache/
+dist/
 
 # Dependencies
 node_modules/
 
-# Output and Results
-/output/
-
 # Cache and Temporary Files
-.cache/
 *.tmp
 *.temp
+
+# Logs
+logs/
+*.log
+npm-debug.log*
 
 # OS Files
 .DS_Store
@@ -20,11 +36,3 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
-
-# Logs
-*.log
-npm-debug.log*
-
-# Environment Variables
-.env
-.env.local
