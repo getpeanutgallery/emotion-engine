@@ -14,6 +14,9 @@ const { exec } = require('child_process');
 const { promisify } = require('util');
 const emotionLensesTool = require('../../../tools/emotion-lenses-tool.cjs');
 const storage = require('../../lib/storage/storage-interface.js');
+const chunkStrategy = require('../../lib/chunk-strategy.cjs');
+const splitStrategy = require('../../lib/split-strategy.cjs');
+const videoChunkExtractor = require('../../lib/video-chunk-extractor.cjs');
 
 const execAsync = promisify(exec);
 
@@ -62,8 +65,8 @@ async function run(input) {
   console.log('   🎬 Processing video in chunks...');
 
   // Validate required inputs
-  if (!toolVariables?.soulPath || !toolVariables?.goalPath) {
-    throw new Error('VideoChunks: toolVariables.soulPath and toolVariables.goalPath are required');
+  if (!toolVariables?.soulId || !toolVariables?.goalId) {
+    throw new Error('VideoChunks: toolVariables.soulId and toolVariables.goalId are required');
   }
 
   // Ensure output directory exists
@@ -73,83 +76,140 @@ async function run(input) {
   const duration = await getVideoDuration(assetPath);
   console.log(`   📊 Video duration: ${duration.toFixed(1)}s`);
 
-  // Calculate chunk boundaries
-  const chunkDuration = config?.settings?.chunk_duration || 8;
-  const maxChunks = config?.settings?.max_chunks || Math.ceil(duration / chunkDuration);
-  const numChunks = Math.min(Math.ceil(duration / chunkDuration), maxChunks);
+  // Get chunk strategy from config
+  const strategyConfig = config?.tool_variables?.chunk_strategy;
+  const strategy = chunkStrategy.getChunkStrategy(
+    strategyConfig?.type || 'duration-based',
+    strategyConfig?.config || {}
+  );
+  const chunkBoundaries = strategy.calculateChunkBoundaries(duration, strategyConfig?.config || {});
 
-  console.log(`   📦 Processing ${numChunks} chunks (${chunkDuration}s each)...`);
+  const numChunks = chunkBoundaries.length;
+  console.log(`   📦 Processing ${numChunks} chunks...`);
 
   // Get context from previous phases
   const dialogueData = artifacts.dialogueData || { dialogue_segments: [], summary: '' };
-  const musicData = artifacts.musicData || { segments: [], summary: '' };
+  const musicData = artifacts.musicData || { segments: [] };
 
   const results = [];
   let totalTokens = 0;
   let previousSummary = '';
 
-  // Create temp directory for frames
-  const tempDir = path.join(outputDir, '.temp-frames');
+  // Create temp directory for chunks
+  const tempDir = path.join(outputDir, '.temp-chunks');
   fs.mkdirSync(tempDir, { recursive: true });
+
+  // Track extracted chunk files for cleanup
+  const extractedChunks = [];
 
   try {
     // Process each chunk
-    for (let i = 0; i < numChunks; i++) {
-      const startTime = i * chunkDuration;
-      const endTime = Math.min(startTime + chunkDuration, duration);
+    for (let chunkIndex = 0; chunkIndex < numChunks; chunkIndex++) {
+      const boundary = chunkBoundaries[chunkIndex];
+      const startTime = boundary.startTime;
+      const endTime = boundary.endTime;
       const chunkDurationActual = endTime - startTime;
 
-      console.log(`   Processing chunk ${i + 1}/${numChunks} (${startTime.toFixed(1)}s - ${endTime.toFixed(1)}s)...`);
+      console.log(`   Processing chunk ${chunkIndex + 1}/${numChunks} (${startTime.toFixed(1)}s - ${endTime.toFixed(1)}s)...`);
 
-      // Extract frame(s) from video
-      const framePath = await extractFrame(assetPath, startTime + chunkDurationActual / 2, tempDir, i);
-
-      // Get relevant dialogue for this chunk
-      const dialogueContext = getRelevantDialogue(dialogueData, startTime, endTime);
-
-      // Get relevant music for this chunk
-      const musicContext = getRelevantMusic(musicData, startTime, endTime);
-
-      // Call emotion-lenses-tool for analysis
-      const toolResult = await emotionLensesTool.analyze({
-        toolVariables,
-        videoContext: {
-          frames: [{ path: framePath }],
-          duration: chunkDurationActual
-        },
-        dialogueContext: {
-          segments: dialogueContext
-        },
-        musicContext: {
-          segments: musicContext
-        },
-        previousState: {
-          summary: previousSummary,
-          emotions: results.length > 0 ? results[results.length - 1].emotions : {}
-        }
-      });
-
-      // Collect result
-      const chunkResult = {
-        chunkIndex: i,
+      // Extract video chunk from source
+      const extractionResult = await videoChunkExtractor.extractVideoChunk(
+        assetPath,
         startTime,
         endTime,
-        summary: toolResult.state.summary,
-        emotions: toolResult.state.emotions,
-        dominant_emotion: toolResult.state.dominant_emotion,
-        confidence: toolResult.state.confidence,
-        tokens: toolResult.usage.input + toolResult.usage.output,
-        persona: {
-          soulPath: toolVariables.soulPath,
-          lenses: toolVariables.variables?.lenses || []
+        tempDir,
+        chunkIndex
+      );
+
+      if (!extractionResult.success) {
+        throw new Error(`Failed to extract chunk ${chunkIndex}: ${extractionResult.error}`);
+      }
+
+      const chunkPath = extractionResult.chunkPath;
+      extractedChunks.push(chunkPath);
+
+      // Check file size against maxFileSize config
+      const maxFileSize = config?.tool_variables?.file_transfer?.maxFileSize;
+      let chunksToProcess = [chunkPath];
+
+      if (maxFileSize) {
+        const stats = fs.statSync(chunkPath);
+        if (stats.size > maxFileSize) {
+          console.log(`   ⚠️  Chunk ${chunkIndex + 1} exceeds max file size (${(stats.size / 1024 / 1024).toFixed(2)}MB > ${(maxFileSize / 1024 / 1024).toFixed(2)}MB), splitting...`);
+          
+          const splitConfig = config?.tool_variables?.split_strategy || {};
+          const splitResults = splitStrategy.splitChunk(
+            chunkPath,
+            maxFileSize,
+            splitConfig.maxSplits || 5,
+            splitConfig.splitFactor || 0.5
+          );
+          
+          // Remove original chunk from extractedChunks since it's been split
+          extractedChunks.splice(extractedChunks.indexOf(chunkPath), 1);
+          
+          // Add split chunks to extractedChunks for cleanup
+          splitResults.forEach(splitPath => extractedChunks.push(splitPath));
+          chunksToProcess = splitResults;
         }
-      };
+      }
 
-      results.push(chunkResult);
-      totalTokens += chunkResult.tokens;
-      previousSummary = chunkResult.summary;
+      // Process each chunk (original or split chunks)
+      for (let splitIndex = 0; splitIndex < chunksToProcess.length; splitIndex++) {
+        const currentChunkPath = chunksToProcess[splitIndex];
 
-      console.log(`      ✅ Chunk ${i + 1} analyzed (${chunkResult.tokens} tokens)`);
+        // Get relevant dialogue for this chunk
+        const dialogueContext = getRelevantDialogue(dialogueData, startTime, endTime);
+
+        // Get relevant music for this chunk
+        const musicContext = getRelevantMusic(musicData, startTime, endTime);
+
+        // Call emotion-lenses-tool for analysis
+        const toolResult = await emotionLensesTool.analyze({
+          toolVariables,
+          videoContext: {
+            chunkPath: currentChunkPath,
+            chunkIndex: chunkIndex,
+            splitIndex: splitIndex || 0,
+            startTime: startTime,
+            endTime: endTime,
+            duration: endTime - startTime
+          },
+          dialogueContext: {
+            segments: dialogueContext
+          },
+          musicContext: {
+            segments: musicContext
+          },
+          previousState: {
+            summary: previousSummary,
+            emotions: results.length > 0 ? results[results.length - 1].emotions : {}
+          }
+        });
+
+        // Collect result
+        const chunkResult = {
+          chunkIndex: chunkIndex,
+          splitIndex: splitIndex || 0,
+          startTime,
+          endTime,
+          summary: toolResult.state.summary,
+          emotions: toolResult.state.emotions,
+          dominant_emotion: toolResult.state.dominant_emotion,
+          confidence: toolResult.state.confidence,
+          tokens: toolResult.usage.input + toolResult.usage.output,
+          persona: {
+            soulPath: toolVariables.soulPath,
+            lenses: toolVariables.variables?.lenses || []
+          }
+        };
+
+        results.push(chunkResult);
+        totalTokens += chunkResult.tokens;
+        previousSummary = chunkResult.summary;
+
+        console.log(`      ✅ Chunk ${chunkIndex + 1}${splitIndex > 0 ? `.${splitIndex + 1}` : ''} analyzed (${chunkResult.tokens} tokens)`);
+      }
     }
 
     // Build chunk analysis artifact
@@ -160,7 +220,7 @@ async function run(input) {
         soulPath: toolVariables.soulPath,
         goalPath: toolVariables.goalPath,
         config: {
-          chunkDuration,
+          chunkDuration: config?.settings?.chunk_duration || 8,
           numChunks
         }
       },
@@ -184,6 +244,19 @@ async function run(input) {
     console.error('   ❌ Error processing video chunks:', error.message);
     throw error;
   } finally {
+    // Cleanup extracted chunk files (unless debug mode)
+    if (!config?.debug) {
+      try {
+        for (const chunkPath of extractedChunks) {
+          if (fs.existsSync(chunkPath)) {
+            fs.unlinkSync(chunkPath);
+          }
+        }
+      } catch (e) {
+        console.warn('   ⚠️  Warning: Failed to cleanup some chunk files:', e.message);
+      }
+    }
+
     // Cleanup temp directory
     try {
       fs.rmSync(tempDir, { recursive: true, force: true });
@@ -209,30 +282,6 @@ async function getVideoDuration(videoPath) {
   } catch (error) {
     console.warn('Failed to get video duration, defaulting to 0');
     return 0;
-  }
-}
-
-/**
- * Extract frame from video at specific timestamp
- * 
- * @async
- * @function extractFrame
- * @param {string} videoPath - Path to video file
- * @param {number} timestamp - Timestamp in seconds
- * @param {string} outputDir - Output directory for frame
- * @param {number} index - Frame index (for filename)
- * @returns {Promise<string>} - Path to extracted frame
- */
-async function extractFrame(videoPath, timestamp, outputDir, index) {
-  const framePath = path.join(outputDir, `frame-${index.toString().padStart(4, '0')}.jpg`);
-
-  try {
-    await execAsync(
-      `ffmpeg -i "${videoPath}" -ss ${timestamp} -vframes 1 -q:v 2 -y "${framePath}" 2>/dev/null`
-    );
-    return framePath;
-  } catch (error) {
-    throw new Error(`Failed to extract frame at ${timestamp}s: ${error.message}`);
   }
 }
 

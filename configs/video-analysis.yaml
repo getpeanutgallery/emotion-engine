@@ -61,6 +61,32 @@ settings:
   api_request_delay: 1000    # milliseconds between API calls
   chunk_quality: "medium"    # low|medium|high
 
+# Tool variables (paths must be absolute or relative to workspace)
+tool_variables:
+  soulPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/impatient-teenager/1.0.0/SOUL.md"
+  goalPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+  
+  file_transfer:
+    strategy: "base64"       # Options: "base64", "web_url", "youtube_url"
+    mimeType: "video/mp4"
+    maxFileSize: 10485760    # 10MB in bytes (OpenRouter limit)
+  
+  chunk_strategy:
+    type: "duration-based"   # Options: "duration-based", "size-based", "count-based"
+    config:
+      duration: 8            # seconds (for duration-based)
+    
+    split:
+      enabled: true
+      max_splits: 3          # Recursive split limit (configurable)
+      split_factor: 2        # Divide chunk duration by this factor each split
+  
+  variables:
+    lenses:
+      - patience
+      - boredom
+      - excitement
+
 ---
 # ALTERNATIVE: Parallel Multi-Persona Swarm (Uncomment to use)
 # All personas analyze the same video simultaneously

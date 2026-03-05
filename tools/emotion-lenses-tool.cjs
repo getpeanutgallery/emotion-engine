@@ -15,6 +15,18 @@ const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js'
 const personaLoader = require('../server/lib/persona-loader.cjs');
 
 /**
+ * Convert file to base64 data URL
+ * @param {string} filePath - Path to the file
+ * @param {string} mimeType - MIME type (e.g., 'video/mp4')
+ * @returns {string} Base64 data URL
+ */
+function fileToBase64(filePath, mimeType) {
+  const buffer = fs.readFileSync(filePath);
+  const base64 = buffer.toString('base64');
+  return `data:${mimeType};base64,${base64}`;
+}
+
+/**
  * Tool Input Contract
  * @typedef {Object} EmotionLensesInput
  * @property {Object} toolVariables - Tool configuration
@@ -22,9 +34,16 @@ const personaLoader = require('../server/lib/persona-loader.cjs');
  * @property {string} toolVariables.goalPath - Path to GOAL.md
  * @property {Object} toolVariables.variables - Additional variables
  * @property {string[]} toolVariables.variables.lenses - Emotion lenses to evaluate
+ * @property {string} [toolVariables.file_transfer] - File transfer strategy: "base64", "web_url", or "youtube_url"
  * @property {Object} [videoContext] - Video context
- * @property {Array} videoContext.frames - Video frames (base64 or paths)
+ * @property {Array} videoContext.frames - Video frames (base64 or paths) - deprecated, use chunkPath
+ * @property {string} [videoContext.chunkPath] - Path to video chunk file
+ * @property {string} [videoContext.url] - URL for web_url strategy
+ * @property {number} videoContext.startTime - Start time of chunk in seconds
+ * @property {number} videoContext.endTime - End time of chunk in seconds
  * @property {number} videoContext.duration - Duration in seconds
+ * @property {number} [videoContext.chunkIndex] - Index of this chunk
+ * @property {number} [videoContext.splitIndex] - Index of split this chunk belongs to
  * @property {Object} [dialogueContext] - Dialogue context
  * @property {Array} dialogueContext.segments - Dialogue segments
  * @property {Object} [musicContext] - Music context
@@ -65,23 +84,24 @@ async function analyze(input) {
   } = input;
 
   // Validate required inputs
-  if (!toolVariables?.soulPath || !toolVariables?.goalPath) {
-    throw new Error('EmotionLensesTool: soulPath and goalPath are required in toolVariables');
+  if (!toolVariables?.soulId || !toolVariables?.goalId) {
+    throw new Error('EmotionLensesTool: soulId and goalId are required in toolVariables');
   }
 
   const lenses = toolVariables.variables?.lenses || ['patience', 'boredom', 'excitement'];
+  const fileTransferStrategy = toolVariables.file_transfer || 'base64';
 
   // Load persona configuration
   const personaConfig = personaLoader.loadPersonaConfig(
-    toolVariables.soulPath,
-    toolVariables.goalPath
+    toolVariables.soulId,
+    toolVariables.goalId
   );
 
   if (!personaConfig) {
-    throw new Error(`EmotionLensesTool: Failed to load persona from ${toolVariables.soulPath} and ${toolVariables.goalPath}`);
+    throw new Error(`EmotionLensesTool: Failed to load persona from soulId=${toolVariables.soulId} and goalId=${toolVariables.goalId}`);
   }
 
-  // Build the prompt
+  // Build the prompt with video context info
   const prompt = buildPrompt(personaConfig, {
     lenses,
     videoContext,
@@ -90,30 +110,86 @@ async function analyze(input) {
     previousState
   });
 
-  // Prepare attachments (video frames as images)
-  const attachments = [];
-  if (videoContext.frames && videoContext.frames.length > 0) {
-    for (const frame of videoContext.frames) {
-      if (frame.path) {
-        // Pattern 2: Local path (auto-convert to base64)
-        attachments.push({
-          type: 'image',
-          path: frame.path
-        });
-      } else if (frame.data) {
-        // Pattern 3: Direct base64 data
-        attachments.push({
-          type: 'image',
-          data: frame.data,
-          mimeType: frame.mimeType || 'image/jpeg'
-        });
+  // Prepare message content for OpenRouter with video support
+  let messageContent = null;
+  let base64VideoOrUrl = null;
+
+  // Check if videoContext contains a chunkPath (video file path)
+  if (videoContext.chunkPath) {
+    const chunkPath = videoContext.chunkPath;
+    
+    // Validate file exists
+    if (!fs.existsSync(chunkPath)) {
+      throw new Error(`EmotionLensesTool: Video chunk file not found: ${chunkPath}`);
+    }
+
+    // Validate file size if maxFileSize is configured
+    const stats = fs.statSync(chunkPath);
+    const maxFileSize = toolVariables.variables?.maxFileSize || 100 * 1024 * 1024; // Default 100MB
+    if (stats.size > maxFileSize) {
+      throw new Error(`EmotionLensesTool: Video file exceeds maxFileSize limit (${stats.size} > ${maxFileSize})`);
+    }
+
+    // Convert video using the appropriate strategy
+    if (fileTransferStrategy === 'base64') {
+      base64VideoOrUrl = fileToBase64(chunkPath, 'video/mp4');
+    } else if (fileTransferStrategy === 'web_url') {
+      base64VideoOrUrl = videoContext.url;
+      if (!base64VideoOrUrl) {
+        throw new Error('EmotionLensesTool: videoContext.url is required for web_url strategy');
+      }
+    } else if (fileTransferStrategy === 'youtube_url') {
+      base64VideoOrUrl = videoContext.url;
+      if (!base64VideoOrUrl) {
+        throw new Error('EmotionLensesTool: videoContext.url is required for youtube_url strategy');
+      }
+      // Basic YouTube URL validation
+      if (!base64VideoOrUrl.includes('youtube.com') && !base64VideoOrUrl.includes('youtu.be')) {
+        console.warn('EmotionLensesTool: URL may not be a valid YouTube URL');
+      }
+    } else {
+      throw new Error(`EmotionLensesTool: Unknown file_transfer strategy: ${fileTransferStrategy}`);
+    }
+
+    // Build the message content for OpenRouter with video support
+    messageContent = [
+      { type: 'text', text: prompt },
+      { 
+        type: 'video_url', 
+        video_url: { url: base64VideoOrUrl } 
+      }
+    ];
+  } else {
+    // Backward compatibility: support image frames if they exist
+    const attachments = [];
+    if (videoContext.frames && videoContext.frames.length > 0) {
+      for (const frame of videoContext.frames) {
+        if (frame.path) {
+          attachments.push({
+            type: 'image',
+            path: frame.path
+          });
+        } else if (frame.data) {
+          attachments.push({
+            type: 'image',
+            data: frame.data,
+            mimeType: frame.mimeType || 'image/jpeg'
+          });
+        }
       }
     }
+    
+    // For backward compatibility, use prompt with attachments
+    messageContent = {
+      prompt,
+      attachments: attachments.length > 0 ? attachments : undefined
+    };
   }
 
   // Get AI provider from environment
   const provider = aiProvider.getProviderFromEnv();
-  const model = process.env.AI_MODEL || 'qwen/qwen-3.5-397b-a17b';
+  // Default model supports video input, can be overridden via config or env
+  const model = process.env.AI_MODEL || 'qwen/qwen3.5-35b-a3b';
   const apiKey = process.env.AI_API_KEY;
 
   if (!apiKey) {
@@ -121,19 +197,47 @@ async function analyze(input) {
   }
 
   // Call AI provider
-  const response = await provider.complete({
-    prompt,
-    model,
-    apiKey,
-    attachments: attachments.length > 0 ? attachments : undefined,
-    options: {
-      temperature: 0.7,
-      maxTokens: 2048
-    }
-  });
+  let response;
+  if (Array.isArray(messageContent)) {
+    // Video input mode (OpenRouter format) - pass as prompt array
+    response = await provider.complete({
+      prompt: messageContent,
+      model,
+      apiKey,
+      options: {
+        temperature: 0.7,
+        maxTokens: 2048
+      }
+    });
+  } else {
+    // Backward compatibility mode (image attachments)
+    response = await provider.complete({
+      prompt: messageContent.prompt,
+      model,
+      apiKey,
+      attachments: messageContent.attachments,
+      options: {
+        temperature: 0.7,
+        maxTokens: 2048
+      }
+    });
+  }
 
   // Parse response into structured state
   const state = parseResponse(response.content, previousState, lenses);
+
+  // Cleanup: delete video chunk file after processing if it's a temp file
+  if (videoContext.chunkPath && fileTransferStrategy === 'base64') {
+    try {
+      // Only delete if it's in a temp directory
+      if (videoContext.chunkPath.includes('tmp') || videoContext.chunkPath.includes('temp')) {
+        fs.unlinkSync(videoContext.chunkPath);
+        console.log(`EmotionLensesTool: Cleaned up temp video chunk: ${videoContext.chunkPath}`);
+      }
+    } catch (err) {
+      console.warn(`EmotionLensesTool: Failed to cleanup temp file: ${err.message}`);
+    }
+  }
 
   return {
     prompt,
@@ -202,9 +306,27 @@ function buildPrompt(personaConfig, options) {
   // Video context
   if (videoContext?.duration) {
     prompt += `## Video Segment\n`;
+    
+    // Add chunk timing info
+    if (videoContext.startTime !== undefined && videoContext.endTime !== undefined) {
+      prompt += `Time Range: ${formatTime(videoContext.startTime)} - ${formatTime(videoContext.endTime)}\n`;
+    }
+    
     prompt += `Duration: ${videoContext.duration} seconds\n`;
+    
+    // Add chunk index and split index for tracking
+    if (videoContext.chunkIndex !== undefined) {
+      prompt += `Chunk Index: ${videoContext.chunkIndex}\n`;
+    }
+    if (videoContext.splitIndex !== undefined) {
+      prompt += `Split Index: ${videoContext.splitIndex}\n`;
+    }
+    
     if (videoContext.frames?.length > 0) {
       prompt += `Attached: ${videoContext.frames.length} frame(s) for visual analysis\n`;
+    }
+    if (videoContext.chunkPath) {
+      prompt += `Video file: ${videoContext.chunkPath}\n`;
     }
     prompt += '\n';
   }
@@ -322,6 +444,19 @@ function parseResponse(responseContent, previousState, lenses) {
 }
 
 /**
+ * Format time as MM:SS
+ * 
+ * @function formatTime
+ * @param {number} time - Time in seconds
+ * @returns {string} - Formatted time
+ */
+function formatTime(time) {
+  const mins = Math.floor(time / 60);
+  const secs = Math.floor(time % 60);
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+/**
  * Format time range as MM:SS
  * 
  * @function formatTimeRange
@@ -330,12 +465,7 @@ function parseResponse(responseContent, previousState, lenses) {
  * @returns {string} - Formatted time range
  */
 function formatTimeRange(start, end) {
-  const format = (s) => {
-    const mins = Math.floor(s / 60);
-    const secs = Math.floor(s % 60);
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-  return `${format(start)}-${format(end)}`;
+  return `${formatTime(start)}-${formatTime(end)}`;
 }
 
 /**

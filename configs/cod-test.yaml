@@ -27,10 +27,24 @@ settings:
   max_chunks: 2  # Only 2 chunks for fast testing
   api_request_delay: 500
 
-# Tool variables (paths must be absolute or relative to workspace)
+# Tool variables (use persona IDs, not full paths)
 tool_variables:
-  soulPath: "impatient-teenager"
-  goalPath: "video-ad-evaluation"
+  soulId: "impatient-teenager"
+  goalId: "video-ad-evaluation"
+  
+  file_transfer: "base64"  # Options: "base64", "web_url", "youtube_url"
+  maxFileSize: 10485760    # 10MB in bytes (OpenRouter limit)
+  
+  chunk_strategy:
+    type: "duration-based"   # Options: "duration-based", "size-based", "count-based"
+    config:
+      chunkDuration: 5       # seconds (for duration-based) - small for testing
+    
+    split:
+      enabled: true
+      max_splits: 3          # Recursive split limit (configurable)
+      split_factor: 2        # Divide chunk duration by this factor each split
+  
   variables:
     lenses:
       - patience
