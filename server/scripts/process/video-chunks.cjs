@@ -71,6 +71,12 @@ async function run(input) {
     throw new Error('VideoChunks: toolVariables.soulPath and toolVariables.goalPath are required');
   }
 
+  // Verify AI_API_KEY is available
+  if (!process.env.AI_API_KEY) {
+    console.error('   ❌ ERROR: AI_API_KEY environment variable is not set');
+    throw new Error('AI_API_KEY is required for chunk analysis');
+  }
+
   // Ensure output directory exists
   fs.mkdirSync(outputDir, { recursive: true });
 
@@ -84,6 +90,12 @@ async function run(input) {
     strategyConfig?.type || 'duration-based',
     strategyConfig?.config || {}
   );
+  
+  // Validate strategy was loaded
+  if (!strategy) {
+    throw new Error(`Failed to load chunk strategy. Type: ${strategyConfig?.type || 'duration-based'}`);
+  }
+  
   const chunkBoundaries = strategy.calculateChunkBoundaries(duration, strategyConfig?.config || {});
 
   // Apply max_chunks limit from config
@@ -91,7 +103,20 @@ async function run(input) {
   const numChunks = Math.min(chunkBoundaries.length, maxChunks);
   const limitedBoundaries = chunkBoundaries.slice(0, numChunks);
   
+  // Validate numChunks
+  if (numChunks <= 0) {
+    throw new Error(`Invalid numChunks: ${numChunks}. Check video duration (${duration}s) and chunk strategy config`);
+  }
+  
   console.log(`   📦 Processing ${numChunks} chunks (max_chunks: ${maxChunks})`);
+
+  // Startup logging - show config values
+  console.log(`   📋 Config values:`);
+  console.log(`      - chunkDuration: ${strategyConfig?.config?.chunkDuration || 'default'}`);
+  console.log(`      - max_chunks: ${config?.settings?.max_chunks || 'unlimited'}`);
+  console.log(`      - video duration: ${duration}s`);
+  console.log(`      - calculated chunks: ${chunkBoundaries.length}`);
+  console.log(`      - processing: ${numChunks} chunks`);
 
   // Get context from previous phases
   const dialogueData = artifacts.dialogueData || { dialogue_segments: [], summary: '' };
@@ -170,52 +195,77 @@ async function run(input) {
         // Get relevant music for this chunk
         const musicContext = getRelevantMusic(musicData, startTime, endTime);
 
-        // Call emotion-lenses-tool for analysis
-        const toolResult = await emotionLensesTool.analyze({
-          toolVariables,
-          videoContext: {
-            chunkPath: currentChunkPath,
-            chunkIndex: chunkIndex,
-            splitIndex: splitIndex || 0,
-            startTime: startTime,
-            endTime: endTime,
-            duration: endTime - startTime
-          },
-          dialogueContext: {
-            segments: dialogueContext
-          },
-          musicContext: {
-            segments: musicContext
-          },
-          previousState: {
-            summary: previousSummary,
-            emotions: results.length > 0 ? results[results.length - 1].emotions : {}
-          }
-        });
-
-        // Collect result
-        const chunkResult = {
-          chunkIndex: chunkIndex,
-          splitIndex: splitIndex || 0,
-          startTime,
-          endTime,
-          summary: toolResult.state.summary,
-          emotions: toolResult.state.emotions,
-          dominant_emotion: toolResult.state.dominant_emotion,
-          confidence: toolResult.state.confidence,
-          tokens: toolResult.usage.input + toolResult.usage.output,
-          persona: {
-            soulPath: toolVariables.soulPath,
-            goalPath: toolVariables.goalPath,
-            lenses: toolVariables.variables?.lenses || []
-          }
+        // Prepare tool variables for error logging
+        const toolVariablesForLogging = {
+          soulPath: toolVariables.soulPath,
+          goalPath: toolVariables.goalPath,
+          variables: toolVariables.variables
         };
 
-        results.push(chunkResult);
-        totalTokens += chunkResult.tokens;
-        previousSummary = chunkResult.summary;
+        // Prepare video context for error logging
+        const videoContextForLogging = {
+          chunkPath: currentChunkPath,
+          chunkIndex: chunkIndex,
+          splitIndex: splitIndex || 0,
+          startTime: startTime,
+          endTime: endTime,
+          duration: endTime - startTime
+        };
 
-        console.log(`      ✅ Chunk ${chunkIndex + 1}${splitIndex > 0 ? `.${splitIndex + 1}` : ''} analyzed (${chunkResult.tokens} tokens)`);
+        // Call emotion-lenses-tool for analysis with error handling
+        try {
+          const toolResult = await emotionLensesTool.analyze({
+            toolVariables,
+            videoContext: {
+              chunkPath: currentChunkPath,
+              chunkIndex: chunkIndex,
+              splitIndex: splitIndex || 0,
+              startTime: startTime,
+              endTime: endTime,
+              duration: endTime - startTime
+            },
+            dialogueContext: {
+              segments: dialogueContext
+            },
+            musicContext: {
+              segments: musicContext
+            },
+            previousState: {
+              summary: previousSummary,
+              emotions: results.length > 0 ? results[results.length - 1].emotions : {}
+            }
+          });
+
+          // Collect result
+          const chunkResult = {
+            chunkIndex: chunkIndex,
+            splitIndex: splitIndex || 0,
+            startTime,
+            endTime,
+            summary: toolResult.state.summary,
+            emotions: toolResult.state.emotions,
+            dominant_emotion: toolResult.state.dominant_emotion,
+            confidence: toolResult.state.confidence,
+            tokens: toolResult.usage.input + toolResult.usage.output,
+            persona: {
+              soulPath: toolVariables.soulPath,
+              goalPath: toolVariables.goalPath,
+              lenses: toolVariables.variables?.lenses || []
+            }
+          };
+
+          results.push(chunkResult);
+          totalTokens += chunkResult.tokens;
+          previousSummary = chunkResult.summary;
+
+          console.log(`      ✅ Chunk ${chunkIndex + 1}${splitIndex > 0 ? `.${splitIndex + 1}` : ''} analyzed (${chunkResult.tokens} tokens)`);
+        } catch (error) {
+          console.error(`      ❌ Chunk ${chunkIndex + 1} analysis failed:`, error.message);
+          console.error(`      Stack:`, error.stack);
+          console.error(`      Tool variables:`, JSON.stringify(toolVariablesForLogging, null, 2));
+          console.error(`      Video context:`, JSON.stringify(videoContextForLogging, null, 2));
+          throw error;
+        }
       }
     }
 
