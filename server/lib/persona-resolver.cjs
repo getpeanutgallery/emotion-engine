@@ -1,15 +1,20 @@
 #!/usr/bin/env node
 /**
- * Persona Resolver Utility
+ * Persona Resolver Utility - DEPRECATED
  * 
- * Converts persona IDs to absolute file paths.
- * Used by CLI wrapper, NOT by pipeline.
+ * This file is deprecated as of 2026-03-06.
+ * The persona system now uses flat paths without ID lookup or version resolution.
  * 
- * Usage:
+ * OLD USAGE (no longer supported):
  *   const resolver = require('./lib/persona-resolver.cjs');
  *   const soulPath = resolver.resolveSoulPath('impatient-teenager', '1.0.0');
- *   const goalPath = resolver.resolveGoalPath('video-ad-evaluation', 'latest');
- *   const toolPath = resolver.resolveToolPath('emotion-lenses');
+ * 
+ * NEW USAGE:
+ *   Use paths directly in configs and code:
+ *   - soulPath: "personas/impatient-teenager.md"
+ *   - goalPath: "goals/video-ad-evaluation.md"
+ * 
+ * All functions below are kept for reference only and will return null.
  */
 
 const fs = require('fs');
@@ -20,121 +25,49 @@ const PERSONAS_ROOT = process.env.PERSONAS_ROOT || path.join(__dirname, '../../p
 const TOOLS_ROOT = process.env.TOOLS_ROOT || path.join(__dirname, '../../tools');
 
 /**
- * Resolve SemVer version to actual folder
- * Supports: 'latest', '1', '1.0', '1.0.0', '^1.0.0', '~1.0.0'
- * @param {string} baseDir - Base directory to search
- * @param {string} version - Version string
- * @returns {string|null} Resolved version folder name or null
+ * @deprecated Version resolution is no longer used.
  */
 function resolveVersion(baseDir, version = 'latest') {
-  if (!fs.existsSync(baseDir)) return null;
-  
-  // Get all version folders
-  const folders = fs.readdirSync(baseDir)
-    .filter(f => fs.statSync(path.join(baseDir, f)).isDirectory())
-    .filter(f => /^\d+\.\d+\.\d+$/.test(f)); // Only SemVer folders
-  
-  if (folders.length === 0) return null;
-  
-  // Sort by SemVer (descending)
-  folders.sort((a, b) => {
-    const [aMajor, aMinor, aPatch] = a.split('.').map(Number);
-    const [bMajor, bMinor, bPatch] = b.split('.').map(Number);
-    if (aMajor !== bMajor) return bMajor - aMajor;
-    if (aMinor !== bMinor) return bMinor - aMinor;
-    return bPatch - aPatch;
-  });
-  
-  if (version === 'latest') {
-    return folders[0];
-  }
-  
-  // Exact match
-  if (folders.includes(version)) {
-    return version;
-  }
-  
-  // Major only (e.g., '1' → latest 1.x.x)
-  const majorMatch = version.match(/^(\d+)$/);
-  if (majorMatch) {
-    const major = parseInt(majorMatch[1]);
-    return folders.find(f => f.startsWith(`${major}.`)) || null;
-  }
-  
-  // Major.Minor (e.g., '1.0' → latest 1.0.x)
-  const minorMatch = version.match(/^(\d+)\.(\d+)$/);
-  if (minorMatch) {
-    const prefix = `${minorMatch[1]}.${minorMatch[2]}.`;
-    return folders.find(f => f.startsWith(prefix)) || null;
-  }
-  
+  console.warn('resolveVersion() is deprecated. Use flat paths instead.');
   return null;
 }
 
 /**
- * Resolve soul ID to absolute path
- * @param {string} soulId - Soul ID (e.g., 'impatient-teenager')
- * @param {string} version - SemVer version (e.g., '1.0.0', 'latest')
- * @returns {string|null} Absolute path to SOUL.md or null
+ * @deprecated Soul ID resolution is no longer used.
+ * Use paths directly: "personas/impatient-teenager.md"
  */
 function resolveSoulPath(soulId, version = 'latest') {
-  const baseDir = path.join(PERSONAS_ROOT, 'souls', soulId);
-  const resolvedVersion = resolveVersion(baseDir, version);
-  
-  if (!resolvedVersion) {
-    return null;
-  }
-  
-  return path.join(baseDir, resolvedVersion, 'SOUL.md');
+  console.warn('resolveSoulPath() is deprecated. Use flat paths directly.');
+  return null;
 }
 
 /**
- * Resolve goal ID to absolute path
- * @param {string} goalId - Goal ID (e.g., 'video-ad-evaluation')
- * @param {string} version - SemVer version
- * @returns {string|null} Absolute path to GOAL.md or null
+ * @deprecated Goal ID resolution is no longer used.
+ * Use paths directly: "goals/video-ad-evaluation.md"
  */
 function resolveGoalPath(goalId, version = 'latest') {
-  const baseDir = path.join(PERSONAS_ROOT, 'goals', goalId);
-  const resolvedVersion = resolveVersion(baseDir, version);
-  
-  if (!resolvedVersion) {
-    return null;
-  }
-  
-  return path.join(baseDir, resolvedVersion, 'GOAL.md');
+  console.warn('resolveGoalPath() is deprecated. Use flat paths directly.');
+  return null;
 }
 
 /**
- * Resolve tool ID to absolute path
- * @param {string} toolId - Tool ID (e.g., 'emotion-lenses')
- * @returns {string|null} Absolute path to tool script or null
+ * @deprecated Tool ID resolution is no longer used.
+ * Tools are loaded directly from /tools/ directory.
  */
 function resolveToolPath(toolId) {
-  const toolPath = path.join(TOOLS_ROOT, `${toolId}-tool.cjs`);
-  
-  if (!fs.existsSync(toolPath)) {
-    return null;
-  }
-  
-  return toolPath;
+  console.warn('resolveToolPath() is deprecated. Load tools directly from /tools/.');
+  return null;
 }
 
 /**
- * Resolve all IDs to paths
- * @param {Object} options - Resolution options
- * @param {string} options.soulId - Soul ID
- * @param {string} options.soulVersion - Soul version
- * @param {string} options.goalId - Goal ID
- * @param {string} options.goalVersion - Goal version
- * @param {string} options.toolId - Tool ID
- * @returns {{soulPath: string|null, goalPath: string|null, toolPath: string|null}}
+ * @deprecated ID-based resolution is no longer used.
  */
 function resolveAll({ soulId, soulVersion = 'latest', goalId, goalVersion = 'latest', toolId }) {
+  console.warn('resolveAll() is deprecated. Use flat paths directly.');
   return {
-    soulPath: resolveSoulPath(soulId, soulVersion),
-    goalPath: resolveGoalPath(goalId, goalVersion),
-    toolPath: resolveToolPath(toolId)
+    soulPath: null,
+    goalPath: null,
+    toolPath: null
   };
 }
 

@@ -12,7 +12,6 @@
 const fs = require('fs');
 const path = require('path');
 const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js');
-const personaLoader = require('../server/lib/persona-loader.cjs');
 const retryStrategy = require('../server/lib/retry-strategy.cjs');
 
 /**
@@ -85,21 +84,21 @@ async function analyze(input) {
   } = input;
 
   // Validate required inputs
-  if (!toolVariables?.soulId || !toolVariables?.goalId) {
-    throw new Error('EmotionLensesTool: soulId and goalId are required in toolVariables');
+  if (!toolVariables?.soulPath || !toolVariables?.goalPath) {
+    throw new Error('EmotionLensesTool: soulPath and goalPath are required in toolVariables');
   }
 
   const lenses = toolVariables.variables?.lenses || ['patience', 'boredom', 'excitement'];
   const fileTransferStrategy = toolVariables.file_transfer || 'base64';
 
-  // Load persona configuration
-  const personaConfig = personaLoader.loadPersonaConfig(
-    toolVariables.soulId,
-    toolVariables.goalId
+  // Load persona configuration directly from paths (no ID lookup)
+  const personaConfig = loadPersonaFromPaths(
+    toolVariables.soulPath,
+    toolVariables.goalPath
   );
 
   if (!personaConfig) {
-    throw new Error(`EmotionLensesTool: Failed to load persona from soulId=${toolVariables.soulId} and goalId=${toolVariables.goalId}`);
+    throw new Error(`EmotionLensesTool: Failed to load persona from soulPath=${toolVariables.soulPath} and goalPath=${toolVariables.goalPath}`);
   }
 
   // Build the prompt with video context info
@@ -513,6 +512,76 @@ function formatTimeRange(start, end) {
  */
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Load persona configuration directly from file paths
+ * @param {string} soulPath - Full path to SOUL.md
+ * @param {string} goalPath - Full path to GOAL.md
+ * @returns {Object|null} Persona config or null if failed
+ */
+function loadPersonaFromPaths(soulPath, goalPath) {
+  try {
+    // Validate paths exist
+    if (!fs.existsSync(soulPath)) {
+      console.error(`❌ SOUL.md not found: ${soulPath}`);
+      return null;
+    }
+    if (!fs.existsSync(goalPath)) {
+      console.error(`❌ GOAL.md not found: ${goalPath}`);
+      return null;
+    }
+
+    // Load SOUL.md
+    const soulContent = fs.readFileSync(soulPath, 'utf8');
+    const soul = parseMarkdown(soulContent);
+
+    // Load GOAL.md
+    const goalContent = fs.readFileSync(goalPath, 'utf8');
+    const goal = parseMarkdown(goalContent);
+
+    if (!soul || !goal) {
+      return null;
+    }
+
+    return { soul, goal, tools: null };
+  } catch (error) {
+    console.error(`❌ Error loading persona from paths: ${error.message}`);
+    return null;
+  }
+}
+
+/**
+ * Parse markdown into sections (copied from persona-loader for independence)
+ * @param {string} markdown - Markdown content
+ * @returns {Object} Parsed sections
+ */
+function parseMarkdown(markdown) {
+  const sections = {};
+  const lines = markdown.split('\n');
+  let currentSection = 'header';
+  let currentContent = [];
+
+  for (const line of lines) {
+    if (line.startsWith('## ')) {
+      // Save previous section
+      if (currentContent.length > 0) {
+        sections[currentSection] = currentContent.join('\n').trim();
+      }
+      // Start new section
+      currentSection = line.replace('## ', '').trim();
+      currentContent = [];
+    } else {
+      currentContent.push(line);
+    }
+  }
+
+  // Save last section
+  if (currentContent.length > 0) {
+    sections[currentSection] = currentContent.join('\n').trim();
+  }
+
+  return sections;
 }
 
 /**

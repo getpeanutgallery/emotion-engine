@@ -67,8 +67,8 @@ async function run(input) {
   console.log('   🎬 Processing video in chunks...');
 
   // Validate required inputs
-  if (!toolVariables?.soulId || !toolVariables?.goalId) {
-    throw new Error('VideoChunks: toolVariables.soulId and toolVariables.goalId are required');
+  if (!toolVariables?.soulPath || !toolVariables?.goalPath) {
+    throw new Error('VideoChunks: toolVariables.soulPath and toolVariables.goalPath are required');
   }
 
   // Ensure output directory exists
@@ -206,6 +206,7 @@ async function run(input) {
           tokens: toolResult.usage.input + toolResult.usage.output,
           persona: {
             soulPath: toolVariables.soulPath,
+            goalPath: toolVariables.goalPath,
             lenses: toolVariables.variables?.lenses || []
           }
         };

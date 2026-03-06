@@ -168,9 +168,12 @@ function generateRecommendation(chunks, metricsData, config) {
   }
 
   // Add persona-specific insights if available
-  if (config?.tool_variables?.soulId) {
+  if (config?.tool_variables?.soulPath) {
+    // Extract persona name from path for display
+    const soulPath = config.tool_variables.soulPath;
+    const personaName = soulPath.split('/').slice(-3, -2)[0] || soulPath;
     recommendation.suggestions.push(
-      `Consider testing with different personas (current: ${config.tool_variables.soulId})`
+      `Consider testing with different personas (current: ${personaName})`
     );
   }
 
@@ -334,7 +337,7 @@ if (require.main === module) {
         }
       }
     },
-    config: { version: '8.0.0', name: 'Test Pipeline', tool_variables: { soulId: 'test-persona' } }
+    config: { version: '8.0.0', name: 'Test Pipeline', tool_variables: { soulPath: 'personas/souls/test-persona/1.0.0/SOUL.md' } }
   })
     .then(result => {
       console.log('Recommendation generation complete:', JSON.stringify(result.artifacts, null, 2));

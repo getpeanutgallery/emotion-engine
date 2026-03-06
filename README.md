@@ -88,20 +88,28 @@ emotion-engine/
 │   ├── cod-test.yaml               # Test configuration
 │   ├── quick-test.yaml             # Lightweight test
 │   └── ... (12 total configs)
-├── personas/
-│   ├── souls/                      # Persona definitions (SOUL.md)
-│   │   └── impatient-teenager/1.0.0/
-│   ├── goals/                      # Goal definitions (GOAL.md)
-│   │   └── video-ad-evaluation/1.0.0/
-│   └── tools/                      # Tool definitions (TOOLS.md)
-│       └── emotion-tracking/1.0.0/
+├── personas/                       # Persona definitions (flat structure)
+│   ├── impatient-teenager.md       # SOUL.md: The Impatient Teenager persona
+│   ├── skeptical-cfo.md            # SOUL.md: Skeptical CFO persona
+│   ├── optimistic-gen-z.md         # SOUL.md: Optimistic Gen Z persona
+│   └── tools/                      # Tool definitions
+│       └── emotion-lenses-tool.cjs # Emotion analysis tool
+├── goals/                          # Goal definitions (flat structure)
+│   ├── video-ad-evaluation.md      # GOAL.md: Video ad evaluation
+│   ├── audio-evaluation.md         # GOAL.md: Audio evaluation
+│   ├── image-evaluation.md         # GOAL.md: Image evaluation
+│   └── README.md                   # Goals directory documentation
 ├── bin/
 │   └── run-analysis.js             # User-friendly CLI wrapper
 ├── docs/                           # Technical documentation
 │   ├── MODULAR-PIPELINE-WORKFLOW.md
 │   ├── STORAGE-ARCHITECTURE.md
-│   ├── AI-PROVIDER-ARCHITECTURE.md
-│   └── MIGRATION-GUIDE-v2.md
+│   └── AI-PROVIDER-ARCHITECTURE.md
+├── goals/                          # Goal definitions (flat structure)
+│   ├── video-ad-evaluation.md
+│   ├── audio-evaluation.md
+│   ├── image-evaluation.md
+│   └── README.md
 ├── test/                           # Unit + integration tests
 │   ├── ai-providers/
 │   ├── pipeline/
@@ -266,9 +274,9 @@ Test videos are used with pipeline configs like `configs/cod-test.yaml` and `con
 - SVG chart generation for visual correlation
 
 **Persona System:**
-- SOUL.md (personality), GOAL.md (objectives), TOOLS.md (capabilities)
-- Versioned persona folders (`/1.0.0/`)
-- Persona resolver with ID-based lookup
+- SOUL.md (personality), GOAL.md (objectives)
+- Flat folder structure (no versioning)
+- Direct path-based loading (no ID lookup)
 - Emotion lenses (patience, boredom, excitement, etc.)
 
 **Storage:**
@@ -325,10 +333,9 @@ phases:
     - scripts/report/final-report.cjs
 
 persona:
-  soul: personas/souls/impatient-teenager/1.0.0/SOUL.md
-  goal: personas/goals/video-ad-evaluation/1.0.0/GOAL.md
-  tools:
-    - personas/tools/emotion-tracking/1.0.0/TOOLS.md
+  soul: personas/impatient-teenager.md
+  goal: goals/video-ad-evaluation.md
+  tool: tools/emotion-lenses-tool.cjs
 
 assets:
   - type: video
@@ -339,9 +346,8 @@ assets:
 
 ```bash
 node bin/run-analysis.js \
-  --soul impatient-teenager \
-  --soul-version 1.0.0 \
-  --goal video-ad-evaluation \
+  --soul personas/impatient-teenager.md \
+  --goal goals/video-ad-evaluation.md \
   --tool emotion-lenses \
   video.mp4 \
   output/my-analysis

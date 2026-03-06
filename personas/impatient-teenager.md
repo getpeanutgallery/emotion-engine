@@ -131,4 +131,4 @@ Not "is this technically impressive." Not "is this well-produced." Just: does it
 
 ---
 
-*This SOUL.md is part of the OpenTruth Emotion Engine persona system. See `/personas/goals/` for evaluation objectives and `/personas/tools/` for response schemas.*
+*This SOUL.md is part of the OpenTruth Emotion Engine persona system. See `/goals/` for evaluation objectives and `/tools/` for response schemas.*

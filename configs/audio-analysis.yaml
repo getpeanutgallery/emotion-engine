@@ -23,8 +23,8 @@ process:
     - script: scripts/process/audio-segments.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/impatient-teenager/1.0.0/SOUL.md"
-        goalPath: "/home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/goals/audio-evaluation/1.0.0/GOAL.md"
+        soulPath: "personas/impatient-teenager.md"
+        goalPath: "goals/audio-evaluation.md"
         variables:
           lenses:
             - patience

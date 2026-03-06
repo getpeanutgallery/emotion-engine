@@ -23,136 +23,91 @@ const PERSONAS_ROOT = path.join(__dirname, '../../personas');
  */
 
 /**
- * Resolve SemVer version to actual folder
- * Supports: 'latest', '1', '1.0', '1.0.0', '^1.0.0', '~1.0.0'
- * @param {string} baseDir - Base directory to search
- * @param {string} version - Version string
- * @returns {string|null} Resolved version folder name or null
+ * @deprecated SemVer resolution is no longer used.
+ * The persona system now uses flat paths without versioning.
+ * This function is kept for backward compatibility only.
  */
 function resolveVersion(baseDir, version = 'latest') {
-    if (!fs.existsSync(baseDir)) return null;
-    
-    // Get all version folders
-    const folders = fs.readdirSync(baseDir)
-        .filter(f => fs.statSync(path.join(baseDir, f)).isDirectory())
-        .filter(f => /^\d+\.\d+\.\d+$/.test(f)); // Only SemVer folders
-    
-    if (folders.length === 0) return null;
-    
-    // Sort by SemVer (descending)
-    folders.sort((a, b) => {
-        const [aMajor, aMinor, aPatch] = a.split('.').map(Number);
-        const [bMajor, bMinor, bPatch] = b.split('.').map(Number);
-        if (aMajor !== bMajor) return bMajor - aMajor;
-        if (aMinor !== bMinor) return bMinor - aMinor;
-        return bPatch - aPatch;
-    });
-    
-    if (version === 'latest') {
-        return folders[0];
-    }
-    
-    // Exact match
-    if (folders.includes(version)) {
-        return version;
-    }
-    
-    // Major only (e.g., '1' → latest 1.x.x)
-    const majorMatch = version.match(/^(\d+)$/);
-    if (majorMatch) {
-        const major = parseInt(majorMatch[1]);
-        return folders.find(f => f.startsWith(`${major}.`)) || null;
-    }
-    
-    // Major.Minor (e.g., '1.0' → latest 1.0.x)
-    const minorMatch = version.match(/^(\d+)\.(\d+)$/);
-    if (minorMatch) {
-        const prefix = `${minorMatch[1]}.${minorMatch[2]}.`;
-        return folders.find(f => f.startsWith(prefix)) || null;
-    }
-    
-    // TODO: Support semver ranges (^, ~) if needed
-    
+    console.warn('resolveVersion() is deprecated. Use flat paths instead.');
     return null;
 }
 
 /**
  * Load SOUL.md for a persona
- * @param {string} soulId - Persona ID (e.g., 'impatient-teenager')
- * @param {string} version - SemVer version (e.g., '1.0.0', '1', 'latest')
+ * @param {string} soulPath - Path to SOUL.md (relative to project root or absolute)
  * @returns {Object|null} Parsed SOUL.md or null if not found
  */
-function loadSoul(soulId, version = 'latest') {
-    const baseDir = path.join(PERSONAS_ROOT, 'souls', soulId);
-    const resolvedVersion = resolveVersion(baseDir, version);
-    
-    if (!resolvedVersion) {
-        console.error(`❌ SOUL.md version not found for: ${soulId}@${version}`);
+function loadSoul(soulPath) {
+    // Path must be provided directly (no ID lookup)
+    if (!soulPath) {
+        console.error('❌ soulPath is required');
         return null;
     }
     
-    const soulPath = path.join(baseDir, resolvedVersion, 'SOUL.md');
+    // Resolve relative paths from project root
+    if (!soulPath.startsWith('/')) {
+        soulPath = path.join(path.dirname(__dirname), '..', soulPath);
+    }
+    
+    if (!fs.existsSync(soulPath)) {
+        console.error(`❌ SOUL.md not found at path: ${soulPath}`);
+        return null;
+    }
+    
     const content = fs.readFileSync(soulPath, 'utf8');
     return parseMarkdown(content);
 }
 
 /**
  * Load GOAL.md for a goal
- * @param {string} goalId - Goal ID (e.g., 'video-ad-evaluation')
- * @param {string} version - SemVer version (defaults to latest)
+ * @param {string} goalPath - Path to GOAL.md (relative to project root or absolute)
  * @returns {Object|null} Parsed GOAL.md or null if not found
  */
-function loadGoal(goalId, version = 'latest') {
-    const baseDir = path.join(PERSONAS_ROOT, 'goals', goalId);
-    const resolvedVersion = resolveVersion(baseDir, version);
-    
-    if (!resolvedVersion) {
-        console.error(`❌ GOAL.md version not found for: ${goalId}@${version}`);
+function loadGoal(goalPath) {
+    // Path must be provided directly (no ID lookup)
+    if (!goalPath) {
+        console.error('❌ goalPath is required');
         return null;
     }
     
-    const goalPath = path.join(baseDir, resolvedVersion, 'GOAL.md');
+    // Resolve relative paths from project root
+    if (!goalPath.startsWith('/')) {
+        goalPath = path.join(path.dirname(__dirname), '..', goalPath);
+    }
+    
+    if (!fs.existsSync(goalPath)) {
+        console.error(`❌ GOAL.md not found at path: ${goalPath}`);
+        return null;
+    }
+    
     const content = fs.readFileSync(goalPath, 'utf8');
     return parseMarkdown(content);
 }
 
 /**
- * Load TOOLS.md
- * @param {string} toolId - Tool ID (e.g., 'emotion-tracking')
- * @param {string} version - SemVer version (defaults to latest)
- * @returns {Object|null} Parsed TOOLS.md or null if not found
+ * @deprecated TOOLS.md loading is deprecated.
+ * Tools are now loaded directly from /tools/ directory.
  */
 function loadTools(toolId, version = 'latest') {
-    const baseDir = path.join(PERSONAS_ROOT, 'tools', toolId);
-    const resolvedVersion = resolveVersion(baseDir, version);
-    
-    if (!resolvedVersion) {
-        console.error(`❌ TOOLS.md version not found for: ${toolId}@${version}`);
-        return null;
-    }
-    
-    const toolsPath = path.join(baseDir, resolvedVersion, 'TOOLS.md');
-    const content = fs.readFileSync(toolsPath, 'utf8');
-    return parseMarkdown(content);
+    console.warn('loadTools() is deprecated. Load tools directly from /tools/ directory.');
+    return null;
 }
 
 /**
  * Load complete persona configuration
- * @param {string} soulId - Persona ID
- * @param {string} goalId - Goal ID
- * @param {string} toolId - Tool ID (default: 'emotion-tracking')
+ * @param {string} soulPath - Path to SOUL.md
+ * @param {string} goalPath - Path to GOAL.md
  * @returns {PersonaConfig|null}
  */
-function loadPersonaConfig(soulId, goalId, toolId = 'emotion-tracking') {
-    const soul = loadSoul(soulId);
-    const goal = loadGoal(goalId);
-    const tools = loadTools(toolId);
+function loadPersonaConfig(soulPath, goalPath) {
+    const soul = loadSoul(soulPath);
+    const goal = loadGoal(goalPath);
     
-    if (!soul || !goal || !tools) {
+    if (!soul || !goal) {
         return null;
     }
     
-    return { soul, goal, tools };
+    return { soul, goal, tools: null };
 }
 
 /**
