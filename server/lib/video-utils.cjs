@@ -8,6 +8,8 @@
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
+const ffmpegPath = require('ffmpeg-static');
+const ffprobePath = require('ffprobe-static');
 
 /**
  * Compress a video chunk to meet size requirements
@@ -63,7 +65,7 @@ async function compressChunk(inputPath, outputPath, maxSizeBytes) {
     ];
     
     return new Promise((resolve, reject) => {
-        const ffmpeg = spawn('ffmpeg', args);
+        const ffmpeg = spawn(ffmpegPath, args);
         let stderr = '';
         
         ffmpeg.stderr.on('data', (data) => {
@@ -141,7 +143,7 @@ async function compressChunkAggressive(inputPath, outputPath, maxSizeBytes, orig
     ];
     
     return new Promise((resolve, reject) => {
-        const ffmpeg = spawn('ffmpeg', args);
+        const ffmpeg = spawn(ffmpegPath, args);
         
         ffmpeg.on('close', (code) => {
             if (code !== 0) {
@@ -170,7 +172,7 @@ async function compressChunkAggressive(inputPath, outputPath, maxSizeBytes, orig
  */
 async function getDuration(videoPath) {
     return new Promise((resolve) => {
-        const ffprobe = spawn('ffprobe', [
+        const ffprobe = spawn(ffprobePath, [
             '-v', 'error',
             '-show_entries', 'format=duration',
             '-of', 'default=noprint_wrappers=1:nokey=1',

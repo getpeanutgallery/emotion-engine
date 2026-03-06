@@ -11,6 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
+const ffmpegPath = require('ffmpeg-static');
 
 /**
  * Extract a video chunk from a source video file
@@ -109,7 +110,7 @@ async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunk
     console.log(`   🎬 Extracting chunk ${chunkIndex}: ${startTime}s → ${endTime}s`);
 
     return new Promise((resolve) => {
-        const ffmpeg = spawn('ffmpeg', args);
+        const ffmpeg = spawn(ffmpegPath, args);
         let stderr = '';
 
         ffmpeg.stderr.on('data', (data) => {

@@ -63,13 +63,13 @@ This enables:
 
 **Current:**
 ```javascript
-const VIDEO_PATH = process.argv[2] || path.resolve(__dirname, '../.cache/videos/cod.mp4');
+const VIDEO_PATH = process.argv[2] || path.resolve(__dirname, '../examples/videos/emotion-tests/cod.mp4');
 const OUTPUT_DIR = process.argv[3] || path.resolve(__dirname, '../output/default');
 ```
 
 **Proposed:**
 ```javascript
-const VIDEO_PATH = process.argv[2] || path.resolve(__dirname, '../.cache/videos/cod.mp4');
+const VIDEO_PATH = process.argv[2] || path.resolve(__dirname, '../examples/videos/emotion-tests/cod.mp4');
 const OUTPUT_DIR = process.argv[3] || path.resolve(__dirname, '../output/default');
 
 // Load generic tool variables (JSON string from env)

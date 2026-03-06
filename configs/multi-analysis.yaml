@@ -7,7 +7,7 @@ version: "1.0"
 
 # Asset configuration (self-contained - no CLI args needed)
 asset:
-  inputPath: ".cache/videos/cod.mp4"
+  inputPath: "examples/videos/emotion-tests/cod.mp4"
   outputDir: "output/multi-test"
 
 # AI provider configuration (git-safe - secrets injected via env vars)

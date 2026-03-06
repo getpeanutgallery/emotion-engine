@@ -7,7 +7,7 @@ version: "1.0"
 
 # Asset configuration
 asset:
-  inputPath: ".cache/videos/cod.mp4"
+  inputPath: "examples/videos/emotion-tests/cod.mp4"
   outputDir: "output/cod-test"
 
 # Skip context gathering for speed

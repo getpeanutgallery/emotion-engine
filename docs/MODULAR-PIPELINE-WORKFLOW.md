@@ -874,7 +874,7 @@ node server/run-pipeline.cjs --config configs/video-analysis.yaml
 ```yaml
 # configs/video-analysis.yaml
 asset:
-  inputPath: ".cache/videos/cod.mp4"
+  inputPath: "examples/videos/emotion-tests/cod.mp4"
   outputDir: "output/cod-test"
 
 gather_context:
@@ -1148,7 +1148,7 @@ settings:
   chunk_quality: "medium"
 
 asset:
-  inputPath: ".cache/videos/cod.mp4"
+  inputPath: "examples/videos/emotion-tests/cod.mp4"
   outputDir: "output/cod-test"
 
 tool_variables:
@@ -1417,7 +1417,7 @@ settings:
   api_request_delay: 1000
 
 asset:
-  inputPath: ".cache/videos/cod.mp4"
+  inputPath: "examples/videos/emotion-tests/cod.mp4"
   outputDir: "output/raw-test"
 
 tool_variables:
@@ -1582,7 +1582,7 @@ The Emotion Engine uses a pluggable storage interface that allows scripts to be 
 ```yaml
 # configs/video-analysis.yaml
 asset:
-  inputPath: ".cache/videos/cod.mp4"
+  inputPath: "examples/videos/emotion-tests/cod.mp4"
   outputDir: "output/cod-test"
 
 # Storage configuration

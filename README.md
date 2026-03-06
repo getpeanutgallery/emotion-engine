@@ -4,13 +4,158 @@
 
 ---
 
+## Overview
+
+Emotion Engine is a **3-phase modular pipeline** that orchestrates AI-powered analysis of video, audio, and image content. It extracts context (dialogue, music, visuals), processes it through customizable scripts, and generates structured reports with emotion scores, recommendations, and visual charts.
+
+The system is **provider-agnostic** — swap AI models (OpenRouter, Anthropic, Gemini, OpenAI) and storage backends (Local FS, AWS S3) without changing your pipeline scripts. Configuration is driven by YAML files, making workflows reproducible and git-safe.
+
+**Current Focus:** Video emotion analysis for ad evaluation, using persona-driven AI analysis to score emotional engagement, dialogue quality, music mood, and visual patterns.
+
+---
+
+## Current Architecture
+
+### 3-Phase Pipeline
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 1: GATHER CONTEXT                                    │
+│  └─ Extract raw data: dialogue (transcription), music       │
+│     (mood/intensity segments), metadata                     │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 2: PROCESS                                           │
+│  └─ Analyze video chunks, per-second emotions, visual       │
+│     patterns with AI + persona lenses                       │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│  PHASE 3: REPORT                                            │
+│  └─ Generate JSON artifacts, SVG charts, markdown summaries │
+│     with emotional analysis, metrics, recommendations       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Folder Structure
+
+```
+emotion-engine/
+├── server/
+│   ├── lib/
+│   │   ├── ai-providers/           # AI provider abstraction layer
+│   │   │   ├── ai-provider-interface.js
+│   │   │   ├── providers/
+│   │   │   │   ├── openrouter.cjs  # Multi-model gateway
+│   │   │   │   ├── anthropic.cjs   # Claude models
+│   │   │   │   ├── gemini.cjs      # Google Gemini
+│   │   │   │   └── openai.cjs      # GPT models
+│   │   │   └── utils/
+│   │   ├── storage/                # Storage abstraction
+│   │   │   ├── storage-interface.js
+│   │   │   └── providers/
+│   │   │       ├── local-fs.cjs    # Default: local filesystem
+│   │   │       └── aws-s3.cjs      # Cloud storage
+│   │   ├── chunk-strategies/       # Video chunking logic
+│   │   ├── retry-strategies/       # API retry handling
+│   │   ├── artifact-manager.cjs    # Manages pipeline artifacts
+│   │   ├── config-loader.cjs       # YAML config parser
+│   │   ├── persona-loader.cjs      # Loads SOUL/GOAL/TOOLS
+│   │   ├── persona-resolver.cjs    # Resolves persona IDs to paths
+│   │   ├── cli-parser.cjs          # CLI argument parsing
+│   │   ├── output-manager.cjs      # Output file management
+│   │   └── video-chunk-extractor.cjs # FFmpeg video processing
+│   ├── scripts/
+│   │   ├── get-context/            # Phase 1: Data extraction
+│   │   │   ├── get-dialogue.cjs    # Audio transcription
+│   │   │   └── get-music.cjs       # Music/mood analysis
+│   │   ├── process/                # Phase 2: Analysis
+│   │   │   ├── video-chunks.cjs    # Chunk-based emotion analysis
+│   │   │   └── video-per-second.cjs # Per-second emotion scoring
+│   │   └── report/                 # Phase 3: Output generation
+│   │       ├── emotional-analysis.cjs
+│   │       ├── metrics.cjs
+│   │       ├── recommendation.cjs
+│   │       ├── summary.cjs
+│   │       └── final-report.cjs
+│   └── run-pipeline.cjs            # Main orchestrator
+├── tools/
+│   ├── lib/
+│   └── emotion-lenses-tool.cjs     # Core emotion analysis tool
+├── configs/                        # YAML pipeline configurations
+│   ├── video-analysis.yaml         # Full video analysis
+│   ├── cod-test.yaml               # Test configuration
+│   ├── quick-test.yaml             # Lightweight test
+│   └── ... (12 total configs)
+├── personas/
+│   ├── souls/                      # Persona definitions (SOUL.md)
+│   │   └── impatient-teenager/1.0.0/
+│   ├── goals/                      # Goal definitions (GOAL.md)
+│   │   └── video-ad-evaluation/1.0.0/
+│   └── tools/                      # Tool definitions (TOOLS.md)
+│       └── emotion-tracking/1.0.0/
+├── bin/
+│   └── run-analysis.js             # User-friendly CLI wrapper
+├── docs/                           # Technical documentation
+│   ├── MODULAR-PIPELINE-WORKFLOW.md
+│   ├── STORAGE-ARCHITECTURE.md
+│   ├── AI-PROVIDER-ARCHITECTURE.md
+│   └── MIGRATION-GUIDE-v2.md
+├── test/                           # Unit + integration tests
+│   ├── ai-providers/
+│   ├── pipeline/
+│   ├── scripts/
+│   └── storage/
+├── output/                         # Pipeline output artifacts
+├── examples/                       # Example assets and test data
+├── .env.example                    # Environment variable template
+├── package.json
+└── README.md
+```
+
+---
+
+## Tech Stack
+
+**Runtime:**
+- Node.js >= 18.0.0 (CommonJS modules)
+- FFmpeg (for video/audio extraction) - **automatically installed via `ffmpeg-static` package**
+
+**Dependencies:**
+- `@aws-sdk/client-s3` — AWS S3 storage backend
+- `axios` — HTTP client for API calls
+- `dotenv` — Environment variable management
+- `js-yaml` — YAML configuration parsing
+- `ffmpeg-static` — Cross-platform FFmpeg binary (auto-installed)
+- `ffprobe-static` — Cross-platform FFprobe binary (auto-installed)
+
+**AI Providers:**
+- OpenRouter (multi-model gateway)
+- Anthropic (Claude)
+- Google Gemini
+- OpenAI (GPT)
+
+**Storage Backends:**
+- Local filesystem (default)
+- AWS S3
+
+**Testing:**
+- Node.js native test runner (`node --test`)
+- 70+ unit tests across AI providers, pipeline, scripts, and storage
+
+---
+
 ## Quick Start
 
 ### 1. Install
 
 ```bash
 pnpm install
+# or: npm install
 ```
+
+**Note:** FFmpeg is now automatically installed via the `ffmpeg-static` package. No manual installation required!
 
 ### 2. Configure
 
@@ -18,49 +163,143 @@ Copy `.env.example` to `.env` and set your API keys:
 
 ```bash
 cp .env.example .env
-# Edit .env with your API keys (OpenRouter, Anthropic, Gemini, OpenAI, AWS, etc.)
 ```
 
-### 3. Run
+Required environment variables (depending on your AI provider):
+- `OPENROUTER_API_KEY` — For OpenRouter (recommended)
+- `ANTHROPIC_API_KEY` — For Anthropic/Claude
+- `GEMINI_API_KEY` — For Google Gemini
+- `OPENAI_API_KEY` — For OpenAI/GPT
+
+Optional (for cloud storage):
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_REGION`
+- `STORAGE_PROVIDER=s3`
+- `STORAGE_BUCKET=your-bucket-name`
+
+### 3. Run a Pipeline
 
 ```bash
+# Using the user-friendly CLI
+node bin/run-analysis.js \
+  --soul impatient-teenager \
+  --goal video-ad-evaluation \
+  --tool emotion-lenses \
+  path/to/video.mp4 \
+  output/
+
+# Or directly with pipeline orchestrator
 pnpm run pipeline --config configs/video-analysis.yaml
 ```
 
----
+### 4. Run Tests
 
-## Architecture Overview
+```bash
+# Run all tests
+npm test
 
-Emotion Engine v8.0 uses a **3-phase modular pipeline**:
-
+# Validate JSON output format
+npm run test:validate-json
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  PHASE 1: GATHER CONTEXT                                    │
-│  └─ Scripts extract raw data (dialogue, music, visuals)     │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│  PHASE 2: PROCESS                                           │
-│  └─ Scripts analyze, score, and interpret emotions          │
-│     (supports sequential or parallel execution)             │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│  PHASE 3: REPORT                                            │
-│  └─ Scripts generate final output (JSON, charts, summaries) │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Key Features:**
-- **Pluggable Tools:** Scripts are provider-agnostic (swap AI models easily)
-- **Multi-Modal:** Supports video, audio, images, text
-- **AI Provider Abstraction:** OpenRouter, Anthropic, Gemini, OpenAI
-- **Storage Abstraction:** Local FS, AWS S3, GCS, Azure Blob
-- **Path-Based Configs:** Self-contained YAML files (git-safe, reproducible)
 
 ---
 
-## Example YAML Config
+## Test Videos
+
+### Location
+
+Test videos are stored in:
+```
+examples/videos/emotion-tests/
+```
+
+### Current Test Video
+
+**File:** `cod.mp4`  
+**Size:** 62 MB  
+**Status:** Committed to git  
+
+**Purpose:** End-to-end (E2E) testing and development of the emotion analysis pipeline.
+
+### Adding New Test Videos
+
+To add new test videos for testing different scenarios:
+
+1. **Place the video** in `examples/videos/emotion-tests/` or create an appropriate subfolder for categorization
+2. **Use descriptive names** that indicate the test purpose:
+   - `neutral-baseline.mp4` — Baseline emotional neutrality test
+   - `poor-lighting-test.mp4` — Low lighting condition analysis
+   - `high-energy-montage.mp4` — Fast-paced content testing
+   - `dialogue-heavy-scene.mp4` — Speech/transcription focus
+3. **Update this README** when adding new videos — document what each video tests
+4. **Consider file size** for git tracking — large videos (>100 MB) may need `.gitignore` rules or external storage
+
+### Usage in Testing
+
+Test videos are used with pipeline configs like `configs/cod-test.yaml` and `configs/quick-test.yaml` for validation during development and CI runs.
+
+---
+
+## Key Features
+
+### ✅ Implemented & Working
+
+**Core Pipeline:**
+- 3-phase modular orchestrator (Gather → Process → Report)
+- YAML-based configuration system (12+ pre-built configs)
+- Sequential and parallel execution modes for Phase 2
+- Artifact management with JSON output
+- Robust error handling and retry logic
+
+**AI Integration:**
+- 4 AI provider implementations (OpenRouter, Anthropic, Gemini, OpenAI)
+- Unified interface with automatic fallbacks
+- Support for text, image, and audio inputs
+- JSON response parsing with error recovery
+
+**Video Analysis:**
+- FFmpeg-based video chunk extraction
+- Per-second emotion scoring
+- Dialogue transcription from audio
+- Music/mood segment detection
+- SVG chart generation for visual correlation
+
+**Persona System:**
+- SOUL.md (personality), GOAL.md (objectives), TOOLS.md (capabilities)
+- Versioned persona folders (`/1.0.0/`)
+- Persona resolver with ID-based lookup
+- Emotion lenses (patience, boredom, excitement, etc.)
+
+**Storage:**
+- Local filesystem (default)
+- AWS S3 integration
+- Pluggable storage interface
+
+**CLI:**
+- `bin/run-analysis.js` — User-friendly wrapper with persona ID resolution
+- `server/run-pipeline.cjs` — Direct pipeline execution
+- YAML config support with `--config` flag
+
+**Testing:**
+- 70+ unit tests
+- Integration tests for AI provider flows
+- Storage backend tests
+- Script-level tests for all pipeline phases
+
+### 📋 Planned / In Progress
+
+- Additional AI providers (Azure OpenAI, local models)
+- More storage backends (GCS, Azure Blob)
+- Real-time streaming analysis
+- Web UI for pipeline monitoring
+- Enhanced persona versioning and discovery
+
+---
+
+## Configuration Examples
+
+### Basic Video Analysis
 
 ```yaml
 # configs/video-analysis.yaml
@@ -73,151 +312,105 @@ phases:
     - scripts/get-context/get-music.cjs
   
   process:
-    mode: parallel  # or 'sequential'
+    mode: parallel
     scripts:
       - scripts/process/video-chunks.cjs
-      - scripts/process/per-second-emotions.cjs
+      - scripts/process/video-per-second.cjs
   
   report:
-    - scripts/report/evaluation.cjs
+    - scripts/report/emotional-analysis.cjs
+    - scripts/report/metrics.cjs
+    - scripts/report/recommendation.cjs
+    - scripts/report/summary.cjs
+    - scripts/report/final-report.cjs
 
 persona:
-  soul: personas/souls/impatient-teenager/1.0.0
-  goal: personas/goals/video-ad-evaluation/1.0.0
+  soul: personas/souls/impatient-teenager/1.0.0/SOUL.md
+  goal: personas/goals/video-ad-evaluation/1.0.0/GOAL.md
   tools:
-    - personas/tools/emotion-tracking/1.0.0
+    - personas/tools/emotion-tracking/1.0.0/TOOLS.md
 
 assets:
   - type: video
     path: ./examples/test-video.mp4
 ```
 
----
-
-## Example CLI Usage
+### Custom Persona CLI
 
 ```bash
-# Run full pipeline
-pnpm run pipeline --config configs/video-analysis.yaml
-
-# Run with custom config
-pnpm run pipeline --config configs/quick-test.yaml
-
-# Run with environment override
-OPENROUTER_API_KEY=sk-xxx pnpm run pipeline --config configs/video-analysis.yaml
+node bin/run-analysis.js \
+  --soul impatient-teenager \
+  --soul-version 1.0.0 \
+  --goal video-ad-evaluation \
+  --tool emotion-lenses \
+  video.mp4 \
+  output/my-analysis
 ```
 
 ---
 
-## Configuration Reference
+## Recent Activity
 
-### Environment Variables
+**Latest Commits (March 2026):**
+- **Refactored report system** — Split monolithic `evaluation.cjs` into 5 modular scripts (emotional-analysis, metrics, recommendation, summary, final-report)
+- **Improved retry logic** — Enhanced API failure handling with configurable strategies
+- **Added SVG correlation charts** — Replaced ASCII charts with visual timeline correlations
+- **Fixed music timestamp parsing** — Support for multiple timestamp formats
+- **Added subset warnings** — Reports now warn when analysis covers <100% of video duration
+- **Enhanced JSON error handling** — Robust parsing with debug logging and fallbacks
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `OPENROUTER_API_KEY` | OpenRouter API key for multi-model access | Yes (for OpenRouter provider) |
-| `ANTHROPIC_API_KEY` | Anthropic API key | Yes (for Anthropic provider) |
-| `GEMINI_API_KEY` | Google Gemini API key | Yes (for Gemini provider) |
-| `OPENAI_API_KEY` | OpenAI API key | Yes (for OpenAI provider) |
-| `AWS_ACCESS_KEY_ID` | AWS access key (for S3 storage) | No (local FS default) |
-| `AWS_SECRET_ACCESS_KEY` | AWS secret key | No |
-| `AWS_REGION` | AWS region | No |
-| `STORAGE_PROVIDER` | Storage backend: `local-fs`, `s3`, `gcs`, `azure` | No (default: `local-fs`) |
-| `STORAGE_BUCKET` | Bucket/container name (for cloud storage) | No |
-
-### YAML Config Options
-
-```yaml
-name: string              # Config name (required)
-description: string       # Config description (optional)
-
-phases:
-  gather: string[]        # Scripts for Phase 1 (optional)
-  process:                # Phase 2 config (optional)
-    mode: sequential|parallel
-    scripts: string[]
-  report: string[]        # Scripts for Phase 3 (optional)
-
-persona:
-  soul: string            # Path to SOUL.md (required)
-  goal: string            # Path to GOAL.md (optional)
-  tools: string[]         # Paths to TOOLS.md (optional)
-
-assets:                   # Input assets (required)
-  - type: video|audio|image|text
-    path: string          # Local path or URL
-    base64: string        # Or base64 data (optional)
-```
-
-**Validation Rules:**
-- At least one phase must have scripts
-- `soul` persona path is required
-- At least one asset is required
+**Recent Focus:**
+- Modular report generation (Phase 4 completion)
+- Visual output improvements (SVG charts, markdown summaries)
+- Error resilience and debugging capabilities
+- Documentation and test coverage
 
 ---
 
-## Project Structure
+## Status
 
-```
-emotion-engine/
-├── server/
-│   ├── lib/
-│   │   ├── ai-providers/       # AI provider implementations
-│   │   │   ├── ai-provider-interface.js
-│   │   │   ├── providers/
-│   │   │   │   ├── openrouter.cjs
-│   │   │   │   ├── anthropic.cjs
-│   │   │   │   ├── gemini.cjs
-│   │   │   │   └── openai.cjs
-│   │   │   └── utils/
-│   │   ├── storage/            # Storage provider implementations
-│   │   │   ├── storage-interface.js
-│   │   │   └── providers/
-│   │   │       ├── local-fs.cjs
-│   │   │       └── s3.cjs
-│   │   ├── persona-loader.cjs  # Load SOUL/GOAL/TOOLS from paths
-│   │   └── logger.cjs          # Logging utilities
-│   ├── scripts/
-│   │   ├── get-context/        # Phase 1 scripts (gather data)
-│   │   ├── process/            # Phase 2 scripts (analyze)
-│   │   └── report/             # Phase 3 scripts (output)
-│   └── run-pipeline.cjs        # Main pipeline orchestrator
-├── tools/
-│   ├── lib/                    # Tool system utilities
-│   └── emotion-lenses-tool.cjs # Reference tool implementation
-├── configs/                    # YAML configuration files
-│   ├── video-analysis.yaml
-│   ├── quick-test.yaml
-│   ├── multi-persona-swarm.yaml
-│   └── ...
-├── personas/
-│   ├── souls/                  # SOUL.md definitions
-│   ├── goals/                  # GOAL.md definitions
-│   └── tools/                  # TOOLS.md definitions
-├── bin/                        # CLI entry points
-├── docs/                       # Full documentation
-├── examples/                   # Example assets and outputs
-├── test/                       # Unit and integration tests
-├── .env.example                # Environment template
-├── package.json
-└── README.md
-```
+**Current State:** ✅ **Active Development**
+
+- **Version:** 8.0.0
+- **Stability:** Stable core pipeline, experimental features in docs/
+- **Test Coverage:** 70+ tests passing
+- **Last Major Update:** March 5, 2026 (Phase 4 report system refactor)
+
+The core 3-phase pipeline is production-ready for video emotion analysis. The persona system, AI provider abstraction, and storage backends are fully functional.
 
 ---
 
-## Full Documentation
+## Next Steps
 
-- **Architecture:** See `docs/ARCHITECTURE.md`
-- **API Reference:** See `docs/API.md`
-- **Migration Guide:** See `docs/MIGRATION-GUIDE.md` (v1.0 → v8.0)
-- **Contributing:** See `docs/CONTRIBUTING.md`
+**Immediate:**
+1. Run end-to-end tests with real video assets
+2. Validate all 12 YAML configs work as expected
+3. Document output artifact schemas for each script
+4. Add integration tests for parallel execution mode
+
+**Near-Term:**
+- Add GCS and Azure storage providers
+- Implement streaming mode for long videos
+- Build web dashboard for pipeline monitoring
+- Expand persona library with more souls/goals/tools
+
+---
+
+## Documentation
+
+- **Pipeline Workflow:** `docs/MODULAR-PIPELINE-WORKFLOW.md` — Full architecture spec
+- **Storage:** `docs/STORAGE-ARCHITECTURE.md` — Storage provider details
+- **AI Providers:** `docs/AI-PROVIDER-ARCHITECTURE.md` — Provider interface docs
+- **Migration:** `docs/MIGRATION-GUIDE-v2.md` — Upgrading from v1.x
 
 ---
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
 **Built with ❤️ by OpenTruth**
+
+*Last updated: March 6, 2026*

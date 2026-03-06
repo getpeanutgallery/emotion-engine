@@ -14,6 +14,8 @@ const { exec } = require('child_process');
 const { promisify } = require('util');
 const aiProvider = require('../../lib/ai-providers/ai-provider-interface.js');
 const storage = require('../../lib/storage/storage-interface.js');
+const ffmpegPath = require('ffmpeg-static');
+const ffprobePath = require('ffprobe-static');
 
 const execAsync = promisify(exec);
 
@@ -148,7 +150,7 @@ async function extractAudio(videoPath, outputDir) {
   // Extract audio from video using ffmpeg
   try {
     await execAsync(
-      `ffmpeg -i "${videoPath}" -vn -acodec pcm_s16le -ar 16000 -ac 1 -y "${audioPath}" 2>/dev/null`
+      `"${ffmpegPath}" -i "${videoPath}" -vn -acodec pcm_s16le -ar 16000 -ac 1 -y "${audioPath}" 2>/dev/null`
     );
     return audioPath;
   } catch (error) {
@@ -246,7 +248,7 @@ function parseTranscriptionResponse(responseContent, audioPath) {
  */
 function getAudioDuration(audioPath) {
   try {
-    const cmd = `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${audioPath}"`;
+    const cmd = `"${ffprobePath}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${audioPath}"`;
     const { stdout } = require('child_process').execSync(cmd);
     return parseFloat(stdout.trim()) || 0;
   } catch (e) {

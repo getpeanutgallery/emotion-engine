@@ -17,6 +17,8 @@ const storage = require('../../lib/storage/storage-interface.js');
 const chunkStrategy = require('../../lib/chunk-strategy.cjs');
 const splitStrategy = require('../../lib/split-strategy.cjs');
 const videoChunkExtractor = require('../../lib/video-chunk-extractor.cjs');
+const ffmpegPath = require('ffmpeg-static');
+const ffprobePath = require('ffprobe-static');
 
 const execAsync = promisify(exec);
 
@@ -280,7 +282,7 @@ async function run(input) {
  */
 async function getVideoDuration(videoPath) {
   try {
-    const cmd = `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${videoPath}"`;
+    const cmd = `"${ffprobePath}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${videoPath}"`;
     const { stdout } = await execAsync(cmd);
     return parseFloat(stdout.trim()) || 0;
   } catch (error) {

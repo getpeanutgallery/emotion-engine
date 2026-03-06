@@ -11,6 +11,8 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const ffmpegPath = require('ffmpeg-static');
+const ffprobePath = require('ffprobe-static');
 
 /**
  * Split a chunk file recursively if it exceeds max file size
@@ -68,10 +70,10 @@ function splitChunk(chunkPath, maxFileSize, maxSplits = 5, splitFactor = 0.5, cu
   // Split using ffmpeg
   try {
     // Split first half (0 to splitTime)
-    execSync(`ffmpeg -y -i "${chunkPath}" -t ${splitTime} -c copy "${firstHalfPath}" 2>/dev/null`);
+    execSync(`"${ffmpegPath}" -y -i "${chunkPath}" -t ${splitTime} -c copy "${firstHalfPath}" 2>/dev/null`);
     
     // Split second half (splitTime to end)
-    execSync(`ffmpeg -y -i "${chunkPath}" -ss ${splitTime} -c copy "${secondHalfPath}" 2>/dev/null`);
+    execSync(`"${ffmpegPath}" -y -i "${chunkPath}" -ss ${splitTime} -c copy "${secondHalfPath}" 2>/dev/null`);
     
     // Remove original chunk
     fs.unlinkSync(chunkPath);
@@ -99,7 +101,7 @@ function splitChunk(chunkPath, maxFileSize, maxSplits = 5, splitFactor = 0.5, cu
 function getVideoDuration(videoPath) {
   try {
     const result = execSync(
-      `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${videoPath}"`,
+      `"${ffprobePath}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${videoPath}"`,
       { encoding: 'utf8' }
     );
     return parseFloat(result.trim());

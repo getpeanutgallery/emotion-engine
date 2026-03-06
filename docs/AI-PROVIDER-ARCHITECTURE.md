@@ -855,7 +855,7 @@ node server/run-pipeline.cjs --config configs/video-analysis.yaml
 ```yaml
 # configs/video-analysis.yaml
 asset:
-  inputPath: ".cache/videos/cod.mp4"
+  inputPath: "examples/videos/emotion-tests/cod.mp4"
   outputDir: "output/cod-test"
 
 # AI provider config (references env vars, no secrets)
