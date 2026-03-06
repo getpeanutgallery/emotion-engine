@@ -13,7 +13,7 @@
 const path = require('path');
 
 // Import the AI provider interface
-const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js');
+const aiProvider = require('ai-providers/ai-provider-interface.js');
 
 // Example configuration
 const CONFIG = {

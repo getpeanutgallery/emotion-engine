@@ -5,7 +5,7 @@
  * Run with: node test/ai-providers/anthropic.test.js
  */
 
-const anthropic = require('../../server/lib/ai-providers/providers/anthropic.cjs');
+const anthropic = require('ai-providers/providers/anthropic.cjs');
 
 let passed = 0;
 let failed = 0;

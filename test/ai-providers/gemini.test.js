@@ -5,7 +5,7 @@
  * Run with: node test/ai-providers/gemini.test.js
  */
 
-const gemini = require('../../server/lib/ai-providers/providers/gemini.cjs');
+const gemini = require('ai-providers/providers/gemini.cjs');
 
 let passed = 0;
 let failed = 0;

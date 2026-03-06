@@ -6,7 +6,7 @@
  */
 
 const path = require('path');
-const aiProvider = require('../../server/lib/ai-providers/ai-provider-interface.js');
+const aiProvider = require('ai-providers/ai-provider-interface.js');
 
 let passed = 0;
 let failed = 0;

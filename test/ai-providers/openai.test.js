@@ -5,7 +5,7 @@
  * Run with: node test/ai-providers/openai.test.js
  */
 
-const openai = require('../../server/lib/ai-providers/providers/openai.cjs');
+const openai = require('ai-providers/providers/openai.cjs');
 
 let passed = 0;
 let failed = 0;

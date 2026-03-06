@@ -13,7 +13,7 @@
 
 const path = require('path');
 const storage = require('../server/lib/storage/storage-interface.js');
-const aiProvider = require('../server/lib/ai-providers/ai-provider-interface.js');
+const aiProvider = require('ai-providers/ai-provider-interface.js');
 
 /**
  * Example: Process video frames with multi-modal AI analysis

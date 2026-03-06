@@ -5,7 +5,7 @@
  * Run with: node test/ai-providers/openrouter.test.js
  */
 
-const openrouter = require('../../server/lib/ai-providers/providers/openrouter.cjs');
+const openrouter = require('ai-providers/providers/openrouter.cjs');
 
 let passed = 0;
 let failed = 0;

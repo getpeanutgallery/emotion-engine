@@ -12,7 +12,7 @@ const {
   detectMimeType, 
   validateAttachment,
   processAttachment 
-} = require('../server/lib/ai-providers/utils/file-utils.cjs');
+} = require('ai-providers/utils/file-utils.cjs');
 
 let passed = 0;
 let failed = 0;

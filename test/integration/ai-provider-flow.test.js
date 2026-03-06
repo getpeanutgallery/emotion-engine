@@ -13,8 +13,8 @@
 
 const path = require('path');
 const fs = require('fs');
-const aiProvider = require('../../server/lib/ai-providers/ai-provider-interface.js');
-const { fileToBase64, detectMimeType } = require('../../server/lib/ai-providers/utils/file-utils.cjs');
+const aiProvider = require('ai-providers/ai-provider-interface.js');
+const { fileToBase64, detectMimeType } = require('ai-providers/utils/file-utils.cjs');
 
 let passed = 0;
 let failed = 0;
