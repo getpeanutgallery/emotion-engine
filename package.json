@@ -19,7 +19,8 @@
 		"dotenv": "^17.3.1",
 		"ffmpeg-static": "^5.2.0",
 		"ffprobe-static": "^3.1.0",
-		"js-yaml": "^4.1.0"
+		"js-yaml": "^4.1.0",
+		"tools": "file:../tools"
 	},
 	"engines": {
 		"node": ">=18.0.0"
