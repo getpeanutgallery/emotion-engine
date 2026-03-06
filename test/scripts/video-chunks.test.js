@@ -31,7 +31,7 @@ const mockEmotionLensesTool = {
 };
 
 // Mock modules
-jest.mock('../../../tools/emotion-lenses-tool.cjs', () => mockEmotionLensesTool);
+jest.mock('tools/emotion-lenses-tool.cjs', () => mockEmotionLensesTool);
 
 // Mock child_process exec
 jest.mock('../../lib/video-utils.cjs', () => ({

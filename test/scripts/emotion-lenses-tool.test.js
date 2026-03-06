@@ -50,7 +50,7 @@ const mockPersonaLoader = {
 jest.mock('../../server/lib/ai-providers/ai-provider-interface.js', () => mockAIProvider);
 jest.mock('../../server/lib/persona-loader.cjs', () => mockPersonaLoader);
 
-const emotionLensesTool = require('../../tools/emotion-lenses-tool.cjs');
+const emotionLensesTool = require('tools/emotion-lenses-tool.cjs');
 
 describe('Emotion Lenses Tool', () => {
   describe('validateVariables', () => {
