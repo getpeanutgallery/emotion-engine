@@ -15,7 +15,7 @@ const { promisify } = require('util');
 const aiProvider = require('../../lib/ai-providers/ai-provider-interface.js');
 const storage = require('../../lib/storage/storage-interface.js');
 const ffmpegPath = require('ffmpeg-static');
-const ffprobePath = require('ffprobe-static');
+const ffprobePath = require('ffprobe-static').path;
 
 const execAsync = promisify(exec);
 

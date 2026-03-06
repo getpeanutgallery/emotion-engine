@@ -18,7 +18,7 @@ const chunkStrategy = require('../../lib/chunk-strategy.cjs');
 const splitStrategy = require('../../lib/split-strategy.cjs');
 const videoChunkExtractor = require('../../lib/video-chunk-extractor.cjs');
 const ffmpegPath = require('ffmpeg-static');
-const ffprobePath = require('ffprobe-static');
+const ffprobePath = require('ffprobe-static').path;
 
 const execAsync = promisify(exec);
 

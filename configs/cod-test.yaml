@@ -30,7 +30,7 @@ report:
 # Settings for full evaluation
 settings:
   chunk_duration: 8
-  max_chunks: -1  # Process all chunks (no limit)
+  max_chunks: 100  # Process all chunks (high limit)
   api_request_delay: 500
   retry_strategy:
     type: "exponential-backoff"  # Options: "none", "fixed-delay", "exponential-backoff", "adaptive"
@@ -68,5 +68,5 @@ tool_variables:
 # AI provider configuration (API key injected via environment)
 ai:
   provider: openrouter
-  model: qwen/qwen3.5-27b
+  model: qwen/qwen3.5-122b-a10b
   # apiKey: injected via AI_API_KEY environment variable

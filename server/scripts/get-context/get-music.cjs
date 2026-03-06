@@ -14,7 +14,7 @@ const { exec } = require('child_process');
 const { promisify } = require('util');
 const aiProvider = require('../../lib/ai-providers/ai-provider-interface.js');
 const ffmpegPath = require('ffmpeg-static');
-const ffprobePath = require('ffprobe-static');
+const ffprobePath = require('ffprobe-static').path;
 
 const execAsync = promisify(exec);
 
