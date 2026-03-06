@@ -87,15 +87,20 @@ emotion-engine/
 │   ├── cod-test.yaml               # Test configuration
 │   ├── quick-test.yaml             # Lightweight test
 │   └── ... (12 total configs)
-├── personas/                       # Persona SOUL definitions (flat, no versioning)
-│   ├── impatient-teenager.md       # SOUL.md: The Impatient Teenager persona
-│   ├── skeptical-cfo.md            # SOUL.md: Skeptical CFO persona
-│   └── optimistic-gen-z.md         # SOUL.md: Optimistic Gen Z persona
+├── cast/                           # Persona definitions (installed as dependency from cast repo)
+│   ├── impatient-teenager/         # Persona: The Impatient Teenager
+│   │   ├── SOUL.md                 # Persona personality definition
+│   │   └── config.yaml             # Persona configuration
+│   ├── skeptical-cfo/              # Persona: Skeptical CFO
+│   └── optimistic-gen-z/           # Persona: Optimistic Gen Z
+│   └── ...                         # More personas available in cast repo
 ├── goals/                          # Goal definitions (flat, no versioning)
 │   ├── video-ad-evaluation.md      # GOAL.md: Video ad evaluation
 │   ├── audio-evaluation.md         # GOAL.md: Audio evaluation
 │   ├── image-evaluation.md         # GOAL.md: Image evaluation
 │   └── README.md                   # Goals directory documentation
+├── tools/                          # Tool definitions
+│   └── emotion-lenses-tool.cjs     # Core emotion analysis tool
 ├── bin/
 │   └── run-analysis.js             # User-friendly CLI wrapper
 ├── docs/                           # Technical documentation
@@ -196,7 +201,7 @@ node bin/run-analysis.js \
 pnpm run pipeline --config configs/video-analysis.yaml
 ```
 
-**Note:** The persona system uses flat paths (no semantic versioning). All souls, goals, and tools are loaded directly from their respective folders.
+**Note:** Personas are now managed in a separate [cast repo](https://github.com/peanut-gallery/cast) installed as a dependency. Persona files use the path format `cast/<persona-name>/SOUL.md`. Goals and tools remain in the emotion-engine repo with flat paths (no semantic versioning).
 
 ### 4. Run Tests
 
@@ -272,8 +277,9 @@ Test videos are used with pipeline configs like `configs/cod-test.yaml` and `con
 
 **Persona System:**
 - SOUL.md (personality), GOAL.md (objectives), TOOLS (analysis scripts)
-- Flat folder structure (no semantic versioning, no 1.0.0 folders)
-- Direct path-based loading (no ID lookups or resolution)
+- Personas managed in separate [cast repo](https://github.com/peanut-gallery/cast) (installed as dependency)
+- Path format: `cast/<persona-name>/SOUL.md` (e.g., `cast/impatient-teenager/SOUL.md`)
+- Goals and tools remain in emotion-engine with flat paths (no versioning)
 - Emotion lenses (patience, boredom, excitement, etc.)
 
 **Storage:**
@@ -330,8 +336,9 @@ phases:
     - scripts/report/final-report.cjs
 
 persona:
-  # Flat path structure - no versioning folders
-  soul: personas/impatient-teenager.md
+  # Personas are loaded from the cast repo (installed as dependency)
+  # Path format: cast/<persona-name>/SOUL.md
+  soul: cast/impatient-teenager/SOUL.md
   goal: goals/video-ad-evaluation.md
   tool: tools/emotion-lenses-tool.cjs
 
@@ -343,9 +350,10 @@ assets:
 ### Custom Persona CLI
 
 ```bash
-# Using flat paths (no ID lookups, no versioning)
+# Personas are loaded from the cast repo
+# Path format: cast/<persona-name>/SOUL.md
 node bin/run-analysis.js \
-  --soul impatient-teenager \
+  --soul cast/impatient-teenager/SOUL.md \
   --goal video-ad-evaluation \
   --tool emotion-lenses \
   video.mp4 \

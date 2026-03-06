@@ -23,7 +23,7 @@ process:
     - script: scripts/process/audio-segments.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "personas/impatient-teenager.md"
+        soulPath: "cast/impatient-teenager/SOUL.md"
         goalPath: "goals/audio-evaluation.md"
         variables:
           lenses:

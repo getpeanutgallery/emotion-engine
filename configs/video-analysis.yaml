@@ -30,7 +30,7 @@ process:
     - script: scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "personas/impatient-teenager.md"
+        soulPath: "cast/impatient-teenager/SOUL.md"
         goalPath: "goals/video-ad-evaluation.md"
         variables:
           lenses:
@@ -40,7 +40,7 @@ process:
     - script: scripts/process/video-per-second.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "personas/impatient-teenager.md"
+        soulPath: "cast/impatient-teenager/SOUL.md"
         goalPath: "goals/video-ad-evaluation.md"
         variables:
           lenses:
@@ -73,7 +73,7 @@ settings:
 
 # Tool variables (paths must be absolute or relative to workspace)
 tool_variables:
-  soulPath: "personas/impatient-teenager.md"
+  soulPath: "cast/impatient-teenager/SOUL.md"
   goalPath: "goals/video-ad-evaluation.md"
   
   file_transfer:

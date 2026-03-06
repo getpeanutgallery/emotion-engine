@@ -1152,8 +1152,10 @@ asset:
   outputDir: "output/cod-test"
 
 tool_variables:
-  soulPath: "/absolute/path/to/personas/souls/impatient-teenager/1.0.0/SOUL.md"
-  goalPath: "/absolute/path/to/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+  # Personas are loaded from the cast repo (installed as dependency)
+  # Path format: cast/<persona-name>/SOUL.md
+  soulPath: "cast/impatient-teenager/SOUL.md"
+  goalPath: "goals/video-ad-evaluation.md"
   variables:
     lenses:
       - patience
@@ -1221,8 +1223,10 @@ asset:
   outputDir: "output/image-test"
 
 tool_variables:
-  soulPath: "/absolute/path/to/personas/souls/impatient-teenager/1.0.0/SOUL.md"
-  goalPath: "/absolute/path/to/personas/goals/image-evaluation/1.0.0/GOAL.md"
+  # Personas are loaded from the cast repo (installed as dependency)
+  # Path format: cast/<persona-name>/SOUL.md
+  soulPath: "cast/impatient-teenager/SOUL.md"
+  goalPath: "goals/image-evaluation.md"
   variables:
     lenses:
       - patience
@@ -1255,8 +1259,10 @@ asset:
   outputDir: "output/audio-test"
 
 tool_variables:
-  soulPath: "/absolute/path/to/personas/souls/impatient-teenager/1.0.0/SOUL.md"
-  goalPath: "/absolute/path/to/personas/goals/audio-evaluation/1.0.0/GOAL.md"
+  # Personas are loaded from the cast repo (installed as dependency)
+  # Path format: cast/<persona-name>/SOUL.md
+  soulPath: "cast/impatient-teenager/SOUL.md"
+  goalPath: "goals/audio-evaluation.md"
   variables:
     lenses:
       - patience
@@ -1300,15 +1306,16 @@ gather_context:
 process:
   parallel:
     - script: scripts/process/video-chunks.cjs
-      soulPath: /home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/impatient-teenager/1.0.0/SOUL.md
+      # Personas are loaded from the cast repo (installed as dependency)
+      soulPath: cast/impatient-teenager/SOUL.md
       toolVariables:
         lenses: ["patience", "boredom"]
     - script: scripts/process/video-chunks.cjs
-      soulPath: /home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/skeptical-cfo/1.0.0/SOUL.md
+      soulPath: cast/skeptical-cfo/SOUL.md
       toolVariables:
         lenses: ["patience", "boredom", "skepticism"]
     - script: scripts/process/video-chunks.cjs
-      soulPath: /home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/optimistic-gen-z/1.0.0/SOUL.md
+      soulPath: cast/optimistic-gen-z/SOUL.md
       toolVariables:
         lenses: ["excitement", "fomo", "joy"]
 
@@ -1343,7 +1350,8 @@ gather_context:
 process:
   parallel:
     - script: scripts/process/video-chunks.cjs
-      soulPath: /home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine/personas/souls/impatient-teenager/1.0.0/SOUL.md
+      # Personas are loaded from the cast repo (installed as dependency)
+      soulPath: cast/impatient-teenager/SOUL.md
       toolVariables:
         lenses: ["patience", "boredom", "excitement"]
     - script: scripts/process/brand-detection.cjs
@@ -1421,8 +1429,10 @@ asset:
   outputDir: "output/raw-test"
 
 tool_variables:
-  soulPath: "/absolute/path/to/personas/souls/impatient-teenager/1.0.0/SOUL.md"
-  goalPath: "/absolute/path/to/personas/goals/video-ad-evaluation/1.0.0/GOAL.md"
+  # Personas are loaded from the cast repo (installed as dependency)
+  # Path format: cast/<persona-name>/SOUL.md
+  soulPath: "cast/impatient-teenager/SOUL.md"
+  goalPath: "goals/video-ad-evaluation.md"
   variables:
     lenses:
       - patience

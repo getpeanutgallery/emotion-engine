@@ -43,7 +43,7 @@ settings:
 
 # Tool variables (use full paths)
 tool_variables:
-  soulPath: "personas/impatient-teenager.md"
+  soulPath: "cast/impatient-teenager/SOUL.md"
   goalPath: "goals/video-ad-evaluation.md"
   
   file_transfer: "base64"  # Options: "base64", "web_url", "youtube_url"

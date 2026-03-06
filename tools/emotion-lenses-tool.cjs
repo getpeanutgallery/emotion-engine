@@ -515,29 +515,65 @@ function capitalize(str) {
 }
 
 /**
+ * Resolve a path that may be a package path (e.g., 'cast/impatient-teenager/SOUL.md')
+ * @param {string} inputPath - Path to resolve
+ * @param {string} emotionEngineRoot - Root directory of emotion-engine
+ * @returns {string} Resolved absolute path
+ */
+function resolvePersonaPath(inputPath, emotionEngineRoot) {
+  // If path starts with '/', it's already absolute
+  if (inputPath.startsWith('/')) {
+    return inputPath;
+  }
+  
+  // Try to resolve from emotion-engine root first
+  const rootPath = path.join(emotionEngineRoot, inputPath);
+  if (fs.existsSync(rootPath)) {
+    return rootPath;
+  }
+  
+  // Try to resolve from node_modules (package path)
+  // e.g., 'cast/impatient-teenager/SOUL.md' -> 'node_modules/cast/impatient-teenager/SOUL.md'
+  const packagePath = path.join(emotionEngineRoot, 'node_modules', inputPath);
+  if (fs.existsSync(packagePath)) {
+    return packagePath;
+  }
+  
+  // If neither works, return the original path (will fail validation later)
+  return inputPath;
+}
+
+/**
  * Load persona configuration directly from file paths
- * @param {string} soulPath - Full path to SOUL.md
- * @param {string} goalPath - Full path to GOAL.md
+ * @param {string} soulPath - Full path to SOUL.md (can be absolute or package path like 'cast/impatient-teenager/SOUL.md')
+ * @param {string} goalPath - Full path to GOAL.md (can be absolute or package path like 'cast/impatient-teenager/GOAL.md')
  * @returns {Object|null} Persona config or null if failed
  */
 function loadPersonaFromPaths(soulPath, goalPath) {
   try {
+    // Get the emotion-engine root directory (parent of tools/)
+    const emotionEngineRoot = path.resolve(__dirname, '..');
+    
+    // Resolve paths (handle both absolute and package paths)
+    const resolvedSoulPath = resolvePersonaPath(soulPath, emotionEngineRoot);
+    const resolvedGoalPath = resolvePersonaPath(goalPath, emotionEngineRoot);
+    
     // Validate paths exist
-    if (!fs.existsSync(soulPath)) {
-      console.error(`❌ SOUL.md not found: ${soulPath}`);
+    if (!fs.existsSync(resolvedSoulPath)) {
+      console.error(`❌ SOUL.md not found: ${resolvedSoulPath}`);
       return null;
     }
-    if (!fs.existsSync(goalPath)) {
-      console.error(`❌ GOAL.md not found: ${goalPath}`);
+    if (!fs.existsSync(resolvedGoalPath)) {
+      console.error(`❌ GOAL.md not found: ${resolvedGoalPath}`);
       return null;
     }
 
     // Load SOUL.md
-    const soulContent = fs.readFileSync(soulPath, 'utf8');
+    const soulContent = fs.readFileSync(resolvedSoulPath, 'utf8');
     const soul = parseMarkdown(soulContent);
 
     // Load GOAL.md
-    const goalContent = fs.readFileSync(goalPath, 'utf8');
+    const goalContent = fs.readFileSync(resolvedGoalPath, 'utf8');
     const goal = parseMarkdown(goalContent);
 
     if (!soul || !goal) {
@@ -618,7 +654,9 @@ module.exports = {
   analyze,
   validateVariables,
   buildPrompt,
-  parseResponse
+  parseResponse,
+  loadPersonaFromPaths,
+  resolvePersonaPath
 };
 
 // Allow standalone execution for testing

@@ -32,7 +32,7 @@ settings:
 
 # Tool variables (paths must be absolute or relative to workspace)
 tool_variables:
-  soulPath: "personas/impatient-teenager.md"
+  soulPath: "cast/impatient-teenager/SOUL.md"
   goalPath: "goals/video-ad-evaluation.md"
   variables:
     lenses:

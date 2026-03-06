@@ -37,7 +37,7 @@ settings:
       jitter: true
 
 tool_variables:
-  soulPath: "personas/impatient-teenager.md"
+  soulPath: "cast/impatient-teenager/SOUL.md"
   goalPath: "goals/video-ad-evaluation.md"
   
   file_transfer: "base64"

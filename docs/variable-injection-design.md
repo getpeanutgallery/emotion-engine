@@ -347,7 +347,7 @@ buildSystemPrompt(config, { duration, toolVariables, videoContext })
 | `server/03-analyze-chunks.cjs` | Replace hardcoded lenses with `toolVariables` | No |
 | `server/04-per-second-emotions.cjs` | Replace hardcoded lenses with `toolVariables` | No |
 | `.env.example` | Add TOOL_VARIABLES example | No |
-| `personas/tools/*/TOOLS.md` | Document expected variables (future) | No |
+| `cast/*/TOOLS.md` | Document expected variables (future) - personas now in cast repo | No |
 
 ---
 
@@ -386,7 +386,8 @@ STEP_4_TOOL_VARIABLES='{"lenses":["excitement","engagement"]}'
 
 Auto-detect tool from `TOOL_ID` and load validation schema:
 ```javascript
-const validationSchema = require(`../personas/tools/${TOOL_ID}/schema.json`);
+// Tools are now in the tools/ directory (personas moved to cast repo)
+const validationSchema = require(`../tools/${TOOL_ID}/schema.json`);
 validateAgainstSchema(toolVariables, validationSchema);
 ```
 

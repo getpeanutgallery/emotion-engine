@@ -28,7 +28,7 @@ process:
     - script: scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "personas/impatient-teenager.md"
+        soulPath: "cast/impatient-teenager/SOUL.md"
         goalPath: "goals/video-ad-evaluation.md"
         variables:
           lenses:
@@ -37,7 +37,7 @@ process:
     - script: scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "personas/skeptical-cfo.md"
+        soulPath: "cast/skeptical-cfo/SOUL.md"
         goalPath: "goals/video-ad-evaluation.md"
         variables:
           lenses:
@@ -47,7 +47,7 @@ process:
     - script: scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "personas/optimistic-gen-z.md"
+        soulPath: "cast/optimistic-gen-z/SOUL.md"
         goalPath: "goals/video-ad-evaluation.md"
         variables:
           lenses:
