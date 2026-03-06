@@ -1,0 +1,64 @@
+# Single Chunk Test - Verify Full Pipeline
+# Test with just 1 chunk to confirm end-to-end flow works
+
+name: "Single Chunk Test"
+description: "Minimal test with 1 chunk to verify pipeline completion"
+version: "1.0"
+
+asset:
+  inputPath: "examples/videos/emotion-tests/cod.mp4"
+  outputDir: "output/single-chunk-test"
+
+gather_context:
+  - server/scripts/get-context/get-dialogue.cjs
+  - server/scripts/get-context/get-music.cjs
+
+process:
+  - server/scripts/process/video-chunks.cjs
+
+report:
+  - server/scripts/report/metrics.cjs
+  - server/scripts/report/recommendation.cjs
+  - server/scripts/report/emotional-analysis.cjs
+  - server/scripts/report/summary.cjs
+  - server/scripts/report/final-report.cjs
+
+settings:
+  chunk_duration: 5
+  max_chunks: 1  # Just 1 chunk for quick test
+  api_request_delay: 500
+  retry_strategy:
+    type: "exponential-backoff"
+    config:
+      maxRetries: 3
+      initialDelayMs: 1000
+      maxDelayMs: 10000
+      exponentialBase: 2
+      jitter: true
+
+tool_variables:
+  soulPath: "personas/impatient-teenager.md"
+  goalPath: "goals/video-ad-evaluation.md"
+  
+  file_transfer: "base64"
+  maxFileSize: 10485760
+  
+  chunk_strategy:
+    type: "duration-based"
+    config:
+      chunkDuration: 5
+    
+    split:
+      enabled: true
+      max_splits: 3
+      split_factor: 2
+  
+  variables:
+    lenses:
+      - patience
+      - boredom
+      - excitement
+
+ai:
+  provider: openrouter
+  model: qwen/qwen3.5-122b-a10b
