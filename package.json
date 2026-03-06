@@ -15,11 +15,13 @@
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.1002.0",
 		"axios": "^1.13.6",
+		"ai-providers": "file:../ai-providers",
 		"cast": "file:../cast",
 		"dotenv": "^17.3.1",
 		"ffmpeg-static": "^5.2.0",
 		"ffprobe-static": "^3.1.0",
 		"js-yaml": "^4.1.0",
+		"retry-strategy": "file:../retry-strategy",
 		"tools": "file:../tools"
 	},
 	"engines": {
