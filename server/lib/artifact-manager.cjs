@@ -247,8 +247,46 @@ function validateArtifacts(artifacts, requiredPaths) {
 }
 
 /**
+ * Get phase for a given artifact key
+ * 
+ * @function getPhaseForArtifact
+ * @param {string} key - Artifact key (e.g., 'dialogueData', 'chunkAnalysis')
+ * @returns {string} - Phase folder name or 'root' for artifacts-complete.json
+ * 
+ * @example
+ * getPhaseForArtifact('dialogueData');    // 'phase1-gather-context'
+ * getPhaseForArtifact('chunkAnalysis');   // 'phase2-process'
+ * getPhaseForArtifact('metricsData');     // 'phase3-report'
+ */
+function getPhaseForArtifact(key) {
+  // Phase 1: Gather Context
+  const phase1Artifacts = ['dialogueData', 'musicData'];
+  
+  // Phase 2: Process
+  const phase2Artifacts = ['chunkAnalysis', 'perSecondData'];
+  
+  // Phase 3: Report
+  const phase3Artifacts = ['metricsData', 'recommendationData', 'emotionalAnalysis', 'summaryData'];
+  
+  if (phase1Artifacts.includes(key)) {
+    return 'phase1-gather-context';
+  }
+  
+  if (phase2Artifacts.includes(key)) {
+    return 'phase2-process';
+  }
+  
+  if (phase3Artifacts.includes(key)) {
+    return 'phase3-report';
+  }
+  
+  // Default to root for unknown artifacts
+  return 'root';
+}
+
+/**
  * Serialize artifacts to JSON files
- * Writes each top-level key as a separate JSON file
+ * Writes each top-level key as a separate JSON file to phase-specific folders
  * 
  * @async
  * @function serializeArtifacts
@@ -267,9 +305,17 @@ async function serializeArtifacts(artifacts, outputDir) {
   
   const writtenFiles = [];
   
-  // Write each top-level artifact as a separate JSON file
+  // Write each top-level artifact as a separate JSON file to phase-specific folder
   for (const [key, value] of Object.entries(artifacts)) {
-    const filePath = path.join(absoluteDir, `${key}.json`);
+    const phase = getPhaseForArtifact(key);
+    const artifactDir = phase === 'root' ? absoluteDir : path.join(absoluteDir, phase);
+    
+    // Ensure phase directory exists
+    if (phase !== 'root') {
+      fs.mkdirSync(artifactDir, { recursive: true });
+    }
+    
+    const filePath = path.join(artifactDir, `${key}.json`);
     
     try {
       const content = JSON.stringify(value, null, 2);
@@ -281,7 +327,7 @@ async function serializeArtifacts(artifacts, outputDir) {
     }
   }
   
-  // Also write complete artifacts dump
+  // Also write complete artifacts dump to root (unchanged)
   const completePath = path.join(absoluteDir, 'artifacts-complete.json');
   fs.writeFileSync(completePath, JSON.stringify(artifacts, null, 2), 'utf8');
   writtenFiles.push(completePath);
@@ -352,5 +398,6 @@ module.exports = {
   serializeArtifacts,
   loadArtifacts,
   clearArtifacts,
+  getPhaseForArtifact, // Export phase mapping function
   parsePath, // Exported for testing
 };
