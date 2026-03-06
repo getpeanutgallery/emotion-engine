@@ -47,7 +47,7 @@ const mockPersonaLoader = {
 };
 
 // Mock modules before requiring the actual module
-jest.mock('../../server/lib/ai-providers/ai-provider-interface.js', () => mockAIProvider);
+jest.mock('ai-providers/ai-provider-interface.js', () => mockAIProvider);
 jest.mock('../../server/lib/persona-loader.cjs', () => mockPersonaLoader);
 
 const emotionLensesTool = require('tools/emotion-lenses-tool.cjs');

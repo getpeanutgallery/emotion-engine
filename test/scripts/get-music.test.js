@@ -27,7 +27,7 @@ const mockAIProvider = {
 };
 
 // Mock modules
-jest.mock('../../server/lib/ai-providers/ai-provider-interface.js', () => mockAIProvider);
+jest.mock('ai-providers/ai-provider-interface.js', () => mockAIProvider);
 
 // Mock child_process exec
 jest.mock('child_process', () => ({

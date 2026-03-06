@@ -23,7 +23,7 @@ const mockAIProvider = {
   })
 };
 
-jest.mock('../../server/lib/ai-providers/ai-provider-interface.js', () => mockAIProvider);
+jest.mock('ai-providers/ai-provider-interface.js', () => mockAIProvider);
 
 const evaluationScript = require('../../server/scripts/report/evaluation.cjs');
 

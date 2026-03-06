@@ -337,7 +337,7 @@ if (require.main === module) {
         }
       }
     },
-    config: { version: '8.0.0', name: 'Test Pipeline', tool_variables: { soulPath: 'personas/souls/test-persona/1.0.0/SOUL.md' } }
+    config: { version: '8.0.0', name: 'Test Pipeline', tool_variables: { soulPath: 'cast/test-persona/SOUL.md' } }
   })
     .then(result => {
       console.log('Recommendation generation complete:', JSON.stringify(result.artifacts, null, 2));

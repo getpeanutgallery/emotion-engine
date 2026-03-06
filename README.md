@@ -44,24 +44,15 @@ The system is **provider-agnostic** — swap AI models (OpenRouter, Anthropic, G
 emotion-engine/
 ├── server/
 │   ├── lib/
-│   │   ├── ai-providers/           # AI provider abstraction layer
-│   │   │   ├── ai-provider-interface.js
-│   │   │   ├── providers/
-│   │   │   │   ├── openrouter.cjs  # Multi-model gateway
-│   │   │   │   ├── anthropic.cjs   # Claude models
-│   │   │   │   ├── gemini.cjs      # Google Gemini
-│   │   │   │   └── openai.cjs      # GPT models
-│   │   │   └── utils/
 │   │   ├── storage/                # Storage abstraction
 │   │   │   ├── storage-interface.js
 │   │   │   └── providers/
 │   │   │       ├── local-fs.cjs    # Default: local filesystem
 │   │   │       └── aws-s3.cjs      # Cloud storage
 │   │   ├── chunk-strategies/       # Video chunking logic
-│   │   ├── retry-strategies/       # API retry handling
 │   │   ├── artifact-manager.cjs    # Manages pipeline artifacts
 │   │   ├── config-loader.cjs       # YAML config parser
-│   │   ├── persona-loader.cjs      # Loads SOUL/GOAL/TOOLS
+│   │   ├── persona-loader.cjs      # Loads SOUL/GOAL/TOOLS from packages
 │   │   ├── cli-parser.cjs          # CLI argument parsing
 │   │   ├── output-manager.cjs      # Output file management
 │   │   └── video-chunk-extractor.cjs # FFmpeg video processing
@@ -79,27 +70,11 @@ emotion-engine/
 │   │       ├── summary.cjs
 │   │       └── final-report.cjs
 │   └── run-pipeline.cjs            # Main orchestrator
-├── tools/                          # Tool scripts (flat structure)
-│   ├── lib/
-│   └── emotion-lenses-tool.cjs     # Core emotion analysis tool
 ├── configs/                        # YAML pipeline configurations
 │   ├── video-analysis.yaml         # Full video analysis
 │   ├── cod-test.yaml               # Test configuration
 │   ├── quick-test.yaml             # Lightweight test
 │   └── ... (12 total configs)
-├── cast/                           # Persona definitions (symlink to cast repo dependency)
-│   └── <persona>/                  # Personas loaded from cast repo
-│       └── SOUL.md                 # Persona personality definition
-│
-│ Cast Repo: https://github.com/getpeanutgallery/cast
-│ Path format: cast/<persona>/SOUL.md
-├── goals/                          # Goal definitions (flat, no versioning)
-│   ├── video-ad-evaluation.md      # GOAL.md: Video ad evaluation
-│   ├── audio-evaluation.md         # GOAL.md: Audio evaluation
-│   ├── image-evaluation.md         # GOAL.md: Image evaluation
-│   └── README.md                   # Goals directory documentation
-├── tools/                          # Tool definitions
-│   └── emotion-lenses-tool.cjs     # Core emotion analysis tool
 ├── bin/
 │   └── run-analysis.js             # User-friendly CLI wrapper
 ├── docs/                           # Technical documentation
@@ -119,6 +94,13 @@ emotion-engine/
 ├── .env.example                    # Environment variable template
 ├── package.json
 └── README.md
+
+# Package Dependencies (installed via pnpm/npm):
+# - cast/              → Personas (SOUL.md files)
+# - goals/             → Goal definitions (GOAL.md files)
+# - tools/             → Tool scripts (e.g., emotion-lenses-tool.cjs)
+# - ai-providers/      → AI provider interface
+# - retry-strategy/    → Retry logic implementations
 ```
 
 ---
@@ -136,6 +118,11 @@ emotion-engine/
 - `js-yaml` — YAML configuration parsing
 - `ffmpeg-static` — Cross-platform FFmpeg binary (auto-installed)
 - `ffprobe-static` — Cross-platform FFprobe binary (auto-installed)
+- `cast` — Persona definitions (SOUL.md files) - [GitHub](https://github.com/getpeanutgallery/cast)
+- `goals` — Goal definitions (GOAL.md files) - [GitHub](https://github.com/getpeanutgallery/goals)
+- `tools` — Composable tool scripts - [GitHub](https://github.com/getpeanutgallery/tools)
+- `ai-providers` — AI provider interface - [GitHub](https://github.com/getpeanutgallery/ai-providers)
+- `retry-strategy` — Retry logic implementations - [GitHub](https://github.com/getpeanutgallery/retry-strategy)
 
 **AI Providers:**
 - OpenRouter (multi-model gateway)
@@ -200,7 +187,12 @@ node bin/run-analysis.js \
 pnpm run pipeline --config configs/video-analysis.yaml
 ```
 
-**Note:** Personas are loaded from the [cast repo](https://github.com/getpeanutgallery/cast) installed as a package dependency. Persona files use the path format `cast/<persona>/SOUL.md` (e.g., `cast/impatient-teenager/SOUL.md`). The old `personas/` folder has been removed. Goals and tools remain in the emotion-engine repo with flat paths (no semantic versioning).
+**Note:** Personas, goals, and tools are loaded from package dependencies:
+- **Personas:** [cast repo](https://github.com/getpeanutgallery/cast) - Path format: `cast/<persona>/SOUL.md` (e.g., `cast/impatient-teenager/SOUL.md`)
+- **Goals:** [goals repo](https://github.com/getpeanutgallery/goals) - Path format: `goals/<goal-name>.md` (e.g., `goals/video-ad-evaluation.md`)
+- **Tools:** [tools repo](https://github.com/getpeanutgallery/tools) - Path format: `tools/<tool-name>.cjs` (e.g., `tools/emotion-lenses-tool.cjs`)
+
+The old `personas/`, `tools/`, and `goals/` folders have been extracted into separate packages.
 
 ### 4. Run Tests
 
@@ -276,10 +268,9 @@ Test videos are used with pipeline configs like `configs/cod-test.yaml` and `con
 
 **Persona System:**
 - SOUL.md (personality), GOAL.md (objectives), TOOLS (analysis scripts)
-- Personas loaded from [cast repo](https://github.com/getpeanutgallery/cast) (package dependency)
-- Path format: `cast/<persona>/SOUL.md` (e.g., `cast/impatient-teenager/SOUL.md`)
-- Old `personas/` folder removed - all personas now in cast repo
-- Goals and tools remain in emotion-engine with flat paths (no versioning)
+- **Personas:** Loaded from [cast repo](https://github.com/getpeanutgallery/cast) package - Path format: `cast/<persona>/SOUL.md`
+- **Goals:** Loaded from [goals repo](https://github.com/getpeanutgallery/goals) package - Path format: `goals/<goal-name>.md`
+- **Tools:** Loaded from [tools repo](https://github.com/getpeanutgallery/tools) package - Path format: `tools/<tool-name>.cjs`
 - Emotion lenses (patience, boredom, excitement, etc.)
 
 **Storage:**
@@ -336,8 +327,10 @@ phases:
     - scripts/report/final-report.cjs
 
 persona:
-  # Cast repo dependency: https://github.com/getpeanutgallery/cast
-  # Path format: cast/<persona>/SOUL.md
+  # Package dependencies:
+  # - cast: https://github.com/getpeanutgallery/cast
+  # - goals: https://github.com/getpeanutgallery/goals
+  # - tools: https://github.com/getpeanutgallery/tools
   soul: cast/impatient-teenager/SOUL.md
   goal: goals/video-ad-evaluation.md
   tool: tools/emotion-lenses-tool.cjs
@@ -350,8 +343,10 @@ assets:
 ### Custom Persona CLI
 
 ```bash
-# Cast repo dependency: https://github.com/getpeanutgallery/cast
-# Path format: cast/<persona>/SOUL.md
+# Package dependencies:
+# - cast: https://github.com/getpeanutgallery/cast
+# - goals: https://github.com/getpeanutgallery/goals
+# - tools: https://github.com/getpeanutgallery/tools
 node bin/run-analysis.js \
   --soul cast/impatient-teenager/SOUL.md \
   --goal video-ad-evaluation \
