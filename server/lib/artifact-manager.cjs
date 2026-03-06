@@ -286,13 +286,14 @@ function getPhaseForArtifact(key) {
 
 /**
  * Serialize artifacts to JSON files
- * Writes each top-level key as a separate JSON file to phase-specific folders
+ * Writes ONLY artifacts-complete.json to the root directory
+ * Individual artifact files are written by phase scripts to their phase folders
  * 
  * @async
  * @function serializeArtifacts
  * @param {object} artifacts - Artifacts object
  * @param {string} outputDir - Output directory path
- * @returns {Promise<string[]>} - Array of written file paths
+ * @returns {Promise<string[]>} - Array containing only artifacts-complete.json path
  * 
  * @example
  * const files = await serializeArtifacts(artifacts, 'output/results');
@@ -303,40 +304,17 @@ async function serializeArtifacts(artifacts, outputDir) {
   // Ensure output directory exists
   fs.mkdirSync(absoluteDir, { recursive: true });
   
-  const writtenFiles = [];
-  
-  // Write each top-level artifact as a separate JSON file to phase-specific folder
-  for (const [key, value] of Object.entries(artifacts)) {
-    const phase = getPhaseForArtifact(key);
-    const artifactDir = phase === 'root' ? absoluteDir : path.join(absoluteDir, phase);
-    
-    // Ensure phase directory exists
-    if (phase !== 'root') {
-      fs.mkdirSync(artifactDir, { recursive: true });
-    }
-    
-    const filePath = path.join(artifactDir, `${key}.json`);
-    
-    try {
-      const content = JSON.stringify(value, null, 2);
-      fs.writeFileSync(filePath, content, 'utf8');
-      writtenFiles.push(filePath);
-    } catch (error) {
-      console.error(`Failed to write artifact ${key}:`, error.message);
-      throw error;
-    }
-  }
-  
-  // Also write complete artifacts dump to root (unchanged)
+  // Write ONLY the complete artifacts dump to root
   const completePath = path.join(absoluteDir, 'artifacts-complete.json');
   fs.writeFileSync(completePath, JSON.stringify(artifacts, null, 2), 'utf8');
-  writtenFiles.push(completePath);
   
-  return writtenFiles;
+  return [completePath];
 }
 
 /**
  * Load artifacts from JSON files in directory
+ * Prefers artifacts-complete.json if it exists (contains all artifacts in one file)
+ * Otherwise loads individual artifact files (legacy behavior)
  * 
  * @async
  * @function loadArtifacts
@@ -353,6 +331,14 @@ async function loadArtifacts(inputDir) {
     throw new Error(`Artifacts directory not found: ${absoluteDir}`);
   }
   
+  // Prefer artifacts-complete.json if it exists
+  const completePath = path.join(absoluteDir, 'artifacts-complete.json');
+  if (fs.existsSync(completePath)) {
+    const content = fs.readFileSync(completePath, 'utf8');
+    return JSON.parse(content);
+  }
+  
+  // Legacy behavior: load individual artifact files
   const artifacts = {};
   const files = fs.readdirSync(absoluteDir);
   

@@ -207,11 +207,12 @@ test('Artifact Manager - serialize and load artifacts', async () => {
   const outputDir = path.join(__dirname, 'fixtures', 'test-artifacts');
   
   try {
-    // Serialize
+    // Serialize - now only writes artifacts-complete.json
     const files = await serializeArtifacts(artifacts, outputDir);
-    assert(files.length >= 2);
+    assert.strictEqual(files.length, 1, 'Should only write artifacts-complete.json');
+    assert(files[0].endsWith('artifacts-complete.json'), 'Should write artifacts-complete.json');
     
-    // Load back
+    // Load back from artifacts-complete.json
     const loaded = await loadArtifacts(outputDir);
     
     assert.deepStrictEqual(loaded.dialogueData, artifacts.dialogueData);
