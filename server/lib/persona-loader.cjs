@@ -22,15 +22,7 @@ const PERSONAS_ROOT = path.join(__dirname, '../../personas');
  * @property {string} systemPrompt - Composed system prompt
  */
 
-/**
- * @deprecated SemVer resolution is no longer used.
- * The persona system now uses flat paths without versioning.
- * This function is kept for backward compatibility only.
- */
-function resolveVersion(baseDir, version = 'latest') {
-    console.warn('resolveVersion() is deprecated. Use flat paths instead.');
-    return null;
-}
+
 
 /**
  * Load SOUL.md for a persona
@@ -82,15 +74,6 @@ function loadGoal(goalPath) {
     
     const content = fs.readFileSync(goalPath, 'utf8');
     return parseMarkdown(content);
-}
-
-/**
- * @deprecated TOOLS.md loading is deprecated.
- * Tools are now loaded directly from /tools/ directory.
- */
-function loadTools(toolId, version = 'latest') {
-    console.warn('loadTools() is deprecated. Load tools directly from /tools/ directory.');
-    return null;
 }
 
 /**
@@ -277,7 +260,6 @@ function capitalize(str) {
 module.exports = {
     loadSoul,
     loadGoal,
-    loadTools,
     loadPersonaConfig,
     buildSystemPrompt,
     parseMarkdown
