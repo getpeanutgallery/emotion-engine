@@ -17,6 +17,7 @@ const storage = require('../../lib/storage/storage-interface.js');
 const chunkStrategy = require('../../lib/chunk-strategy.cjs');
 const splitStrategy = require('../../lib/split-strategy.cjs');
 const videoChunkExtractor = require('../../lib/video-chunk-extractor.cjs');
+const outputManager = require('../../lib/output-manager.cjs');
 const ffmpegPath = require('ffmpeg-static');
 const ffprobePath = require('ffprobe-static').path;
 
@@ -126,9 +127,20 @@ async function run(input) {
   let totalTokens = 0;
   let previousSummary = '';
 
-  // Create temp directory for chunks
-  const tempDir = path.join(outputDir, '.temp-chunks');
-  fs.mkdirSync(tempDir, { recursive: true });
+  // Create phase directory for artifacts
+  const phaseDir = outputManager.createPhaseDirectory(outputDir, 'phase2-process');
+  
+  // Create directory for processed chunks (replaces .temp-chunks)
+  const chunksDir = path.join(outputDir, 'assets', 'processed', 'chunks');
+  fs.mkdirSync(chunksDir, { recursive: true });
+
+  console.log(`   📁 Phase directory: ${phaseDir}`);
+  console.log(`   📁 Chunks directory: ${chunksDir}`);
+
+  // Check debug config for keeping temp files
+  const keepTempFiles = config?.debug?.keepTempFiles === true;
+  const keepProcessedAssets = config?.debug?.keepProcessedAssets !== false;
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
 
   // Track extracted chunk files for cleanup
   const extractedChunks = [];
@@ -148,7 +160,7 @@ async function run(input) {
         assetPath,
         startTime,
         endTime,
-        tempDir,
+        chunksDir,
         chunkIndex
       );
 
@@ -284,11 +296,12 @@ async function run(input) {
       videoDuration: duration
     };
 
-    // Write artifact
-    const artifactPath = path.join(outputDir, 'chunk-analysis.json');
+    // Write artifact to phase directory
+    const artifactPath = path.join(phaseDir, 'chunk-analysis.json');
     fs.writeFileSync(artifactPath, JSON.stringify(chunkAnalysis, null, 2));
 
     console.log('   ✅ Video chunk analysis complete');
+    console.log(`      Artifact path: ${artifactPath}`);
     console.log(`      Total tokens used: ${totalTokens}`);
     console.log(`      Average per chunk: ${(totalTokens / numChunks).toFixed(0)} tokens`);
 
@@ -301,22 +314,49 @@ async function run(input) {
     console.error('   ❌ Error processing video chunks:', error.message);
     throw error;
   } finally {
-    // Cleanup extracted chunk files (unless debug mode)
-    if (!config?.debug) {
+    // Handle chunk file cleanup based on config
+    if (keepTempFiles && keepProcessedAssets) {
+      // Move chunk files to assets/processed/chunks/ with timestamp to avoid overwrites
+      const destDir = path.join(phaseDir, 'assets', 'processed', 'chunks', timestamp);
+      fs.mkdirSync(destDir, { recursive: true });
+      
+      try {
+        for (const chunkPath of extractedChunks) {
+          if (fs.existsSync(chunkPath)) {
+            const chunkName = path.basename(chunkPath);
+            const destPath = path.join(destDir, chunkName);
+            fs.copyFileSync(chunkPath, destPath);
+            console.log(`   💾 Kept chunk file for debugging: ${chunkName} → ${destPath}`);
+          }
+        }
+        console.log(`   💾 Debug mode: Chunk files preserved in ${destDir}`);
+      } catch (e) {
+        console.warn('   ⚠️  Warning: Failed to copy some chunk files:', e.message);
+      }
+    } else if (keepTempFiles) {
+      console.log(`   💾 Debug mode: Chunk files kept in ${chunksDir}`);
+    } else {
+      // Clean up extracted chunk files
       try {
         for (const chunkPath of extractedChunks) {
           if (fs.existsSync(chunkPath)) {
             fs.unlinkSync(chunkPath);
           }
         }
+        console.log('   🧹 Cleaned up extracted chunk files');
       } catch (e) {
         console.warn('   ⚠️  Warning: Failed to cleanup some chunk files:', e.message);
       }
     }
 
-    // Cleanup temp directory
+    // Cleanup temp chunks directory if empty
     try {
-      fs.rmSync(tempDir, { recursive: true, force: true });
+      if (fs.existsSync(chunksDir)) {
+        const files = fs.readdirSync(chunksDir);
+        if (files.length === 0) {
+          fs.rmSync(chunksDir, { recursive: true, force: true });
+        }
+      }
     } catch (e) {
       // Ignore cleanup errors
     }

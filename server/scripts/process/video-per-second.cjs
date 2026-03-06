@@ -10,6 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const outputManager = require('../../lib/output-manager.cjs');
 
 /**
  * Script Input Contract
@@ -51,6 +52,10 @@ async function run(input) {
 
   // Ensure output directory exists
   fs.mkdirSync(outputDir, { recursive: true });
+
+  // Create phase directory for artifacts
+  const phaseDir = outputManager.createPhaseDirectory(outputDir, 'phase2-process');
+  console.log(`   📁 Phase directory: ${phaseDir}`);
 
   // Get chunk analysis from previous phase
   const chunkAnalysis = artifacts.chunkAnalysis;
@@ -123,11 +128,12 @@ async function run(input) {
     }
   };
 
-  // Write artifact
-  const artifactPath = path.join(outputDir, 'per-second-data.json');
+  // Write artifact to phase directory
+  const artifactPath = path.join(phaseDir, 'per-second-data.json');
   fs.writeFileSync(artifactPath, JSON.stringify(perSecondArtifact, null, 2));
 
   console.log('   ✅ Per-second analysis complete');
+  console.log(`      Artifact path: ${artifactPath}`);
   console.log(`      Generated ${perSecondData.length} data points`);
   console.log(`      Summary: ${summary}`);
 

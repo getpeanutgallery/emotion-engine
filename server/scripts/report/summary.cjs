@@ -241,7 +241,7 @@ if (require.main === module) {
     outputDir,
     artifacts: {
       metricsData: {
-        path: path.join(outputDir, 'metrics', 'metrics.json'),
+        path: path.join(outputDir, 'phase3-report', 'metrics', 'metrics.json'),
         averages: {
           boredom: 0.4,
           excitement: 0.6,
@@ -261,13 +261,13 @@ if (require.main === module) {
         frictionIndex: 42.5
       },
       recommendationData: {
-        path: path.join(outputDir, 'recommendation', 'recommendation.json'),
+        path: path.join(outputDir, 'phase3-report', 'recommendation', 'recommendation.json'),
         text: 'Consider increasing excitement levels in the middle section.',
         reasoning: 'Excitement scores dropped significantly between 60-120 seconds.',
         confidence: 0.85
       },
       emotionalAnalysis: {
-        path: path.join(outputDir, 'emotional-analysis', 'emotional-analysis.json'),
+        path: path.join(outputDir, 'phase3-report', 'emotional-analysis', 'emotional-data.json'),
         insights: ['High engagement in first 30 seconds', 'Attention drop at 2-minute mark'],
         dominantEmotions: ['excitement', 'curiosity']
       },

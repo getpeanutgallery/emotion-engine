@@ -29,6 +29,17 @@ settings:
   chunk_duration: 8
   max_chunks: 2  # Only 2 chunks for fast testing
   api_request_delay: 500
+  music_segment_duration: 30
+
+# Debug settings (for development/testing)
+# When keepTempFiles: true, intermediate files are saved to:
+#   - phase1-gather-context/assets/processed/dialogue/<timestamp>/
+#   - phase1-gather-context/assets/processed/music/<timestamp>/
+#   - phase2-process/assets/processed/chunks/<timestamp>/
+# See: docs/DEBUG-CONFIG.md for details
+debug:
+  keepTempFiles: true        # Keep ffmpeg extracts, chunk files for debugging
+  keepProcessedAssets: true  # Copy to assets/processed/
 
 # Tool variables (paths must be absolute or relative to workspace)
 tool_variables:

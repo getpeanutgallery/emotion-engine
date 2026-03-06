@@ -1,0 +1,66 @@
+# Single Chunk Test with Debug - Verify Chunks Are Kept
+# Test with debug mode to verify chunks are kept for debugging
+# Output structure: phase1-gather-context/, phase2-process/, phase3-report/
+
+name: "Single Chunk Test with Debug"
+description: "Test with debug=true to verify chunks are kept in assets/processed/chunks/"
+version: "1.0"
+
+asset:
+  inputPath: "examples/videos/emotion-tests/cod.mp4"
+  outputDir: "output/single-chunk-test-debug"
+
+gather_context:
+  - server/scripts/get-context/get-dialogue.cjs
+  - server/scripts/get-context/get-music.cjs
+
+process:
+  - server/scripts/process/video-chunks.cjs
+
+report: []
+
+settings:
+  chunk_duration: 5
+  max_chunks: 1
+  api_request_delay: 500
+  retry_strategy:
+    type: "exponential-backoff"
+    config:
+      maxRetries: 3
+      initialDelayMs: 1000
+      maxDelayMs: 10000
+      exponentialBase: 2
+      jitter: true
+
+# Debug settings - keeps temp files for inspection
+# Files saved to: phase2-process/assets/processed/chunks/<timestamp>/
+debug:
+  keepTempFiles: true
+  keepProcessedAssets: true
+
+tool_variables:
+  soulPath: "cast/impatient-teenager/SOUL.md"
+  goalPath: "goals/video-ad-evaluation.md"
+  
+  file_transfer: "base64"
+  maxFileSize: 10485760
+  
+  chunk_strategy:
+    type: "duration-based"
+    config:
+      chunkDuration: 5
+    
+    split:
+      enabled: true
+      max_splits: 3
+      split_factor: 2
+  
+  variables:
+    lenses:
+      - patience
+      - boredom
+      - excitement
+
+ai:
+  provider: openrouter
+  model: qwen/qwen3.5-122b-a10b

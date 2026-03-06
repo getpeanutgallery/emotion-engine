@@ -108,10 +108,12 @@ emotion-engine/
 ## Tech Stack
 
 **Runtime:**
+
 - Node.js >= 18.0.0 (CommonJS modules)
 - FFmpeg & FFprobe — **automatically installed via `ffmpeg-static` and `ffprobe-static` packages** (no manual installation required!)
 
 **Dependencies:**
+
 - `@aws-sdk/client-s3` — AWS S3 storage backend
 - `axios` — HTTP client for API calls
 - `dotenv` — Environment variable management
@@ -125,16 +127,19 @@ emotion-engine/
 - `retry-strategy` — Retry logic implementations - [GitHub](https://github.com/getpeanutgallery/retry-strategy)
 
 **AI Providers:**
+
 - OpenRouter (multi-model gateway)
 - Anthropic (Claude)
 - Google Gemini
 - OpenAI (GPT)
 
 **Storage Backends:**
+
 - Local filesystem (default)
 - AWS S3
 
 **Testing:**
+
 - Node.js native test runner (`node --test`)
 - 70+ unit tests across AI providers, pipeline, scripts, and storage
 
@@ -160,12 +165,14 @@ cp .env.example .env
 ```
 
 Required environment variables (depending on your AI provider):
+
 - `OPENROUTER_API_KEY` — For OpenRouter (recommended)
 - `ANTHROPIC_API_KEY` — For Anthropic/Claude
 - `GEMINI_API_KEY` — For Google Gemini
 - `OPENAI_API_KEY` — For OpenAI/GPT
 
 Optional (for cloud storage):
+
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 - `AWS_REGION`
@@ -188,6 +195,7 @@ pnpm run pipeline --config configs/video-analysis.yaml
 ```
 
 **Note:** Personas, goals, and tools are loaded from package dependencies:
+
 - **Personas:** [cast repo](https://github.com/getpeanutgallery/cast) - Path format: `cast/<persona>/SOUL.md` (e.g., `cast/impatient-teenager/SOUL.md`)
 - **Goals:** [goals repo](https://github.com/getpeanutgallery/goals) - Path format: `goals/<goal-name>.md` (e.g., `goals/video-ad-evaluation.md`)
 - **Tools:** [tools repo](https://github.com/getpeanutgallery/tools) - Path format: `tools/<tool-name>.cjs` (e.g., `tools/emotion-lenses-tool.cjs`)
@@ -211,6 +219,7 @@ npm run test:validate-json
 ### Location
 
 Test videos are stored in:
+
 ```
 examples/videos/emotion-tests/
 ```
@@ -247,6 +256,7 @@ Test videos are used with pipeline configs like `configs/cod-test.yaml` and `con
 ### ✅ Implemented & Working
 
 **Core Pipeline:**
+
 - 3-phase modular orchestrator (Gather → Process → Report)
 - YAML-based configuration system (12+ pre-built configs)
 - Sequential and parallel execution modes for Phase 2
@@ -254,12 +264,14 @@ Test videos are used with pipeline configs like `configs/cod-test.yaml` and `con
 - Robust error handling and retry logic
 
 **AI Integration:**
+
 - 4 AI provider implementations (OpenRouter, Anthropic, Gemini, OpenAI)
 - Unified interface with automatic fallbacks
 - Support for text, image, and audio inputs
 - JSON response parsing with error recovery
 
 **Video Analysis:**
+
 - FFmpeg-based video chunk extraction
 - Per-second emotion scoring
 - Dialogue transcription from audio
@@ -267,6 +279,7 @@ Test videos are used with pipeline configs like `configs/cod-test.yaml` and `con
 - SVG chart generation for visual correlation
 
 **Persona System:**
+
 - SOUL.md (personality), GOAL.md (objectives), TOOLS (analysis scripts)
 - **Personas:** Loaded from [cast repo](https://github.com/getpeanutgallery/cast) package - Path format: `cast/<persona>/SOUL.md`
 - **Goals:** Loaded from [goals repo](https://github.com/getpeanutgallery/goals) package - Path format: `goals/<goal-name>.md`
@@ -274,16 +287,19 @@ Test videos are used with pipeline configs like `configs/cod-test.yaml` and `con
 - Emotion lenses (patience, boredom, excitement, etc.)
 
 **Storage:**
+
 - Local filesystem (default)
 - AWS S3 integration
 - Pluggable storage interface
 
 **CLI:**
+
 - `bin/run-analysis.js` — User-friendly wrapper with persona ID resolution
 - `server/run-pipeline.cjs` — Direct pipeline execution
 - YAML config support with `--config` flag
 
 **Testing:**
+
 - 70+ unit tests
 - Integration tests for AI provider flows
 - Storage backend tests
@@ -312,13 +328,13 @@ phases:
   gather:
     - scripts/get-context/get-dialogue.cjs
     - scripts/get-context/get-music.cjs
-  
+
   process:
     mode: parallel
     scripts:
       - scripts/process/video-chunks.cjs
       - scripts/process/video-per-second.cjs
-  
+
   report:
     - scripts/report/emotional-analysis.cjs
     - scripts/report/metrics.cjs
@@ -360,6 +376,7 @@ node bin/run-analysis.js \
 ## Recent Activity
 
 **Latest Commits (March 2026):**
+
 - **Refactored report system** — Split monolithic `evaluation.cjs` into 5 modular scripts (emotional-analysis, metrics, recommendation, summary, final-report)
 - **Improved retry logic** — Enhanced API failure handling with configurable strategies
 - **Added SVG correlation charts** — Replaced ASCII charts with visual timeline correlations
@@ -368,6 +385,7 @@ node bin/run-analysis.js \
 - **Enhanced JSON error handling** — Robust parsing with debug logging and fallbacks
 
 **Recent Focus:**
+
 - Modular report generation (Phase 4 completion)
 - Visual output improvements (SVG charts, markdown summaries)
 - Error resilience and debugging capabilities
@@ -391,12 +409,14 @@ The core 3-phase pipeline is production-ready for video emotion analysis. The pe
 ## Next Steps
 
 **Immediate:**
+
 1. Run end-to-end tests with real video assets
 2. Validate all 12 YAML configs work as expected
 3. Document output artifact schemas for each script
 4. Add integration tests for parallel execution mode
 
 **Near-Term:**
+
 - Add GCS and Azure storage providers
 - Implement streaming mode for long videos
 - Build web dashboard for pipeline monitoring
@@ -419,6 +439,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Built with ❤️ by OpenTruth**
+**Built with ❤️ by Peanut Gallery**
 
 *Last updated: March 6, 2026*

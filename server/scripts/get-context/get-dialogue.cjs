@@ -14,6 +14,7 @@ const { exec } = require('child_process');
 const { promisify } = require('util');
 const aiProvider = require('ai-providers/ai-provider-interface.js');
 const storage = require('../../lib/storage/storage-interface.js');
+const outputManager = require('../../lib/output-manager.cjs');
 const ffmpegPath = require('ffmpeg-static');
 const ffprobePath = require('ffprobe-static').path;
 
@@ -50,12 +51,20 @@ async function run(input) {
 
   console.log('   🎤 Extracting and transcribing dialogue from:', assetPath);
 
-  // Ensure output directory exists
-  fs.mkdirSync(outputDir, { recursive: true });
-
-  // Create temp directory for audio extraction
-  const tempDir = path.join(outputDir, '.temp-dialogue');
+  // Create phase-aware output directory
+  const phaseDir = outputManager.createPhaseDirectory(outputDir, 'phase1-gather-context');
+  
+  // Create assets directory for processed files
+  const assetsDirs = outputManager.createAssetsDirectory(phaseDir);
+  
+  // Create temp directory for audio extraction in assets/processed/dialogue/
+  const tempDir = path.join(assetsDirs.processedDir, 'dialogue');
   fs.mkdirSync(tempDir, { recursive: true });
+
+  // Check debug config for keeping temp files
+  const keepTempFiles = config?.debug?.keepTempFiles === true;
+  const keepProcessedAssets = config?.debug?.keepProcessedAssets !== false;
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
 
   try {
     // Extract audio from video (if needed)
@@ -99,11 +108,12 @@ async function run(input) {
     // Parse transcription response
     const dialogueData = parseTranscriptionResponse(response.content, audioPath);
 
-    // Write intermediate artifact
-    const artifactPath = path.join(outputDir, 'dialogue-data.json');
+    // Write intermediate artifact to phase directory
+    const artifactPath = path.join(phaseDir, 'dialogue-data.json');
     fs.writeFileSync(artifactPath, JSON.stringify(dialogueData, null, 2));
 
     console.log('   ✅ Dialogue extraction complete');
+    console.log(`      Output: ${artifactPath}`);
     console.log(`      Found ${dialogueData.dialogue_segments.length} dialogue segments`);
     console.log(`      Total duration: ${dialogueData.totalDuration.toFixed(1)}s`);
 
@@ -116,11 +126,35 @@ async function run(input) {
     console.error('   ❌ Error extracting dialogue:', error.message);
     throw error;
   } finally {
-    // Cleanup temp directory
-    try {
-      fs.rmSync(tempDir, { recursive: true, force: true });
-    } catch (e) {
-      // Ignore cleanup errors
+    // Handle temp file cleanup based on config
+    if (keepTempFiles && keepProcessedAssets) {
+      // Move temp files to assets/processed/dialogue/ with timestamp to avoid overwrites
+      const destDir = path.join(phaseDir, 'assets', 'processed', 'dialogue', timestamp);
+      fs.mkdirSync(destDir, { recursive: true });
+      
+      try {
+        const files = fs.readdirSync(tempDir);
+        for (const file of files) {
+          const srcPath = path.join(tempDir, file);
+          const destPath = path.join(destDir, file);
+          fs.copyFileSync(srcPath, destPath);
+          console.log(`   💾 Kept dialogue temp file for debugging: ${file} → ${destPath}`);
+        }
+        console.log(`   💾 Debug mode: Dialogue temp files preserved in ${destDir}`);
+      } catch (e) {
+        console.warn('   ⚠️  Warning: Failed to copy some dialogue temp files:', e.message);
+      }
+    } else if (keepTempFiles) {
+      console.log(`   💾 Debug mode: Dialogue temp files kept in ${tempDir}`);
+    } else {
+      // Clean up temp files
+      try {
+        if (fs.existsSync(tempDir)) {
+          fs.rmSync(tempDir, { recursive: true, force: true });
+        }
+      } catch (e) {
+        console.warn('   ⚠️  Warning: Failed to cleanup dialogue temp files:', e.message);
+      }
     }
   }
 }

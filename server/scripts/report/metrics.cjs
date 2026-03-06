@@ -10,6 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const outputManager = require('../../lib/output-manager.cjs');
 
 /**
  * Main entry point
@@ -69,9 +70,8 @@ async function run(input) {
     frictionIndex
   };
 
-  // Create metrics subdirectory
-  const metricsDir = path.join(outputDir, 'metrics');
-  fs.mkdirSync(metricsDir, { recursive: true });
+  // Create metrics subdirectory under phase3-report
+  const metricsDir = outputManager.createReportDirectory(outputDir, 'metrics');
 
   // Save metrics JSON
   const metricsPath = path.join(metricsDir, 'metrics.json');

@@ -62,6 +62,7 @@ settings:
   max_chunks: 4              # limit chunks for testing
   api_request_delay: 1000    # milliseconds between API calls
   chunk_quality: "medium"    # low|medium|high
+  music_segment_duration: 30 # seconds per music analysis segment
   retry_strategy:
     type: "exponential-backoff"  # Options: "none", "fixed-delay", "exponential-backoff", "adaptive"
     config:
@@ -70,6 +71,16 @@ settings:
       maxDelayMs: 10000
       exponentialBase: 2
       jitter: true
+
+# Debug settings (for development/testing)
+# When keepTempFiles: true, intermediate files are saved to:
+#   - phase1-gather-context/assets/processed/dialogue/<timestamp>/
+#   - phase1-gather-context/assets/processed/music/<timestamp>/
+#   - phase2-process/assets/processed/chunks/<timestamp>/
+# See: docs/DEBUG-CONFIG.md for details
+debug:
+  keepTempFiles: false       # Keep ffmpeg extracts, chunk files for debugging
+  keepProcessedAssets: true  # Copy to assets/processed/
 
 # Tool variables (paths must be absolute or relative to workspace)
 tool_variables:

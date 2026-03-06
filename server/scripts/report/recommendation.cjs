@@ -12,6 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const outputManager = require('../../lib/output-manager.cjs');
 
 /**
  * Main entry point
@@ -46,9 +47,8 @@ async function run(input) {
   console.log('   📊 Analyzing emotional patterns...');
   const recommendation = generateRecommendation(chunks, metricsData, config);
 
-  // Create recommendation subdirectory
-  const recommendationDir = path.join(outputDir, 'recommendation');
-  fs.mkdirSync(recommendationDir, { recursive: true });
+  // Create recommendation subdirectory under phase3-report
+  const recommendationDir = outputManager.createReportDirectory(outputDir, 'recommendation');
 
   // Save recommendation JSON
   const recommendationPath = path.join(recommendationDir, 'recommendation.json');
