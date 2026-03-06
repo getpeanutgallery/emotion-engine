@@ -22,7 +22,8 @@
 		"ffprobe-static": "^3.1.0",
 		"js-yaml": "^4.1.0",
 		"retry-strategy": "file:../retry-strategy",
-		"tools": "file:../tools"
+		"tools": "file:../tools",
+		"goals": "file:../goals"
 	},
 	"engines": {
 		"node": ">=18.0.0"

@@ -52,7 +52,7 @@ function loadSoul(soulPath) {
 
 /**
  * Load GOAL.md for a goal
- * @param {string} goalPath - Path to GOAL.md (relative to project root or absolute)
+ * @param {string} goalPath - Path to GOAL.md (relative to project root or absolute, e.g., 'goals/video-ad-evaluation.md')
  * @returns {Object|null} Parsed GOAL.md or null if not found
  */
 function loadGoal(goalPath) {
@@ -62,18 +62,28 @@ function loadGoal(goalPath) {
         return null;
     }
     
+    let resolvedPath = goalPath;
+    
     // Resolve relative paths from project root
     if (!goalPath.startsWith('/')) {
-        goalPath = path.join(path.dirname(__dirname), '..', goalPath);
+        resolvedPath = path.join(path.dirname(__dirname), '..', goalPath);
     }
     
-    if (!fs.existsSync(goalPath)) {
-        console.error(`❌ GOAL.md not found at path: ${goalPath}`);
-        return null;
+    // First, try to load from the local path
+    if (fs.existsSync(resolvedPath)) {
+        const content = fs.readFileSync(resolvedPath, 'utf8');
+        return parseMarkdown(content);
     }
     
-    const content = fs.readFileSync(goalPath, 'utf8');
-    return parseMarkdown(content);
+    // If not found locally, try to load from node_modules/goals package
+    const nodeModulesPath = path.join(path.dirname(__dirname), '..', 'node_modules', 'goals', goalPath);
+    if (fs.existsSync(nodeModulesPath)) {
+        const content = fs.readFileSync(nodeModulesPath, 'utf8');
+        return parseMarkdown(content);
+    }
+    
+    console.error(`❌ GOAL.md not found at path: ${goalPath} (checked local and node_modules/goals)`);
+    return null;
 }
 
 /**
