@@ -6,7 +6,7 @@ This document describes test assets used for validating the Emotion Engine pipel
 
 ### 1. Test Video
 
-**Location:** `.cache/videos/test-video.mp4`
+**Location:** `examples/videos/emotion-tests/cod.mp4` (current test video)
 
 **Requirements:**
 - Duration: 30-60 seconds (for quick testing)
@@ -16,14 +16,14 @@ This document describes test assets used for validating the Emotion Engine pipel
 
 **How to Create:**
 ```bash
-# Option 1: Use existing video
-cp /path/to/your/video.mp4 .cache/videos/test-video.mp4
+# Option 1: Use existing test video
+cp examples/videos/emotion-tests/cod.mp4 /path/to/your/test.mp4
 
 # Option 2: Create test video with ffmpeg (color bars + tone)
 ffmpeg -f lavfi -i testsrc=duration=30:size=1280x720:rate=30 \
        -f lavfi -i sine=frequency=440:duration=30 \
        -c:v libx264 -c:a aac \
-       .cache/videos/test-video.mp4
+       examples/videos/emotion-tests/test-video.mp4
 
 # Option 3: Download sample video
 # Use a Creative Commons video from Pexels, Pixabay, etc.
@@ -31,7 +31,7 @@ ffmpeg -f lavfi -i testsrc=duration=30:size=1280x720:rate=30 \
 
 ### 2. Test Audio (Optional)
 
-**Location:** `.cache/audio/test-audio.wav`
+**Location:** Extract from test video as needed
 
 **Requirements:**
 - Duration: 30 seconds
@@ -41,12 +41,12 @@ ffmpeg -f lavfi -i testsrc=duration=30:size=1280x720:rate=30 \
 **How to Create:**
 ```bash
 # Extract audio from test video
-ffmpeg -i .cache/videos/test-video.mp4 -vn -acodec pcm_s16le .cache/audio/test-audio.wav
+ffmpeg -i examples/videos/emotion-tests/cod.mp4 -vn -acodec pcm_s16le test-audio.wav
 ```
 
 ### 3. Test Image (Optional)
 
-**Location:** `.cache/images/test-frame.jpg`
+**Location:** Extract from test video as needed
 
 **Requirements:**
 - Format: JPEG
@@ -56,7 +56,7 @@ ffmpeg -i .cache/videos/test-video.mp4 -vn -acodec pcm_s16le .cache/audio/test-a
 **How to Create:**
 ```bash
 # Extract frame from test video at 5 seconds
-ffmpeg -i .cache/videos/test-video.mp4 -ss 5 -vframes 1 .cache/images/test-frame.jpg
+ffmpeg -i examples/videos/emotion-tests/cod.mp4 -ss 5 -vframes 1 test-frame.jpg
 ```
 
 ## Using Test Assets
@@ -68,7 +68,7 @@ ffmpeg -i .cache/videos/test-video.mp4 -ss 5 -vframes 1 .cache/images/test-frame
 export AI_API_KEY="your-api-key"
 export AI_MODEL="qwen/qwen-3.5-397b-a17b"
 
-# Run quick test pipeline
+# Run quick test pipeline with cod.mp4
 cd /home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine
 node server/run-pipeline.cjs --config configs/quick-test.yaml
 ```
@@ -76,8 +76,8 @@ node server/run-pipeline.cjs --config configs/quick-test.yaml
 ### Full Test (all scripts)
 
 ```bash
-# Run full analysis pipeline
-node server/run-pipeline.cjs --config configs/full-analysis.yaml
+# Run full analysis pipeline with cod.mp4
+node server/run-pipeline.cjs --config configs/video-analysis.yaml
 ```
 
 ### Individual Script Testing
@@ -184,7 +184,9 @@ If AI_API_KEY is not set:
 
 ### ffmpeg Not Installed
 
-Install ffmpeg:
+**Note:** FFmpeg is now automatically installed via the `ffmpeg-static` package when you run `pnpm install` or `npm install`. Manual installation is not required!
+
+If you need ffmpeg for other purposes:
 ```bash
 # Ubuntu/Debian
 sudo apt-get install ffmpeg

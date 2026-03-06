@@ -15,7 +15,7 @@ gather_context:
   - server/scripts/get-context/get-dialogue.cjs
   - server/scripts/get-context/get-music.cjs
 
-# Process with video-chunks (limited to 2 chunks for fast testing)
+# Process with video-chunks
 process:
   - server/scripts/process/video-chunks.cjs
 

@@ -62,7 +62,6 @@ emotion-engine/
 │   │   ├── artifact-manager.cjs    # Manages pipeline artifacts
 │   │   ├── config-loader.cjs       # YAML config parser
 │   │   ├── persona-loader.cjs      # Loads SOUL/GOAL/TOOLS
-│   │   ├── persona-resolver.cjs    # Resolves persona IDs to paths
 │   │   ├── cli-parser.cjs          # CLI argument parsing
 │   │   ├── output-manager.cjs      # Output file management
 │   │   └── video-chunk-extractor.cjs # FFmpeg video processing
@@ -80,7 +79,7 @@ emotion-engine/
 │   │       ├── summary.cjs
 │   │       └── final-report.cjs
 │   └── run-pipeline.cjs            # Main orchestrator
-├── tools/
+├── tools/                          # Tool scripts (flat structure)
 │   ├── lib/
 │   └── emotion-lenses-tool.cjs     # Core emotion analysis tool
 ├── configs/                        # YAML pipeline configurations
@@ -88,13 +87,11 @@ emotion-engine/
 │   ├── cod-test.yaml               # Test configuration
 │   ├── quick-test.yaml             # Lightweight test
 │   └── ... (12 total configs)
-├── personas/                       # Persona definitions (flat structure)
+├── personas/                       # Persona SOUL definitions (flat, no versioning)
 │   ├── impatient-teenager.md       # SOUL.md: The Impatient Teenager persona
 │   ├── skeptical-cfo.md            # SOUL.md: Skeptical CFO persona
-│   ├── optimistic-gen-z.md         # SOUL.md: Optimistic Gen Z persona
-│   └── tools/                      # Tool definitions
-│       └── emotion-lenses-tool.cjs # Emotion analysis tool
-├── goals/                          # Goal definitions (flat structure)
+│   └── optimistic-gen-z.md         # SOUL.md: Optimistic Gen Z persona
+├── goals/                          # Goal definitions (flat, no versioning)
 │   ├── video-ad-evaluation.md      # GOAL.md: Video ad evaluation
 │   ├── audio-evaluation.md         # GOAL.md: Audio evaluation
 │   ├── image-evaluation.md         # GOAL.md: Image evaluation
@@ -105,18 +102,16 @@ emotion-engine/
 │   ├── MODULAR-PIPELINE-WORKFLOW.md
 │   ├── STORAGE-ARCHITECTURE.md
 │   └── AI-PROVIDER-ARCHITECTURE.md
-├── goals/                          # Goal definitions (flat structure)
-│   ├── video-ad-evaluation.md
-│   ├── audio-evaluation.md
-│   ├── image-evaluation.md
-│   └── README.md
+├── examples/
+│   └── videos/
+│       └── emotion-tests/          # Test video assets
+│           └── cod.mp4             # Current test video (62 MB)
 ├── test/                           # Unit + integration tests
 │   ├── ai-providers/
 │   ├── pipeline/
 │   ├── scripts/
 │   └── storage/
 ├── output/                         # Pipeline output artifacts
-├── examples/                       # Example assets and test data
 ├── .env.example                    # Environment variable template
 ├── package.json
 └── README.md
@@ -128,7 +123,7 @@ emotion-engine/
 
 **Runtime:**
 - Node.js >= 18.0.0 (CommonJS modules)
-- FFmpeg (for video/audio extraction) - **automatically installed via `ffmpeg-static` package**
+- FFmpeg & FFprobe — **automatically installed via `ffmpeg-static` and `ffprobe-static` packages** (no manual installation required!)
 
 **Dependencies:**
 - `@aws-sdk/client-s3` — AWS S3 storage backend
@@ -189,7 +184,7 @@ Optional (for cloud storage):
 ### 3. Run a Pipeline
 
 ```bash
-# Using the user-friendly CLI
+# Using the user-friendly CLI (flat paths, no versioning)
 node bin/run-analysis.js \
   --soul impatient-teenager \
   --goal video-ad-evaluation \
@@ -200,6 +195,8 @@ node bin/run-analysis.js \
 # Or directly with pipeline orchestrator
 pnpm run pipeline --config configs/video-analysis.yaml
 ```
+
+**Note:** The persona system uses flat paths (no semantic versioning). All souls, goals, and tools are loaded directly from their respective folders.
 
 ### 4. Run Tests
 
@@ -274,9 +271,9 @@ Test videos are used with pipeline configs like `configs/cod-test.yaml` and `con
 - SVG chart generation for visual correlation
 
 **Persona System:**
-- SOUL.md (personality), GOAL.md (objectives)
-- Flat folder structure (no versioning)
-- Direct path-based loading (no ID lookup)
+- SOUL.md (personality), GOAL.md (objectives), TOOLS (analysis scripts)
+- Flat folder structure (no semantic versioning, no 1.0.0 folders)
+- Direct path-based loading (no ID lookups or resolution)
 - Emotion lenses (patience, boredom, excitement, etc.)
 
 **Storage:**
@@ -301,7 +298,7 @@ Test videos are used with pipeline configs like `configs/cod-test.yaml` and `con
 - More storage backends (GCS, Azure Blob)
 - Real-time streaming analysis
 - Web UI for pipeline monitoring
-- Enhanced persona versioning and discovery
+- Enhanced persona discovery and management tools
 
 ---
 
@@ -333,21 +330,23 @@ phases:
     - scripts/report/final-report.cjs
 
 persona:
+  # Flat path structure - no versioning folders
   soul: personas/impatient-teenager.md
   goal: goals/video-ad-evaluation.md
   tool: tools/emotion-lenses-tool.cjs
 
 assets:
   - type: video
-    path: ./examples/test-video.mp4
+    path: ./examples/videos/emotion-tests/cod.mp4
 ```
 
 ### Custom Persona CLI
 
 ```bash
+# Using flat paths (no ID lookups, no versioning)
 node bin/run-analysis.js \
-  --soul personas/impatient-teenager.md \
-  --goal goals/video-ad-evaluation.md \
+  --soul impatient-teenager \
+  --goal video-ad-evaluation \
   --tool emotion-lenses \
   video.mp4 \
   output/my-analysis
