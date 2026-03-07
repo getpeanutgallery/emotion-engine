@@ -1,0 +1,33 @@
+# Test Model Loading from YAML
+# This config tests if models are loaded from YAML or env vars
+
+name: "Test Model Loading"
+description: "Verify models load from YAML config, not env vars"
+version: "1.0"
+
+asset:
+  inputPath: "examples/videos/emotion-tests/cod.mp4"
+  outputDir: "output/test-model-loading"
+
+# AI configuration - this SHOULD be used by the code
+ai:
+  provider: openrouter
+  model: qwen/qwen-3.5-397b-a17b
+
+# Run dialogue extraction to test model loading
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+
+# Skip processing for this test
+process: []
+
+# Simple report
+report:
+  - scripts/report/dialogue-summary.cjs
+
+settings:
+  api_request_delay: 1000
+
+debug:
+  keepTempFiles: false
+  keepProcessedAssets: true

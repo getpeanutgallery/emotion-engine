@@ -99,7 +99,7 @@ async function run(input) {
       // Get AI provider from environment
       const provider = aiProvider.getProviderFromEnv();
       // Use script-specific model, fallback to AI_MODEL, then to default
-      const model = process.env.MUSIC_MODEL || process.env.AI_MODEL || 'qwen/qwen-3.5-397b-a17b';
+      const model = config?.ai?.music?.model || config?.ai?.model || 'qwen/qwen-3.5-397b-a17b';
       const apiKey = process.env.AI_API_KEY;
 
       if (!apiKey) {
