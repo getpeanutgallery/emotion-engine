@@ -78,9 +78,8 @@ emotion-engine/
 ├── bin/
 │   └── run-analysis.js             # User-friendly CLI wrapper
 ├── docs/                           # Technical documentation
-│   ├── MODULAR-PIPELINE-WORKFLOW.md
-│   ├── STORAGE-ARCHITECTURE.md
-│   └── AI-PROVIDER-ARCHITECTURE.md
+│   ├── DEBUG-CONFIG.md              # Debug file handling
+│   └── CONFIG-GUIDE.md              # Complete YAML configuration guide
 ├── examples/
 │   └── videos/
 │       └── emotion-tests/          # Test video assets
@@ -158,26 +157,18 @@ pnpm install
 
 ### 2. Configure
 
-Copy `.env.example` to `.env` and set your API keys:
+Copy `.env.example` to `.env` and set your API key:
 
 ```bash
 cp .env.example .env
 ```
 
-Required environment variables (depending on your AI provider):
+**Only `AI_API_KEY` is required in `.env`.** All other configuration (including AI models) is managed in YAML files.
 
-- `OPENROUTER_API_KEY` — For OpenRouter (recommended)
-- `ANTHROPIC_API_KEY` — For Anthropic/Claude
-- `GEMINI_API_KEY` — For Google Gemini
-- `OPENAI_API_KEY` — For OpenAI/GPT
-
-Optional (for cloud storage):
-
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-- `AWS_REGION`
-- `STORAGE_PROVIDER=s3`
-- `STORAGE_BUCKET=your-bucket-name`
+```bash
+# .env - Only this ONE variable needed
+AI_API_KEY=sk-or-v1-your-key-here
+```
 
 ### 3. Run a Pipeline
 
@@ -211,6 +202,64 @@ npm test
 # Validate JSON output format
 npm run test:validate-json
 ```
+
+---
+
+## Configuration
+
+### AI Provider Configuration (YAML)
+
+All AI configuration is done in your YAML config files, not in `.env`. This makes configurations reproducible and git-safe (no API keys in YAML).
+
+**Simple Configuration (Single Model):**
+```yaml
+# configs/quick-test.yaml
+ai:
+  provider: openrouter        # Provider: openrouter, anthropic, gemini, openai
+  model: qwen/qwen-3.5-397b-a17b
+  # API key is injected from AI_API_KEY environment variable
+```
+
+**Multi-Model Configuration (Per-Component Models):**
+```yaml
+# Use different models for different analysis types
+ai:
+  provider: openrouter
+  dialogue:
+    model: google/gemini-2.5-flash      # For transcription/context
+  music:
+    model: google/gemini-2.5-flash      # For music/mood analysis
+  video:
+    model: qwen/qwen3.5-122b-a10b       # For video analysis
+```
+
+### Global Settings
+
+```yaml
+settings:
+  chunk_duration: 8          # Seconds per video chunk
+  max_chunks: 4              # Limit chunks for testing
+  api_request_delay: 1000    # Milliseconds between API calls
+  chunk_quality: "medium"    # Video quality: low|medium|high
+  music_segment_duration: 30 # Seconds per music analysis segment
+  
+  retry_strategy:
+    type: "exponential-backoff"  # Options: none, fixed-delay, exponential-backoff, adaptive
+    config:
+      maxRetries: 3
+      initialDelayMs: 1000
+      maxDelayMs: 10000
+      exponentialBase: 2
+      jitter: true
+
+tool_variables:
+  file_transfer:
+    strategy: "base64"       # Options: base64, web_url, youtube_url
+    mimeType: "video/mp4"
+    maxFileSize: 10485760    # 10MB in bytes (OpenRouter limit)
+```
+
+See `docs/CONFIG-GUIDE.md` for the complete YAML schema.
 
 ---
 
@@ -266,9 +315,11 @@ Test videos are used with pipeline configs like `configs/cod-test.yaml` and `con
 **AI Integration:**
 
 - 4 AI provider implementations (OpenRouter, Anthropic, Gemini, OpenAI)
+- Per-component model selection (dialogue, music, video)
 - Unified interface with automatic fallbacks
 - Support for text, image, and audio inputs
 - JSON response parsing with error recovery
+- Configurable retry strategies (exponential-backoff, fixed-delay, adaptive)
 
 **Video Analysis:**
 
@@ -343,10 +394,6 @@ phases:
     - scripts/report/final-report.cjs
 
 persona:
-  # Package dependencies:
-  # - cast: https://github.com/getpeanutgallery/cast
-  # - goals: https://github.com/getpeanutgallery/goals
-  # - tools: https://github.com/getpeanutgallery/tools
   soul: cast/impatient-teenager/SOUL.md
   goal: goals/video-ad-evaluation.md
   tool: tools/emotion-lenses-tool.cjs
@@ -354,15 +401,40 @@ persona:
 assets:
   - type: video
     path: ./examples/videos/emotion-tests/cod.mp4
+
+ai:
+  provider: openrouter
+  dialogue:
+    model: google/gemini-2.5-flash
+  music:
+    model: google/gemini-2.5-flash
+  video:
+    model: qwen/qwen3.5-122b-a10b
+
+settings:
+  chunk_duration: 8
+  max_chunks: 4
+  api_request_delay: 1000
+  chunk_quality: "medium"
+  
+  retry_strategy:
+    type: "exponential-backoff"
+    config:
+      maxRetries: 3
+      initialDelayMs: 1000
+      maxDelayMs: 10000
+      exponentialBase: 2
+      jitter: true
+
+tool_variables:
+  file_transfer:
+    strategy: "base64"
+    maxFileSize: 10485760
 ```
 
 ### Custom Persona CLI
 
 ```bash
-# Package dependencies:
-# - cast: https://github.com/getpeanutgallery/cast
-# - goals: https://github.com/getpeanutgallery/goals
-# - tools: https://github.com/getpeanutgallery/tools
 node bin/run-analysis.js \
   --soul cast/impatient-teenager/SOUL.md \
   --goal video-ad-evaluation \
@@ -377,7 +449,10 @@ node bin/run-analysis.js \
 
 **Latest Commits (March 2026):**
 
-- **Refactored report system** — Split monolithic `evaluation.cjs` into 5 modular scripts (emotional-analysis, metrics, recommendation, summary, final-report)
+- **Environment Variable Simplification** — Removed all env vars except `AI_API_KEY`; all config now in YAML
+- **Multi-model Support** — Added support for different AI models per component (dialogue, music, video)
+- **Retry Strategy** — Configurable retry strategies (exponential-backoff, fixed-delay, adaptive)
+- **Refactored report system** — Split monolithic `evaluation.cjs` into 5 modular scripts
 - **Improved retry logic** — Enhanced API failure handling with configurable strategies
 - **Added SVG correlation charts** — Replaced ASCII charts with visual timeline correlations
 - **Fixed music timestamp parsing** — Support for multiple timestamp formats
@@ -400,7 +475,7 @@ node bin/run-analysis.js \
 - **Version:** 8.0.0
 - **Stability:** Stable core pipeline, experimental features in docs/
 - **Test Coverage:** 70+ tests passing
-- **Last Major Update:** March 5, 2026 (Phase 4 report system refactor)
+- **Last Major Update:** March 7, 2026 (Docs update with new YAML configuration schema)
 
 The core 3-phase pipeline is production-ready for video emotion analysis. The persona system, AI provider abstraction, and storage backends are fully functional.
 
@@ -426,10 +501,8 @@ The core 3-phase pipeline is production-ready for video emotion analysis. The pe
 
 ## Documentation
 
-- **Pipeline Workflow:** `docs/MODULAR-PIPELINE-WORKFLOW.md` — Full architecture spec
-- **Storage:** `docs/STORAGE-ARCHITECTURE.md` — Storage provider details
-- **AI Providers:** `docs/AI-PROVIDER-ARCHITECTURE.md` — Provider interface docs
-- **Migration:** `docs/MIGRATION-GUIDE-v2.md` — Upgrading from v1.x
+- **Configuration Guide:** `docs/CONFIG-GUIDE.md` — Complete YAML schema and migration guide
+- **Debug Configuration:** `docs/DEBUG-CONFIG.md` — Debug file handling and temp file preservation
 
 ---
 
@@ -441,4 +514,4 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 **Built with ❤️ by Peanut Gallery**
 
-*Last updated: March 6, 2026*
+*Last updated: March 7, 2026*
