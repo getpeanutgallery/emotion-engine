@@ -76,7 +76,8 @@ async function run(input) {
 
     // Get AI provider from environment
     const provider = aiProvider.getProviderFromEnv();
-    const model = process.env.AI_MODEL || 'qwen/qwen-3.5-397b-a17b';
+    // Use script-specific model, fallback to AI_MODEL, then to default
+    const model = process.env.DIALOGUE_MODEL || process.env.AI_MODEL || 'qwen/qwen-3.5-397b-a17b';
     const apiKey = process.env.AI_API_KEY;
 
     if (!apiKey) {
