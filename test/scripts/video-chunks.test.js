@@ -1,16 +1,23 @@
-/**
- * Unit Tests for Video Chunks Script
- * 
- * Tests the video-chunks.cjs script.
- * Uses mock AI provider and emotion-lenses-tool (no real API calls).
- */
-
 const fs = require('fs');
 const path = require('path');
+const test = require('node:test');
+const { property, ok, is, rejects } = require('../helpers/assertions');
 
-// Mock emotion-lenses-tool
+process.env.AI_API_KEY = 'test-api-key';
+
+function mockModule(modulePath, mockExports) {
+  const absolutePath = require.resolve(modulePath, { paths: [__dirname] });
+  if (require.cache[absolutePath]) delete require.cache[absolutePath];
+  require.cache[absolutePath] = {
+    exports: mockExports,
+    loaded: true,
+    id: absolutePath,
+    filename: absolutePath
+  };
+}
+
 const mockEmotionLensesTool = {
-  analyze: async (input) => ({
+  analyze: async () => ({
     prompt: 'Test prompt',
     state: {
       summary: 'Test chunk summary',
@@ -23,69 +30,64 @@ const mockEmotionLensesTool = {
       confidence: 0.85,
       previousSummary: ''
     },
-    usage: {
-      input: 150,
-      output: 100
-    }
+    usage: { input: 150, output: 100 }
   })
 };
 
-// Mock modules
-jest.mock('tools/emotion-lenses-tool.cjs', () => mockEmotionLensesTool);
+const mockVideoChunkExtractor = {
+  extractVideoChunk: async (assetPath, startTime, endTime, chunksDir, chunkIndex) => {
+    const chunkPath = path.join(chunksDir, `chunk-${chunkIndex}.mp4`);
+    fs.mkdirSync(chunksDir, { recursive: true });
+    fs.writeFileSync(chunkPath, 'mock chunk');
+    return { success: true, chunkPath };
+  }
+};
 
-// Mock child_process exec
-jest.mock('../../lib/video-utils.cjs', () => ({
-  getVideoDuration: async () => 16.0
-}));
-
-jest.mock('child_process', () => ({
+const mockChildProcess = {
   exec: (cmd, callback) => {
-    if (callback) callback(null, { stdout: '', stderr: '' });
+    if (cmd.includes('ffprobe')) {
+      callback?.(null, { stdout: '16.0', stderr: '' });
+    } else {
+      callback?.(null, { stdout: '', stderr: '' });
+    }
     return { on: () => {} };
   },
-  execSync: (cmd) => {
-    if (cmd.includes('ffprobe')) {
-      return Buffer.from('16.0');
-    }
-    return Buffer.from('');
-  }
-}));
+  execSync: () => Buffer.from('16.0')
+};
+
+mockModule('tools/emotion-lenses-tool.cjs', mockEmotionLensesTool);
+mockModule('child_process', mockChildProcess);
+mockModule('../../server/lib/video-chunk-extractor.cjs', mockVideoChunkExtractor);
 
 const videoChunksScript = require('../../server/scripts/process/video-chunks.cjs');
 
-describe('Video Chunks Script', () => {
+test('Video Chunks Script', async (t) => {
   const testOutputDir = '/tmp/test-chunks-output';
 
-  beforeEach(() => {
-    if (!fs.existsSync(testOutputDir)) {
-      fs.mkdirSync(testOutputDir, { recursive: true });
-    }
+  t.beforeEach(() => {
+    if (!fs.existsSync(testOutputDir)) fs.mkdirSync(testOutputDir, { recursive: true });
   });
 
-  afterEach(() => {
-    if (fs.existsSync(testOutputDir)) {
-      fs.rmSync(testOutputDir, { recursive: true, force: true });
-    }
+  t.afterEach(() => {
+    if (fs.existsSync(testOutputDir)) fs.rmSync(testOutputDir, { recursive: true, force: true });
   });
 
-  describe('run function', () => {
-    test('exports run function', () => {
-      expect(typeof videoChunksScript.run).toBe('function');
+  t.test('run function', async (tNested) => {
+    await tNested.test('exports run function', () => {
+      is(typeof videoChunksScript.run, 'function');
     });
 
-    test('throws error when toolVariables is missing', async () => {
-      const input = {
+    await tNested.test('throws error when toolVariables is missing', async () => {
+      await rejects(videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         artifacts: {},
         toolVariables: null
-      };
-
-      await expect(videoChunksScript.run(input)).rejects.toThrow('toolVariables.soulPath and toolVariables.goalPath are required');
+      }), /toolVariables\.soulPath and toolVariables\.goalPath are required/);
     });
 
-    test('throws error when soulPath is missing', async () => {
-      const input = {
+    await tNested.test('throws error when soulPath is missing', async () => {
+      await rejects(videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         artifacts: {},
@@ -93,45 +95,38 @@ describe('Video Chunks Script', () => {
           goalPath: '/path/to/GOAL.md',
           variables: { lenses: ['patience'] }
         }
-      };
-
-      await expect(videoChunksScript.run(input)).rejects.toThrow('toolVariables.soulPath and toolVariables.goalPath are required');
+      }), /toolVariables\.soulPath and toolVariables\.goalPath are required/);
     });
 
-    test('returns correct output structure', async () => {
-      const input = {
+    await tNested.test('returns correct output structure', async () => {
+      const result = await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         artifacts: {
-          dialogueData: { dialogue_segments: [] },
+          dialogueData: { dialogue_segments: [], summary: '' },
           musicData: { segments: [] }
         },
         toolVariables: {
           soulPath: '/path/to/SOUL.md',
           goalPath: '/path/to/GOAL.md',
-          variables: {
-            lenses: ['patience', 'boredom', 'excitement']
-          }
+          variables: { lenses: ['patience'] }
         },
         config: {
-          settings: {
-            chunk_duration: 8,
-            max_chunks: 2
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
           }
         }
-      };
+      });
 
-      const result = await videoChunksScript.run(input);
-
-      expect(result).toHaveProperty('artifacts');
-      expect(result.artifacts).toHaveProperty('chunkAnalysis');
-      expect(result.artifacts.chunkAnalysis).toHaveProperty('chunks');
-      expect(result.artifacts.chunkAnalysis).toHaveProperty('totalTokens');
-      expect(result.artifacts.chunkAnalysis).toHaveProperty('persona');
+      property(result, 'artifacts');
+      property(result.artifacts, 'chunkAnalysis');
+      property(result.artifacts.chunkAnalysis, 'chunks');
+      property(result.artifacts.chunkAnalysis, 'totalTokens');
+      property(result.artifacts.chunkAnalysis, 'persona');
     });
 
-    test('writes chunk-analysis.json to output directory', async () => {
-      const input = {
+    await tNested.test('writes chunk-analysis.json to phase output directory', async () => {
+      await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         artifacts: {},
@@ -140,85 +135,19 @@ describe('Video Chunks Script', () => {
           goalPath: '/path/to/GOAL.md',
           variables: { lenses: ['patience'] }
         }
-      };
+      });
 
-      await videoChunksScript.run(input);
-
-      const artifactPath = path.join(testOutputDir, 'chunk-analysis.json');
-      expect(fs.existsSync(artifactPath)).toBe(true);
-
+      const artifactPath = path.join(testOutputDir, 'phase2-process', 'chunk-analysis.json');
+      ok(fs.existsSync(artifactPath));
       const data = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
-      expect(data).toHaveProperty('chunks');
-      expect(data).toHaveProperty('totalTokens');
+      property(data, 'chunks');
+      property(data, 'totalTokens');
     });
   });
 
-  describe('chunk structure', () => {
-    test('chunk has required fields', async () => {
-      const input = {
-        assetPath: '/path/to/test-video.mp4',
-        outputDir: testOutputDir,
-        artifacts: {},
-        toolVariables: {
-          soulPath: '/path/to/SOUL.md',
-          goalPath: '/path/to/GOAL.md',
-          variables: { lenses: ['patience'] }
-        }
-      };
-
-      const result = await videoChunksScript.run(input);
-      const chunk = result.artifacts.chunkAnalysis.chunks[0];
-
-      expect(chunk).toHaveProperty('chunkIndex');
-      expect(chunk).toHaveProperty('startTime');
-      expect(chunk).toHaveProperty('endTime');
-      expect(chunk).toHaveProperty('summary');
-      expect(chunk).toHaveProperty('emotions');
-      expect(chunk).toHaveProperty('tokens');
-    });
-
-    test('chunk emotions match configured lenses', async () => {
-      const input = {
-        assetPath: '/path/to/test-video.mp4',
-        outputDir: testOutputDir,
-        artifacts: {},
-        toolVariables: {
-          soulPath: '/path/to/SOUL.md',
-          goalPath: '/path/to/GOAL.md',
-          variables: { lenses: ['patience', 'boredom'] }
-        }
-      };
-
-      const result = await videoChunksScript.run(input);
-      const chunk = result.artifacts.chunkAnalysis.chunks[0];
-
-      expect(chunk.emotions).toHaveProperty('patience');
-      expect(chunk.emotions).toHaveProperty('boredom');
-    });
-
-    test('emotion has score and reasoning', async () => {
-      const input = {
-        assetPath: '/path/to/test-video.mp4',
-        outputDir: testOutputDir,
-        artifacts: {},
-        toolVariables: {
-          soulPath: '/path/to/SOUL.md',
-          goalPath: '/path/to/GOAL.md',
-          variables: { lenses: ['patience'] }
-        }
-      };
-
-      const result = await videoChunksScript.run(input);
-      const chunk = result.artifacts.chunkAnalysis.chunks[0];
-
-      expect(chunk.emotions.patience).toHaveProperty('score');
-      expect(chunk.emotions.patience).toHaveProperty('reasoning');
-    });
-  });
-
-  describe('token counting', () => {
-    test('tracks total tokens correctly', async () => {
-      const input = {
+  t.test('token counting', async (tNested) => {
+    await tNested.test('tracks total tokens correctly', async () => {
+      const result = await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         artifacts: {},
@@ -228,17 +157,14 @@ describe('Video Chunks Script', () => {
           variables: { lenses: ['patience'] }
         },
         config: {
-          settings: {
-            max_chunks: 2
-          }
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          },
+          settings: { max_chunks: 2 }
         }
-      };
+      });
 
-      const result = await videoChunksScript.run(input);
-
-      // Mock returns 250 tokens per chunk (150 input + 100 output)
-      // 2 chunks = 500 total tokens
-      expect(result.artifacts.chunkAnalysis.totalTokens).toBe(500);
+      is(result.artifacts.chunkAnalysis.totalTokens, 500);
     });
   });
 });

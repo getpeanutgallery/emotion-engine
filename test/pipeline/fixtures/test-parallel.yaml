@@ -7,6 +7,15 @@ asset:
   inputPath: ".cache/videos/test.mp4"
   outputDir: "output/parallel-test"
 
+ai:
+  provider: openrouter
+  dialogue:
+    model: test-dialogue-model
+  music:
+    model: test-music-model
+  video:
+    model: test-video-model
+
 gather_context:
   parallel:
     - script: server/scripts/get-context/example-gather.cjs

@@ -3,18 +3,33 @@ name: "Pipeline Test"
 description: "Test configuration for orchestrator unit tests"
 version: "1.0.0"
 
+# Asset configuration
 asset:
   inputPath: ".cache/videos/test.mp4"
   outputDir: "output/pipeline-test"
 
+# AI provider configuration (required by validation)
+ai:
+  provider: openrouter
+  dialogue:
+    model: test-dialogue-model
+  music:
+    model: test-music-model
+  video:
+    model: test-video-model
+
+# Phase 1: Gather Context
 gather_context:
   - server/scripts/get-context/example-gather.cjs
 
+# Phase 2: Process
 process:
   - server/scripts/process/example-process.cjs
 
+# Phase 3: Report
 report:
   - server/scripts/report/example-report.cjs
 
+# Global settings
 settings:
   test_mode: true

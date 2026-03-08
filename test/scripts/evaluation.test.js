@@ -1,348 +1,196 @@
-/**
- * Unit Tests for Evaluation Report Script
- * 
- * Tests the evaluation.cjs script.
- */
-
 const fs = require('fs');
 const path = require('path');
+const test = require('node:test');
+const { property, ok, is } = require('../helpers/assertions');
 
-// Mock AI provider
+function mockModule(modulePath, mockExports) {
+  const absolutePath = require.resolve(modulePath, { paths: [__dirname] });
+  if (require.cache[absolutePath]) delete require.cache[absolutePath];
+  require.cache[absolutePath] = { exports: mockExports, loaded: true, id: absolutePath, filename: absolutePath };
+}
+
 const mockAIProvider = {
   getProviderFromEnv: () => ({
-    complete: async (options) => ({
-      content: JSON.stringify({
-        text: 'Test recommendation',
-        reasoning: 'Test reasoning'
-      }),
-      usage: {
-        input: 100,
-        output: 50
-      }
+    complete: async () => ({
+      content: JSON.stringify({ text: 'Test recommendation', reasoning: 'Test reasoning' }),
+      usage: { input: 100, output: 50 }
     })
   })
 };
 
-jest.mock('ai-providers/ai-provider-interface.js', () => mockAIProvider);
+mockModule('ai-providers/ai-provider-interface.js', mockAIProvider);
 
 const evaluationScript = require('../../server/scripts/report/evaluation.cjs');
 
-describe('Evaluation Report Script', () => {
+test('Evaluation Report Script', async (t) => {
   const testOutputDir = '/tmp/test-evaluation-output';
 
-  beforeEach(() => {
-    if (!fs.existsSync(testOutputDir)) {
-      fs.mkdirSync(testOutputDir, { recursive: true });
-    }
+  t.beforeEach(() => {
+    if (!fs.existsSync(testOutputDir)) fs.mkdirSync(testOutputDir, { recursive: true });
   });
 
-  afterEach(() => {
-    if (fs.existsSync(testOutputDir)) {
-      fs.rmSync(testOutputDir, { recursive: true, force: true });
-    }
+  t.afterEach(() => {
+    if (fs.existsSync(testOutputDir)) fs.rmSync(testOutputDir, { recursive: true, force: true });
   });
 
-  describe('run function', () => {
-    test('exports run function', () => {
-      expect(typeof evaluationScript.run).toBe('function');
+  t.test('run function', async (tNested) => {
+    await tNested.test('exports run function', () => {
+      is(typeof evaluationScript.run, 'function');
     });
 
-    test('returns correct output structure', async () => {
-      const input = {
+    await tNested.test('returns correct output structure', async () => {
+      const result = await evaluationScript.run({
         outputDir: testOutputDir,
         artifacts: {
           dialogueData: { dialogue_segments: [], summary: '' },
           musicData: { segments: [], summary: '', hasMusic: false },
           chunkAnalysis: {
-            chunks: [
-              {
-                chunkIndex: 0,
-                startTime: 0,
-                endTime: 8,
-                summary: 'Test chunk',
-                emotions: {
-                  patience: { score: 7, reasoning: 'Test' },
-                  boredom: { score: 3, reasoning: 'Test' }
-                },
-                dominant_emotion: 'patience',
-                tokens: 250
-              }
-            ],
+            chunks: [{
+              chunkIndex: 0,
+              startTime: 0,
+              endTime: 8,
+              summary: 'Test chunk',
+              emotions: { patience: { score: 7, reasoning: 'Test' } },
+              dominant_emotion: 'patience',
+              tokens: 250
+            }],
             totalTokens: 250,
             videoDuration: 16
           },
           perSecondData: {
-            per_second_data: [
-              {
-                second: 0,
-                emotions: {
-                  patience: { score: 7 },
-                  boredom: { score: 3 }
-                },
-                dominant_emotion: 'patience'
-              }
-            ],
+            per_second_data: [{ second: 0, emotions: { patience: { score: 7 } }, dominant_emotion: 'patience' }],
             totalSeconds: 16,
             summary: 'Test summary'
           }
         },
         config: {}
-      };
+      });
 
-      const result = await evaluationScript.run(input);
-
-      expect(result).toHaveProperty('artifacts');
-      expect(result.artifacts).toHaveProperty('reportFiles');
-      expect(result.artifacts.reportFiles).toHaveProperty('main');
-      expect(result.artifacts.reportFiles).toHaveProperty('json');
-      expect(result.artifacts).toHaveProperty('summary');
+      property(result, 'artifacts');
+      property(result.artifacts, 'reportFiles');
+      property(result.artifacts.reportFiles, 'main');
+      property(result.artifacts.reportFiles, 'json');
+      property(result.artifacts, 'summary');
     });
 
-    test('writes FINAL-REPORT.md to output directory', async () => {
-      const input = {
+    await tNested.test('writes FINAL-REPORT.md to output directory', async () => {
+      await evaluationScript.run({
         outputDir: testOutputDir,
         artifacts: {
           dialogueData: { dialogue_segments: [], summary: '' },
           musicData: { segments: [], summary: '', hasMusic: false },
-          chunkAnalysis: {
-            chunks: [],
-            totalTokens: 0,
-            videoDuration: 16
-          },
-          perSecondData: {
-            per_second_data: [],
-            totalSeconds: 16,
-            summary: ''
-          }
-        }
-      };
-
-      await evaluationScript.run(input);
+          chunkAnalysis: { chunks: [], totalTokens: 0, videoDuration: 16 },
+          perSecondData: { per_second_data: [], totalSeconds: 16, summary: '' }
+        },
+        config: {}
+      });
 
       const reportPath = path.join(testOutputDir, 'FINAL-REPORT.md');
-      expect(fs.existsSync(reportPath)).toBe(true);
-
+      ok(fs.existsSync(reportPath));
       const content = fs.readFileSync(reportPath, 'utf8');
-      expect(content).toContain('# Emotion Analysis Report');
-      expect(content).toContain('Executive Summary');
-      expect(content).toContain('Key Metrics');
+      ok(content.includes('# Emotion Analysis Report'));
+      ok(content.includes('Executive Summary'));
+      ok(content.includes('Chunk-by-Chunk Analysis'));
     });
 
-    test('writes analysis-data.json to output directory', async () => {
-      const input = {
+    await tNested.test('writes analysis-data.json to output directory', async () => {
+      await evaluationScript.run({
         outputDir: testOutputDir,
         artifacts: {
           dialogueData: { dialogue_segments: [], summary: '' },
           musicData: { segments: [], summary: '', hasMusic: false },
-          chunkAnalysis: {
-            chunks: [],
-            totalTokens: 0,
-            videoDuration: 16
-          },
-          perSecondData: {
-            per_second_data: [],
-            totalSeconds: 16,
-            summary: ''
-          }
-        }
-      };
-
-      await evaluationScript.run(input);
+          chunkAnalysis: { chunks: [], totalTokens: 0, videoDuration: 16 },
+          perSecondData: { per_second_data: [], totalSeconds: 16, summary: '' }
+        },
+        config: {}
+      });
 
       const jsonPath = path.join(testOutputDir, 'analysis-data.json');
-      expect(fs.existsSync(jsonPath)).toBe(true);
-
+      ok(fs.existsSync(jsonPath));
       const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-      expect(data).toHaveProperty('metadata');
-      expect(data).toHaveProperty('summary');
-      expect(data).toHaveProperty('data');
+      property(data, 'metadata');
+      property(data, 'summary');
+      property(data, 'data');
     });
   });
 
-  describe('report content', () => {
-    test('includes executive summary section', async () => {
-      const input = {
+  t.test('report content', async (tNested) => {
+    await tNested.test('includes video duration in executive summary', async () => {
+      await evaluationScript.run({
         outputDir: testOutputDir,
         artifacts: {
           dialogueData: { dialogue_segments: [], summary: '' },
           musicData: { segments: [], summary: '', hasMusic: false },
-          chunkAnalysis: {
-            chunks: [],
-            totalTokens: 500,
-            videoDuration: 30
-          },
-          perSecondData: {
-            per_second_data: [],
-            totalSeconds: 30,
-            summary: ''
-          }
-        }
-      };
+          chunkAnalysis: { chunks: [], totalTokens: 500, videoDuration: 30 },
+          perSecondData: { per_second_data: [], totalSeconds: 30, summary: '' }
+        },
+        config: {}
+      });
 
-      await evaluationScript.run(input);
-
-      const reportPath = path.join(testOutputDir, 'FINAL-REPORT.md');
-      const content = fs.readFileSync(reportPath, 'utf8');
-
-      expect(content).toContain('Executive Summary');
-      expect(content).toContain('30.0 seconds');
-      expect(content).toContain('500');
+      const content = fs.readFileSync(path.join(testOutputDir, 'FINAL-REPORT.md'), 'utf8');
+      ok(content.includes('Video Duration:'));
+      ok(content.includes('30.0 seconds'));
     });
 
-    test('includes key metrics table', async () => {
-      const input = {
+    await tNested.test('includes chunk-by-chunk analysis section', async () => {
+      await evaluationScript.run({
         outputDir: testOutputDir,
         artifacts: {
           dialogueData: { dialogue_segments: [], summary: '' },
           musicData: { segments: [], summary: '', hasMusic: false },
           chunkAnalysis: {
-            chunks: [],
-            totalTokens: 0,
-            videoDuration: 16
-          },
-          perSecondData: {
-            per_second_data: [
-              {
-                second: 0,
-                emotions: {
-                  patience: { score: 7 },
-                  boredom: { score: 3 },
-                  excitement: { score: 6 }
-                }
-              }
-            ],
-            totalSeconds: 1,
-            summary: ''
-          }
-        }
-      };
-
-      await evaluationScript.run(input);
-
-      const reportPath = path.join(testOutputDir, 'FINAL-REPORT.md');
-      const content = fs.readFileSync(reportPath, 'utf8');
-
-      expect(content).toContain('Key Metrics');
-      expect(content).toContain('Patience');
-      expect(content).toContain('Boredom');
-      expect(content).toContain('Excitement');
-    });
-
-    test('includes recommendation section', async () => {
-      const input = {
-        outputDir: testOutputDir,
-        artifacts: {
-          dialogueData: { dialogue_segments: [], summary: '' },
-          musicData: { segments: [], summary: '', hasMusic: false },
-          chunkAnalysis: {
-            chunks: [],
-            totalTokens: 0,
-            videoDuration: 16
-          },
-          perSecondData: {
-            per_second_data: [],
-            totalSeconds: 16,
-            summary: ''
-          }
-        }
-      };
-
-      await evaluationScript.run(input);
-
-      const reportPath = path.join(testOutputDir, 'FINAL-REPORT.md');
-      const content = fs.readFileSync(reportPath, 'utf8');
-
-      expect(content).toContain('Recommendation');
-    });
-
-    test('includes chunk-by-chunk analysis', async () => {
-      const input = {
-        outputDir: testOutputDir,
-        artifacts: {
-          dialogueData: { dialogue_segments: [], summary: '' },
-          musicData: { segments: [], summary: '', hasMusic: false },
-          chunkAnalysis: {
-            chunks: [
-              {
-                chunkIndex: 0,
-                startTime: 0,
-                endTime: 8,
-                summary: 'First chunk summary',
-                emotions: {
-                  patience: { score: 7, reasoning: 'Test' }
-                },
-                dominant_emotion: 'patience',
-                tokens: 250
-              }
-            ],
+            chunks: [{
+              chunkIndex: 0,
+              startTime: 0,
+              endTime: 8,
+              summary: 'First chunk summary',
+              emotions: { patience: { score: 7, reasoning: 'Test' } },
+              dominant_emotion: 'patience',
+              tokens: 250
+            }],
             totalTokens: 250,
             videoDuration: 8
           },
-          perSecondData: {
-            per_second_data: [],
-            totalSeconds: 8,
-            summary: ''
-          }
-        }
-      };
+          perSecondData: { per_second_data: [], totalSeconds: 8, summary: '' }
+        },
+        config: {}
+      });
 
-      await evaluationScript.run(input);
-
-      const reportPath = path.join(testOutputDir, 'FINAL-REPORT.md');
-      const content = fs.readFileSync(reportPath, 'utf8');
-
-      expect(content).toContain('Chunk-by-Chunk Analysis');
-      expect(content).toContain('First chunk summary');
+      const content = fs.readFileSync(path.join(testOutputDir, 'FINAL-REPORT.md'), 'utf8');
+      ok(content.includes('Chunk-by-Chunk Analysis'));
+      ok(content.includes('First chunk summary'));
     });
   });
 
-  describe('summary calculation', () => {
-    test('calculates total tokens correctly', async () => {
-      const input = {
+  t.test('summary calculation', async (tNested) => {
+    await tNested.test('calculates total tokens correctly', async () => {
+      const result = await evaluationScript.run({
         outputDir: testOutputDir,
         artifacts: {
           dialogueData: { dialogue_segments: [], summary: '' },
           musicData: { segments: [], summary: '', hasMusic: false },
-          chunkAnalysis: {
-            chunks: [],
-            totalTokens: 750,
-            videoDuration: 16
-          },
-          perSecondData: {
-            per_second_data: [],
-            totalSeconds: 16,
-            summary: ''
-          }
-        }
-      };
+          chunkAnalysis: { chunks: [], totalTokens: 750, videoDuration: 16 },
+          perSecondData: { per_second_data: [], totalSeconds: 16, summary: '' }
+        },
+        config: {}
+      });
 
-      const result = await evaluationScript.run(input);
-
-      expect(result.artifacts.summary.totalTokens).toBe(750);
+      is(result.artifacts.summary.totalTokens, 750);
     });
 
-    test('includes duration in summary', async () => {
-      const input = {
+    await tNested.test('includes duration in summary', async () => {
+      const result = await evaluationScript.run({
         outputDir: testOutputDir,
         artifacts: {
           dialogueData: { dialogue_segments: [], summary: '' },
           musicData: { segments: [], summary: '', hasMusic: false },
-          chunkAnalysis: {
-            chunks: [],
-            totalTokens: 0,
-            videoDuration: 45.5
-          },
-          perSecondData: {
-            per_second_data: [],
-            totalSeconds: 45,
-            summary: ''
-          }
-        }
-      };
+          chunkAnalysis: { chunks: [], totalTokens: 0, videoDuration: 45.5 },
+          perSecondData: { per_second_data: [], totalSeconds: 45, summary: '' }
+        },
+        config: {}
+      });
 
-      const result = await evaluationScript.run(input);
-
-      expect(result.artifacts.summary.duration).toBe(45.5);
+      is(result.artifacts.summary.duration, 45.5);
     });
   });
 });

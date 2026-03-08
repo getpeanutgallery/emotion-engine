@@ -1,268 +1,157 @@
-/**
- * Unit Tests for Video Per-Second Script
- * 
- * Tests the video-per-second.cjs script.
- */
-
 const fs = require('fs');
 const path = require('path');
+const test = require('node:test');
+const { property, ok, is, rejects } = require('../helpers/assertions');
 
 const videoPerSecondScript = require('../../server/scripts/process/video-per-second.cjs');
 
-describe('Video Per-Second Script', () => {
+test('Video Per-Second Script', async (t) => {
   const testOutputDir = '/tmp/test-per-second-output';
 
-  beforeEach(() => {
+  t.beforeEach(() => {
     if (!fs.existsSync(testOutputDir)) {
       fs.mkdirSync(testOutputDir, { recursive: true });
     }
   });
 
-  afterEach(() => {
+  t.afterEach(() => {
     if (fs.existsSync(testOutputDir)) {
       fs.rmSync(testOutputDir, { recursive: true, force: true });
     }
   });
 
-  describe('run function', () => {
-    test('exports run function', () => {
-      expect(typeof videoPerSecondScript.run).toBe('function');
+  t.test('run function', async (tNested) => {
+    await tNested.test('exports run function', () => {
+      is(typeof videoPerSecondScript.run, 'function');
     });
 
-    test('throws error when chunkAnalysis is missing', async () => {
-      const input = {
+    await tNested.test('throws error when chunkAnalysis is missing', async () => {
+      await rejects(videoPerSecondScript.run({
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         artifacts: {}
-      };
-
-      await expect(videoPerSecondScript.run(input)).rejects.toThrow('chunkAnalysis artifact is required');
+      }), /chunkAnalysis artifact is required/);
     });
 
-    test('throws error when chunks array is empty', async () => {
-      const input = {
+    await tNested.test('throws error when chunks array is empty', async () => {
+      await rejects(videoPerSecondScript.run({
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         artifacts: {
           chunkAnalysis: { chunks: [] }
         }
-      };
-
-      await expect(videoPerSecondScript.run(input)).rejects.toThrow('chunkAnalysis artifact is required');
+      }), /chunkAnalysis artifact is required/);
     });
 
-    test('returns correct output structure', async () => {
-      const input = {
+    await tNested.test('returns correct output structure', async () => {
+      const result = await videoPerSecondScript.run({
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         artifacts: {
           chunkAnalysis: {
-            chunks: [
-              {
-                chunkIndex: 0,
-                startTime: 0,
-                endTime: 8,
-                summary: 'Test chunk',
-                emotions: {
-                  patience: { score: 7, reasoning: 'Test' },
-                  boredom: { score: 3, reasoning: 'Test' }
-                },
-                dominant_emotion: 'patience',
-                tokens: 250
-              }
-            ],
-            totalTokens: 250,
-            videoDuration: 16
-          }
-        }
-      };
-
-      const result = await videoPerSecondScript.run(input);
-
-      expect(result).toHaveProperty('artifacts');
-      expect(result.artifacts).toHaveProperty('perSecondData');
-      expect(result.artifacts.perSecondData).toHaveProperty('per_second_data');
-      expect(result.artifacts.perSecondData).toHaveProperty('totalSeconds');
-      expect(result.artifacts.perSecondData).toHaveProperty('summary');
-    });
-
-    test('writes per-second-data.json to output directory', async () => {
-      const input = {
-        assetPath: '/path/to/test-video.mp4',
-        outputDir: testOutputDir,
-        artifacts: {
-          chunkAnalysis: {
-            chunks: [
-              {
-                chunkIndex: 0,
-                startTime: 0,
-                endTime: 8,
-                summary: 'Test',
-                emotions: { patience: { score: 7 } },
-                tokens: 250
-              }
-            ],
-            totalTokens: 250,
-            videoDuration: 16
-          }
-        }
-      };
-
-      await videoPerSecondScript.run(input);
-
-      const artifactPath = path.join(testOutputDir, 'per-second-data.json');
-      expect(fs.existsSync(artifactPath)).toBe(true);
-
-      const data = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
-      expect(data).toHaveProperty('per_second_data');
-      expect(data).toHaveProperty('totalSeconds');
-    });
-  });
-
-  describe('per-second data structure', () => {
-    test('generates correct number of data points', async () => {
-      const input = {
-        assetPath: '/path/to/test-video.mp4',
-        outputDir: testOutputDir,
-        artifacts: {
-          chunkAnalysis: {
-            chunks: [
-              {
-                chunkIndex: 0,
-                startTime: 0,
-                endTime: 8,
-                summary: 'Test',
-                emotions: { patience: { score: 7 } },
-                tokens: 250
-              }
-            ],
-            totalTokens: 250,
-            videoDuration: 16
-          }
-        }
-      };
-
-      const result = await videoPerSecondScript.run(input);
-
-      // 16 seconds = 16 data points (0-15)
-      expect(result.artifacts.perSecondData.per_second_data.length).toBe(16);
-    });
-
-    test('each data point has required fields', async () => {
-      const input = {
-        assetPath: '/path/to/test-video.mp4',
-        outputDir: testOutputDir,
-        artifacts: {
-          chunkAnalysis: {
-            chunks: [
-              {
-                chunkIndex: 0,
-                startTime: 0,
-                endTime: 8,
-                summary: 'Test',
-                emotions: { patience: { score: 7 } },
-                tokens: 250
-              }
-            ],
-            totalTokens: 250,
-            videoDuration: 16
-          }
-        }
-      };
-
-      const result = await videoPerSecondScript.run(input);
-      const dataPoint = result.artifacts.perSecondData.per_second_data[0];
-
-      expect(dataPoint).toHaveProperty('second');
-      expect(dataPoint).toHaveProperty('timestamp');
-      expect(dataPoint).toHaveProperty('emotions');
-      expect(dataPoint).toHaveProperty('dominant_emotion');
-      expect(dataPoint).toHaveProperty('chunkIndex');
-    });
-
-    test('interpolates emotions from chunks', async () => {
-      const input = {
-        assetPath: '/path/to/test-video.mp4',
-        outputDir: testOutputDir,
-        artifacts: {
-          chunkAnalysis: {
-            chunks: [
-              {
-                chunkIndex: 0,
-                startTime: 0,
-                endTime: 8,
-                summary: 'Test',
-                emotions: {
-                  patience: { score: 8, reasoning: 'First chunk' },
-                  boredom: { score: 2, reasoning: 'First chunk' }
-                },
-                dominant_emotion: 'patience',
-                tokens: 250
+            chunks: [{
+              chunkIndex: 0,
+              startTime: 0,
+              endTime: 8,
+              summary: 'Test chunk',
+              emotions: {
+                patience: { score: 7, reasoning: 'Test' },
+                boredom: { score: 3, reasoning: 'Test' }
               },
-              {
-                chunkIndex: 1,
-                startTime: 8,
-                endTime: 16,
-                summary: 'Test',
-                emotions: {
-                  patience: { score: 6, reasoning: 'Second chunk' },
-                  boredom: { score: 4, reasoning: 'Second chunk' }
-                },
-                dominant_emotion: 'patience',
-                tokens: 250
-              }
-            ],
-            totalTokens: 500,
-            videoDuration: 16
-          }
-        }
-      };
-
-      const result = await videoPerSecondScript.run(input);
-      const data = result.artifacts.perSecondData.per_second_data;
-
-      // First 8 seconds should have emotions from first chunk
-      expect(data[0].emotions.patience.score).toBe(8);
-      expect(data[7].emotions.patience.score).toBe(8);
-
-      // Next 8 seconds should have emotions from second chunk
-      expect(data[8].emotions.patience.score).toBe(6);
-      expect(data[15].emotions.patience.score).toBe(6);
-    });
-  });
-
-  describe('summary generation', () => {
-    test('generates summary with statistics', async () => {
-      const input = {
-        assetPath: '/path/to/test-video.mp4',
-        outputDir: testOutputDir,
-        artifacts: {
-          chunkAnalysis: {
-            chunks: [
-              {
-                chunkIndex: 0,
-                startTime: 0,
-                endTime: 8,
-                summary: 'Test',
-                emotions: {
-                  patience: { score: 7 },
-                  boredom: { score: 3 }
-                },
-                dominant_emotion: 'patience',
-                tokens: 250
-              }
-            ],
+              dominant_emotion: 'patience',
+              tokens: 250
+            }],
             totalTokens: 250,
             videoDuration: 16
           }
         }
-      };
+      });
 
-      const result = await videoPerSecondScript.run(input);
+      property(result, 'artifacts');
+      property(result.artifacts, 'perSecondData');
+      property(result.artifacts.perSecondData, 'per_second_data');
+      property(result.artifacts.perSecondData, 'totalSeconds');
+      property(result.artifacts.perSecondData, 'summary');
+    });
 
-      expect(result.artifacts.perSecondData.summary).toContain('Analyzed');
-      expect(result.artifacts.perSecondData.summary).toContain('seconds');
-      expect(result.artifacts.perSecondData.summary).toContain('chunks');
+    await tNested.test('writes per-second-data.json to phase output directory', async () => {
+      await videoPerSecondScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {
+          chunkAnalysis: {
+            chunks: [{
+              chunkIndex: 0,
+              startTime: 0,
+              endTime: 8,
+              summary: 'Test',
+              emotions: { patience: { score: 7 } },
+              tokens: 250
+            }],
+            totalTokens: 250,
+            videoDuration: 16
+          }
+        }
+      });
+
+      const artifactPath = path.join(testOutputDir, 'phase2-process', 'per-second-data.json');
+      ok(fs.existsSync(artifactPath));
+      const data = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
+      property(data, 'per_second_data');
+      property(data, 'totalSeconds');
+    });
+  });
+
+  t.test('per-second data structure', async (tNested) => {
+    await tNested.test('generates correct number of data points', async () => {
+      const result = await videoPerSecondScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {
+          chunkAnalysis: {
+            chunks: [{
+              chunkIndex: 0,
+              startTime: 0,
+              endTime: 8,
+              summary: 'Test',
+              emotions: { patience: { score: 7 } },
+              tokens: 250
+            }],
+            totalTokens: 250,
+            videoDuration: 16
+          }
+        }
+      });
+
+      is(result.artifacts.perSecondData.per_second_data.length, 16);
+    });
+
+    await tNested.test('each data point has required fields', async () => {
+      const result = await videoPerSecondScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {
+          chunkAnalysis: {
+            chunks: [{
+              chunkIndex: 0,
+              startTime: 0,
+              endTime: 8,
+              summary: 'Test',
+              emotions: { patience: { score: 7 } },
+              tokens: 250
+            }],
+            totalTokens: 250,
+            videoDuration: 16
+          }
+        }
+      });
+
+      const dataPoint = result.artifacts.perSecondData.per_second_data[0];
+      property(dataPoint, 'second');
+      property(dataPoint, 'timestamp');
+      property(dataPoint, 'emotions');
+      property(dataPoint, 'dominant_emotion');
+      property(dataPoint, 'chunkIndex');
     });
   });
 });

@@ -1,11 +1,17 @@
-/**
- * Unit Tests for Emotion Lenses Tool
- * 
- * Tests the emotion-lenses-tool.cjs module.
- * Uses mock AI provider (no real API calls).
- */
-
 const path = require('path');
+const fs = require('fs');
+const assert = require('node:assert/strict');
+const test = require('node:test');
+const { property, ok, rejects, is } = require('../helpers/assertions');
+
+process.env.AI_API_KEY = 'test-api-key';
+
+// Mock helper
+function mockModule(modulePath, mockExports) {
+  const absolutePath = require.resolve(modulePath, { paths: [__dirname] });
+  if (require.cache[absolutePath]) delete require.cache[absolutePath];
+  require.cache[absolutePath] = { exports: mockExports, loaded: true, id: absolutePath, filename: absolutePath };
+}
 
 // Mock AI provider
 const mockAIProvider = {
@@ -21,113 +27,93 @@ const mockAIProvider = {
         dominant_emotion: 'patience',
         confidence: 0.85
       }),
-      usage: {
-        input: 150,
-        output: 100
-      }
+      usage: { input: 150, output: 100 }
     })
   })
 };
 
-// Mock persona loader
-const mockPersonaLoader = {
-  loadPersonaConfig: (soulPath, goalPath) => ({
-    soul: {
-      'Identity': '**Name:** Test Persona\n**Age:** 25',
-      'Core Truth': 'This is a test persona for unit testing.'
-    },
-    goal: {
-      'Primary Objective': 'Test emotion analysis',
-      'Success Criteria': '- Criterion 1\n- Criterion 2'
-    },
-    tools: {
-      'Emotional Lenses': '- Patience: Test lens\n- Boredom: Test lens'
-    }
-  })
-};
-
-// Mock modules before requiring the actual module
-jest.mock('ai-providers/ai-provider-interface.js', () => mockAIProvider);
-jest.mock('../../server/lib/persona-loader.cjs', () => mockPersonaLoader);
+mockModule('ai-providers/ai-provider-interface.js', mockAIProvider);
 
 const emotionLensesTool = require('tools/emotion-lenses-tool.cjs');
 
-describe('Emotion Lenses Tool', () => {
-  describe('validateVariables', () => {
-    test('returns valid for correct input', () => {
+test('Emotion Lenses Tool', async (t) => {
+  const testOutputDir = '/tmp/test-emotion-lenses-tool';
+  let soulPath, goalPath;
+
+  t.beforeEach(() => {
+    if (!fs.existsSync(testOutputDir)) {
+      fs.mkdirSync(testOutputDir, { recursive: true });
+    }
+    // Create temporary SOUL.md and GOAL.md for tests
+    soulPath = path.join(testOutputDir, 'SOUL.md');
+    goalPath = path.join(testOutputDir, 'GOAL.md');
+    fs.writeFileSync(soulPath, `# Identity\n**Name:** Test Persona\n**Age:** 25\n\n## Core Truth\nThis is a test persona for unit testing.\n\n## Tools\n### Emotional Lenses\n- Patience: Test lens\n- Boredom: Test lens\n- Excitement: Test lens`);
+    fs.writeFileSync(goalPath, `# Primary Objective\nTest emotion analysis\n\n## Success Criteria\n- Criterion 1\n- Criterion 2`);
+  });
+
+  t.afterEach(() => {
+    if (fs.existsSync(testOutputDir)) {
+      fs.rmSync(testOutputDir, { recursive: true, force: true });
+    }
+  });
+
+  t.test('validateVariables', (tNested) => {
+    tNested.test('returns valid for correct input', () => {
       const toolVariables = {
-        soulPath: '/path/to/SOUL.md',
-        goalPath: '/path/to/GOAL.md',
-        variables: {
-          lenses: ['patience', 'boredom', 'excitement']
-        }
+        soulPath: soulPath,
+        goalPath: goalPath,
+        variables: { lenses: ['patience', 'boredom', 'excitement'] }
       };
-
       const result = emotionLensesTool.validateVariables(toolVariables);
-
-      expect(result.valid).toBe(true);
-      expect(result.error).toBeUndefined();
+      ok(result.valid);
+      ok(result.error === undefined);
     });
 
-    test('returns invalid when toolVariables is missing', () => {
+    tNested.test('returns invalid when toolVariables is missing', () => {
       const result = emotionLensesTool.validateVariables(null);
-
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain('required');
+      ok(!result.valid);
+      ok(result.error.includes('required'));
     });
 
-    test('returns invalid when soulPath is missing', () => {
+    tNested.test('returns invalid when soulPath is missing', () => {
       const toolVariables = {
-        goalPath: '/path/to/GOAL.md',
-        variables: {
-          lenses: ['patience']
-        }
+        goalPath: goalPath,
+        variables: { lenses: ['patience'] }
       };
-
       const result = emotionLensesTool.validateVariables(toolVariables);
-
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain('soulPath');
+      ok(!result.valid);
+      ok(result.error.includes('soulPath'));
     });
 
-    test('returns invalid when goalPath is missing', () => {
+    tNested.test('returns invalid when goalPath is missing', () => {
       const toolVariables = {
-        soulPath: '/path/to/SOUL.md',
-        variables: {
-          lenses: ['patience']
-        }
+        soulPath: soulPath,
+        variables: { lenses: ['patience'] }
       };
-
       const result = emotionLensesTool.validateVariables(toolVariables);
-
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain('goalPath');
+      ok(!result.valid);
+      ok(result.error.includes('goalPath'));
     });
 
-    test('returns invalid when lenses is not an array', () => {
+    tNested.test('returns invalid when lenses is not an array', () => {
       const toolVariables = {
-        soulPath: '/path/to/SOUL.md',
-        goalPath: '/path/to/GOAL.md',
-        variables: {
-          lenses: 'patience' // Should be array
-        }
+        soulPath: soulPath,
+        goalPath: goalPath,
+        variables: { lenses: 'patience' } // Should be array
       };
-
       const result = emotionLensesTool.validateVariables(toolVariables);
-
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain('array');
+      ok(!result.valid);
+      ok(result.error.includes('array'));
     });
   });
 
-  describe('buildPrompt', () => {
-    test('builds prompt with all sections', () => {
+  t.test('buildPrompt', (tNested) => {
+    tNested.test('builds prompt with all sections', () => {
       const personaConfig = {
         soul: { 'Identity': 'Test Persona' },
         goal: { 'Objective': 'Test Goal' },
         tools: { 'Lenses': 'Test lenses' }
       };
-
       const options = {
         lenses: ['patience', 'boredom'],
         videoContext: { duration: 8, frames: [] },
@@ -135,32 +121,28 @@ describe('Emotion Lenses Tool', () => {
         musicContext: { segments: [] },
         previousState: { summary: '' }
       };
-
       const prompt = emotionLensesTool.buildPrompt(personaConfig, options);
-
-      expect(prompt).toContain('# PERSONA');
-      expect(prompt).toContain('# EVALUATION GOAL');
-      expect(prompt).toContain('# EMOTION LENSES TO TRACK');
-      expect(prompt).toContain('patience');
-      expect(prompt).toContain('boredom');
-      expect(prompt).toContain('# CONTEXT');
-      expect(prompt).toContain('# INSTRUCTIONS');
+      ok(prompt.includes('# PERSONA'));
+      ok(prompt.includes('# EVALUATION GOAL'));
+      ok(prompt.includes('# EMOTION LENSES TO TRACK'));
+      ok(prompt.includes('patience'));
+      ok(prompt.includes('boredom'));
+      ok(prompt.includes('# CONTEXT'));
+      ok(prompt.includes('# INSTRUCTIONS'));
     });
 
-    test('includes previous state in prompt', () => {
+    tNested.test('includes previous state in prompt', () => {
       const personaConfig = { soul: {}, goal: {}, tools: {} };
       const options = {
         lenses: ['patience'],
         previousState: { summary: 'Previous chunk summary' }
       };
-
       const prompt = emotionLensesTool.buildPrompt(personaConfig, options);
-
-      expect(prompt).toContain('Previous Summary');
-      expect(prompt).toContain('Previous chunk summary');
+      ok(prompt.includes('Previous Summary'));
+      ok(prompt.includes('Previous chunk summary'));
     });
 
-    test('includes dialogue context in prompt', () => {
+    tNested.test('includes dialogue context in prompt', () => {
       const personaConfig = { soul: {}, goal: {}, tools: {} };
       const options = {
         lenses: ['patience'],
@@ -168,17 +150,15 @@ describe('Emotion Lenses Tool', () => {
           segments: [{ start: 0, end: 5, speaker: 'Speaker 1', text: 'Hello' }]
         }
       };
-
       const prompt = emotionLensesTool.buildPrompt(personaConfig, options);
-
-      expect(prompt).toContain('## Dialogue');
-      expect(prompt).toContain('Speaker 1');
-      expect(prompt).toContain('Hello');
+      ok(prompt.includes('## Dialogue'));
+      ok(prompt.includes('Speaker 1'));
+      ok(prompt.includes('Hello'));
     });
   });
 
-  describe('parseResponse', () => {
-    test('parses valid JSON response', () => {
+  t.test('parseResponse', (tNested) => {
+    tNested.test('parses valid JSON response', () => {
       const responseContent = JSON.stringify({
         summary: 'Test summary',
         emotions: {
@@ -188,62 +168,52 @@ describe('Emotion Lenses Tool', () => {
         dominant_emotion: 'patience',
         confidence: 0.9
       });
-
       const state = emotionLensesTool.parseResponse(responseContent, {}, ['patience', 'boredom']);
-
-      expect(state.summary).toBe('Test summary');
-      expect(state.emotions.patience.score).toBe(8);
-      expect(state.emotions.boredom.score).toBe(2);
-      expect(state.dominant_emotion).toBe('patience');
-      expect(state.confidence).toBe(0.9);
+      is(state.summary, 'Test summary');
+      is(state.emotions.patience.score, 8);
+      is(state.emotions.boredom.score, 2);
+      is(state.dominant_emotion, 'patience');
+      is(state.confidence, 0.9);
     });
 
-    test('parses JSON from markdown code block', () => {
+    tNested.test('parses JSON from markdown code block', () => {
       const responseContent = '```json\n' + JSON.stringify({
         summary: 'Test summary',
         emotions: {
           patience: { score: 7, reasoning: 'Test' }
         }
       }) + '\n```';
-
       const state = emotionLensesTool.parseResponse(responseContent, {}, ['patience']);
-
-      expect(state.summary).toBe('Test summary');
-      expect(state.emotions.patience.score).toBe(7);
+      is(state.summary, 'Test summary');
+      is(state.emotions.patience.score, 7);
     });
 
-    test('uses fallback for invalid JSON', () => {
+    tNested.test('uses fallback for invalid JSON', () => {
       const responseContent = 'Invalid response';
-
       const state = emotionLensesTool.parseResponse(responseContent, {}, ['patience', 'boredom']);
-
-      expect(state.summary).toBe('Analysis completed');
-      expect(state.emotions.patience.score).toBe(5); // Default score
-      expect(state.emotions.boredom.score).toBe(5); // Default score
+      is(state.summary, 'Analysis completed');
+      is(state.emotions.patience.score, 5);
+      is(state.emotions.boredom.score, 5);
     });
 
-    test('includes previous summary in state', () => {
+    tNested.test('includes previous summary in state', () => {
       const responseContent = JSON.stringify({
         summary: 'New summary',
         emotions: {}
       });
-
       const previousState = { summary: 'Previous summary' };
       const state = emotionLensesTool.parseResponse(responseContent, previousState, []);
-
-      expect(state.previousSummary).toBe('Previous summary');
+      is(state.previousSummary, 'Previous summary');
     });
   });
 
-  describe('analyze (integration)', () => {
-    test('calls AI provider and returns structured result', async () => {
+  t.test('analyze (integration)', (tNested) => {
+    tNested.test('calls AI provider and returns structured result', async () => {
       const input = {
         toolVariables: {
-          soulPath: '/path/to/SOUL.md',
-          goalPath: '/path/to/GOAL.md',
-          variables: {
-            lenses: ['patience', 'boredom', 'excitement']
-          }
+          soulPath: soulPath,
+          goalPath: goalPath,
+          variables: { lenses: ['patience', 'boredom', 'excitement'] }
         },
         videoContext: {
           frames: [],
@@ -253,24 +223,19 @@ describe('Emotion Lenses Tool', () => {
         musicContext: { segments: [] },
         previousState: { summary: '', emotions: {} }
       };
-
       const result = await emotionLensesTool.analyze(input);
-
-      expect(result).toHaveProperty('prompt');
-      expect(result).toHaveProperty('state');
-      expect(result).toHaveProperty('usage');
-      expect(result.state.summary).toBe('Test chunk analysis');
-      expect(result.state.emotions.patience.score).toBe(7);
-      expect(result.usage.input).toBe(150);
-      expect(result.usage.output).toBe(100);
+      property(result, 'prompt');
+      property(result, 'state');
+      property(result, 'usage');
+      is(result.state.summary, 'Test chunk analysis');
+      is(result.state.emotions.patience.score, 7);
+      is(result.usage.input, 150);
+      is(result.usage.output, 100);
     });
 
-    test('throws error when toolVariables is invalid', async () => {
-      const input = {
-        toolVariables: null
-      };
-
-      await expect(emotionLensesTool.analyze(input)).rejects.toThrow('soulPath and goalPath are required');
+    tNested.test('throws error when toolVariables is invalid', async () => {
+      const input = { toolVariables: null };
+      await rejects(emotionLensesTool.analyze(input), /toolVariables is required/);
     });
   });
 });
