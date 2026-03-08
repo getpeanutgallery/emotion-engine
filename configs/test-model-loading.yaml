@@ -12,7 +12,8 @@ asset:
 # AI configuration - this SHOULD be used by the code
 ai:
   provider: openrouter
-  model: qwen/qwen-3.5-397b-a17b
+  dialogue:
+    model: qwen/qwen-3.5-397b-a17b
 
 # Run dialogue extraction to test model loading
 gather_context:

@@ -13,7 +13,8 @@ asset:
 # AI provider configuration (git-safe - secrets injected via env vars)
 ai:
   provider: openrouter
-  model: qwen/qwen-3.5-397b-a17b
+  video:
+    model: qwen/qwen-3.5-397b-a17b
 
 # Skip context gathering
 gather_context: []

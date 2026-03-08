@@ -29,7 +29,8 @@ asset:
 
 ai:
   provider: openrouter
-  model: qwen/qwen-3.5-397b-a17b
+  video:
+    model: qwen/qwen-3.5-397b-a17b
 
 gather_context: []
 
@@ -74,7 +75,7 @@ The following environment variables were removed and must be configured in YAML:
 | Old Env Var | New YAML Location |
 |-------------|-------------------|
 | `AI_PROVIDER` | `ai.provider` |
-| `AI_MODEL` | `ai.model` or `ai.dialogue.model`, `ai.music.model`, `ai.video.model` |
+| `AI_MODEL` | `ai.dialogue.model`, `ai.music.model`, or `ai.video.model` |
 | `AI_BASE_URL` | `ai.baseUrl` |
 | `STORAGE_PROVIDER` | `storage.provider` |
 | `STORAGE_BUCKET` | `storage.bucket` |
@@ -120,16 +121,6 @@ asset:
 
 ### AI Configuration
 
-#### Simple (Single Model)
-
-```yaml
-ai:
-  provider: openrouter                      # openrouter, anthropic, gemini, openai
-  model: qwen/qwen-3.5-397b-a17b           # Model identifier
-  # apiKey: NEVER in YAML - use env var
-  # baseUrl: Optional custom endpoint
-```
-
 #### Multi-Model (Per Component)
 
 ```yaml
@@ -146,7 +137,6 @@ ai:
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `provider` | string | Yes | AI provider: `openrouter`, `anthropic`, `gemini`, `openai` |
-| `model` | string | Conditional | Model identifier (required if not using per-component) |
 | `dialogue` | object | No | Dialogue-specific model config |
 | `music` | object | No | Music-specific model config |
 | `video` | object | No | Video-specific model config |
@@ -448,7 +438,12 @@ Add these fields to your YAML configuration:
 # AI Provider (moved from env vars)
 ai:
   provider: openrouter
-  model: qwen/qwen-3.5-397b-a17b
+  dialogue:
+    model: qwen/qwen-3.5-397b-a17b
+  music:
+    model: qwen/qwen-3.5-397b-a17b
+  video:
+    model: qwen/qwen-3.5-397b-a17b
   # baseUrl: https://custom.api.com  # Optional
 
 # Storage (moved from env vars)
@@ -485,7 +480,8 @@ asset:
 
 ai:
   provider: openrouter
-  model: google/gemini-2.5-flash
+  video:
+    model: google/gemini-2.5-flash
 
 gather_context: []
 
@@ -605,7 +601,10 @@ asset:
 
 ai:
   provider: openrouter
-  model: qwen/qwen3.5-122b-a10b
+  dialogue:
+    model: qwen/qwen3.5-122b-a10b
+  video:
+    model: qwen/qwen3.5-122b-a10b
 
 gather_context:
   - scripts/get-context/get-dialogue.cjs

@@ -11,12 +11,16 @@ asset:
   outputDir: "output/cod-test"
 
 # AI provider configuration (git-safe - secrets injected via env vars)
-# Set environment variables: AI_PROVIDER, AI_API_KEY, AI_MODEL, AI_BASE_URL
 ai:
-  provider: openrouter  # Provider name (openrouter, anthropic, gemini, openai)
-  model: qwen/qwen-3.5-397b-a17b  # Model identifier
+  provider: openrouter
+  dialogue:
+    model: qwen/qwen-3.5-397b-a17b
+  music:
+    model: qwen/qwen-3.5-397b-a17b
+  video:
+    model: qwen/qwen-3.5-397b-a17b
   # apiKey: NEVER put API keys in YAML - use environment variables
-  # baseUrl: Optional, defaults to provider's standard endpoint
+  # baseUrl: Optional custom endpoint
 
 # Phase 1: Gather context from video
 gather_context:

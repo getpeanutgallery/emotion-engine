@@ -61,7 +61,12 @@ tool_variables:
 
 ai:
   provider: openrouter
-  model: qwen/qwen3.5-122b-a10b
+  dialogue:
+    model: qwen/qwen3.5-122b-a10b
+  music:
+    model: qwen/qwen3.5-122b-a10b
+  video:
+    model: qwen/qwen3.5-122b-a10b
 
 debug:
   keepTempFiles: true

@@ -54,5 +54,6 @@ tool_variables:
 # AI provider configuration (API key injected via environment)
 ai:
   provider: openrouter
-  model: qwen/qwen-3.5-397b-a17b
+  video:
+    model: qwen/qwen-3.5-397b-a17b
   # apiKey: injected via AI_API_KEY environment variable

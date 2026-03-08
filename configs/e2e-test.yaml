@@ -10,6 +10,16 @@ asset:
   inputPath: ".cache/videos/e2e-test.mp4"
   outputDir: "output/e2e-test"
 
+# AI provider configuration (git-safe - secrets injected via env vars)
+ai:
+  provider: openrouter
+  dialogue:
+    model: qwen/qwen-3.5-397b-a17b
+  music:
+    model: qwen/qwen-3.5-397b-a17b
+  video:
+    model: qwen/qwen-3.5-397b-a17b
+
 # Phase 1: Gather Context (parallel)
 gather_context:
   parallel:
