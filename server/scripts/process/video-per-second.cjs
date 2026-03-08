@@ -11,6 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const outputManager = require('../../lib/output-manager.cjs');
+const { splitChunksByStatus } = require('../../lib/chunk-analysis-status.cjs');
 
 /**
  * Script Input Contract
@@ -65,17 +66,21 @@ async function run(input) {
   }
 
   const { chunks, videoDuration = 0 } = chunkAnalysis;
+  const { successfulChunks, failedChunks } = splitChunksByStatus(chunks || []);
   const totalSeconds = Math.floor(videoDuration);
 
   console.log(`   📊 Video duration: ${videoDuration.toFixed(1)}s (${totalSeconds} seconds)`);
-  console.log(`   📈 Interpolating from ${chunks.length} chunks...`);
+  console.log(`   📈 Interpolating from ${successfulChunks.length} successful chunks...`);
+  if (failedChunks.length > 0) {
+    console.log(`   ⚠️  Excluding ${failedChunks.length} failed chunks from per-second interpolation`);
+  }
 
   // Generate per-second data by interpolating from chunks
   const perSecondData = [];
 
   for (let second = 0; second < totalSeconds; second++) {
     // Find the chunk that contains this second
-    const chunk = chunks.find(c => c.startTime <= second && c.endTime > second);
+    const chunk = successfulChunks.find(c => c.startTime <= second && c.endTime > second);
 
     if (chunk) {
       // Use chunk's emotion scores (could interpolate between chunks for smoother transitions)
@@ -113,7 +118,7 @@ async function run(input) {
   }
 
   // Generate summary statistics
-  const summary = generateSummary(perSecondData, chunks);
+  const summary = generateSummary(perSecondData, successfulChunks);
 
   // Build per-second artifact
   const perSecondArtifact = {
@@ -122,7 +127,8 @@ async function run(input) {
     totalTokens: chunkAnalysis.totalTokens || 0,
     summary,
     metadata: {
-      numChunks: chunks.length,
+      numChunks: successfulChunks.length,
+      failedChunks: failedChunks.length,
       videoDuration: videoDuration,
       generatedAt: new Date().toISOString()
     }

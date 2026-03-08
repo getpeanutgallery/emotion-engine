@@ -13,6 +13,7 @@
 const fs = require('fs');
 const path = require('path');
 const outputManager = require('../../lib/output-manager.cjs');
+const { splitChunksByStatus } = require('../../lib/chunk-analysis-status.cjs');
 
 /**
  * Main entry point
@@ -42,10 +43,12 @@ async function run(input) {
   } = artifacts;
 
   const chunks = chunkAnalysis.chunks || [];
+  const { successfulChunks, failedChunks } = splitChunksByStatus(chunks);
 
   // Generate recommendation based on analysis
   console.log('   📊 Analyzing emotional patterns...');
-  const recommendation = generateRecommendation(chunks, metricsData, config);
+  const recommendation = generateRecommendation(successfulChunks, metricsData, config);
+  recommendation.failedChunks = failedChunks.length;
 
   // Create recommendation subdirectory under phase3-report
   const recommendationDir = outputManager.createReportDirectory(outputDir, 'recommendation');

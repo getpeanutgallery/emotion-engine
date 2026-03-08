@@ -108,4 +108,44 @@ test('Pipeline Orchestrator - Parallel execution', async (t) => {
   });
 });
 
+test('Pipeline Orchestrator - artifacts-complete count integrity', async () => {
+  const configPath = path.join(__dirname, 'fixtures', 'test-artifacts-complete-counts.yaml');
+  const outputDir = path.join(__dirname, 'fixtures', 'artifacts-count-output');
+
+  if (fs.existsSync(outputDir)) {
+    fs.rmSync(outputDir, { recursive: true, force: true });
+  }
+
+  try {
+    await runPipeline(configPath);
+
+    const complete = JSON.parse(fs.readFileSync(path.join(outputDir, 'artifacts-complete.json'), 'utf8'));
+    const dialoguePhase = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.json'), 'utf8'));
+    const musicPhase = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'music-data.json'), 'utf8'));
+    const chunksPhase = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase2-process', 'chunk-analysis.json'), 'utf8'));
+
+    assert.strictEqual(
+      complete.dialogueData.dialogue_segments.length,
+      dialoguePhase.dialogue_segments.length,
+      'dialogue_segments count in artifacts-complete.json should match phase1 output'
+    );
+
+    assert.strictEqual(
+      complete.musicData.segments.length,
+      musicPhase.segments.length,
+      'music segments count in artifacts-complete.json should match phase1 output'
+    );
+
+    assert.strictEqual(
+      complete.chunkAnalysis.chunks.length,
+      chunksPhase.chunks.length,
+      'chunk count in artifacts-complete.json should match phase2 output'
+    );
+  } finally {
+    if (fs.existsSync(outputDir)) {
+      fs.rmSync(outputDir, { recursive: true, force: true });
+    }
+  }
+});
+
 console.log('✅ Pipeline orchestrator tests complete');

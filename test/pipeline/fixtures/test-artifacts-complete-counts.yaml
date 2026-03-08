@@ -1,0 +1,25 @@
+name: "Artifacts Complete Count Test"
+description: "Ensures artifacts-complete.json matches phase artifact array counts"
+version: "1.0.0"
+
+asset:
+  inputPath: ".cache/videos/test.mp4"
+  outputDir: "test/pipeline/fixtures/artifacts-count-output"
+
+ai:
+  provider: openrouter
+  dialogue:
+    model: test-dialogue-model
+  music:
+    model: test-music-model
+  video:
+    model: test-video-model
+
+gather_context:
+  - test/pipeline/fixtures/scripts/phase1-array-artifacts.cjs
+
+process:
+  - test/pipeline/fixtures/scripts/phase2-array-artifacts.cjs
+
+report:
+  - test/pipeline/fixtures/scripts/phase3-noop-report.cjs

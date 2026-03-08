@@ -65,7 +65,7 @@ async function runGatherContext(input) {
   
   if (isParallel) {
     // Parallel execution: all scripts run simultaneously
-    phaseArtifacts = await runParallelScripts(scriptList, { assetPath, outputDir, config });
+    phaseArtifacts = await runParallelScripts(scriptList, { assetPath, outputDir, artifacts, config });
   } else {
     // Sequential execution: scripts run in order, artifacts accumulate
     for (const scriptItem of scriptList) {
@@ -150,7 +150,7 @@ async function runSingleScript(scriptPath, input) {
  * @returns {Promise<object>} - Merged artifacts from all scripts
  */
 async function runParallelScripts(scriptItems, baseInput) {
-  const { assetPath, outputDir, config } = baseInput;
+  const { assetPath, outputDir, artifacts = {}, config } = baseInput;
   
   // Start all scripts simultaneously
   const promises = scriptItems.map(async (scriptItem) => {
@@ -175,7 +175,7 @@ async function runParallelScripts(scriptItems, baseInput) {
   const results = await Promise.all(promises);
   
   // Merge all artifacts
-  let mergedArtifacts = {};
+  let mergedArtifacts = { ...artifacts };
   for (const artifacts of results) {
     mergedArtifacts = mergeArtifacts(mergedArtifacts, artifacts);
   }

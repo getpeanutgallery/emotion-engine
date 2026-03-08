@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
  * Final Report Script
- * 
+ *
  * Generates the human-readable markdown report (FINAL-REPORT.md).
  * This script runs in Phase 3 (Report) of the pipeline.
- * 
+ *
  * Reuses aggregated data from summary.cjs to create a polished markdown document.
- * 
+ *
  * @module scripts/report/final-report
  */
 
@@ -16,7 +16,7 @@ const outputManager = require('../../lib/output-manager.cjs');
 
 /**
  * Main entry point
- * 
+ *
  * @async
  * @function run
  * @param {object} input - Script input
@@ -52,6 +52,24 @@ async function run(input) {
 
   const chunks = chunkAnalysis.chunks || [];
 
+  // Create summary subdirectory using output manager
+  const summaryDir = outputManager.createReportDirectory(outputDir, 'summary');
+
+  // Build raw analysis payload referenced by FINAL-REPORT.md
+  const analysisData = buildAnalysisData({
+    duration,
+    totalTokens,
+    keyMetrics,
+    recommendation,
+    chunkAnalysis,
+    summary,
+    config
+  });
+
+  const analysisDataPath = path.join(summaryDir, 'analysis-data.json');
+  fs.writeFileSync(analysisDataPath, JSON.stringify(analysisData, null, 2), 'utf8');
+  console.log(`   ✅ Analysis data saved to: ${analysisDataPath}`);
+
   // Build markdown report
   console.log('   📝 Building report structure...');
   const reportContent = buildReport({
@@ -61,12 +79,10 @@ async function run(input) {
     keyMetrics,
     recommendation,
     config,
-    chunkAnalysis
+    chunkAnalysis,
+    outputDir
   });
 
-  // Create summary subdirectory using output manager
-  const summaryDir = outputManager.createReportDirectory(outputDir, 'summary');
-  
   // Save report to summary/FINAL-REPORT.md
   const reportPath = path.join(summaryDir, 'FINAL-REPORT.md');
   fs.writeFileSync(reportPath, reportContent, 'utf8');
@@ -76,6 +92,7 @@ async function run(input) {
     artifacts: {
       finalReport: {
         path: reportPath,
+        analysisDataPath,
         generatedAt: new Date().toISOString(),
         summary: {
           duration,
@@ -90,7 +107,7 @@ async function run(input) {
 
 /**
  * Build markdown report from analysis data
- * 
+ *
  * @function buildReport
  * @param {object} data - Report data
  * @param {number} data.duration - Video duration in seconds
@@ -100,6 +117,7 @@ async function run(input) {
  * @param {object} data.recommendation - AI recommendation with text and reasoning
  * @param {object} data.config - Pipeline config
  * @param {object} data.chunkAnalysis - Full chunk analysis data
+ * @param {string} data.outputDir - Base output directory
  * @returns {string} - Markdown report content
  */
 function buildReport(data) {
@@ -110,11 +128,12 @@ function buildReport(data) {
     keyMetrics,
     recommendation,
     config,
-    chunkAnalysis
+    chunkAnalysis,
+    outputDir
   } = data;
 
   let report = `# Emotion Analysis - Final Report\n\n`;
-  
+
   // Header
   report += `**Generated:** ${new Date().toISOString()}\n`;
   report += `**Pipeline Version:** ${config?.version || '8.0.0'}\n`;
@@ -140,13 +159,13 @@ function buildReport(data) {
   report += `## Key Metrics\n\n`;
   report += `| Emotion | Average Score (1-10) | Visual |\n`;
   report += `|---------|---------------------|--------|\n`;
-  
+
   const emotionOrder = ['boredom', 'excitement', 'curiosity', 'tension', 'satisfaction', 'patience'];
-  
+
   // Extract averages from keyMetrics (handles both flat object and nested structure)
   const metricsToUse = keyMetrics.averages || keyMetrics;
   const metricsEntries = Object.entries(metricsToUse);
-  
+
   // Sort metrics by emotion order if possible
   const sortedMetrics = metricsEntries.sort((a, b) => {
     const aIndex = emotionOrder.indexOf(a[0].replace('avg', '').toLowerCase());
@@ -169,19 +188,19 @@ function buildReport(data) {
 
   // Chunk-by-Chunk Analysis
   report += `## Chunk-by-Chunk Analysis\n\n`;
-  
+
   if (chunks && chunks.length > 0) {
     for (const chunk of chunks) {
       report += `### Chunk ${chunk.chunkIndex + 1}\n\n`;
       report += `**Time:** ${formatTime(chunk.startTime)} - ${formatTime(chunk.endTime)}\n\n`;
       report += `**Summary:** ${chunk.summary}\n\n`;
-      
+
       // Emotions for this chunk
       if (chunk.emotions) {
         report += `**Emotions:**\n\n`;
         report += `| Emotion | Score (1-10) | Intensity |\n`;
         report += `|---------|-------------|-----------|\n`;
-        
+
         for (const [lens, emotionData] of Object.entries(chunk.emotions)) {
           const score = emotionData.score || 0;
           const bar = buildEmojiBar(Math.round(score));
@@ -189,17 +208,17 @@ function buildReport(data) {
         }
         report += '\n';
       }
-      
+
       // Dominant emotion
       if (chunk.dominant_emotion) {
         report += `**Dominant Emotion:** ${chunk.dominant_emotion}\n\n`;
       }
-      
+
       // Reasoning (if available)
       if (chunk.reasoning) {
         report += `**Analysis:** ${chunk.reasoning}\n\n`;
       }
-      
+
       report += `---\n\n`;
     }
   } else {
@@ -210,26 +229,26 @@ function buildReport(data) {
   // Emotional Arc
   report += `## Emotional Arc\n\n`;
   report += `The emotional arc shows how emotions evolved throughout the video.\n\n`;
-  
+
   if (chunks && chunks.length > 0) {
     // Extract dominant emotions timeline
     report += `**Dominant Emotion Timeline:**\n\n`;
     report += `| Time Range | Dominant Emotion | Key Emotions |\n`;
     report += `|------------|-----------------|--------------|\n`;
-    
+
     for (const chunk of chunks) {
       const timeRange = `${formatTime(chunk.startTime)}-${formatTime(chunk.endTime)}`;
       const dominant = chunk.dominant_emotion || 'N/A';
-      
+
       // Get top 2 emotions for this chunk
       const topEmotions = getTopEmotions(chunk.emotions, 2);
       const keyEmotions = topEmotions.map(e => `${capitalize(e.name)} (${e.score.toFixed(1)})`).join(', ');
-      
+
       report += `| ${timeRange} | ${capitalize(dominant)} | ${keyEmotions} |\n`;
     }
     report += '\n';
   }
-  
+
   report += `---\n\n`;
 
   // Technical Details
@@ -241,20 +260,17 @@ function buildReport(data) {
   report += `- Total Duration: ${formatDuration(duration)}\n`;
   report += `- Tokens Used: ${totalTokens.toLocaleString()}\n\n`;
 
-  if (chunkAnalysis.persona && Object.keys(chunkAnalysis.persona).length > 0) {
-    report += `**Persona:**\n`;
-    if (chunkAnalysis.persona.name) {
-      report += `- Name: ${chunkAnalysis.persona.name}\n`;
-    }
-    if (chunkAnalysis.persona.version) {
-      report += `- Version: ${chunkAnalysis.persona.version}\n`;
-    }
-    report += '\n';
+  const personaLines = buildPersonaSectionLines(chunkAnalysis, config, outputDir);
+  report += `**Persona:**\n`;
+  for (const line of personaLines) {
+    report += `- ${line}\n`;
   }
+  report += '\n';
 
   report += `**Output Files:**\n`;
-  report += `- Final Report: \`summary/FINAL-REPORT.md\`\n`;
-  report += `- Metrics: \`metrics/metrics.json\`\n`;
+  report += `- Final Report: \`FINAL-REPORT.md\`\n`;
+  report += `- Summary Data: \`summary.json\`\n`;
+  report += `- Metrics: \`../metrics/metrics.json\`\n`;
   report += `- Raw Data: \`analysis-data.json\`\n\n`;
 
   report += `---\n\n`;
@@ -263,9 +279,99 @@ function buildReport(data) {
   return report;
 }
 
+function buildAnalysisData(data) {
+  const {
+    duration,
+    totalTokens,
+    keyMetrics,
+    recommendation,
+    chunkAnalysis,
+    summary,
+    config
+  } = data;
+
+  return {
+    metadata: {
+      generatedAt: new Date().toISOString(),
+      pipelineVersion: config?.version || '8.0.0',
+      pipelineName: config?.name || 'Unknown',
+      videoDuration: duration,
+      chunksAnalyzed: chunkAnalysis?.chunks?.length || 0,
+      totalTokens
+    },
+    summary: {
+      keyMetrics,
+      recommendation
+    },
+    data: {
+      chunkAnalysis,
+      summary
+    }
+  };
+}
+
+function buildPersonaSectionLines(chunkAnalysis, config, outputDir) {
+  const persona = chunkAnalysis?.persona || {};
+  const toolVars = config?.tool_variables || {};
+
+  const soulPath = persona.soulPath || toolVars.soulPath;
+  const goalPath = persona.goalPath || toolVars.goalPath;
+
+  const lines = [];
+
+  const personaId = derivePersonaId(soulPath);
+  if (personaId) {
+    lines.push(`ID: ${personaId}`);
+    lines.push(`Display Name: ${formatPersonaName(personaId)}`);
+  } else {
+    lines.push('ID: unknown (no soulPath configured)');
+  }
+
+  lines.push(`SOUL Source: ${soulPath || 'missing (no soulPath configured)'}`);
+  lines.push(`GOAL Source: ${goalPath || 'missing (no goalPath configured)'}`);
+
+  const soulAssetPath = path.join(outputDir, 'assets', 'input', 'personas', 'SOUL.md');
+  const goalAssetPath = path.join(outputDir, 'assets', 'input', 'personas', 'GOAL.md');
+
+  lines.push(
+    fs.existsSync(soulAssetPath)
+      ? 'SOUL Asset: ../../assets/input/personas/SOUL.md'
+      : 'SOUL Asset: missing (expected ../../assets/input/personas/SOUL.md)'
+  );
+
+  lines.push(
+    fs.existsSync(goalAssetPath)
+      ? 'GOAL Asset: ../../assets/input/personas/GOAL.md'
+      : 'GOAL Asset: missing (expected ../../assets/input/personas/GOAL.md)'
+  );
+
+  return lines;
+}
+
+function derivePersonaId(soulPath) {
+  if (!soulPath || typeof soulPath !== 'string') return '';
+  const match = soulPath.match(/cast\/([^/]+)\/SOUL\.md$/i);
+  if (match && match[1]) return match[1];
+
+  const normalized = soulPath.replace(/\\/g, '/');
+  const parts = normalized.split('/').filter(Boolean);
+  const soulIndex = parts.findIndex((part) => /SOUL\.md$/i.test(part));
+  if (soulIndex > 0) return parts[soulIndex - 1];
+
+  return '';
+}
+
+function formatPersonaName(id) {
+  return id
+    .split('-')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
 /**
  * Build emoji bar for visual representation
- * 
+ *
  * @function buildEmojiBar
  * @param {number} score - Score from 0-10
  * @returns {string} - Emoji bar string
@@ -276,13 +382,13 @@ function buildEmojiBar(score) {
   const maxBars = 10;
   const filledCount = Math.min(maxBars, Math.max(0, Math.round(score)));
   const emptyCount = maxBars - filledCount;
-  
+
   return filled.repeat(filledCount) + empty.repeat(emptyCount);
 }
 
 /**
  * Get top N emotions by score
- * 
+ *
  * @function getTopEmotions
  * @param {object} emotions - Emotion scores object
  * @param {number} n - Number of top emotions to return
@@ -290,7 +396,7 @@ function buildEmojiBar(score) {
  */
 function getTopEmotions(emotions, n = 2) {
   if (!emotions) return [];
-  
+
   return Object.entries(emotions)
     .map(([name, data]) => ({
       name,
@@ -302,7 +408,7 @@ function getTopEmotions(emotions, n = 2) {
 
 /**
  * Format duration in seconds to human-readable string
- * 
+ *
  * @function formatDuration
  * @param {number} seconds - Duration in seconds
  * @returns {string} - Formatted duration string
@@ -311,7 +417,7 @@ function formatDuration(seconds) {
   if (seconds < 60) {
     return `${seconds.toFixed(1)} seconds`;
   }
-  
+
   const mins = Math.floor(seconds / 60);
   const secs = (seconds % 60).toFixed(1);
   return `${mins}m ${secs}s`;
@@ -319,7 +425,7 @@ function formatDuration(seconds) {
 
 /**
  * Format time as MM:SS
- * 
+ *
  * @function formatTime
  * @param {number} seconds - Time in seconds
  * @returns {string} - Formatted time string
@@ -332,7 +438,7 @@ function formatTime(seconds) {
 
 /**
  * Capitalize first letter
- * 
+ *
  * @function capitalize
  * @param {string} str - String to capitalize
  * @returns {string} - Capitalized string

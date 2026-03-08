@@ -1,27 +1,26 @@
 #!/usr/bin/env node
 /**
  * Metrics Report Script
- * 
+ *
  * Calculates and saves emotion metrics from chunk analysis and per-second data.
  * This script runs in Phase 3 (Report) of the pipeline.
- * 
+ *
  * @module scripts/report/metrics
  */
 
 const fs = require('fs');
 const path = require('path');
 const outputManager = require('../../lib/output-manager.cjs');
+const { splitChunksByStatus } = require('../../lib/chunk-analysis-status.cjs');
 
 /**
  * Main entry point
- * 
+ *
  * @async
  * @function run
  * @param {object} input - Script input
  * @param {string} input.outputDir - Base output directory
  * @param {object} input.artifacts - Artifacts from previous phases
- *   @param {array} input.artifacts.chunkAnalysis.chunks - Array of chunk results
- *   @param {array} input.artifacts.perSecondData.per_second_data - Per-second emotion scores
  * @param {object} input.config - Pipeline config
  * @returns {Promise<object>} - Script output: { artifacts: object }
  */
@@ -33,47 +32,60 @@ async function run(input) {
   // Ensure output directory exists
   fs.mkdirSync(outputDir, { recursive: true });
 
-  // Extract artifacts from previous phases
   const {
     chunkAnalysis = { chunks: [], totalTokens: 0, videoDuration: 0 },
     perSecondData = { per_second_data: [], totalSeconds: 0 }
   } = artifacts;
 
   const chunks = chunkAnalysis.chunks || [];
+  const { successfulChunks, failedChunks } = splitChunksByStatus(chunks);
   const perSecondDataArray = perSecondData.per_second_data || [];
 
-  // Calculate metrics
+  const normalizedPerSecond = normalizePerSecondRows(perSecondDataArray);
+  const hasNativePerSecondData = normalizedPerSecond.length > 0;
+  const computedPerSecond = hasNativePerSecondData
+    ? normalizedPerSecond
+    : buildPerSecondFromChunks(successfulChunks, chunkAnalysis.videoDuration || perSecondData.totalSeconds || 0);
+
   console.log('   📈 Computing averages per emotion lens...');
-  const averages = calculateAverageScores(perSecondDataArray);
+  const averages = calculateAverageScores(computedPerSecond);
 
   console.log('   🎯 Finding peak moments...');
-  const peakMoments = findPeakMoments(perSecondDataArray);
+  const peakMoments = findPeakMoments(computedPerSecond);
 
   console.log('   📊 Analyzing emotional trends...');
-  const trends = analyzeTrends(perSecondDataArray);
+  const trends = analyzeTrends(computedPerSecond);
 
   console.log('   ⚡ Calculating friction index...');
-  const frictionIndex = calculateFrictionIndex(perSecondDataArray, chunks);
+  const frictionIndex = calculateFrictionIndex(computedPerSecond);
 
-  // Build metrics object
+  const status = computedPerSecond.length > 0
+    ? {
+        state: 'computed',
+        dataSource: hasNativePerSecondData ? 'phase2.perSecondData' : 'derived-from-phase2.chunkAnalysis',
+      }
+    : {
+        state: 'not_implemented',
+        reason: 'No usable phase2 emotion timeseries (perSecondData or chunkAnalysis) found.'
+      };
+
   const metrics = {
     generatedAt: new Date().toISOString(),
     pipelineVersion: config?.version || '8.0.0',
     summary: {
-      totalChunks: chunks.length,
-      totalSeconds: perSecondDataArray.length,
+      totalChunks: successfulChunks.length,
+      failedChunks: failedChunks.length,
+      totalSeconds: computedPerSecond.length,
       videoDuration: chunkAnalysis.videoDuration || perSecondData.totalSeconds || 0
     },
+    implementationStatus: status,
     averages,
     peakMoments,
     trends,
     frictionIndex
   };
 
-  // Create metrics subdirectory under phase3-report
   const metricsDir = outputManager.createReportDirectory(outputDir, 'metrics');
-
-  // Save metrics JSON
   const metricsPath = path.join(metricsDir, 'metrics.json');
   fs.writeFileSync(metricsPath, JSON.stringify(metrics, null, 2), 'utf8');
   console.log(`   ✅ Metrics saved to: ${metricsPath}`);
@@ -87,6 +99,7 @@ async function run(input) {
         peakMoments,
         trends,
         frictionIndex,
+        implementationStatus: status,
         summary: {
           averages: Object.keys(averages).length,
           peakMoments: Object.keys(peakMoments).length,
@@ -98,43 +111,106 @@ async function run(input) {
   };
 }
 
-/**
- * Calculate average scores per emotion lens
- * 
- * @function calculateAverageScores
- * @param {array} perSecondData - Array of per-second emotion scores
- * @returns {object} - Average scores per emotion
- */
-function calculateAverageScores(perSecondData) {
-  if (!perSecondData || perSecondData.length === 0) {
-    return {};
+function getEmotionKeysFromRows(rows) {
+  const keys = new Set();
+  for (const row of rows) {
+    for (const key of Object.keys(row || {})) {
+      if (key === 'timestamp' || key === 'second' || key === 'chunkIndex' || key === 'confidence' || key === 'dominant_emotion' || key === 'dominantEmotion') {
+        continue;
+      }
+      const value = row[key];
+      if (typeof value === 'number') {
+        keys.add(key);
+      }
+    }
+  }
+  return Array.from(keys);
+}
+
+function normalizeScore(rawScore) {
+  if (typeof rawScore !== 'number' || Number.isNaN(rawScore)) return 0;
+  if (rawScore <= 1) return Math.max(0, rawScore);
+  return Math.max(0, Math.min(1, rawScore / 10));
+}
+
+function normalizeEmotionMap(source = {}) {
+  const normalized = {};
+  const metaFields = new Set(['timestamp', 'second', 'chunkIndex', 'confidence', 'dominant_emotion', 'dominantEmotion']);
+  for (const [emotion, value] of Object.entries(source)) {
+    if (metaFields.has(emotion)) continue;
+    if (value && typeof value === 'object' && typeof value.score === 'number') {
+      normalized[emotion] = normalizeScore(value.score);
+    } else if (typeof value === 'number') {
+      normalized[emotion] = normalizeScore(value);
+    }
+  }
+  return normalized;
+}
+
+function normalizePerSecondRows(perSecondData = []) {
+  return perSecondData.map((row, index) => {
+    const fromNested = row && typeof row === 'object' && row.emotions
+      ? normalizeEmotionMap(row.emotions)
+      : normalizeEmotionMap(row);
+
+    return {
+      timestamp: typeof row?.timestamp === 'number' ? row.timestamp : (typeof row?.second === 'number' ? row.second : index),
+      ...fromNested,
+    };
+  }).filter((row) => Object.keys(row).some((key) => key !== 'timestamp'));
+}
+
+function buildPerSecondFromChunks(chunks = [], videoDuration = 0) {
+  if (!Array.isArray(chunks) || chunks.length === 0) return [];
+
+  const rows = [];
+  for (const chunk of chunks) {
+    const start = typeof chunk.startTime === 'number' ? chunk.startTime : 0;
+    const end = typeof chunk.endTime === 'number' ? chunk.endTime : start;
+    const startSecond = Math.floor(start);
+    const endSecond = Math.max(startSecond + 1, Math.ceil(end));
+    const normalized = normalizeEmotionMap(chunk.emotions || {});
+
+    for (let second = startSecond; second < endSecond; second++) {
+      if (videoDuration > 0 && second >= Math.ceil(videoDuration)) break;
+      rows.push({
+        timestamp: second,
+        ...normalized
+      });
+    }
   }
 
-  const emotionKeys = ['boredom', 'excitement', 'curiosity', 'tension', 'satisfaction'];
-  const averages = {};
+  const deduped = new Map();
+  for (const row of rows) {
+    deduped.set(row.timestamp, row);
+  }
 
+  return Array.from(deduped.values()).sort((a, b) => a.timestamp - b.timestamp);
+}
+
+function calculateAverageScores(perSecondData) {
+  if (!perSecondData || perSecondData.length === 0) return {};
+
+  const emotionKeys = getEmotionKeysFromRows(perSecondData);
+  if (emotionKeys.length === 0) return {};
+
+  const averages = {};
   for (const emotion of emotionKeys) {
-    const scores = perSecondData.map(d => d[emotion] || 0);
+    const scores = perSecondData.map((d) => d[emotion]).filter((score) => typeof score === 'number');
+    if (scores.length === 0) continue;
     const sum = scores.reduce((a, b) => a + b, 0);
-    averages[emotion] = sum / perSecondData.length;
+    averages[emotion] = sum / scores.length;
   }
 
   return averages;
 }
 
-/**
- * Find peak moments (highest and lowest) per emotion
- * 
- * @function findPeakMoments
- * @param {array} perSecondData - Array of per-second emotion scores
- * @returns {object} - Peak moments per emotion
- */
 function findPeakMoments(perSecondData) {
-  if (!perSecondData || perSecondData.length === 0) {
-    return {};
-  }
+  if (!perSecondData || perSecondData.length === 0) return {};
 
-  const emotionKeys = ['boredom', 'excitement', 'curiosity', 'tension', 'satisfaction'];
+  const emotionKeys = getEmotionKeysFromRows(perSecondData);
+  if (emotionKeys.length === 0) return {};
+
   const peakMoments = {};
 
   for (const emotion of emotionKeys) {
@@ -144,7 +220,7 @@ function findPeakMoments(perSecondData) {
     let minTimestamp = 0;
 
     for (let i = 0; i < perSecondData.length; i++) {
-      const score = perSecondData[i][emotion] || 0;
+      const score = typeof perSecondData[i][emotion] === 'number' ? perSecondData[i][emotion] : 0;
       const timestamp = perSecondData[i].timestamp || i;
 
       if (score > maxScore) {
@@ -159,39 +235,26 @@ function findPeakMoments(perSecondData) {
     }
 
     peakMoments[emotion] = {
-      highest: {
-        timestamp: maxTimestamp,
-        score: maxScore
-      },
-      lowest: {
-        timestamp: minTimestamp,
-        score: minScore
-      }
+      highest: { timestamp: maxTimestamp, score: maxScore },
+      lowest: { timestamp: minTimestamp, score: minScore }
     };
   }
 
   return peakMoments;
 }
 
-/**
- * Analyze emotional trends (increasing/decreasing over time)
- * 
- * @function analyzeTrends
- * @param {array} perSecondData - Array of per-second emotion scores
- * @returns {object} - Trend analysis per emotion
- */
 function analyzeTrends(perSecondData) {
-  if (!perSecondData || perSecondData.length < 2) {
-    return {};
-  }
+  if (!perSecondData || perSecondData.length < 2) return {};
 
-  const emotionKeys = ['boredom', 'excitement', 'curiosity', 'tension', 'satisfaction'];
+  const emotionKeys = getEmotionKeysFromRows(perSecondData);
+  if (emotionKeys.length === 0) return {};
+
   const trends = {};
 
   for (const emotion of emotionKeys) {
-    const scores = perSecondData.map(d => d[emotion] || 0);
-    
-    // Simple linear trend: compare first half average to second half average
+    const scores = perSecondData.map((d) => d[emotion]).filter((score) => typeof score === 'number');
+    if (scores.length < 2) continue;
+
     const midpoint = Math.floor(scores.length / 2);
     const firstHalf = scores.slice(0, midpoint);
     const secondHalf = scores.slice(midpoint);
@@ -204,7 +267,7 @@ function analyzeTrends(perSecondData) {
 
     trends[emotion] = {
       direction,
-      change: change,
+      change,
       firstHalfAverage: firstAvg,
       secondHalfAverage: secondAvg
     };
@@ -213,64 +276,46 @@ function analyzeTrends(perSecondData) {
   return trends;
 }
 
-/**
- * Calculate friction index (weighted formula)
- * 
- * Friction index measures emotional conflict/instability.
- * Higher values indicate more emotional friction.
- * 
- * @function calculateFrictionIndex
- * @param {array} perSecondData - Array of per-second emotion scores
- * @param {array} chunks - Array of chunk results
- * @returns {number} - Friction index (0-100 scale)
- */
-function calculateFrictionIndex(perSecondData, chunks) {
-  if (!perSecondData || perSecondData.length === 0) {
-    return 0;
-  }
+function calculateFrictionIndex(perSecondData) {
+  if (!perSecondData || perSecondData.length === 0) return 0;
 
-  // Calculate variance for each emotion
-  const emotionKeys = ['boredom', 'excitement', 'curiosity', 'tension', 'satisfaction'];
+  const emotionKeys = getEmotionKeysFromRows(perSecondData);
+  if (emotionKeys.length === 0) return 0;
+
   let totalVariance = 0;
 
   for (const emotion of emotionKeys) {
-    const scores = perSecondData.map(d => d[emotion] || 0);
+    const scores = perSecondData.map((d) => d[emotion]).filter((score) => typeof score === 'number');
+    if (scores.length === 0) continue;
+
     const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
     const variance = scores.reduce((sum, score) => sum + Math.pow(score - avg, 2), 0) / scores.length;
     totalVariance += variance;
   }
 
-  // Calculate transition frequency (how often emotions change significantly)
   let transitions = 0;
   for (let i = 1; i < perSecondData.length; i++) {
     const prev = perSecondData[i - 1];
     const curr = perSecondData[i];
-    
+
     for (const emotion of emotionKeys) {
       const diff = Math.abs((curr[emotion] || 0) - (prev[emotion] || 0));
-      if (diff > 0.3) {
-        transitions++;
-      }
+      if (diff > 0.3) transitions++;
     }
   }
 
-  // Normalize to 0-100 scale
   const avgVariance = totalVariance / emotionKeys.length;
   const transitionRate = transitions / (perSecondData.length * emotionKeys.length);
-  
-  // Weighted formula: variance (60%) + transition rate (40%)
   const frictionIndex = (avgVariance * 60 + transitionRate * 100 * 40);
 
-  // Clamp to 0-100
   return Math.min(100, Math.max(0, frictionIndex));
 }
 
 module.exports = { run };
 
-// Allow standalone execution for testing
 if (require.main === module) {
   const outputDir = process.argv[2] || 'output/test';
-  
+
   run({
     outputDir,
     artifacts: {

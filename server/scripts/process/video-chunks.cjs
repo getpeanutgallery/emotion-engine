@@ -18,6 +18,7 @@ const chunkStrategy = require('../../lib/chunk-strategy.cjs');
 const splitStrategy = require('../../lib/split-strategy.cjs');
 const videoChunkExtractor = require('../../lib/video-chunk-extractor.cjs');
 const outputManager = require('../../lib/output-manager.cjs');
+const { getChunkFailureReason } = require('../../lib/chunk-analysis-status.cjs');
 const ffmpegPath = require('ffmpeg-static');
 const ffprobePath = require('ffprobe-static').path;
 
@@ -275,6 +276,7 @@ async function run(input) {
             splitIndex: splitIndex || 0,
             startTime,
             endTime,
+            status: 'success',
             summary: toolResult.state.summary,
             emotions: toolResult.state.emotions,
             dominant_emotion: toolResult.state.dominant_emotion,
@@ -287,25 +289,62 @@ async function run(input) {
             }
           };
 
+          const failureReason = getChunkFailureReason(chunkResult);
+          if (failureReason) {
+            chunkResult.status = 'failed';
+            chunkResult.errorReason = failureReason;
+            results.push(chunkResult);
+            console.warn(`      ⚠️  Chunk ${chunkIndex + 1}${splitIndex > 0 ? `.${splitIndex + 1}` : ''} marked failed (${failureReason})`);
+            continue;
+          }
+
           results.push(chunkResult);
           totalTokens += chunkResult.tokens;
           previousSummary = chunkResult.summary;
 
           console.log(`      ✅ Chunk ${chunkIndex + 1}${splitIndex > 0 ? `.${splitIndex + 1}` : ''} analyzed (${chunkResult.tokens} tokens)`);
         } catch (error) {
+          const failedChunkResult = {
+            chunkIndex: chunkIndex,
+            splitIndex: splitIndex || 0,
+            startTime,
+            endTime,
+            status: 'failed',
+            errorReason: `analysis_error: ${error.message}`,
+            summary: 'Chunk analysis failed',
+            emotions: {},
+            dominant_emotion: 'unknown',
+            confidence: 0,
+            tokens: 0,
+            persona: {
+              soulPath: toolVariables.soulPath,
+              goalPath: toolVariables.goalPath,
+              lenses: toolVariables.variables?.lenses || []
+            }
+          };
+
+          results.push(failedChunkResult);
           console.error(`      ❌ Chunk ${chunkIndex + 1} analysis failed:`, error.message);
-          console.error(`      Stack:`, error.stack);
           console.error(`      Tool variables:`, JSON.stringify(toolVariablesForLogging, null, 2));
           console.error(`      Video context:`, JSON.stringify(videoContextForLogging, null, 2));
-          throw error;
+          console.error('      Continuing with remaining chunks...');
         }
       }
     }
 
     // Build chunk analysis artifact
+    const successfulChunks = results.filter((chunk) => chunk.status !== 'failed');
+    const failedChunks = results.filter((chunk) => chunk.status === 'failed');
+
     const chunkAnalysis = {
       chunks: results,
       totalTokens,
+      statusSummary: {
+        total: results.length,
+        successful: successfulChunks.length,
+        failed: failedChunks.length,
+        failedChunkIndexes: failedChunks.map((chunk) => chunk.chunkIndex)
+      },
       persona: {
         soulPath: toolVariables.soulPath,
         goalPath: toolVariables.goalPath,
@@ -324,7 +363,11 @@ async function run(input) {
     console.log('   ✅ Video chunk analysis complete');
     console.log(`      Artifact path: ${artifactPath}`);
     console.log(`      Total tokens used: ${totalTokens}`);
-    console.log(`      Average per chunk: ${(totalTokens / numChunks).toFixed(0)} tokens`);
+    const analyzedChunkCount = chunkAnalysis.statusSummary.successful || 1;
+    console.log(`      Average per successful chunk: ${(totalTokens / analyzedChunkCount).toFixed(0)} tokens`);
+    if (chunkAnalysis.statusSummary.failed > 0) {
+      console.log(`      Failed chunks: ${chunkAnalysis.statusSummary.failed} (${chunkAnalysis.statusSummary.failedChunkIndexes.join(', ')})`);
+    }
 
     return {
       artifacts: {

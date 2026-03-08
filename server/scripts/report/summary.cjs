@@ -11,6 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const outputManager = require('../../lib/output-manager.cjs');
+const { splitChunksByStatus } = require('../../lib/chunk-analysis-status.cjs');
 
 /**
  * Main entry point
@@ -45,12 +46,14 @@ async function run(input) {
 
   // Build metadata
   console.log('   📊 Building metadata...');
+  const { successfulChunks, failedChunks } = splitChunksByStatus(chunkAnalysis.chunks || []);
   const metadata = {
     generatedAt: new Date().toISOString(),
     pipelineVersion: config?.version || '8.0.0',
-    videoDuration: chunkAnalysis.videoDuration || perSecondData.totalSeconds || 0,
-    chunksAnalyzed: chunkAnalysis.chunks?.length || 0,
-    totalSeconds: perSecondData.per_second_data?.length || 0,
+    videoDuration: chunkAnalysis.videoDuration || perSecondData.totalSeconds || emotionalAnalysis?.summary?.videoDuration || 0,
+    chunksAnalyzed: successfulChunks.length,
+    failedChunks: failedChunks.length,
+    totalSeconds: perSecondData.per_second_data?.length || emotionalAnalysis?.summary?.totalSeconds || metricsData?.summary?.totalSeconds || 0,
     totalTokens: chunkAnalysis.totalTokens || 0
   };
 
@@ -203,7 +206,7 @@ function buildReportPaths(outputDir, artifacts) {
     reportPaths.emotionalAnalysis = artifacts.emotionalAnalysis.path;
   } else {
     // Check if emotional-analysis.cjs created a file
-    const emoPath = outputManager.getReportPath(outputDir, 'emotional-analysis', 'emotional-analysis.json');
+    const emoPath = outputManager.getReportPath(outputDir, 'emotional-analysis', 'emotional-data.json');
     if (fs.existsSync(emoPath)) {
       reportPaths.emotionalAnalysis = emoPath;
     }

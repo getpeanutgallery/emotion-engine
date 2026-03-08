@@ -20,7 +20,7 @@ require('dotenv').config();
 
 // Import pipeline components
 const { loadConfig, validateConfig, getScriptsFromPhase } = require('./lib/config-loader.cjs');
-const { createArtifactContext, mergeArtifacts, serializeArtifacts } = require('./lib/artifact-manager.cjs');
+const { createArtifactContext, serializeArtifacts } = require('./lib/artifact-manager.cjs');
 const { parseArgs, printHelp, printVersion, validateArgs } = require('./lib/cli-parser.cjs');
 const { runGatherContext } = require('./lib/phases/gather-context-runner.cjs');
 const { runProcess } = require('./lib/phases/process-runner.cjs');
@@ -107,7 +107,7 @@ async function runPipeline(configPath, options = {}) {
         scripts: config.gather_context,
         artifacts
       });
-      artifacts = mergeArtifacts(artifacts, result.artifacts);
+      artifacts = result.artifacts;
       console.log('   ✅ Phase 1 complete\n');
     } catch (error) {
       console.error('   ❌ Phase 1 failed:', error.message);
@@ -127,7 +127,7 @@ async function runPipeline(configPath, options = {}) {
         config,
         scripts: config.process
       });
-      artifacts = mergeArtifacts(artifacts, result.artifacts);
+      artifacts = result.artifacts;
       console.log('   ✅ Phase 2 complete\n');
     } catch (error) {
       console.error('   ❌ Phase 2 failed:', error.message);
@@ -146,7 +146,7 @@ async function runPipeline(configPath, options = {}) {
         config,
         scripts: config.report
       });
-      artifacts = mergeArtifacts(artifacts, result.artifacts);
+      artifacts = result.artifacts;
       console.log('   ✅ Phase 3 complete\n');
     } catch (error) {
       console.error('   ❌ Phase 3 failed:', error.message);

@@ -17,25 +17,27 @@ function mockModule(modulePath, mockExports) {
 }
 
 const analyzeCalls = [];
-const mockEmotionLensesTool = {
-  analyze: async (input) => {
-    analyzeCalls.push(input);
-    return {
-      prompt: 'Test prompt',
-      state: {
-        summary: 'Test chunk summary',
-        emotions: {
-          patience: { score: 7, reasoning: 'Test reasoning' },
-          boredom: { score: 3, reasoning: 'Test reasoning' },
-          excitement: { score: 6, reasoning: 'Test reasoning' }
-        },
-        dominant_emotion: 'patience',
-        confidence: 0.85,
-        previousSummary: ''
+let analyzeImplementation = async (input) => {
+  analyzeCalls.push(input);
+  return {
+    prompt: 'Test prompt',
+    state: {
+      summary: 'Test chunk summary',
+      emotions: {
+        patience: { score: 7, reasoning: 'Test reasoning' },
+        boredom: { score: 3, reasoning: 'Test reasoning' },
+        excitement: { score: 6, reasoning: 'Test reasoning' }
       },
-      usage: { input: 150, output: 100 }
-    };
-  }
+      dominant_emotion: 'patience',
+      confidence: 0.85,
+      previousSummary: ''
+    },
+    usage: { input: 150, output: 100 }
+  };
+};
+
+const mockEmotionLensesTool = {
+  analyze: async (input) => analyzeImplementation(input)
 };
 
 const mockVideoChunkExtractor = {
@@ -70,6 +72,24 @@ test('Video Chunks Script', async (t) => {
 
   t.beforeEach(() => {
     analyzeCalls.length = 0;
+    analyzeImplementation = async (input) => {
+      analyzeCalls.push(input);
+      return {
+        prompt: 'Test prompt',
+        state: {
+          summary: 'Test chunk summary',
+          emotions: {
+            patience: { score: 7, reasoning: 'Test reasoning' },
+            boredom: { score: 3, reasoning: 'Test reasoning' },
+            excitement: { score: 6, reasoning: 'Test reasoning' }
+          },
+          dominant_emotion: 'patience',
+          confidence: 0.85,
+          previousSummary: ''
+        },
+        usage: { input: 150, output: 100 }
+      };
+    };
     if (!fs.existsSync(testOutputDir)) fs.mkdirSync(testOutputDir, { recursive: true });
   });
 
@@ -205,6 +225,70 @@ test('Video Chunks Script', async (t) => {
       });
 
       is(result.artifacts.chunkAnalysis.totalTokens, 500);
+    });
+
+    await tNested.test('marks parse fallback chunk as failed and continues', async () => {
+      let callCount = 0;
+      analyzeImplementation = async (input) => {
+        analyzeCalls.push(input);
+        callCount += 1;
+
+        if (callCount === 2) {
+          return {
+            prompt: 'Test prompt',
+            state: {
+              summary: 'Analysis completed',
+              emotions: {
+                patience: { score: 5, reasoning: 'Default - could not parse response' },
+                boredom: { score: 5, reasoning: 'Default - could not parse response' }
+              },
+              dominant_emotion: 'patience',
+              confidence: 0.5
+            },
+            usage: { input: 10, output: 10 }
+          };
+        }
+
+        return {
+          prompt: 'Test prompt',
+          state: {
+            summary: 'Valid chunk summary',
+            emotions: {
+              patience: { score: 8, reasoning: 'Solid hook' },
+              boredom: { score: 2, reasoning: 'Engaging' }
+            },
+            dominant_emotion: 'patience',
+            confidence: 0.9
+          },
+          usage: { input: 100, output: 50 }
+        };
+      };
+
+      const result = await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience', 'boredom'] }
+        },
+        config: {
+          ai: {
+            video: { model: 'yaml-video-model' }
+          },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          },
+          settings: { max_chunks: 2 }
+        }
+      });
+
+      const failed = result.artifacts.chunkAnalysis.chunks.find((chunk) => chunk.status === 'failed');
+      ok(!!failed);
+      ok(failed.errorReason.includes('parse_error'));
+      is(result.artifacts.chunkAnalysis.statusSummary.successful, 1);
+      is(result.artifacts.chunkAnalysis.statusSummary.failed, 1);
     });
   });
 });
