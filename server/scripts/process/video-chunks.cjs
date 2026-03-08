@@ -24,6 +24,10 @@ const ffprobePath = require('ffprobe-static').path;
 
 const execAsync = promisify(exec);
 
+function isReplayMode() {
+  return (process.env.DIGITAL_TWIN_MODE || '').trim().toLowerCase() === 'replay';
+}
+
 /**
  * Script Input Contract
  * @typedef {Object} VideoChunksInput
@@ -73,10 +77,12 @@ async function run(input) {
     throw new Error('VideoChunks: toolVariables.soulPath and toolVariables.goalPath are required');
   }
 
-  // Verify AI_API_KEY is available
-  if (!process.env.AI_API_KEY) {
+  const replayMode = isReplayMode();
+
+  // Verify AI_API_KEY is available for live calls only
+  if (!replayMode && !process.env.AI_API_KEY) {
     console.error('   ❌ ERROR: AI_API_KEY environment variable is not set');
-    throw new Error('AI_API_KEY is required for chunk analysis');
+    throw new Error('AI_API_KEY is required for chunk analysis unless DIGITAL_TWIN_MODE=replay');
   }
 
   // Ensure output directory exists

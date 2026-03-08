@@ -202,6 +202,63 @@ test('Video Chunks Script', async (t) => {
     });
   });
 
+  t.test('AI_API_KEY requirement by DIGITAL_TWIN_MODE', async (tNested) => {
+    await tNested.test('requires AI_API_KEY when DIGITAL_TWIN_MODE is off', async () => {
+      delete process.env.AI_API_KEY;
+      process.env.DIGITAL_TWIN_MODE = 'off';
+
+      try {
+        await rejects(videoChunksScript.run({
+          assetPath: '/path/to/test-video.mp4',
+          outputDir: testOutputDir,
+          artifacts: {},
+          toolVariables: {
+            soulPath: '/path/to/SOUL.md',
+            goalPath: '/path/to/GOAL.md',
+            variables: { lenses: ['patience'] }
+          },
+          config: {
+            ai: {
+              video: { model: 'yaml-video-model' }
+            }
+          }
+        }), /AI_API_KEY is required for chunk analysis unless DIGITAL_TWIN_MODE=replay/);
+      } finally {
+        process.env.AI_API_KEY = 'test-api-key';
+        delete process.env.DIGITAL_TWIN_MODE;
+      }
+    });
+
+    await tNested.test('allows missing AI_API_KEY when DIGITAL_TWIN_MODE=replay', async () => {
+      delete process.env.AI_API_KEY;
+      process.env.DIGITAL_TWIN_MODE = 'replay';
+
+      try {
+        const result = await videoChunksScript.run({
+          assetPath: '/path/to/test-video.mp4',
+          outputDir: testOutputDir,
+          artifacts: {},
+          toolVariables: {
+            soulPath: '/path/to/SOUL.md',
+            goalPath: '/path/to/GOAL.md',
+            variables: { lenses: ['patience'] }
+          },
+          config: {
+            ai: {
+              video: { model: 'yaml-video-model' }
+            }
+          }
+        });
+
+        property(result, 'artifacts');
+        property(result.artifacts, 'chunkAnalysis');
+      } finally {
+        process.env.AI_API_KEY = 'test-api-key';
+        delete process.env.DIGITAL_TWIN_MODE;
+      }
+    });
+  });
+
   t.test('token counting', async (tNested) => {
     await tNested.test('tracks total tokens correctly', async () => {
       const result = await videoChunksScript.run({
