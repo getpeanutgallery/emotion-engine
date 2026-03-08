@@ -18,8 +18,8 @@ const { fileToBase64, detectMimeType } = require('ai-providers/utils/file-utils.
 
 // Enable digital twin transport for offline tests
 process.env.NODE_ENV = 'test';
-process.env.DIGITAL_TWIN_PACK = '/home/derrick/.openclaw/workspace/projects/peanut-gallery/digital-twin-emotion-engine-providers';
-process.env.DIGITAL_TWIN_CASSETTE = 'providers';
+process.env.DIGITAL_TWIN_PACK = process.env.DIGITAL_TWIN_PACK || '/home/derrick/.openclaw/workspace/projects/peanut-gallery/digital-twin-emotion-engine-providers';
+process.env.DIGITAL_TWIN_CASSETTE = process.env.DIGITAL_TWIN_CASSETTE || 'providers';
 
 let passed = 0;
 let failed = 0;
