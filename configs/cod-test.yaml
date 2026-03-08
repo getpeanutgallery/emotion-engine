@@ -69,9 +69,9 @@ tool_variables:
 ai:
   provider: openrouter
   dialogue:
-    model: qwen/qwen3.5-122b-a10b
+    model: google/gemini-2.5-flash
   music:
-    model: qwen/qwen3.5-122b-a10b
+    model: google/gemini-2.5-flash
   video:
     model: qwen/qwen3.5-122b-a10b
   # apiKey: injected via AI_API_KEY environment variable

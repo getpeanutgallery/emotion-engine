@@ -14,7 +14,7 @@ asset:
 ai:
   provider: openrouter
   dialogue:
-    model: qwen/qwen-3.5-397b-a17b
+    model: google/gemini-2.5-flash
 
 # Gather dialogue from audio/video
 gather_context:

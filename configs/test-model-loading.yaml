@@ -13,7 +13,7 @@ asset:
 ai:
   provider: openrouter
   dialogue:
-    model: qwen/qwen-3.5-397b-a17b
+    model: google/gemini-2.5-flash
 
 # Run dialogue extraction to test model loading
 gather_context:

@@ -14,9 +14,9 @@ asset:
 ai:
   provider: openrouter
   dialogue:
-    model: qwen/qwen-3.5-397b-a17b
+    model: google/gemini-2.5-flash
   music:
-    model: qwen/qwen-3.5-397b-a17b
+    model: google/gemini-2.5-flash
   video:
     model: qwen/qwen-3.5-397b-a17b
   # apiKey: NEVER put API keys in YAML - use environment variables
