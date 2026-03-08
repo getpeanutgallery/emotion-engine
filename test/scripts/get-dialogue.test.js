@@ -7,6 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
+process.env.AI_API_KEY = 'test-api-key';
 
 // Mock AI provider
 const mockAIProvider = {
@@ -36,20 +37,34 @@ const mockAIProvider = {
 // Mock modules
 jest.mock('ai-providers/ai-provider-interface.js', () => mockAIProvider);
 
-// Mock child_process exec
-jest.mock('child_process', () => ({
-  exec: (cmd, callback) => {
-    // Simulate successful ffmpeg execution
-    if (callback) callback(null, { stdout: '', stderr: '' });
-    return { on: () => {} };
-  },
-  execSync: (cmd) => {
-    if (cmd.includes('ffprobe')) {
-      return Buffer.from('10.0'); // Mock duration
+// Mock child_process exec with file creation to simulate ffmpeg output
+jest.mock('child_process', () => {
+  const fs = require('fs');
+  const path = require('path');
+  return {
+    exec: (cmd, callback) => {
+      // If it's an ffmpeg command that writes to a file (-y "output"), create that file
+      const match = cmd.match(/-y\s+"([^"]+)"/);
+      if (match) {
+        const outputPath = match[1];
+        try {
+          fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+          fs.writeFileSync(outputPath, Buffer.from('mock audio data'));
+        } catch (e) {
+          console.warn('Mock failed to create file:', e.message);
+        }
+      }
+      if (callback) callback(null, { stdout: '', stderr: '' });
+      return { on: () => {} };
+    },
+    execSync: (cmd) => {
+      if (cmd.includes('ffprobe')) {
+        return Buffer.from('10.0'); // Mock duration
+      }
+      return Buffer.from('');
     }
-    return Buffer.from('');
-  }
-}));
+  };
+});
 
 const getDialogueScript = require('../../server/scripts/get-context/get-dialogue.cjs');
 
@@ -79,7 +94,7 @@ describe('Get Dialogue Script', () => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: {}
+        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
       };
 
       const result = await getDialogueScript.run(input);
@@ -95,7 +110,7 @@ describe('Get Dialogue Script', () => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: {}
+        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
       };
 
       const result = await getDialogueScript.run(input);
@@ -107,12 +122,13 @@ describe('Get Dialogue Script', () => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: {}
+        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
       };
 
       await getDialogueScript.run(input);
 
-      const artifactPath = path.join(testOutputDir, 'dialogue-data.json');
+      // The script writes to phase1-gather-context subdirectory
+      const artifactPath = path.join(testOutputDir, 'phase1-gather-context', 'dialogue-data.json');
       expect(fs.existsSync(artifactPath)).toBe(true);
 
       const data = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
@@ -126,7 +142,7 @@ describe('Get Dialogue Script', () => {
       const input = {
         assetPath: null,
         outputDir: testOutputDir,
-        config: {}
+        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
       };
 
       // Should throw an error (ffmpeg will fail)
@@ -137,7 +153,7 @@ describe('Get Dialogue Script', () => {
       const input = {
         assetPath: '/path/to/video.mp4',
         outputDir: null,
-        config: {}
+        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
       };
 
       // Should throw an error
@@ -150,7 +166,7 @@ describe('Get Dialogue Script', () => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: {}
+        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
       };
 
       const result = await getDialogueScript.run(input);
@@ -167,7 +183,7 @@ describe('Get Dialogue Script', () => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: {}
+        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
       };
 
       const result = await getDialogueScript.run(input);
@@ -181,7 +197,7 @@ describe('Get Dialogue Script', () => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: {}
+        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
       };
 
       const result = await getDialogueScript.run(input);

@@ -98,8 +98,11 @@ async function run(input) {
 
       // Get AI provider from environment
       const provider = aiProvider.getProviderFromEnv();
-      // Use script-specific model, fallback to AI_MODEL, then to default
-      const model = config?.ai?.music?.model || config?.ai?.model || 'qwen/qwen-3.5-397b-a17b';
+      // Require explicit music model
+      const model = config?.ai?.music?.model;
+      if (!model) {
+        throw new Error('GetMusic: config.ai.music.model is required (missing in YAML config)');
+      }
       const apiKey = process.env.AI_API_KEY;
 
       if (!apiKey) {
@@ -258,7 +261,7 @@ async function extractAudioSegment(audioPath, startTime, duration, outputPath) {
 function getAudioDuration(audioPath) {
   try {
     const cmd = `"${ffprobePath}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${audioPath}"`;
-    const { stdout } = require('child_process').execSync(cmd);
+    const stdout = require('child_process').execSync(cmd).toString();
     return parseFloat(stdout.trim()) || 0;
   } catch (e) {
     return 0;
@@ -390,9 +393,10 @@ if (require.main === module) {
   console.log('');
   console.log('⚠️  This script requires:');
   console.log('   - AI_API_KEY environment variable');
+  console.log('   - config.ai.music.model (set in pipeline YAML)');
   console.log('   - ffmpeg installed for audio extraction');
   console.log('   - A model that supports audio analysis');
   console.log('');
-  console.log('Example usage:');
-  console.log('  AI_API_KEY=your-key node get-music.cjs video.mp4 output/');
+  console.log('Note: This script is designed to be run within the pipeline.');
+  console.log('      The model must be explicitly configured in the YAML.');
 }

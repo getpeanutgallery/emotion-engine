@@ -76,8 +76,11 @@ async function run(input) {
 
     // Get AI provider from environment
     const provider = aiProvider.getProviderFromEnv();
-    // Use script-specific model, fallback to AI_MODEL, then to default
-    const model = config?.ai?.dialogue?.model || config?.ai?.model || 'qwen/qwen-3.5-397b-a17b';
+    // Require explicit dialogue model
+    const model = config?.ai?.dialogue?.model;
+    if (!model) {
+      throw new Error('GetDialogue: config.ai.dialogue.model is required (missing in YAML config)');
+    }
     const apiKey = process.env.AI_API_KEY;
 
     if (!apiKey) {
@@ -284,7 +287,7 @@ function parseTranscriptionResponse(responseContent, audioPath) {
 function getAudioDuration(audioPath) {
   try {
     const cmd = `"${ffprobePath}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${audioPath}"`;
-    const { stdout } = require('child_process').execSync(cmd);
+    const stdout = require('child_process').execSync(cmd).toString();
     return parseFloat(stdout.trim()) || 0;
   } catch (e) {
     return 0;
@@ -304,9 +307,10 @@ if (require.main === module) {
   console.log('');
   console.log('⚠️  This script requires:');
   console.log('   - AI_API_KEY environment variable');
+  console.log('   - config.ai.dialogue.model (set in pipeline YAML)');
   console.log('   - ffmpeg installed for audio extraction');
   console.log('   - A model that supports audio transcription (e.g., Whisper)');
   console.log('');
-  console.log('Example usage:');
-  console.log('  AI_API_KEY=your-key AI_MODEL=openai/whisper-1 node get-dialogue.cjs video.mp4 output/');
+  console.log('Note: This script is designed to be run within the pipeline.');
+  console.log('      The model must be explicitly configured in the YAML.');
 }
