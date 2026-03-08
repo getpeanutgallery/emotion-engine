@@ -1,40 +1,40 @@
 {
-	"name": "emotion-engine",
-	"version": "8.0.0",
-	"type": "commonjs",
-	"description": "Modular, tool-agnostic AI workflow engine for multi-modal emotion analysis",
-	"main": "server/run-pipeline.cjs",
-	"bin": {
-		"emotion-engine": "./bin/run-pipeline.js"
-	},
-	"scripts": {
-		"pipeline": "node server/run-pipeline.cjs",
-		"test": "node --test test/**/*.test.js",
-		"test:validate-json": "node test-validate-json.cjs"
-	},
-	"dependencies": {
-		"@aws-sdk/client-s3": "^3.1002.0",
-		"axios": "^1.13.6",
-		"ai-providers": "file:../ai-providers",
-		"cast": "file:../cast",
-		"dotenv": "^17.3.1",
-		"ffmpeg-static": "^5.2.0",
-		"ffprobe-static": "^3.1.0",
-		"js-yaml": "^4.1.0",
-		"retry-strategy": "file:../retry-strategy",
-		"tools": "file:../tools",
-		"goals": "file:../goals"
-	},
-	"engines": {
-		"node": ">=18.0.0"
-	},
-	"keywords": [
-		"ai",
-		"emotion-analysis",
-		"multi-modal",
-		"pipeline",
-		"workflow"
-	],
-	"author": "OpenTruth",
-	"license": "MIT"
+  "name": "emotion-engine",
+  "version": "8.0.0",
+  "type": "commonjs",
+  "description": "Modular, tool-agnostic AI workflow engine for multi-modal emotion analysis",
+  "main": "server/run-pipeline.cjs",
+  "bin": {
+    "emotion-engine": "./bin/run-pipeline.js"
+  },
+  "scripts": {
+    "pipeline": "node server/run-pipeline.cjs",
+    "test": "node --test test/**/*.test.js",
+    "test:validate-json": "node test-validate-json.cjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1002.0",
+    "axios": "^1.13.6",
+    "ai-providers": "git+ssh://git@github.com/getpeanutgallery/ai-providers.git#main",
+    "cast": "git+ssh://git@github.com/getpeanutgallery/cast.git#main",
+    "dotenv": "^17.3.1",
+    "ffmpeg-static": "^5.2.0",
+    "ffprobe-static": "^3.1.0",
+    "js-yaml": "^4.1.0",
+    "retry-strategy": "git+ssh://git@github.com/getpeanutgallery/retry-strategy.git#main",
+    "tools": "git+ssh://git@github.com/getpeanutgallery/tools.git#main",
+    "goals": "git+ssh://git@github.com/getpeanutgallery/goals.git#main"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "ai",
+    "emotion-analysis",
+    "multi-modal",
+    "pipeline",
+    "workflow"
+  ],
+  "author": "OpenTruth",
+  "license": "MIT"
 }
