@@ -80,6 +80,10 @@ function parseConfig(configString, format = 'yaml') {
  * - At least 1 script across all phases (gather_context, process, or report)
  * - If parallel execution, scripts must be in { parallel: [...] } format
  * - asset.inputPath and asset.outputDir are required
+ * - ai must be present with provider and explicit domain models
+ *   - Requires: config.ai, config.ai.provider
+ *   - Forbids: config.ai.model (top-level model)
+ *   - Requires: config.ai.dialogue.model, config.ai.music.model, config.ai.video.model
  * 
  * @function validateConfig
  * @param {object} config - Configuration object to validate
@@ -103,6 +107,32 @@ function validateConfig(config) {
     }
     if (!config.asset.outputDir) {
       errors.push('Missing required "asset.outputDir"');
+    }
+  }
+  
+  // Check AI configuration
+  if (!config.ai) {
+    errors.push('Missing required "ai" configuration');
+  } else {
+    // Check for forbidden top-level model
+    if (config.ai.model !== undefined) {
+      errors.push('Forbidden "ai.model" - use explicit domain models (ai.dialogue.model, ai.music.model, ai.video.model)');
+    }
+    
+    // Require provider
+    if (config.ai.provider === undefined) {
+      errors.push('Missing required "ai.provider"');
+    }
+    
+    // Require explicit domain models
+    if (config.ai.dialogue?.model === undefined) {
+      errors.push('Missing required "ai.dialogue.model"');
+    }
+    if (config.ai.music?.model === undefined) {
+      errors.push('Missing required "ai.music.model"');
+    }
+    if (config.ai.video?.model === undefined) {
+      errors.push('Missing required "ai.video.model"');
     }
   }
   
