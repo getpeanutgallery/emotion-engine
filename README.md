@@ -14,7 +14,7 @@ The system is **provider-agnostic** — swap AI models (OpenRouter, Anthropic, G
 
 ---
 
-## Current Architecture
+## Architecture
 
 ### 3-Phase Pipeline
 
@@ -38,69 +38,51 @@ The system is **provider-agnostic** — swap AI models (OpenRouter, Anthropic, G
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Folder Structure
+### Polyrepo Sibling Architecture
 
-```
-emotion-engine/
-├── server/
-│   ├── lib/
-│   │   ├── storage/                # Storage abstraction
-│   │   │   ├── storage-interface.js
-│   │   │   └── providers/
-│   │   │       ├── local-fs.cjs    # Default: local filesystem
-│   │   │       └── aws-s3.cjs      # Cloud storage
-│   │   ├── chunk-strategies/       # Video chunking logic
-│   │   ├── artifact-manager.cjs    # Manages pipeline artifacts
-│   │   ├── config-loader.cjs       # YAML config parser
-│   │   ├── persona-loader.cjs      # Loads SOUL/GOAL/TOOLS from packages
-│   │   ├── cli-parser.cjs          # CLI argument parsing
-│   │   ├── output-manager.cjs      # Output file management
-│   │   └── video-chunk-extractor.cjs # FFmpeg video processing
-│   ├── scripts/
-│   │   ├── get-context/            # Phase 1: Data extraction
-│   │   │   ├── get-dialogue.cjs    # Audio transcription
-│   │   │   └── get-music.cjs       # Music/mood analysis
-│   │   ├── process/                # Phase 2: Analysis
-│   │   │   ├── video-chunks.cjs    # Chunk-based emotion analysis
-│   │   │   └── video-per-second.cjs # Per-second emotion scoring
-│   │   └── report/                 # Phase 3: Output generation
-│   │       ├── emotional-analysis.cjs
-│   │       ├── metrics.cjs
-│   │       ├── recommendation.cjs
-│   │       ├── summary.cjs
-│   │       └── final-report.cjs
-│   └── run-pipeline.cjs            # Main orchestrator
-├── configs/                        # YAML pipeline configurations
-│   ├── video-analysis.yaml         # Full video analysis
-│   ├── cod-test.yaml               # Test configuration
-│   ├── quick-test.yaml             # Lightweight test
-│   └── ... (12 total configs)
-├── bin/
-│   └── run-analysis.js             # User-friendly CLI wrapper
-├── docs/                           # Technical documentation
-│   ├── DEBUG-CONFIG.md              # Debug file handling
-│   └── CONFIG-GUIDE.md              # Complete YAML configuration guide
-├── examples/
-│   └── videos/
-│       └── emotion-tests/          # Test video assets
-│           └── cod.mp4             # Current test video (62 MB)
-├── test/                           # Unit + integration tests
-│   ├── ai-providers/
-│   ├── pipeline/
-│   ├── scripts/
-│   └── storage/
-├── output/                         # Pipeline output artifacts
-├── .env.example                    # Environment variable template
-├── package.json
-└── README.md
+Emotion Engine is part of a **polyrepo monorepo** at `peanut-gallery/`. Local dependencies are linked via the `file:` protocol:
 
-# Package Dependencies (installed via pnpm/npm):
-# - cast/              → Personas (SOUL.md files)
-# - goals/             → Goal definitions (GOAL.md files)
-# - tools/             → Tool scripts (e.g., emotion-lenses-tool.cjs)
-# - ai-providers/      → AI provider interface
-# - retry-strategy/    → Retry logic implementations
+```json
+{
+  "dependencies": {
+    "ai-providers": "file:../ai-providers",
+    "cast": "file:../cast",
+    "goals": "file:../goals",
+    "retry-strategy": "file:../retry-strategy",
+    "tools": "file:../tools"
+  }
+}
 ```
+
+**These sibling packages provide:**
+
+- **`cast/`** — Persona definitions (`SOUL.md` files) - [GitHub](https://github.com/getpeanutgallery/cast)
+- **`goals/`** — Goal definitions (`GOAL.md` files) - [GitHub](https://github.com/getpeanutgallery/goals)
+- **`tools/`** — Composable tool scripts (e.g., `emotion-lenses-tool.cjs`) - [GitHub](https://github.com/getpeanutgallery/tools)
+- **`ai-providers/`** — AI provider interface (OpenRouter, Anthropic, Gemini, OpenAI) - [GitHub](https://github.com/getpeanutgallery/ai-providers)
+- **`retry-strategy/`** — Retry logic implementations - [GitHub](https://github.com/getpeanutgallery/retry-strategy)
+
+**Note:** These must be present as sibling directories when installing locally. CI/CD or distribution should publish these packages to npm and use versioned dependencies.
+
+### Digital Twin Packages (Offline Testing)
+
+For offline testing and deterministic CI, digital twin packages provide mock/cassette-based AI responses:
+
+- **`digital-twin-core/`** — Core digital twin infrastructure
+- **`digital-twin-emotion-engine-providers/`** — AI provider cassettes for emotion-engine
+- **`digital-twin-openrouter-emotion-engine/`** — OpenRouter-specific cassettes
+- **`digital-twin-router/`** — Routes real/digital twin requests
+
+**Integration via environment variables:**
+
+```bash
+# Enable digital twin mode (typically in test scripts)
+export DIGITAL_TWIN_MODE=test                # Mode: test/off/on
+export DIGITAL_TWIN_PACK=/path/to/digital-twin-emotion-engine-providers
+export DIGITAL_TWIN_CASSETTE=providers       # Cassette name (fixtures subfolder)
+```
+
+Tests automatically set these variables to use recorded AI responses instead of making live API calls, ensuring fast, deterministic, and cost-free test runs.
 
 ---
 
@@ -119,11 +101,7 @@ emotion-engine/
 - `js-yaml` — YAML configuration parsing
 - `ffmpeg-static` — Cross-platform FFmpeg binary (auto-installed)
 - `ffprobe-static` — Cross-platform FFprobe binary (auto-installed)
-- `cast` — Persona definitions (SOUL.md files) - [GitHub](https://github.com/getpeanutgallery/cast)
-- `goals` — Goal definitions (GOAL.md files) - [GitHub](https://github.com/getpeanutgallery/goals)
-- `tools` — Composable tool scripts - [GitHub](https://github.com/getpeanutgallery/tools)
-- `ai-providers` — AI provider interface - [GitHub](https://github.com/getpeanutgallery/ai-providers)
-- `retry-strategy` — Retry logic implementations - [GitHub](https://github.com/getpeanutgallery/retry-strategy)
+- Local packages (via `file:../`): `cast`, `goals`, `tools`, `ai-providers`, `retry-strategy`
 
 **AI Providers:**
 
@@ -149,6 +127,8 @@ emotion-engine/
 ### 1. Install
 
 ```bash
+# Install local dependencies first (from sibling repos)
+# Then install emotion-engine deps:
 pnpm install
 # or: npm install
 ```
@@ -185,18 +165,18 @@ node bin/run-analysis.js \
 pnpm run pipeline --config configs/video-analysis.yaml
 ```
 
-**Note:** Personas, goals, and tools are loaded from package dependencies:
+**Note:** Personas, goals, and tools are loaded from local package dependencies:
 
-- **Personas:** [cast repo](https://github.com/getpeanutgallery/cast) - Path format: `cast/<persona>/SOUL.md` (e.g., `cast/impatient-teenager/SOUL.md`)
-- **Goals:** [goals repo](https://github.com/getpeanutgallery/goals) - Path format: `goals/<goal-name>.md` (e.g., `goals/video-ad-evaluation.md`)
-- **Tools:** [tools repo](https://github.com/getpeanutgallery/tools) - Path format: `tools/<tool-name>.cjs` (e.g., `tools/emotion-lenses-tool.cjs`)
+- **Personas:** `cast/<persona>/SOUL.md` (e.g., `cast/impatient-teenager/SOUL.md`)
+- **Goals:** `goals/<goal-name>.md` (e.g., `goals/video-ad-evaluation.md`)
+- **Tools:** `tools/<tool-name>.cjs` (e.g., `tools/emotion-lenses-tool.cjs`)
 
 The old `personas/`, `tools/`, and `goals/` folders have been extracted into separate packages.
 
 ### 4. Run Tests
 
 ```bash
-# Run all tests
+# Run all tests (uses Node's built-in test runner)
 npm test
 
 # Validate JSON output format
@@ -332,9 +312,9 @@ Test videos are used with pipeline configs like `configs/cod-test.yaml` and `con
 **Persona System:**
 
 - SOUL.md (personality), GOAL.md (objectives), TOOLS (analysis scripts)
-- **Personas:** Loaded from [cast repo](https://github.com/getpeanutgallery/cast) package - Path format: `cast/<persona>/SOUL.md`
-- **Goals:** Loaded from [goals repo](https://github.com/getpeanutgallery/goals) package - Path format: `goals/<goal-name>.md`
-- **Tools:** Loaded from [tools repo](https://github.com/getpeanutgallery/tools) package - Path format: `tools/<tool-name>.cjs`
+- **Personas:** Loaded from `cast` package - Path format: `cast/<persona>/SOUL.md`
+- **Goals:** Loaded from `goals` package - Path format: `goals/<goal-name>.md`
+- **Tools:** Loaded from `tools` package - Path format: `tools/<tool-name>.cjs`
 - Emotion lenses (patience, boredom, excitement, etc.)
 
 **Storage:**
@@ -351,10 +331,11 @@ Test videos are used with pipeline configs like `configs/cod-test.yaml` and `con
 
 **Testing:**
 
-- 70+ unit tests
+- 70+ unit tests with Node.js native test runner
 - Integration tests for AI provider flows
 - Storage backend tests
 - Script-level tests for all pipeline phases
+- Digital twin cassettes for deterministic offline testing
 
 ### 📋 Planned / In Progress
 
