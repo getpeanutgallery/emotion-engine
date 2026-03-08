@@ -1,5 +1,7 @@
 # Emotion Engine v8.0 - Pipeline Scripts
 
+> **Note:** This document was moved from `server/scripts/README.md` to keep script folders code-only and consolidate documentation under `docs/`.
+
 This directory contains the AI-powered pipeline scripts that perform emotion analysis on video/audio/image assets.
 
 ## Directory Structure
@@ -56,7 +58,7 @@ server/scripts/
 
 **Requirements:**
 - `AI_API_KEY` environment variable
-- `ffmpeg` installed for audio extraction
+- FFmpeg available (provided via `ffmpeg-static`, or system `ffmpeg` if preferred)
 - Model that supports audio transcription (e.g., Whisper)
 
 **Usage:**
@@ -101,7 +103,7 @@ AI_API_KEY="your-key" node server/scripts/get-context/get-dialogue.cjs video.mp4
 
 **Requirements:**
 - `AI_API_KEY` environment variable
-- `ffmpeg` installed for audio extraction
+- FFmpeg available (provided via `ffmpeg-static`, or system `ffmpeg` if preferred)
 
 **Usage:**
 ```bash
@@ -164,7 +166,7 @@ AI_API_KEY="your-key" node server/scripts/get-context/get-music.cjs video.mp4 ou
 
 **Requirements:**
 - `AI_API_KEY` environment variable
-- `ffmpeg` installed for frame extraction
+- FFmpeg available (provided via `ffmpeg-static`, or system `ffmpeg` if preferred)
 - `tools/emotion-lenses-tool.cjs` available
 - Persona files (SOUL.md, GOAL.md)
 
@@ -290,7 +292,7 @@ export AI_API_KEY="your-api-key"
 export AI_MODEL="qwen/qwen-3.5-397b-a17b"
 
 # Run quick test pipeline
-cd /home/derrick/.openclaw/workspace/projects/opentruth/emotion-engine
+cd /path/to/emotion-engine
 node server/run-pipeline.cjs --config configs/quick-test.yaml
 ```
 
@@ -416,7 +418,8 @@ export AI_API_KEY="your-api-key"
 
 **2. "ffmpeg not found"**
 
-Install ffmpeg:
+If you are not using the bundled FFmpeg (`ffmpeg-static`) and need a system install:
+
 ```bash
 # Ubuntu/Debian
 sudo apt-get install ffmpeg
@@ -427,11 +430,11 @@ brew install ffmpeg
 
 **3. "chunkAnalysis artifact is required"**
 
-Ensure video-chunks.cjs runs before video-per-second.cjs in the pipeline config.
+Ensure `video-chunks.cjs` runs before `video-per-second.cjs` in the pipeline config.
 
 **4. "Failed to load persona"**
 
-Check that soulPath and goalPath point to valid files:
+Check that `soulPath` and `goalPath` point to valid files:
 ```bash
 ls -la /path/to/personas/souls/impatient-teenager/1.0.0/SOUL.md
 ```

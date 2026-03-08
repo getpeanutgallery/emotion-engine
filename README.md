@@ -484,6 +484,7 @@ The core 3-phase pipeline is production-ready for video emotion analysis. The pe
 
 - **Configuration Guide:** `docs/CONFIG-GUIDE.md` — Complete YAML schema and migration guide
 - **Debug Configuration:** `docs/DEBUG-CONFIG.md` — Debug file handling and temp file preservation
+- **Pipeline Scripts:** `docs/PIPELINE-SCRIPTS.md` — Script-by-script overview, contracts, and troubleshooting
 
 ---
 
