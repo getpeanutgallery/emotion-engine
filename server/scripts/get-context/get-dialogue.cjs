@@ -74,8 +74,10 @@ async function run(input) {
     const audioBase64 = fs.readFileSync(audioPath).toString('base64');
     const audioMimeType = 'audio/wav';
 
-    // Get AI provider from environment
-    const provider = aiProvider.getProviderFromEnv();
+    // Get AI provider from YAML config
+    const provider = typeof aiProvider.getProviderFromConfig === 'function'
+      ? aiProvider.getProviderFromConfig(config)
+      : aiProvider.loadProvider(config?.ai?.provider || 'openrouter');
     // Require explicit dialogue model
     const model = config?.ai?.dialogue?.model;
     if (!model) {

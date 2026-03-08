@@ -96,8 +96,10 @@ async function run(input) {
       // Convert to base64
       const audioBase64 = fs.readFileSync(segmentPath).toString('base64');
 
-      // Get AI provider from environment
-      const provider = aiProvider.getProviderFromEnv();
+      // Get AI provider from YAML config
+      const provider = typeof aiProvider.getProviderFromConfig === 'function'
+        ? aiProvider.getProviderFromConfig(config)
+        : aiProvider.loadProvider(config?.ai?.provider || 'openrouter');
       // Require explicit music model
       const model = config?.ai?.music?.model;
       if (!model) {

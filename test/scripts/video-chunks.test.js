@@ -16,22 +16,26 @@ function mockModule(modulePath, mockExports) {
   };
 }
 
+const analyzeCalls = [];
 const mockEmotionLensesTool = {
-  analyze: async () => ({
-    prompt: 'Test prompt',
-    state: {
-      summary: 'Test chunk summary',
-      emotions: {
-        patience: { score: 7, reasoning: 'Test reasoning' },
-        boredom: { score: 3, reasoning: 'Test reasoning' },
-        excitement: { score: 6, reasoning: 'Test reasoning' }
+  analyze: async (input) => {
+    analyzeCalls.push(input);
+    return {
+      prompt: 'Test prompt',
+      state: {
+        summary: 'Test chunk summary',
+        emotions: {
+          patience: { score: 7, reasoning: 'Test reasoning' },
+          boredom: { score: 3, reasoning: 'Test reasoning' },
+          excitement: { score: 6, reasoning: 'Test reasoning' }
+        },
+        dominant_emotion: 'patience',
+        confidence: 0.85,
+        previousSummary: ''
       },
-      dominant_emotion: 'patience',
-      confidence: 0.85,
-      previousSummary: ''
-    },
-    usage: { input: 150, output: 100 }
-  })
+      usage: { input: 150, output: 100 }
+    };
+  }
 };
 
 const mockVideoChunkExtractor = {
@@ -65,10 +69,12 @@ test('Video Chunks Script', async (t) => {
   const testOutputDir = '/tmp/test-chunks-output';
 
   t.beforeEach(() => {
+    analyzeCalls.length = 0;
     if (!fs.existsSync(testOutputDir)) fs.mkdirSync(testOutputDir, { recursive: true });
   });
 
   t.afterEach(() => {
+    delete process.env.AI_MODEL;
     if (fs.existsSync(testOutputDir)) fs.rmSync(testOutputDir, { recursive: true, force: true });
   });
 
@@ -112,6 +118,9 @@ test('Video Chunks Script', async (t) => {
           variables: { lenses: ['patience'] }
         },
         config: {
+          ai: {
+            video: { model: 'yaml-video-model' }
+          },
           tool_variables: {
             chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
           }
@@ -134,6 +143,11 @@ test('Video Chunks Script', async (t) => {
           soulPath: '/path/to/SOUL.md',
           goalPath: '/path/to/GOAL.md',
           variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { model: 'yaml-video-model' }
+          }
         }
       });
 
@@ -142,6 +156,29 @@ test('Video Chunks Script', async (t) => {
       const data = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
       property(data, 'chunks');
       property(data, 'totalTokens');
+    });
+
+    await tNested.test('uses YAML config.ai.video.model for chunk analysis', async () => {
+      process.env.AI_MODEL = 'env-model-that-must-be-ignored';
+
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { model: 'yaml-video-model' }
+          }
+        }
+      });
+
+      is(analyzeCalls.length > 0, true);
+      is(analyzeCalls[0].toolVariables.variables.model, 'yaml-video-model');
     });
   });
 
@@ -157,6 +194,9 @@ test('Video Chunks Script', async (t) => {
           variables: { lenses: ['patience'] }
         },
         config: {
+          ai: {
+            video: { model: 'yaml-video-model' }
+          },
           tool_variables: {
             chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
           },

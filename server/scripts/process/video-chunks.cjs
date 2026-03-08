@@ -123,6 +123,26 @@ async function run(input) {
   const dialogueData = artifacts.dialogueData || { dialogue_segments: [], summary: '' };
   const musicData = artifacts.musicData || { segments: [] };
 
+  const videoModel = config?.ai?.video?.model;
+  if (!videoModel) {
+    throw new Error('VideoChunks: config.ai.video.model is required');
+  }
+
+  const legacyToolModel = toolVariables?.variables?.model;
+  if (legacyToolModel && legacyToolModel !== videoModel) {
+    throw new Error(
+      `VideoChunks: legacy tool_variables.variables.model (${legacyToolModel}) must match config.ai.video.model (${videoModel})`
+    );
+  }
+
+  const normalizedToolVariables = {
+    ...toolVariables,
+    variables: {
+      ...(toolVariables?.variables || {}),
+      model: videoModel
+    }
+  };
+
   const results = [];
   let totalTokens = 0;
   let previousSummary = '';
@@ -227,7 +247,7 @@ async function run(input) {
         // Call emotion-lenses-tool for analysis with error handling
         try {
           const toolResult = await emotionLensesTool.analyze({
-            toolVariables,
+            toolVariables: normalizedToolVariables,
             videoContext: {
               chunkPath: currentChunkPath,
               chunkIndex: chunkIndex,
@@ -245,7 +265,8 @@ async function run(input) {
             previousState: {
               summary: previousSummary,
               emotions: results.length > 0 ? results[results.length - 1].emotions : {}
-            }
+            },
+            config
           });
 
           // Collect result

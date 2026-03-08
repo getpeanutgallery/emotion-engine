@@ -14,22 +14,29 @@ function mockModule(modulePath, mockExports) {
 }
 
 // Mock AI provider
+let lastCompletionOptions = null;
 const mockAIProvider = {
-  getProviderFromEnv: () => ({
-    complete: async (options) => ({
-      content: JSON.stringify({
-        summary: 'Test chunk analysis',
-        emotions: {
-          patience: { score: 7, reasoning: 'Test reasoning' },
-          boredom: { score: 3, reasoning: 'Test reasoning' },
-          excitement: { score: 6, reasoning: 'Test reasoning' }
-        },
-        dominant_emotion: 'patience',
-        confidence: 0.85
-      }),
-      usage: { input: 150, output: 100 }
-    })
-  })
+  getProviderFromConfig: () => ({
+    complete: async (options) => {
+      lastCompletionOptions = options;
+      return {
+        content: JSON.stringify({
+          summary: 'Test chunk analysis',
+          emotions: {
+            patience: { score: 7, reasoning: 'Test reasoning' },
+            boredom: { score: 3, reasoning: 'Test reasoning' },
+            excitement: { score: 6, reasoning: 'Test reasoning' }
+          },
+          dominant_emotion: 'patience',
+          confidence: 0.85
+        }),
+        usage: { input: 150, output: 100 }
+      };
+    }
+  }),
+  getProviderFromEnv: () => {
+    throw new Error('getProviderFromEnv should not be used in emotion-lenses-tool');
+  }
 };
 
 mockModule('ai-providers/ai-provider-interface.js', mockAIProvider);
@@ -41,6 +48,7 @@ test('Emotion Lenses Tool', async (t) => {
   let soulPath, goalPath;
 
   t.beforeEach(() => {
+    lastCompletionOptions = null;
     if (!fs.existsSync(testOutputDir)) {
       fs.mkdirSync(testOutputDir, { recursive: true });
     }
@@ -221,7 +229,13 @@ test('Emotion Lenses Tool', async (t) => {
         },
         dialogueContext: { segments: [] },
         musicContext: { segments: [] },
-        previousState: { summary: '', emotions: {} }
+        previousState: { summary: '', emotions: {} },
+        config: {
+          ai: {
+            provider: 'openrouter',
+            video: { model: 'yaml-video-model' }
+          }
+        }
       };
       const result = await emotionLensesTool.analyze(input);
       property(result, 'prompt');
@@ -231,6 +245,7 @@ test('Emotion Lenses Tool', async (t) => {
       is(result.state.emotions.patience.score, 7);
       is(result.usage.input, 150);
       is(result.usage.output, 100);
+      is(lastCompletionOptions.model, 'yaml-video-model');
     });
 
     tNested.test('throws error when toolVariables is invalid', async () => {

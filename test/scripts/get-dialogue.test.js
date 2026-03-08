@@ -14,25 +14,32 @@ function mockModule(modulePath, mockExports) {
 }
 
 // Mock AI provider
+const providerConfigCalls = [];
 const mockAIProvider = {
-  getProviderFromEnv: () => ({
-    complete: async (options) => ({
-      content: JSON.stringify({
-        dialogue_segments: [
-          {
-            start: 0.5,
-            end: 3.2,
-            speaker: 'Speaker 1',
-            text: 'Test transcription',
-            confidence: 0.95
-          }
-        ],
-        summary: 'Test dialogue summary',
-        totalDuration: 10.0
-      }),
-      usage: { input: 100, output: 150 }
-    })
-  })
+  getProviderFromConfig: (config) => {
+    providerConfigCalls.push(config?.ai?.provider);
+    return {
+      complete: async (options) => ({
+        content: JSON.stringify({
+          dialogue_segments: [
+            {
+              start: 0.5,
+              end: 3.2,
+              speaker: 'Speaker 1',
+              text: 'Test transcription',
+              confidence: 0.95
+            }
+          ],
+          summary: 'Test dialogue summary',
+          totalDuration: 10.0
+        }),
+        usage: { input: 100, output: 150 }
+      })
+    };
+  },
+  getProviderFromEnv: () => {
+    throw new Error('getProviderFromEnv should not be used in get-dialogue');
+  }
 };
 
 // Mock child_process
@@ -66,6 +73,7 @@ test('Get Dialogue Script', async (t) => {
   const testOutputDir = '/tmp/test-dialogue-output';
 
   t.beforeEach(() => {
+    providerConfigCalls.length = 0;
     if (!fs.existsSync(testOutputDir)) fs.mkdirSync(testOutputDir, { recursive: true });
   });
 
@@ -106,7 +114,7 @@ test('Get Dialogue Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
+        config: { ai: { provider: 'openai', dialogue: { model: 'test-dialogue-model' } } }
       };
       await getDialogueScript.run(input);
       const artifactPath = path.join(testOutputDir, 'phase1-gather-context', 'dialogue-data.json');
@@ -114,6 +122,16 @@ test('Get Dialogue Script', async (t) => {
       const data = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
       property(data, 'dialogue_segments');
       property(data, 'summary');
+    });
+
+    tNested.test('selects provider from YAML config.ai.provider', async () => {
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: { ai: { provider: 'anthropic', dialogue: { model: 'test-dialogue-model' } } }
+      };
+      await getDialogueScript.run(input);
+      assert.deepEqual(providerConfigCalls, ['anthropic']);
     });
   });
 

@@ -70,7 +70,9 @@ settings:
 
 ### Removed (Migrate to YAML)
 
-The following environment variables were removed and must be configured in YAML:
+The following environment variables were removed and must be configured in YAML.
+
+Runtime behavior note: `AI_PROVIDER` and `AI_MODEL` are ignored during normal pipeline execution; provider/model selection comes from YAML (`ai.provider`, `ai.<domain>.model`).
 
 | Old Env Var | New YAML Location |
 |-------------|-------------------|

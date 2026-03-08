@@ -21,21 +21,28 @@ function mockModule(modulePath, mockExports) {
 }
 
 // Mock AI provider
+const providerConfigCalls = [];
 const mockAIProvider = {
-  getProviderFromEnv: () => ({
-    complete: async (options) => ({
-      content: JSON.stringify({
-        type: 'music',
-        description: 'Test music description',
-        mood: 'upbeat',
-        intensity: 7
-      }),
-      usage: {
-        input: 80,
-        output: 60
-      }
-    })
-  })
+  getProviderFromConfig: (config) => {
+    providerConfigCalls.push(config?.ai?.provider);
+    return {
+      complete: async (options) => ({
+        content: JSON.stringify({
+          type: 'music',
+          description: 'Test music description',
+          mood: 'upbeat',
+          intensity: 7
+        }),
+        usage: {
+          input: 80,
+          output: 60
+        }
+      })
+    };
+  },
+  getProviderFromEnv: () => {
+    throw new Error('getProviderFromEnv should not be used in get-music');
+  }
 };
 
 // Mock child_process
@@ -74,6 +81,7 @@ test('Get Music Script', async (t) => {
   const testOutputDir = '/tmp/test-music-output';
 
   t.beforeEach(() => {
+    providerConfigCalls.length = 0;
     if (!fs.existsSync(testOutputDir)) {
       fs.mkdirSync(testOutputDir, { recursive: true });
     }
@@ -118,7 +126,7 @@ test('Get Music Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { music: { model: 'test-music-model' } } }
+        config: { ai: { provider: 'openai', music: { model: 'test-music-model' } } }
       };
       await getMusicScript.run(input);
       const artifactPath = path.join(testOutputDir, 'phase1-gather-context', 'music-data.json');
@@ -126,6 +134,16 @@ test('Get Music Script', async (t) => {
       const data = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
       property(data, 'segments');
       property(data, 'summary');
+    });
+
+    tNested.test('selects provider from YAML config.ai.provider', async () => {
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: { ai: { provider: 'gemini', music: { model: 'test-music-model' } } }
+      };
+      await getMusicScript.run(input);
+      assert.deepEqual(providerConfigCalls, ['gemini']);
     });
   });
 
