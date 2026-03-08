@@ -16,6 +16,11 @@ const fs = require('fs');
 const aiProvider = require('ai-providers/ai-provider-interface.js');
 const { fileToBase64, detectMimeType } = require('ai-providers/utils/file-utils.cjs');
 
+// Enable digital twin transport for offline tests
+process.env.NODE_ENV = 'test';
+process.env.DIGITAL_TWIN_PACK = '/home/derrick/.openclaw/workspace/projects/peanut-gallery/digital-twin-emotion-engine-providers';
+process.env.DIGITAL_TWIN_CASSETTE = 'providers';
+
 let passed = 0;
 let failed = 0;
 
@@ -86,69 +91,80 @@ async function runTests() {
   // Test 3: Completion flow (skip if API key not available)
   console.log('\nTesting completion flow:\n');
 
-  const apiKey = process.env.AI_API_KEY || process.env.OPENROUTER_API_KEY;
+  // Use dummy key for twin mode (real key if provided but not needed)
+  const apiKey = (process.env.AI_API_KEY || process.env.OPENROUTER_API_KEY || 'dummy-key');
   const provider = process.env.AI_PROVIDER || 'openrouter';
+  const providerImpl = aiProvider.loadProvider(provider);
 
-  if (!apiKey) {
-    console.log('⊘ Skipping completion tests - API key not set');
-    console.log('Set AI_API_KEY or OPENROUTER_API_KEY to run full integration tests.\n');
-    passed += 3; // Count skipped tests as passed
-  } else {
-    const providerImpl = aiProvider.loadProvider(provider);
+  // Note: DIGITAL_TWIN_CASSETTE is set to 'providers' at the top
+  // The providers cassette contains interactions for all supported providers
+
+  // Model map to match cassette
+  const modelMap = {
+    openrouter: 'qwen/qwen-3.5-397b-a17b',
+    anthropic: 'claude-3-5-sonnet-20241022',
+    openai: 'gpt-4-turbo',
+    gemini: 'gemini-1.5-pro'
+  };
+  const model = modelMap[provider] || modelMap.openrouter;
+
+  await asyncTest('executes text-only completion', async () => {
+    const response = await providerImpl.complete({
+      prompt: 'Say hello',
+      model: model,
+      apiKey: apiKey,
+    });
     
-    await asyncTest('executes text-only completion', async () => {
-      const response = await providerImpl.complete({
-        prompt: 'Say "Hello, World!"',
-        model: provider === 'openrouter' ? 'qwen/qwen-2.5-72b-instruct' : 
-               provider === 'anthropic' ? 'claude-3-5-sonnet-20241022' :
-               provider === 'gemini' ? 'gemini-1.5-flash' : 'gpt-4-turbo',
-        apiKey: apiKey,
-      });
-      
-      if (!response.content) throw new Error('Should have content');
-      if (typeof response.content !== 'string') throw new Error('Content should be string');
-      if (!response.usage) throw new Error('Should have usage');
-      if (typeof response.usage.input !== 'number') throw new Error('Usage input should be number');
-      if (typeof response.usage.output !== 'number') throw new Error('Usage output should be number');
-    });
+    if (!response.content) throw new Error('Should have content');
+    if (typeof response.content !== 'string') throw new Error('Content should be string');
+    if (!response.usage) throw new Error('Should have usage');
+    if (typeof response.usage.input !== 'number') throw new Error('Usage input should be number');
+    if (typeof response.usage.output !== 'number') throw new Error('Usage output should be number');
+  });
 
-    await asyncTest('handles messages array format', async () => {
-      const response = await providerImpl.complete({
-        prompt: [
-          { role: 'user', content: 'Say hello' }
-        ],
-        model: provider === 'openrouter' ? 'qwen/qwen-2.5-72b-instruct' : 
-               provider === 'anthropic' ? 'claude-3-5-sonnet-20241022' :
-               provider === 'gemini' ? 'gemini-1.5-flash' : 'gpt-4-turbo',
-        apiKey: apiKey,
-      });
-      
-      if (!response.content) throw new Error('Should have content');
+  await asyncTest('handles messages array format', async () => {
+    // OpenRouter expects content as array of parts; others use string
+    let prompt;
+    if (provider === 'openrouter') {
+      prompt = [
+        { role: 'user', content: [{ type: 'text', text: 'Say hello' }] }
+      ];
+    } else {
+      prompt = [
+        { role: 'user', content: 'Say hello' }
+      ];
+    }
+    const response = await providerImpl.complete({
+      prompt: prompt,
+      model: model,
+      apiKey: apiKey,
     });
+    
+    if (!response.content) throw new Error('Should have content');
+  });
 
-    await asyncTest('throws error for invalid API key', async () => {
-      try {
-        await providerImpl.complete({
-          prompt: 'Test',
-          model: 'invalid-model',
-          apiKey: 'invalid-key',
-        });
-        throw new Error('Should have thrown error');
-      } catch (error) {
-        // Should get an error (401, 400, or similar)
-        if (!error.message) throw new Error('Error should have message');
-      }
-    });
-  }
+  await asyncTest('throws error for invalid API key', async () => {
+    try {
+      await providerImpl.complete({
+        prompt: 'Test',
+        model: 'invalid-model',
+        apiKey: 'invalid-key',
+      });
+      throw new Error('Should have thrown error');
+    } catch (error) {
+      // Should get an error (cache miss, 401, 400, or similar)
+      if (!error.message) throw new Error('Error should have message');
+    }
+  });
 
   // Test 4: Error handling
   console.log('\nTesting error handling:\n');
 
-  const providerImpl = aiProvider.loadProvider('openrouter');
+  const errorProviderImpl = aiProvider.loadProvider('openrouter');
   
   await asyncTest('handles missing prompt gracefully', async () => {
     try {
-      await providerImpl.complete({
+      await errorProviderImpl.complete({
         model: 'test-model',
         apiKey: 'test-key',
       });
@@ -162,7 +178,7 @@ async function runTests() {
 
   await asyncTest('handles missing model gracefully', async () => {
     try {
-      await providerImpl.complete({
+      await errorProviderImpl.complete({
         prompt: 'Test',
         apiKey: 'test-key',
       });

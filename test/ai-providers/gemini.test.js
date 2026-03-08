@@ -5,7 +5,13 @@
  * Run with: node test/ai-providers/gemini.test.js
  */
 
+const path = require('path');
 const gemini = require('ai-providers/providers/gemini.cjs');
+
+// Enable digital twin transport for offline tests
+process.env.NODE_ENV = 'test';
+process.env.DIGITAL_TWIN_PACK = '/home/derrick/.openclaw/workspace/projects/peanut-gallery/digital-twin-emotion-engine-providers';
+process.env.DIGITAL_TWIN_CASSETTE = 'providers';
 
 let passed = 0;
 let failed = 0;
@@ -85,54 +91,50 @@ test('rejects invalid baseUrl', () => {
 console.log('\nTesting complete():\n');
 
 async function runCompletionTests() {
-  const apiKey = process.env.GEMINI_API_KEY;
-  
-  if (!apiKey) {
-    console.log('⊘ Skipping complete() tests - GEMINI_API_KEY not set');
-    passed += 3; // Count skipped tests as passed
-  } else {
-    await asyncTest('returns content and usage', async () => {
-      const response = await gemini.complete({
-        prompt: 'Say hello',
+  // Use dummy key for twin mode (real key if provided but not needed)
+  const apiKey = process.env.GEMINI_API_KEY || 'AIzaSyDummyKey';
+
+  await asyncTest('returns content and usage', async () => {
+    const response = await gemini.complete({
+      prompt: 'Say hello',
+      model: 'gemini-1.5-pro',
+      apiKey: apiKey,
+    });
+    
+    if (!response.content) throw new Error('Should have content');
+    if (typeof response.content !== 'string') throw new Error('Content should be string');
+    if (!response.usage) throw new Error('Should have usage');
+    if (typeof response.usage.input !== 'number') throw new Error('Usage input should be number');
+    if (typeof response.usage.output !== 'number') throw new Error('Usage output should be number');
+  });
+
+  await asyncTest('throws without prompt', async () => {
+    try {
+      await gemini.complete({
         model: 'gemini-1.5-pro',
         apiKey: apiKey,
       });
-      
-      if (!response.content) throw new Error('Should have content');
-      if (typeof response.content !== 'string') throw new Error('Content should be string');
-      if (!response.usage) throw new Error('Should have usage');
-      if (typeof response.usage.input !== 'number') throw new Error('Usage input should be number');
-      if (typeof response.usage.output !== 'number') throw new Error('Usage output should be number');
-    });
-
-    await asyncTest('throws without prompt', async () => {
-      try {
-        await gemini.complete({
-          model: 'gemini-1.5-pro',
-          apiKey: apiKey,
-        });
-        throw new Error('Should have thrown error');
-      } catch (error) {
-        if (!error.message.includes('prompt is required')) {
-          throw new Error(`Wrong error message: ${error.message}`);
-        }
+      throw new Error('Should have thrown error');
+    } catch (error) {
+      if (!error.message.includes('prompt is required')) {
+        throw new Error(`Wrong error message: ${error.message}`);
       }
-    });
+    }
+  });
 
-    await asyncTest('throws without model', async () => {
-      try {
-        await gemini.complete({
-          prompt: 'Test',
-          apiKey: apiKey,
-        });
-        throw new Error('Should have thrown error');
-      } catch (error) {
-        if (!error.message.includes('model is required')) {
-          throw new Error(`Wrong error message: ${error.message}`);
-        }
+  await asyncTest('throws without model', async () => {
+    try {
+      await gemini.complete({
+        prompt: 'Test',
+        apiKey: apiKey,
+      });
+      throw new Error('Should have thrown error');
+    } catch (error) {
+      if (!error.message.includes('model is required')) {
+        throw new Error(`Wrong error message: ${error.message}`);
       }
-    });
-  }
+    }
+  });
 
   // Summary
   console.log('\n==========================');
