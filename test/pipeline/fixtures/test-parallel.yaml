@@ -8,13 +8,21 @@ asset:
   outputDir: "output/parallel-test"
 
 ai:
-  provider: openrouter
   dialogue:
-    model: test-dialogue-model
+    targets:
+      - adapter:
+          name: openrouter
+          model: test-dialogue-model
   music:
-    model: test-music-model
+    targets:
+      - adapter:
+          name: openrouter
+          model: test-music-model
   video:
-    model: test-video-model
+    targets:
+      - adapter:
+          name: openrouter
+          model: test-video-model
 
 gather_context:
   parallel:

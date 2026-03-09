@@ -18,6 +18,42 @@ const {
   isParallelPhase
 } = require('../../server/lib/config-loader.cjs');
 
+function makeAiConfig({
+  adapterName = 'openrouter',
+  dialogueModel = 'qwen/qwen-3.5-397b-a17b',
+  musicModel = 'qwen/qwen-3.5-397b-a17b',
+  videoModel = 'qwen/qwen-3.5-397b-a17b',
+  dialogueParams,
+  musicParams,
+  videoParams,
+  dialogueRetry,
+  musicRetry,
+  videoRetry
+} = {}) {
+  const target = (model, params) => ({
+    adapter: {
+      name: adapterName,
+      model,
+      ...(params !== undefined ? { params } : {})
+    }
+  });
+
+  return {
+    dialogue: {
+      ...(dialogueRetry !== undefined ? { retry: dialogueRetry } : {}),
+      targets: [target(dialogueModel, dialogueParams)]
+    },
+    music: {
+      ...(musicRetry !== undefined ? { retry: musicRetry } : {}),
+      targets: [target(musicModel, musicParams)]
+    },
+    video: {
+      ...(videoRetry !== undefined ? { retry: videoRetry } : {}),
+      targets: [target(videoModel, videoParams)]
+    }
+  };
+}
+
 test('Config Loader - loadConfig', async (t) => {
   await t.test('should load YAML config file', async () => {
     const configPath = path.join(__dirname, 'fixtures', 'valid-config.yaml');
@@ -105,12 +141,7 @@ test('Config Loader - validateConfig', async (t) => {
   await t.test('should validate config with gather_context scripts', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai: makeAiConfig(),
       gather_context: ['script1.cjs', 'script2.cjs']
     };
     
@@ -122,12 +153,7 @@ test('Config Loader - validateConfig', async (t) => {
   await t.test('should validate config with process scripts', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai: makeAiConfig(),
       process: ['script1.cjs']
     };
     
@@ -139,12 +165,7 @@ test('Config Loader - validateConfig', async (t) => {
   await t.test('should validate config with report scripts', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai: makeAiConfig(),
       report: ['script1.cjs']
     };
     
@@ -188,12 +209,7 @@ test('Config Loader - validateConfig', async (t) => {
   await t.test('should validate parallel execution format', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai: makeAiConfig(),
       gather_context: {
         parallel: [
           { script: 'script1.cjs' },
@@ -210,12 +226,7 @@ test('Config Loader - validateConfig', async (t) => {
   await t.test('should validate sequential process format', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai: makeAiConfig(),
       process: {
         sequential: [
           { script: 'script1.cjs' },
@@ -232,12 +243,7 @@ test('Config Loader - validateConfig', async (t) => {
   await t.test('should validate debug.keepProcessedIntermediates as boolean', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai: makeAiConfig(),
       gather_context: ['script1.cjs'],
       debug: {
         keepProcessedIntermediates: false
@@ -251,12 +257,7 @@ test('Config Loader - validateConfig', async (t) => {
   await t.test('should fail validation when debug.keepProcessedIntermediates is not boolean', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai: makeAiConfig(),
       gather_context: ['script1.cjs'],
       debug: {
         keepProcessedIntermediates: 'nope'
@@ -271,12 +272,7 @@ test('Config Loader - validateConfig', async (t) => {
   await t.test('should validate debug.captureRaw as boolean', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai: makeAiConfig(),
       gather_context: ['script1.cjs'],
       debug: {
         captureRaw: true
@@ -290,12 +286,7 @@ test('Config Loader - validateConfig', async (t) => {
   await t.test('should fail validation when debug.captureRaw is not boolean', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai: makeAiConfig(),
       gather_context: ['script1.cjs'],
       debug: {
         captureRaw: 'yes'
@@ -312,37 +303,24 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
   await t.test('should validate config with complete AI configuration', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai: makeAiConfig(),
       gather_context: ['script1.cjs']
     };
-    
+
     const result = validateConfig(config);
     assert.strictEqual(result.valid, true);
     assert.strictEqual(result.errors.length, 0);
   });
-  
+
   await t.test('should validate ai.video.retry when configured', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: {
-          model: 'qwen/qwen-3.5-397b-a17b',
-          retry: {
-            maxAttempts: 2,
-            backoffMs: 500,
-            retryOnParseError: true,
-            retryOnProviderError: true
-          }
+      ai: makeAiConfig({
+        videoRetry: {
+          maxAttempts: 2,
+          backoffMs: 500
         }
-      },
+      }),
       gather_context: ['script1.cjs']
     };
 
@@ -353,19 +331,13 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
   await t.test('should fail validation with invalid ai.video.retry fields', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: {
-          model: 'qwen/qwen-3.5-397b-a17b',
-          retry: {
-            maxAttempts: 0,
-            backoffMs: -1,
-            retryOnParseError: 'yes'
-          }
+      ai: makeAiConfig({
+        videoRetry: {
+          maxAttempts: 0,
+          backoffMs: -1,
+          retryOnParseError: true
         }
-      },
+      }),
       gather_context: ['script1.cjs']
     };
 
@@ -373,7 +345,7 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
     assert.strictEqual(result.valid, false);
     assert(result.errors.some(e => e.includes('"ai.video.retry.maxAttempts"')));
     assert(result.errors.some(e => e.includes('"ai.video.retry.backoffMs"')));
-    assert(result.errors.some(e => e.includes('"ai.video.retry.retryOnParseError"')));
+    assert(result.errors.some(e => e.includes('Unsupported "ai.video.retry.retryOnParseError"')));
   });
 
   await t.test('should fail validation with missing ai configuration', () => {
@@ -381,109 +353,112 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       gather_context: ['script1.cjs']
     };
-    
+
     const result = validateConfig(config);
     assert.strictEqual(result.valid, false);
     assert(result.errors.some(e => e.includes('Missing required "ai" configuration')));
   });
-  
-  await t.test('should fail validation with missing ai.provider', () => {
+
+  await t.test('should fail validation when ai.provider is present (forbidden)', () => {
+    const ai = makeAiConfig();
+    ai.provider = 'openrouter';
+
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai,
       gather_context: ['script1.cjs']
     };
-    
+
     const result = validateConfig(config);
     assert.strictEqual(result.valid, false);
-    assert(result.errors.some(e => e.includes('Missing required "ai.provider"')));
+    assert(result.errors.some(e => e.includes('Forbidden "ai.provider"')));
   });
-  
-  await t.test('should fail validation with missing ai.dialogue.model', () => {
+
+  await t.test('should fail validation with missing ai.dialogue.targets', () => {
+    const ai = makeAiConfig();
+    delete ai.dialogue;
+
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai,
       gather_context: ['script1.cjs']
     };
-    
+
     const result = validateConfig(config);
     assert.strictEqual(result.valid, false);
-    assert(result.errors.some(e => e.includes('Missing required "ai.dialogue.model"')));
+    assert(result.errors.some(e => e.includes('Missing required "ai.dialogue.targets"')));
   });
-  
-  await t.test('should fail validation with missing ai.music.model', () => {
+
+  await t.test('should fail validation when ai.dialogue.model is present (forbidden legacy key)', () => {
+    const ai = makeAiConfig();
+    ai.dialogue.model = 'legacy-model';
+
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai,
       gather_context: ['script1.cjs']
     };
-    
+
     const result = validateConfig(config);
     assert.strictEqual(result.valid, false);
-    assert(result.errors.some(e => e.includes('Missing required "ai.music.model"')));
+    assert(result.errors.some(e => e.includes('Forbidden "ai.dialogue.model"')));
   });
-  
-  await t.test('should fail validation with missing ai.video.model', () => {
+
+  await t.test('should fail validation with missing ai.music.targets', () => {
+    const ai = makeAiConfig();
+    delete ai.music;
+
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai,
       gather_context: ['script1.cjs']
     };
-    
+
     const result = validateConfig(config);
     assert.strictEqual(result.valid, false);
-    assert(result.errors.some(e => e.includes('Missing required "ai.video.model"')));
+    assert(result.errors.some(e => e.includes('Missing required "ai.music.targets"')));
   });
-  
+
+  await t.test('should fail validation with missing ai.video.targets', () => {
+    const ai = makeAiConfig();
+    delete ai.video;
+
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai,
+      gather_context: ['script1.cjs']
+    };
+
+    const result = validateConfig(config);
+    assert.strictEqual(result.valid, false);
+    assert(result.errors.some(e => e.includes('Missing required "ai.video.targets"')));
+  });
+
   await t.test('should fail validation when ai.model is present (forbidden)', () => {
+    const ai = makeAiConfig();
+    ai.model = 'some-model';
+
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        model: 'some-model', // Forbidden top-level model
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai,
       gather_context: ['script1.cjs']
     };
-    
+
     const result = validateConfig(config);
     assert.strictEqual(result.valid, false);
-    assert(result.errors.some(e => e.includes('Forbidden "ai.model"') && e.includes('explicit domain models')));
+    assert(result.errors.some(e => e.includes('Forbidden "ai.model"')));
   });
-  
+
   await t.test('should allow ai.model to be undefined (not an error)', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
-      ai: {
-        provider: 'openrouter',
-        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
-        music: { model: 'qwen/qwen-3.5-397b-a17b' },
-        video: { model: 'qwen/qwen-3.5-397b-a17b' }
-      },
+      ai: makeAiConfig(),
       gather_context: ['script1.cjs']
     };
-    
+
     // Ensure ai.model is explicitly undefined (not present)
     assert.strictEqual(config.ai.model, undefined);
-    
+
     const result = validateConfig(config);
     assert.strictEqual(result.valid, true);
   });

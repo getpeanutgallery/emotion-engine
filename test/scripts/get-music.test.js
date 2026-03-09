@@ -22,23 +22,27 @@ function mockModule(modulePath, mockExports) {
 
 // Mock AI provider
 const providerConfigCalls = [];
+const mockCompletion = async (options) => ({
+  content: JSON.stringify({
+    type: 'music',
+    description: 'Test music description',
+    mood: 'upbeat',
+    intensity: 7
+  }),
+  usage: {
+    input: 80,
+    output: 60
+  }
+});
+
 const mockAIProvider = {
   getProviderFromConfig: (config) => {
     providerConfigCalls.push(config?.ai?.provider);
-    return {
-      complete: async (options) => ({
-        content: JSON.stringify({
-          type: 'music',
-          description: 'Test music description',
-          mood: 'upbeat',
-          intensity: 7
-        }),
-        usage: {
-          input: 80,
-          output: 60
-        }
-      })
-    };
+    return { complete: mockCompletion };
+  },
+  loadProvider: (providerName) => {
+    providerConfigCalls.push(providerName);
+    return { complete: mockCompletion };
   },
   getProviderFromEnv: () => {
     throw new Error('getProviderFromEnv should not be used in get-music');
@@ -76,6 +80,25 @@ mockModule('child_process', mockChildProcess);
 // Require module under test
 const getMusicScript = require('../../server/scripts/get-context/get-music.cjs');
 
+function makeMusicConfig({ adapterName = 'openrouter', model = 'test-music-model', params, retry } = {}) {
+  return {
+    ai: {
+      music: {
+        ...(retry !== undefined ? { retry } : {}),
+        targets: [
+          {
+            adapter: {
+              name: adapterName,
+              model,
+              ...(params !== undefined ? { params } : {})
+            }
+          }
+        ]
+      }
+    }
+  };
+}
+
 // Tests
 test('Get Music Script', async (t) => {
   const testOutputDir = '/tmp/test-music-output';
@@ -102,7 +125,7 @@ test('Get Music Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { music: { model: 'test-music-model' } } }
+        config: makeMusicConfig()
       };
       const result = await getMusicScript.run(input);
       property(result, 'artifacts');
@@ -116,7 +139,7 @@ test('Get Music Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { music: { model: 'test-music-model' } } }
+        config: makeMusicConfig()
       };
       const result = await getMusicScript.run(input);
       ok(Array.isArray(result.artifacts.musicData.segments));
@@ -126,7 +149,7 @@ test('Get Music Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { provider: 'openai', music: { model: 'test-music-model' } } }
+        config: makeMusicConfig({ adapterName: 'openai' })
       };
       await getMusicScript.run(input);
       const artifactPath = path.join(testOutputDir, 'phase1-gather-context', 'music-data.json');
@@ -140,7 +163,7 @@ test('Get Music Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { provider: 'gemini', music: { model: 'test-music-model' } } }
+        config: makeMusicConfig({ adapterName: 'gemini' })
       };
       await getMusicScript.run(input);
       assert.deepEqual(providerConfigCalls, ['gemini']);
@@ -150,9 +173,7 @@ test('Get Music Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: {
-          ai: { music: { model: 'test-music-model' } }
-        }
+        config: makeMusicConfig()
       };
 
       await getMusicScript.run(input);
@@ -168,7 +189,7 @@ test('Get Music Script', async (t) => {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         config: {
-          ai: { music: { model: 'test-music-model' } },
+          ...makeMusicConfig(),
           debug: { keepProcessedIntermediates: false }
         }
       };
@@ -184,7 +205,7 @@ test('Get Music Script', async (t) => {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         config: {
-          ai: { provider: 'gemini', music: { model: 'test-music-model' } },
+          ...makeMusicConfig({ adapterName: 'gemini' }),
           debug: { captureRaw: true, keepProcessedIntermediates: false }
         }
       };
@@ -234,7 +255,7 @@ test('Get Music Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { music: { model: 'test-music-model' } } }
+        config: makeMusicConfig()
       };
       const result = await getMusicScript.run(input);
       const segment = result.artifacts.musicData.segments[0];
@@ -248,7 +269,7 @@ test('Get Music Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { music: { model: 'test-music-model' } } }
+        config: makeMusicConfig()
       };
       const result = await getMusicScript.run(input);
       const segment = result.artifacts.musicData.segments[0];
@@ -260,7 +281,7 @@ test('Get Music Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { music: { model: 'test-music-model' } } }
+        config: makeMusicConfig()
       };
       const result = await getMusicScript.run(input);
       const segment = result.artifacts.musicData.segments[0];
@@ -273,7 +294,7 @@ test('Get Music Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { music: { model: 'test-music-model' } } }
+        config: makeMusicConfig()
       };
       const result = await getMusicScript.run(input);
       is(result.artifacts.musicData.hasMusic, true);

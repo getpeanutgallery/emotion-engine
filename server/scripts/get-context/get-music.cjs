@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const { exec, execSync } = require('child_process');
 const { promisify } = require('util');
-const aiProvider = require('ai-providers/ai-provider-interface.js');
+const { executeWithTargets, getProviderForTarget } = require('../../lib/ai-targets.cjs');
 const outputManager = require('../../lib/output-manager.cjs');
 const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
 const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
@@ -31,6 +31,15 @@ const SCRIPT_ID = 'get-music';
 
 function pad(value, width) {
   return String(value).padStart(width, '0');
+}
+
+function getRetryConfig(config = {}) {
+  const retry = config?.ai?.music?.retry || {};
+
+  return {
+    maxAttempts: Number.isInteger(retry.maxAttempts) && retry.maxAttempts > 0 ? retry.maxAttempts : 1,
+    backoffMs: Number.isInteger(retry.backoffMs) && retry.backoffMs >= 0 ? retry.backoffMs : 0
+  };
 }
 
 function sanitizeRawCaptureValue(value, depth = 0, seen = new WeakSet()) {
@@ -217,6 +226,16 @@ async function run(input) {
     const segments = [];
     let hasMusic = false;
 
+    // config.ai.music.targets[*].adapter.model is required (validated by config-loader)
+
+    const apiKey = process.env.AI_API_KEY;
+    if (!apiKey) {
+      throw new Error('GetMusic: AI_API_KEY environment variable is required');
+    }
+
+    const retryConfig = getRetryConfig(config);
+    console.log(`   🔁 Music retry config: attempts=${retryConfig.maxAttempts}, backoffMs=${retryConfig.backoffMs}`);
+
     // Analyze each segment
     for (let i = 0; i < numSegments; i++) {
       const startTime = i * segmentDuration;
@@ -236,70 +255,99 @@ async function run(input) {
       // Convert to base64
       const audioBase64 = fs.readFileSync(segmentPath).toString('base64');
 
-      // Get AI provider from YAML config
-      const provider = typeof aiProvider.getProviderFromConfig === 'function'
-        ? aiProvider.getProviderFromConfig(config)
-        : aiProvider.loadProvider(config?.ai?.provider || 'openrouter');
-
-      // Require explicit music model
-      const model = config?.ai?.music?.model;
-      if (!model) {
-        throw new Error('GetMusic: config.ai.music.model is required (missing in YAML config)');
-      }
-
-      const apiKey = process.env.AI_API_KEY;
-      if (!apiKey) {
-        throw new Error('GetMusic: AI_API_KEY environment variable is required');
-      }
-
       // Build analysis prompt
       const prompt = buildAnalysisPrompt(startTime, endTime);
 
-      let response = null;
-
       try {
-        // Call AI provider for analysis
-        response = await provider.complete({
-          prompt,
-          model,
-          apiKey,
-          attachments: [
-            {
-              type: 'audio',
-              data: audioBase64,
-              mimeType: 'audio/wav'
-            }
-          ],
-          options: {
-            temperature: 0.5,
-            maxTokens: 512
+        const { result: segmentResult } = await executeWithTargets({
+          config,
+          domain: 'music',
+          retry: retryConfig,
+          operation: async (ctx) => {
+            const adapter = ctx?.target?.adapter;
+            const provider = getProviderForTarget({
+              configForTarget: ctx.configForTarget,
+              target: ctx.target
+            });
+
+            const completion = await provider.complete({
+              prompt,
+              model: adapter?.model,
+              apiKey,
+              attachments: [
+                {
+                  type: 'audio',
+                  data: audioBase64,
+                  mimeType: 'audio/wav'
+                }
+              ],
+              options: {
+                temperature: 0.5,
+                maxTokens: 512,
+                ...(
+                  adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
+                    ? adapter.params
+                    : {}
+                )
+              }
+            });
+
+            const segmentAnalysis = parseSegmentResponse(completion.content, startTime, endTime);
+            return { completion, segmentAnalysis };
+          },
+          onAttempt: ({
+            ok,
+            attempt,
+            attemptInTarget,
+            target,
+            targetIndex,
+            targetCount,
+            failover,
+            result,
+            error
+          }) => {
+            if (!captureRaw) return;
+
+            const adapter = target?.adapter || null;
+
+            writeMusicSegmentRaw(i, attempt, {
+              segmentIndex: i,
+              startTime,
+              endTime,
+              attempt,
+              attemptInTarget,
+              targetIndex,
+              targetCount,
+              adapter,
+              failover: failover || null,
+              prompt,
+              rawResponse: ok ? sanitizeRawCaptureValue(result?.completion) : null,
+              parsed: ok ? result?.segmentAnalysis : null,
+              error: ok ? null : (error?.message || String(error)),
+              errorName: ok ? null : (error?.name || null),
+              errorCode: ok ? null : (error?.code || null),
+              errorStatus: ok ? null : (error?.response?.status || null),
+              errorStack: ok ? null : (typeof error?.stack === 'string' ? error.stack : null),
+              errorDebug: ok ? null : (sanitizeRawCaptureValue(error?.debug) || null),
+              errorResponse: ok ? null : (sanitizeRawCaptureValue(error?.response?.data) || null),
+              provider: adapter?.name || null,
+              model: adapter?.model || null,
+              requestMeta: {
+                adapter,
+                provider: adapter?.name || null,
+                model: adapter?.model || null,
+                segmentIndex: i,
+                attempt,
+                attemptInTarget,
+                targetIndex,
+                targetCount
+              }
+            });
           }
         });
 
-        // Parse segment analysis
-        const segmentAnalysis = parseSegmentResponse(response.content, startTime, endTime);
+        const segmentAnalysis = segmentResult.segmentAnalysis;
         segments.push(segmentAnalysis);
-
-        if (captureRaw) {
-          writeMusicSegmentRaw(i, 1, {
-            segmentIndex: i,
-            startTime,
-            endTime,
-            attempt: 1,
-            prompt,
-            rawResponse: sanitizeRawCaptureValue(response),
-            parsed: segmentAnalysis,
-            error: null,
-            provider: config?.ai?.provider || 'openrouter',
-            model,
-            requestMeta: {
-              provider: config?.ai?.provider || 'openrouter',
-              model,
-              segmentIndex: i,
-              attempt: 1
-            }
-          });
-        }
 
         if (segmentAnalysis.type === 'music' || segmentAnalysis.mood) {
           hasMusic = true;
@@ -319,33 +367,6 @@ async function run(input) {
           startTime,
           endTime
         });
-
-        if (captureRaw) {
-          writeMusicSegmentRaw(i, 1, {
-            segmentIndex: i,
-            startTime,
-            endTime,
-            attempt: 1,
-            prompt,
-            rawResponse: sanitizeRawCaptureValue(response),
-            parsed: null,
-            error: error?.message || String(error),
-            errorName: error?.name || null,
-            errorCode: error?.code || null,
-            errorStatus: error?.response?.status || null,
-            errorStack: typeof error?.stack === 'string' ? error.stack : null,
-            errorDebug: sanitizeRawCaptureValue(error?.debug) || null,
-            errorResponse: sanitizeRawCaptureValue(error?.response?.data) || null,
-            provider: config?.ai?.provider || 'openrouter',
-            model: model || null,
-            requestMeta: {
-              provider: config?.ai?.provider || 'openrouter',
-              model: model || null,
-              segmentIndex: i,
-              attempt: 1
-            }
-          });
-        }
 
         throw error;
       }
@@ -661,7 +682,7 @@ if (require.main === module) {
   console.log('');
   console.log('⚠️  This script requires:');
   console.log('   - AI_API_KEY environment variable');
-  console.log('   - config.ai.music.model (set in pipeline YAML)');
+  console.log('   - config.ai.music.targets[*].adapter.{name,model} (set in pipeline YAML)');
   console.log('   - ffmpeg installed for audio extraction');
   console.log('   - A model that supports audio analysis');
   console.log('');

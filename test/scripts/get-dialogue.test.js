@@ -15,27 +15,31 @@ function mockModule(modulePath, mockExports) {
 
 // Mock AI provider
 const providerConfigCalls = [];
+const mockCompletion = async (options) => ({
+  content: JSON.stringify({
+    dialogue_segments: [
+      {
+        start: 0.5,
+        end: 3.2,
+        speaker: 'Speaker 1',
+        text: 'Test transcription',
+        confidence: 0.95
+      }
+    ],
+    summary: 'Test dialogue summary',
+    totalDuration: 10.0
+  }),
+  usage: { input: 100, output: 150 }
+});
+
 const mockAIProvider = {
   getProviderFromConfig: (config) => {
     providerConfigCalls.push(config?.ai?.provider);
-    return {
-      complete: async (options) => ({
-        content: JSON.stringify({
-          dialogue_segments: [
-            {
-              start: 0.5,
-              end: 3.2,
-              speaker: 'Speaker 1',
-              text: 'Test transcription',
-              confidence: 0.95
-            }
-          ],
-          summary: 'Test dialogue summary',
-          totalDuration: 10.0
-        }),
-        usage: { input: 100, output: 150 }
-      })
-    };
+    return { complete: mockCompletion };
+  },
+  loadProvider: (providerName) => {
+    providerConfigCalls.push(providerName);
+    return { complete: mockCompletion };
   },
   getProviderFromEnv: () => {
     throw new Error('getProviderFromEnv should not be used in get-dialogue');
@@ -69,6 +73,25 @@ mockModule('child_process', mockChildProcess);
 
 const getDialogueScript = require('../../server/scripts/get-context/get-dialogue.cjs');
 
+function makeDialogueConfig({ adapterName = 'openrouter', model = 'test-dialogue-model', params, retry } = {}) {
+  return {
+    ai: {
+      dialogue: {
+        ...(retry !== undefined ? { retry } : {}),
+        targets: [
+          {
+            adapter: {
+              name: adapterName,
+              model,
+              ...(params !== undefined ? { params } : {})
+            }
+          }
+        ]
+      }
+    }
+  };
+}
+
 test('Get Dialogue Script', async (t) => {
   const testOutputDir = '/tmp/test-dialogue-output';
 
@@ -90,7 +113,7 @@ test('Get Dialogue Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
+        config: makeDialogueConfig()
       };
       const result = await getDialogueScript.run(input);
       property(result, 'artifacts');
@@ -104,7 +127,7 @@ test('Get Dialogue Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
+        config: makeDialogueConfig()
       };
       const result = await getDialogueScript.run(input);
       ok(Array.isArray(result.artifacts.dialogueData.dialogue_segments));
@@ -114,7 +137,7 @@ test('Get Dialogue Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { provider: 'openai', dialogue: { model: 'test-dialogue-model' } } }
+        config: makeDialogueConfig({ adapterName: 'openai' })
       };
       await getDialogueScript.run(input);
       const artifactPath = path.join(testOutputDir, 'phase1-gather-context', 'dialogue-data.json');
@@ -128,7 +151,7 @@ test('Get Dialogue Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { provider: 'anthropic', dialogue: { model: 'test-dialogue-model' } } }
+        config: makeDialogueConfig({ adapterName: 'anthropic' })
       };
       await getDialogueScript.run(input);
       assert.deepEqual(providerConfigCalls, ['anthropic']);
@@ -138,9 +161,7 @@ test('Get Dialogue Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: {
-          ai: { dialogue: { model: 'test-dialogue-model' } }
-        }
+        config: makeDialogueConfig()
       };
 
       await getDialogueScript.run(input);
@@ -155,7 +176,7 @@ test('Get Dialogue Script', async (t) => {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         config: {
-          ai: { dialogue: { model: 'test-dialogue-model' } },
+          ...makeDialogueConfig(),
           debug: { keepProcessedIntermediates: false }
         }
       };
@@ -171,7 +192,7 @@ test('Get Dialogue Script', async (t) => {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         config: {
-          ai: { provider: 'openai', dialogue: { model: 'test-dialogue-model' } },
+          ...makeDialogueConfig({ adapterName: 'openai' }),
           debug: { captureRaw: true, keepProcessedIntermediates: false }
         }
       };
@@ -217,7 +238,7 @@ test('Get Dialogue Script', async (t) => {
       const input = {
         assetPath: null,
         outputDir: testOutputDir,
-        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
+        config: makeDialogueConfig()
       };
       await rejects(getDialogueScript.run(input), /path|assetPath|required|type string/i);
     });
@@ -226,7 +247,7 @@ test('Get Dialogue Script', async (t) => {
       const input = {
         assetPath: '/path/to/video.mp4',
         outputDir: null,
-        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
+        config: makeDialogueConfig()
       };
       await rejects(getDialogueScript.run(input), /outputDir|path|required|type string/i);
     });
@@ -237,7 +258,7 @@ test('Get Dialogue Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
+        config: makeDialogueConfig()
       };
       const result = await getDialogueScript.run(input);
       const segment = result.artifacts.dialogueData.dialogue_segments[0];
@@ -252,7 +273,7 @@ test('Get Dialogue Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
+        config: makeDialogueConfig()
       };
       const result = await getDialogueScript.run(input);
       const segment = result.artifacts.dialogueData.dialogue_segments[0];
@@ -264,7 +285,7 @@ test('Get Dialogue Script', async (t) => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
-        config: { ai: { dialogue: { model: 'test-dialogue-model' } } }
+        config: makeDialogueConfig()
       };
       const result = await getDialogueScript.run(input);
       const segment = result.artifacts.dialogueData.dialogue_segments[0];

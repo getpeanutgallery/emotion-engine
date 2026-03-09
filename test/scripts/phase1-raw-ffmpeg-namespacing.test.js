@@ -16,39 +16,40 @@ function mockModule(modulePath, mockExports) {
   };
 }
 
-const mockAIProvider = {
-  getProviderFromConfig: () => ({
-    complete: async (options) => {
-      if (String(options?.model || '').includes('dialogue')) {
-        return {
-          content: JSON.stringify({
-            dialogue_segments: [
-              {
-                start: 0.5,
-                end: 3.2,
-                speaker: 'Speaker 1',
-                text: 'Test transcription',
-                confidence: 0.95
-              }
-            ],
-            summary: 'Test dialogue summary'
-            // Intentionally omit totalDuration so ffprobe is exercised
-          }),
-          usage: { input: 100, output: 150 }
-        };
-      }
+const mockCompletion = async (options) => {
+  if (String(options?.model || '').includes('dialogue')) {
+    return {
+      content: JSON.stringify({
+        dialogue_segments: [
+          {
+            start: 0.5,
+            end: 3.2,
+            speaker: 'Speaker 1',
+            text: 'Test transcription',
+            confidence: 0.95
+          }
+        ],
+        summary: 'Test dialogue summary'
+        // Intentionally omit totalDuration so ffprobe is exercised
+      }),
+      usage: { input: 100, output: 150 }
+    };
+  }
 
-      return {
-        content: JSON.stringify({
-          type: 'music',
-          description: 'Test music description',
-          mood: 'upbeat',
-          intensity: 7
-        }),
-        usage: { input: 80, output: 60 }
-      };
-    }
-  }),
+  return {
+    content: JSON.stringify({
+      type: 'music',
+      description: 'Test music description',
+      mood: 'upbeat',
+      intensity: 7
+    }),
+    usage: { input: 80, output: 60 }
+  };
+};
+
+const mockAIProvider = {
+  getProviderFromConfig: () => ({ complete: mockCompletion }),
+  loadProvider: () => ({ complete: mockCompletion }),
   getProviderFromEnv: () => {
     throw new Error('getProviderFromEnv should not be used in phase1 scripts');
   }
@@ -93,7 +94,13 @@ test('Phase1 raw ffmpeg/ffprobe logs are namespaced by script', async (t) => {
     assetPath: '/path/to/test-video.mp4',
     outputDir: testOutputDir,
     config: {
-      ai: { provider: 'openai', dialogue: { model: 'test-dialogue-model' } },
+      ai: {
+        dialogue: {
+          targets: [
+            { adapter: { name: 'openai', model: 'test-dialogue-model' } }
+          ]
+        }
+      },
       debug: { captureRaw: true, keepProcessedIntermediates: false }
     }
   });
@@ -102,7 +109,13 @@ test('Phase1 raw ffmpeg/ffprobe logs are namespaced by script', async (t) => {
     assetPath: '/path/to/test-video.mp4',
     outputDir: testOutputDir,
     config: {
-      ai: { provider: 'openai', music: { model: 'test-music-model' } },
+      ai: {
+        music: {
+          targets: [
+            { adapter: { name: 'openai', model: 'test-music-model' } }
+          ]
+        }
+      },
       debug: { captureRaw: true, keepProcessedIntermediates: false }
     }
   });

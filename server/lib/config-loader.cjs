@@ -80,10 +80,14 @@ function parseConfig(configString, format = 'yaml') {
  * - At least 1 script across all phases (gather_context, process, or report)
  * - If parallel execution, scripts must be in { parallel: [...] } format
  * - asset.inputPath and asset.outputDir are required
- * - ai must be present with provider and explicit domain models
- *   - Requires: config.ai, config.ai.provider
+ * - ai must be present with explicit per-operation target chains
+ *   - Forbids: config.ai.provider (provider selected via adapter.name per target)
  *   - Forbids: config.ai.model (top-level model)
- *   - Requires: config.ai.dialogue.model, config.ai.music.model, config.ai.video.model
+ *   - Forbids: config.ai.<op>.model (use adapter.model)
+ *   - Requires: ai.dialogue.targets[*].adapter.{name,model,params?}
+ *   - Requires: ai.music.targets[*].adapter.{name,model,params?}
+ *   - Requires: ai.video.targets[*].adapter.{name,model,params?}
+ *   - Optional per operation: ai.<op>.retry.{maxAttempts,backoffMs}
  * - debug keep flags must be booleans when provided
  *   - debug.keepProcessedIntermediates (new, default keep)
  *   - debug.keepProcessedFiles (alias)
@@ -118,49 +122,91 @@ function validateConfig(config) {
   if (!config.ai) {
     errors.push('Missing required "ai" configuration');
   } else {
-    // Check for forbidden top-level model
+    // Check for forbidden top-level model/provider
     if (config.ai.model !== undefined) {
-      errors.push('Forbidden "ai.model" - use explicit domain models (ai.dialogue.model, ai.music.model, ai.video.model)');
+      errors.push('Forbidden "ai.model" - use per-operation targets (ai.dialogue.targets, ai.music.targets, ai.video.targets)');
     }
-    
-    // Require provider
-    if (config.ai.provider === undefined) {
-      errors.push('Missing required "ai.provider"');
-    }
-    
-    // Require explicit domain models
-    if (config.ai.dialogue?.model === undefined) {
-      errors.push('Missing required "ai.dialogue.model"');
-    }
-    if (config.ai.music?.model === undefined) {
-      errors.push('Missing required "ai.music.model"');
-    }
-    if (config.ai.video?.model === undefined) {
-      errors.push('Missing required "ai.video.model"');
+    if (config.ai.provider !== undefined) {
+      errors.push('Forbidden "ai.provider" - use per-target adapter.name (ai.<op>.targets[*].adapter.name)');
     }
 
-    const retry = config.ai.video?.retry;
-    if (retry !== undefined) {
+    function validateRetry(retry, prefix) {
+      if (retry === undefined) return;
       if (typeof retry !== 'object' || retry === null || Array.isArray(retry)) {
-        errors.push('"ai.video.retry" must be an object when provided');
-      } else {
-        if (retry.maxAttempts !== undefined && (!Number.isInteger(retry.maxAttempts) || retry.maxAttempts < 1)) {
-          errors.push('"ai.video.retry.maxAttempts" must be an integer >= 1 when provided');
+        errors.push(`"${prefix}" must be an object when provided`);
+        return;
+      }
+
+      const allowed = new Set(['maxAttempts', 'backoffMs']);
+      for (const k of Object.keys(retry)) {
+        if (!allowed.has(k)) {
+          errors.push(`Unsupported "${prefix}.${k}" - supported fields: maxAttempts, backoffMs`);
         }
-        if (retry.backoffMs !== undefined && (!Number.isInteger(retry.backoffMs) || retry.backoffMs < 0)) {
-          errors.push('"ai.video.retry.backoffMs" must be an integer >= 0 when provided');
+      }
+
+      if (retry.maxAttempts !== undefined && (!Number.isInteger(retry.maxAttempts) || retry.maxAttempts < 1)) {
+        errors.push(`"${prefix}.maxAttempts" must be an integer >= 1 when provided`);
+      }
+      if (retry.backoffMs !== undefined && (!Number.isInteger(retry.backoffMs) || retry.backoffMs < 0)) {
+        errors.push(`"${prefix}.backoffMs" must be an integer >= 0 when provided`);
+      }
+    }
+
+    function validateTargets(opName) {
+      const op = config.ai?.[opName];
+
+      // Forbid legacy per-op model key
+      if (op?.model !== undefined) {
+        errors.push(`Forbidden "ai.${opName}.model" - use ai.${opName}.targets[*].adapter.model`);
+      }
+
+      const targets = op?.targets;
+      if (!Array.isArray(targets) || targets.length < 1) {
+        errors.push(`Missing required "ai.${opName}.targets" (must be a non-empty array)`);
+        return;
+      }
+
+      for (let i = 0; i < targets.length; i++) {
+        const target = targets[i];
+        const targetPrefix = `ai.${opName}.targets[${i}]`;
+
+        if (typeof target !== 'object' || target === null || Array.isArray(target)) {
+          errors.push(`"${targetPrefix}" must be an object`);
+          continue;
         }
 
-        const retryBooleanFields = ['retryOnParseError', 'retryOnProviderError'];
-        for (const field of retryBooleanFields) {
-          if (retry[field] !== undefined && typeof retry[field] !== 'boolean') {
-            errors.push(`"ai.video.retry.${field}" must be a boolean when provided`);
+        const adapter = target.adapter;
+        const adapterPrefix = `${targetPrefix}.adapter`;
+
+        if (typeof adapter !== 'object' || adapter === null || Array.isArray(adapter)) {
+          errors.push(`Missing required "${adapterPrefix}" (must be an object)`);
+          continue;
+        }
+
+        if (typeof adapter.name !== 'string' || adapter.name.trim().length === 0) {
+          errors.push(`Missing required "${adapterPrefix}.name" (must be a non-empty string)`);
+        }
+
+        if (typeof adapter.model !== 'string' || adapter.model.trim().length === 0) {
+          errors.push(`Missing required "${adapterPrefix}.model" (must be a non-empty string)`);
+        }
+
+        if (adapter.params !== undefined) {
+          // emotion-engine does NOT validate adapter.params contents, but it must be an object if present
+          if (typeof adapter.params !== 'object' || adapter.params === null || Array.isArray(adapter.params)) {
+            errors.push(`"${adapterPrefix}.params" must be an object when provided`);
           }
         }
       }
+
+      validateRetry(op?.retry, `ai.${opName}.retry`);
     }
+
+    validateTargets('dialogue');
+    validateTargets('music');
+    validateTargets('video');
   }
-  
+
   // Validate debug configuration when provided
   if (config.debug !== undefined) {
     if (typeof config.debug !== 'object' || config.debug === null || Array.isArray(config.debug)) {

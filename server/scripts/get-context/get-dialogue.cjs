@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const { exec, execSync } = require('child_process');
 const { promisify } = require('util');
-const aiProvider = require('ai-providers/ai-provider-interface.js');
+const { executeWithTargets, getProviderForTarget } = require('../../lib/ai-targets.cjs');
 const storage = require('../../lib/storage/storage-interface.js');
 const outputManager = require('../../lib/output-manager.cjs');
 const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
@@ -32,6 +32,15 @@ const SCRIPT_ID = 'get-dialogue';
 
 function pad(value, width) {
   return String(value).padStart(width, '0');
+}
+
+function getRetryConfig(config = {}) {
+  const retry = config?.ai?.dialogue?.retry || {};
+
+  return {
+    maxAttempts: Number.isInteger(retry.maxAttempts) && retry.maxAttempts > 0 ? retry.maxAttempts : 1,
+    backoffMs: Number.isInteger(retry.backoffMs) && retry.backoffMs >= 0 ? retry.backoffMs : 0
+  };
 }
 
 function sanitizeRawCaptureValue(value, depth = 0, seen = new WeakSet()) {
@@ -196,7 +205,7 @@ async function run(input) {
 
   let prompt = null;
   let response = null;
-  let model = config?.ai?.dialogue?.model || null;
+  let model = null;
 
   try {
     // Extract audio from video (if needed)
@@ -210,67 +219,114 @@ async function run(input) {
     const audioBase64 = fs.readFileSync(audioPath).toString('base64');
     const audioMimeType = 'audio/wav';
 
-    // Get AI provider from YAML config
-    const provider = typeof aiProvider.getProviderFromConfig === 'function'
-      ? aiProvider.getProviderFromConfig(config)
-      : aiProvider.loadProvider(config?.ai?.provider || 'openrouter');
-
-    // Require explicit dialogue model
-    model = config?.ai?.dialogue?.model;
-    if (!model) {
-      throw new Error('GetDialogue: config.ai.dialogue.model is required (missing in YAML config)');
-    }
+    // config.ai.dialogue.targets[*].adapter.model is required (validated by config-loader)
 
     const apiKey = process.env.AI_API_KEY;
     if (!apiKey) {
       throw new Error('GetDialogue: AI_API_KEY environment variable is required');
     }
 
+    const retryConfig = getRetryConfig(config);
+
     // Build transcription prompt
     prompt = buildTranscriptionPrompt();
 
-    // Call AI provider for transcription
+    console.log(`   🔁 Dialogue retry config: attempts=${retryConfig.maxAttempts}, backoffMs=${retryConfig.backoffMs}`);
+
+    // Call AI provider for transcription (targets + consolidated retries)
     console.log('   🤖 Calling AI provider for transcription...');
-    response = await provider.complete({
-      prompt,
-      model,
-      apiKey,
-      attachments: [
-        {
-          type: 'audio',
-          data: audioBase64,
-          mimeType: audioMimeType
-        }
-      ],
-      options: {
-        temperature: 0.3, // Lower temperature for accurate transcription
-        maxTokens: 4096
+
+    const { result: dialogueResult, meta } = await executeWithTargets({
+      config,
+      domain: 'dialogue',
+      retry: retryConfig,
+      operation: async (ctx) => {
+        const adapter = ctx?.target?.adapter;
+        const provider = getProviderForTarget({
+          configForTarget: ctx.configForTarget,
+          target: ctx.target
+        });
+
+        const completion = await provider.complete({
+          prompt,
+          model: adapter?.model,
+          apiKey,
+          attachments: [
+            {
+              type: 'audio',
+              data: audioBase64,
+              mimeType: audioMimeType
+            }
+          ],
+          options: {
+            temperature: 0.3,
+            maxTokens: 4096,
+            ...(
+              adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
+                ? adapter.params
+                : {}
+            )
+          }
+        });
+
+        const dialogueData = parseTranscriptionResponse(completion.content, audioPath, {
+          captureRaw,
+          ffmpegRawDir,
+          ffprobeLogName: 'ffprobe-audio-duration.json'
+        });
+
+        return { completion, dialogueData };
+      },
+      onAttempt: ({
+        ok,
+        attempt,
+        attemptInTarget,
+        target,
+        targetIndex,
+        targetCount,
+        failover,
+        result,
+        error
+      }) => {
+        if (!captureRaw) return;
+
+        const adapter = target?.adapter || null;
+
+        writeDialogueRaw(attempt, {
+          attempt,
+          attemptInTarget,
+          targetIndex,
+          targetCount,
+          adapter,
+          failover: failover || null,
+          prompt,
+          rawResponse: ok ? sanitizeRawCaptureValue(result?.completion) : null,
+          parsed: ok ? result?.dialogueData : null,
+          error: ok ? null : (error?.message || String(error)),
+          errorName: ok ? null : (error?.name || null),
+          errorCode: ok ? null : (error?.code || null),
+          errorStatus: ok ? null : (error?.response?.status || null),
+          errorStack: ok ? null : (typeof error?.stack === 'string' ? error.stack : null),
+          errorDebug: ok ? null : (sanitizeRawCaptureValue(error?.debug) || null),
+          errorResponse: ok ? null : (sanitizeRawCaptureValue(error?.response?.data) || null),
+          provider: adapter?.name || null,
+          model: adapter?.model || null,
+          requestMeta: {
+            adapter,
+            provider: adapter?.name || null,
+            model: adapter?.model || null,
+            attempt,
+            attemptInTarget,
+            targetIndex,
+            targetCount
+          }
+        });
       }
     });
 
-    // Parse transcription response
-    const dialogueData = parseTranscriptionResponse(response.content, audioPath, {
-      captureRaw,
-      ffmpegRawDir,
-      ffprobeLogName: 'ffprobe-audio-duration.json'
-    });
-
-    if (captureRaw) {
-      writeDialogueRaw(1, {
-        attempt: 1,
-        prompt,
-        rawResponse: sanitizeRawCaptureValue(response),
-        parsed: dialogueData,
-        error: null,
-        provider: config?.ai?.provider || 'openrouter',
-        model,
-        requestMeta: {
-          provider: config?.ai?.provider || 'openrouter',
-          model,
-          attempt: 1
-        }
-      });
-    }
+    response = dialogueResult?.completion || null;
+    const dialogueData = dialogueResult.dialogueData;
+    model = meta?.target?.adapter?.model || null;
 
     // Write intermediate artifact to phase directory
     const artifactPath = path.join(phaseDir, 'dialogue-data.json');
@@ -299,28 +355,7 @@ async function run(input) {
       errorStatus: error?.response?.status || null
     });
 
-    if (captureRaw) {
-      writeDialogueRaw(1, {
-        attempt: 1,
-        prompt,
-        rawResponse: sanitizeRawCaptureValue(response),
-        parsed: null,
-        error: error?.message || String(error),
-        errorName: error?.name || null,
-        errorCode: error?.code || null,
-        errorStatus: error?.response?.status || null,
-        errorStack: typeof error?.stack === 'string' ? error.stack : null,
-        errorDebug: sanitizeRawCaptureValue(error?.debug) || null,
-        errorResponse: sanitizeRawCaptureValue(error?.response?.data) || null,
-        provider: config?.ai?.provider || 'openrouter',
-        model: model || null,
-        requestMeta: {
-          provider: config?.ai?.provider || 'openrouter',
-          model: model || null,
-          attempt: 1
-        }
-      });
-    }
+    // AI attempts (including errors) are captured via executeWithTargets(onAttempt).
 
     console.error('   ❌ Error extracting dialogue:', error.message);
     throw error;
@@ -540,7 +575,7 @@ if (require.main === module) {
   console.log('');
   console.log('⚠️  This script requires:');
   console.log('   - AI_API_KEY environment variable');
-  console.log('   - config.ai.dialogue.model (set in pipeline YAML)');
+  console.log('   - config.ai.dialogue.targets[*].adapter.{name,model} (set in pipeline YAML)');
   console.log('   - ffmpeg installed for audio extraction');
   console.log('   - A model that supports audio transcription (e.g., Whisper)');
   console.log('');

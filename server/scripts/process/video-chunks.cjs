@@ -23,6 +23,7 @@ const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets
 const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
 const { ensureToolVersionsCaptured } = require('../../lib/tool-versions.cjs');
 const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
+const { executeWithTargets, createRetryableError, getTargetsFromConfig } = require('../../lib/ai-targets.cjs');
 
 const execAsync = promisify(exec);
 
@@ -36,9 +37,31 @@ function getRetryConfig(config = {}) {
   return {
     maxAttempts: Number.isInteger(retry.maxAttempts) && retry.maxAttempts > 0 ? retry.maxAttempts : 2,
     backoffMs: Number.isInteger(retry.backoffMs) && retry.backoffMs >= 0 ? retry.backoffMs : 500,
-    retryOnParseError: retry.retryOnParseError !== undefined ? !!retry.retryOnParseError : true,
-    retryOnProviderError: retry.retryOnProviderError !== undefined ? !!retry.retryOnProviderError : true
+    // Policy (not configurable via YAML): retry invalid output + provider errors.
+    retryOnParseError: true,
+    retryOnProviderError: true
   };
+}
+
+function getPrimaryVideoAdapter(config = {}) {
+  const targets = config?.ai?.video?.targets;
+  if (Array.isArray(targets) && targets.length > 0) {
+    const adapter = targets[0]?.adapter;
+    if (adapter && typeof adapter === 'object' && !Array.isArray(adapter)) {
+      return adapter;
+    }
+  }
+
+  // Legacy compatibility (non-schema): allow scripts/tests to pass old shape.
+  const legacyModel = config?.ai?.video?.model;
+  if (typeof legacyModel === 'string' && legacyModel.trim().length > 0) {
+    return {
+      name: config?.ai?.provider || 'openrouter',
+      model: legacyModel
+    };
+  }
+
+  return null;
 }
 
 function sleep(ms) {
@@ -134,140 +157,18 @@ function sanitizeRawCaptureValue(value, depth = 0, seen = new WeakSet()) {
   return out;
 }
 
-function buildRequestMeta({ chunkIndex, splitIndex, attempt, config }) {
+function buildRequestMeta({ chunkIndex, splitIndex, attempt, attemptInTarget, targetIndex, targetCount, adapter }) {
   return {
-    provider: config?.ai?.provider || 'openrouter',
-    model: config?.ai?.video?.model || null,
+    adapter: adapter || null,
+    provider: adapter?.name || null,
+    model: adapter?.model || null,
     chunkIndex,
     splitIndex: splitIndex || 0,
-    attempt
+    attempt,
+    attemptInTarget: attemptInTarget || null,
+    targetIndex: Number.isInteger(targetIndex) ? targetIndex : null,
+    targetCount: Number.isInteger(targetCount) ? targetCount : null
   };
-}
-
-async function analyzeChunkWithRetry({
-  analyzeInput,
-  retryConfig,
-  replayMode,
-  chunkLabel,
-  chunkIndex,
-  splitIndex,
-  startTime,
-  endTime,
-  toolVariables,
-  config,
-  writeChunkRaw
-}) {
-  let lastError = null;
-
-  for (let attempt = 1; attempt <= retryConfig.maxAttempts; attempt++) {
-    try {
-      const toolResult = await emotionLensesTool.analyze(analyzeInput);
-      const lenses = analyzeInput?.toolVariables?.variables?.lenses || [];
-      const schemaFailure = getSchemaFailureReason(toolResult?.state, lenses);
-
-      const candidateChunkResult = {
-        chunkIndex,
-        splitIndex,
-        startTime,
-        endTime,
-        status: 'success',
-        summary: toolResult?.state?.summary,
-        emotions: toolResult?.state?.emotions,
-        dominant_emotion: toolResult?.state?.dominant_emotion,
-        confidence: toolResult?.state?.confidence,
-        tokens: (toolResult?.usage?.input || 0) + (toolResult?.usage?.output || 0),
-        persona: {
-          soulPath: toolVariables.soulPath,
-          goalPath: toolVariables.goalPath,
-          lenses: toolVariables.variables?.lenses || []
-        }
-      };
-
-      const parseFailure = getChunkFailureReason(candidateChunkResult);
-      const invalidReason = schemaFailure || parseFailure;
-
-      if (!invalidReason) {
-        writeChunkRaw(chunkIndex, splitIndex || 0, {
-          chunkIndex,
-          splitIndex,
-          attempt,
-          prompt: toolResult?.prompt || null,
-          rawResponse: extractRawResponse(toolResult),
-          parsed: toolResult?.state || null,
-          error: null,
-          provider: config?.ai?.provider || 'openrouter',
-          model: config?.ai?.video?.model || null,
-          requestMeta: buildRequestMeta({ chunkIndex, splitIndex, attempt, config })
-        });
-
-        return { toolResult, chunkResult: candidateChunkResult, attempt };
-      }
-
-      writeChunkRaw(chunkIndex, splitIndex || 0, {
-        chunkIndex,
-        splitIndex,
-        attempt,
-        prompt: toolResult?.prompt || null,
-        rawResponse: extractRawResponse(toolResult),
-        parsed: toolResult?.state || null,
-        error: invalidReason,
-        provider: config?.ai?.provider || 'openrouter',
-        model: config?.ai?.video?.model || null,
-        requestMeta: buildRequestMeta({ chunkIndex, splitIndex, attempt, config })
-      });
-
-      lastError = new Error(`invalid_output: ${invalidReason}`);
-      lastError.__rawCaptured = true;
-      const shouldRetry = retryConfig.retryOnParseError && attempt < retryConfig.maxAttempts;
-
-      if (!shouldRetry) {
-        throw lastError;
-      }
-
-      console.warn(`      ⚠️  ${chunkLabel} invalid output on attempt ${attempt}/${retryConfig.maxAttempts}: ${invalidReason}`);
-      if (!replayMode && retryConfig.backoffMs > 0) {
-        await sleep(retryConfig.backoffMs);
-      }
-    } catch (error) {
-      lastError = error;
-      const isInvalidOutputError = typeof error?.message === 'string' && error.message.startsWith('invalid_output:');
-      const shouldRetry = isInvalidOutputError
-        ? retryConfig.retryOnParseError && attempt < retryConfig.maxAttempts
-        : retryConfig.retryOnProviderError && attempt < retryConfig.maxAttempts;
-
-      if (!error.__rawCaptured) {
-        writeChunkRaw(chunkIndex, splitIndex || 0, {
-          chunkIndex,
-          splitIndex,
-          attempt,
-          prompt: null,
-          rawResponse: null,
-          parsed: null,
-          error: error?.message || String(error),
-          errorName: error?.name || null,
-          errorCode: error?.code || null,
-          errorStatus: error?.response?.status || null,
-          errorStack: typeof error?.stack === 'string' ? error.stack : null,
-          errorDebug: sanitizeRawCaptureValue(error?.debug) || null,
-          errorResponse: sanitizeRawCaptureValue(error?.response?.data) || null,
-          provider: config?.ai?.provider || 'openrouter',
-          model: config?.ai?.video?.model || null,
-          requestMeta: buildRequestMeta({ chunkIndex, splitIndex, attempt, config })
-        });
-      }
-
-      if (!shouldRetry) {
-        throw error;
-      }
-
-      console.warn(`      ⚠️  ${chunkLabel} ${isInvalidOutputError ? 'invalid output' : 'provider error'} on attempt ${attempt}/${retryConfig.maxAttempts}: ${error.message}`);
-      if (!replayMode && retryConfig.backoffMs > 0) {
-        await sleep(retryConfig.backoffMs);
-      }
-    }
-  }
-
-  throw lastError || new Error(`${chunkLabel} failed with unknown retry error`);
 }
 
 /**
@@ -466,15 +367,16 @@ async function run(input) {
   const dialogueData = artifacts.dialogueData || { dialogue_segments: [], summary: '' };
   const musicData = artifacts.musicData || { segments: [] };
 
-  const videoModel = config?.ai?.video?.model;
+  const primaryAdapter = getPrimaryVideoAdapter(config);
+  const videoModel = primaryAdapter?.model;
   if (!videoModel) {
-    throw new Error('VideoChunks: config.ai.video.model is required');
+    throw new Error('VideoChunks: config.ai.video.targets[*].adapter.model is required');
   }
 
   const legacyToolModel = toolVariables?.variables?.model;
   if (legacyToolModel && legacyToolModel !== videoModel) {
     throw new Error(
-      `VideoChunks: legacy tool_variables.variables.model (${legacyToolModel}) must match config.ai.video.model (${videoModel})`
+      `VideoChunks: legacy tool_variables.variables.model (${legacyToolModel}) must match config.ai.video.targets[*].adapter.model (${videoModel})`
     );
   }
 
@@ -596,14 +498,13 @@ async function run(input) {
 
         const chunkLabel = `Chunk ${chunkIndex + 1}${splitIndex > 0 ? `.${splitIndex + 1}` : ''}`;
 
-        const analyzeInput = {
-          toolVariables: normalizedToolVariables,
+        const analyzeInputBase = {
           videoContext: {
             chunkPath: currentChunkPath,
-            chunkIndex: chunkIndex,
+            chunkIndex,
             splitIndex: splitIndex || 0,
-            startTime: startTime,
-            endTime: endTime,
+            startTime,
+            endTime,
             duration: endTime - startTime
           },
           dialogueContext: {
@@ -615,30 +516,142 @@ async function run(input) {
           previousState: {
             summary: previousSummary,
             emotions: results.length > 0 ? results[results.length - 1].emotions : {}
-          },
-          config
+          }
         };
 
         try {
-          const { chunkResult, attempt } = await analyzeChunkWithRetry({
-            analyzeInput,
-            retryConfig,
-            replayMode,
-            chunkLabel,
-            chunkIndex,
-            splitIndex: splitIndex || 0,
-            startTime,
-            endTime,
-            toolVariables,
+          const { result: analysisResult, meta } = await executeWithTargets({
             config,
-            writeChunkRaw
+            domain: 'video',
+            retry: retryConfig,
+            replayMode,
+            shouldRetry: ({ error }, ctx) => {
+              const group = error?.aiTargets?.group;
+              const msg = String(error?.message || '');
+              const isParseError = group === 'parse' || msg.startsWith('invalid_output:');
+              return isParseError ? !!retryConfig.retryOnParseError : !!retryConfig.retryOnProviderError;
+            },
+            operation: async (ctx) => {
+              const adapter = ctx?.target?.adapter;
+
+              const toolVariablesForAttempt = {
+                ...normalizedToolVariables,
+                variables: {
+                  ...(normalizedToolVariables?.variables || {}),
+                  model: adapter?.model || normalizedToolVariables?.variables?.model
+                }
+              };
+
+              const analyzeInput = {
+                ...analyzeInputBase,
+                toolVariables: toolVariablesForAttempt,
+                config: ctx.configForTarget
+              };
+
+              const toolResult = await emotionLensesTool.analyze(analyzeInput);
+              const lenses = analyzeInput?.toolVariables?.variables?.lenses || [];
+              const schemaFailure = getSchemaFailureReason(toolResult?.state, lenses);
+
+              const candidateChunkResult = {
+                chunkIndex,
+                splitIndex: splitIndex || 0,
+                startTime,
+                endTime,
+                status: 'success',
+                summary: toolResult?.state?.summary,
+                emotions: toolResult?.state?.emotions,
+                dominant_emotion: toolResult?.state?.dominant_emotion,
+                confidence: toolResult?.state?.confidence,
+                tokens: (toolResult?.usage?.input || 0) + (toolResult?.usage?.output || 0),
+                persona: {
+                  soulPath: toolVariables.soulPath,
+                  goalPath: toolVariables.goalPath,
+                  lenses: toolVariables.variables?.lenses || []
+                }
+              };
+
+              const parseFailure = getChunkFailureReason(candidateChunkResult);
+              const invalidReason = schemaFailure || parseFailure;
+
+              if (invalidReason) {
+                throw createRetryableError(`invalid_output: ${invalidReason}`, {
+                  group: 'parse',
+                  toolResult,
+                  invalidReason
+                });
+              }
+
+              return {
+                toolResult,
+                chunkResult: candidateChunkResult
+              };
+            },
+            onAttempt: ({
+              ok,
+              attempt,
+              attemptInTarget,
+              target,
+              targetIndex,
+              targetCount,
+              failover,
+              configForTarget,
+              result,
+              error
+            }) => {
+              const adapter = target?.adapter || null;
+
+              const toolResult = ok
+                ? result?.toolResult
+                : error?.aiTargets?.toolResult;
+
+              const invalidReason = error?.aiTargets?.invalidReason;
+              const errorMessage = ok
+                ? null
+                : (invalidReason || error?.message || String(error));
+
+              writeChunkRaw(chunkIndex, splitIndex || 0, {
+                chunkIndex,
+                splitIndex: splitIndex || 0,
+                startTime,
+                endTime,
+                attempt,
+                attemptInTarget,
+                targetIndex,
+                targetCount,
+                adapter,
+                failover: failover || null,
+                prompt: toolResult?.prompt || null,
+                rawResponse: toolResult ? extractRawResponse(toolResult) : null,
+                parsed: toolResult?.state || null,
+                error: errorMessage,
+                errorName: !ok ? (error?.name || null) : null,
+                errorCode: !ok ? (error?.code || null) : null,
+                errorStatus: !ok ? (error?.response?.status || null) : null,
+                errorStack: !ok && typeof error?.stack === 'string' ? error.stack : null,
+                errorDebug: !ok ? (sanitizeRawCaptureValue(error?.debug) || null) : null,
+                errorResponse: !ok ? (sanitizeRawCaptureValue(error?.response?.data) || null) : null,
+                provider: adapter?.name || (configForTarget?.ai?.provider || 'openrouter'),
+                model: adapter?.model || (configForTarget?.ai?.video?.model || null),
+                requestMeta: buildRequestMeta({
+                  chunkIndex,
+                  splitIndex,
+                  attempt,
+                  attemptInTarget,
+                  targetIndex,
+                  targetCount,
+                  adapter
+                })
+              });
+            }
           });
+
+          const chunkResult = analysisResult.chunkResult;
 
           results.push(chunkResult);
           totalTokens += chunkResult.tokens;
           previousSummary = chunkResult.summary;
 
-          console.log(`      ✅ ${chunkLabel} analyzed (${chunkResult.tokens} tokens)${attempt > 1 ? ` after ${attempt} attempts` : ''}`);
+          console.log(`      ✅ ${chunkLabel} analyzed (${chunkResult.tokens} tokens)${meta.attempt > 1 ? ` after ${meta.attempt} attempts` : ''}`);
         } catch (error) {
           recordPhaseError({
             kind: 'chunk_analysis_failed',
@@ -648,7 +661,11 @@ async function run(input) {
             stack: typeof error?.stack === 'string' ? error.stack : null
           });
 
-          throw new Error(`${chunkLabel} failed after ${retryConfig.maxAttempts} attempts: ${error.message}`);
+          const attempts = Number.isInteger(error?.aiTargets?.attempts)
+            ? error.aiTargets.attempts
+            : retryConfig.maxAttempts;
+
+          throw new Error(`${chunkLabel} failed after ${attempts} attempts: ${error.message}`);
         }
       }
     }

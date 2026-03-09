@@ -159,7 +159,7 @@ test('Video Chunks Script', async (t) => {
         },
         config: {
           ai: {
-            video: { model: 'yaml-video-model' }
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
           },
           tool_variables: {
             chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
@@ -186,7 +186,7 @@ test('Video Chunks Script', async (t) => {
         },
         config: {
           ai: {
-            video: { model: 'yaml-video-model' }
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
           }
         }
       });
@@ -212,7 +212,7 @@ test('Video Chunks Script', async (t) => {
         },
         config: {
           ai: {
-            video: { model: 'yaml-video-model' }
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
           }
         }
       });
@@ -233,7 +233,7 @@ test('Video Chunks Script', async (t) => {
         },
         config: {
           ai: {
-            video: { model: 'yaml-video-model' }
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
           }
         }
       });
@@ -255,7 +255,7 @@ test('Video Chunks Script', async (t) => {
         },
         config: {
           ai: {
-            video: { model: 'yaml-video-model' }
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
           },
           debug: {
             keepProcessedIntermediates: false
@@ -283,7 +283,7 @@ test('Video Chunks Script', async (t) => {
         },
         config: {
           ai: {
-            video: { model: 'yaml-video-model' }
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
           },
           debug: { keepTempFiles: true, keepProcessedAssets: true },
           settings: { max_chunks: 1 },
@@ -315,8 +315,7 @@ test('Video Chunks Script', async (t) => {
         },
         config: {
           ai: {
-            provider: 'openrouter',
-            video: { model: 'yaml-video-model' }
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
           },
           debug: {
             captureRaw: true,
@@ -386,10 +385,11 @@ test('Video Chunks Script', async (t) => {
         },
         config: {
           ai: {
-            provider: 'openrouter',
             video: {
-              model: 'yaml-video-model',
-              retry: { maxAttempts: 1, backoffMs: 0, retryOnParseError: true, retryOnProviderError: true }
+              targets: [
+                { adapter: { name: 'openrouter', model: 'yaml-video-model' } }
+              ],
+              retry: { maxAttempts: 1, backoffMs: 0 }
             }
           },
           debug: { captureRaw: true },
@@ -436,7 +436,7 @@ test('Video Chunks Script', async (t) => {
           },
           config: {
             ai: {
-              video: { model: 'yaml-video-model' }
+              video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
             }
           }
         }), /AI_API_KEY is required for chunk analysis unless DIGITAL_TWIN_MODE=replay/);
@@ -462,7 +462,7 @@ test('Video Chunks Script', async (t) => {
           },
           config: {
             ai: {
-              video: { model: 'yaml-video-model' }
+              video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
             }
           }
         });
@@ -489,7 +489,7 @@ test('Video Chunks Script', async (t) => {
         },
         config: {
           ai: {
-            video: { model: 'yaml-video-model' }
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
           },
           tool_variables: {
             chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
@@ -550,12 +550,12 @@ test('Video Chunks Script', async (t) => {
         config: {
           ai: {
             video: {
-              model: 'yaml-video-model',
+              targets: [
+                { adapter: { name: 'openrouter', model: 'yaml-video-model' } }
+              ],
               retry: {
                 maxAttempts: 2,
-                backoffMs: 0,
-                retryOnParseError: true,
-                retryOnProviderError: true
+                backoffMs: 0
               }
             }
           },
@@ -590,12 +590,12 @@ test('Video Chunks Script', async (t) => {
         config: {
           ai: {
             video: {
-              model: 'yaml-video-model',
+              targets: [
+                { adapter: { name: 'openrouter', model: 'yaml-video-model' } }
+              ],
               retry: {
                 maxAttempts: 2,
-                backoffMs: 0,
-                retryOnParseError: true,
-                retryOnProviderError: true
+                backoffMs: 0
               }
             }
           },
@@ -609,6 +609,116 @@ test('Video Chunks Script', async (t) => {
       is(analyzeCalls.length, 2);
       const artifactPath = path.join(testOutputDir, 'phase2-process', 'chunk-analysis.json');
       is(fs.existsSync(artifactPath), false);
+    });
+
+    await tNested.test('falls back to second target after retryable failures exhaust on first target', async () => {
+      analyzeImplementation = async (input) => {
+        analyzeCalls.push(input);
+
+        const model = input?.config?.ai?.video?.model;
+        if (model === 'primary-model') {
+          const err = new Error('upstream failure');
+          err.response = { status: 503, data: { error: 'service unavailable' } };
+          throw err;
+        }
+
+        return {
+          prompt: 'Test prompt',
+          state: {
+            summary: 'Fallback chunk summary',
+            emotions: {
+              patience: { score: 8, reasoning: 'Recovered on fallback' },
+              boredom: { score: 2, reasoning: 'Still engaging' }
+            },
+            dominant_emotion: 'patience',
+            confidence: 0.9
+          },
+          usage: { input: 100, output: 50 }
+        };
+      };
+
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience', 'boredom'] }
+        },
+        config: {
+          ai: {
+            video: {
+              targets: [
+                { adapter: { name: 'openrouter', model: 'primary-model' } },
+                { adapter: { name: 'openrouter', model: 'fallback-model' } }
+              ],
+              retry: {
+                maxAttempts: 2,
+                backoffMs: 0
+              }
+            }
+          },
+          debug: { captureRaw: true },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          },
+          settings: { max_chunks: 1 }
+        }
+      });
+
+      is(analyzeCalls.length, 3);
+      is(analyzeCalls[0]?.config?.ai?.video?.model, 'primary-model');
+      is(analyzeCalls[2]?.config?.ai?.video?.model, 'fallback-model');
+
+      const rawAiDir = path.join(testOutputDir, 'phase2-process', 'raw', 'ai');
+      const { pointer, capture: rawChunk } = readLatestChunkRawCapture(rawAiDir, 0, 0);
+      is(pointer.latestAttempt, 3);
+      is(rawChunk.model, 'fallback-model');
+      property(rawChunk, 'failover');
+      is(rawChunk.failover.from.model, 'primary-model');
+      is(rawChunk.failover.to.model, 'fallback-model');
+    });
+
+    await tNested.test('hard-stops on auth error (no retry, no failover)', async () => {
+      analyzeImplementation = async (input) => {
+        analyzeCalls.push(input);
+        const err = new Error('unauthorized');
+        err.response = { status: 401, data: { error: 'invalid api key' } };
+        throw err;
+      };
+
+      await rejects(videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience', 'boredom'] }
+        },
+        config: {
+          ai: {
+            video: {
+              targets: [
+                { adapter: { name: 'openrouter', model: 'primary-model' } },
+                { adapter: { name: 'openrouter', model: 'fallback-model' } }
+              ],
+              retry: {
+                maxAttempts: 3,
+                backoffMs: 0
+              }
+            }
+          },
+          debug: { captureRaw: true },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          },
+          settings: { max_chunks: 1 }
+        }
+      }), /failed after 1 attempts: unauthorized/);
+
+      is(analyzeCalls.length, 1);
     });
   });
 });
