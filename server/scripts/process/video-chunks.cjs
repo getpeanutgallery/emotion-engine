@@ -21,6 +21,7 @@ const outputManager = require('../../lib/output-manager.cjs');
 const { getChunkFailureReason } = require('../../lib/chunk-analysis-status.cjs');
 const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
 const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
+const { ensureToolVersionsCaptured } = require('../../lib/tool-versions.cjs');
 const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 
 const execAsync = promisify(exec);
@@ -414,49 +415,14 @@ async function run(input) {
     });
   };
 
-  const ensureToolVersionsCaptured = async () => {
-    if (!captureRaw) return;
-
-    const captureVersion = async (toolName, toolPath) => {
-      const outPath = path.join(toolVersionsDir, `${toolName}.json`);
-      if (fs.existsSync(outPath)) return;
-
-      fs.mkdirSync(toolVersionsDir, { recursive: true });
-      const command = `"${toolPath}" -version`;
-
-      try {
-        const { stdout, stderr } = await execAsync(command);
-        fs.writeFileSync(outPath, JSON.stringify({
-          schemaVersion: 1,
-          tool: toolName,
-          resolvedPath: toolPath,
-          command,
-          exitCode: 0,
-          stdout,
-          stderr,
-          capturedAt: new Date().toISOString()
-        }, null, 2), 'utf8');
-      } catch (error) {
-        fs.writeFileSync(outPath, JSON.stringify({
-          schemaVersion: 1,
-          tool: toolName,
-          resolvedPath: toolPath,
-          command,
-          exitCode: typeof error?.code === 'number' ? error.code : 1,
-          stdout: error?.stdout || '',
-          stderr: error?.stderr || '',
-          error: error?.message || String(error),
-          capturedAt: new Date().toISOString()
-        }, null, 2), 'utf8');
-      }
-    };
-
-    // Lazy, once per phase
-    await captureVersion('ffmpeg', ffmpegPath);
-    await captureVersion('ffprobe', ffprobePath);
-  };
-
-  await ensureToolVersionsCaptured();
+  await ensureToolVersionsCaptured({
+    captureRaw,
+    toolVersionsDir,
+    tools: [
+      { name: 'ffmpeg', path: ffmpegPath },
+      { name: 'ffprobe', path: ffprobePath }
+    ]
+  });
 
   // Get video duration
   const duration = await getVideoDuration(assetPath, writeFfmpegRawLog);

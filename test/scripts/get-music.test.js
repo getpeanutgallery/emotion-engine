@@ -192,12 +192,21 @@ test('Get Music Script', async (t) => {
       await getMusicScript.run(input);
 
       const aiPointerPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ai', 'music-segment-0.json');
-      const ffmpegRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ffmpeg', 'extract-audio.json');
+      const ffmpegRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ffmpeg', 'music', 'extract-audio.json');
+      const ffprobeRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ffmpeg', 'music', 'ffprobe-audio-duration.json');
+      const segmentRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ffmpeg', 'music', 'extract-segment-0.json');
       const metaSummaryPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', '_meta', 'errors.summary.json');
+      const toolVersionsDir = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'tools', '_versions');
+      const ffmpegVersionPath = path.join(toolVersionsDir, 'ffmpeg.json');
+      const ffprobeVersionPath = path.join(toolVersionsDir, 'ffprobe.json');
 
       ok(fs.existsSync(aiPointerPath));
       ok(fs.existsSync(ffmpegRawPath));
+      ok(fs.existsSync(ffprobeRawPath));
+      ok(fs.existsSync(segmentRawPath));
       ok(fs.existsSync(metaSummaryPath));
+      ok(fs.existsSync(ffmpegVersionPath));
+      ok(fs.existsSync(ffprobeVersionPath));
 
       const pointer = JSON.parse(fs.readFileSync(aiPointerPath, 'utf8'));
       is(pointer.schemaVersion, 2);

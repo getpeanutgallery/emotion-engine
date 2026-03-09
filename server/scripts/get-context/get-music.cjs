@@ -21,6 +21,7 @@ const aiProvider = require('ai-providers/ai-provider-interface.js');
 const outputManager = require('../../lib/output-manager.cjs');
 const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
 const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
+const { ensureToolVersionsCaptured } = require('../../lib/tool-versions.cjs');
 const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 
 const execAsync = promisify(exec);
@@ -143,8 +144,18 @@ async function run(input) {
   const captureRaw = shouldCaptureRaw(config);
   const rawDir = getRawPhaseDir(outputDir, PHASE_KEY);
   const rawMetaDir = path.join(rawDir, '_meta');
-  const ffmpegRawDir = path.join(rawDir, 'ffmpeg');
+  const ffmpegRawDir = path.join(rawDir, 'ffmpeg', 'music');
   const aiRawDir = path.join(rawDir, 'ai');
+  const toolVersionsDir = path.join(rawDir, 'tools', '_versions');
+
+  await ensureToolVersionsCaptured({
+    captureRaw,
+    toolVersionsDir,
+    tools: [
+      { name: 'ffmpeg', path: ffmpegPath },
+      { name: 'ffprobe', path: ffprobePath }
+    ]
+  });
 
   const phaseErrors = [];
   let phaseOutcome = 'success';
