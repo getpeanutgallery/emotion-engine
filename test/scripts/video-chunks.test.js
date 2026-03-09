@@ -412,13 +412,13 @@ test('Video Chunks Script', async (t) => {
       is(result.artifacts.chunkAnalysis.totalTokens, 500);
     });
 
-    await tNested.test('marks parse fallback chunk as failed and continues', async () => {
+    await tNested.test('retries invalid first response and succeeds on second attempt', async () => {
       let callCount = 0;
       analyzeImplementation = async (input) => {
         analyzeCalls.push(input);
         callCount += 1;
 
-        if (callCount === 2) {
+        if (callCount === 1) {
           return {
             prompt: 'Test prompt',
             state: {
@@ -460,20 +460,66 @@ test('Video Chunks Script', async (t) => {
         },
         config: {
           ai: {
-            video: { model: 'yaml-video-model' }
+            video: {
+              model: 'yaml-video-model',
+              retry: {
+                maxAttempts: 2,
+                backoffMs: 0,
+                retryOnParseError: true,
+                retryOnProviderError: true
+              }
+            }
           },
           tool_variables: {
             chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
           },
-          settings: { max_chunks: 2 }
+          settings: { max_chunks: 1 }
         }
       });
 
-      const failed = result.artifacts.chunkAnalysis.chunks.find((chunk) => chunk.status === 'failed');
-      ok(!!failed);
-      ok(failed.errorReason.includes('parse_error'));
+      is(analyzeCalls.length, 2);
       is(result.artifacts.chunkAnalysis.statusSummary.successful, 1);
-      is(result.artifacts.chunkAnalysis.statusSummary.failed, 1);
+      is(result.artifacts.chunkAnalysis.statusSummary.failed, 0);
+      is(result.artifacts.chunkAnalysis.chunks[0].summary, 'Valid chunk summary');
+    });
+
+    await tNested.test('hard-fails run after repeated provider errors', async () => {
+      analyzeImplementation = async (input) => {
+        analyzeCalls.push(input);
+        throw new Error('provider timeout');
+      };
+
+      await rejects(videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience', 'boredom'] }
+        },
+        config: {
+          ai: {
+            video: {
+              model: 'yaml-video-model',
+              retry: {
+                maxAttempts: 2,
+                backoffMs: 0,
+                retryOnParseError: true,
+                retryOnProviderError: true
+              }
+            }
+          },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          },
+          settings: { max_chunks: 1 }
+        }
+      }), /failed after 2 attempts: provider timeout/);
+
+      is(analyzeCalls.length, 2);
+      const artifactPath = path.join(testOutputDir, 'phase2-process', 'chunk-analysis.json');
+      is(fs.existsSync(artifactPath), false);
     });
   });
 });

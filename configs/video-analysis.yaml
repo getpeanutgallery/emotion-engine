@@ -19,6 +19,11 @@ ai:
     model: google/gemini-2.5-flash
   video:
     model: qwen/qwen-3.5-397b-a17b
+    retry:
+      maxAttempts: 2
+      backoffMs: 500
+      retryOnParseError: true
+      retryOnProviderError: true
   # apiKey: NEVER put API keys in YAML - use environment variables
   # baseUrl: Optional custom endpoint
 

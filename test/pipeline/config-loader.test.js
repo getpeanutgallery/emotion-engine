@@ -315,6 +315,56 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
     assert.strictEqual(result.errors.length, 0);
   });
   
+  await t.test('should validate ai.video.retry when configured', () => {
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai: {
+        provider: 'openrouter',
+        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
+        music: { model: 'qwen/qwen-3.5-397b-a17b' },
+        video: {
+          model: 'qwen/qwen-3.5-397b-a17b',
+          retry: {
+            maxAttempts: 2,
+            backoffMs: 500,
+            retryOnParseError: true,
+            retryOnProviderError: true
+          }
+        }
+      },
+      gather_context: ['script1.cjs']
+    };
+
+    const result = validateConfig(config);
+    assert.strictEqual(result.valid, true);
+  });
+
+  await t.test('should fail validation with invalid ai.video.retry fields', () => {
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai: {
+        provider: 'openrouter',
+        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
+        music: { model: 'qwen/qwen-3.5-397b-a17b' },
+        video: {
+          model: 'qwen/qwen-3.5-397b-a17b',
+          retry: {
+            maxAttempts: 0,
+            backoffMs: -1,
+            retryOnParseError: 'yes'
+          }
+        }
+      },
+      gather_context: ['script1.cjs']
+    };
+
+    const result = validateConfig(config);
+    assert.strictEqual(result.valid, false);
+    assert(result.errors.some(e => e.includes('"ai.video.retry.maxAttempts"')));
+    assert(result.errors.some(e => e.includes('"ai.video.retry.backoffMs"')));
+    assert(result.errors.some(e => e.includes('"ai.video.retry.retryOnParseError"')));
+  });
+
   await t.test('should fail validation with missing ai configuration', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },

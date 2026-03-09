@@ -138,6 +138,27 @@ function validateConfig(config) {
     if (config.ai.video?.model === undefined) {
       errors.push('Missing required "ai.video.model"');
     }
+
+    const retry = config.ai.video?.retry;
+    if (retry !== undefined) {
+      if (typeof retry !== 'object' || retry === null || Array.isArray(retry)) {
+        errors.push('"ai.video.retry" must be an object when provided');
+      } else {
+        if (retry.maxAttempts !== undefined && (!Number.isInteger(retry.maxAttempts) || retry.maxAttempts < 1)) {
+          errors.push('"ai.video.retry.maxAttempts" must be an integer >= 1 when provided');
+        }
+        if (retry.backoffMs !== undefined && (!Number.isInteger(retry.backoffMs) || retry.backoffMs < 0)) {
+          errors.push('"ai.video.retry.backoffMs" must be an integer >= 0 when provided');
+        }
+
+        const retryBooleanFields = ['retryOnParseError', 'retryOnProviderError'];
+        for (const field of retryBooleanFields) {
+          if (retry[field] !== undefined && typeof retry[field] !== 'boolean') {
+            errors.push(`"ai.video.retry.${field}" must be a boolean when provided`);
+          }
+        }
+      }
+    }
   }
   
   // Validate debug configuration when provided
