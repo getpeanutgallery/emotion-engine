@@ -240,7 +240,14 @@ test('Get Music Script', async (t) => {
       ok(fs.existsSync(attemptCapturePath));
 
       const attemptCapture = JSON.parse(fs.readFileSync(attemptCapturePath, 'utf8'));
-      property(attemptCapture, 'prompt');
+      property(attemptCapture, 'promptRef');
+
+      const promptPath = path.join(testOutputDir, attemptCapture.promptRef.file);
+      ok(fs.existsSync(promptPath));
+      const storedPrompt = JSON.parse(fs.readFileSync(promptPath, 'utf8'));
+      is(typeof storedPrompt, 'string');
+      ok(storedPrompt.includes('Analyze'));
+
       property(attemptCapture, 'rawResponse');
       property(attemptCapture, 'parsed');
       is(attemptCapture.model, 'test-music-model');

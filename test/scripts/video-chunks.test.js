@@ -370,7 +370,14 @@ test('Video Chunks Script', async (t) => {
       is(pointer.latestAttempt, 1);
 
       property(rawChunk, 'chunkIndex');
-      property(rawChunk, 'prompt');
+      property(rawChunk, 'promptRef');
+
+      const promptPath = path.join(testOutputDir, rawChunk.promptRef.file);
+      ok(fs.existsSync(promptPath));
+      const storedPrompt = JSON.parse(fs.readFileSync(promptPath, 'utf8'));
+      is(typeof storedPrompt, 'string');
+      ok(storedPrompt.length > 0);
+
       property(rawChunk, 'rawResponse');
       property(rawChunk, 'parsed');
       property(rawChunk, 'provider');

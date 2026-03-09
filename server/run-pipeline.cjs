@@ -26,6 +26,7 @@ const { runGatherContext } = require('./lib/phases/gather-context-runner.cjs');
 const { runProcess } = require('./lib/phases/process-runner.cjs');
 const { runReport } = require('./lib/phases/report-runner.cjs');
 const { createAssetsDirectory, copyInputAssets, createRawDirectories } = require('./lib/output-manager.cjs');
+const { getEventsLogger } = require('./lib/events-timeline.cjs');
 
 /**
  * Run the complete pipeline
@@ -83,7 +84,21 @@ async function runPipeline(configPath, options = {}) {
   // Step 4: Prepare execution environment
   const assetPath = path.resolve(config.asset.inputPath);
   const outputDir = path.resolve(config.asset.outputDir);
+
+  const events = getEventsLogger({ outputDir, config });
+  const runStartMs = Date.now();
+  let runOutcome = 'success';
+  let fatalRunError = null;
+
+  events.emit({
+    kind: 'run.start',
+    configName: config?.name || null,
+    totalScriptsPlanned: validation.totalScripts,
+  });
+
   
+
+  try {
   // Create assets directory structure and copy input files
   console.log('📁 Setting up assets directory...');
   const { inputDir: assetsInputDir } = createAssetsDirectory(outputDir);
@@ -106,6 +121,14 @@ async function runPipeline(configPath, options = {}) {
   
   // Phase 1: Gather Context
   if (config.gather_context) {
+    events.emit({
+      kind: 'phase.start',
+      phase: 'phase1-gather-context',
+      scriptsCount: Array.isArray(config.gather_context)
+        ? config.gather_context.length
+        : (Array.isArray(config.gather_context?.parallel) ? config.gather_context.parallel.length : null)
+    });
+
     try {
       const result = await runGatherContext({
         assetPath,
@@ -116,8 +139,10 @@ async function runPipeline(configPath, options = {}) {
       });
       artifacts = result.artifacts;
       console.log('   ✅ Phase 1 complete\n');
+      events.emit({ kind: 'phase.end', phase: 'phase1-gather-context', outcome: 'success' });
     } catch (error) {
       console.error('   ❌ Phase 1 failed:', error.message);
+      events.emit({ kind: 'phase.end', phase: 'phase1-gather-context', outcome: 'failed', error: error?.message || String(error) });
       throw error;
     }
   } else {
@@ -126,6 +151,14 @@ async function runPipeline(configPath, options = {}) {
   
   // Phase 2: Process
   if (config.process) {
+    events.emit({
+      kind: 'phase.start',
+      phase: 'phase2-process',
+      scriptsCount: Array.isArray(config.process)
+        ? config.process.length
+        : (Array.isArray(config.process?.parallel) ? config.process.parallel.length : null)
+    });
+
     try {
       const result = await runProcess({
         assetPath,
@@ -136,8 +169,10 @@ async function runPipeline(configPath, options = {}) {
       });
       artifacts = result.artifacts;
       console.log('   ✅ Phase 2 complete\n');
+      events.emit({ kind: 'phase.end', phase: 'phase2-process', outcome: 'success' });
     } catch (error) {
       console.error('   ❌ Phase 2 failed:', error.message);
+      events.emit({ kind: 'phase.end', phase: 'phase2-process', outcome: 'failed', error: error?.message || String(error) });
       throw error;
     }
   } else {
@@ -146,6 +181,14 @@ async function runPipeline(configPath, options = {}) {
   
   // Phase 3: Report
   if (config.report) {
+    events.emit({
+      kind: 'phase.start',
+      phase: 'phase3-report',
+      scriptsCount: Array.isArray(config.report)
+        ? config.report.length
+        : (Array.isArray(config.report?.parallel) ? config.report.parallel.length : null)
+    });
+
     try {
       const result = await runReport({
         outputDir,
@@ -155,8 +198,10 @@ async function runPipeline(configPath, options = {}) {
       });
       artifacts = result.artifacts;
       console.log('   ✅ Phase 3 complete\n');
+      events.emit({ kind: 'phase.end', phase: 'phase3-report', outcome: 'success' });
     } catch (error) {
       console.error('   ❌ Phase 3 failed:', error.message);
+      events.emit({ kind: 'phase.end', phase: 'phase3-report', outcome: 'failed', error: error?.message || String(error) });
       throw error;
     }
   } else {
@@ -166,6 +211,9 @@ async function runPipeline(configPath, options = {}) {
   // Step 6: Save final artifacts
   console.log('💾 Saving final artifacts...');
   const savedFiles = await serializeArtifacts(artifacts, outputDir);
+  for (const f of savedFiles) {
+    events.artifactWrite({ absolutePath: f, role: 'artifact', phase: null, script: null });
+  }
   console.log(`   ✅ Saved ${savedFiles.length} file(s) to ${outputDir}`);
   
   // Step 7: Report results
@@ -181,6 +229,19 @@ async function runPipeline(configPath, options = {}) {
     savedFiles,
     outputDir
   };
+  } catch (error) {
+    runOutcome = 'failed';
+    fatalRunError = error;
+    events.error({ message: error?.message || String(error), phase: null, script: null, where: 'run' });
+    throw error;
+  } finally {
+    events.emit({
+      kind: 'run.end',
+      outcome: runOutcome,
+      durationMs: Date.now() - runStartMs,
+      error: fatalRunError ? (fatalRunError?.message || String(fatalRunError)) : null,
+    });
+  }
 }
 
 /**

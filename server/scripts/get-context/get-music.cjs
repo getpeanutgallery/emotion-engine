@@ -23,6 +23,8 @@ const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets
 const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
 const { ensureToolVersionsCaptured } = require('../../lib/tool-versions.cjs');
 const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
+const { getEventsLogger } = require('../../lib/events-timeline.cjs');
+const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 
 const execAsync = promisify(exec);
 
@@ -72,7 +74,7 @@ function sanitizeRawCaptureValue(value, depth = 0, seen = new WeakSet()) {
   return out;
 }
 
-function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, phaseOutcome, fatalPhaseError, phaseErrors }) {
+function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, events, phaseOutcome, fatalPhaseError, phaseErrors }) {
   if (!captureRaw) return;
 
   fs.mkdirSync(rawMetaDir, { recursive: true });
@@ -83,6 +85,10 @@ function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, phaseOutcome, fatal
     fs.appendFileSync(errorsPath, lines, 'utf8');
   } else if (!fs.existsSync(errorsPath)) {
     fs.writeFileSync(errorsPath, '', 'utf8');
+  }
+
+  if (events) {
+    events.artifactWrite({ absolutePath: errorsPath, role: 'raw.meta', phase: PHASE_KEY, script: SCRIPT_ID });
   }
 
   const totalErrors = fs.existsSync(errorsPath)
@@ -104,7 +110,10 @@ function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, phaseOutcome, fatal
       : null
   };
 
-  writeRawJson(rawMetaDir, 'errors.summary.json', summary);
+  const summaryPath = writeRawJson(rawMetaDir, 'errors.summary.json', summary);
+  if (events) {
+    events.artifactWrite({ absolutePath: summaryPath, role: 'raw.meta', phase: PHASE_KEY, script: SCRIPT_ID });
+  }
 }
 
 /**
@@ -151,6 +160,10 @@ async function run(input) {
   // Default to keeping processed/intermediate files unless explicitly disabled
   const keepProcessedIntermediates = shouldKeepProcessedIntermediates(config);
   const captureRaw = shouldCaptureRaw(config);
+
+  const events = getEventsLogger({ outputDir, config });
+  events.emit({ kind: 'script.start', phase: PHASE_KEY, script: SCRIPT_ID });
+
   const rawDir = getRawPhaseDir(outputDir, PHASE_KEY);
   const rawMetaDir = path.join(rawDir, '_meta');
   const ffmpegRawDir = path.join(rawDir, 'ffmpeg', 'music');
@@ -177,6 +190,20 @@ async function run(input) {
       script: SCRIPT_ID,
       ...entry
     });
+
+    events.error({
+      message: entry?.message || null,
+      phase: PHASE_KEY,
+      script: SCRIPT_ID,
+      where: entry?.kind || entry?.level || null,
+      extra: {
+        kind: entry?.kind || null,
+        level: entry?.level || null,
+        errorName: entry?.errorName || null,
+        errorCode: entry?.errorCode || null,
+        errorStatus: entry?.errorStatus || null,
+      }
+    });
   };
 
   const writeMusicSegmentRaw = (segmentIndex, attempt, payload) => {
@@ -187,9 +214,10 @@ async function run(input) {
     const attemptRelDir = path.join(`music-segment-${pad(segmentIndex, 4)}`, `attempt-${pad(attempt, 2)}`);
     const attemptRelPath = path.join(attemptRelDir, 'capture.json');
 
-    writeRawJson(aiRawDir, attemptRelPath, payload);
+    const capturePath = writeRawJson(aiRawDir, attemptRelPath, payload);
+    events.artifactWrite({ absolutePath: capturePath, role: 'raw.ai.attempt', phase: PHASE_KEY, script: SCRIPT_ID });
 
-    writeRawJson(aiRawDir, legacyFileName, {
+    const pointerPath = writeRawJson(aiRawDir, legacyFileName, {
       schemaVersion: 2,
       kind: 'pointer',
       updatedAt: new Date().toISOString(),
@@ -200,6 +228,7 @@ async function run(input) {
         file: attemptRelPath
       }
     });
+    events.artifactWrite({ absolutePath: pointerPath, role: 'raw.ai.pointer', phase: PHASE_KEY, script: SCRIPT_ID });
   };
 
   try {
@@ -257,6 +286,15 @@ async function run(input) {
 
       // Build analysis prompt
       const prompt = buildAnalysisPrompt(startTime, endTime);
+      const promptRef = captureRaw
+        ? storePromptPayload({ outputDir, payload: prompt })
+        : null;
+
+      if (promptRef?.absolutePath) {
+        events.artifactWrite({ absolutePath: promptRef.absolutePath, role: 'raw.prompt', phase: PHASE_KEY, script: SCRIPT_ID });
+      }
+
+      const attemptStartMs = new Map();
 
       try {
         const { result: segmentResult } = await executeWithTargets({
@@ -265,35 +303,102 @@ async function run(input) {
           retry: retryConfig,
           operation: async (ctx) => {
             const adapter = ctx?.target?.adapter;
+            const attemptKey = String(ctx?.attempt || '');
+
+            if (attemptKey && !attemptStartMs.has(attemptKey)) {
+              attemptStartMs.set(attemptKey, Date.now());
+              events.emit({
+                kind: 'attempt.start',
+                phase: PHASE_KEY,
+                script: SCRIPT_ID,
+                domain: 'music',
+                segmentIndex: i,
+                attempt: ctx.attempt,
+                attemptInTarget: ctx.attemptInTarget,
+                targetIndex: ctx.targetIndex,
+                targetCount: ctx.targetCount,
+                adapter: adapter || null,
+              });
+            }
+
             const provider = getProviderForTarget({
               configForTarget: ctx.configForTarget,
               target: ctx.target
             });
 
-            const completion = await provider.complete({
-              prompt,
-              model: adapter?.model,
-              apiKey,
-              attachments: [
-                {
-                  type: 'audio',
-                  data: audioBase64,
-                  mimeType: 'audio/wav'
-                }
-              ],
-              options: {
-                temperature: 0.5,
-                maxTokens: 512,
-                ...(
-                  adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
-                    ? adapter.params
-                    : {}
-                )
-              }
+            const providerCallStart = Date.now();
+            events.emit({
+              kind: 'provider.call.start',
+              phase: PHASE_KEY,
+              script: SCRIPT_ID,
+              domain: 'music',
+              segmentIndex: i,
+              attempt: ctx.attempt,
+              attemptInTarget: ctx.attemptInTarget,
+              targetIndex: ctx.targetIndex,
+              targetCount: ctx.targetCount,
+              provider: adapter?.name || null,
+              model: adapter?.model || null,
             });
 
-            const segmentAnalysis = parseSegmentResponse(completion.content, startTime, endTime);
-            return { completion, segmentAnalysis };
+            try {
+              const completion = await provider.complete({
+                prompt,
+                model: adapter?.model,
+                apiKey,
+                attachments: [
+                  {
+                    type: 'audio',
+                    data: audioBase64,
+                    mimeType: 'audio/wav'
+                  }
+                ],
+                options: {
+                  temperature: 0.5,
+                  maxTokens: 512,
+                  ...(
+                    adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
+                      ? adapter.params
+                      : {}
+                  )
+                }
+              });
+
+              events.emit({
+                kind: 'provider.call.end',
+                phase: PHASE_KEY,
+                script: SCRIPT_ID,
+                domain: 'music',
+                segmentIndex: i,
+                attempt: ctx.attempt,
+                attemptInTarget: ctx.attemptInTarget,
+                targetIndex: ctx.targetIndex,
+                ok: true,
+                durationMs: Date.now() - providerCallStart,
+                provider: adapter?.name || null,
+                model: adapter?.model || null,
+              });
+
+              const segmentAnalysis = parseSegmentResponse(completion.content, startTime, endTime);
+              return { completion, segmentAnalysis };
+            } catch (error) {
+              events.emit({
+                kind: 'provider.call.end',
+                phase: PHASE_KEY,
+                script: SCRIPT_ID,
+                domain: 'music',
+                segmentIndex: i,
+                attempt: ctx.attempt,
+                attemptInTarget: ctx.attemptInTarget,
+                targetIndex: ctx.targetIndex,
+                ok: false,
+                durationMs: Date.now() - providerCallStart,
+                provider: adapter?.name || null,
+                model: adapter?.model || null,
+                error: error?.message || String(error),
+              });
+              throw error;
+            }
           },
           onAttempt: ({
             ok,
@@ -306,6 +411,26 @@ async function run(input) {
             result,
             error
           }) => {
+            const attemptKey = String(attempt || '');
+            const startedAt = attemptKey && attemptStartMs.has(attemptKey) ? attemptStartMs.get(attemptKey) : null;
+
+            events.emit({
+              kind: 'attempt.end',
+              phase: PHASE_KEY,
+              script: SCRIPT_ID,
+              domain: 'music',
+              segmentIndex: i,
+              attempt,
+              attemptInTarget,
+              targetIndex,
+              targetCount,
+              ok,
+              durationMs: startedAt ? (Date.now() - startedAt) : null,
+              provider: target?.adapter?.name || null,
+              model: target?.adapter?.model || null,
+              error: ok ? null : (error?.message || String(error)),
+            });
+
             if (!captureRaw) return;
 
             const adapter = target?.adapter || null;
@@ -320,7 +445,7 @@ async function run(input) {
               targetCount,
               adapter,
               failover: failover || null,
-              prompt,
+              promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
               rawResponse: ok ? sanitizeRawCaptureValue(result?.completion) : null,
               parsed: ok ? result?.segmentAnalysis : null,
               error: ok ? null : (error?.message || String(error)),
@@ -382,6 +507,7 @@ async function run(input) {
     // Write intermediate artifact to phase directory
     const artifactPath = path.join(phaseDir, 'music-data.json');
     fs.writeFileSync(artifactPath, JSON.stringify(musicData, null, 2));
+    events.artifactWrite({ absolutePath: artifactPath, role: 'artifact', phase: PHASE_KEY, script: SCRIPT_ID });
 
     console.log('   ✅ Music/audio analysis complete');
     console.log(`      Output: ${artifactPath}`);
@@ -400,10 +526,13 @@ async function run(input) {
     ensurePhaseErrorArtifacts({
       captureRaw,
       rawMetaDir,
+      events,
       phaseOutcome,
       fatalPhaseError,
       phaseErrors
     });
+
+    events.emit({ kind: 'script.end', phase: PHASE_KEY, script: SCRIPT_ID, outcome: phaseOutcome });
 
     // Handle temp file cleanup based on config
     if (keepProcessedIntermediates) {

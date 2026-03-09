@@ -27,8 +27,11 @@ const {
   getProviderForTarget,
   createRetryableError
 } = require('../../lib/ai-targets.cjs');
+const { getEventsLogger } = require('../../lib/events-timeline.cjs');
+const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 
 const PHASE_KEY = 'phase3-report';
+const SCRIPT_ID = 'recommendation';
 
 function isReplayMode() {
   return (process.env.DIGITAL_TWIN_MODE || '').trim().toLowerCase() === 'replay';
@@ -77,7 +80,7 @@ function sanitizeRawCaptureValue(value, depth = 0, seen = new WeakSet()) {
   return out;
 }
 
-function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, phaseOutcome, fatalPhaseError, phaseErrors }) {
+function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, events, phaseOutcome, fatalPhaseError, phaseErrors }) {
   if (!captureRaw) return;
 
   fs.mkdirSync(rawMetaDir, { recursive: true });
@@ -89,6 +92,10 @@ function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, phaseOutcome, fatal
   } else if (!fs.existsSync(errorsPath)) {
     // Create empty file so downstream tooling can rely on it existing.
     fs.writeFileSync(errorsPath, '', 'utf8');
+  }
+
+  if (events) {
+    events.artifactWrite({ absolutePath: errorsPath, role: 'raw.meta', phase: PHASE_KEY, script: SCRIPT_ID });
   }
 
   const totalErrors = fs.existsSync(errorsPath)
@@ -110,7 +117,10 @@ function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, phaseOutcome, fatal
       : null
   };
 
-  writeRawJson(rawMetaDir, 'errors.summary.json', summary);
+  const summaryPath = writeRawJson(rawMetaDir, 'errors.summary.json', summary);
+  if (events) {
+    events.artifactWrite({ absolutePath: summaryPath, role: 'raw.meta', phase: PHASE_KEY, script: SCRIPT_ID });
+  }
 }
 
 function buildPrompt({ chunks, metricsData, config }) {
@@ -280,6 +290,10 @@ async function run(input) {
   const { successfulChunks, failedChunks } = splitChunksByStatus(chunks);
 
   const captureRaw = shouldCaptureRaw(configForRecommendation);
+
+  const events = getEventsLogger({ outputDir, config: configForRecommendation });
+  events.emit({ kind: 'script.start', phase: PHASE_KEY, script: SCRIPT_ID });
+
   const rawDir = getRawPhaseDir(outputDir, PHASE_KEY);
   const rawMetaDir = path.join(rawDir, '_meta');
   const aiRawDir = path.join(rawDir, 'ai', 'recommendation');
@@ -293,6 +307,20 @@ async function run(input) {
       ts: new Date().toISOString(),
       ...entry
     });
+
+    events.error({
+      message: entry?.message || null,
+      phase: PHASE_KEY,
+      script: SCRIPT_ID,
+      where: entry?.kind || entry?.level || null,
+      extra: {
+        kind: entry?.kind || null,
+        level: entry?.level || null,
+        errorName: entry?.errorName || null,
+        errorCode: entry?.errorCode || null,
+        errorStatus: entry?.errorStatus || null,
+      }
+    });
   };
 
   const writeRecommendationRaw = (payload) => {
@@ -303,10 +331,11 @@ async function run(input) {
     const attemptRelDir = path.join(`attempt-${pad(attempt, 2)}`);
     const attemptRelPath = path.join(attemptRelDir, 'capture.json');
 
-    writeRawJson(aiRawDir, attemptRelPath, payload);
+    const capturePath = writeRawJson(aiRawDir, attemptRelPath, payload);
+    events.artifactWrite({ absolutePath: capturePath, role: 'raw.ai.attempt', phase: PHASE_KEY, script: SCRIPT_ID });
 
     // Legacy pointer file for stable discovery.
-    writeRawJson(aiRawDir, 'recommendation.json', {
+    const pointerPath = writeRawJson(aiRawDir, 'recommendation.json', {
       schemaVersion: 2,
       kind: 'pointer',
       updatedAt: new Date().toISOString(),
@@ -316,10 +345,21 @@ async function run(input) {
         file: attemptRelPath
       }
     });
+    events.artifactWrite({ absolutePath: pointerPath, role: 'raw.ai.pointer', phase: PHASE_KEY, script: SCRIPT_ID });
   };
 
   try {
     const prompt = buildPrompt({ chunks: successfulChunks, metricsData, config: configForRecommendation });
+
+    const promptRef = captureRaw
+      ? storePromptPayload({ outputDir, payload: prompt })
+      : null;
+
+    if (promptRef?.absolutePath) {
+      events.artifactWrite({ absolutePath: promptRef.absolutePath, role: 'raw.prompt', phase: PHASE_KEY, script: SCRIPT_ID });
+    }
+
+    const attemptStartMs = new Map();
 
     const { result: aiResult, meta } = await executeWithTargets({
       config: configForRecommendation,
@@ -328,28 +368,91 @@ async function run(input) {
       replayMode,
       operation: async (ctx) => {
         const adapter = ctx?.target?.adapter;
+        const attemptKey = String(ctx?.attempt || '');
+
+        if (attemptKey && !attemptStartMs.has(attemptKey)) {
+          attemptStartMs.set(attemptKey, Date.now());
+          events.emit({
+            kind: 'attempt.start',
+            phase: PHASE_KEY,
+            script: SCRIPT_ID,
+            domain: 'recommendation',
+            attempt: ctx.attempt,
+            attemptInTarget: ctx.attemptInTarget,
+            targetIndex: ctx.targetIndex,
+            targetCount: ctx.targetCount,
+            adapter: adapter || null,
+          });
+        }
+
         const provider = getProviderForTarget({
           configForTarget: ctx.configForTarget,
           target: ctx.target
         });
 
-        const completion = await provider.complete({
-          prompt,
-          model: adapter?.model,
-          apiKey: process.env.AI_API_KEY,
-          options: {
-            temperature: 0.4,
-            maxTokens: 900,
-            ...(
-              adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
-                ? adapter.params
-                : {}
-            )
-          }
+        const providerCallStart = Date.now();
+        events.emit({
+          kind: 'provider.call.start',
+          phase: PHASE_KEY,
+          script: SCRIPT_ID,
+          domain: 'recommendation',
+          attempt: ctx.attempt,
+          attemptInTarget: ctx.attemptInTarget,
+          targetIndex: ctx.targetIndex,
+          targetCount: ctx.targetCount,
+          provider: adapter?.name || null,
+          model: adapter?.model || null,
         });
 
-        const parsed = parseRecommendationResponse(completion.content);
-        return { completion, parsed };
+        try {
+          const completion = await provider.complete({
+            prompt,
+            model: adapter?.model,
+            apiKey: process.env.AI_API_KEY,
+            options: {
+              temperature: 0.4,
+              maxTokens: 900,
+              ...(
+                adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
+                  ? adapter.params
+                  : {}
+              )
+            }
+          });
+
+          events.emit({
+            kind: 'provider.call.end',
+            phase: PHASE_KEY,
+            script: SCRIPT_ID,
+            domain: 'recommendation',
+            attempt: ctx.attempt,
+            attemptInTarget: ctx.attemptInTarget,
+            targetIndex: ctx.targetIndex,
+            ok: true,
+            durationMs: Date.now() - providerCallStart,
+            provider: adapter?.name || null,
+            model: adapter?.model || null,
+          });
+
+          const parsed = parseRecommendationResponse(completion.content);
+          return { completion, parsed };
+        } catch (error) {
+          events.emit({
+            kind: 'provider.call.end',
+            phase: PHASE_KEY,
+            script: SCRIPT_ID,
+            domain: 'recommendation',
+            attempt: ctx.attempt,
+            attemptInTarget: ctx.attemptInTarget,
+            targetIndex: ctx.targetIndex,
+            ok: false,
+            durationMs: Date.now() - providerCallStart,
+            provider: adapter?.name || null,
+            model: adapter?.model || null,
+            error: error?.message || String(error),
+          });
+          throw error;
+        }
       },
       onAttempt: ({
         ok,
@@ -363,6 +466,27 @@ async function run(input) {
         error,
         configForTarget
       }) => {
+        const attemptKey = String(attempt || '');
+        const startedAt = attemptKey && attemptStartMs.has(attemptKey) ? attemptStartMs.get(attemptKey) : null;
+
+        events.emit({
+          kind: 'attempt.end',
+          phase: PHASE_KEY,
+          script: SCRIPT_ID,
+          domain: 'recommendation',
+          attempt,
+          attemptInTarget,
+          targetIndex,
+          targetCount,
+          ok,
+          durationMs: startedAt ? (Date.now() - startedAt) : null,
+          provider: target?.adapter?.name || null,
+          model: target?.adapter?.model || null,
+          error: ok ? null : (error?.message || String(error)),
+        });
+
+        if (!captureRaw) return;
+
         const adapter = target?.adapter || null;
 
         const completion = ok
@@ -381,7 +505,7 @@ async function run(input) {
           targetCount,
           adapter,
           failover: failover || null,
-          prompt,
+          promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
           rawResponse: ok ? sanitizeRawCaptureValue(completion) : null,
           parsed: ok ? (result?.parsed || null) : null,
           error: errorMessage,
@@ -435,6 +559,7 @@ async function run(input) {
     // Save recommendation JSON
     const recommendationPath = path.join(recommendationDir, 'recommendation.json');
     fs.writeFileSync(recommendationPath, JSON.stringify(recommendation, null, 2), 'utf8');
+    events.artifactWrite({ absolutePath: recommendationPath, role: 'artifact', phase: PHASE_KEY, script: SCRIPT_ID });
     console.log(`   ✅ Recommendation saved to: ${recommendationPath}`);
 
     return {
@@ -474,10 +599,13 @@ async function run(input) {
       ensurePhaseErrorArtifacts({
         captureRaw,
         rawMetaDir,
+        events,
         phaseOutcome,
         fatalPhaseError,
         phaseErrors
       });
+
+      events.emit({ kind: 'script.end', phase: PHASE_KEY, script: SCRIPT_ID, outcome: phaseOutcome });
     } catch (e) {
       console.warn('   ⚠️  Warning: Failed to write recommendation raw error artifacts:', e?.message || String(e));
     }

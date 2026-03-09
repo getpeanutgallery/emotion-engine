@@ -24,6 +24,8 @@ const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/ra
 const { ensureToolVersionsCaptured } = require('../../lib/tool-versions.cjs');
 const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 const { executeWithTargets, createRetryableError, getTargetsFromConfig } = require('../../lib/ai-targets.cjs');
+const { getEventsLogger } = require('../../lib/events-timeline.cjs');
+const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 
 const execAsync = promisify(exec);
 
@@ -232,6 +234,10 @@ async function run(input) {
   fs.mkdirSync(outputDir, { recursive: true });
 
   const captureRaw = shouldCaptureRaw(config);
+
+  const events = getEventsLogger({ outputDir, config });
+  events.emit({ kind: 'script.start', phase: 'phase2-process', script: 'video-chunks' });
+
   const rawDir = getRawPhaseDir(outputDir, 'phase2-process');
   const rawMetaDir = path.join(rawDir, '_meta');
   const ffmpegRawDir = path.join(rawDir, 'ffmpeg');
@@ -246,6 +252,18 @@ async function run(input) {
     phaseErrors.push({
       ts: new Date().toISOString(),
       ...entry
+    });
+
+    events.error({
+      message: entry?.message || null,
+      phase: 'phase2-process',
+      script: 'video-chunks',
+      where: entry?.kind || entry?.name || null,
+      extra: {
+        kind: entry?.kind || null,
+        chunkIndex: Number.isInteger(entry?.chunkIndex) ? entry.chunkIndex : null,
+        splitIndex: Number.isInteger(entry?.splitIndex) ? entry.splitIndex : null,
+      }
     });
   };
 
@@ -520,6 +538,8 @@ async function run(input) {
         };
 
         try {
+          const attemptStartMs = new Map();
+
           const { result: analysisResult, meta } = await executeWithTargets({
             config,
             domain: 'video',
@@ -533,6 +553,24 @@ async function run(input) {
             },
             operation: async (ctx) => {
               const adapter = ctx?.target?.adapter;
+              const attemptKey = String(ctx?.attempt || '');
+
+              if (attemptKey && !attemptStartMs.has(attemptKey)) {
+                attemptStartMs.set(attemptKey, Date.now());
+                events.emit({
+                  kind: 'attempt.start',
+                  phase: 'phase2-process',
+                  script: 'video-chunks',
+                  domain: 'video',
+                  chunkIndex,
+                  splitIndex: splitIndex || 0,
+                  attempt: ctx.attempt,
+                  attemptInTarget: ctx.attemptInTarget,
+                  targetIndex: ctx.targetIndex,
+                  targetCount: ctx.targetCount,
+                  adapter: adapter || null,
+                });
+              }
 
               const toolVariablesForAttempt = {
                 ...normalizedToolVariables,
@@ -548,7 +586,59 @@ async function run(input) {
                 config: ctx.configForTarget
               };
 
-              const toolResult = await emotionLensesTool.analyze(analyzeInput);
+              const providerCallStart = Date.now();
+              events.emit({
+                kind: 'provider.call.start',
+                phase: 'phase2-process',
+                script: 'video-chunks',
+                domain: 'video',
+                chunkIndex,
+                splitIndex: splitIndex || 0,
+                attempt: ctx.attempt,
+                attemptInTarget: ctx.attemptInTarget,
+                targetIndex: ctx.targetIndex,
+                targetCount: ctx.targetCount,
+                provider: adapter?.name || null,
+                model: adapter?.model || null,
+              });
+
+              let toolResult;
+              try {
+                toolResult = await emotionLensesTool.analyze(analyzeInput);
+                events.emit({
+                  kind: 'provider.call.end',
+                  phase: 'phase2-process',
+                  script: 'video-chunks',
+                  domain: 'video',
+                  chunkIndex,
+                  splitIndex: splitIndex || 0,
+                  attempt: ctx.attempt,
+                  attemptInTarget: ctx.attemptInTarget,
+                  targetIndex: ctx.targetIndex,
+                  ok: true,
+                  durationMs: Date.now() - providerCallStart,
+                  provider: adapter?.name || null,
+                  model: adapter?.model || null,
+                });
+              } catch (error) {
+                events.emit({
+                  kind: 'provider.call.end',
+                  phase: 'phase2-process',
+                  script: 'video-chunks',
+                  domain: 'video',
+                  chunkIndex,
+                  splitIndex: splitIndex || 0,
+                  attempt: ctx.attempt,
+                  attemptInTarget: ctx.attemptInTarget,
+                  targetIndex: ctx.targetIndex,
+                  ok: false,
+                  durationMs: Date.now() - providerCallStart,
+                  provider: adapter?.name || null,
+                  model: adapter?.model || null,
+                  error: error?.message || String(error),
+                });
+                throw error;
+              }
               const lenses = analyzeInput?.toolVariables?.variables?.lenses || [];
               const schemaFailure = getSchemaFailureReason(toolResult?.state, lenses);
 
@@ -598,6 +688,29 @@ async function run(input) {
               result,
               error
             }) => {
+              const attemptKey = String(attempt || '');
+              const startedAt = attemptKey && attemptStartMs.has(attemptKey) ? attemptStartMs.get(attemptKey) : null;
+
+              events.emit({
+                kind: 'attempt.end',
+                phase: 'phase2-process',
+                script: 'video-chunks',
+                domain: 'video',
+                chunkIndex,
+                splitIndex: splitIndex || 0,
+                attempt,
+                attemptInTarget,
+                targetIndex,
+                targetCount,
+                ok,
+                durationMs: startedAt ? (Date.now() - startedAt) : null,
+                provider: target?.adapter?.name || null,
+                model: target?.adapter?.model || null,
+                error: ok ? null : (error?.message || String(error)),
+              });
+
+              if (!captureRaw) return;
+
               const adapter = target?.adapter || null;
 
               const toolResult = ok
@@ -608,6 +721,15 @@ async function run(input) {
               const errorMessage = ok
                 ? null
                 : (invalidReason || error?.message || String(error));
+
+              const promptPayload = toolResult?.prompt || null;
+              const promptRef = promptPayload
+                ? storePromptPayload({ outputDir, payload: promptPayload })
+                : null;
+
+              if (promptRef?.absolutePath) {
+                events.artifactWrite({ absolutePath: promptRef.absolutePath, role: 'raw.prompt', phase: 'phase2-process', script: 'video-chunks' });
+              }
 
               writeChunkRaw(chunkIndex, splitIndex || 0, {
                 chunkIndex,
@@ -620,7 +742,7 @@ async function run(input) {
                 targetCount,
                 adapter,
                 failover: failover || null,
-                prompt: toolResult?.prompt || null,
+                promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
                 rawResponse: toolResult ? extractRawResponse(toolResult) : null,
                 parsed: toolResult?.state || null,
                 error: errorMessage,
@@ -697,6 +819,7 @@ async function run(input) {
     // Write artifact to phase directory
     const artifactPath = path.join(phaseDir, 'chunk-analysis.json');
     fs.writeFileSync(artifactPath, JSON.stringify(chunkAnalysis, null, 2));
+    events.artifactWrite({ absolutePath: artifactPath, role: 'artifact', phase: 'phase2-process', script: 'video-chunks' });
 
     console.log('   ✅ Video chunk analysis complete');
     console.log(`      Artifact path: ${artifactPath}`);
@@ -730,6 +853,8 @@ async function run(input) {
     } catch (e) {
       console.warn('   ⚠️  Warning: Failed to write phase raw error artifacts:', e?.message || String(e));
     }
+
+    events.emit({ kind: 'script.end', phase: 'phase2-process', script: 'video-chunks', outcome: phaseOutcome });
 
     // Handle chunk file cleanup based on config
     if (keepProcessedIntermediates) {
