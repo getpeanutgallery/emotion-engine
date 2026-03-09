@@ -2,6 +2,21 @@
 
 Modular 3-phase pipeline for video/audio emotion analysis.
 
+## Quickstart (canonical commands)
+
+```bash
+npm install
+npm run validate-configs
+npm run pipeline -- --config configs/cod-test.yaml --dry-run
+npm test
+```
+
+Digital-twin (record/replay) knobs:
+
+- `DIGITAL_TWIN_MODE` — `replay` (offline/deterministic) or `record` (capture new cassettes)
+- `DIGITAL_TWIN_PACK` — path to a twin pack repo (contains `cassettes/`)
+- `DIGITAL_TWIN_CASSETTE` — cassette id (filename without `.json`)
+
 ## What this repo runs today
 
 **Primary entrypoint (use this):**
@@ -13,7 +28,7 @@ npm run pipeline -- --config <config.yaml>
 
 The orchestrator (`server/run-pipeline.cjs`) loads YAML/JSON config, validates it, runs scripts in 3 phases, and writes artifacts to `output/...`.
 
-> Note: `bin/run-analysis.js` is legacy/broken and should not be used. `npm exec emotion-engine` (bin shim → `server/run-pipeline.cjs`) is supported and equivalent to `npm run pipeline`.
+> `npm exec emotion-engine` (bin shim → `server/run-pipeline.cjs`) is supported and equivalent to `npm run pipeline`.
 
 ---
 
@@ -30,14 +45,14 @@ emotion-engine/
 ├── configs/                         # runnable YAML configs
 ├── test/                            # node --test suites
 ├── output/                          # run outputs
-└── docs/                            # deeper references (some docs are stale)
+└── docs/                            # deeper references
 ```
 
 ---
 
 ## Polyrepo sibling dependencies
 
-This repo expects the Peanut Gallery sibling repos to exist (for development and tests):
+This repo is part of the Peanut Gallery polyrepo ecosystem and integrates with sibling repos. In normal installs, dependencies are pulled via `git+ssh` (see `package.json`). For local development across repos, sibling checkouts are useful:
 
 - `../ai-providers`
 - `../tools`
@@ -103,10 +118,18 @@ Or run the underlying script directly:
 npm run pipeline -- --config configs/full-analysis.yaml --dry-run
 ```
 
-### 1) Validate config only (recommended first)
+### 1) Validate configs (parse + schema)
+
+Parse all `configs/*.yaml` (single-doc YAML):
 
 ```bash
-npm run pipeline -- --config configs/full-analysis.yaml --dry-run
+npm run validate-configs
+```
+
+Validate a specific config against the engine schema (no execution):
+
+```bash
+npm run pipeline -- --config configs/cod-test.yaml --dry-run
 ```
 
 ### 2) Run a no-AI smoke test
@@ -127,16 +150,19 @@ npm run pipeline -- --config configs/full-analysis.yaml
 
 Given `asset.outputDir: output/<run-name>`, the pipeline writes under that folder.
 
-Always created by orchestrator:
+Always created by orchestrator (regardless of `debug.captureRaw`):
 
 ```text
 output/<run-name>/
 ├── assets/
 │   ├── input/                       # copied input asset + config (+ persona files when available)
 │   └── processed/                   # extracted audio/chunks (retention controlled by debug flags)
-├── phase1-extract/raw/              # raw capture bucket for phase1
-├── phase2-process/raw/              # raw capture bucket for phase2
-├── phase3-report/raw/               # raw capture bucket for phase3
+├── phase1-gather-context/
+├── phase2-process/
+├── phase3-report/
+├── raw/
+│   ├── _meta/events.jsonl           # run timeline (append-only JSONL)
+│   └── ai/_prompts/<sha256>.json    # stored prompt payloads (referenced via promptRef)
 └── artifacts-complete.json          # final serialized artifact context
 ```
 
@@ -159,26 +185,41 @@ debug:
   captureRaw: true
 ```
 
-the scripts persist raw AI + ffmpeg/ffprobe diagnostics into canonical raw folders:
+the scripts persist raw AI + ffmpeg/ffprobe diagnostics into phase-scoped raw folders (and reference run-level prompt payloads via `promptRef`):
 
 ```text
-phase1-extract/raw/
+phase1-gather-context/raw/
+  _meta/
+    errors.jsonl
+    errors.summary.json
   ai/
-    dialogue-transcription.json
-    music-segment-<n>.json
+    dialogue-transcription.json         # pointer to latest attempt capture
+    dialogue-transcription/attempt-01/capture.json
+    music-analysis.json                 # pointer to latest attempt capture
+    music-analysis/attempt-01/capture.json
   ffmpeg/
-    extract-audio.json
-    extract-segment-<n>.json
-    ffprobe-audio-duration.json
+    dialogue/extract-audio.json
+    dialogue/ffprobe-audio-duration.json
+    music/extract-audio.json
+    ...
+  tools/_versions/
+    ffmpeg.json
+    ffprobe.json
 
 phase2-process/raw/
+  _meta/
+    errors.jsonl
+    errors.summary.json
   ai/
-    chunk-<n>.json
-    chunk-<n>-split-<m>.json
+    chunk-analysis/attempt-01/capture.json
   ffmpeg/
-    ffprobe-video-duration.json
-    extract-chunk-<n>.json
-    split-*.json (when splitting occurs)
+    ...
+
+phase3-report/raw/
+  ...
+
+raw/ai/_prompts/<sha256>.json           # prompt payloads (run-level)
+raw/_meta/events.jsonl                 # run timeline (run-level)
 ```
 
 ### Processed intermediates retention
@@ -232,9 +273,15 @@ So for green provider/integration tests, ensure a matching cassette exists (or p
 
 Your YAML has multiple documents (`---`). Keep configs single-document. `configs/video-analysis.yaml` is single-doc; the parallel example lives in `configs/video-analysis-parallel.yaml`.
 
-### `Missing required "ai.dialogue.model" / "ai.music.model" / "ai.video.model"`
+### `Missing required "ai.<domain>.targets"`
 
-Config validation now requires explicit per-domain models.
+Config validation requires explicit per-domain targets:
+
+- `ai.dialogue.targets[*].adapter.{name,model}`
+- `ai.music.targets[*].adapter.{name,model}`
+- `ai.video.targets[*].adapter.{name,model}`
+
+See `configs/cod-test.yaml` for a working example.
 
 ### `AI_API_KEY ... is required`
 
@@ -254,8 +301,8 @@ Ensure these exist and match sibling repo layout:
 
 ---
 
-## Practical known gaps
+## Docs
 
-- Some docs in `docs/` still describe older debug folder semantics (`keepTempFiles` + timestamped folders).
-
-Use this README as the current source of truth for running the repo today.
+- `docs/CONFIG-GUIDE.md` — current YAML schema + examples
+- `docs/DEBUG-CONFIG.md` — `debug.captureRaw` + processed intermediates retention
+- `docs/COD-TEST-GOLDEN-RUN-CHECKLIST.md` — deterministic replay/record checklist for `configs/cod-test.yaml`
