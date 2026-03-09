@@ -16,8 +16,7 @@ const aiProvider = require('ai-providers/ai-provider-interface.js');
 const outputManager = require('../../lib/output-manager.cjs');
 const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
 const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
-const ffmpegPath = require('ffmpeg-static');
-const ffprobePath = require('ffprobe-static').path;
+const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 
 const execAsync = promisify(exec);
 

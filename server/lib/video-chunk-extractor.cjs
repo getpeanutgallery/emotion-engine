@@ -11,7 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
-const ffmpegPath = require('ffmpeg-static');
+const { ffmpegPath } = require('./ffmpeg-path.cjs');
 
 /**
  * Extract a video chunk from a source video file

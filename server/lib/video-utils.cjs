@@ -8,8 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
-const ffmpegPath = require('ffmpeg-static');
-const ffprobePath = require('ffprobe-static');
+const { ffmpegPath, ffprobePath } = require('./ffmpeg-path.cjs');
 
 /**
  * Compress a video chunk to meet size requirements

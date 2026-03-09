@@ -11,8 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const ffmpegPath = require('ffmpeg-static');
-const ffprobePath = require('ffprobe-static');
+const { ffmpegPath, ffprobePath } = require('./ffmpeg-path.cjs');
 
 /**
  * Split a chunk file recursively if it exceeds max file size
