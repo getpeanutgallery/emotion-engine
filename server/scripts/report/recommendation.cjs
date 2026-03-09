@@ -1,30 +1,253 @@
 #!/usr/bin/env node
 /**
- * Recommendation Report Script
- * 
- * Generates AI-powered recommendation based on emotion analysis.
- * This script runs in Phase 3 (Report) of the pipeline.
- * 
- * Analyzes chunk data and metrics to provide actionable insights.
- * 
+ * Recommendation Report Script (Phase 3 - AI Advisor)
+ *
+ * Uses YAML-configured AI targets to generate actionable recommendations
+ * based on phase2 chunk analysis + phase3 metrics.
+ *
+ * Raw capture schema v2 parity:
+ * - attempt-scoped capture payloads under phase3-report/raw/ai/recommendation/
+ * - legacy pointer file (recommendation.json) pointing at latest attempt
+ *
+ * Config (new):
+ * - ai.recommendation.targets[*].adapter.{name,model,params?}
+ * - ai.recommendation.retry.{maxAttempts,backoffMs}
+ *
  * @module scripts/report/recommendation
  */
 
 const fs = require('fs');
 const path = require('path');
+
 const outputManager = require('../../lib/output-manager.cjs');
 const { splitChunksByStatus } = require('../../lib/chunk-analysis-status.cjs');
+const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
+const {
+  executeWithTargets,
+  getProviderForTarget,
+  createRetryableError
+} = require('../../lib/ai-targets.cjs');
+
+const PHASE_KEY = 'phase3-report';
+
+function isReplayMode() {
+  return (process.env.DIGITAL_TWIN_MODE || '').trim().toLowerCase() === 'replay';
+}
+
+function pad(value, width) {
+  return String(value).padStart(width, '0');
+}
+
+function getRetryConfig(config = {}) {
+  const retry = config?.ai?.recommendation?.retry || {};
+
+  return {
+    maxAttempts: Number.isInteger(retry.maxAttempts) && retry.maxAttempts > 0 ? retry.maxAttempts : 1,
+    backoffMs: Number.isInteger(retry.backoffMs) && retry.backoffMs >= 0 ? retry.backoffMs : 0
+  };
+}
+
+function sanitizeRawCaptureValue(value, depth = 0, seen = new WeakSet()) {
+  if (value === null || value === undefined) return value;
+  if (depth > 8) return '[Truncated]';
+
+  if (typeof value === 'string') {
+    if (value.startsWith('Bearer ')) return 'Bearer [REDACTED]';
+    return value;
+  }
+
+  if (typeof value !== 'object') return value;
+
+  if (seen.has(value)) return '[Circular]';
+  seen.add(value);
+
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeRawCaptureValue(item, depth + 1, seen));
+  }
+
+  const out = {};
+  for (const [key, item] of Object.entries(value)) {
+    if (/authorization/i.test(key) || /api[_-]?key/i.test(key)) {
+      out[key] = '[REDACTED]';
+      continue;
+    }
+    out[key] = sanitizeRawCaptureValue(item, depth + 1, seen);
+  }
+
+  return out;
+}
+
+function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, phaseOutcome, fatalPhaseError, phaseErrors }) {
+  if (!captureRaw) return;
+
+  fs.mkdirSync(rawMetaDir, { recursive: true });
+  const errorsPath = path.join(rawMetaDir, 'errors.jsonl');
+
+  if (phaseErrors.length > 0) {
+    const lines = phaseErrors.map((e) => JSON.stringify(e)).join('\n') + '\n';
+    fs.appendFileSync(errorsPath, lines, 'utf8');
+  } else if (!fs.existsSync(errorsPath)) {
+    // Create empty file so downstream tooling can rely on it existing.
+    fs.writeFileSync(errorsPath, '', 'utf8');
+  }
+
+  const totalErrors = fs.existsSync(errorsPath)
+    ? fs.readFileSync(errorsPath, 'utf8').split('\n').filter(Boolean).length
+    : 0;
+
+  const summary = {
+    schemaVersion: 1,
+    phase: PHASE_KEY,
+    outcome: phaseOutcome,
+    generatedAt: new Date().toISOString(),
+    totalErrors,
+    fatalError: fatalPhaseError
+      ? {
+          name: fatalPhaseError?.name || null,
+          message: fatalPhaseError?.message || String(fatalPhaseError),
+          stack: typeof fatalPhaseError?.stack === 'string' ? fatalPhaseError.stack : null
+        }
+      : null
+  };
+
+  writeRawJson(rawMetaDir, 'errors.summary.json', summary);
+}
+
+function buildPrompt({ chunks, metricsData, config }) {
+  const metricsSummary = {
+    averages: metricsData?.averages || null,
+    trends: metricsData?.trends || null,
+    frictionIndex: typeof metricsData?.frictionIndex === 'number' ? metricsData.frictionIndex : null,
+    peakMoments: metricsData?.peakMoments || null
+  };
+
+  const chunkSummaries = (chunks || []).map((chunk) => ({
+    chunkIndex: typeof chunk?.chunkIndex === 'number' ? chunk.chunkIndex : null,
+    startTime: typeof chunk?.startTime === 'number' ? chunk.startTime : null,
+    endTime: typeof chunk?.endTime === 'number' ? chunk.endTime : null,
+    summary: typeof chunk?.summary === 'string' ? chunk.summary : null,
+    dominant_emotion: chunk?.dominant_emotion || null,
+    confidence: typeof chunk?.confidence === 'number' ? chunk.confidence : null,
+    emotions: chunk?.emotions || null
+  }));
+
+  const pipelineMeta = {
+    pipelineName: config?.name || null,
+    pipelineVersion: config?.version || null,
+    persona: {
+      soulPath: config?.tool_variables?.soulPath || null,
+      goalPath: config?.tool_variables?.goalPath || null
+    }
+  };
+
+  return [
+    'You are an expert short-form video creative director and retention analyst.',
+    '',
+    'Using the provided chunk-level emotion analysis and computed metrics, generate actionable recommendations to improve viewer retention and emotional impact.',
+    '',
+    'Return ONLY valid JSON (no markdown, no commentary) matching this schema:',
+    '{',
+    '  "text": string,                  // 2-5 sentence executive recommendation',
+    '  "reasoning": string,             // 3-8 sentences referencing evidence in the data',
+    '  "confidence": number,            // 0..1',
+    '  "keyFindings": string[],         // 3-8 bullets',
+    '  "suggestions": string[]          // 5-12 bullets; concrete edits',
+    '}',
+    '',
+    'Rules:',
+    '- Keep it specific (talk about the start/hook, pacing, emotional beats).',
+    '- If data is insufficient, say so and provide next steps.',
+    '- Do not invent timestamps or quotes not present in the input.',
+    '',
+    'INPUT:',
+    JSON.stringify({ pipelineMeta, metricsSummary, chunkSummaries }, null, 2)
+  ].join('\n');
+}
+
+function parseRecommendationResponse(content) {
+  let parsed;
+  try {
+    parsed = JSON.parse(content);
+  } catch (e) {
+    throw createRetryableError('invalid_output: response was not valid JSON', {
+      group: 'parse',
+      raw: content
+    });
+  }
+
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw createRetryableError('invalid_output: response must be a JSON object', {
+      group: 'parse',
+      parsed
+    });
+  }
+
+  if (typeof parsed.text !== 'string' || parsed.text.trim().length === 0) {
+    throw createRetryableError('invalid_output: "text" must be a non-empty string', {
+      group: 'parse',
+      parsed
+    });
+  }
+
+  if (typeof parsed.reasoning !== 'string' || parsed.reasoning.trim().length === 0) {
+    throw createRetryableError('invalid_output: "reasoning" must be a non-empty string', {
+      group: 'parse',
+      parsed
+    });
+  }
+
+  const confidence = typeof parsed.confidence === 'number' && !Number.isNaN(parsed.confidence)
+    ? Math.max(0, Math.min(1, parsed.confidence))
+    : 0.5;
+
+  const keyFindings = Array.isArray(parsed.keyFindings)
+    ? parsed.keyFindings.filter((x) => typeof x === 'string' && x.trim().length > 0)
+    : [];
+
+  const suggestions = Array.isArray(parsed.suggestions)
+    ? parsed.suggestions.filter((x) => typeof x === 'string' && x.trim().length > 0)
+    : [];
+
+  return {
+    text: parsed.text.trim(),
+    reasoning: parsed.reasoning.trim(),
+    confidence,
+    keyFindings,
+    suggestions
+  };
+}
+
+function getConfigForRecommendation(config = {}) {
+  // Backward compatibility: if ai.recommendation is absent, reuse video targets.
+  // This keeps existing configs functioning while the new keys roll out.
+  if (config?.ai?.recommendation?.targets) return config;
+
+  if (config?.ai?.video?.targets) {
+    return {
+      ...config,
+      ai: {
+        ...(config.ai || {}),
+        recommendation: {
+          // Inherit a retry policy if one exists for video; otherwise, the default
+          // retry config is (1 attempt, 0 backoff).
+          ...(config?.ai?.video?.retry ? { retry: config.ai.video.retry } : {}),
+          targets: config.ai.video.targets
+        }
+      }
+    };
+  }
+
+  return config;
+}
 
 /**
  * Main entry point
- * 
+ *
  * @async
  * @function run
  * @param {object} input - Script input
  * @param {string} input.outputDir - Base output directory
- * @param {object} input.artifacts - Artifacts from previous phases
- *   @param {array} input.artifacts.chunkAnalysis.chunks - Array of chunk results
- *   @param {object} input.artifacts.metricsData - Metrics from metrics.cjs
+ * @param {object} input.artifacts - Artifacts from previous phases/scripts
  * @param {object} input.config - Pipeline config
  * @returns {Promise<object>} - Script output: { artifacts: object }
  */
@@ -32,6 +255,17 @@ async function run(input) {
   const { outputDir, artifacts = {}, config } = input;
 
   console.log('   🤖 Generating AI recommendation...');
+
+  const replayMode = isReplayMode();
+
+  // Verify AI_API_KEY is available for live calls only
+  if (!replayMode && !process.env.AI_API_KEY) {
+    console.error('   ❌ ERROR: AI_API_KEY environment variable is not set');
+    throw new Error('AI_API_KEY is required for recommendations unless DIGITAL_TWIN_MODE=replay');
+  }
+
+  const configForRecommendation = getConfigForRecommendation(config);
+  const retryConfig = getRetryConfig(configForRecommendation);
 
   // Ensure output directory exists
   fs.mkdirSync(outputDir, { recursive: true });
@@ -42,268 +276,212 @@ async function run(input) {
     metricsData = {}
   } = artifacts;
 
-  const chunks = chunkAnalysis.chunks || [];
+  const chunks = Array.isArray(chunkAnalysis.chunks) ? chunkAnalysis.chunks : [];
   const { successfulChunks, failedChunks } = splitChunksByStatus(chunks);
 
-  // Generate recommendation based on analysis
-  console.log('   📊 Analyzing emotional patterns...');
-  const recommendation = generateRecommendation(successfulChunks, metricsData, config);
-  recommendation.failedChunks = failedChunks.length;
+  const captureRaw = shouldCaptureRaw(configForRecommendation);
+  const rawDir = getRawPhaseDir(outputDir, PHASE_KEY);
+  const rawMetaDir = path.join(rawDir, '_meta');
+  const aiRawDir = path.join(rawDir, 'ai', 'recommendation');
 
-  // Create recommendation subdirectory under phase3-report
-  const recommendationDir = outputManager.createReportDirectory(outputDir, 'recommendation');
+  const phaseErrors = [];
+  let phaseOutcome = 'success';
+  let fatalPhaseError = null;
 
-  // Save recommendation JSON
-  const recommendationPath = path.join(recommendationDir, 'recommendation.json');
-  fs.writeFileSync(recommendationPath, JSON.stringify(recommendation, null, 2), 'utf8');
-  console.log(`   ✅ Recommendation saved to: ${recommendationPath}`);
+  const recordPhaseError = (entry) => {
+    phaseErrors.push({
+      ts: new Date().toISOString(),
+      ...entry
+    });
+  };
 
-  return {
-    artifacts: {
-      recommendationData: {
-        path: recommendationPath,
-        generatedAt: recommendation.generatedAt,
-        text: recommendation.text,
-        reasoning: recommendation.reasoning,
-        confidence: recommendation.confidence,
-        keyFindings: recommendation.keyFindings,
-        suggestions: recommendation.suggestions,
-        summary: {
-          hasRecommendation: !!recommendation.text && recommendation.text !== 'No recommendation available',
-          confidence: recommendation.confidence || 0
+  const writeRecommendationRaw = (payload) => {
+    if (!captureRaw) return;
+
+    const attempt = Number.isInteger(payload?.attempt) ? payload.attempt : 1;
+
+    const attemptRelDir = path.join(`attempt-${pad(attempt, 2)}`);
+    const attemptRelPath = path.join(attemptRelDir, 'capture.json');
+
+    writeRawJson(aiRawDir, attemptRelPath, payload);
+
+    // Legacy pointer file for stable discovery.
+    writeRawJson(aiRawDir, 'recommendation.json', {
+      schemaVersion: 2,
+      kind: 'pointer',
+      updatedAt: new Date().toISOString(),
+      latestAttempt: attempt,
+      target: {
+        dir: attemptRelDir,
+        file: attemptRelPath
+      }
+    });
+  };
+
+  try {
+    const prompt = buildPrompt({ chunks: successfulChunks, metricsData, config: configForRecommendation });
+
+    const { result: aiResult, meta } = await executeWithTargets({
+      config: configForRecommendation,
+      domain: 'recommendation',
+      retry: retryConfig,
+      replayMode,
+      operation: async (ctx) => {
+        const adapter = ctx?.target?.adapter;
+        const provider = getProviderForTarget({
+          configForTarget: ctx.configForTarget,
+          target: ctx.target
+        });
+
+        const completion = await provider.complete({
+          prompt,
+          model: adapter?.model,
+          apiKey: process.env.AI_API_KEY,
+          options: {
+            temperature: 0.4,
+            maxTokens: 900,
+            ...(
+              adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
+                ? adapter.params
+                : {}
+            )
+          }
+        });
+
+        const parsed = parseRecommendationResponse(completion.content);
+        return { completion, parsed };
+      },
+      onAttempt: ({
+        ok,
+        attempt,
+        attemptInTarget,
+        target,
+        targetIndex,
+        targetCount,
+        failover,
+        result,
+        error,
+        configForTarget
+      }) => {
+        const adapter = target?.adapter || null;
+
+        const completion = ok
+          ? result?.completion
+          : error?.aiTargets?.completion;
+
+        const errorMessage = ok ? null : (error?.message || String(error));
+
+        writeRecommendationRaw({
+          schemaVersion: 2,
+          domain: 'recommendation',
+          generatedAt: new Date().toISOString(),
+          attempt,
+          attemptInTarget,
+          targetIndex,
+          targetCount,
+          adapter,
+          failover: failover || null,
+          prompt,
+          rawResponse: ok ? sanitizeRawCaptureValue(completion) : null,
+          parsed: ok ? (result?.parsed || null) : null,
+          error: errorMessage,
+          errorName: ok ? null : (error?.name || null),
+          errorCode: ok ? null : (error?.code || null),
+          errorStatus: ok ? null : (error?.response?.status || null),
+          errorStack: ok ? null : (typeof error?.stack === 'string' ? error.stack : null),
+          errorDebug: ok ? null : (sanitizeRawCaptureValue(error?.debug) || null),
+          errorResponse: ok ? null : (sanitizeRawCaptureValue(error?.response?.data) || null),
+          provider: adapter?.name || (configForTarget?.ai?.provider || null),
+          model: adapter?.model || (configForTarget?.ai?.recommendation?.model || null),
+          requestMeta: {
+            adapter,
+            provider: adapter?.name || null,
+            model: adapter?.model || null,
+            attempt,
+            attemptInTarget,
+            targetIndex,
+            targetCount
+          }
+        });
+      }
+    });
+
+    const parsed = aiResult.parsed;
+
+    const recommendation = {
+      generatedAt: new Date().toISOString(),
+      pipelineVersion: configForRecommendation?.version || '8.0.0',
+      text: parsed.text,
+      reasoning: parsed.reasoning,
+      confidence: parsed.confidence,
+      keyFindings: parsed.keyFindings,
+      suggestions: parsed.suggestions,
+      failedChunks: failedChunks.length,
+      ai: {
+        attempt: meta?.attempt || 1,
+        provider: meta?.target?.adapter?.name || null,
+        model: meta?.target?.adapter?.model || null,
+        failover: meta?.failover || null,
+        usage: {
+          input: aiResult?.completion?.usage?.input ?? null,
+          output: aiResult?.completion?.usage?.output ?? null
         }
       }
-    }
-  };
-}
+    };
 
-/**
- * Generate AI recommendation based on emotion analysis
- * 
- * @function generateRecommendation
- * @param {array} chunks - Array of chunk analysis results
- * @param {object} metricsData - Metrics from metrics.cjs
- * @param {object} config - Pipeline config
- * @returns {object} - Recommendation object with text, reasoning, and confidence
- */
-function generateRecommendation(chunks, metricsData, config) {
-  const recommendation = {
-    generatedAt: new Date().toISOString(),
-    pipelineVersion: config?.version || '8.0.0',
-    text: '',
-    reasoning: '',
-    confidence: 0,
-    keyFindings: [],
-    suggestions: []
-  };
+    // Create recommendation subdirectory under phase3-report
+    const recommendationDir = outputManager.createReportDirectory(outputDir, 'recommendation');
 
-  if (!chunks || chunks.length === 0) {
-    recommendation.text = 'No recommendation available';
-    recommendation.reasoning = 'No chunk analysis data was provided';
-    recommendation.confidence = 0;
-    return recommendation;
-  }
+    // Save recommendation JSON
+    const recommendationPath = path.join(recommendationDir, 'recommendation.json');
+    fs.writeFileSync(recommendationPath, JSON.stringify(recommendation, null, 2), 'utf8');
+    console.log(`   ✅ Recommendation saved to: ${recommendationPath}`);
 
-  // Analyze emotional patterns across chunks
-  const emotionScores = analyzeEmotionPatterns(chunks);
-  
-  // Identify dominant emotions
-  const dominantEmotions = findDominantEmotions(emotionScores);
-  
-  // Detect emotional trends
-  const trends = detectEmotionalTrends(chunks);
-  
-  // Calculate engagement score
-  const engagementScore = calculateEngagementScore(chunks, emotionScores);
-
-  // Generate recommendation based on analysis
-  if (engagementScore >= 7) {
-    recommendation.text = 'This content demonstrates strong emotional engagement. The emotional arc effectively maintains viewer attention with compelling peaks and valleys.';
-    recommendation.reasoning = `High engagement score (${engagementScore.toFixed(1)}/10) driven by ${dominantEmotions.slice(0, 2).join(' and ')} emotions with clear emotional progression.`;
-    recommendation.confidence = 0.85;
-    
-    recommendation.keyFindings = [
-      `Strong ${dominantEmotions[0]} response throughout`,
-      `Emotional engagement remains consistent across ${chunks.length} segments`,
-      trends.increasing ? 'Emotional intensity builds over time' : 'Emotional intensity remains stable'
-    ];
-    
-    recommendation.suggestions = [
-      'Consider amplifying peak emotional moments for even stronger impact',
-      'Maintain the current pacing to preserve engagement',
-      'Test variations of high-engagement segments to optimize further'
-    ];
-  } else if (engagementScore >= 5) {
-    recommendation.text = 'This content shows moderate emotional engagement with room for improvement. Consider strengthening emotional peaks and reducing flat sections.';
-    recommendation.reasoning = `Moderate engagement score (${engagementScore.toFixed(1)}/10) with ${dominantEmotions[0]} as the primary emotion but inconsistent emotional intensity.`;
-    recommendation.confidence = 0.72;
-    
-    recommendation.keyFindings = [
-      `Mixed emotional response with ${dominantEmotions[0]} dominating`,
-      'Some segments show stronger engagement than others',
-      trends.decreasing ? 'Emotional engagement decreases over time' : 'Emotional engagement fluctuates'
-    ];
-    
-    recommendation.suggestions = [
-      'Strengthen emotional hooks in the first 3 seconds',
-      'Reduce or remove low-engagement segments',
-      'Add more dynamic transitions between emotional states',
-      'Consider restructuring to build toward a stronger climax'
-    ];
-  } else {
-    recommendation.text = 'This content struggles to maintain emotional engagement. Significant restructuring is recommended to improve viewer retention and emotional impact.';
-    recommendation.reasoning = `Low engagement score (${engagementScore.toFixed(1)}/10) with weak emotional responses and ${trends.decreasing ? 'declining' : 'inconsistent'} viewer interest.`;
-    recommendation.confidence = 0.68;
-    
-    recommendation.keyFindings = [
-      'Weak emotional response across most segments',
-      dominantEmotions[0] === 'boredom' ? 'Boredom is the dominant emotion' : 'Lack of clear emotional focus',
-      'Emotional arc lacks compelling progression'
-    ];
-    
-    recommendation.suggestions = [
-      'Completely restructure the opening to grab attention immediately',
-      'Remove or replace low-engagement segments',
-      'Add stronger emotional triggers (surprise, curiosity, excitement)',
-      'Consider shorter format to maintain intensity',
-      'Test with different target personas to find better alignment'
-    ];
-  }
-
-  // Add persona-specific insights if available
-  if (config?.tool_variables?.soulPath) {
-    // Extract persona name from path for display
-    const soulPath = config.tool_variables.soulPath;
-    const personaName = soulPath.split('/').slice(-3, -2)[0] || soulPath;
-    recommendation.suggestions.push(
-      `Consider testing with different personas (current: ${personaName})`
-    );
-  }
-
-  return recommendation;
-}
-
-/**
- * Analyze emotion patterns across chunks
- * 
- * @function analyzeEmotionPatterns
- * @param {array} chunks - Array of chunk analysis results
- * @returns {object} - Aggregated emotion scores
- */
-function analyzeEmotionPatterns(chunks) {
-  const emotionScores = {};
-  const emotionCounts = {};
-
-  for (const chunk of chunks) {
-    if (!chunk.emotions) continue;
-
-    for (const [emotion, data] of Object.entries(chunk.emotions)) {
-      const score = data.score || (typeof data === 'number' ? data : 0);
-      
-      if (!emotionScores[emotion]) {
-        emotionScores[emotion] = 0;
-        emotionCounts[emotion] = 0;
+    return {
+      artifacts: {
+        recommendationData: {
+          path: recommendationPath,
+          generatedAt: recommendation.generatedAt,
+          text: recommendation.text,
+          reasoning: recommendation.reasoning,
+          confidence: recommendation.confidence,
+          keyFindings: recommendation.keyFindings,
+          suggestions: recommendation.suggestions,
+          summary: {
+            hasRecommendation: !!recommendation.text && recommendation.text !== 'No recommendation available',
+            confidence: recommendation.confidence || 0
+          }
+        }
       }
-      
-      emotionScores[emotion] += score;
-      emotionCounts[emotion]++;
+    };
+  } catch (error) {
+    phaseOutcome = 'failed';
+    fatalPhaseError = error;
+
+    recordPhaseError({
+      kind: 'recommendation_failed',
+      message: error?.message || String(error),
+      stack: typeof error?.stack === 'string' ? error.stack : null
+    });
+
+    const attempts = Number.isInteger(error?.aiTargets?.attempts)
+      ? error.aiTargets.attempts
+      : retryConfig.maxAttempts;
+
+    throw new Error(`Recommendation generation failed after ${attempts} attempts: ${error.message}`);
+  } finally {
+    try {
+      ensurePhaseErrorArtifacts({
+        captureRaw,
+        rawMetaDir,
+        phaseOutcome,
+        fatalPhaseError,
+        phaseErrors
+      });
+    } catch (e) {
+      console.warn('   ⚠️  Warning: Failed to write recommendation raw error artifacts:', e?.message || String(e));
     }
   }
-
-  // Calculate averages
-  const averages = {};
-  for (const emotion of Object.keys(emotionScores)) {
-    averages[emotion] = emotionScores[emotion] / emotionCounts[emotion];
-  }
-
-  return averages;
-}
-
-/**
- * Find dominant emotions sorted by score
- * 
- * @function findDominantEmotions
- * @param {object} emotionScores - Aggregated emotion scores
- * @returns {array} - Array of emotion names sorted by score
- */
-function findDominantEmotions(emotionScores) {
-  return Object.entries(emotionScores)
-    .sort((a, b) => b[1] - a[1])
-    .map(([emotion]) => emotion);
-}
-
-/**
- * Detect emotional trends across chunks
- * 
- * @function detectEmotionalTrends
- * @param {array} chunks - Array of chunk analysis results
- * @returns {object} - Trend analysis
- */
-function detectEmotionalTrends(chunks) {
-  if (chunks.length < 2) {
-    return { increasing: false, decreasing: false, stable: true };
-  }
-
-  // Compare first half to second half
-  const midpoint = Math.floor(chunks.length / 2);
-  const firstHalf = chunks.slice(0, midpoint);
-  const secondHalf = chunks.slice(midpoint);
-
-  const firstAvg = calculateAverageEngagement(firstHalf);
-  const secondAvg = calculateAverageEngagement(secondHalf);
-
-  const change = secondAvg - firstAvg;
-
-  return {
-    increasing: change > 1,
-    decreasing: change < -1,
-    stable: Math.abs(change) <= 1,
-    change
-  };
-}
-
-/**
- * Calculate average engagement for a set of chunks
- * 
- * @function calculateAverageEngagement
- * @param {array} chunks - Array of chunk analysis results
- * @returns {number} - Average engagement score
- */
-function calculateAverageEngagement(chunks) {
-  if (!chunks || chunks.length === 0) return 0;
-
-  let totalEngagement = 0;
-  let count = 0;
-
-  for (const chunk of chunks) {
-    if (!chunk.emotions) continue;
-
-    // Engagement = excitement + curiosity - boredom (simplified)
-    const excitement = chunk.emotions.excitement?.score || 0;
-    const curiosity = chunk.emotions.curiosity?.score || 0;
-    const boredom = chunk.emotions.boredom?.score || 10; // Default high if missing
-
-    const engagement = excitement + curiosity + (10 - boredom);
-    totalEngagement += engagement;
-    count++;
-  }
-
-  return count > 0 ? totalEngagement / count : 0;
-}
-
-/**
- * Calculate overall engagement score (0-10)
- * 
- * @function calculateEngagementScore
- * @param {array} chunks - Array of chunk analysis results
- * @param {object} emotionScores - Aggregated emotion scores
- * @returns {number} - Engagement score
- */
-function calculateEngagementScore(chunks, emotionScores) {
-  const avgEngagement = calculateAverageEngagement(chunks);
-  
-  // Normalize to 0-10 scale (max theoretical is 30: 10+10+10)
-  return Math.min(10, Math.max(0, avgEngagement / 3));
 }
 
 module.exports = { run };
@@ -311,39 +489,51 @@ module.exports = { run };
 // Allow standalone execution for testing
 if (require.main === module) {
   const outputDir = process.argv[2] || 'output/test-recommendation';
-  
+
   run({
     outputDir,
     artifacts: {
       chunkAnalysis: {
         chunks: [
           {
+            chunkIndex: 0,
+            startTime: 0,
+            endTime: 8,
+            summary: 'Energetic intro with quick cuts.',
             emotions: {
               excitement: { score: 8, reasoning: 'High energy' },
               boredom: { score: 2, reasoning: 'Very engaging' },
               curiosity: { score: 7, reasoning: 'Intriguing content' }
-            }
-          },
-          {
-            emotions: {
-              excitement: { score: 6, reasoning: 'Moderate energy' },
-              boredom: { score: 4, reasoning: 'Some drag' },
-              curiosity: { score: 5, reasoning: 'Somewhat interesting' }
-            }
+            },
+            dominant_emotion: 'excitement',
+            confidence: 0.8
           }
         ],
-        videoDuration: 120
+        videoDuration: 8
       },
       metricsData: {
-        summary: {
-          averages: { excitement: 7, boredom: 3, curiosity: 6 }
-        }
+        averages: { excitement: 0.8, boredom: 0.2, curiosity: 0.7 },
+        frictionIndex: 0.1
       }
     },
-    config: { version: '8.0.0', name: 'Test Pipeline', tool_variables: { soulPath: 'cast/test-persona/SOUL.md' } }
+    config: {
+      version: '8.0.0',
+      name: 'Test Pipeline',
+      ai: {
+        recommendation: {
+          targets: [
+            { adapter: { name: 'openrouter', model: 'google/gemini-2.5-flash' } }
+          ]
+        }
+      },
+      debug: { captureRaw: true }
+    }
   })
-    .then(result => {
+    .then((result) => {
       console.log('Recommendation generation complete:', JSON.stringify(result.artifacts, null, 2));
     })
-    .catch(console.error);
+    .catch((err) => {
+      console.error(err);
+      process.exitCode = 1;
+    });
 }
