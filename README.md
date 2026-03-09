@@ -1,499 +1,250 @@
 # Emotion Engine v8.0
 
-**Modular, tool-agnostic AI workflow engine for multi-modal emotion analysis**
+Modular 3-phase pipeline for video/audio emotion analysis.
+
+## What this repo runs today
+
+**Primary entrypoint (use this):**
+
+```bash
+npm run pipeline -- --config <config.yaml>
+# equivalent: node server/run-pipeline.cjs --config <config.yaml>
+```
+
+The orchestrator (`server/run-pipeline.cjs`) loads YAML/JSON config, validates it, runs scripts in 3 phases, and writes artifacts to `output/...`.
+
+> Note: `bin/run-analysis.js` and `package.json#bin` are legacy/incomplete in this repo state. Prefer `server/run-pipeline.cjs` directly.
 
 ---
 
-## Overview
+## Repo structure (quick audit)
 
-Emotion Engine is a **3-phase modular pipeline** that orchestrates AI-powered analysis of video, audio, and image content. It extracts context (dialogue, music, visuals), processes it through customizable scripts, and generates structured reports with emotion scores, recommendations, and visual charts.
-
-The system is **provider-agnostic** — swap AI models (OpenRouter, Anthropic, Gemini, OpenAI) and storage backends (Local FS, AWS S3) without changing your pipeline scripts. Configuration is driven by YAML files, making workflows reproducible and git-safe.
-
-**Current Focus:** Video emotion analysis for ad evaluation, using persona-driven AI analysis to score emotional engagement, dialogue quality, music mood, and visual patterns.
+```text
+emotion-engine/
+├── server/run-pipeline.cjs          # main orchestrator
+├── server/lib/                      # config loader, phase runners, output/raw helpers
+├── server/scripts/
+│   ├── get-context/                 # phase 1 scripts
+│   ├── process/                     # phase 2 scripts
+│   └── report/                      # phase 3 scripts
+├── configs/                         # runnable YAML configs
+├── test/                            # node --test suites
+├── output/                          # run outputs
+└── docs/                            # deeper references (some docs are stale)
+```
 
 ---
 
-## Architecture
+## Polyrepo sibling dependencies
 
-### 3-Phase Pipeline
+This repo expects the Peanut Gallery sibling repos to exist (for development and tests):
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  PHASE 1: GATHER CONTEXT                                    │
-│  └─ Extract raw data: dialogue (transcription), music       │
-│     (mood/intensity segments), metadata                     │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│  PHASE 2: PROCESS                                           │
-│  └─ Analyze video chunks, per-second emotions, visual       │
-│     patterns with AI + persona lenses                       │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│  PHASE 3: REPORT                                            │
-│  └─ Generate JSON artifacts, SVG charts, markdown summaries │
-│     with emotional analysis, metrics, recommendations       │
-└─────────────────────────────────────────────────────────────┘
-```
+- `../ai-providers`
+- `../tools`
+- `../cast`
+- `../goals`
+- `../retry-strategy`
+- (tests/cassettes) `../digital-twin-*` repos
 
-### Polyrepo Sibling Architecture
+### Dependency wiring status
 
-Emotion Engine is part of a **polyrepo monorepo** at `peanut-gallery/`. Local dependencies are linked via the `file:` protocol:
+`package.json` is already using **git+ssh** dependencies (good):
 
-```json
-{
-  "dependencies": {
-    "ai-providers": "file:../ai-providers",
-    "cast": "file:../cast",
-    "goals": "file:../goals",
-    "retry-strategy": "file:../retry-strategy",
-    "tools": "file:../tools"
-  }
-}
-```
+- `ai-providers`, `tools`, `cast`, `goals`, `retry-strategy` are `git+ssh://...`
+- no `file:` deps in `package.json`
 
-**These sibling packages provide:**
-
-- **`cast/`** — Persona definitions (`SOUL.md` files) - [GitHub](https://github.com/getpeanutgallery/cast)
-- **`goals/`** — Goal definitions (`GOAL.md` files) - [GitHub](https://github.com/getpeanutgallery/goals)
-- **`tools/`** — Composable tool scripts (e.g., `emotion-lenses-tool.cjs`) - [GitHub](https://github.com/getpeanutgallery/tools)
-- **`ai-providers/`** — AI provider interface (OpenRouter, Anthropic, Gemini, OpenAI) - [GitHub](https://github.com/getpeanutgallery/ai-providers)
-- **`retry-strategy/`** — Retry logic implementations - [GitHub](https://github.com/getpeanutgallery/retry-strategy)
-
-**Note:** These must be present as sibling directories when installing locally. CI/CD or distribution should publish these packages to npm and use versioned dependencies.
-
-### Digital Twin Packages (Offline Testing)
-
-For offline testing and deterministic CI, digital twin packages provide mock/cassette-based AI responses:
-
-- **`digital-twin-core/`** — Core digital twin infrastructure
-- **`digital-twin-emotion-engine-providers/`** — AI provider cassettes for emotion-engine
-- **`digital-twin-openrouter-emotion-engine/`** — OpenRouter-specific cassettes
-- **`digital-twin-router/`** — Routes real/digital twin requests
-
-**Integration via environment variables:**
-
-```bash
-# Enable digital twin mode (typically in test scripts)
-export DIGITAL_TWIN_MODE=test                # Mode: test/off/on
-export DIGITAL_TWIN_PACK=/path/to/digital-twin-emotion-engine-providers
-export DIGITAL_TWIN_CASSETTE=providers       # Cassette name (fixtures subfolder)
-```
-
-Tests automatically set these variables to use recorded AI responses instead of making live API calls, ensuring fast, deterministic, and cost-free test runs.
+This matches CI-friendly polyrepo behavior.
 
 ---
 
-## Tech Stack
+## Prerequisites
 
-**Runtime:**
+- Node.js `>=18`
+- npm (repo has `package-lock.json`; npm is the safest default)
+- GitHub SSH access (for `git+ssh` package installs)
+- API key for live provider calls (`AI_API_KEY`) unless running in digital-twin replay
+- FFmpeg/FFprobe are provided via `ffmpeg-static` + `ffprobe-static` (no manual apt/brew needed)
 
-- Node.js >= 18.0.0 (CommonJS modules)
-- FFmpeg & FFprobe — **automatically installed via `ffmpeg-static` and `ffprobe-static` packages** (no manual installation required!)
+Optional for integration/provider tests:
 
-**Dependencies:**
-
-- `@aws-sdk/client-s3` — AWS S3 storage backend
-- `axios` — HTTP client for API calls
-- `dotenv` — Environment variable management
-- `js-yaml` — YAML configuration parsing
-- `ffmpeg-static` — Cross-platform FFmpeg binary (auto-installed)
-- `ffprobe-static` — Cross-platform FFprobe binary (auto-installed)
-- Local packages (via `file:../`): `cast`, `goals`, `tools`, `ai-providers`, `retry-strategy`
-
-**AI Providers:**
-
-- OpenRouter (multi-model gateway)
-- Anthropic (Claude)
-- Google Gemini
-- OpenAI (GPT)
-
-**Storage Backends:**
-
-- Local filesystem (default)
-- AWS S3
-
-**Testing:**
-
-- Node.js native test runner (`node --test`)
-- 70+ unit tests across AI providers, pipeline, scripts, and storage
+- `digital-twin-emotion-engine-providers` (or another cassette pack)
+- valid cassette files under `<pack>/cassettes/`
 
 ---
 
-## Quick Start
-
-### 1. Install
+## Install
 
 ```bash
-# Install local dependencies first (from sibling repos)
-# Then install emotion-engine deps:
-pnpm install
-# or: npm install
+cd /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine
+npm install
 ```
 
-**Note:** FFmpeg is now automatically installed via the `ffmpeg-static` package. No manual installation required!
-
-### 2. Configure
-
-Copy `.env.example` to `.env` and set your API key:
+Set env (there is currently no `.env.example` in this repo):
 
 ```bash
-cp .env.example .env
+# .env
+AI_API_KEY=...
 ```
 
-**Only `AI_API_KEY` is required in `.env`.** All other configuration (including AI models) is managed in YAML files.
+---
+
+## Running pipelines
+
+### 1) Validate config only (recommended first)
 
 ```bash
-# .env - Only this ONE variable needed
-AI_API_KEY=sk-or-v1-your-key-here
+npm run pipeline -- --config configs/full-analysis.yaml --dry-run
 ```
 
-### 3. Run a Pipeline
+### 2) Run a no-AI smoke test
 
 ```bash
-# Using the user-friendly CLI (flat paths, no versioning)
-node bin/run-analysis.js \
-  --soul impatient-teenager \
-  --goal video-ad-evaluation \
-  --tool emotion-lenses \
-  path/to/video.mp4 \
-  output/
-
-# Or directly with pipeline orchestrator
-pnpm run pipeline --config configs/video-analysis.yaml
+npm run pipeline -- --config configs/example-pipeline.yaml
 ```
 
-**Note:** Personas, goals, and tools are loaded from local package dependencies:
-
-- **Personas:** `cast/<persona>/SOUL.md` (e.g., `cast/impatient-teenager/SOUL.md`)
-- **Goals:** `goals/<goal-name>.md` (e.g., `goals/video-ad-evaluation.md`)
-- **Tools:** `tools/<tool-name>.cjs` (e.g., `tools/emotion-lenses-tool.cjs`)
-
-The old `personas/`, `tools/`, and `goals/` folders have been extracted into separate packages.
-
-### 4. Run Tests
+### 3) Run full analysis
 
 ```bash
-# Run all tests (uses Node's built-in test runner)
+npm run pipeline -- --config configs/full-analysis.yaml
+```
+
+---
+
+## Output layout
+
+Given `asset.outputDir: output/<run-name>`, the pipeline writes under that folder.
+
+Always created by orchestrator:
+
+```text
+output/<run-name>/
+├── assets/
+│   ├── input/                       # copied input asset + config (+ persona files when available)
+│   └── processed/                   # extracted audio/chunks (retention controlled by debug flags)
+├── phase1-extract/raw/              # raw capture bucket for phase1
+├── phase2-process/raw/              # raw capture bucket for phase2
+├── phase3-report/raw/               # raw capture bucket for phase3
+└── artifacts-complete.json          # final serialized artifact context
+```
+
+Typical script outputs:
+
+- `phase1-gather-context/dialogue-data.json`
+- `phase1-gather-context/music-data.json`
+- `phase2-process/chunk-analysis.json`
+- `phase2-process/per-second-data.json`
+- `phase3-report/...` (metrics/recommendation/final report files)
+
+---
+
+## `debug.captureRaw` behavior (new)
+
+When enabled:
+
+```yaml
+debug:
+  captureRaw: true
+```
+
+the scripts persist raw AI + ffmpeg/ffprobe diagnostics into canonical raw folders:
+
+```text
+phase1-extract/raw/
+  ai/
+    dialogue-transcription.json
+    music-segment-<n>.json
+  ffmpeg/
+    extract-audio.json
+    extract-segment-<n>.json
+    ffprobe-audio-duration.json
+
+phase2-process/raw/
+  ai/
+    chunk-<n>.json
+    chunk-<n>-split-<m>.json
+  ffmpeg/
+    ffprobe-video-duration.json
+    extract-chunk-<n>.json
+    split-*.json (when splitting occurs)
+```
+
+### Processed intermediates retention
+
+Current behavior defaults to **keep** processed intermediates unless you disable it:
+
+```yaml
+debug:
+  keepProcessedIntermediates: false
+```
+
+Backward-compatible aliases still read:
+
+- `debug.keepProcessedFiles`
+- `debug.keepTempFiles` (legacy)
+
+---
+
+## Testing
+
+### Unit / script tests (fast, local)
+
+```bash
 npm test
-
-# Validate JSON output format
-npm run test:validate-json
 ```
 
----
-
-## Configuration
-
-### AI Provider Configuration (YAML)
-
-All AI configuration is done in your YAML config files, not in `.env`. This makes configurations reproducible and git-safe (no API keys in YAML).
-
-**Simple Configuration (Single Model):**
-```yaml
-# configs/quick-test.yaml
-ai:
-  provider: openrouter        # Provider: openrouter, anthropic, gemini, openai
-  model: qwen/qwen-3.5-397b-a17b
-  # API key is injected from AI_API_KEY environment variable
-```
-
-**Multi-Model Configuration (Per-Component Models):**
-```yaml
-# Use different models for different analysis types
-ai:
-  provider: openrouter
-  dialogue:
-    model: google/gemini-2.5-flash      # For transcription/context
-  music:
-    model: google/gemini-2.5-flash      # For music/mood analysis
-  video:
-    model: qwen/qwen3.5-122b-a10b       # For video analysis
-```
-
-### Global Settings
-
-```yaml
-settings:
-  chunk_duration: 8          # Seconds per video chunk
-  max_chunks: 4              # Limit chunks for testing
-  api_request_delay: 1000    # Milliseconds between API calls
-  chunk_quality: "medium"    # Video quality: low|medium|high
-  music_segment_duration: 30 # Seconds per music analysis segment
-  
-  retry_strategy:
-    type: "exponential-backoff"  # Options: none, fixed-delay, exponential-backoff, adaptive
-    config:
-      maxRetries: 3
-      initialDelayMs: 1000
-      maxDelayMs: 10000
-      exponentialBase: 2
-      jitter: true
-
-tool_variables:
-  file_transfer:
-    strategy: "base64"       # Options: base64, web_url, youtube_url
-    mimeType: "video/mp4"
-    maxFileSize: 10485760    # 10MB in bytes (OpenRouter limit)
-```
-
-See `docs/CONFIG-GUIDE.md` for the complete YAML schema.
-
----
-
-## Test Videos
-
-### Location
-
-Test videos are stored in:
-
-```
-examples/videos/emotion-tests/
-```
-
-### Current Test Video
-
-**File:** `cod.mp4`  
-**Size:** 62 MB  
-**Status:** Committed to git  
-
-**Purpose:** End-to-end (E2E) testing and development of the emotion analysis pipeline.
-
-### Adding New Test Videos
-
-To add new test videos for testing different scenarios:
-
-1. **Place the video** in `examples/videos/emotion-tests/` or create an appropriate subfolder for categorization
-2. **Use descriptive names** that indicate the test purpose:
-   - `neutral-baseline.mp4` — Baseline emotional neutrality test
-   - `poor-lighting-test.mp4` — Low lighting condition analysis
-   - `high-energy-montage.mp4` — Fast-paced content testing
-   - `dialogue-heavy-scene.mp4` — Speech/transcription focus
-3. **Update this README** when adding new videos — document what each video tests
-4. **Consider file size** for git tracking — large videos (>100 MB) may need `.gitignore` rules or external storage
-
-### Usage in Testing
-
-Test videos are used with pipeline configs like `configs/cod-test.yaml` and `configs/quick-test.yaml` for validation during development and CI runs.
-
----
-
-## Key Features
-
-### ✅ Implemented & Working
-
-**Core Pipeline:**
-
-- 3-phase modular orchestrator (Gather → Process → Report)
-- YAML-based configuration system (12+ pre-built configs)
-- Sequential and parallel execution modes for Phase 2
-- Artifact management with JSON output
-- Robust error handling and retry logic
-
-**AI Integration:**
-
-- 4 AI provider implementations (OpenRouter, Anthropic, Gemini, OpenAI)
-- Per-component model selection (dialogue, music, video)
-- Unified interface with automatic fallbacks
-- Support for text, image, and audio inputs
-- JSON response parsing with error recovery
-- Configurable retry strategies (exponential-backoff, fixed-delay, adaptive)
-
-**Video Analysis:**
-
-- FFmpeg-based video chunk extraction
-- Per-second emotion scoring
-- Dialogue transcription from audio
-- Music/mood segment detection
-- SVG chart generation for visual correlation
-
-**Persona System:**
-
-- SOUL.md (personality), GOAL.md (objectives), TOOLS (analysis scripts)
-- **Personas:** Loaded from `cast` package - Path format: `cast/<persona>/SOUL.md`
-- **Goals:** Loaded from `goals` package - Path format: `goals/<goal-name>.md`
-- **Tools:** Loaded from `tools` package - Path format: `tools/<tool-name>.cjs`
-- Emotion lenses (patience, boredom, excitement, etc.)
-
-**Storage:**
-
-- Local filesystem (default)
-- AWS S3 integration
-- Pluggable storage interface
-
-**CLI:**
-
-- `bin/run-analysis.js` — User-friendly wrapper with persona ID resolution
-- `server/run-pipeline.cjs` — Direct pipeline execution
-- YAML config support with `--config` flag
-
-**Testing:**
-
-- 70+ unit tests with Node.js native test runner
-- Integration tests for AI provider flows
-- Storage backend tests
-- Script-level tests for all pipeline phases
-- Digital twin cassettes for deterministic offline testing
-
-### 📋 Planned / In Progress
-
-- Additional AI providers (Azure OpenAI, local models)
-- More storage backends (GCS, Azure Blob)
-- Real-time streaming analysis
-- Web UI for pipeline monitoring
-- Enhanced persona discovery and management tools
-
----
-
-## Configuration Examples
-
-### Basic Video Analysis
-
-```yaml
-# configs/video-analysis.yaml
-name: Video Emotion Analysis
-description: Full pipeline for video emotion evaluation
-
-phases:
-  gather:
-    - scripts/get-context/get-dialogue.cjs
-    - scripts/get-context/get-music.cjs
-
-  process:
-    mode: parallel
-    scripts:
-      - scripts/process/video-chunks.cjs
-      - scripts/process/video-per-second.cjs
-
-  report:
-    - scripts/report/emotional-analysis.cjs
-    - scripts/report/metrics.cjs
-    - scripts/report/recommendation.cjs
-    - scripts/report/summary.cjs
-    - scripts/report/final-report.cjs
-
-persona:
-  soul: cast/impatient-teenager/SOUL.md
-  goal: goals/video-ad-evaluation.md
-  tool: tools/emotion-lenses-tool.cjs
-
-assets:
-  - type: video
-    path: ./examples/videos/emotion-tests/cod.mp4
-
-ai:
-  provider: openrouter
-  dialogue:
-    model: google/gemini-2.5-flash
-  music:
-    model: google/gemini-2.5-flash
-  video:
-    model: qwen/qwen3.5-122b-a10b
-
-settings:
-  chunk_duration: 8
-  max_chunks: 4
-  api_request_delay: 1000
-  chunk_quality: "medium"
-  
-  retry_strategy:
-    type: "exponential-backoff"
-    config:
-      maxRetries: 3
-      initialDelayMs: 1000
-      maxDelayMs: 10000
-      exponentialBase: 2
-      jitter: true
-
-tool_variables:
-  file_transfer:
-    strategy: "base64"
-    maxFileSize: 10485760
-```
-
-### Custom Persona CLI
+or run targeted suites:
 
 ```bash
-node bin/run-analysis.js \
-  --soul cast/impatient-teenager/SOUL.md \
-  --goal video-ad-evaluation \
-  --tool emotion-lenses \
-  video.mp4 \
-  output/my-analysis
+node --test test/scripts/get-dialogue.test.js test/scripts/get-music.test.js test/scripts/video-chunks.test.js
 ```
 
----
+### Provider + integration tests (cassette-dependent)
 
-## Recent Activity
+Provider tests use digital-twin defaults:
 
-**Latest Commits (March 2026):**
+- `DIGITAL_TWIN_PACK=/home/derrick/.openclaw/workspace/projects/peanut-gallery/digital-twin-emotion-engine-providers`
+- `DIGITAL_TWIN_CASSETTE=providers`
 
-- **Environment Variable Simplification** — Removed all env vars except `AI_API_KEY`; all config now in YAML
-- **Multi-model Support** — Added support for different AI models per component (dialogue, music, video)
-- **Retry Strategy** — Configurable retry strategies (exponential-backoff, fixed-delay, adaptive)
-- **Refactored report system** — Split monolithic `evaluation.cjs` into 5 modular scripts
-- **Improved retry logic** — Enhanced API failure handling with configurable strategies
-- **Added SVG correlation charts** — Replaced ASCII charts with visual timeline correlations
-- **Fixed music timestamp parsing** — Support for multiple timestamp formats
-- **Added subset warnings** — Reports now warn when analysis covers <100% of video duration
-- **Enhanced JSON error handling** — Robust parsing with debug logging and fallbacks
+If that cassette is missing, tests fail with:
 
-**Recent Focus:**
+`Cassette not found: providers`
 
-- Modular report generation (Phase 4 completion)
-- Visual output improvements (SVG charts, markdown summaries)
-- Error resilience and debugging capabilities
-- Documentation and test coverage
+So for green provider/integration tests, ensure a matching cassette exists (or point env vars at a valid pack/cassette).
 
 ---
 
-## Status
+## Troubleshooting
 
-**Current State:** ✅ **Active Development**
+### `Failed to parse config file: expected a single document in the stream, but found more`
 
-- **Version:** 8.0.0
-- **Stability:** Stable core pipeline, experimental features in docs/
-- **Test Coverage:** 70+ tests passing
-- **Last Major Update:** March 7, 2026 (Docs update with new YAML configuration schema)
+Your YAML has multiple documents (`---`). Use a single-document config. Example: `configs/full-analysis.yaml` works; `configs/video-analysis.yaml` currently contains an extra alt doc block.
 
-The core 3-phase pipeline is production-ready for video emotion analysis. The persona system, AI provider abstraction, and storage backends are fully functional.
+### `Missing required "ai.dialogue.model" / "ai.music.model" / "ai.video.model"`
 
----
+Config validation now requires explicit per-domain models.
 
-## Next Steps
+### `AI_API_KEY ... is required`
 
-**Immediate:**
+Live calls require `AI_API_KEY`. For `video-chunks` replay mode, `DIGITAL_TWIN_MODE=replay` allows running without a live key.
 
-1. Run end-to-end tests with real video assets
-2. Validate all 12 YAML configs work as expected
-3. Document output artifact schemas for each script
-4. Add integration tests for parallel execution mode
+### `Cassette not found: providers`
 
-**Near-Term:**
+Set `DIGITAL_TWIN_PACK` and `DIGITAL_TWIN_CASSETTE` to an existing cassette pair, or record new cassettes in the digital-twin repo.
 
-- Add GCS and Azure storage providers
-- Implement streaming mode for long videos
-- Build web dashboard for pipeline monitoring
-- Expand persona library with more souls/goals/tools
+### Persona/goal path failures
+
+Ensure these exist and match sibling repo layout:
+
+- `cast/<persona>/SOUL.md`
+- `goals/<goal>.md`
+- `tools/<tool>.cjs`
 
 ---
 
-## Documentation
+## Practical known gaps
 
-- **Configuration Guide:** `docs/CONFIG-GUIDE.md` — Complete YAML schema and migration guide
-- **Debug Configuration:** `docs/DEBUG-CONFIG.md` — Debug file handling and temp file preservation
-- **Pipeline Scripts:** `docs/PIPELINE-SCRIPTS.md` — Script-by-script overview, contracts, and troubleshooting
+- `package.json#bin` points to `./bin/run-pipeline.js` (not present).
+- No `.env.example` committed right now.
+- Some docs in `docs/` still describe older debug folder semantics (`keepTempFiles` + timestamped folders).
 
----
-
-## License
-
-MIT License — see [LICENSE](LICENSE) for details.
-
----
-
-**Built with ❤️ by Peanut Gallery**
-
-*Last updated: March 7, 2026*
+Use this README as the current source of truth for running the repo today.
