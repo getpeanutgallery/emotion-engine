@@ -64,7 +64,7 @@ async function run(input) {
   // Default to keeping processed/intermediate files unless explicitly disabled
   const keepProcessedIntermediates = shouldKeepProcessedIntermediates(config);
   const captureRaw = shouldCaptureRaw(config);
-  const rawDir = getRawPhaseDir(outputDir, 'phase1-extract');
+  const rawDir = getRawPhaseDir(outputDir, 'phase1-gather-context');
   const ffmpegRawDir = path.join(rawDir, 'ffmpeg');
   const aiRawDir = path.join(rawDir, 'ai');
 

@@ -21,6 +21,7 @@ let analyzeImplementation = async (input) => {
   analyzeCalls.push(input);
   return {
     prompt: 'Test prompt',
+    rawResponse: '{"summary":"Test chunk summary","emotions":{"patience":{"score":7,"reasoning":"Test reasoning"}}}',
     state: {
       summary: 'Test chunk summary',
       emotions: {
@@ -76,6 +77,7 @@ test('Video Chunks Script', async (t) => {
       analyzeCalls.push(input);
       return {
         prompt: 'Test prompt',
+        rawResponse: '{"summary":"Test chunk summary","emotions":{"patience":{"score":7,"reasoning":"Test reasoning"}}}',
         state: {
           summary: 'Test chunk summary',
           emotions: {
@@ -320,6 +322,11 @@ test('Video Chunks Script', async (t) => {
       property(rawChunk, 'provider');
       property(rawChunk, 'model');
       is(rawChunk.model, 'yaml-video-model');
+      is(typeof rawChunk.rawResponse, 'string');
+      ok(rawChunk.rawResponse.length > 0);
+
+      ok(analyzeCalls.length > 0);
+      is(analyzeCalls[0]?.config?.debug?.captureRaw, true);
 
       const chunksDir = path.join(testOutputDir, 'assets', 'processed', 'chunks');
       if (fs.existsSync(chunksDir)) {

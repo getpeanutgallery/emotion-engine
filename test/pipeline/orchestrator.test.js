@@ -75,9 +75,11 @@ test('Pipeline Orchestrator - runPipeline', async (t) => {
 
     const result = await runPipeline(configPath);
 
-    assert(fs.existsSync(path.join(result.outputDir, 'phase1-extract', 'raw')));
+    assert(fs.existsSync(path.join(result.outputDir, 'phase1-gather-context', 'raw')));
     assert(fs.existsSync(path.join(result.outputDir, 'phase2-process', 'raw')));
     assert(fs.existsSync(path.join(result.outputDir, 'phase3-report', 'raw')));
+    // Legacy compatibility
+    assert(fs.existsSync(path.join(result.outputDir, 'phase1-extract', 'raw')));
   });
   
   await t.test('should handle dry-run mode', async () => {

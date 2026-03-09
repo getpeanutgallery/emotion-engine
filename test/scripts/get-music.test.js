@@ -191,8 +191,8 @@ test('Get Music Script', async (t) => {
 
       await getMusicScript.run(input);
 
-      const aiRawPath = path.join(testOutputDir, 'phase1-extract', 'raw', 'ai', 'music-segment-0.json');
-      const ffmpegRawPath = path.join(testOutputDir, 'phase1-extract', 'raw', 'ffmpeg', 'extract-audio.json');
+      const aiRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ai', 'music-segment-0.json');
+      const ffmpegRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ffmpeg', 'extract-audio.json');
 
       ok(fs.existsSync(aiRawPath));
       ok(fs.existsSync(ffmpegRawPath));

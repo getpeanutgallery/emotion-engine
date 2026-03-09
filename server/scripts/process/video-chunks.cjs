@@ -83,6 +83,26 @@ function getSchemaFailureReason(state, lenses = []) {
   return null;
 }
 
+function stringifyRawValue(value) {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (value && typeof value === 'object') {
+    return JSON.stringify(value);
+  }
+
+  return null;
+}
+
+function extractRawResponse(toolResult) {
+  return stringifyRawValue(toolResult?.rawResponse)
+    || stringifyRawValue(toolResult?.response)
+    || stringifyRawValue(toolResult?.providerResponse)
+    || stringifyRawValue(toolResult?.completion)
+    || null;
+}
+
 async function analyzeChunkWithRetry({
   analyzeInput,
   retryConfig,
@@ -131,7 +151,7 @@ async function analyzeChunkWithRetry({
           splitIndex,
           attempt,
           prompt: toolResult?.prompt || null,
-          rawResponse: toolResult?.rawResponse || toolResult?.response || null,
+          rawResponse: extractRawResponse(toolResult),
           parsed: toolResult?.state || null,
           error: null,
           provider: config?.ai?.provider || 'openrouter',
@@ -146,7 +166,7 @@ async function analyzeChunkWithRetry({
         splitIndex,
         attempt,
         prompt: toolResult?.prompt || null,
-        rawResponse: toolResult?.rawResponse || toolResult?.response || null,
+        rawResponse: extractRawResponse(toolResult),
         parsed: toolResult?.state || null,
         error: invalidReason,
         provider: config?.ai?.provider || 'openrouter',
@@ -275,6 +295,19 @@ async function run(input) {
     const fileName = splitIndex > 0
       ? `chunk-${chunkIndex}-split-${splitIndex}.json`
       : `chunk-${chunkIndex}.json`;
+
+    const filePath = path.join(aiRawDir, fileName);
+    if ((!payload.rawResponse || payload.rawResponse.length === 0) && fs.existsSync(filePath)) {
+      try {
+        const existing = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        if (typeof existing?.rawResponse === 'string' && existing.rawResponse.length > 0) {
+          payload.rawResponse = existing.rawResponse;
+        }
+      } catch {
+        // ignore malformed existing files and overwrite normally
+      }
+    }
+
     writeRawJson(aiRawDir, fileName, payload);
   };
 

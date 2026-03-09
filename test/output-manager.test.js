@@ -131,8 +131,13 @@ test('createRawDirectories creates raw folders for all phases', () => {
   if (!fs.existsSync(dirs.phase2RawDir)) throw new Error('phase2 raw dir missing');
   if (!fs.existsSync(dirs.phase3RawDir)) throw new Error('phase3 raw dir missing');
 
-  if (!dirs.phase1RawDir.endsWith(path.join('phase1-extract', 'raw'))) {
+  if (!dirs.phase1RawDir.endsWith(path.join('phase1-gather-context', 'raw'))) {
     throw new Error(`Wrong phase1 raw path: ${dirs.phase1RawDir}`);
+  }
+
+  const legacyPhase1RawDir = path.join(testOutputDir, 'phase1-extract', 'raw');
+  if (!fs.existsSync(legacyPhase1RawDir)) {
+    throw new Error('legacy phase1 raw dir missing');
   }
 });
 
@@ -141,6 +146,13 @@ test('getPhaseRawDirectory creates and returns requested phase raw directory', (
   if (!fs.existsSync(phase2Raw)) throw new Error('phase2 raw dir not created');
   if (!phase2Raw.endsWith(path.join('phase2-process', 'raw'))) {
     throw new Error(`Wrong phase2 raw path: ${phase2Raw}`);
+  }
+});
+
+test('getPhaseRawDirectory supports legacy phase1 key and maps to canonical phase1 directory', () => {
+  const phase1Raw = getPhaseRawDirectory(testOutputDir, 'phase1-extract');
+  if (!phase1Raw.endsWith(path.join('phase1-gather-context', 'raw'))) {
+    throw new Error(`Legacy phase1 key did not resolve to canonical phase1 raw path: ${phase1Raw}`);
   }
 });
 

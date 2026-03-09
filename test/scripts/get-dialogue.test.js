@@ -178,8 +178,8 @@ test('Get Dialogue Script', async (t) => {
 
       await getDialogueScript.run(input);
 
-      const aiRawPath = path.join(testOutputDir, 'phase1-extract', 'raw', 'ai', 'dialogue-transcription.json');
-      const ffmpegRawPath = path.join(testOutputDir, 'phase1-extract', 'raw', 'ffmpeg', 'extract-audio.json');
+      const aiRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ai', 'dialogue-transcription.json');
+      const ffmpegRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ffmpeg', 'extract-audio.json');
 
       ok(fs.existsSync(aiRawPath));
       ok(fs.existsSync(ffmpegRawPath));

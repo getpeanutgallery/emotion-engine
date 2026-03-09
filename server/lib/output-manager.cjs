@@ -113,48 +113,64 @@ function createReportDirectory(outputDir, reportName) {
   return reportDir;
 }
 
+const RAW_PHASE_KEY_ALIASES = {
+  'phase1-extract': 'phase1-gather-context'
+};
+
+function resolveRawPhaseKey(phaseKey) {
+  return RAW_PHASE_KEY_ALIASES[phaseKey] || phaseKey;
+}
+
 /**
  * Create canonical raw directories for all pipeline phases.
  *
- * Always creates:
- * - /output/<run>/phase1-extract/raw/
+ * Always creates (canonical):
+ * - /output/<run>/phase1-gather-context/raw/
  * - /output/<run>/phase2-process/raw/
  * - /output/<run>/phase3-report/raw/
  *
+ * Backward compatibility:
+ * - Also creates /output/<run>/phase1-extract/raw/ as a legacy path.
+ *
  * @param {string} outputDir - Base output directory path (run or phase dir)
- * @returns {{ phase1RawDir: string, phase2RawDir: string, phase3RawDir: string }}
+ * @returns {{ phase1RawDir: string, phase2RawDir: string, phase3RawDir: string, legacyPhase1RawDir: string }}
  */
 function createRawDirectories(outputDir) {
   const runOutputDir = resolveRunOutputDir(outputDir);
 
-  const phase1RawDir = path.join(runOutputDir, 'phase1-extract', 'raw');
+  const phase1RawDir = path.join(runOutputDir, 'phase1-gather-context', 'raw');
   const phase2RawDir = path.join(runOutputDir, 'phase2-process', 'raw');
   const phase3RawDir = path.join(runOutputDir, 'phase3-report', 'raw');
+  const legacyPhase1RawDir = path.join(runOutputDir, 'phase1-extract', 'raw');
 
-  for (const dir of [phase1RawDir, phase2RawDir, phase3RawDir]) {
+  for (const dir of [phase1RawDir, phase2RawDir, phase3RawDir, legacyPhase1RawDir]) {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
   }
 
-  return { phase1RawDir, phase2RawDir, phase3RawDir };
+  return { phase1RawDir, phase2RawDir, phase3RawDir, legacyPhase1RawDir };
 }
 
 /**
- * Get (and create) a phase raw directory by canonical phase key.
+ * Get (and create) a phase raw directory by phase key.
  *
- * Valid phase keys:
- * - phase1-extract
+ * Canonical phase keys:
+ * - phase1-gather-context
  * - phase2-process
  * - phase3-report
  *
+ * Supported legacy key aliases:
+ * - phase1-extract -> phase1-gather-context
+ *
  * @param {string} outputDir - Base output directory path (run or phase dir)
- * @param {string} phaseKey - Canonical phase key
+ * @param {string} phaseKey - Phase key
  * @returns {string} Raw directory path for the phase
  */
 function getPhaseRawDirectory(outputDir, phaseKey) {
   const runOutputDir = resolveRunOutputDir(outputDir);
-  const rawDir = path.join(runOutputDir, phaseKey, 'raw');
+  const resolvedPhaseKey = resolveRawPhaseKey(phaseKey);
+  const rawDir = path.join(runOutputDir, resolvedPhaseKey, 'raw');
 
   if (!fs.existsSync(rawDir)) {
     fs.mkdirSync(rawDir, { recursive: true });
