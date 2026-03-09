@@ -124,7 +124,7 @@ test('resolveRunOutputDir maps phase dir to parent run dir', () => {
 // Test raw directory helpers
 console.log('\nTesting raw directories helpers:\n');
 
-test('createRawDirectories creates raw folders for all phases', () => {
+test('createRawDirectories creates raw folders for all phases (canonical only by default)', () => {
   const dirs = createRawDirectories(testOutputDir);
 
   if (!fs.existsSync(dirs.phase1RawDir)) throw new Error('phase1 raw dir missing');
@@ -136,8 +136,21 @@ test('createRawDirectories creates raw folders for all phases', () => {
   }
 
   const legacyPhase1RawDir = path.join(testOutputDir, 'phase1-extract', 'raw');
+  if (fs.existsSync(legacyPhase1RawDir)) {
+    throw new Error('legacy phase1 raw dir should not be created by default');
+  }
+});
+
+test('createRawDirectories can optionally create legacy phase1-extract/raw', () => {
+  const dirs = createRawDirectories(testOutputDir, { includeLegacyPhase1RawDir: true });
+
+  const legacyPhase1RawDir = path.join(testOutputDir, 'phase1-extract', 'raw');
   if (!fs.existsSync(legacyPhase1RawDir)) {
-    throw new Error('legacy phase1 raw dir missing');
+    throw new Error('legacy phase1 raw dir missing when includeLegacyPhase1RawDir=true');
+  }
+
+  if (!dirs.legacyPhase1RawDir || dirs.legacyPhase1RawDir !== legacyPhase1RawDir) {
+    throw new Error(`Expected legacyPhase1RawDir to be ${legacyPhase1RawDir}, got ${dirs.legacyPhase1RawDir}`);
   }
 });
 

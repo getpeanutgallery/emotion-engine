@@ -129,27 +129,37 @@ function resolveRawPhaseKey(phaseKey) {
  * - /output/<run>/phase2-process/raw/
  * - /output/<run>/phase3-report/raw/
  *
- * Backward compatibility:
- * - Also creates /output/<run>/phase1-extract/raw/ as a legacy path.
+ * Optional backward compatibility:
+ * - Can also create /output/<run>/phase1-extract/raw/ as a legacy path.
+ *   (Disabled by default; prefer canonical phase1-gather-context/raw)
  *
  * @param {string} outputDir - Base output directory path (run or phase dir)
- * @returns {{ phase1RawDir: string, phase2RawDir: string, phase3RawDir: string, legacyPhase1RawDir: string }}
+ * @param {{ includeLegacyPhase1RawDir?: boolean }} [options]
+ * @returns {{ phase1RawDir: string, phase2RawDir: string, phase3RawDir: string, legacyPhase1RawDir?: string }}
  */
-function createRawDirectories(outputDir) {
+function createRawDirectories(outputDir, options = {}) {
   const runOutputDir = resolveRunOutputDir(outputDir);
+  const includeLegacyPhase1RawDir = !!options?.includeLegacyPhase1RawDir;
 
   const phase1RawDir = path.join(runOutputDir, 'phase1-gather-context', 'raw');
   const phase2RawDir = path.join(runOutputDir, 'phase2-process', 'raw');
   const phase3RawDir = path.join(runOutputDir, 'phase3-report', 'raw');
-  const legacyPhase1RawDir = path.join(runOutputDir, 'phase1-extract', 'raw');
 
-  for (const dir of [phase1RawDir, phase2RawDir, phase3RawDir, legacyPhase1RawDir]) {
+  const dirsToCreate = [phase1RawDir, phase2RawDir, phase3RawDir];
+
+  let legacyPhase1RawDir;
+  if (includeLegacyPhase1RawDir) {
+    legacyPhase1RawDir = path.join(runOutputDir, 'phase1-extract', 'raw');
+    dirsToCreate.push(legacyPhase1RawDir);
+  }
+
+  for (const dir of dirsToCreate) {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
   }
 
-  return { phase1RawDir, phase2RawDir, phase3RawDir, legacyPhase1RawDir };
+  return { phase1RawDir, phase2RawDir, phase3RawDir, ...(legacyPhase1RawDir ? { legacyPhase1RawDir } : {}) };
 }
 
 /**

@@ -14,16 +14,26 @@ const { runPipeline } = require('../../server/run-pipeline.cjs');
 
 test('Pipeline Orchestrator - runPipeline', async (t) => {
   const testOutputDir = path.join(__dirname, 'fixtures', 'pipeline-test-output');
+  const pipelineOutputDir = path.resolve(process.cwd(), 'output', 'pipeline-test');
   
   t.beforeEach(() => {
     if (fs.existsSync(testOutputDir)) {
       fs.rmSync(testOutputDir, { recursive: true, force: true });
+    }
+
+    // test-pipeline.yaml writes to output/pipeline-test; ensure a clean slate
+    if (fs.existsSync(pipelineOutputDir)) {
+      fs.rmSync(pipelineOutputDir, { recursive: true, force: true });
     }
   });
   
   t.afterEach(() => {
     if (fs.existsSync(testOutputDir)) {
       fs.rmSync(testOutputDir, { recursive: true, force: true });
+    }
+
+    if (fs.existsSync(pipelineOutputDir)) {
+      fs.rmSync(pipelineOutputDir, { recursive: true, force: true });
     }
   });
   
@@ -70,7 +80,7 @@ test('Pipeline Orchestrator - runPipeline', async (t) => {
     }
   });
 
-  await t.test('should always create raw directories for all phases', async () => {
+  await t.test('should always create raw directories for all phases (canonical only)', async () => {
     const configPath = path.join(__dirname, 'fixtures', 'test-pipeline.yaml');
 
     const result = await runPipeline(configPath);
@@ -78,8 +88,9 @@ test('Pipeline Orchestrator - runPipeline', async (t) => {
     assert(fs.existsSync(path.join(result.outputDir, 'phase1-gather-context', 'raw')));
     assert(fs.existsSync(path.join(result.outputDir, 'phase2-process', 'raw')));
     assert(fs.existsSync(path.join(result.outputDir, 'phase3-report', 'raw')));
-    // Legacy compatibility
-    assert(fs.existsSync(path.join(result.outputDir, 'phase1-extract', 'raw')));
+
+    // Regression: do not create legacy phase1-extract/raw by default
+    assert(!fs.existsSync(path.join(result.outputDir, 'phase1-extract', 'raw')));
   });
   
   await t.test('should handle dry-run mode', async () => {
@@ -110,6 +121,20 @@ test('Pipeline Orchestrator - runPipeline', async (t) => {
 });
 
 test('Pipeline Orchestrator - Parallel execution', async (t) => {
+  const parallelOutputDir = path.resolve(process.cwd(), 'output', 'parallel-test');
+
+  t.beforeEach(() => {
+    if (fs.existsSync(parallelOutputDir)) {
+      fs.rmSync(parallelOutputDir, { recursive: true, force: true });
+    }
+  });
+
+  t.afterEach(() => {
+    if (fs.existsSync(parallelOutputDir)) {
+      fs.rmSync(parallelOutputDir, { recursive: true, force: true });
+    }
+  });
+
   await t.test('should run parallel scripts simultaneously', async () => {
     const configPath = path.join(__dirname, 'fixtures', 'test-parallel.yaml');
     

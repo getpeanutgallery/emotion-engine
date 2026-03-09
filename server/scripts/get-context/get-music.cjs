@@ -4,7 +4,12 @@
  * 
  * Extracts and analyzes music/audio from video to identify mood, intensity, and segments.
  * This script runs in Phase 1 (Gather Context) of the pipeline.
- * 
+ *
+ * Raw capture schema v2 parity (Phase2-style):
+ * - attempt-scoped capture payloads (even if attempt is always 1 for now)
+ * - legacy flat files preserved as pointer JSON
+ * - phase error artifacts written to raw/_meta/errors.jsonl + errors.summary.json
+ *
  * @module scripts/get-context/get-music
  */
 
@@ -19,6 +24,78 @@ const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/ra
 const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 
 const execAsync = promisify(exec);
+
+const PHASE_KEY = 'phase1-gather-context';
+const SCRIPT_ID = 'get-music';
+
+function pad(value, width) {
+  return String(value).padStart(width, '0');
+}
+
+function sanitizeRawCaptureValue(value, depth = 0, seen = new WeakSet()) {
+  if (value === null || value === undefined) return value;
+  if (depth > 8) return '[Truncated]';
+
+  if (typeof value === 'string') {
+    if (value.startsWith('Bearer ')) return 'Bearer [REDACTED]';
+    return value;
+  }
+
+  if (typeof value !== 'object') return value;
+
+  if (seen.has(value)) return '[Circular]';
+  seen.add(value);
+
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeRawCaptureValue(item, depth + 1, seen));
+  }
+
+  const out = {};
+  for (const [key, item] of Object.entries(value)) {
+    if (/authorization/i.test(key) || /api[_-]?key/i.test(key)) {
+      out[key] = '[REDACTED]';
+      continue;
+    }
+    out[key] = sanitizeRawCaptureValue(item, depth + 1, seen);
+  }
+
+  return out;
+}
+
+function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, phaseOutcome, fatalPhaseError, phaseErrors }) {
+  if (!captureRaw) return;
+
+  fs.mkdirSync(rawMetaDir, { recursive: true });
+  const errorsPath = path.join(rawMetaDir, 'errors.jsonl');
+
+  if (phaseErrors.length > 0) {
+    const lines = phaseErrors.map((e) => JSON.stringify(e)).join('\n') + '\n';
+    fs.appendFileSync(errorsPath, lines, 'utf8');
+  } else if (!fs.existsSync(errorsPath)) {
+    fs.writeFileSync(errorsPath, '', 'utf8');
+  }
+
+  const totalErrors = fs.existsSync(errorsPath)
+    ? fs.readFileSync(errorsPath, 'utf8').split('\n').filter(Boolean).length
+    : 0;
+
+  const summary = {
+    schemaVersion: 1,
+    phase: PHASE_KEY,
+    outcome: phaseOutcome,
+    generatedAt: new Date().toISOString(),
+    totalErrors,
+    fatalError: fatalPhaseError
+      ? {
+          name: fatalPhaseError?.name || null,
+          message: fatalPhaseError?.message || String(fatalPhaseError),
+          stack: typeof fatalPhaseError?.stack === 'string' ? fatalPhaseError.stack : null
+        }
+      : null
+  };
+
+  writeRawJson(rawMetaDir, 'errors.summary.json', summary);
+}
 
 /**
  * Script Input Contract
@@ -52,11 +129,11 @@ async function run(input) {
   console.log('   🎵 Extracting and analyzing music/audio from:', assetPath);
 
   // Create phase-aware output directory
-  const phaseDir = outputManager.createPhaseDirectory(outputDir, 'phase1-gather-context');
-  
+  const phaseDir = outputManager.createPhaseDirectory(outputDir, PHASE_KEY);
+
   // Create assets directory for processed files (canonical run-level assets)
   const assetsDirs = outputManager.createAssetsDirectory(outputDir);
-  
+
   // Create temp directory for audio extraction in assets/processed/music/
   const tempDir = path.join(assetsDirs.processedDir, 'music');
   fs.mkdirSync(tempDir, { recursive: true });
@@ -64,9 +141,46 @@ async function run(input) {
   // Default to keeping processed/intermediate files unless explicitly disabled
   const keepProcessedIntermediates = shouldKeepProcessedIntermediates(config);
   const captureRaw = shouldCaptureRaw(config);
-  const rawDir = getRawPhaseDir(outputDir, 'phase1-gather-context');
+  const rawDir = getRawPhaseDir(outputDir, PHASE_KEY);
+  const rawMetaDir = path.join(rawDir, '_meta');
   const ffmpegRawDir = path.join(rawDir, 'ffmpeg');
   const aiRawDir = path.join(rawDir, 'ai');
+
+  const phaseErrors = [];
+  let phaseOutcome = 'success';
+  let fatalPhaseError = null;
+
+  const recordPhaseError = (entry) => {
+    phaseErrors.push({
+      ts: new Date().toISOString(),
+      phase: PHASE_KEY,
+      script: SCRIPT_ID,
+      ...entry
+    });
+  };
+
+  const writeMusicSegmentRaw = (segmentIndex, attempt, payload) => {
+    if (!captureRaw) return;
+
+    const legacyFileName = `music-segment-${segmentIndex}.json`;
+
+    const attemptRelDir = path.join(`music-segment-${pad(segmentIndex, 4)}`, `attempt-${pad(attempt, 2)}`);
+    const attemptRelPath = path.join(attemptRelDir, 'capture.json');
+
+    writeRawJson(aiRawDir, attemptRelPath, payload);
+
+    writeRawJson(aiRawDir, legacyFileName, {
+      schemaVersion: 2,
+      kind: 'pointer',
+      updatedAt: new Date().toISOString(),
+      segmentIndex,
+      latestAttempt: attempt,
+      target: {
+        dir: attemptRelDir,
+        file: attemptRelPath
+      }
+    });
+  };
 
   try {
     // Extract audio from video (if needed)
@@ -115,13 +229,14 @@ async function run(input) {
       const provider = typeof aiProvider.getProviderFromConfig === 'function'
         ? aiProvider.getProviderFromConfig(config)
         : aiProvider.loadProvider(config?.ai?.provider || 'openrouter');
+
       // Require explicit music model
       const model = config?.ai?.music?.model;
       if (!model) {
         throw new Error('GetMusic: config.ai.music.model is required (missing in YAML config)');
       }
-      const apiKey = process.env.AI_API_KEY;
 
+      const apiKey = process.env.AI_API_KEY;
       if (!apiKey) {
         throw new Error('GetMusic: AI_API_KEY environment variable is required');
       }
@@ -129,44 +244,99 @@ async function run(input) {
       // Build analysis prompt
       const prompt = buildAnalysisPrompt(startTime, endTime);
 
-      // Call AI provider for analysis
-      const response = await provider.complete({
-        prompt,
-        model,
-        apiKey,
-        attachments: [
-          {
-            type: 'audio',
-            data: audioBase64,
-            mimeType: 'audio/wav'
+      let response = null;
+
+      try {
+        // Call AI provider for analysis
+        response = await provider.complete({
+          prompt,
+          model,
+          apiKey,
+          attachments: [
+            {
+              type: 'audio',
+              data: audioBase64,
+              mimeType: 'audio/wav'
+            }
+          ],
+          options: {
+            temperature: 0.5,
+            maxTokens: 512
           }
-        ],
-        options: {
-          temperature: 0.5,
-          maxTokens: 512
+        });
+
+        // Parse segment analysis
+        const segmentAnalysis = parseSegmentResponse(response.content, startTime, endTime);
+        segments.push(segmentAnalysis);
+
+        if (captureRaw) {
+          writeMusicSegmentRaw(i, 1, {
+            segmentIndex: i,
+            startTime,
+            endTime,
+            attempt: 1,
+            prompt,
+            rawResponse: sanitizeRawCaptureValue(response),
+            parsed: segmentAnalysis,
+            error: null,
+            provider: config?.ai?.provider || 'openrouter',
+            model,
+            requestMeta: {
+              provider: config?.ai?.provider || 'openrouter',
+              model,
+              segmentIndex: i,
+              attempt: 1
+            }
+          });
         }
-      });
 
-      // Parse segment analysis
-      const segmentAnalysis = parseSegmentResponse(response.content, startTime, endTime);
-      segments.push(segmentAnalysis);
+        if (segmentAnalysis.type === 'music' || segmentAnalysis.mood) {
+          hasMusic = true;
+        }
+      } catch (error) {
+        phaseOutcome = 'failed';
+        fatalPhaseError = error;
 
-      if (captureRaw) {
-        writeRawJson(aiRawDir, `music-segment-${i}.json`, {
+        recordPhaseError({
+          level: 'error',
+          kind: 'fatal',
+          message: error?.message || String(error),
+          errorName: error?.name || null,
+          errorCode: error?.code || null,
+          errorStatus: error?.response?.status || null,
           segmentIndex: i,
           startTime,
-          endTime,
-          prompt,
-          rawResponse: response,
-          parsed: segmentAnalysis,
-          error: null,
-          provider: config?.ai?.provider || 'openrouter',
-          model
+          endTime
         });
-      }
 
-      if (segmentAnalysis.type === 'music' || segmentAnalysis.mood) {
-        hasMusic = true;
+        if (captureRaw) {
+          writeMusicSegmentRaw(i, 1, {
+            segmentIndex: i,
+            startTime,
+            endTime,
+            attempt: 1,
+            prompt,
+            rawResponse: sanitizeRawCaptureValue(response),
+            parsed: null,
+            error: error?.message || String(error),
+            errorName: error?.name || null,
+            errorCode: error?.code || null,
+            errorStatus: error?.response?.status || null,
+            errorStack: typeof error?.stack === 'string' ? error.stack : null,
+            errorDebug: sanitizeRawCaptureValue(error?.debug) || null,
+            errorResponse: sanitizeRawCaptureValue(error?.response?.data) || null,
+            provider: config?.ai?.provider || 'openrouter',
+            model: model || null,
+            requestMeta: {
+              provider: config?.ai?.provider || 'openrouter',
+              model: model || null,
+              segmentIndex: i,
+              attempt: 1
+            }
+          });
+        }
+
+        throw error;
       }
     }
 
@@ -192,17 +362,17 @@ async function run(input) {
       }
     };
   } catch (error) {
-    if (captureRaw) {
-      writeRawJson(aiRawDir, 'music-analysis.error.json', {
-        error: error.message,
-        stack: error.stack,
-        provider: config?.ai?.provider || 'openrouter',
-        model: config?.ai?.music?.model || null
-      });
-    }
     console.error('   ❌ Error analyzing music:', error.message);
     throw error;
   } finally {
+    ensurePhaseErrorArtifacts({
+      captureRaw,
+      rawMetaDir,
+      phaseOutcome,
+      fatalPhaseError,
+      phaseErrors
+    });
+
     // Handle temp file cleanup based on config
     if (keepProcessedIntermediates) {
       console.log(`   💾 Keeping music temp files in ${tempDir}`);

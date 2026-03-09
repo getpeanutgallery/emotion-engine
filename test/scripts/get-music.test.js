@@ -191,17 +191,32 @@ test('Get Music Script', async (t) => {
 
       await getMusicScript.run(input);
 
-      const aiRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ai', 'music-segment-0.json');
+      const aiPointerPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ai', 'music-segment-0.json');
       const ffmpegRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ffmpeg', 'extract-audio.json');
+      const metaSummaryPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', '_meta', 'errors.summary.json');
 
-      ok(fs.existsSync(aiRawPath));
+      ok(fs.existsSync(aiPointerPath));
       ok(fs.existsSync(ffmpegRawPath));
+      ok(fs.existsSync(metaSummaryPath));
 
-      const aiRaw = JSON.parse(fs.readFileSync(aiRawPath, 'utf8'));
-      property(aiRaw, 'prompt');
-      property(aiRaw, 'rawResponse');
-      property(aiRaw, 'parsed');
-      is(aiRaw.model, 'test-music-model');
+      const pointer = JSON.parse(fs.readFileSync(aiPointerPath, 'utf8'));
+      is(pointer.schemaVersion, 2);
+      is(pointer.kind, 'pointer');
+      is(pointer.latestAttempt, 1);
+      property(pointer, 'target');
+      property(pointer.target, 'file');
+
+      const attemptCapturePath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ai', pointer.target.file);
+      ok(fs.existsSync(attemptCapturePath));
+
+      const attemptCapture = JSON.parse(fs.readFileSync(attemptCapturePath, 'utf8'));
+      property(attemptCapture, 'prompt');
+      property(attemptCapture, 'rawResponse');
+      property(attemptCapture, 'parsed');
+      is(attemptCapture.model, 'test-music-model');
+
+      const metaSummary = JSON.parse(fs.readFileSync(metaSummaryPath, 'utf8'));
+      is(metaSummary.phase, 'phase1-gather-context');
     });
   });
 
