@@ -5,7 +5,7 @@
     "name": "providers",
     "description": "Minimal cassette for provider + integration tests (offline replay)",
     "created": "2026-03-09T12:20:14.542Z",
-    "updated": "2026-03-09T12:20:14.543Z",
+    "updated": "2026-03-09T14:33:56.748Z",
     "tags": [
       "tests",
       "providers"
@@ -103,6 +103,29 @@
         }
       },
       "timestamp": "2026-03-09T12:20:14.543Z",
+      "durationMs": null,
+      "interactionId": "ccd36acb132f74edfd132e0f5011e122e0d915990d774cc686151634f0bfd720"
+    },
+    {
+      "id": "entry_1773058814543_av4a7eb_dup2",
+      "request": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "protocol": "http:",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{\"model\":\"qwen/qwen-3.5-397b-a17b\",\"messages\":[{\"role\":\"user\",\"content\":[{\"type\":\"text\",\"text\":\"Say hello\"}]}]}"
+      },
+      "response": {
+        "content": "Hello from OpenRouter (cassette).",
+        "usage": {
+          "input": 2,
+          "output": 6,
+          "total": 8
+        }
+      },
+      "timestamp": "2026-03-09T14:33:56.748Z",
       "durationMs": null,
       "interactionId": "ccd36acb132f74edfd132e0f5011e122e0d915990d774cc686151634f0bfd720"
     }
