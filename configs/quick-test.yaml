@@ -13,16 +13,16 @@ asset:
 # Skip context gathering for speed (or enable for full test)
 gather_context: []
 # gather_context:
-#   - scripts/get-context/get-dialogue.cjs
-#   - scripts/get-context/get-music.cjs
+#   - server/scripts/get-context/get-dialogue.cjs
+#   - server/scripts/get-context/get-music.cjs
 
 # Process with video-chunks (limited to 2 chunks for fast testing)
 process:
-  - scripts/process/video-chunks.cjs
+  - server/scripts/process/video-chunks.cjs
 
 # Generate evaluation report
 report:
-  - scripts/report/evaluation.cjs
+  - server/scripts/report/evaluation.cjs
 
 # Settings for quick testing
 settings:

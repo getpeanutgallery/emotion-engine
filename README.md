@@ -13,7 +13,7 @@ npm run pipeline -- --config <config.yaml>
 
 The orchestrator (`server/run-pipeline.cjs`) loads YAML/JSON config, validates it, runs scripts in 3 phases, and writes artifacts to `output/...`.
 
-> Note: `bin/run-analysis.js` and `package.json#bin` are legacy/incomplete in this repo state. Prefer `server/run-pipeline.cjs` directly.
+> Note: `bin/run-analysis.js` is legacy/broken and should not be used. `npm exec emotion-engine` (bin shim → `server/run-pipeline.cjs`) is supported and equivalent to `npm run pipeline`.
 
 ---
 

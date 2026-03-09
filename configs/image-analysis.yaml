@@ -1,8 +1,13 @@
 # Image Analysis Pipeline
 # Analyze static images (no dialogue or music)
+#
+# NOTE:
+# The original "image-frames" and "graphs" scripts referenced here do not exist
+# in this repo today. This config is kept as a placeholder until image-specific
+# scripts are implemented.
 
 name: "Image Analysis Pipeline"
-description: "Analyze static images (no dialogue or music)"
+description: "Placeholder config (image scripts not implemented in this repo yet)"
 version: "1.0"
 
 # Asset configuration (self-contained - no CLI args needed)
@@ -11,7 +16,6 @@ asset:
   outputDir: "output/image-test"
 
 # AI provider configuration (git-safe - secrets injected via env vars)
-
 ai:
   dialogue:
     targets:
@@ -30,25 +34,11 @@ ai:
           model: qwen/qwen-3.5-397b-a17b
 
 gather_context: []
+process: []
 
-process:
-  sequential:
-    - script: scripts/process/image-frames.cjs
-      toolPath: tools/emotion-lenses-tool.cjs
-      tool_variables:
-        soulPath: "cast/impatient-teenager/SOUL.md"
-        goalPath: "goals/image-evaluation.md"
-        variables:
-          lenses:
-            - patience
-            - boredom
-            - excitement
-
+# Minimal report so this config remains runnable
 report:
-  - scripts/report/evaluation.cjs
-  - scripts/report/graphs.cjs
+  - server/scripts/report/evaluation.cjs
 
-# Global settings
 settings:
   api_request_delay: 1000
-

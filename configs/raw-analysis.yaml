@@ -34,7 +34,7 @@ gather_context: []
 # Run analysis only
 process:
   sequential:
-    - script: scripts/process/video-chunks.cjs
+    - script: server/scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
         soulPath: "cast/impatient-teenager/SOUL.md"

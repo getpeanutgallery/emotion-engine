@@ -1,5 +1,5 @@
 # Test Model Loading from YAML
-# This config tests if models are loaded from YAML or env vars
+# This config tests if models are loaded from YAML, not env vars
 
 name: "Test Model Loading"
 description: "Verify models load from YAML config, not env vars"
@@ -10,7 +10,6 @@ asset:
   outputDir: "output/test-model-loading"
 
 # AI configuration - this SHOULD be used by the code
-
 ai:
   dialogue:
     targets:
@@ -29,14 +28,14 @@ ai:
           model: google/gemini-2.5-flash
 
 gather_context:
-  - scripts/get-context/get-dialogue.cjs
+  - server/scripts/get-context/get-dialogue.cjs
 
 # Skip processing for this test
 process: []
 
-# Simple report
+# Simple report (legacy evaluation wrapper)
 report:
-  - scripts/report/dialogue-summary.cjs
+  - server/scripts/report/evaluation.cjs
 
 settings:
   api_request_delay: 1000
@@ -44,4 +43,3 @@ settings:
 debug:
   keepTempFiles: false
   keepProcessedAssets: true
-

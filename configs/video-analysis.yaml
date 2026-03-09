@@ -35,14 +35,14 @@ ai:
 
 # Phase 1: Gather context from video
 gather_context:
-  - scripts/get-context/get-dialogue.cjs
-  - scripts/get-context/get-music.cjs
+  - server/scripts/get-context/get-dialogue.cjs
+  - server/scripts/get-context/get-music.cjs
 
 # Phase 2: Process video (SEQUENTIAL - default)
 # Each script receives output from the previous script
 process:
   sequential:
-    - script: scripts/process/video-chunks.cjs
+    - script: server/scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
         soulPath: "cast/impatient-teenager/SOUL.md"
@@ -52,7 +52,7 @@ process:
             - patience
             - boredom
             - excitement
-    - script: scripts/process/video-per-second.cjs
+    - script: server/scripts/process/video-per-second.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
         soulPath: "cast/impatient-teenager/SOUL.md"
@@ -65,11 +65,11 @@ process:
 
 # Phase 3: Generate reports
 report:
-  - scripts/report/metrics.cjs
-  - scripts/report/recommendation.cjs
-  - scripts/report/emotional-analysis.cjs
-  - scripts/report/summary.cjs
-  - scripts/report/final-report.cjs
+  - server/scripts/report/metrics.cjs
+  - server/scripts/report/recommendation.cjs
+  - server/scripts/report/emotional-analysis.cjs
+  - server/scripts/report/summary.cjs
+  - server/scripts/report/final-report.cjs
 
 # Global settings
 settings:

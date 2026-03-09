@@ -77,9 +77,9 @@ async function testDebugConfig() {
   console.log('  - Scripts can read and interpret the debug config');
   console.log('  - Timestamp format is safe for file paths');
   console.log('\nTo test with actual files:');
-  console.log('  1. Run: node bin/run-analysis.js --config configs/quick-test.yaml');
-  console.log('  2. Check output/quick-test/phase1-gather-context/assets/processed/dialogue/');
-  console.log('  3. Check output/quick-test/phase2-process/assets/processed/chunks/');
+  console.log('  1. Run: npm run pipeline -- --config configs/quick-test.yaml');
+  console.log('  2. Check output/quick-test/assets/processed/dialogue/');
+  console.log('  3. Check output/quick-test/assets/processed/chunks/');
 }
 
 // Run the test

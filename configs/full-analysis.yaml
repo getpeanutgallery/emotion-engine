@@ -12,13 +12,13 @@ asset:
 
 # Gather context from video (dialogue and music)
 gather_context:
-  - scripts/get-context/get-dialogue.cjs
-  - scripts/get-context/get-music.cjs
+  - server/scripts/get-context/get-dialogue.cjs
+  - server/scripts/get-context/get-music.cjs
 
 # Process video with emotion analysis
 process:
   sequential:
-    - script: scripts/process/video-chunks.cjs
+    - script: server/scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
         soulPath: "cast/impatient-teenager/SOUL.md"
@@ -28,11 +28,11 @@ process:
             - patience
             - boredom
             - excitement
-    - script: scripts/process/video-per-second.cjs
+    - script: server/scripts/process/video-per-second.cjs
 
 # Generate comprehensive report
 report:
-  - scripts/report/evaluation.cjs
+  - server/scripts/report/evaluation.cjs
 
 # Settings
 settings:

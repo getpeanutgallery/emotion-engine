@@ -27,9 +27,9 @@ export DIGITAL_TWIN_PACK="$(pwd)/../digital-twin-openrouter-emotion-engine"
 # Known-good cassette for this checklist:
 export DIGITAL_TWIN_CASSETTE=cod-full-pipeline-20260308-172855
 
-# NOTE: currently required even in replay mode (not used during replay).
-# Any non-empty value is fine until we gate this in config validation.
-export AI_API_KEY=dummy
+# AI_API_KEY is not required in replay mode (no live calls).
+# If you see a key-related error in replay, it's a bug/drift to fix.
+# export AI_API_KEY=dummy
 
 # Run the pipeline
 npm run pipeline -- --config configs/cod-test.yaml
@@ -319,8 +319,8 @@ export DIGITAL_TWIN_MODE=replay
 export DIGITAL_TWIN_PACK="$(pwd)/../digital-twin-openrouter-emotion-engine"
 export DIGITAL_TWIN_CASSETTE=cod-full-pipeline-20260308-172855
 
-# NOTE: currently required even in replay mode (not used during replay).
-export AI_API_KEY=dummy
+# AI_API_KEY is not required in replay mode (no live calls).
+# export AI_API_KEY=dummy
 
 npm test
 ```

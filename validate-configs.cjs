@@ -1,26 +1,42 @@
 #!/usr/bin/env node
 /**
  * Quick validation script for YAML configuration files.
- * Checks that all configs in configs/*.yaml can be parsed.
+ *
+ * Purpose:
+ * - Catch YAML parse errors early across configs/*.yaml.
+ * - Match the pipeline loader behavior (js-yaml `load` => single-document YAML).
+ *
+ * NOTE:
+ * This script validates *parsing only*.
+ * For schema/semantic validation, use:
+ *   npm run pipeline -- --config <file> --dry-run
  */
+
+'use strict';
 
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 
 const configsDir = path.join(__dirname, 'configs');
-const files = fs.readdirSync(configsDir).filter(f => f.endsWith('.yaml'));
 
-console.log('🔍 Validating YAML configuration files...\n');
+if (!fs.existsSync(configsDir)) {
+  console.error(`❌ configs directory not found: ${configsDir}`);
+  process.exit(1);
+}
 
-let errors = [];
+const files = fs.readdirSync(configsDir).filter((f) => f.endsWith('.yaml') || f.endsWith('.yml'));
+
+console.log('🔍 Validating YAML configuration files (single-document)...\n');
+
+const errors = [];
 for (const file of files) {
   const filePath = path.join(configsDir, file);
   try {
     const content = fs.readFileSync(filePath, 'utf8');
-    // Load all documents (support multi-doc YAML)
-    const docs = yaml.loadAll(content);
-    console.log(`  ✅ ${file} - loaded OK (${docs.length} document(s))`);
+    // Single-document load: matches server/lib/config-loader.cjs
+    yaml.load(content);
+    console.log(`  ✅ ${file} - parsed OK`);
   } catch (e) {
     console.error(`  ❌ ${file} - ERROR: ${e.message}`);
     errors.push(file);
@@ -30,7 +46,7 @@ for (const file of files) {
 if (errors.length > 0) {
   console.error(`\n❌ Validation failed for ${errors.length} file(s): ${errors.join(', ')}`);
   process.exit(1);
-} else {
-  console.log(`\n✅ All ${files.length} YAML file(s) are valid.`);
-  process.exit(0);
 }
+
+console.log(`\n✅ All ${files.length} YAML file(s) parsed successfully.`);
+process.exit(0);

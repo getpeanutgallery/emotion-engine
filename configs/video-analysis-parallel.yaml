@@ -30,12 +30,12 @@ ai:
           model: qwen/qwen-3.5-397b-a17b
 
 gather_context:
-  - scripts/get-context/get-dialogue.cjs
-  - scripts/get-context/get-music.cjs
+  - server/scripts/get-context/get-dialogue.cjs
+  - server/scripts/get-context/get-music.cjs
 
 process:
   parallel:
-    - script: scripts/process/video-chunks.cjs
+    - script: server/scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
         soulPath: "cast/impatient-teenager/SOUL.md"
@@ -45,7 +45,7 @@ process:
             - patience
             - boredom
             - excitement
-    - script: scripts/process/video-chunks.cjs
+    - script: server/scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
         soulPath: "cast/skeptical-cfo/SOUL.md"
@@ -55,7 +55,7 @@ process:
             - skepticism
             - confusion
             - patience
-    - script: scripts/process/video-chunks.cjs
+    - script: server/scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
         soulPath: "cast/optimistic-gen-z/SOUL.md"
@@ -67,11 +67,11 @@ process:
             - joy
 
 report:
-  - scripts/report/metrics.cjs
-  - scripts/report/recommendation.cjs
-  - scripts/report/emotional-analysis.cjs
-  - scripts/report/summary.cjs
-  - scripts/report/final-report.cjs
+  - server/scripts/report/metrics.cjs
+  - server/scripts/report/recommendation.cjs
+  - server/scripts/report/emotional-analysis.cjs
+  - server/scripts/report/summary.cjs
+  - server/scripts/report/final-report.cjs
 
 settings:
   chunk_duration: 8

@@ -11,7 +11,6 @@ asset:
   outputDir: "output/swarm-test"
 
 # AI provider configuration (git-safe - secrets injected via env vars)
-
 ai:
   dialogue:
     targets:
@@ -30,15 +29,13 @@ ai:
           model: qwen/qwen-3.5-397b-a17b
 
 gather_context:
-  - scripts/get-context/get-dialogue.cjs
-  - scripts/get-context/get-music.cjs
+  - server/scripts/get-context/get-dialogue.cjs
+  - server/scripts/get-context/get-music.cjs
 
 # Phase 2: Process video (PARALLEL)
-# All 3 personas analyze the same video simultaneously
-# Each receives base input only, outputs are merged after all complete
 process:
   parallel:
-    - script: scripts/process/video-chunks.cjs
+    - script: server/scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
         soulPath: "cast/impatient-teenager/SOUL.md"
@@ -47,7 +44,7 @@ process:
           lenses:
             - patience
             - boredom
-    - script: scripts/process/video-chunks.cjs
+    - script: server/scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
         soulPath: "cast/skeptical-cfo/SOUL.md"
@@ -57,7 +54,7 @@ process:
             - patience
             - boredom
             - skepticism
-    - script: scripts/process/video-chunks.cjs
+    - script: server/scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
         soulPath: "cast/optimistic-gen-z/SOUL.md"
@@ -68,20 +65,12 @@ process:
             - fomo
             - joy
 
-# Phase 3: Generate reports
+# Phase 3: Generate report
 report:
-  - scripts/report/evaluation.cjs
-  - scripts/report/graphs.cjs
+  - server/scripts/report/evaluation.cjs
 
 # Global settings
 settings:
   chunk_duration: 8          # seconds per chunk
   max_chunks: 4              # limit chunks for testing
   api_request_delay: 1000    # milliseconds between API calls
-
-# Use Case: Compare how different personas react to the same content
-# Useful for:
-# - Testing content against multiple audience archetypes
-# - Getting diverse perspectives on the same video
-# - A/B testing persona responses
-

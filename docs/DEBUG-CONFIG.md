@@ -159,7 +159,10 @@ Run a pipeline with debug enabled:
 
 ```bash
 # Using quick-test config (has debug enabled)
-node bin/run-analysis.js --config configs/quick-test.yaml
+npm run pipeline -- --config configs/quick-test.yaml
+
+# (equivalent)
+# npm exec emotion-engine -- --config configs/quick-test.yaml
 
 # Or manually set in any config
 ```
@@ -167,14 +170,10 @@ node bin/run-analysis.js --config configs/quick-test.yaml
 Then inspect the output:
 
 ```bash
-# Check dialogue temp files
-ls -la output/quick-test/phase1-gather-context/assets/processed/dialogue/
-
-# Check music temp files
-ls -la output/quick-test/phase1-gather-context/assets/processed/music/
-
-# Check video chunk files
-ls -la output/quick-test/phase2-process/assets/processed/chunks/
+# Check processed assets (run-level assets/processed/)
+ls -la output/quick-test/assets/processed/dialogue/
+ls -la output/quick-test/assets/processed/music/
+ls -la output/quick-test/assets/processed/chunks/
 ```
 
 ## Implementation Details

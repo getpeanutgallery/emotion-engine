@@ -1,5 +1,10 @@
 # Audio Analysis Pipeline
 # Analyze audio files (podcasts, music, etc.)
+#
+# NOTE:
+# This config is currently a minimal, runnable pipeline (transcription + report).
+# The older audio-segmentation process script referenced here previously does not
+# exist in this repo.
 
 name: "Audio Analysis Pipeline"
 description: "Analyze audio files (podcasts, music, etc.)"
@@ -29,24 +34,14 @@ ai:
           model: qwen/qwen-3.5-397b-a17b
 
 gather_context:
-  - scripts/get-context/get-dialogue.cjs
+  - server/scripts/get-context/get-dialogue.cjs
 
-process:
-  sequential:
-    - script: scripts/process/audio-segments.cjs
-      toolPath: tools/emotion-lenses-tool.cjs
-      tool_variables:
-        soulPath: "cast/impatient-teenager/SOUL.md"
-        goalPath: "goals/audio-evaluation.md"
-        variables:
-          lenses:
-            - patience
-            - boredom
+# No persona-based processing for now
+process: []
 
 report:
-  - scripts/report/evaluation.cjs
+  - server/scripts/report/evaluation.cjs
 
 # Global settings
 settings:
-  segment_duration: 30
   api_request_delay: 1000

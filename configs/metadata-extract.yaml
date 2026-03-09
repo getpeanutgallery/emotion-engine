@@ -30,7 +30,7 @@ ai:
           model: qwen/qwen-3.5-397b-a17b
 
 gather_context:
-  - scripts/get-context/get-metadata.cjs
+  - server/scripts/get-context/get-metadata.cjs
 
 # Skip processing
 process: []

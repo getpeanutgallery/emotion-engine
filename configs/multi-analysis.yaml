@@ -1,8 +1,13 @@
 # Multi-Analysis Pipeline
-# Run independent analyses (emotion + brand + OCR) in parallel
+# Run independent analyses in parallel.
+#
+# NOTE:
+# This repo currently only includes the emotion analysis process script
+# (video-chunks / video-per-second). Brand/OCR + graphs/assets scripts referenced
+# in older docs/configs are not present here.
 
 name: "Multi-Analysis Pipeline"
-description: "Run independent analyses (emotion + brand + OCR) simultaneously"
+description: "Parallel pipeline (emotion analysis only; brand/OCR stubs removed)"
 version: "1.0"
 
 # Asset configuration (self-contained - no CLI args needed)
@@ -11,7 +16,6 @@ asset:
   outputDir: "output/multi-test"
 
 # AI provider configuration (git-safe - secrets injected via env vars)
-
 ai:
   dialogue:
     targets:
@@ -30,15 +34,13 @@ ai:
           model: qwen/qwen-3.5-397b-a17b
 
 gather_context:
-  - scripts/get-context/get-dialogue.cjs
-  - scripts/get-context/get-music.cjs
+  - server/scripts/get-context/get-dialogue.cjs
+  - server/scripts/get-context/get-music.cjs
 
-# Phase 2: Process video (PARALLEL - Independent Analyses)
-# Each analysis runs independently, outputs merged after completion
+# Phase 2: Process video (PARALLEL)
 process:
   parallel:
-    # Emotion analysis with persona
-    - script: scripts/process/video-chunks.cjs
+    - script: server/scripts/process/video-chunks.cjs
       toolPath: tools/emotion-lenses-tool.cjs
       tool_variables:
         soulPath: "cast/impatient-teenager/SOUL.md"
@@ -48,18 +50,10 @@ process:
             - patience
             - boredom
             - excitement
-    
-    # Brand detection (no persona needed)
-    - script: scripts/process/brand-detection.cjs
-    
-    # OCR text extraction (no persona needed)
-    - script: scripts/process/ocr-extraction.cjs
 
-# Phase 3: Generate reports
+# Phase 3: Generate report
 report:
-  - scripts/report/evaluation.cjs
-  - scripts/report/graphs.cjs
-  - scripts/report/assets.cjs
+  - server/scripts/report/evaluation.cjs
 
 # Global settings
 settings:
@@ -67,11 +61,3 @@ settings:
   max_chunks: 4              # limit chunks for testing
   api_request_delay: 1000    # milliseconds between API calls
   chunk_quality: "medium"    # low|medium|high
-
-# Use Case: Run multiple independent analysis types on the same video
-# - Emotion analysis: How does the persona feel?
-# - Brand detection: What brands/logos appear?
-# - OCR extraction: What text is visible on screen?
-#
-# Benefit: 3x faster than running sequentially (no dependencies between analyses)
-
