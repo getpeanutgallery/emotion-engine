@@ -335,6 +335,60 @@ test('Video Chunks Script', async (t) => {
         ok(true);
       }
     });
+
+    await tNested.test('captures provider debug payload when AI provider throws', async () => {
+      analyzeImplementation = async (input) => {
+        analyzeCalls.push(input);
+        const err = new Error('provider exploded');
+        err.code = 'ETIMEDOUT';
+        err.debug = {
+          request: {
+            url: 'https://openrouter.ai/api/v1/chat/completions',
+            headers: { Authorization: 'Bearer super-secret' },
+            body: { model: input?.config?.ai?.video?.model }
+          },
+          response: { status: 500, data: { error: 'upstream failure' } }
+        };
+        throw err;
+      };
+
+      await rejects(videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            provider: 'openrouter',
+            video: {
+              model: 'yaml-video-model',
+              retry: { maxAttempts: 1, backoffMs: 0, retryOnParseError: true, retryOnProviderError: true }
+            }
+          },
+          debug: { captureRaw: true },
+          settings: { max_chunks: 1 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          }
+        }
+      }), /failed after 1 attempts: provider exploded/);
+
+      const rawChunkPath = path.join(testOutputDir, 'phase2-process', 'raw', 'ai', 'chunk-0.json');
+      ok(fs.existsSync(rawChunkPath));
+
+      const rawChunk = JSON.parse(fs.readFileSync(rawChunkPath, 'utf8'));
+      is(rawChunk.error, 'provider exploded');
+      property(rawChunk, 'errorDebug');
+      property(rawChunk, 'requestMeta');
+      is(rawChunk.requestMeta.model, 'yaml-video-model');
+      is(rawChunk.requestMeta.chunkIndex, 0);
+      is(rawChunk.requestMeta.attempt, 1);
+      is(rawChunk.errorDebug.request.headers.Authorization, '[REDACTED]');
+    });
   });
 
   t.test('AI_API_KEY requirement by DIGITAL_TWIN_MODE', async (tNested) => {

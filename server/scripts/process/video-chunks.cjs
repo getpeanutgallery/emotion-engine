@@ -103,6 +103,46 @@ function extractRawResponse(toolResult) {
     || null;
 }
 
+function sanitizeRawCaptureValue(value, depth = 0, seen = new WeakSet()) {
+  if (value === null || value === undefined) return value;
+  if (depth > 8) return '[Truncated]';
+
+  if (typeof value === 'string') {
+    if (value.startsWith('Bearer ')) return 'Bearer [REDACTED]';
+    return value;
+  }
+
+  if (typeof value !== 'object') return value;
+
+  if (seen.has(value)) return '[Circular]';
+  seen.add(value);
+
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeRawCaptureValue(item, depth + 1, seen));
+  }
+
+  const out = {};
+  for (const [key, item] of Object.entries(value)) {
+    if (/authorization/i.test(key) || /api[_-]?key/i.test(key)) {
+      out[key] = '[REDACTED]';
+      continue;
+    }
+    out[key] = sanitizeRawCaptureValue(item, depth + 1, seen);
+  }
+
+  return out;
+}
+
+function buildRequestMeta({ chunkIndex, splitIndex, attempt, config }) {
+  return {
+    provider: config?.ai?.provider || 'openrouter',
+    model: config?.ai?.video?.model || null,
+    chunkIndex,
+    splitIndex: splitIndex || 0,
+    attempt
+  };
+}
+
 async function analyzeChunkWithRetry({
   analyzeInput,
   retryConfig,
@@ -155,7 +195,8 @@ async function analyzeChunkWithRetry({
           parsed: toolResult?.state || null,
           error: null,
           provider: config?.ai?.provider || 'openrouter',
-          model: config?.ai?.video?.model || null
+          model: config?.ai?.video?.model || null,
+          requestMeta: buildRequestMeta({ chunkIndex, splitIndex, attempt, config })
         });
 
         return { toolResult, chunkResult: candidateChunkResult, attempt };
@@ -170,7 +211,8 @@ async function analyzeChunkWithRetry({
         parsed: toolResult?.state || null,
         error: invalidReason,
         provider: config?.ai?.provider || 'openrouter',
-        model: config?.ai?.video?.model || null
+        model: config?.ai?.video?.model || null,
+        requestMeta: buildRequestMeta({ chunkIndex, splitIndex, attempt, config })
       });
 
       lastError = new Error(`invalid_output: ${invalidReason}`);
@@ -200,9 +242,16 @@ async function analyzeChunkWithRetry({
           prompt: null,
           rawResponse: null,
           parsed: null,
-          error: error.message,
+          error: error?.message || String(error),
+          errorName: error?.name || null,
+          errorCode: error?.code || null,
+          errorStatus: error?.response?.status || null,
+          errorStack: typeof error?.stack === 'string' ? error.stack : null,
+          errorDebug: sanitizeRawCaptureValue(error?.debug) || null,
+          errorResponse: sanitizeRawCaptureValue(error?.response?.data) || null,
           provider: config?.ai?.provider || 'openrouter',
-          model: config?.ai?.video?.model || null
+          model: config?.ai?.video?.model || null,
+          requestMeta: buildRequestMeta({ chunkIndex, splitIndex, attempt, config })
         });
       }
 
