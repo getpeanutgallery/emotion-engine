@@ -221,6 +221,38 @@ test('Video Chunks Script', async (t) => {
       is(analyzeCalls[0].toolVariables.variables.model, 'yaml-video-model');
     });
 
+    await tNested.test('forwards adapter.params into analyze config (phase2 chunk analysis)', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: {
+              targets: [
+                {
+                  adapter: {
+                    name: 'openrouter',
+                    model: 'yaml-video-model',
+                    params: { temperature: 0.9, maxTokens: 222 }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      });
+
+      is(analyzeCalls.length > 0, true);
+      is(analyzeCalls[0].config.ai.video.params.temperature, 0.9);
+      is(analyzeCalls[0].config.ai.video.params.maxTokens, 222);
+    });
+
     await tNested.test('keeps processed chunk files by default', async () => {
       await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',

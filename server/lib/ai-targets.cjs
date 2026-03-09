@@ -140,6 +140,11 @@ function getTargetsFromConfig(config, domain) {
 
 function applyTargetToConfig(config, domain, target) {
   const adapter = normalizeAdapterTarget(target).adapter;
+
+  // Copy adapter-specific params into the domain config so downstream tools can forward
+  // them into the underlying provider adapter call.
+  const adapterParams = adapter?.params;
+
   return {
     ...config,
     ai: {
@@ -147,7 +152,8 @@ function applyTargetToConfig(config, domain, target) {
       provider: adapter.name,
       [domain]: {
         ...((config?.ai && config.ai[domain]) || {}),
-        model: adapter.model
+        model: adapter.model,
+        ...(adapterParams !== undefined ? { params: adapterParams } : {})
       }
     }
   };
