@@ -133,6 +133,38 @@ test('Get Dialogue Script', async (t) => {
       await getDialogueScript.run(input);
       assert.deepEqual(providerConfigCalls, ['anthropic']);
     });
+
+    tNested.test('keeps processed dialogue temp files by default', async () => {
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ai: { dialogue: { model: 'test-dialogue-model' } }
+        }
+      };
+
+      await getDialogueScript.run(input);
+
+      const processedDialogueDir = path.join(testOutputDir, 'assets', 'processed', 'dialogue');
+      ok(fs.existsSync(processedDialogueDir));
+      ok(fs.existsSync(path.join(processedDialogueDir, 'audio.wav')));
+    });
+
+    tNested.test('cleans processed dialogue temp files when debug.keepProcessedIntermediates=false', async () => {
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ai: { dialogue: { model: 'test-dialogue-model' } },
+          debug: { keepProcessedIntermediates: false }
+        }
+      };
+
+      await getDialogueScript.run(input);
+
+      const processedDialogueDir = path.join(testOutputDir, 'assets', 'processed', 'dialogue');
+      ok(!fs.existsSync(processedDialogueDir));
+    });
   });
 
   t.test('input validation', (tNested) => {

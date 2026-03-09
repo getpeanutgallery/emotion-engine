@@ -145,6 +145,39 @@ test('Get Music Script', async (t) => {
       await getMusicScript.run(input);
       assert.deepEqual(providerConfigCalls, ['gemini']);
     });
+
+    tNested.test('keeps processed music temp files by default', async () => {
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ai: { music: { model: 'test-music-model' } }
+        }
+      };
+
+      await getMusicScript.run(input);
+
+      const processedMusicDir = path.join(testOutputDir, 'assets', 'processed', 'music');
+      ok(fs.existsSync(processedMusicDir));
+      ok(fs.existsSync(path.join(processedMusicDir, 'audio.wav')));
+      ok(fs.existsSync(path.join(processedMusicDir, 'segment-0.wav')));
+    });
+
+    tNested.test('cleans processed music temp files when debug.keepProcessedIntermediates=false', async () => {
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ai: { music: { model: 'test-music-model' } },
+          debug: { keepProcessedIntermediates: false }
+        }
+      };
+
+      await getMusicScript.run(input);
+
+      const processedMusicDir = path.join(testOutputDir, 'assets', 'processed', 'music');
+      ok(!fs.existsSync(processedMusicDir));
+    });
   });
 
   t.test('segment structure', (tNested) => {

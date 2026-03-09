@@ -19,6 +19,7 @@ const splitStrategy = require('../../lib/split-strategy.cjs');
 const videoChunkExtractor = require('../../lib/video-chunk-extractor.cjs');
 const outputManager = require('../../lib/output-manager.cjs');
 const { getChunkFailureReason } = require('../../lib/chunk-analysis-status.cjs');
+const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
 const ffmpegPath = require('ffmpeg-static');
 const ffprobePath = require('ffprobe-static').path;
 
@@ -164,10 +165,8 @@ async function run(input) {
   console.log(`   📁 Phase directory: ${phaseDir}`);
   console.log(`   📁 Chunks directory: ${chunksDir}`);
 
-  // Check debug config for keeping temp files
-  const keepTempFiles = config?.debug?.keepTempFiles === true;
-  const keepProcessedAssets = config?.debug?.keepProcessedAssets !== false;
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+  // Default to keeping processed/intermediate files unless explicitly disabled
+  const keepProcessedIntermediates = shouldKeepProcessedIntermediates(config);
 
   // Track extracted chunk files for cleanup
   const extractedChunks = [];
@@ -385,26 +384,8 @@ async function run(input) {
     throw error;
   } finally {
     // Handle chunk file cleanup based on config
-    if (keepTempFiles && keepProcessedAssets) {
-      // Move chunk files to assets/processed/chunks/ with timestamp to avoid overwrites
-      const destDir = path.join(phaseDir, 'assets', 'processed', 'chunks', timestamp);
-      fs.mkdirSync(destDir, { recursive: true });
-      
-      try {
-        for (const chunkPath of extractedChunks) {
-          if (fs.existsSync(chunkPath)) {
-            const chunkName = path.basename(chunkPath);
-            const destPath = path.join(destDir, chunkName);
-            fs.copyFileSync(chunkPath, destPath);
-            console.log(`   💾 Kept chunk file for debugging: ${chunkName} → ${destPath}`);
-          }
-        }
-        console.log(`   💾 Debug mode: Chunk files preserved in ${destDir}`);
-      } catch (e) {
-        console.warn('   ⚠️  Warning: Failed to copy some chunk files:', e.message);
-      }
-    } else if (keepTempFiles) {
-      console.log(`   💾 Debug mode: Chunk files kept in ${chunksDir}`);
+    if (keepProcessedIntermediates) {
+      console.log(`   💾 Keeping extracted chunk files in ${chunksDir}`);
     } else {
       // Clean up extracted chunk files
       try {

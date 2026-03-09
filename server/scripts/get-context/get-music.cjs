@@ -14,6 +14,7 @@ const { exec } = require('child_process');
 const { promisify } = require('util');
 const aiProvider = require('ai-providers/ai-provider-interface.js');
 const outputManager = require('../../lib/output-manager.cjs');
+const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
 const ffmpegPath = require('ffmpeg-static');
 const ffprobePath = require('ffprobe-static').path;
 
@@ -53,17 +54,15 @@ async function run(input) {
   // Create phase-aware output directory
   const phaseDir = outputManager.createPhaseDirectory(outputDir, 'phase1-gather-context');
   
-  // Create assets directory for processed files
-  const assetsDirs = outputManager.createAssetsDirectory(phaseDir);
+  // Create assets directory for processed files (canonical run-level assets)
+  const assetsDirs = outputManager.createAssetsDirectory(outputDir);
   
   // Create temp directory for audio extraction in assets/processed/music/
   const tempDir = path.join(assetsDirs.processedDir, 'music');
   fs.mkdirSync(tempDir, { recursive: true });
 
-  // Check debug config for keeping temp files
-  const keepTempFiles = config?.debug?.keepTempFiles === true;
-  const keepProcessedAssets = config?.debug?.keepProcessedAssets !== false;
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+  // Default to keeping processed/intermediate files unless explicitly disabled
+  const keepProcessedIntermediates = shouldKeepProcessedIntermediates(config);
 
   try {
     // Extract audio from video (if needed)
@@ -167,25 +166,8 @@ async function run(input) {
     throw error;
   } finally {
     // Handle temp file cleanup based on config
-    if (keepTempFiles && keepProcessedAssets) {
-      // Move temp files to assets/processed/music/ with timestamp to avoid overwrites
-      const destDir = path.join(phaseDir, 'assets', 'processed', 'music', timestamp);
-      fs.mkdirSync(destDir, { recursive: true });
-      
-      try {
-        const files = fs.readdirSync(tempDir);
-        for (const file of files) {
-          const srcPath = path.join(tempDir, file);
-          const destPath = path.join(destDir, file);
-          fs.copyFileSync(srcPath, destPath);
-          console.log(`   💾 Kept music temp file for debugging: ${file} → ${destPath}`);
-        }
-        console.log(`   💾 Debug mode: Music temp files preserved in ${destDir}`);
-      } catch (e) {
-        console.warn('   ⚠️  Warning: Failed to copy some music temp files:', e.message);
-      }
-    } else if (keepTempFiles) {
-      console.log(`   💾 Debug mode: Music temp files kept in ${tempDir}`);
+    if (keepProcessedIntermediates) {
+      console.log(`   💾 Keeping music temp files in ${tempDir}`);
     } else {
       // Clean up temp files
       try {

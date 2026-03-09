@@ -41,10 +41,29 @@ function createPhaseDirectory(outputDir, phaseName) {
 }
 
 /**
+ * Resolve canonical run output directory.
+ *
+ * Backward compatibility: older callers occasionally pass a phase directory
+ * (e.g. /output/<run>/phase1-gather-context) when creating assets folders.
+ * Assets are canonical at /output/<run>/assets, so normalize phase paths
+ * back to the run root.
+ *
+ * @param {string} outputDir - Run output dir or phase output dir
+ * @returns {string} Canonical run output directory
+ */
+function resolveRunOutputDir(outputDir) {
+  const baseName = path.basename(outputDir);
+  if (/^phase\d+-/.test(baseName)) {
+    return path.dirname(outputDir);
+  }
+  return outputDir;
+}
+
+/**
  * Create assets directory structure
  * Creates /output/<run-name>/assets/input/ and /output/<run-name>/assets/processed/ directories
  *
- * @param {string} outputDir - Base output directory path
+ * @param {string} outputDir - Base output directory path (run or phase dir)
  * @returns {object} Object with inputDir and processedDir paths
  *
  * @example
@@ -53,7 +72,8 @@ function createPhaseDirectory(outputDir, phaseName) {
  * // Returns: { inputDir: '/app/output/assets/input', processedDir: '/app/output/assets/processed' }
  */
 function createAssetsDirectory(outputDir) {
-  const assetsDir = path.join(outputDir, 'assets');
+  const runOutputDir = resolveRunOutputDir(outputDir);
+  const assetsDir = path.join(runOutputDir, 'assets');
   const inputDir = path.join(assetsDir, 'input');
   const processedDir = path.join(assetsDir, 'processed');
 
@@ -277,5 +297,6 @@ module.exports = {
   createReportDirectory,
   getReportPath,
   copyInputAssets,
-  cleanupTempFiles
+  cleanupTempFiles,
+  resolveRunOutputDir
 };

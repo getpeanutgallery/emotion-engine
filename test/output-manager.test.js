@@ -13,7 +13,8 @@ const {
   createReportDirectory,
   getReportPath,
   copyInputAssets,
-  cleanupTempFiles
+  cleanupTempFiles,
+  resolveRunOutputDir
 } = require('../server/lib/output-manager.cjs');
 
 let passed = 0;
@@ -87,6 +88,35 @@ test('returns both directories', () => {
   const result = createAssetsDirectory(testOutputDir);
   if (!result.inputDir) throw new Error('Missing inputDir');
   if (!result.processedDir) throw new Error('Missing processedDir');
+});
+
+test('normalizes phase directory input to run-level assets directory', () => {
+  const phaseDir = createPhaseDirectory(testOutputDir, 'phase1-gather-context');
+  const { inputDir, processedDir } = createAssetsDirectory(phaseDir);
+
+  const expectedInputDir = path.join(testOutputDir, 'assets', 'input');
+  const expectedProcessedDir = path.join(testOutputDir, 'assets', 'processed');
+
+  if (inputDir !== expectedInputDir) {
+    throw new Error(`Expected input dir ${expectedInputDir}, got ${inputDir}`);
+  }
+
+  if (processedDir !== expectedProcessedDir) {
+    throw new Error(`Expected processed dir ${expectedProcessedDir}, got ${processedDir}`);
+  }
+
+  const phaseAssetsDir = path.join(phaseDir, 'assets');
+  if (fs.existsSync(phaseAssetsDir)) {
+    throw new Error(`Unexpected phase assets directory created: ${phaseAssetsDir}`);
+  }
+});
+
+test('resolveRunOutputDir maps phase dir to parent run dir', () => {
+  const phaseDir = path.join(testOutputDir, 'phase2-process');
+  const runDir = resolveRunOutputDir(phaseDir);
+  if (runDir !== testOutputDir) {
+    throw new Error(`Expected ${testOutputDir}, got ${runDir}`);
+  }
 });
 
 // Test createReportDirectory

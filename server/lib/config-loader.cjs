@@ -84,6 +84,10 @@ function parseConfig(configString, format = 'yaml') {
  *   - Requires: config.ai, config.ai.provider
  *   - Forbids: config.ai.model (top-level model)
  *   - Requires: config.ai.dialogue.model, config.ai.music.model, config.ai.video.model
+ * - debug keep flags must be booleans when provided
+ *   - debug.keepProcessedIntermediates (new, default keep)
+ *   - debug.keepProcessedFiles (alias)
+ *   - debug.keepTempFiles / debug.keepProcessedAssets (legacy)
  * 
  * @function validateConfig
  * @param {object} config - Configuration object to validate
@@ -136,6 +140,26 @@ function validateConfig(config) {
     }
   }
   
+  // Validate debug configuration when provided
+  if (config.debug !== undefined) {
+    if (typeof config.debug !== 'object' || config.debug === null || Array.isArray(config.debug)) {
+      errors.push('"debug" must be an object when provided');
+    } else {
+      const debugBooleanFields = [
+        'keepProcessedIntermediates',
+        'keepProcessedFiles',
+        'keepTempFiles',
+        'keepProcessedAssets'
+      ];
+
+      for (const field of debugBooleanFields) {
+        if (config.debug[field] !== undefined && typeof config.debug[field] !== 'boolean') {
+          errors.push(`"debug.${field}" must be a boolean when provided`);
+        }
+      }
+    }
+  }
+
   // Count scripts across all phases
   let totalScripts = 0;
   

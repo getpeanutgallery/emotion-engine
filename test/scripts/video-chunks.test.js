@@ -200,6 +200,88 @@ test('Video Chunks Script', async (t) => {
       is(analyzeCalls.length > 0, true);
       is(analyzeCalls[0].toolVariables.variables.model, 'yaml-video-model');
     });
+
+    await tNested.test('keeps processed chunk files by default', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { model: 'yaml-video-model' }
+          }
+        }
+      });
+
+      const chunksDir = path.join(testOutputDir, 'assets', 'processed', 'chunks');
+      ok(fs.existsSync(chunksDir));
+      ok(fs.readdirSync(chunksDir).some((file) => file.endsWith('.mp4')));
+    });
+
+    await tNested.test('cleans processed chunk files when debug.keepProcessedIntermediates=false', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { model: 'yaml-video-model' }
+          },
+          debug: {
+            keepProcessedIntermediates: false
+          }
+        }
+      });
+
+      const chunksDir = path.join(testOutputDir, 'assets', 'processed', 'chunks');
+      if (fs.existsSync(chunksDir)) {
+        is(fs.readdirSync(chunksDir).length, 0);
+      } else {
+        ok(true);
+      }
+    });
+
+    await tNested.test('stores processed debug chunks under run-level assets directory (not phase assets)', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { model: 'yaml-video-model' }
+          },
+          debug: { keepTempFiles: true, keepProcessedAssets: true },
+          settings: { max_chunks: 1 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          }
+        }
+      });
+
+      const processedChunksDir = path.join(testOutputDir, 'assets', 'processed', 'chunks');
+      ok(fs.existsSync(processedChunksDir));
+
+      const chunkFiles = fs.readdirSync(processedChunksDir);
+      ok(chunkFiles.length > 0);
+
+      const legacyPhaseAssetsDir = path.join(testOutputDir, 'phase2-process', 'assets');
+      ok(!fs.existsSync(legacyPhaseAssetsDir));
+    });
   });
 
   t.test('AI_API_KEY requirement by DIGITAL_TWIN_MODE', async (tNested) => {
