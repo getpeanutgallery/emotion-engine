@@ -256,6 +256,45 @@ test('Config Loader - validateConfig', async (t) => {
     assert.strictEqual(result.valid, false);
     assert(result.errors.some(e => e.includes('"debug.keepProcessedIntermediates" must be a boolean')));
   });
+
+  await t.test('should validate debug.captureRaw as boolean', () => {
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai: {
+        provider: 'openrouter',
+        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
+        music: { model: 'qwen/qwen-3.5-397b-a17b' },
+        video: { model: 'qwen/qwen-3.5-397b-a17b' }
+      },
+      gather_context: ['script1.cjs'],
+      debug: {
+        captureRaw: true
+      }
+    };
+
+    const result = validateConfig(config);
+    assert.strictEqual(result.valid, true);
+  });
+
+  await t.test('should fail validation when debug.captureRaw is not boolean', () => {
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai: {
+        provider: 'openrouter',
+        dialogue: { model: 'qwen/qwen-3.5-397b-a17b' },
+        music: { model: 'qwen/qwen-3.5-397b-a17b' },
+        video: { model: 'qwen/qwen-3.5-397b-a17b' }
+      },
+      gather_context: ['script1.cjs'],
+      debug: {
+        captureRaw: 'yes'
+      }
+    };
+
+    const result = validateConfig(config);
+    assert.strictEqual(result.valid, false);
+    assert(result.errors.some(e => e.includes('"debug.captureRaw" must be a boolean')));
+  });
 });
 
 test('Config Loader - validateConfig AI requirements', async (t) => {

@@ -25,7 +25,7 @@ const { parseArgs, printHelp, printVersion, validateArgs } = require('./lib/cli-
 const { runGatherContext } = require('./lib/phases/gather-context-runner.cjs');
 const { runProcess } = require('./lib/phases/process-runner.cjs');
 const { runReport } = require('./lib/phases/report-runner.cjs');
-const { createAssetsDirectory, copyInputAssets } = require('./lib/output-manager.cjs');
+const { createAssetsDirectory, copyInputAssets, createRawDirectories } = require('./lib/output-manager.cjs');
 
 /**
  * Run the complete pipeline
@@ -87,8 +87,15 @@ async function runPipeline(configPath, options = {}) {
   // Create assets directory structure and copy input files
   console.log('📁 Setting up assets directory...');
   const { inputDir: assetsInputDir } = createAssetsDirectory(outputDir);
+  const rawDirs = createRawDirectories(outputDir);
   copyInputAssets(outputDir, config, assetPath, configPath);
   console.log(`   ✅ Assets directory created at ${assetsInputDir}`);
+  if (verbose) {
+    console.log('   ✅ Raw directories ready:');
+    console.log(`      - ${rawDirs.phase1RawDir}`);
+    console.log(`      - ${rawDirs.phase2RawDir}`);
+    console.log(`      - ${rawDirs.phase3RawDir}`);
+  }
   
   // Initialize artifact context with assets directory path
   let artifacts = createArtifactContext();

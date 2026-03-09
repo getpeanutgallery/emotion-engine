@@ -69,6 +69,16 @@ test('Pipeline Orchestrator - runPipeline', async (t) => {
       assert(fs.existsSync(file), `File should exist: ${file}`);
     }
   });
+
+  await t.test('should always create raw directories for all phases', async () => {
+    const configPath = path.join(__dirname, 'fixtures', 'test-pipeline.yaml');
+
+    const result = await runPipeline(configPath);
+
+    assert(fs.existsSync(path.join(result.outputDir, 'phase1-extract', 'raw')));
+    assert(fs.existsSync(path.join(result.outputDir, 'phase2-process', 'raw')));
+    assert(fs.existsSync(path.join(result.outputDir, 'phase3-report', 'raw')));
+  });
   
   await t.test('should handle dry-run mode', async () => {
     const configPath = path.join(__dirname, 'fixtures', 'test-pipeline.yaml');

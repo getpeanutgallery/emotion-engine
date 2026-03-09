@@ -165,6 +165,31 @@ test('Get Dialogue Script', async (t) => {
       const processedDialogueDir = path.join(testOutputDir, 'assets', 'processed', 'dialogue');
       ok(!fs.existsSync(processedDialogueDir));
     });
+
+    tNested.test('captures AI + ffmpeg raw artifacts when debug.captureRaw=true', async () => {
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ai: { provider: 'openai', dialogue: { model: 'test-dialogue-model' } },
+          debug: { captureRaw: true, keepProcessedIntermediates: false }
+        }
+      };
+
+      await getDialogueScript.run(input);
+
+      const aiRawPath = path.join(testOutputDir, 'phase1-extract', 'raw', 'ai', 'dialogue-transcription.json');
+      const ffmpegRawPath = path.join(testOutputDir, 'phase1-extract', 'raw', 'ffmpeg', 'extract-audio.json');
+
+      ok(fs.existsSync(aiRawPath));
+      ok(fs.existsSync(ffmpegRawPath));
+
+      const aiRaw = JSON.parse(fs.readFileSync(aiRawPath, 'utf8'));
+      property(aiRaw, 'prompt');
+      property(aiRaw, 'rawResponse');
+      property(aiRaw, 'parsed');
+      is(aiRaw.model, 'test-dialogue-model');
+    });
   });
 
   t.test('input validation', (tNested) => {

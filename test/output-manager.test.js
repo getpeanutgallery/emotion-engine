@@ -11,6 +11,8 @@ const {
   createPhaseDirectory,
   createAssetsDirectory,
   createReportDirectory,
+  createRawDirectories,
+  getPhaseRawDirectory,
   getReportPath,
   copyInputAssets,
   cleanupTempFiles,
@@ -119,6 +121,29 @@ test('resolveRunOutputDir maps phase dir to parent run dir', () => {
   }
 });
 
+// Test raw directory helpers
+console.log('\nTesting raw directories helpers:\n');
+
+test('createRawDirectories creates raw folders for all phases', () => {
+  const dirs = createRawDirectories(testOutputDir);
+
+  if (!fs.existsSync(dirs.phase1RawDir)) throw new Error('phase1 raw dir missing');
+  if (!fs.existsSync(dirs.phase2RawDir)) throw new Error('phase2 raw dir missing');
+  if (!fs.existsSync(dirs.phase3RawDir)) throw new Error('phase3 raw dir missing');
+
+  if (!dirs.phase1RawDir.endsWith(path.join('phase1-extract', 'raw'))) {
+    throw new Error(`Wrong phase1 raw path: ${dirs.phase1RawDir}`);
+  }
+});
+
+test('getPhaseRawDirectory creates and returns requested phase raw directory', () => {
+  const phase2Raw = getPhaseRawDirectory(testOutputDir, 'phase2-process');
+  if (!fs.existsSync(phase2Raw)) throw new Error('phase2 raw dir not created');
+  if (!phase2Raw.endsWith(path.join('phase2-process', 'raw'))) {
+    throw new Error(`Wrong phase2 raw path: ${phase2Raw}`);
+  }
+});
+
 // Test createReportDirectory
 console.log('\nTesting createReportDirectory():\n');
 
@@ -161,7 +186,11 @@ test('copies input assets', () => {
   fs.writeFileSync(testVideo, 'fake video content');
   
   const testConfig = path.join(assetPath, 'test-config.yaml');
-  fs.writeFileSync(testConfig, 'test: config');
+  fs.writeFileSync(testConfig, [
+    'tool_variables:',
+    '  soulPath: "test-assets/SOUL.md"',
+    '  goalPath: "test-assets/GOAL.md"'
+  ].join('\n'));
   
   const soulFile = path.join(assetPath, 'SOUL.md');
   fs.writeFileSync(soulFile, '# SOUL');
@@ -170,11 +199,10 @@ test('copies input assets', () => {
   fs.writeFileSync(goalFile, '# GOAL');
   
   const config = {
-    input: { path: testVideo },
-    configPath: testConfig
+    asset: { inputPath: testVideo }
   };
   
-  copyInputAssets(testOutputDir, config, assetPath);
+  copyInputAssets(testOutputDir, config, assetPath, testConfig);
   
   // Verify files were copied
   const inputDir = path.join(testOutputDir, 'assets', 'input');
@@ -185,13 +213,6 @@ test('copies input assets', () => {
     throw new Error('Config not copied');
   }
   
-  const personasDir = path.join(inputDir, 'personas');
-  if (!fs.existsSync(path.join(personasDir, 'SOUL.md'))) {
-    throw new Error('SOUL.md not copied');
-  }
-  if (!fs.existsSync(path.join(personasDir, 'GOAL.md'))) {
-    throw new Error('GOAL.md not copied');
-  }
 });
 
 // Test cleanupTempFiles

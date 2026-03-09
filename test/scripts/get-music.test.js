@@ -178,6 +178,31 @@ test('Get Music Script', async (t) => {
       const processedMusicDir = path.join(testOutputDir, 'assets', 'processed', 'music');
       ok(!fs.existsSync(processedMusicDir));
     });
+
+    tNested.test('captures AI + ffmpeg raw artifacts when debug.captureRaw=true', async () => {
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ai: { provider: 'gemini', music: { model: 'test-music-model' } },
+          debug: { captureRaw: true, keepProcessedIntermediates: false }
+        }
+      };
+
+      await getMusicScript.run(input);
+
+      const aiRawPath = path.join(testOutputDir, 'phase1-extract', 'raw', 'ai', 'music-segment-0.json');
+      const ffmpegRawPath = path.join(testOutputDir, 'phase1-extract', 'raw', 'ffmpeg', 'extract-audio.json');
+
+      ok(fs.existsSync(aiRawPath));
+      ok(fs.existsSync(ffmpegRawPath));
+
+      const aiRaw = JSON.parse(fs.readFileSync(aiRawPath, 'utf8'));
+      property(aiRaw, 'prompt');
+      property(aiRaw, 'rawResponse');
+      property(aiRaw, 'parsed');
+      is(aiRaw.model, 'test-music-model');
+    });
   });
 
   t.test('segment structure', (tNested) => {

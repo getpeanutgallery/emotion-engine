@@ -10,11 +10,12 @@
 
 const fs = require('fs');
 const path = require('path');
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process');
 const { promisify } = require('util');
 const aiProvider = require('ai-providers/ai-provider-interface.js');
 const outputManager = require('../../lib/output-manager.cjs');
 const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
+const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
 const ffmpegPath = require('ffmpeg-static');
 const ffprobePath = require('ffprobe-static').path;
 
@@ -63,13 +64,25 @@ async function run(input) {
 
   // Default to keeping processed/intermediate files unless explicitly disabled
   const keepProcessedIntermediates = shouldKeepProcessedIntermediates(config);
+  const captureRaw = shouldCaptureRaw(config);
+  const rawDir = getRawPhaseDir(outputDir, 'phase1-extract');
+  const ffmpegRawDir = path.join(rawDir, 'ffmpeg');
+  const aiRawDir = path.join(rawDir, 'ai');
 
   try {
     // Extract audio from video (if needed)
-    const audioPath = await extractAudio(assetPath, tempDir);
+    const audioPath = await extractAudio(assetPath, tempDir, {
+      captureRaw,
+      ffmpegRawDir,
+      logName: 'extract-audio.json'
+    });
 
     // Get audio duration
-    const duration = getAudioDuration(audioPath);
+    const duration = getAudioDuration(audioPath, {
+      captureRaw,
+      ffmpegRawDir,
+      logName: 'ffprobe-audio-duration.json'
+    });
 
     // Segment audio (e.g., every 30 seconds)
     const segmentDuration = config?.settings?.music_segment_duration || 30;
@@ -90,7 +103,11 @@ async function run(input) {
 
       // Extract segment
       const segmentPath = path.join(tempDir, `segment-${i}.wav`);
-      await extractAudioSegment(audioPath, startTime, segmentDurationActual, segmentPath);
+      await extractAudioSegment(audioPath, startTime, segmentDurationActual, segmentPath, {
+        captureRaw,
+        ffmpegRawDir,
+        logName: `extract-segment-${i}.json`
+      });
 
       // Convert to base64
       const audioBase64 = fs.readFileSync(segmentPath).toString('base64');
@@ -135,6 +152,20 @@ async function run(input) {
       const segmentAnalysis = parseSegmentResponse(response.content, startTime, endTime);
       segments.push(segmentAnalysis);
 
+      if (captureRaw) {
+        writeRawJson(aiRawDir, `music-segment-${i}.json`, {
+          segmentIndex: i,
+          startTime,
+          endTime,
+          prompt,
+          rawResponse: response,
+          parsed: segmentAnalysis,
+          error: null,
+          provider: config?.ai?.provider || 'openrouter',
+          model
+        });
+      }
+
       if (segmentAnalysis.type === 'music' || segmentAnalysis.mood) {
         hasMusic = true;
       }
@@ -162,6 +193,14 @@ async function run(input) {
       }
     };
   } catch (error) {
+    if (captureRaw) {
+      writeRawJson(aiRawDir, 'music-analysis.error.json', {
+        error: error.message,
+        stack: error.stack,
+        provider: config?.ai?.provider || 'openrouter',
+        model: config?.ai?.music?.model || null
+      });
+    }
     console.error('   ❌ Error analyzing music:', error.message);
     throw error;
   } finally {
@@ -190,7 +229,7 @@ async function run(input) {
  * @param {string} outputDir - Output directory for audio file
  * @returns {Promise<string>} - Path to extracted audio file
  */
-async function extractAudio(videoPath, outputDir) {
+async function extractAudio(videoPath, outputDir, rawCapture = {}) {
   const audioPath = path.join(outputDir, 'audio.wav');
 
   // Check if input is already audio
@@ -200,16 +239,44 @@ async function extractAudio(videoPath, outputDir) {
   if (isAudio) {
     // Copy audio file directly
     fs.copyFileSync(videoPath, audioPath);
+    if (rawCapture.captureRaw) {
+      writeRawJson(rawCapture.ffmpegRawDir, rawCapture.logName || 'extract-audio.json', {
+        tool: 'copy',
+        command: 'fs.copyFileSync',
+        input: videoPath,
+        output: audioPath,
+        status: 'success'
+      });
+    }
     return audioPath;
   }
 
+  const command = `"${ffmpegPath}" -v error -i "${videoPath}" -vn -acodec pcm_s16le -ar 16000 -ac 1 -y "${audioPath}"`;
+
   // Extract audio from video using ffmpeg
   try {
-    await execAsync(
-      `"${ffmpegPath}" -i "${videoPath}" -vn -acodec pcm_s16le -ar 16000 -ac 1 -y "${audioPath}" 2>/dev/null`
-    );
+    const { stdout, stderr } = await execAsync(command);
+    if (rawCapture.captureRaw) {
+      writeRawJson(rawCapture.ffmpegRawDir, rawCapture.logName || 'extract-audio.json', {
+        tool: 'ffmpeg',
+        command,
+        stdout,
+        stderr,
+        status: 'success'
+      });
+    }
     return audioPath;
   } catch (error) {
+    if (rawCapture.captureRaw) {
+      writeRawJson(rawCapture.ffmpegRawDir, rawCapture.logName || 'extract-audio.json', {
+        tool: 'ffmpeg',
+        command,
+        stdout: error.stdout || '',
+        stderr: error.stderr || '',
+        status: 'failed',
+        error: error.message
+      });
+    }
     throw new Error(`Failed to extract audio: ${error.message}`);
   }
 }
@@ -225,12 +292,30 @@ async function extractAudio(videoPath, outputDir) {
  * @param {string} outputPath - Output path for segment
  * @returns {Promise<void>}
  */
-async function extractAudioSegment(audioPath, startTime, duration, outputPath) {
+async function extractAudioSegment(audioPath, startTime, duration, outputPath, rawCapture = {}) {
+  const command = `"${ffmpegPath}" -v error -i "${audioPath}" -ss ${startTime} -t ${duration} -acodec pcm_s16le -ar 16000 -ac 1 -y "${outputPath}"`;
   try {
-    await execAsync(
-      `"${ffmpegPath}" -i "${audioPath}" -ss ${startTime} -t ${duration} -acodec pcm_s16le -ar 16000 -ac 1 -y "${outputPath}" 2>/dev/null`
-    );
+    const { stdout, stderr } = await execAsync(command);
+    if (rawCapture.captureRaw) {
+      writeRawJson(rawCapture.ffmpegRawDir, rawCapture.logName || 'extract-segment.json', {
+        tool: 'ffmpeg',
+        command,
+        stdout,
+        stderr,
+        status: 'success'
+      });
+    }
   } catch (error) {
+    if (rawCapture.captureRaw) {
+      writeRawJson(rawCapture.ffmpegRawDir, rawCapture.logName || 'extract-segment.json', {
+        tool: 'ffmpeg',
+        command,
+        stdout: error.stdout || '',
+        stderr: error.stderr || '',
+        status: 'failed',
+        error: error.message
+      });
+    }
     throw new Error(`Failed to extract audio segment: ${error.message}`);
   }
 }
@@ -242,12 +327,31 @@ async function extractAudioSegment(audioPath, startTime, duration, outputPath) {
  * @param {string} audioPath - Path to audio file
  * @returns {number} - Duration in seconds
  */
-function getAudioDuration(audioPath) {
+function getAudioDuration(audioPath, rawCapture = {}) {
+  const command = `"${ffprobePath}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${audioPath}"`;
   try {
-    const cmd = `"${ffprobePath}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${audioPath}"`;
-    const stdout = require('child_process').execSync(cmd).toString();
-    return parseFloat(stdout.trim()) || 0;
+    const stdout = execSync(command, { encoding: 'utf8' });
+    const stdoutText = typeof stdout === 'string' ? stdout : stdout.toString();
+    if (rawCapture.captureRaw) {
+      writeRawJson(rawCapture.ffmpegRawDir, rawCapture.logName || 'ffprobe-audio-duration.json', {
+        tool: 'ffprobe',
+        command,
+        stdout: stdoutText,
+        status: 'success'
+      });
+    }
+    return parseFloat(stdoutText.trim()) || 0;
   } catch (e) {
+    if (rawCapture.captureRaw) {
+      writeRawJson(rawCapture.ffmpegRawDir, rawCapture.logName || 'ffprobe-audio-duration.json', {
+        tool: 'ffprobe',
+        command,
+        stdout: e.stdout ? e.stdout.toString() : '',
+        stderr: e.stderr ? e.stderr.toString() : '',
+        status: 'failed',
+        error: e.message
+      });
+    }
     return 0;
   }
 }

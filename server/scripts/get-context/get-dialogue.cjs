@@ -10,12 +10,13 @@
 
 const fs = require('fs');
 const path = require('path');
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process');
 const { promisify } = require('util');
 const aiProvider = require('ai-providers/ai-provider-interface.js');
 const storage = require('../../lib/storage/storage-interface.js');
 const outputManager = require('../../lib/output-manager.cjs');
 const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
+const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
 const ffmpegPath = require('ffmpeg-static');
 const ffprobePath = require('ffprobe-static').path;
 
@@ -64,10 +65,18 @@ async function run(input) {
 
   // Default to keeping processed/intermediate files unless explicitly disabled
   const keepProcessedIntermediates = shouldKeepProcessedIntermediates(config);
+  const captureRaw = shouldCaptureRaw(config);
+  const rawDir = getRawPhaseDir(outputDir, 'phase1-extract');
+  const ffmpegRawDir = path.join(rawDir, 'ffmpeg');
+  const aiRawDir = path.join(rawDir, 'ai');
 
   try {
     // Extract audio from video (if needed)
-    const audioPath = await extractAudio(assetPath, tempDir);
+    const audioPath = await extractAudio(assetPath, tempDir, {
+      captureRaw,
+      ffmpegRawDir,
+      logName: 'extract-audio.json'
+    });
 
     // Convert audio to base64 for AI provider
     const audioBase64 = fs.readFileSync(audioPath).toString('base64');
@@ -111,7 +120,22 @@ async function run(input) {
     });
 
     // Parse transcription response
-    const dialogueData = parseTranscriptionResponse(response.content, audioPath);
+    const dialogueData = parseTranscriptionResponse(response.content, audioPath, {
+      captureRaw,
+      ffmpegRawDir,
+      ffprobeLogName: 'ffprobe-audio-duration.json'
+    });
+
+    if (captureRaw) {
+      writeRawJson(aiRawDir, 'dialogue-transcription.json', {
+        prompt,
+        rawResponse: response,
+        parsed: dialogueData,
+        error: null,
+        provider: config?.ai?.provider || 'openrouter',
+        model
+      });
+    }
 
     // Write intermediate artifact to phase directory
     const artifactPath = path.join(phaseDir, 'dialogue-data.json');
@@ -128,6 +152,14 @@ async function run(input) {
       }
     };
   } catch (error) {
+    if (captureRaw) {
+      writeRawJson(aiRawDir, 'dialogue-transcription.error.json', {
+        error: error.message,
+        stack: error.stack,
+        provider: config?.ai?.provider || 'openrouter',
+        model: config?.ai?.dialogue?.model || null
+      });
+    }
     console.error('   ❌ Error extracting dialogue:', error.message);
     throw error;
   } finally {
@@ -156,7 +188,7 @@ async function run(input) {
  * @param {string} outputDir - Output directory for audio file
  * @returns {Promise<string>} - Path to extracted audio file
  */
-async function extractAudio(videoPath, outputDir) {
+async function extractAudio(videoPath, outputDir, rawCapture = {}) {
   const audioPath = path.join(outputDir, 'audio.wav');
 
   // Check if input is already audio
@@ -166,16 +198,44 @@ async function extractAudio(videoPath, outputDir) {
   if (isAudio) {
     // Copy audio file directly
     fs.copyFileSync(videoPath, audioPath);
+    if (rawCapture.captureRaw) {
+      writeRawJson(rawCapture.ffmpegRawDir, rawCapture.logName || 'extract-audio.json', {
+        tool: 'copy',
+        command: 'fs.copyFileSync',
+        input: videoPath,
+        output: audioPath,
+        status: 'success'
+      });
+    }
     return audioPath;
   }
 
+  const command = `"${ffmpegPath}" -v error -i "${videoPath}" -vn -acodec pcm_s16le -ar 16000 -ac 1 -y "${audioPath}"`;
+
   // Extract audio from video using ffmpeg
   try {
-    await execAsync(
-      `"${ffmpegPath}" -i "${videoPath}" -vn -acodec pcm_s16le -ar 16000 -ac 1 -y "${audioPath}" 2>/dev/null`
-    );
+    const { stdout, stderr } = await execAsync(command);
+    if (rawCapture.captureRaw) {
+      writeRawJson(rawCapture.ffmpegRawDir, rawCapture.logName || 'extract-audio.json', {
+        tool: 'ffmpeg',
+        command,
+        stdout,
+        stderr,
+        status: 'success'
+      });
+    }
     return audioPath;
   } catch (error) {
+    if (rawCapture.captureRaw) {
+      writeRawJson(rawCapture.ffmpegRawDir, rawCapture.logName || 'extract-audio.json', {
+        tool: 'ffmpeg',
+        command,
+        stdout: error.stdout || '',
+        stderr: error.stderr || '',
+        status: 'failed',
+        error: error.message
+      });
+    }
     throw new Error(`Failed to extract audio: ${error.message}`);
   }
 }
@@ -223,7 +283,7 @@ IMPORTANT:
  * @param {string} audioPath - Path to audio file (for duration calculation)
  * @returns {Object} - Parsed dialogue data
  */
-function parseTranscriptionResponse(responseContent, audioPath) {
+function parseTranscriptionResponse(responseContent, audioPath, rawCapture = {}) {
   // Try to extract JSON from response
   let jsonData = null;
 
@@ -247,7 +307,7 @@ function parseTranscriptionResponse(responseContent, audioPath) {
     return {
       dialogue_segments: [],
       summary: 'Transcription failed - no speech detected or parsing error',
-      totalDuration: getAudioDuration(audioPath)
+      totalDuration: getAudioDuration(audioPath, rawCapture)
     };
   }
 
@@ -257,7 +317,7 @@ function parseTranscriptionResponse(responseContent, audioPath) {
     summary: jsonData.summary || 'Dialogue transcription completed',
     totalDuration: typeof jsonData.totalDuration === 'number' 
       ? jsonData.totalDuration 
-      : getAudioDuration(audioPath)
+      : getAudioDuration(audioPath, rawCapture)
   };
 }
 
@@ -268,12 +328,31 @@ function parseTranscriptionResponse(responseContent, audioPath) {
  * @param {string} audioPath - Path to audio file
  * @returns {number} - Duration in seconds
  */
-function getAudioDuration(audioPath) {
+function getAudioDuration(audioPath, rawCapture = {}) {
+  const command = `"${ffprobePath}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${audioPath}"`;
   try {
-    const cmd = `"${ffprobePath}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${audioPath}"`;
-    const stdout = require('child_process').execSync(cmd).toString();
-    return parseFloat(stdout.trim()) || 0;
+    const stdout = execSync(command, { encoding: 'utf8' });
+    const stdoutText = typeof stdout === 'string' ? stdout : stdout.toString();
+    if (rawCapture.captureRaw) {
+      writeRawJson(rawCapture.ffmpegRawDir, rawCapture.ffprobeLogName || 'ffprobe-audio-duration.json', {
+        tool: 'ffprobe',
+        command,
+        stdout: stdoutText,
+        status: 'success'
+      });
+    }
+    return parseFloat(stdoutText.trim()) || 0;
   } catch (e) {
+    if (rawCapture.captureRaw) {
+      writeRawJson(rawCapture.ffmpegRawDir, rawCapture.ffprobeLogName || 'ffprobe-audio-duration.json', {
+        tool: 'ffprobe',
+        command,
+        stdout: e.stdout ? e.stdout.toString() : '',
+        stderr: e.stderr ? e.stderr.toString() : '',
+        status: 'failed',
+        error: e.message
+      });
+    }
     return 0;
   }
 }

@@ -114,6 +114,56 @@ function createReportDirectory(outputDir, reportName) {
 }
 
 /**
+ * Create canonical raw directories for all pipeline phases.
+ *
+ * Always creates:
+ * - /output/<run>/phase1-extract/raw/
+ * - /output/<run>/phase2-process/raw/
+ * - /output/<run>/phase3-report/raw/
+ *
+ * @param {string} outputDir - Base output directory path (run or phase dir)
+ * @returns {{ phase1RawDir: string, phase2RawDir: string, phase3RawDir: string }}
+ */
+function createRawDirectories(outputDir) {
+  const runOutputDir = resolveRunOutputDir(outputDir);
+
+  const phase1RawDir = path.join(runOutputDir, 'phase1-extract', 'raw');
+  const phase2RawDir = path.join(runOutputDir, 'phase2-process', 'raw');
+  const phase3RawDir = path.join(runOutputDir, 'phase3-report', 'raw');
+
+  for (const dir of [phase1RawDir, phase2RawDir, phase3RawDir]) {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  }
+
+  return { phase1RawDir, phase2RawDir, phase3RawDir };
+}
+
+/**
+ * Get (and create) a phase raw directory by canonical phase key.
+ *
+ * Valid phase keys:
+ * - phase1-extract
+ * - phase2-process
+ * - phase3-report
+ *
+ * @param {string} outputDir - Base output directory path (run or phase dir)
+ * @param {string} phaseKey - Canonical phase key
+ * @returns {string} Raw directory path for the phase
+ */
+function getPhaseRawDirectory(outputDir, phaseKey) {
+  const runOutputDir = resolveRunOutputDir(outputDir);
+  const rawDir = path.join(runOutputDir, phaseKey, 'raw');
+
+  if (!fs.existsSync(rawDir)) {
+    fs.mkdirSync(rawDir, { recursive: true });
+  }
+
+  return rawDir;
+}
+
+/**
  * Get full path to a file within a report directory
  * Returns /output/<run-name>/<report-name>/<filename>
  *
@@ -295,6 +345,8 @@ module.exports = {
   createPhaseDirectory,
   createAssetsDirectory,
   createReportDirectory,
+  createRawDirectories,
+  getPhaseRawDirectory,
   getReportPath,
   copyInputAssets,
   cleanupTempFiles,

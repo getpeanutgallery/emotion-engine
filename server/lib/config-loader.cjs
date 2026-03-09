@@ -146,6 +146,7 @@ function validateConfig(config) {
       errors.push('"debug" must be an object when provided');
     } else {
       const debugBooleanFields = [
+        'captureRaw',
         'keepProcessedIntermediates',
         'keepProcessedFiles',
         'keepTempFiles',

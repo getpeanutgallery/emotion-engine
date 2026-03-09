@@ -31,7 +31,7 @@ const ffmpegPath = require('ffmpeg-static');
  *   console.error(`Extraction failed: ${result.error}`);
  * }
  */
-async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunkIndex) {
+async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunkIndex, options = {}) {
     // Validate inputs
     if (!videoPath || typeof videoPath !== 'string') {
         return {
@@ -107,6 +107,8 @@ async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunk
         outputPath
     ];
 
+    const rawLogger = typeof options.rawLogger === 'function' ? options.rawLogger : null;
+
     console.log(`   🎬 Extracting chunk ${chunkIndex}: ${startTime}s → ${endTime}s`);
 
     return new Promise((resolve) => {
@@ -119,6 +121,19 @@ async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunk
 
         ffmpeg.on('close', (code) => {
             if (code !== 0) {
+                if (rawLogger) {
+                    rawLogger({
+                        tool: 'ffmpeg',
+                        command: ffmpegPath,
+                        args,
+                        chunkIndex,
+                        startTime,
+                        endTime,
+                        status: 'failed',
+                        exitCode: code,
+                        stderr
+                    });
+                }
                 console.error(`   ⚠️  FFmpeg extraction failed with code ${code}`);
                 return resolve({
                     success: false,
@@ -128,6 +143,20 @@ async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunk
 
             // Verify output file was created
             if (!fs.existsSync(outputPath)) {
+                if (rawLogger) {
+                    rawLogger({
+                        tool: 'ffmpeg',
+                        command: ffmpegPath,
+                        args,
+                        chunkIndex,
+                        startTime,
+                        endTime,
+                        status: 'failed',
+                        exitCode: code,
+                        stderr,
+                        error: 'output_not_created'
+                    });
+                }
                 return resolve({
                     success: false,
                     error: 'FFmpeg completed but output file was not created'
@@ -136,6 +165,21 @@ async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunk
 
             const fileSize = fs.statSync(outputPath).size;
             const duration = endTime - startTime;
+            if (rawLogger) {
+                rawLogger({
+                    tool: 'ffmpeg',
+                    command: ffmpegPath,
+                    args,
+                    chunkIndex,
+                    startTime,
+                    endTime,
+                    status: 'success',
+                    exitCode: code,
+                    stderr,
+                    outputPath,
+                    fileSize
+                });
+            }
             console.log(`   ✅ Chunk extracted: ${(fileSize / 1024 / 1024).toFixed(2)}MB (${duration}s)`);
 
             resolve({
@@ -145,6 +189,18 @@ async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunk
         });
 
         ffmpeg.on('error', (err) => {
+            if (rawLogger) {
+                rawLogger({
+                    tool: 'ffmpeg',
+                    command: ffmpegPath,
+                    args,
+                    chunkIndex,
+                    startTime,
+                    endTime,
+                    status: 'failed',
+                    error: err.message
+                });
+            }
             console.error(`   ⚠️  FFmpeg spawn error: ${err.message}`);
             resolve({
                 success: false,

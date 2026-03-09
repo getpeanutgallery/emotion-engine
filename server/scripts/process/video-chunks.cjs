@@ -20,6 +20,7 @@ const videoChunkExtractor = require('../../lib/video-chunk-extractor.cjs');
 const outputManager = require('../../lib/output-manager.cjs');
 const { getChunkFailureReason } = require('../../lib/chunk-analysis-status.cjs');
 const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
+const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
 const ffmpegPath = require('ffmpeg-static');
 const ffprobePath = require('ffprobe-static').path;
 
@@ -89,8 +90,26 @@ async function run(input) {
   // Ensure output directory exists
   fs.mkdirSync(outputDir, { recursive: true });
 
+  const captureRaw = shouldCaptureRaw(config);
+  const rawDir = getRawPhaseDir(outputDir, 'phase2-process');
+  const ffmpegRawDir = path.join(rawDir, 'ffmpeg');
+  const aiRawDir = path.join(rawDir, 'ai');
+
+  const writeFfmpegRawLog = (name, payload) => {
+    if (!captureRaw) return;
+    writeRawJson(ffmpegRawDir, name, payload);
+  };
+
+  const writeChunkRaw = (chunkIndex, splitIndex, payload) => {
+    if (!captureRaw) return;
+    const fileName = splitIndex > 0
+      ? `chunk-${chunkIndex}-split-${splitIndex}.json`
+      : `chunk-${chunkIndex}.json`;
+    writeRawJson(aiRawDir, fileName, payload);
+  };
+
   // Get video duration
-  const duration = await getVideoDuration(assetPath);
+  const duration = await getVideoDuration(assetPath, writeFfmpegRawLog);
   console.log(`   📊 Video duration: ${duration.toFixed(1)}s`);
 
   // Get chunk strategy from config
@@ -187,7 +206,10 @@ async function run(input) {
         startTime,
         endTime,
         chunksDir,
-        chunkIndex
+        chunkIndex,
+        {
+          rawLogger: (payload) => writeFfmpegRawLog(`extract-chunk-${chunkIndex}.json`, payload)
+        }
       );
 
       if (!extractionResult.success) {
@@ -211,7 +233,11 @@ async function run(input) {
             chunkPath,
             maxFileSize,
             splitConfig.maxSplits || 5,
-            splitConfig.splitFactor || 0.5
+            splitConfig.splitFactor || 0.5,
+            0,
+            {
+              rawLogger: (logName, payload) => writeFfmpegRawLog(logName, payload)
+            }
           );
           
           // Remove original chunk from extractedChunks since it's been split
@@ -298,10 +324,29 @@ async function run(input) {
           if (failureReason) {
             chunkResult.status = 'failed';
             chunkResult.errorReason = failureReason;
+            writeChunkRaw(chunkIndex, splitIndex || 0, {
+              chunkIndex,
+              prompt: toolResult?.prompt || null,
+              rawResponse: toolResult?.rawResponse || toolResult?.response || null,
+              parsed: toolResult?.state || null,
+              error: failureReason,
+              provider: config?.ai?.provider || 'openrouter',
+              model: config?.ai?.video?.model || null
+            });
             results.push(chunkResult);
             console.warn(`      ⚠️  Chunk ${chunkIndex + 1}${splitIndex > 0 ? `.${splitIndex + 1}` : ''} marked failed (${failureReason})`);
             continue;
           }
+
+          writeChunkRaw(chunkIndex, splitIndex || 0, {
+            chunkIndex,
+            prompt: toolResult?.prompt || null,
+            rawResponse: toolResult?.rawResponse || toolResult?.response || null,
+            parsed: toolResult?.state || null,
+            error: null,
+            provider: config?.ai?.provider || 'openrouter',
+            model: config?.ai?.video?.model || null
+          });
 
           results.push(chunkResult);
           totalTokens += chunkResult.tokens;
@@ -327,6 +372,16 @@ async function run(input) {
               lenses: toolVariables.variables?.lenses || []
             }
           };
+
+          writeChunkRaw(chunkIndex, splitIndex || 0, {
+            chunkIndex,
+            prompt: null,
+            rawResponse: null,
+            parsed: null,
+            error: error.message,
+            provider: config?.ai?.provider || 'openrouter',
+            model: config?.ai?.video?.model || null
+          });
 
           results.push(failedChunkResult);
           console.error(`      ❌ Chunk ${chunkIndex + 1} analysis failed:`, error.message);
@@ -422,12 +477,31 @@ async function run(input) {
  * @param {string} videoPath - Path to video file
  * @returns {Promise<number>} - Duration in seconds
  */
-async function getVideoDuration(videoPath) {
+async function getVideoDuration(videoPath, rawLogger) {
+  const command = `"${ffprobePath}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${videoPath}"`;
   try {
-    const cmd = `"${ffprobePath}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${videoPath}"`;
-    const { stdout } = await execAsync(cmd);
+    const { stdout, stderr } = await execAsync(command);
+    if (typeof rawLogger === 'function') {
+      rawLogger('ffprobe-video-duration.json', {
+        tool: 'ffprobe',
+        command,
+        stdout,
+        stderr,
+        status: 'success'
+      });
+    }
     return parseFloat(stdout.trim()) || 0;
   } catch (error) {
+    if (typeof rawLogger === 'function') {
+      rawLogger('ffprobe-video-duration.json', {
+        tool: 'ffprobe',
+        command,
+        stdout: error.stdout || '',
+        stderr: error.stderr || '',
+        status: 'failed',
+        error: error.message
+      });
+    }
     console.warn('Failed to get video duration, defaulting to 0');
     return 0;
   }

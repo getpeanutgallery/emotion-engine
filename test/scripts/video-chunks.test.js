@@ -282,6 +282,52 @@ test('Video Chunks Script', async (t) => {
       const legacyPhaseAssetsDir = path.join(testOutputDir, 'phase2-process', 'assets');
       ok(!fs.existsSync(legacyPhaseAssetsDir));
     });
+
+    await tNested.test('captures chunk AI raw output even when processed intermediates are cleaned', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            provider: 'openrouter',
+            video: { model: 'yaml-video-model' }
+          },
+          debug: {
+            captureRaw: true,
+            keepProcessedIntermediates: false
+          },
+          settings: { max_chunks: 1 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          }
+        }
+      });
+
+      const rawChunkPath = path.join(testOutputDir, 'phase2-process', 'raw', 'ai', 'chunk-0.json');
+      ok(fs.existsSync(rawChunkPath));
+
+      const rawChunk = JSON.parse(fs.readFileSync(rawChunkPath, 'utf8'));
+      property(rawChunk, 'chunkIndex');
+      property(rawChunk, 'prompt');
+      property(rawChunk, 'rawResponse');
+      property(rawChunk, 'parsed');
+      property(rawChunk, 'provider');
+      property(rawChunk, 'model');
+      is(rawChunk.model, 'yaml-video-model');
+
+      const chunksDir = path.join(testOutputDir, 'assets', 'processed', 'chunks');
+      if (fs.existsSync(chunksDir)) {
+        is(fs.readdirSync(chunksDir).length, 0);
+      } else {
+        ok(true);
+      }
+    });
   });
 
   t.test('AI_API_KEY requirement by DIGITAL_TWIN_MODE', async (tNested) => {
