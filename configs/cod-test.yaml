@@ -41,6 +41,9 @@ settings:
       exponentialBase: 2
       jitter: true
 
+debug:
+  captureRaw: true
+
 # Tool variables (use full paths)
 tool_variables:
   soulPath: "cast/impatient-teenager/SOUL.md"
