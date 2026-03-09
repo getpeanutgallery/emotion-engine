@@ -82,6 +82,13 @@ ai:
           model: openai/gpt-audio-mini
   video:
     targets:
+      # Best-first: prefer Gemini for stability; fall back to Qwen variants.
+      - adapter:
+          name: openrouter
+          model: google/gemini-2.5-flash
+      - adapter:
+          name: openrouter
+          model: qwen/qwen-3.5-397b-a17b
       - adapter:
           name: openrouter
           model: qwen/qwen3.5-122b-a10b

@@ -11,11 +11,18 @@ We can capture attempt-scoped artifacts + phase-level error summaries, so we sho
 - inspect the failing chunk attempt folders
 - examine sanitized provider debug payloads (request-id headers, status, truncated body)
 
-## Potential fixes
-- Switch to a more reliable OpenRouter model for Phase2 video.
-- Add a fallback model/provider for Phase2 when a transport/provider error happens.
-- Increase retry policy for this specific error classification.
+## Mitigation (shipped)
+We mitigated this by adding an ordered failover chain to the Phase2 video config (`configs/cod-test.yaml` → `ai.video.targets`).
+
+- Best-first target: `google/gemini-2.5-flash` on OpenRouter (more reliable content responses)
+- Fallback targets: Qwen variants (`qwen/qwen-3.5-397b-a17b` → `qwen/qwen3.5-122b-a10b`)
+
+This defers a deeper root-cause fix (provider/model intermittency) in favor of making golden recording resilient.
+
+## Potential deeper fixes (deferred)
+- Investigate why OpenRouter intermittently returns "No content in response" for specific video models.
 - Improve provider transport debug capture (cross-provider consistency).
+- Add error-classification specific retry tuning (beyond generic retryable runtime errors).
 
 ## Acceptance criteria
 - Record a full cod-test golden with Phase2 video completing all chunks with zero fatal failures.
