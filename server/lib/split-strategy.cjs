@@ -10,7 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { spawnSync } = require('child_process');
 const { ffmpegPath, ffprobePath } = require('./ffmpeg-path.cjs');
 
 /**
@@ -70,34 +70,61 @@ function splitChunk(chunkPath, maxFileSize, maxSplits = 5, splitFactor = 0.5, cu
   
   // Split using ffmpeg
   try {
+    const quoteArg = (value) => {
+      if (typeof value !== 'string') return String(value);
+      return /\s|"/.test(value) ? `"${value.replace(/"/g, '\\"')}"` : value;
+    };
+
     // Split first half (0 to splitTime)
-    const firstCommand = `"${ffmpegPath}" -y -i "${chunkPath}" -t ${splitTime} -c copy "${firstHalfPath}"`;
-    const firstStdout = execSync(firstCommand, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    const firstArgs = ['-y', '-i', chunkPath, '-t', String(splitTime), '-c', 'copy', firstHalfPath];
+    const firstResult = spawnSync(ffmpegPath, firstArgs, { encoding: 'utf8' });
+    const firstCommand = `"${ffmpegPath}" ${firstArgs.map(quoteArg).join(' ')}`;
     if (rawLogger) {
       rawLogger(`split-depth-${currentSplit}-a.json`, {
         tool: 'ffmpeg',
         command: firstCommand,
-        stdout: firstStdout,
-        status: 'success',
+        args: firstArgs,
+        exitCode: firstResult.status,
+        stdout: firstResult.stdout || '',
+        stderr: firstResult.stderr || '',
+        status: firstResult.status === 0 ? 'success' : 'failed',
         chunkPath,
         outputPath: firstHalfPath,
         splitDepth: currentSplit
       });
     }
-    
+    if (firstResult.status !== 0) {
+      const error = new Error(`ffmpeg split failed (a) with exit code ${firstResult.status}`);
+      error.exitCode = firstResult.status;
+      error.stdout = firstResult.stdout;
+      error.stderr = firstResult.stderr;
+      throw error;
+    }
+
     // Split second half (splitTime to end)
-    const secondCommand = `"${ffmpegPath}" -y -i "${chunkPath}" -ss ${splitTime} -c copy "${secondHalfPath}"`;
-    const secondStdout = execSync(secondCommand, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    const secondArgs = ['-y', '-i', chunkPath, '-ss', String(splitTime), '-c', 'copy', secondHalfPath];
+    const secondResult = spawnSync(ffmpegPath, secondArgs, { encoding: 'utf8' });
+    const secondCommand = `"${ffmpegPath}" ${secondArgs.map(quoteArg).join(' ')}`;
     if (rawLogger) {
       rawLogger(`split-depth-${currentSplit}-b.json`, {
         tool: 'ffmpeg',
         command: secondCommand,
-        stdout: secondStdout,
-        status: 'success',
+        args: secondArgs,
+        exitCode: secondResult.status,
+        stdout: secondResult.stdout || '',
+        stderr: secondResult.stderr || '',
+        status: secondResult.status === 0 ? 'success' : 'failed',
         chunkPath,
         outputPath: secondHalfPath,
         splitDepth: currentSplit
       });
+    }
+    if (secondResult.status !== 0) {
+      const error = new Error(`ffmpeg split failed (b) with exit code ${secondResult.status}`);
+      error.exitCode = secondResult.status;
+      error.stdout = secondResult.stdout;
+      error.stderr = secondResult.stderr;
+      throw error;
     }
     
     // Remove original chunk
@@ -136,33 +163,39 @@ function splitChunk(chunkPath, maxFileSize, maxSplits = 5, splitFactor = 0.5, cu
  */
 function getVideoDuration(videoPath, options = {}) {
   const rawLogger = typeof options.rawLogger === 'function' ? options.rawLogger : null;
-  const command = `"${ffprobePath}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${videoPath}"`;
-  try {
-    const result = execSync(command, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-    if (rawLogger) {
-      rawLogger('split-ffprobe-duration.json', {
-        tool: 'ffprobe',
-        command,
-        videoPath,
-        stdout: result,
-        status: 'success'
-      });
-    }
-    return parseFloat(result.trim());
-  } catch (error) {
-    if (rawLogger) {
-      rawLogger('split-ffprobe-duration.error.json', {
-        tool: 'ffprobe',
-        command,
-        videoPath,
-        status: 'failed',
-        error: error.message,
-        stdout: error.stdout ? error.stdout.toString() : '',
-        stderr: error.stderr ? error.stderr.toString() : ''
-      });
-    }
-    throw new Error(`Failed to get duration for ${videoPath}: ${error.message}`);
+
+  const quoteArg = (value) => {
+    if (typeof value !== 'string') return String(value);
+    return /\s|"/.test(value) ? `"${value.replace(/"/g, '\\"')}"` : value;
+  };
+
+  const args = ['-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', videoPath];
+  const command = `"${ffprobePath}" ${args.map(quoteArg).join(' ')}`;
+
+  const result = spawnSync(ffprobePath, args, { encoding: 'utf8' });
+
+  if (rawLogger) {
+    rawLogger('split-ffprobe-duration.json', {
+      tool: 'ffprobe',
+      command,
+      args,
+      videoPath,
+      exitCode: result.status,
+      stdout: result.stdout || '',
+      stderr: result.stderr || '',
+      status: result.status === 0 ? 'success' : 'failed'
+    });
   }
+
+  if (result.status !== 0) {
+    const error = new Error(`ffprobe duration failed with exit code ${result.status}`);
+    error.exitCode = result.status;
+    error.stdout = result.stdout;
+    error.stderr = result.stderr;
+    throw error;
+  }
+
+  return parseFloat((result.stdout || '').trim());
 }
 
 /**

@@ -21,7 +21,7 @@ const outputManager = require('../../lib/output-manager.cjs');
 const { getChunkFailureReason } = require('../../lib/chunk-analysis-status.cjs');
 const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
 const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
-const { ffprobePath } = require('../../lib/ffmpeg-path.cjs');
+const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 
 const execAsync = promisify(exec);
 
@@ -331,34 +331,132 @@ async function run(input) {
 
   const captureRaw = shouldCaptureRaw(config);
   const rawDir = getRawPhaseDir(outputDir, 'phase2-process');
+  const rawMetaDir = path.join(rawDir, '_meta');
   const ffmpegRawDir = path.join(rawDir, 'ffmpeg');
   const aiRawDir = path.join(rawDir, 'ai');
+  const toolVersionsDir = path.join(rawDir, 'tools', '_versions');
+
+  const phaseErrors = [];
+  let phaseOutcome = 'success';
+  let fatalPhaseError = null;
+
+  const recordPhaseError = (entry) => {
+    phaseErrors.push({
+      ts: new Date().toISOString(),
+      ...entry
+    });
+  };
+
+  const writePhaseErrorArtifacts = () => {
+    if (!captureRaw) return;
+
+    fs.mkdirSync(rawMetaDir, { recursive: true });
+    const errorsPath = path.join(rawMetaDir, 'errors.jsonl');
+    const summary = {
+      schemaVersion: 1,
+      phase: 'phase2-process',
+      outcome: phaseOutcome,
+      generatedAt: new Date().toISOString(),
+      totalErrors: phaseErrors.length,
+      fatalError: fatalPhaseError
+        ? {
+            name: fatalPhaseError?.name || null,
+            message: fatalPhaseError?.message || String(fatalPhaseError),
+            stack: typeof fatalPhaseError?.stack === 'string' ? fatalPhaseError.stack : null
+          }
+        : null
+    };
+
+    const lines = phaseErrors.map((e) => JSON.stringify(e)).join('\n') + (phaseErrors.length ? '\n' : '');
+    fs.writeFileSync(errorsPath, lines, 'utf8');
+    writeRawJson(rawMetaDir, 'errors.summary.json', summary);
+  };
 
   const writeFfmpegRawLog = (name, payload) => {
     if (!captureRaw) return;
     writeRawJson(ffmpegRawDir, name, payload);
   };
 
+  const pad = (value, width) => String(value).padStart(width, '0');
+
   const writeChunkRaw = (chunkIndex, splitIndex, payload) => {
     if (!captureRaw) return;
-    const fileName = splitIndex > 0
+
+    const attempt = Number.isInteger(payload?.attempt) ? payload.attempt : 1;
+
+    const legacyFileName = splitIndex > 0
       ? `chunk-${chunkIndex}-split-${splitIndex}.json`
       : `chunk-${chunkIndex}.json`;
 
-    const filePath = path.join(aiRawDir, fileName);
-    if ((!payload.rawResponse || payload.rawResponse.length === 0) && fs.existsSync(filePath)) {
-      try {
-        const existing = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        if (typeof existing?.rawResponse === 'string' && existing.rawResponse.length > 0) {
-          payload.rawResponse = existing.rawResponse;
-        }
-      } catch {
-        // ignore malformed existing files and overwrite normally
-      }
-    }
+    const attemptRelDir = path.join(
+      `chunk-${pad(chunkIndex, 4)}`,
+      `split-${pad(splitIndex || 0, 2)}`,
+      `attempt-${pad(attempt, 2)}`
+    );
 
-    writeRawJson(aiRawDir, fileName, payload);
+    const attemptRelPath = path.join(attemptRelDir, 'capture.json');
+
+    // Schema v2: attempt-scoped capture payloads (do not overwrite retries)
+    writeRawJson(aiRawDir, attemptRelPath, payload);
+
+    // Legacy pointer: keep chunk-<n>.json files as pointers to latest attempt
+    writeRawJson(aiRawDir, legacyFileName, {
+      schemaVersion: 2,
+      kind: 'pointer',
+      updatedAt: new Date().toISOString(),
+      chunkIndex,
+      splitIndex: splitIndex || 0,
+      latestAttempt: attempt,
+      target: {
+        dir: attemptRelDir,
+        file: attemptRelPath
+      }
+    });
   };
+
+  const ensureToolVersionsCaptured = async () => {
+    if (!captureRaw) return;
+
+    const captureVersion = async (toolName, toolPath) => {
+      const outPath = path.join(toolVersionsDir, `${toolName}.json`);
+      if (fs.existsSync(outPath)) return;
+
+      fs.mkdirSync(toolVersionsDir, { recursive: true });
+      const command = `"${toolPath}" -version`;
+
+      try {
+        const { stdout, stderr } = await execAsync(command);
+        fs.writeFileSync(outPath, JSON.stringify({
+          schemaVersion: 1,
+          tool: toolName,
+          resolvedPath: toolPath,
+          command,
+          exitCode: 0,
+          stdout,
+          stderr,
+          capturedAt: new Date().toISOString()
+        }, null, 2), 'utf8');
+      } catch (error) {
+        fs.writeFileSync(outPath, JSON.stringify({
+          schemaVersion: 1,
+          tool: toolName,
+          resolvedPath: toolPath,
+          command,
+          exitCode: typeof error?.code === 'number' ? error.code : 1,
+          stdout: error?.stdout || '',
+          stderr: error?.stderr || '',
+          error: error?.message || String(error),
+          capturedAt: new Date().toISOString()
+        }, null, 2), 'utf8');
+      }
+    };
+
+    // Lazy, once per phase
+    await captureVersion('ffmpeg', ffmpegPath);
+    await captureVersion('ffprobe', ffprobePath);
+  };
+
+  await ensureToolVersionsCaptured();
 
   // Get video duration
   const duration = await getVideoDuration(assetPath, writeFfmpegRawLog);
@@ -467,6 +565,11 @@ async function run(input) {
       );
 
       if (!extractionResult.success) {
+        recordPhaseError({
+          kind: 'chunk_extraction_failed',
+          chunkIndex,
+          message: extractionResult?.error || 'unknown extraction error'
+        });
         throw new Error(`Failed to extract chunk ${chunkIndex}: ${extractionResult.error}`);
       }
 
@@ -483,16 +586,28 @@ async function run(input) {
           console.log(`   ⚠️  Chunk ${chunkIndex + 1} exceeds max file size (${(stats.size / 1024 / 1024).toFixed(2)}MB > ${(maxFileSize / 1024 / 1024).toFixed(2)}MB), splitting...`);
           
           const splitConfig = config?.tool_variables?.split_strategy || {};
-          const splitResults = splitStrategy.splitChunk(
-            chunkPath,
-            maxFileSize,
-            splitConfig.maxSplits || 5,
-            splitConfig.splitFactor || 0.5,
-            0,
-            {
-              rawLogger: (logName, payload) => writeFfmpegRawLog(logName, payload)
-            }
-          );
+          let splitResults;
+
+          try {
+            splitResults = splitStrategy.splitChunk(
+              chunkPath,
+              maxFileSize,
+              splitConfig.maxSplits || 5,
+              splitConfig.splitFactor || 0.5,
+              0,
+              {
+                rawLogger: (logName, payload) => writeFfmpegRawLog(logName, payload)
+              }
+            );
+          } catch (error) {
+            recordPhaseError({
+              kind: 'chunk_split_failed',
+              chunkIndex,
+              message: error?.message || String(error),
+              stack: typeof error?.stack === 'string' ? error.stack : null
+            });
+            throw error;
+          }
           
           // Remove original chunk from extractedChunks since it's been split
           extractedChunks.splice(extractedChunks.indexOf(chunkPath), 1);
@@ -559,6 +674,14 @@ async function run(input) {
 
           console.log(`      ✅ ${chunkLabel} analyzed (${chunkResult.tokens} tokens)${attempt > 1 ? ` after ${attempt} attempts` : ''}`);
         } catch (error) {
+          recordPhaseError({
+            kind: 'chunk_analysis_failed',
+            chunkIndex,
+            splitIndex: splitIndex || 0,
+            message: error?.message || String(error),
+            stack: typeof error?.stack === 'string' ? error.stack : null
+          });
+
           throw new Error(`${chunkLabel} failed after ${retryConfig.maxAttempts} attempts: ${error.message}`);
         }
       }
@@ -607,9 +730,24 @@ async function run(input) {
       }
     };
   } catch (error) {
+    phaseOutcome = 'failed';
+    fatalPhaseError = error;
+    recordPhaseError({
+      kind: 'phase_failure',
+      name: error?.name || null,
+      message: error?.message || String(error),
+      stack: typeof error?.stack === 'string' ? error.stack : null
+    });
+
     console.error('   ❌ Error processing video chunks:', error.message);
     throw error;
   } finally {
+    try {
+      writePhaseErrorArtifacts();
+    } catch (e) {
+      console.warn('   ⚠️  Warning: Failed to write phase raw error artifacts:', e?.message || String(e));
+    }
+
     // Handle chunk file cleanup based on config
     if (keepProcessedIntermediates) {
       console.log(`   💾 Keeping extracted chunk files in ${chunksDir}`);

@@ -16,6 +16,24 @@ function mockModule(modulePath, mockExports) {
   };
 }
 
+function readLatestChunkRawCapture(rawAiDir, chunkIndex, splitIndex = 0) {
+  const legacyFileName = splitIndex > 0
+    ? `chunk-${chunkIndex}-split-${splitIndex}.json`
+    : `chunk-${chunkIndex}.json`;
+
+  const pointerPath = path.join(rawAiDir, legacyFileName);
+  const pointer = JSON.parse(fs.readFileSync(pointerPath, 'utf8'));
+
+  if (pointer && pointer.kind === 'pointer' && pointer.target && pointer.target.file) {
+    const capturePath = path.join(rawAiDir, pointer.target.file);
+    const capture = JSON.parse(fs.readFileSync(capturePath, 'utf8'));
+    return { pointer, capture };
+  }
+
+  // Backward compat if legacy file is still the capture payload.
+  return { pointer: null, capture: pointer };
+}
+
 const analyzeCalls = [];
 let analyzeImplementation = async (input) => {
   analyzeCalls.push(input);
@@ -314,7 +332,12 @@ test('Video Chunks Script', async (t) => {
       const rawChunkPath = path.join(testOutputDir, 'phase2-process', 'raw', 'ai', 'chunk-0.json');
       ok(fs.existsSync(rawChunkPath));
 
-      const rawChunk = JSON.parse(fs.readFileSync(rawChunkPath, 'utf8'));
+      const rawAiDir = path.join(testOutputDir, 'phase2-process', 'raw', 'ai');
+      const { pointer, capture: rawChunk } = readLatestChunkRawCapture(rawAiDir, 0, 0);
+
+      ok(pointer);
+      is(pointer.latestAttempt, 1);
+
       property(rawChunk, 'chunkIndex');
       property(rawChunk, 'prompt');
       property(rawChunk, 'rawResponse');
@@ -380,7 +403,12 @@ test('Video Chunks Script', async (t) => {
       const rawChunkPath = path.join(testOutputDir, 'phase2-process', 'raw', 'ai', 'chunk-0.json');
       ok(fs.existsSync(rawChunkPath));
 
-      const rawChunk = JSON.parse(fs.readFileSync(rawChunkPath, 'utf8'));
+      const rawAiDir = path.join(testOutputDir, 'phase2-process', 'raw', 'ai');
+      const { pointer, capture: rawChunk } = readLatestChunkRawCapture(rawAiDir, 0, 0);
+
+      ok(pointer);
+      is(pointer.latestAttempt, 1);
+
       is(rawChunk.error, 'provider exploded');
       property(rawChunk, 'errorDebug');
       property(rawChunk, 'requestMeta');
