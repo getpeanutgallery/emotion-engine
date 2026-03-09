@@ -70,11 +70,19 @@ tool_variables:
 
 # AI provider configuration (API key injected via environment)
 ai:
-  provider: openrouter
   dialogue:
-    model: openai/gpt-audio-mini
+    targets:
+      - adapter:
+          name: openrouter
+          model: openai/gpt-audio-mini
   music:
-    model: openai/gpt-audio-mini
+    targets:
+      - adapter:
+          name: openrouter
+          model: openai/gpt-audio-mini
   video:
-    model: qwen/qwen3.5-122b-a10b
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen3.5-122b-a10b
   # apiKey: injected via AI_API_KEY environment variable

@@ -11,16 +11,24 @@ asset:
   outputDir: "output/multi-test"
 
 # AI provider configuration (git-safe - secrets injected via env vars)
-ai:
-  provider: openrouter
-  dialogue:
-    model: google/gemini-2.5-flash
-  music:
-    model: google/gemini-2.5-flash
-  video:
-    model: qwen/qwen-3.5-397b-a17b
 
-# Phase 1: Gather context from video
+ai:
+  dialogue:
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-2.5-flash
+  music:
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-2.5-flash
+  video:
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen-3.5-397b-a17b
+
 gather_context:
   - scripts/get-context/get-dialogue.cjs
   - scripts/get-context/get-music.cjs
@@ -66,3 +74,4 @@ settings:
 # - OCR extraction: What text is visible on screen?
 #
 # Benefit: 3x faster than running sequentially (no dependencies between analyses)
+

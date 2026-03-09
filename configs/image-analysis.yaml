@@ -11,12 +11,24 @@ asset:
   outputDir: "output/image-test"
 
 # AI provider configuration (git-safe - secrets injected via env vars)
-ai:
-  provider: openrouter
-  video:
-    model: qwen/qwen-3.5-397b-a17b
 
-# No context gathering for images
+ai:
+  dialogue:
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen-3.5-397b-a17b
+  music:
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen-3.5-397b-a17b
+  video:
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen-3.5-397b-a17b
+
 gather_context: []
 
 process:
@@ -39,3 +51,4 @@ report:
 # Global settings
 settings:
   api_request_delay: 1000
+

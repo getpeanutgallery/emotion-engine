@@ -60,14 +60,23 @@ tool_variables:
       - excitement
 
 ai:
-  provider: openrouter
   dialogue:
-    model: google/gemini-2.5-flash
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-2.5-flash
   music:
-    model: google/gemini-2.5-flash
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-2.5-flash
   video:
-    model: qwen/qwen3.5-122b-a10b
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen3.5-122b-a10b
 
 debug:
   keepTempFiles: true
   keepProcessedAssets: true
+

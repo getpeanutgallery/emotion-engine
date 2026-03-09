@@ -12,18 +12,24 @@ asset:
 
 # AI provider configuration (git-safe - secrets injected via env vars)
 ai:
-  provider: openrouter
   dialogue:
-    model: google/gemini-2.5-flash
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-2.5-flash
   music:
-    model: google/gemini-2.5-flash
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-2.5-flash
   video:
-    model: qwen/qwen-3.5-397b-a17b
     retry:
       maxAttempts: 2
       backoffMs: 500
-      retryOnParseError: true
-      retryOnProviderError: true
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen-3.5-397b-a17b
   # apiKey: NEVER put API keys in YAML - use environment variables
   # baseUrl: Optional custom endpoint
 

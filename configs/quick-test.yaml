@@ -52,8 +52,20 @@ tool_variables:
       - excitement
 
 # AI provider configuration (API key injected via environment)
+
 ai:
-  provider: openrouter
+  dialogue:
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen-3.5-397b-a17b
+  music:
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen-3.5-397b-a17b
   video:
-    model: qwen/qwen-3.5-397b-a17b
-  # apiKey: injected via AI_API_KEY environment variable
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen-3.5-397b-a17b

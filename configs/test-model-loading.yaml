@@ -10,12 +10,24 @@ asset:
   outputDir: "output/test-model-loading"
 
 # AI configuration - this SHOULD be used by the code
-ai:
-  provider: openrouter
-  dialogue:
-    model: google/gemini-2.5-flash
 
-# Run dialogue extraction to test model loading
+ai:
+  dialogue:
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-2.5-flash
+  music:
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-2.5-flash
+  video:
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-2.5-flash
+
 gather_context:
   - scripts/get-context/get-dialogue.cjs
 
@@ -32,3 +44,4 @@ settings:
 debug:
   keepTempFiles: false
   keepProcessedAssets: true
+

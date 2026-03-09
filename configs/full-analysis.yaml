@@ -53,12 +53,20 @@ tool_variables:
       - excitement
 
 # AI provider configuration
+
 ai:
-  provider: openrouter
   dialogue:
-    model: google/gemini-2.5-flash
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-2.5-flash
   music:
-    model: google/gemini-2.5-flash
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-2.5-flash
   video:
-    model: qwen/qwen-3.5-397b-a17b
-  # apiKey: injected via AI_API_KEY environment variable
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen-3.5-397b-a17b

@@ -11,12 +11,24 @@ asset:
   outputDir: "output/metadata"
 
 # AI provider configuration (git-safe - secrets injected via env vars)
-ai:
-  provider: openrouter
-  dialogue:
-    model: qwen/qwen-3.5-397b-a17b
 
-# Extract metadata only
+ai:
+  dialogue:
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen-3.5-397b-a17b
+  music:
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen-3.5-397b-a17b
+  video:
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen-3.5-397b-a17b
+
 gather_context:
   - scripts/get-context/get-metadata.cjs
 
@@ -28,3 +40,4 @@ report: []
 
 # Use case: Quick metadata extraction for cataloging, indexing,
 # or validation purposes. Outputs duration, resolution, codec, fps, etc.
+
