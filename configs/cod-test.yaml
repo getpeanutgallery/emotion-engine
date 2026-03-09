@@ -72,9 +72,9 @@ tool_variables:
 ai:
   provider: openrouter
   dialogue:
-    model: google/gemini-2.5-flash
+    model: openai/gpt-audio-mini
   music:
-    model: google/gemini-2.5-flash
+    model: openai/gpt-audio-mini
   video:
     model: qwen/qwen3.5-122b-a10b
   # apiKey: injected via AI_API_KEY environment variable
