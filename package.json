@@ -10,6 +10,7 @@
   "scripts": {
     "pipeline": "node server/run-pipeline.cjs",
     "test": "node --test test/**/*.test.js",
+    "test:providers:check": "node -e \"require('./test/helpers/digital-twin-preflight.cjs').preflightDigitalTwin()\"",
     "test:validate-json": "node test-validate-json.cjs"
   },
   "dependencies": {

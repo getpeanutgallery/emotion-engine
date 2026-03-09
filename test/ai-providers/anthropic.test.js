@@ -10,8 +10,11 @@ const anthropic = require('ai-providers/providers/anthropic.cjs');
 
 // Enable digital twin transport for offline tests
 process.env.NODE_ENV = 'test';
-process.env.DIGITAL_TWIN_PACK = process.env.DIGITAL_TWIN_PACK || '/home/derrick/.openclaw/workspace/projects/peanut-gallery/digital-twin-emotion-engine-providers';
+process.env.DIGITAL_TWIN_PACK = process.env.DIGITAL_TWIN_PACK || path.resolve(__dirname, '..', 'fixtures', 'digital-twin-emotion-engine-providers');
 process.env.DIGITAL_TWIN_CASSETTE = process.env.DIGITAL_TWIN_CASSETTE || 'providers';
+
+const { preflightDigitalTwin } = require('../helpers/digital-twin-preflight.cjs');
+preflightDigitalTwin();
 
 let passed = 0;
 let failed = 0;

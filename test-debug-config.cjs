@@ -33,10 +33,7 @@ async function testDebugConfig() {
   
   // Test 2: Load video-analysis.yaml (has debug.keepTempFiles: false)
   console.log('\nTest 2: Loading video-analysis.yaml config...');
-  const yaml = require('js-yaml');
-  const videoAnalysisContent = fs.readFileSync('configs/video-analysis.yaml', 'utf8');
-  // Only load the first document (before ---)
-  const videoAnalysisConfig = yaml.load(videoAnalysisContent.split('---')[0]);
+  const videoAnalysisConfig = await loadConfig('configs/video-analysis.yaml');
   
   if (videoAnalysisConfig.debug?.keepTempFiles === false) {
     console.log('   ✅ debug.keepTempFiles is false');

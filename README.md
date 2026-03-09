@@ -79,16 +79,29 @@ cd /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine
 npm install
 ```
 
-Set env (there is currently no `.env.example` in this repo):
+Set env:
 
 ```bash
-# .env
+cp .env.example .env
+# edit .env
 AI_API_KEY=...
 ```
 
 ---
 
 ## Running pipelines
+
+Canonical CLI invocation (via `package.json#bin`):
+
+```bash
+npm exec emotion-engine -- --config configs/full-analysis.yaml --dry-run
+```
+
+Or run the underlying script directly:
+
+```bash
+npm run pipeline -- --config configs/full-analysis.yaml --dry-run
+```
 
 ### 1) Validate config only (recommended first)
 
@@ -202,7 +215,7 @@ node --test test/scripts/get-dialogue.test.js test/scripts/get-music.test.js tes
 
 Provider tests use digital-twin defaults:
 
-- `DIGITAL_TWIN_PACK=/home/derrick/.openclaw/workspace/projects/peanut-gallery/digital-twin-emotion-engine-providers`
+- `DIGITAL_TWIN_PACK=test/fixtures/digital-twin-emotion-engine-providers` (included minimal cassette pack)
 - `DIGITAL_TWIN_CASSETTE=providers`
 
 If that cassette is missing, tests fail with:
@@ -217,7 +230,7 @@ So for green provider/integration tests, ensure a matching cassette exists (or p
 
 ### `Failed to parse config file: expected a single document in the stream, but found more`
 
-Your YAML has multiple documents (`---`). Use a single-document config. Example: `configs/full-analysis.yaml` works; `configs/video-analysis.yaml` currently contains an extra alt doc block.
+Your YAML has multiple documents (`---`). Keep configs single-document. `configs/video-analysis.yaml` is single-doc; the parallel example lives in `configs/video-analysis-parallel.yaml`.
 
 ### `Missing required "ai.dialogue.model" / "ai.music.model" / "ai.video.model"`
 
@@ -243,8 +256,6 @@ Ensure these exist and match sibling repo layout:
 
 ## Practical known gaps
 
-- `package.json#bin` points to `./bin/run-pipeline.js` (not present).
-- No `.env.example` committed right now.
 - Some docs in `docs/` still describe older debug folder semantics (`keepTempFiles` + timestamped folders).
 
 Use this README as the current source of truth for running the repo today.

@@ -27,6 +27,17 @@ test('Config Loader - loadConfig', async (t) => {
     assert.strictEqual(config.asset.inputPath, 'test.mp4');
     assert.strictEqual(config.asset.outputDir, 'output/test');
   });
+
+
+  await t.test('should load configs/video-analysis.yaml (single-document YAML)', async () => {
+    const repoRoot = path.resolve(__dirname, '..', '..');
+    const configPath = path.join(repoRoot, 'configs', 'video-analysis.yaml');
+    const config = await loadConfig(configPath);
+
+    assert.strictEqual(typeof config, 'object');
+    assert(config.asset?.inputPath, 'config.asset.inputPath should exist');
+    assert(config.asset?.outputDir, 'config.asset.outputDir should exist');
+  });
   
   await t.test('should load JSON config file', async () => {
     const configPath = path.join(__dirname, 'fixtures', 'valid-config.json');

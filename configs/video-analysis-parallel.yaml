@@ -1,0 +1,91 @@
+# Full Video Analysis Pipeline (Parallel)
+# Example configuration - phase 2 runs multiple analyses in parallel.
+
+name: "Multi-Persona Parallel Video Analysis"
+description: "Same video analyzed by multiple personas in parallel"
+version: "1.0"
+
+asset:
+  inputPath: "examples/videos/emotion-tests/cod.mp4"
+  outputDir: "output/cod-test-parallel"
+
+ai:
+  provider: openrouter
+  dialogue:
+    model: google/gemini-2.5-flash
+  music:
+    model: google/gemini-2.5-flash
+  video:
+    model: qwen/qwen-3.5-397b-a17b
+    retry:
+      maxAttempts: 2
+      backoffMs: 500
+      retryOnParseError: true
+      retryOnProviderError: true
+
+gather_context:
+  - scripts/get-context/get-dialogue.cjs
+  - scripts/get-context/get-music.cjs
+
+process:
+  parallel:
+    - script: scripts/process/video-chunks.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: "cast/impatient-teenager/SOUL.md"
+        goalPath: "goals/video-ad-evaluation.md"
+        variables:
+          lenses:
+            - patience
+            - boredom
+            - excitement
+    - script: scripts/process/video-chunks.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: "cast/skeptical-cfo/SOUL.md"
+        goalPath: "goals/video-ad-evaluation.md"
+        variables:
+          lenses:
+            - skepticism
+            - confusion
+            - patience
+    - script: scripts/process/video-chunks.cjs
+      toolPath: tools/emotion-lenses-tool.cjs
+      tool_variables:
+        soulPath: "cast/optimistic-gen-z/SOUL.md"
+        goalPath: "goals/video-ad-evaluation.md"
+        variables:
+          lenses:
+            - excitement
+            - fomo
+            - joy
+
+report:
+  - scripts/report/metrics.cjs
+  - scripts/report/recommendation.cjs
+  - scripts/report/emotional-analysis.cjs
+  - scripts/report/summary.cjs
+  - scripts/report/final-report.cjs
+
+settings:
+  chunk_duration: 8
+  max_chunks: 4
+  api_request_delay: 1000
+  chunk_quality: "medium"
+  music_segment_duration: 30
+  retry_strategy:
+    type: "exponential-backoff"
+    config:
+      maxRetries: 3
+      initialDelayMs: 1000
+      maxDelayMs: 10000
+      exponentialBase: 2
+      jitter: true
+
+debug:
+  keepTempFiles: false
+  keepProcessedAssets: true
+
+# Tool variables (paths must be absolute or relative to workspace)
+tool_variables:
+  goalPath: "goals/video-ad-evaluation.md"
