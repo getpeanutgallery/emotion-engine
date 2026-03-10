@@ -80,6 +80,18 @@ ai:
       - adapter:
           name: openrouter
           model: openai/gpt-audio-mini
+  dialogue_stitch:
+    targets:
+      # OpenRouter-only stitcher chain (text-only) with fallbacks
+      - adapter:
+          name: openrouter
+          model: openai/gpt-4.1
+      - adapter:
+          name: openrouter
+          model: anthropic/claude-3.5-sonnet
+      - adapter:
+          name: openrouter
+          model: google/gemini-2.5-pro
   video:
     targets:
       # Best-first: prefer Gemini for stability; fall back to Qwen variants.

@@ -207,6 +207,12 @@ function validateConfig(config) {
     validateTargets('music');
     validateTargets('video');
 
+    // Optional: dialogue stitcher is phase1-only and used when dialogue chunking is triggered.
+    // Validate only when configured explicitly.
+    if (config.ai?.dialogue_stitch !== undefined) {
+      validateTargets('dialogue_stitch');
+    }
+
     // Optional: recommendation is phase3-only and may inherit video targets in scripts.
     // Validate only when configured explicitly.
     if (config.ai?.recommendation !== undefined) {

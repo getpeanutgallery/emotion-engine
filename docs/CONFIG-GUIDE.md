@@ -178,6 +178,66 @@ tool_variables:
 
 ---
 
+## Audio Base64 budget & chunking (Phase1)
+
+Phase1 audio scripts (`get-dialogue`, `get-music`) preflight the extracted WAV and estimate the **Base64 payload size**.
+
+Chunking trigger:
+
+- `estimatedBase64Bytes = 4 * ceil(rawBytes / 3)`
+- if `estimatedBase64Bytes > (audio_base64_max_bytes * audio_base64_headroom_ratio)` → time-chunk and process sequentially
+
+Config knobs:
+
+```yaml
+settings:
+  # Encoded payload cap (Base64 bytes). Defaults to ~10MB.
+  audio_base64_max_bytes: 10485760
+
+  # Headroom under the cap (default 0.9). Helps avoid provider-side overhead/limits.
+  audio_base64_headroom_ratio: 0.9
+```
+
+### Dialogue stitcher (required when chunking)
+
+When dialogue chunking is triggered, `get-dialogue` performs a **required** final stitcher pass:
+
+- Domain: `ai.dialogue_stitch`
+- Text-only (no attachments)
+- **OpenRouter-only** target chain recommended (with model fallbacks)
+
+Example:
+
+```yaml
+ai:
+  dialogue_stitch:
+    targets:
+      - adapter: { name: openrouter, model: openai/gpt-4.1 }
+      - adapter: { name: openrouter, model: anthropic/claude-3.5-sonnet }
+      - adapter: { name: openrouter, model: google/gemini-2.5-pro }
+```
+
+Stitcher output contract (JSON):
+
+- `cleanedTranscript` (string)
+- `auditTrail` (array)
+- `debug` (object, refs/payloads)
+
+### Raw artifacts + traceability
+
+When `debug.captureRaw: true`, the scripts persist (best-effort):
+
+- `phase1-gather-context/raw/ffmpeg/<script>/chunk-plan.json`
+- extracted chunk WAVs under `phase1-gather-context/raw/ffmpeg/<script>/chunks/`
+- dialogue stitcher I/O under `phase1-gather-context/raw/ai/dialogue-stitch/`:
+  - `mechanical-transcript.txt`
+  - `input.json`
+  - `output.json`
+
+And they emit `artifact.write` events in `raw/_meta/events.jsonl` pointing to these files.
+
+---
+
 ## Debug flags
 
 See `docs/DEBUG-CONFIG.md` for details.

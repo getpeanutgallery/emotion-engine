@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('node:assert/strict');
 const test = require('node:test');
+const { EventEmitter } = require('node:events');
 const { property, ok, is } = require('../helpers/assertions');
 
 process.env.AI_API_KEY = 'test-api-key';
@@ -64,6 +65,21 @@ const mockChildProcess = {
     }
     if (callback) callback(null, { stdout: '', stderr: '' });
     return { on: () => {} };
+  },
+  spawn: (cmd, args) => {
+    const proc = new EventEmitter();
+    proc.stderr = new EventEmitter();
+
+    const outputPath = args[args.length - 1];
+    try {
+      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+      fs.writeFileSync(outputPath, Buffer.from('mock audio chunk'));
+    } catch {
+      // ignore
+    }
+
+    setImmediate(() => proc.emit('close', 0));
+    return proc;
   },
   execSync: (cmd) => {
     if (cmd.includes('ffprobe')) {
@@ -181,7 +197,7 @@ test('Get Music Script', async (t) => {
       const processedMusicDir = path.join(testOutputDir, 'assets', 'processed', 'music');
       ok(fs.existsSync(processedMusicDir));
       ok(fs.existsSync(path.join(processedMusicDir, 'audio.wav')));
-      ok(fs.existsSync(path.join(processedMusicDir, 'segment-0.wav')));
+      ok(fs.existsSync(path.join(processedMusicDir, 'chunks', 'chunk_000.wav')));
     });
 
     tNested.test('cleans processed music temp files when debug.keepProcessedIntermediates=false', async () => {
@@ -215,7 +231,7 @@ test('Get Music Script', async (t) => {
       const aiPointerPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ai', 'music-segment-0.json');
       const ffmpegRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ffmpeg', 'music', 'extract-audio.json');
       const ffprobeRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ffmpeg', 'music', 'ffprobe-audio-duration.json');
-      const segmentRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ffmpeg', 'music', 'extract-segment-0.json');
+      const segmentRawPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ffmpeg', 'music', 'extract-chunk-0.json');
       const metaSummaryPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', '_meta', 'errors.summary.json');
       const toolVersionsDir = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'tools', '_versions');
       const ffmpegVersionPath = path.join(toolVersionsDir, 'ffmpeg.json');

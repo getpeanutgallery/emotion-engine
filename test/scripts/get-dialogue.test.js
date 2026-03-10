@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('node:assert/strict');
 const test = require('node:test');
+const { EventEmitter } = require('node:events');
 const { property, ok, is, rejects } = require('../helpers/assertions');
 
 process.env.AI_API_KEY = 'test-api-key';
@@ -15,22 +16,41 @@ function mockModule(modulePath, mockExports) {
 
 // Mock AI provider
 const providerConfigCalls = [];
-const mockCompletion = async (options) => ({
-  content: JSON.stringify({
-    dialogue_segments: [
-      {
-        start: 0.5,
-        end: 3.2,
-        speaker: 'Speaker 1',
-        text: 'Test transcription',
-        confidence: 0.95
-      }
-    ],
-    summary: 'Test dialogue summary',
-    totalDuration: 10.0
-  }),
-  usage: { input: 100, output: 150 }
-});
+const completionPrompts = [];
+const mockCompletion = async (options) => {
+  completionPrompts.push(String(options?.prompt || ''));
+
+  // Stitcher call is text-only.
+  if (String(options?.prompt || '').includes('dialogue transcript stitcher')) {
+    return {
+      content: JSON.stringify({
+        cleanedTranscript: 'CLEANED TRANSCRIPT',
+        auditTrail: [{ op: 'merge_boundary', chunkIndex: 0, detail: 'test' }],
+        debug: { refs: [] }
+      }),
+      usage: { input: 100, output: 150 }
+    };
+  }
+
+  // Chunk or whole-file transcription.
+  return {
+    content: JSON.stringify({
+      dialogue_segments: [
+        {
+          start: 0.5,
+          end: 3.2,
+          speaker: 'Speaker 1',
+          text: 'Test transcription',
+          confidence: 0.95
+        }
+      ],
+      summary: 'Test dialogue summary',
+      handoffContext: 'Speaker 1 continues...',
+      totalDuration: 10.0
+    }),
+    usage: { input: 100, output: 150 }
+  };
+};
 
 const mockAIProvider = {
   getProviderFromConfig: (config) => {
@@ -61,6 +81,21 @@ const mockChildProcess = {
     }
     if (callback) callback(null, { stdout: '', stderr: '' });
     return { on: () => {} };
+  },
+  spawn: (cmd, args) => {
+    const proc = new EventEmitter();
+    proc.stderr = new EventEmitter();
+
+    const outputPath = args[args.length - 1];
+    try {
+      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+      fs.writeFileSync(outputPath, Buffer.from('mock audio chunk'));
+    } catch {
+      // ignore
+    }
+
+    setImmediate(() => proc.emit('close', 0));
+    return proc;
   },
   execSync: (cmd) => {
     if (cmd.includes('ffprobe')) return Buffer.from('10.0');
@@ -237,6 +272,44 @@ test('Get Dialogue Script', async (t) => {
 
       const metaSummary = JSON.parse(fs.readFileSync(metaSummaryPath, 'utf8'));
       is(metaSummary.phase, 'phase1-gather-context');
+    });
+
+    tNested.test('chunks + runs required stitcher when Base64 budget is exceeded', async () => {
+      completionPrompts.length = 0;
+
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ...makeDialogueConfig({ adapterName: 'openrouter' }),
+          settings: {
+            // Force chunking with a tiny budget.
+            audio_base64_max_bytes: 10,
+            audio_base64_headroom_ratio: 0.9
+          },
+          ai: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).ai,
+            dialogue_stitch: {
+              targets: [
+                { adapter: { name: 'openrouter', model: 'test-stitch-model' } }
+              ]
+            }
+          },
+          debug: { captureRaw: true, keepProcessedIntermediates: false }
+        }
+      };
+
+      const result = await getDialogueScript.run(input);
+      ok(Array.isArray(result.artifacts.dialogueData.dialogue_segments));
+      ok(result.artifacts.dialogueData.dialogue_segments.length > 0);
+      is(result.artifacts.dialogueData.cleanedTranscript, 'CLEANED TRANSCRIPT');
+
+      ok(completionPrompts.some((p) => p.includes('dialogue transcript stitcher')));
+
+      const stitchDir = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ai', 'dialogue-stitch');
+      ok(fs.existsSync(path.join(stitchDir, 'input.json')));
+      ok(fs.existsSync(path.join(stitchDir, 'output.json')));
+      ok(fs.existsSync(path.join(stitchDir, 'mechanical-transcript.txt')));
     });
   });
 

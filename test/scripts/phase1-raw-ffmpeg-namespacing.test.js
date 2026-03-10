@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const test = require('node:test');
+const { EventEmitter } = require('node:events');
 const { ok, is } = require('../helpers/assertions');
 
 process.env.AI_API_KEY = 'test-api-key';
@@ -67,6 +68,17 @@ const mockChildProcess = {
     if (callback) callback(null, { stdout: 'mock stdout', stderr: '' });
     return { on: () => {} };
   },
+  spawn: (cmd, args) => {
+    const proc = new EventEmitter();
+    proc.stderr = new EventEmitter();
+
+    const outputPath = args[args.length - 1];
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+    fs.writeFileSync(outputPath, Buffer.from('mock audio chunk'));
+
+    setImmediate(() => proc.emit('close', 0));
+    return proc;
+  },
   execSync: (cmd) => {
     if (cmd.includes('ffprobe')) return Buffer.from('10.0');
     return Buffer.from('');
@@ -127,7 +139,7 @@ test('Phase1 raw ffmpeg/ffprobe logs are namespaced by script', async (t) => {
 
   const musicExtractPath = path.join(baseRawDir, 'ffmpeg', 'music', 'extract-audio.json');
   const musicProbePath = path.join(baseRawDir, 'ffmpeg', 'music', 'ffprobe-audio-duration.json');
-  const musicSegmentPath = path.join(baseRawDir, 'ffmpeg', 'music', 'extract-segment-0.json');
+  const musicSegmentPath = path.join(baseRawDir, 'ffmpeg', 'music', 'extract-chunk-0.json');
 
   ok(fs.existsSync(dialogueExtractPath));
   ok(fs.existsSync(dialogueProbePath));
@@ -137,7 +149,7 @@ test('Phase1 raw ffmpeg/ffprobe logs are namespaced by script', async (t) => {
 
   const legacyExtractPath = path.join(baseRawDir, 'ffmpeg', 'extract-audio.json');
   const legacyProbePath = path.join(baseRawDir, 'ffmpeg', 'ffprobe-audio-duration.json');
-  const legacySegmentPath = path.join(baseRawDir, 'ffmpeg', 'extract-segment-0.json');
+  const legacySegmentPath = path.join(baseRawDir, 'ffmpeg', 'extract-chunk-0.json');
 
   is(fs.existsSync(legacyExtractPath), false);
   is(fs.existsSync(legacyProbePath), false);

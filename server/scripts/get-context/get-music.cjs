@@ -25,6 +25,8 @@ const { ensureToolVersionsCaptured } = require('../../lib/tool-versions.cjs');
 const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
+const { preflightAudio } = require('../../lib/audio-preflight.cjs');
+const { extractAudioChunk } = require('../../lib/audio-chunk-extractor.cjs');
 
 const execAsync = promisify(exec);
 
@@ -35,8 +37,8 @@ function pad(value, width) {
   return String(value).padStart(width, '0');
 }
 
-function getRetryConfig(config = {}) {
-  const retry = config?.ai?.music?.retry || {};
+function getRetryConfig(config = {}, domain = 'music') {
+  const retry = config?.ai?.[domain]?.retry || {};
 
   return {
     maxAttempts: Number.isInteger(retry.maxAttempts) && retry.maxAttempts > 0 ? retry.maxAttempts : 1,
@@ -239,18 +241,38 @@ async function run(input) {
       logName: 'extract-audio.json'
     });
 
-    // Get audio duration
-    const duration = getAudioDuration(audioPath, {
-      captureRaw,
-      ffmpegRawDir,
-      logName: 'ffprobe-audio-duration.json'
+    const preflight = preflightAudio({
+      audioPath,
+      config,
+      rawCapture: {
+        captureRaw,
+        rawLogger: (payload) => writeRawJson(ffmpegRawDir, 'ffprobe-audio-duration.json', payload)
+      }
     });
 
-    // Segment audio (e.g., every 30 seconds)
-    const segmentDuration = config?.settings?.music_segment_duration || 30;
-    const numSegments = Math.ceil(duration / segmentDuration);
+    events.emit({
+      kind: 'audio.preflight',
+      phase: PHASE_KEY,
+      script: SCRIPT_ID,
+      domain: 'music',
+      trace: preflight.trace
+    });
 
-    console.log(`   📊 Audio duration: ${duration.toFixed(1)}s (${numSegments} segments)`);
+    if (captureRaw) {
+      const planPath = writeRawJson(ffmpegRawDir, 'chunk-plan.json', {
+        schemaVersion: 1,
+        kind: 'audio.chunk.plan',
+        domain: 'music',
+        createdAt: new Date().toISOString(),
+        trace: preflight.trace,
+        chunks: preflight.chunkPlan
+      });
+      events.artifactWrite({ absolutePath: planPath, role: 'raw.ffmpeg.plan', phase: PHASE_KEY, script: SCRIPT_ID });
+    }
+
+    const duration = preflight.durationSeconds;
+
+    console.log(`   📊 Audio duration: ${duration.toFixed(1)}s (${preflight.chunkPlan.length} chunk(s))`);
 
     const segments = [];
     let hasMusic = false;
@@ -262,30 +284,48 @@ async function run(input) {
       throw new Error('GetMusic: AI_API_KEY environment variable is required');
     }
 
-    const retryConfig = getRetryConfig(config);
+    const retryConfig = getRetryConfig(config, 'music');
     console.log(`   🔁 Music retry config: attempts=${retryConfig.maxAttempts}, backoffMs=${retryConfig.backoffMs}`);
 
-    // Analyze each segment
-    for (let i = 0; i < numSegments; i++) {
-      const startTime = i * segmentDuration;
-      const endTime = Math.min(startTime + segmentDuration, duration);
-      const segmentDurationActual = endTime - startTime;
+    const chunksDir = captureRaw
+      ? path.join(ffmpegRawDir, 'chunks')
+      : path.join(tempDir, 'chunks');
+    fs.mkdirSync(chunksDir, { recursive: true });
 
-      console.log(`   Analyzing segment ${i + 1}/${numSegments} (${startTime.toFixed(1)}s - ${endTime.toFixed(1)}s)...`);
+    let rollingSummary = '';
 
-      // Extract segment
-      const segmentPath = path.join(tempDir, `segment-${i}.wav`);
-      await extractAudioSegment(audioPath, startTime, segmentDurationActual, segmentPath, {
-        captureRaw,
-        ffmpegRawDir,
-        logName: `extract-segment-${i}.json`
-      });
+    // Analyze each chunk sequentially (rolling-summary carry)
+    for (const chunk of preflight.chunkPlan) {
+      const chunkIndex = chunk.index;
+      const startTime = chunk.startTime;
+      const endTime = chunk.endTime;
 
-      // Convert to base64
-      const audioBase64 = fs.readFileSync(segmentPath).toString('base64');
+      console.log(`   Analyzing chunk ${chunkIndex + 1}/${preflight.chunkPlan.length} (${startTime.toFixed(1)}s - ${endTime.toFixed(1)}s)...`);
 
-      // Build analysis prompt
-      const prompt = buildAnalysisPrompt(startTime, endTime);
+      const extraction = await extractAudioChunk(
+        audioPath,
+        startTime,
+        endTime,
+        chunksDir,
+        chunkIndex,
+        {
+          rawLogger: captureRaw
+            ? (payload) => writeRawJson(ffmpegRawDir, `extract-chunk-${chunkIndex}.json`, payload)
+            : null
+        }
+      );
+
+      if (!extraction.success) {
+        throw new Error(`Failed to extract audio chunk ${chunkIndex}: ${extraction.error}`);
+      }
+
+      if (captureRaw) {
+        events.artifactWrite({ absolutePath: extraction.chunkPath, role: 'raw.ffmpeg.chunk', phase: PHASE_KEY, script: SCRIPT_ID });
+      }
+
+      const audioBase64 = fs.readFileSync(extraction.chunkPath).toString('base64');
+
+      const prompt = buildRollingAnalysisPrompt(startTime, endTime, rollingSummary);
       const promptRef = captureRaw
         ? storePromptPayload({ outputDir, payload: prompt })
         : null;
@@ -312,7 +352,7 @@ async function run(input) {
                 phase: PHASE_KEY,
                 script: SCRIPT_ID,
                 domain: 'music',
-                segmentIndex: i,
+                segmentIndex: chunkIndex,
                 attempt: ctx.attempt,
                 attemptInTarget: ctx.attemptInTarget,
                 targetIndex: ctx.targetIndex,
@@ -332,7 +372,7 @@ async function run(input) {
               phase: PHASE_KEY,
               script: SCRIPT_ID,
               domain: 'music',
-              segmentIndex: i,
+              segmentIndex: chunkIndex,
               attempt: ctx.attempt,
               attemptInTarget: ctx.attemptInTarget,
               targetIndex: ctx.targetIndex,
@@ -355,7 +395,7 @@ async function run(input) {
                 ],
                 options: {
                   temperature: 0.5,
-                  maxTokens: 512,
+                  maxTokens: 768,
                   ...(
                     adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
                       ? adapter.params
@@ -369,7 +409,7 @@ async function run(input) {
                 phase: PHASE_KEY,
                 script: SCRIPT_ID,
                 domain: 'music',
-                segmentIndex: i,
+                segmentIndex: chunkIndex,
                 attempt: ctx.attempt,
                 attemptInTarget: ctx.attemptInTarget,
                 targetIndex: ctx.targetIndex,
@@ -379,15 +419,15 @@ async function run(input) {
                 model: adapter?.model || null,
               });
 
-              const segmentAnalysis = parseSegmentResponse(completion.content, startTime, endTime);
-              return { completion, segmentAnalysis };
+              const parsed = parseRollingMusicResponse(completion.content, startTime, endTime);
+              return { completion, parsed };
             } catch (error) {
               events.emit({
                 kind: 'provider.call.end',
                 phase: PHASE_KEY,
                 script: SCRIPT_ID,
                 domain: 'music',
-                segmentIndex: i,
+                segmentIndex: chunkIndex,
                 attempt: ctx.attempt,
                 attemptInTarget: ctx.attemptInTarget,
                 targetIndex: ctx.targetIndex,
@@ -419,7 +459,7 @@ async function run(input) {
               phase: PHASE_KEY,
               script: SCRIPT_ID,
               domain: 'music',
-              segmentIndex: i,
+              segmentIndex: chunkIndex,
               attempt,
               attemptInTarget,
               targetIndex,
@@ -435,10 +475,11 @@ async function run(input) {
 
             const adapter = target?.adapter || null;
 
-            writeMusicSegmentRaw(i, attempt, {
-              segmentIndex: i,
+            writeMusicSegmentRaw(chunkIndex, attempt, {
+              segmentIndex: chunkIndex,
               startTime,
               endTime,
+              rollingSummaryIn: rollingSummary || null,
               attempt,
               attemptInTarget,
               targetIndex,
@@ -447,7 +488,7 @@ async function run(input) {
               failover: failover || null,
               promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
               rawResponse: ok ? sanitizeRawCaptureValue(result?.completion) : null,
-              parsed: ok ? result?.segmentAnalysis : null,
+              parsed: ok ? result?.parsed : null,
               error: ok ? null : (error?.message || String(error)),
               errorName: ok ? null : (error?.name || null),
               errorCode: ok ? null : (error?.code || null),
@@ -461,7 +502,7 @@ async function run(input) {
                 adapter,
                 provider: adapter?.name || null,
                 model: adapter?.model || null,
-                segmentIndex: i,
+                segmentIndex: chunkIndex,
                 attempt,
                 attemptInTarget,
                 targetIndex,
@@ -471,12 +512,15 @@ async function run(input) {
           }
         });
 
-        const segmentAnalysis = segmentResult.segmentAnalysis;
-        segments.push(segmentAnalysis);
-
-        if (segmentAnalysis.type === 'music' || segmentAnalysis.mood) {
+        const parsed = segmentResult.parsed;
+        segments.push(parsed.segment);
+        if (parsed.segment.type === 'music' || parsed.segment.mood) {
           hasMusic = true;
         }
+
+        rollingSummary = typeof parsed.rollingSummary === 'string' && parsed.rollingSummary.trim().length > 0
+          ? parsed.rollingSummary.trim()
+          : rollingSummary;
       } catch (error) {
         phaseOutcome = 'failed';
         fatalPhaseError = error;
@@ -488,7 +532,7 @@ async function run(input) {
           errorName: error?.name || null,
           errorCode: error?.code || null,
           errorStatus: error?.response?.status || null,
-          segmentIndex: i,
+          segmentIndex: chunkIndex,
           startTime,
           endTime
         });
@@ -500,7 +544,7 @@ async function run(input) {
     // Build music data
     const musicData = {
       segments,
-      summary: generateSummary(segments),
+      summary: rollingSummary || generateSummary(segments),
       hasMusic
     };
 
@@ -511,7 +555,7 @@ async function run(input) {
 
     console.log('   ✅ Music/audio analysis complete');
     console.log(`      Output: ${artifactPath}`);
-    console.log(`      Found ${segments.length} segments`);
+    console.log(`      Found ${segments.length} segment(s)`);
     console.log(`      Music detected: ${hasMusic ? 'Yes' : 'No'}`);
 
     return {
@@ -718,6 +762,91 @@ IMPORTANT:
 - Respond ONLY with valid JSON (no markdown, no explanation)
 - Be specific about the mood and characteristics
 - If it's speech, set type to "speech" and mood to "neutral"`;
+}
+
+function parseJsonResponse(responseContent) {
+  if (typeof responseContent !== 'string') return null;
+
+  try {
+    return JSON.parse(responseContent.trim());
+  } catch {
+    const jsonMatch = responseContent.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (!jsonMatch) return null;
+    try {
+      return JSON.parse(jsonMatch[1].trim());
+    } catch {
+      return null;
+    }
+  }
+}
+
+function buildRollingAnalysisPrompt(startTime, endTime, rollingSummary) {
+  const roll = typeof rollingSummary === 'string' && rollingSummary.trim().length > 0
+    ? rollingSummary.trim()
+    : null;
+
+  return `Analyze the audio in this chunk (${startTime.toFixed(1)}s to ${endTime.toFixed(1)}s).
+
+${roll ? `Rolling summary so far (from previous chunks):\n${roll}\n\n` : ''}Identify:
+1. Type of audio: music, speech, silence, ambient noise, sound effects
+2. If music: describe the mood (upbeat, calm, tense, sad, energetic, etc.)
+3. Intensity level from 1-10
+4. Brief description
+
+Return ONLY valid JSON.
+
+Preferred response format:
+{
+  "analysis": {
+    "type": "music|speech|silence|ambient|sfx",
+    "description": "Brief description of the audio",
+    "mood": "upbeat|calm|tense|sad|energetic|neutral",
+    "intensity": 5
+  },
+  "chunkSummary": "1-2 sentences",
+  "rollingSummary": "Updated rolling summary for the entire audio so far (keep concise)"
+}
+
+Compatibility: If you cannot produce the preferred format, you may return the legacy format:
+{ "type": "...", "description": "...", "mood": "...", "intensity": 5 }`;
+}
+
+function parseRollingMusicResponse(responseContent, startTime, endTime) {
+  const jsonData = parseJsonResponse(responseContent);
+
+  if (!jsonData) {
+    return {
+      segment: {
+        start: startTime,
+        end: endTime,
+        type: 'unknown',
+        description: 'Analysis failed',
+        mood: null,
+        intensity: 0
+      },
+      rollingSummary: null
+    };
+  }
+
+  const analysis = (jsonData.analysis && typeof jsonData.analysis === 'object') ? jsonData.analysis : jsonData;
+
+  const segment = {
+    start: startTime,
+    end: endTime,
+    type: analysis.type || 'unknown',
+    description: analysis.description || 'No description',
+    mood: analysis.mood || null,
+    intensity: typeof analysis.intensity === 'number' ? analysis.intensity : 0
+  };
+
+  const rollingSummary = typeof jsonData.rollingSummary === 'string'
+    ? jsonData.rollingSummary
+    : (typeof jsonData.rolling_summary === 'string' ? jsonData.rolling_summary : null);
+
+  return {
+    segment,
+    rollingSummary: rollingSummary || (typeof jsonData.chunkSummary === 'string' ? jsonData.chunkSummary : null)
+  };
 }
 
 /**
