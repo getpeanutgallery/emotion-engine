@@ -87,7 +87,7 @@ function parseConfig(configString, format = 'yaml') {
  *   - Requires: ai.dialogue.targets[*].adapter.{name,model,params?}
  *   - Requires: ai.music.targets[*].adapter.{name,model,params?}
  *   - Requires: ai.video.targets[*].adapter.{name,model,params?}
- *   - Optional: ai.recommendation.targets[*].adapter.{name,model,params?}
+ *   - Conditional: ai.recommendation.targets[*].adapter.{name,model,params?} is required when using server/scripts/report/recommendation.cjs
  *   - Optional per operation: ai.<op>.retry.{maxAttempts,backoffMs}
  * - debug keep flags must be booleans when provided
  *   - debug.keepProcessedIntermediates (new, default keep)
@@ -213,9 +213,17 @@ function validateConfig(config) {
       validateTargets('dialogue_stitch');
     }
 
-    // Optional: recommendation is phase3-only and may inherit video targets in scripts.
-    // Validate only when configured explicitly.
-    if (config.ai?.recommendation !== undefined) {
+    // Recommendation is phase3-only. If the recommendation report script is present, require explicit ai.recommendation.targets.
+    const reportScripts = getScriptsFromPhase(config.report);
+    const usesRecommendationScript = reportScripts.some((s) => {
+      const p = (s && typeof s.script === 'string') ? s.script : '';
+      return p.endsWith('/recommendation.cjs') || p === 'server/scripts/report/recommendation.cjs' || p.includes('scripts/report/recommendation.cjs');
+    });
+
+    if (usesRecommendationScript) {
+      validateTargets('recommendation');
+    } else if (config.ai?.recommendation !== undefined) {
+      // If configured but unused, still validate its shape.
       validateTargets('recommendation');
     }
   }

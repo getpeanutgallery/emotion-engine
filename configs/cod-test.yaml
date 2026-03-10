@@ -100,7 +100,6 @@ ai:
           model: mistralai/voxtral-small-24b-2507
   dialogue_stitch:
     targets:
-      # OpenRouter-only stitcher chain (text-only) with fallbacks
       - adapter:
           name: openrouter
           model: openai/gpt-5.4
@@ -120,7 +119,7 @@ ai:
     targets:
       - adapter:
           name: openrouter
-          model: qwen/qwen-3.5-397b-a17b
+          model: qwen/qwen3.5-397b-a17b
       - adapter:
           name: openrouter
           model: google/gemini-3.1-pro-preview
@@ -130,5 +129,25 @@ ai:
       - adapter:
           name: openrouter
           model: bytedance-seed/seed-2.0-mini
+  recommendation:
+    targets:
+      - adapter:
+          name: openrouter
+          model: openai/gpt-5.4
+      - adapter:
+          name: openrouter
+          model: z-ai/glm-5
+      - adapter:
+          name: openrouter
+          model: qwen/qwen3.5-397b-a17b
+      - adapter:
+          name: openrouter
+          model: moonshotai/kimi-k2.5
+      - adapter:
+          name: openrouter
+          model: minimax/minimax-m2.5
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-pro-preview
           
   # apiKey: injected via AI_API_KEY environment variable

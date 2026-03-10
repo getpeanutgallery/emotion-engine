@@ -93,6 +93,8 @@ Each domain must define at least one target:
 - `ai.dialogue.targets` (non-empty array)
 - `ai.music.targets` (non-empty array)
 - `ai.video.targets` (non-empty array)
+- `ai.recommendation.targets` (non-empty array) — required when running `server/scripts/report/recommendation.cjs`
+
 
 A target looks like:
 

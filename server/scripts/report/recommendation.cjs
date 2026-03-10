@@ -227,28 +227,6 @@ function parseRecommendationResponse(content) {
   };
 }
 
-function getConfigForRecommendation(config = {}) {
-  // Backward compatibility: if ai.recommendation is absent, reuse video targets.
-  // This keeps existing configs functioning while the new keys roll out.
-  if (config?.ai?.recommendation?.targets) return config;
-
-  if (config?.ai?.video?.targets) {
-    return {
-      ...config,
-      ai: {
-        ...(config.ai || {}),
-        recommendation: {
-          // Inherit a retry policy if one exists for video; otherwise, the default
-          // retry config is (1 attempt, 0 backoff).
-          ...(config?.ai?.video?.retry ? { retry: config.ai.video.retry } : {}),
-          targets: config.ai.video.targets
-        }
-      }
-    };
-  }
-
-  return config;
-}
 
 /**
  * Main entry point
@@ -274,7 +252,7 @@ async function run(input) {
     throw new Error('AI_API_KEY is required for recommendations unless DIGITAL_TWIN_MODE=replay');
   }
 
-  const configForRecommendation = getConfigForRecommendation(config);
+  const configForRecommendation = config || {};
   const retryConfig = getRetryConfig(configForRecommendation);
 
   // Ensure output directory exists
@@ -349,6 +327,16 @@ async function run(input) {
   };
 
   try {
+    const recommendationTargets = configForRecommendation?.ai?.recommendation?.targets;
+    if (!Array.isArray(recommendationTargets) || recommendationTargets.length < 1) {
+      const err = new Error(
+        'Missing required "ai.recommendation.targets" (must be a non-empty array). ' +
+        'This script no longer falls back to ai.video.targets; update your config to include ai.recommendation.targets.'
+      );
+      err.code = 'CONFIG_MISSING_RECOMMENDATION_TARGETS';
+      throw err;
+    }
+
     const prompt = buildPrompt({ chunks: successfulChunks, metricsData, config: configForRecommendation });
 
     const promptRef = captureRaw
@@ -583,11 +571,20 @@ async function run(input) {
     phaseOutcome = 'failed';
     fatalPhaseError = error;
 
+    const isConfigError = error?.code === 'CONFIG_MISSING_RECOMMENDATION_TARGETS';
+
     recordPhaseError({
-      kind: 'recommendation_failed',
+      kind: isConfigError ? 'recommendation_config_invalid' : 'recommendation_failed',
       message: error?.message || String(error),
+      errorName: error?.name || null,
+      errorCode: error?.code || null,
       stack: typeof error?.stack === 'string' ? error.stack : null
     });
+
+    if (isConfigError) {
+      // Preserve the clear configuration error message (do not wrap as a retry failure).
+      throw error;
+    }
 
     const attempts = Number.isInteger(error?.aiTargets?.attempts)
       ? error.aiTargets.attempts
