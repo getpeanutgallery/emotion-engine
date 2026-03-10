@@ -1,0 +1,73 @@
+# Phase 3-only pipeline for fast iteration on report scripts.
+#
+# This config intentionally skips Phase 1 + Phase 2 work and reuses an existing
+# run folder that already contains Phase 1/2 artifacts (e.g. output/cod-test).
+#
+# NOTE: Phase 3 still needs prior artifacts (especially phase2 chunk-analysis).
+#       The orchestrator will attempt to hydrate artifacts from outputDir and
+#       will fail early with a clear error if required files are missing.
+
+name: "COD Test Pipeline (Phase 3 only)"
+description: "Run only Phase 3 report scripts using existing Phase 1/2 artifacts in output/cod-test"
+version: "1.0"
+
+asset:
+  # Required by config validation. For Phase 3 runs, prefer keeping this identical to
+  # the original run that produced output/cod-test to avoid confusion.
+  inputPath: "examples/videos/emotion-tests/cod.mp4"
+
+  # IMPORTANT: points at an existing run folder with Phase 1 + Phase 2 artifacts.
+  # This is what makes Phase 3 fast.
+  outputDir: "output/cod-test"
+
+# No Phase 1/2 work in this config.
+gather_context: []
+process: []
+
+# Phase 3 report scripts only.
+report:
+  - server/scripts/report/metrics.cjs
+  - server/scripts/report/recommendation.cjs
+  - server/scripts/report/emotional-analysis.cjs
+  - server/scripts/report/summary.cjs
+  - server/scripts/report/final-report.cjs
+
+# Keep settings aligned with the original run where possible (especially if the
+# report scripts rely on config-derived parameters).
+settings:
+  chunk_duration: 8
+  max_chunks: 100
+  api_request_delay: 500
+
+debug:
+  captureRaw: true
+
+# AI config is required by schema and may be used by Phase 3 scripts (notably recommendation).
+# We keep these aligned with configs/cod-test.yaml.
+ai:
+  dialogue:
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-flash-lite-preview
+  music:
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-flash-lite-preview
+  video:
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-pro-preview
+
+  # Recommendation is Phase 3 only. If omitted, the script will inherit ai.video.targets,
+  # but we define it explicitly so Phase3-only runs are self-contained.
+  recommendation:
+    retry:
+      maxAttempts: 1
+      backoffMs: 0
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-pro-preview

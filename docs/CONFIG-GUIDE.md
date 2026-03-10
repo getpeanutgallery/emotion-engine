@@ -252,7 +252,56 @@ debug:
 
 ---
 
+## Phase 3-only iteration (fast report debugging)
+
+When iterating on **Phase 3** report scripts (metrics/recommendation/emotional-analysis/summary/final-report), you can skip Phase 1 + 2 entirely and reuse an existing run folder.
+
+Use:
+
+- `configs/cod-test-phase3.yaml` — Phase 3 only, reuses `output/cod-test`
+
+### Workflow
+
+1) Run a full pipeline once (to generate Phase 1/2 artifacts):
+
+```bash
+node server/run-pipeline.cjs --config configs/cod-test.yaml --verbose
+```
+
+2) Iterate quickly on Phase 3 scripts:
+
+```bash
+node server/run-pipeline.cjs --config configs/cod-test-phase3.yaml --verbose
+```
+
+Notes:
+
+- `asset.outputDir` intentionally points at an *existing* run folder (default `output/cod-test`).
+- The orchestrator will **hydrate persisted artifacts** from that folder (prefers `artifacts-complete.json`, falls back to known phase outputs like `phase2-process/chunk-analysis.json`).
+- If required artifacts are missing, the run fails early with a clear error and the expected file paths.
+
+### Digital twin replay caveat (strict request matching)
+
+In replay mode:
+
+```bash
+export DIGITAL_TWIN_MODE=replay
+export DIGITAL_TWIN_PACK=...          # path to twin pack repo/dir (contains cassettes/)
+export DIGITAL_TWIN_CASSETTE=...      # cassette id (filename without .json)
+```
+
+Digital twin replay performs **strict request matching** (stable hashing of request payloads). If you change *any* request content (prompt text/formatting, model params, tool variables, etc.), the request hash changes and replay may fail with a mismatch/cache-miss.
+
+Fix options:
+
+- switch to live mode (unset `DIGITAL_TWIN_MODE`, set `AI_API_KEY`), or
+- record a new cassette (`DIGITAL_TWIN_MODE=record`), or
+- keep the request stable and only change local post-processing.
+
+---
+
 ## Recommended starting points
 
 - `configs/cod-test.yaml` — “real” end-to-end config used as an acceptance gate
+- `configs/cod-test-phase3.yaml` — Phase 3-only loop for fast report iteration (reuses an existing run folder)
 - `configs/quick-test.yaml` — smaller/faster config for local iteration

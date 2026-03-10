@@ -144,6 +144,18 @@ npm run pipeline -- --config configs/example-pipeline.yaml
 npm run pipeline -- --config configs/full-analysis.yaml
 ```
 
+### 4) Phase 3-only (fast iteration on report scripts)
+
+If you already have a run folder with Phase 1/2 artifacts (default: `output/cod-test`), you can iterate on Phase 3 without rerunning extraction/chunk analysis:
+
+```bash
+npm run pipeline -- --config configs/cod-test-phase3.yaml --verbose
+# equivalent:
+# node server/run-pipeline.cjs --config configs/cod-test-phase3.yaml --verbose
+```
+
+See `docs/CONFIG-GUIDE.md#phase-3-only-iteration-fast-report-debugging` for digital-twin replay caveats (strict request matching).
+
 ---
 
 ## Output layout

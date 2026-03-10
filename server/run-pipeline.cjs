@@ -21,6 +21,7 @@ require('dotenv').config();
 // Import pipeline components
 const { loadConfig, validateConfig, getScriptsFromPhase } = require('./lib/config-loader.cjs');
 const { createArtifactContext, serializeArtifacts } = require('./lib/artifact-manager.cjs');
+const { loadPersistedArtifacts, getArtifactFileHints } = require('./lib/persisted-artifacts.cjs');
 const { parseArgs, printHelp, printVersion, validateArgs } = require('./lib/cli-parser.cjs');
 const { runGatherContext } = require('./lib/phases/gather-context-runner.cjs');
 const { runProcess } = require('./lib/phases/process-runner.cjs');
@@ -115,6 +116,76 @@ async function runPipeline(configPath, options = {}) {
   // Initialize artifact context with assets directory path
   let artifacts = createArtifactContext();
   artifacts.assetsDir = assetsInputDir;
+
+  // Phase3-only / partial runs: hydrate persisted artifacts from an existing outputDir
+  // so report scripts can run without re-running Phase 1/2.
+  const phase1Scripts = getScriptsFromPhase(config.gather_context);
+  const phase2Scripts = getScriptsFromPhase(config.process);
+  const phase3Scripts = getScriptsFromPhase(config.report);
+
+  const keysToHydrate = [];
+  if (phase1Scripts.length === 0) {
+    keysToHydrate.push('dialogueData', 'musicData');
+  }
+  if (phase2Scripts.length === 0) {
+    keysToHydrate.push('chunkAnalysis', 'perSecondData');
+  }
+
+  if (keysToHydrate.length > 0) {
+    const { artifacts: persisted, sources } = loadPersistedArtifacts(outputDir, { keys: keysToHydrate });
+
+    for (const key of Object.keys(persisted)) {
+      if (artifacts[key] === undefined) {
+        artifacts[key] = persisted[key];
+      }
+    }
+
+    if (verbose) {
+      const hydratedKeys = Object.keys(persisted);
+      if (hydratedKeys.length > 0) {
+        console.log('   ♻️  Hydrated persisted artifacts from outputDir:');
+        for (const key of hydratedKeys) {
+          console.log(`      - ${key} ← ${sources[key]}`);
+        }
+      }
+    }
+  }
+
+  // Guardrails: if Phase 2 is skipped but Phase 3 scripts need phase2 artifacts, fail fast.
+  if (phase3Scripts.length > 0 && phase2Scripts.length === 0) {
+    const phase3ScriptPaths = phase3Scripts.map((entry) => entry?.script).filter(Boolean);
+
+    const requiresChunkAnalysis = phase3ScriptPaths.some((p) => [
+      'server/scripts/report/metrics.cjs',
+      'server/scripts/report/recommendation.cjs',
+      'server/scripts/report/emotional-analysis.cjs',
+      'server/scripts/report/summary.cjs',
+      'server/scripts/report/final-report.cjs'
+    ].includes(p));
+
+    if (requiresChunkAnalysis) {
+      const chunkAnalysis = artifacts.chunkAnalysis;
+      const hasChunks = Array.isArray(chunkAnalysis?.chunks) && chunkAnalysis.chunks.length > 0;
+
+      if (!hasChunks) {
+        const hints = getArtifactFileHints(outputDir, ['chunkAnalysis', 'perSecondData']);
+        const hintLines = Object.values(hints).map((p) => `- ${p}`).join('\n');
+
+        throw new Error([
+          'Phase 3-only run requires Phase 2 artifacts, but none were found in outputDir.',
+          '',
+          'Expected at least one of:',
+          hintLines,
+          '',
+          'Fix:',
+          '- Run a full pipeline once to generate Phase 1/2 artifacts, e.g.:',
+          '  node server/run-pipeline.cjs --config configs/cod-test.yaml --verbose',
+          '',
+          'Then re-run this Phase 3-only config.'
+        ].join('\n'));
+      }
+    }
+  }
   
   // Step 5: Execute phases
   console.log('\n🎯 Executing pipeline...\n');
