@@ -74,34 +74,61 @@ ai:
     targets:
       - adapter:
           name: openrouter
+          model: google/gemini-3.1-flash-lite-preview
+      - adapter:
+          name: openrouter
+          model: openai/gpt-audio
+      - adapter:
+          name: openrouter
           model: openai/gpt-audio-mini
+      - adapter:
+          name: openrouter
+          model: mistralai/voxtral-small-24b-2507
   music:
     targets:
       - adapter:
           name: openrouter
+          model: google/gemini-3.1-flash-lite-preview
+      - adapter:
+          name: openrouter
+          model: openai/gpt-audio
+      - adapter:
+          name: openrouter
           model: openai/gpt-audio-mini
+      - adapter:
+          name: openrouter
+          model: mistralai/voxtral-small-24b-2507
   dialogue_stitch:
     targets:
       # OpenRouter-only stitcher chain (text-only) with fallbacks
       - adapter:
           name: openrouter
-          model: openai/gpt-4.1
+          model: openai/gpt-5.4
       - adapter:
           name: openrouter
-          model: anthropic/claude-3.5-sonnet
+          model: qwen/qwen3.5-397b-a17b
       - adapter:
           name: openrouter
-          model: google/gemini-2.5-pro
+          model: moonshotai/kimi-k2.5
+      - adapter:
+          name: openrouter
+          model: z-ai/glm-5
+      - adapter:
+          name: openrouter
+          model: minimax/minimax-m2.5
   video:
     targets:
-      # Best-first: prefer Gemini for stability; fall back to Qwen variants.
-      - adapter:
-          name: openrouter
-          model: google/gemini-2.5-flash
       - adapter:
           name: openrouter
           model: qwen/qwen-3.5-397b-a17b
       - adapter:
           name: openrouter
-          model: qwen/qwen3.5-122b-a10b
+          model: google/gemini-3.1-pro-preview
+      - adapter:
+          name: openrouter
+          model: z-ai/glm-4.6v
+      - adapter:
+          name: openrouter
+          model: bytedance-seed/seed-2.0-mini
+          
   # apiKey: injected via AI_API_KEY environment variable
