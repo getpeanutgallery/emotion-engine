@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "emotion_engine",
+  "project_id": "1d36a80b-92c4-4fe8-9f0f-c1d81e10a7f1"
+}
