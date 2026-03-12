@@ -1,7 +1,7 @@
 # captureRaw/meta: events.jsonl + prompt dedupe + provider debug consistency
 
 **Date:** 2026-03-09  
-**Status:** In Progress (updated: breaking changes allowed)  
+**Status:** Superseded (split into implemented work + remaining Beads)
 **Agent:** Cookie 🍪
 
 ---

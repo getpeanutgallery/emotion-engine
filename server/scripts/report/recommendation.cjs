@@ -174,35 +174,172 @@ function buildPrompt({ chunks, metricsData, config }) {
   ].join('\n');
 }
 
-function parseRecommendationResponse(content) {
-  let parsed;
-  try {
-    parsed = JSON.parse(content);
-  } catch (e) {
-    throw createRetryableError('invalid_output: response was not valid JSON', {
-      group: 'parse',
-      raw: content
-    });
+function extractBalancedJsonObject(text) {
+  if (typeof text !== 'string') return null;
+
+  let start = -1;
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      if (ch === '\\') {
+        escaped = true;
+        continue;
+      }
+      if (ch === '"') {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (ch === '"') {
+      inString = true;
+      continue;
+    }
+
+    if (ch === '{') {
+      if (depth === 0) start = i;
+      depth += 1;
+      continue;
+    }
+
+    if (ch === '}') {
+      if (depth > 0) {
+        depth -= 1;
+        if (depth === 0 && start >= 0) {
+          return text.slice(start, i + 1);
+        }
+      }
+    }
   }
+
+  return null;
+}
+
+function normalizeJsonCandidate(candidate) {
+  if (typeof candidate !== 'string') return candidate;
+
+  let text = candidate.trim();
+  if (!text) return text;
+
+  text = text.replace(/^\uFEFF/, '');
+  text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+  text = text.replace(/^json\s*/i, '').trim();
+  text = text.replace(/,\s*([}\]])/g, '$1');
+
+  return text;
+}
+
+function parseJsonObjectCandidate(candidate) {
+  if (typeof candidate !== 'string' || candidate.trim().length === 0) {
+    return { ok: false, error: new Error('empty candidate') };
+  }
+
+  try {
+    return { ok: true, value: JSON.parse(candidate) };
+  } catch (error) {
+    return { ok: false, error };
+  }
+}
+
+function tryExtractRecommendationJson(content) {
+  const raw = typeof content === 'string' ? content : String(content ?? '');
+  const trimmed = raw.trim();
+  const candidates = [];
+  const seen = new Set();
+
+  const pushCandidate = (value) => {
+    const normalized = normalizeJsonCandidate(value);
+    if (typeof normalized !== 'string' || normalized.length === 0) return;
+    if (seen.has(normalized)) return;
+    seen.add(normalized);
+    candidates.push(normalized);
+  };
+
+  pushCandidate(trimmed);
+
+  const fencedBlocks = raw.match(/```(?:json)?\s*[\s\S]*?```/gi) || [];
+  for (const block of fencedBlocks) {
+    pushCandidate(block);
+  }
+
+  const balancedObject = extractBalancedJsonObject(raw);
+  if (balancedObject) {
+    pushCandidate(balancedObject);
+  }
+
+  if ((trimmed.startsWith('"') && trimmed.endsWith('"')) || (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+    const unwrapped = trimmed.slice(1, -1).trim();
+    pushCandidate(unwrapped);
+
+    try {
+      const reparsed = JSON.parse(trimmed);
+      if (typeof reparsed === 'string') {
+        pushCandidate(reparsed);
+      }
+    } catch {
+      // Ignore quoted wrapper parse errors.
+    }
+  }
+
+  let lastError = null;
+  for (const candidate of candidates) {
+    const parsed = parseJsonObjectCandidate(candidate);
+    if (parsed.ok) {
+      return {
+        raw,
+        extracted: candidate,
+        parsed: parsed.value,
+        repairApplied: candidate !== normalizeJsonCandidate(raw)
+      };
+    }
+    lastError = parsed.error;
+  }
+
+  throw createRetryableError('invalid_output: response was not valid JSON', {
+    group: 'parse',
+    raw,
+    extracted: candidates,
+    parseError: lastError?.message || null
+  });
+}
+
+function parseRecommendationResponse(content) {
+  const extraction = tryExtractRecommendationJson(content);
+  const parsed = extraction.parsed;
 
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
     throw createRetryableError('invalid_output: response must be a JSON object', {
       group: 'parse',
-      parsed
+      parsed,
+      raw: extraction.raw,
+      extracted: extraction.extracted
     });
   }
 
   if (typeof parsed.text !== 'string' || parsed.text.trim().length === 0) {
     throw createRetryableError('invalid_output: "text" must be a non-empty string', {
       group: 'parse',
-      parsed
+      parsed,
+      raw: extraction.raw,
+      extracted: extraction.extracted
     });
   }
 
   if (typeof parsed.reasoning !== 'string' || parsed.reasoning.trim().length === 0) {
     throw createRetryableError('invalid_output: "reasoning" must be a non-empty string', {
       group: 'parse',
-      parsed
+      parsed,
+      raw: extraction.raw,
+      extracted: extraction.extracted
     });
   }
 
@@ -223,7 +360,12 @@ function parseRecommendationResponse(content) {
     reasoning: parsed.reasoning.trim(),
     confidence,
     keyFindings,
-    suggestions
+    suggestions,
+    _meta: {
+      raw: extraction.raw,
+      extracted: extraction.extracted,
+      repairApplied: extraction.repairApplied
+    }
   };
 }
 
@@ -392,13 +534,15 @@ async function run(input) {
           model: adapter?.model || null,
         });
 
+        let completion;
+
         try {
-          const completion = await provider.complete({
+          completion = await provider.complete({
             prompt,
             model: adapter?.model,
             apiKey: process.env.AI_API_KEY,
             options: {
-              temperature: 0.4,
+              temperature: 0.2,
               maxTokens: 900,
               ...(
                 adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
@@ -407,6 +551,8 @@ async function run(input) {
               )
             }
           });
+
+          const parsed = parseRecommendationResponse(completion.content);
 
           events.emit({
             kind: 'provider.call.end',
@@ -422,9 +568,11 @@ async function run(input) {
             model: adapter?.model || null,
           });
 
-          const parsed = parseRecommendationResponse(completion.content);
           return { completion, parsed };
         } catch (error) {
+          if (error && typeof error === 'object' && error.aiTargets && !error.aiTargets.completion && typeof completion !== 'undefined') {
+            error.aiTargets.completion = completion;
+          }
           events.emit({
             kind: 'provider.call.end',
             phase: PHASE_KEY,
@@ -494,8 +642,15 @@ async function run(input) {
           adapter,
           failover: failover || null,
           promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
-          rawResponse: ok ? sanitizeRawCaptureValue(completion) : null,
+          rawResponse: sanitizeRawCaptureValue(completion || null),
           parsed: ok ? (result?.parsed || null) : null,
+          parseMeta: ok
+            ? sanitizeRawCaptureValue(result?.parsed?._meta || null)
+            : sanitizeRawCaptureValue({
+                raw: error?.aiTargets?.raw || error?.aiTargets?.completion?.content || null,
+                extracted: error?.aiTargets?.extracted || null,
+                parseError: error?.aiTargets?.parseError || null
+              }),
           error: errorMessage,
           errorName: ok ? null : (error?.name || null),
           errorCode: ok ? null : (error?.code || null),
@@ -609,7 +764,15 @@ async function run(input) {
   }
 }
 
-module.exports = { run };
+module.exports = {
+  run,
+  _private: {
+    extractBalancedJsonObject,
+    normalizeJsonCandidate,
+    tryExtractRecommendationJson,
+    parseRecommendationResponse
+  }
+};
 
 // Allow standalone execution for testing
 if (require.main === module) {

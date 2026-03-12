@@ -1,7 +1,7 @@
 # emotion-engine: nuke legacy + sync README/docs to polyrepo reality
 
 **Date:** 2026-03-09  
-**Status:** In Progress  
+**Status:** Superseded
 **Agent:** Cookie 🍪
 
 ---

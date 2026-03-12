@@ -1,7 +1,7 @@
 # Add issues: adapter smoketests + OAuth architecture
 
 **Date:** 2026-03-09  
-**Status:** Draft  
+**Status:** Superseded (draft never executed)
 **Agent:** Cookie 🍪
 
 ---

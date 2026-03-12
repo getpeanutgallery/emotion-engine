@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const test = require('node:test');
+const assert = require('node:assert/strict');
 const { ok, is, property, rejects } = require('../helpers/assertions');
 
 process.env.AI_API_KEY = 'test-api-key';
@@ -163,6 +164,57 @@ test('Recommendation Script', async (t) => {
     property(call, 'options');
     is(call.options.temperature, 0.9);
     is(call.options.maxTokens, 222);
+  });
+
+  await t.test('repairs markdown-fenced JSON with trailing commas', async () => {
+    completeImplementation = async () => ({
+      content: [
+        'Here is the recommendation JSON:',
+        '```json',
+        '{',
+        '  "text": "Tighten the hook.",',
+        '  "reasoning": "The opening is strong but the middle drifts.",',
+        '  "confidence": 0.91,',
+        '  "keyFindings": ["Strong first beat", "Mid-video drag",],',
+        '  "suggestions": ["Trim exposition", "Front-load payoff",]',
+        '}',
+        '```'
+      ].join('\n'),
+      usage: { input: 11, output: 22 }
+    });
+
+    const result = await recommendationScript.run({
+      outputDir: testOutputDir,
+      artifacts: makeArtifacts(),
+      config: makeConfig()
+    });
+
+    is(result.artifacts.recommendationData.text, 'Tighten the hook.');
+    assert.deepStrictEqual(result.artifacts.recommendationData.keyFindings, ['Strong first beat', 'Mid-video drag']);
+    assert.deepStrictEqual(result.artifacts.recommendationData.suggestions, ['Trim exposition', 'Front-load payoff']);
+  });
+
+  await t.test('captures raw malformed response when parse ultimately fails', async () => {
+    completeImplementation = async () => ({
+      content: 'I cannot comply with JSON only. Recommendation: tighten pacing.',
+      usage: { input: 5, output: 7 }
+    });
+
+    await rejects(recommendationScript.run({
+      outputDir: testOutputDir,
+      artifacts: makeArtifacts(),
+      config: makeConfig({
+        debug: { captureRaw: true },
+        retry: { maxAttempts: 1, backoffMs: 0 }
+      })
+    }), /failed after 1 attempts: invalid_output: response was not valid JSON/);
+
+    const rawRecDir = path.join(testOutputDir, 'phase3-report', 'raw', 'ai', 'recommendation');
+    const { capture } = readLatestRecommendationRawCapture(rawRecDir);
+    property(capture, 'rawResponse');
+    is(capture.rawResponse.content, 'I cannot comply with JSON only. Recommendation: tighten pacing.');
+    property(capture, 'parseMeta');
+    is(capture.parseMeta.raw, 'I cannot comply with JSON only. Recommendation: tighten pacing.');
   });
 
   await t.test('retryable failure exhausts retries then falls back to next target', async () => {

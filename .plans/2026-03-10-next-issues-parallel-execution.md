@@ -1,7 +1,7 @@
 # emotion-engine: next issues + parallel execution
 
 **Date:** 2026-03-10  
-**Status:** Draft  
+**Status:** Superseded (draft planning snapshot)
 **Agent:** Cookie 🍪
 
 ---
