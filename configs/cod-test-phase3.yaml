@@ -65,7 +65,7 @@ ai:
   # but we define it explicitly so Phase3-only runs are self-contained.
   recommendation:
     retry:
-      maxAttempts: 1
+      maxAttempts: 3
       backoffMs: 0
     targets:
       - adapter:

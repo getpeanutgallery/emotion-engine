@@ -12,6 +12,7 @@
  * Config (new):
  * - ai.recommendation.targets[*].adapter.{name,model,params?}
  * - ai.recommendation.retry.{maxAttempts,backoffMs}
+ * - ai.recommendation.toolLoop.{maxTurns,maxValidatorCalls}
  *
  * @module scripts/report/recommendation
  */
@@ -29,6 +30,14 @@ const {
 } = require('../../lib/ai-targets.cjs');
 const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
+const { parseJsonObjectInput } = require('../../lib/json-validator.cjs');
+const { parseRecommendationResponse } = require('../../lib/recommendation-validator.cjs');
+const {
+  TOOL_NAME,
+  buildRecommendationValidatorToolContract,
+  executeRecommendationValidatorTool,
+  parseRecommendationToolCallEnvelope
+} = require('../../lib/recommendation-validator-tool.cjs');
 
 const PHASE_KEY = 'phase3-report';
 const SCRIPT_ID = 'recommendation';
@@ -47,6 +56,15 @@ function getRetryConfig(config = {}) {
   return {
     maxAttempts: Number.isInteger(retry.maxAttempts) && retry.maxAttempts > 0 ? retry.maxAttempts : 1,
     backoffMs: Number.isInteger(retry.backoffMs) && retry.backoffMs >= 0 ? retry.backoffMs : 0
+  };
+}
+
+function getToolLoopConfig(config = {}) {
+  const toolLoop = config?.ai?.recommendation?.toolLoop || {};
+
+  return {
+    maxTurns: Number.isInteger(toolLoop.maxTurns) && toolLoop.maxTurns > 1 ? toolLoop.maxTurns : 4,
+    maxValidatorCalls: Number.isInteger(toolLoop.maxValidatorCalls) && toolLoop.maxValidatorCalls > 0 ? toolLoop.maxValidatorCalls : 3
   };
 }
 
@@ -90,7 +108,6 @@ function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, events, phaseOutcom
     const lines = phaseErrors.map((e) => JSON.stringify(e)).join('\n') + '\n';
     fs.appendFileSync(errorsPath, lines, 'utf8');
   } else if (!fs.existsSync(errorsPath)) {
-    // Create empty file so downstream tooling can rely on it existing.
     fs.writeFileSync(errorsPath, '', 'utf8');
   }
 
@@ -155,7 +172,7 @@ function buildPrompt({ chunks, metricsData, config }) {
     '',
     'Using the provided chunk-level emotion analysis and computed metrics, generate actionable recommendations to improve viewer retention and emotional impact.',
     '',
-    'Return ONLY valid JSON (no markdown, no commentary) matching this schema:',
+    'Final recommendation JSON schema:',
     '{',
     '  "text": string,                  // 2-5 sentence executive recommendation',
     '  "reasoning": string,             // 3-8 sentences referencing evidence in the data',
@@ -168,218 +185,337 @@ function buildPrompt({ chunks, metricsData, config }) {
     '- Keep it specific (talk about the start/hook, pacing, emotional beats).',
     '- If data is insufficient, say so and provide next steps.',
     '- Do not invent timestamps or quotes not present in the input.',
+    '- Return JSON only. No markdown fences or commentary.',
     '',
     'INPUT:',
     JSON.stringify({ pipelineMeta, metricsSummary, chunkSummaries }, null, 2)
   ].join('\n');
 }
 
-function extractBalancedJsonObject(text) {
-  if (typeof text !== 'string') return null;
-
-  let start = -1;
-  let depth = 0;
-  let inString = false;
-  let escaped = false;
-
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-
-    if (inString) {
-      if (escaped) {
-        escaped = false;
-        continue;
-      }
-      if (ch === '\\') {
-        escaped = true;
-        continue;
-      }
-      if (ch === '"') {
-        inString = false;
-      }
-      continue;
-    }
-
-    if (ch === '"') {
-      inString = true;
-      continue;
-    }
-
-    if (ch === '{') {
-      if (depth === 0) start = i;
-      depth += 1;
-      continue;
-    }
-
-    if (ch === '}') {
-      if (depth > 0) {
-        depth -= 1;
-        if (depth === 0 && start >= 0) {
-          return text.slice(start, i + 1);
-        }
-      }
-    }
-  }
-
-  return null;
+function buildToolLoopPrompt({ basePrompt, toolContract, history, remainingTurns, remainingValidatorCalls }) {
+  return [
+    basePrompt,
+    '',
+    'LOCAL TOOL LOOP:',
+    'You have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:',
+    '1) Canonical tool call envelope:',
+    JSON.stringify(toolContract.canonicalEnvelope, null, 2),
+    '2) Final recommendation JSON matching the schema above.',
+    '',
+    'Acceptance rules:',
+    `- The final recommendation is accepted only after ${TOOL_NAME} returns {"valid": true}.`,
+    `- If you call the tool, use exactly this minimal envelope: {"tool":"${TOOL_NAME}","recommendation":{...}}.`,
+    '- Do not add type/toolName/arguments/args/input wrappers around the tool call.',
+    '- If the validator reports problems, revise and either call the tool again or return a revised recommendation JSON candidate.',
+    '- After the validator returns valid=true, return ONLY the final recommendation JSON object with no wrapper.',
+    '- Do not emit markdown, prose, or multiple objects.',
+    '',
+    'Tool contract:',
+    JSON.stringify(toolContract, null, 2),
+    '',
+    'Current turn budget:',
+    JSON.stringify({ remainingTurns, remainingValidatorCalls }, null, 2),
+    '',
+    'Conversation state:',
+    JSON.stringify(history, null, 2)
+  ].join('\n');
 }
 
-function normalizeJsonCandidate(candidate) {
-  if (typeof candidate !== 'string') return candidate;
+function normalizeRecommendationForComparison(recommendation) {
+  if (!recommendation || typeof recommendation !== 'object' || Array.isArray(recommendation)) return null;
 
-  let text = candidate.trim();
-  if (!text) return text;
-
-  text = text.replace(/^\uFEFF/, '');
-  text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
-  text = text.replace(/^json\s*/i, '').trim();
-  text = text.replace(/,\s*([}\]])/g, '$1');
-
-  return text;
-}
-
-function parseJsonObjectCandidate(candidate) {
-  if (typeof candidate !== 'string' || candidate.trim().length === 0) {
-    return { ok: false, error: new Error('empty candidate') };
-  }
-
-  try {
-    return { ok: true, value: JSON.parse(candidate) };
-  } catch (error) {
-    return { ok: false, error };
-  }
-}
-
-function tryExtractRecommendationJson(content) {
-  const raw = typeof content === 'string' ? content : String(content ?? '');
-  const trimmed = raw.trim();
-  const candidates = [];
-  const seen = new Set();
-
-  const pushCandidate = (value) => {
-    const normalized = normalizeJsonCandidate(value);
-    if (typeof normalized !== 'string' || normalized.length === 0) return;
-    if (seen.has(normalized)) return;
-    seen.add(normalized);
-    candidates.push(normalized);
-  };
-
-  pushCandidate(trimmed);
-
-  const fencedBlocks = raw.match(/```(?:json)?\s*[\s\S]*?```/gi) || [];
-  for (const block of fencedBlocks) {
-    pushCandidate(block);
-  }
-
-  const balancedObject = extractBalancedJsonObject(raw);
-  if (balancedObject) {
-    pushCandidate(balancedObject);
-  }
-
-  if ((trimmed.startsWith('"') && trimmed.endsWith('"')) || (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
-    const unwrapped = trimmed.slice(1, -1).trim();
-    pushCandidate(unwrapped);
-
-    try {
-      const reparsed = JSON.parse(trimmed);
-      if (typeof reparsed === 'string') {
-        pushCandidate(reparsed);
-      }
-    } catch {
-      // Ignore quoted wrapper parse errors.
-    }
-  }
-
-  let lastError = null;
-  for (const candidate of candidates) {
-    const parsed = parseJsonObjectCandidate(candidate);
-    if (parsed.ok) {
-      return {
-        raw,
-        extracted: candidate,
-        parsed: parsed.value,
-        repairApplied: candidate !== normalizeJsonCandidate(raw)
-      };
-    }
-    lastError = parsed.error;
-  }
-
-  throw createRetryableError('invalid_output: response was not valid JSON', {
-    group: 'parse',
-    raw,
-    extracted: candidates,
-    parseError: lastError?.message || null
+  return JSON.stringify({
+    text: recommendation.text,
+    reasoning: recommendation.reasoning,
+    confidence: recommendation.confidence,
+    keyFindings: recommendation.keyFindings,
+    suggestions: recommendation.suggestions
   });
 }
 
-function parseRecommendationResponse(content) {
-  const extraction = tryExtractRecommendationJson(content);
-  const parsed = extraction.parsed;
+async function executeRecommendationToolLoop({
+  provider,
+  adapter,
+  basePrompt,
+  toolLoopConfig,
+  promptRef,
+  events,
+  ctx
+}) {
+  const toolContract = buildRecommendationValidatorToolContract();
+  const history = [];
+  let successfulValidatedRecommendation = null;
+  let validatorCalls = 0;
+  let finalCompletion = null;
+  let finalValidation = null;
+  let finalPromptMode = 'tool_loop';
 
-  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-    throw createRetryableError('invalid_output: response must be a JSON object', {
-      group: 'parse',
-      parsed,
-      raw: extraction.raw,
-      extracted: extraction.extracted
+  for (let turn = 1; turn <= toolLoopConfig.maxTurns; turn += 1) {
+    const remainingTurns = toolLoopConfig.maxTurns - turn + 1;
+    const remainingValidatorCalls = Math.max(toolLoopConfig.maxValidatorCalls - validatorCalls, 0);
+    const prompt = buildToolLoopPrompt({
+      basePrompt,
+      toolContract,
+      history,
+      remainingTurns,
+      remainingValidatorCalls
     });
-  }
 
-  if (typeof parsed.text !== 'string' || parsed.text.trim().length === 0) {
-    throw createRetryableError('invalid_output: "text" must be a non-empty string', {
-      group: 'parse',
-      parsed,
-      raw: extraction.raw,
-      extracted: extraction.extracted
+    const promptMode = turn === 1 ? 'tool_loop' : 'tool_loop_followup';
+    finalPromptMode = promptMode;
+
+    const completion = await provider.complete({
+      prompt,
+      model: adapter?.model,
+      apiKey: process.env.AI_API_KEY,
+      options: {
+        temperature: 0.2,
+        maxTokens: 900,
+        ...(
+          adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
+            ? adapter.params
+            : {}
+        )
+      }
     });
-  }
 
-  if (typeof parsed.reasoning !== 'string' || parsed.reasoning.trim().length === 0) {
-    throw createRetryableError('invalid_output: "reasoning" must be a non-empty string', {
-      group: 'parse',
-      parsed,
-      raw: extraction.raw,
-      extracted: extraction.extracted
+    finalCompletion = completion;
+    const rawContent = completion?.content;
+
+    history.push({
+      role: 'assistant',
+      turn,
+      kind: 'model_output',
+      raw: rawContent
     });
-  }
 
-  const confidence = typeof parsed.confidence === 'number' && !Number.isNaN(parsed.confidence)
-    ? Math.max(0, Math.min(1, parsed.confidence))
-    : 0.5;
-
-  const keyFindings = Array.isArray(parsed.keyFindings)
-    ? parsed.keyFindings.filter((x) => typeof x === 'string' && x.trim().length > 0)
-    : [];
-
-  const suggestions = Array.isArray(parsed.suggestions)
-    ? parsed.suggestions.filter((x) => typeof x === 'string' && x.trim().length > 0)
-    : [];
-
-  return {
-    text: parsed.text.trim(),
-    reasoning: parsed.reasoning.trim(),
-    confidence,
-    keyFindings,
-    suggestions,
-    _meta: {
-      raw: extraction.raw,
-      extracted: extraction.extracted,
-      repairApplied: extraction.repairApplied
+    const parsedObject = parseJsonObjectInput(rawContent);
+    if (!parsedObject.ok) {
+      throw createRetryableError('invalid_output: response was not valid JSON', {
+        group: parsedObject.meta?.stage || 'parse',
+        raw: parsedObject.meta?.raw || rawContent || null,
+        extracted: parsedObject.meta?.extracted || null,
+        parseError: parsedObject.meta?.parseError || null,
+        validationErrors: parsedObject.errors,
+        validationSummary: parsedObject.summary,
+        completion,
+        promptMode,
+        promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
+        toolLoop: {
+          maxTurns: toolLoopConfig.maxTurns,
+          maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
+          turn,
+          validatorCalls,
+          history
+        }
+      });
     }
-  };
-}
 
+    const toolCall = parseRecommendationToolCallEnvelope(parsedObject.value);
+    if (toolCall.ok) {
+      if (validatorCalls >= toolLoopConfig.maxValidatorCalls) {
+        throw createRetryableError(`invalid_output: exceeded ${TOOL_NAME} tool-call limit`, {
+          group: 'tool_loop',
+          raw: rawContent || null,
+          extracted: parsedObject.meta?.extracted || null,
+          validationErrors: [
+            {
+              path: '$',
+              code: 'tool_call_limit_exceeded',
+              message: `Exceeded ${TOOL_NAME} tool-call limit.`
+            }
+          ],
+          validationSummary: `Exceeded ${TOOL_NAME} tool-call limit. Return a final validated recommendation JSON.`,
+          completion,
+          promptMode,
+          promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
+          toolLoop: {
+            maxTurns: toolLoopConfig.maxTurns,
+            maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
+            turn,
+            validatorCalls,
+            history
+          }
+        });
+      }
+
+      validatorCalls += 1;
+      const toolResult = executeRecommendationValidatorTool(toolCall.value.arguments);
+
+      history.push({
+        role: 'tool',
+        turn,
+        kind: toolResult.valid ? 'validator_acceptance' : 'validator_rejection',
+        toolName: TOOL_NAME,
+        toolCall: toolCall.value,
+        result: toolResult
+      });
+
+      if (toolResult.valid && toolResult.normalizedRecommendation) {
+        successfulValidatedRecommendation = toolResult.normalizedRecommendation;
+      }
+
+      continue;
+    }
+
+    if (toolCall.kind === 'malformed_tool_call') {
+      history.push({
+        role: 'tool',
+        turn,
+        kind: 'malformed_tool_call_envelope',
+        toolName: TOOL_NAME,
+        source: 'model_output',
+        toolCall: sanitizeRawCaptureValue(toolCall.envelope || parsedObject.value),
+        result: {
+          ok: false,
+          valid: false,
+          toolName: TOOL_NAME,
+          summary: toolCall.summary,
+          errors: toolCall.errors || [],
+          malformedEnvelope: true
+        }
+      });
+      continue;
+    }
+
+    const autoToolArgs = { recommendation: parsedObject.value };
+
+    if (validatorCalls >= toolLoopConfig.maxValidatorCalls) {
+      throw createRetryableError(`invalid_output: exceeded ${TOOL_NAME} tool-call limit`, {
+        group: 'tool_loop',
+        raw: rawContent || null,
+        extracted: parsedObject.meta?.extracted || null,
+        validationErrors: [
+          {
+            path: '$',
+            code: 'tool_call_limit_exceeded',
+            message: `Exceeded ${TOOL_NAME} tool-call limit before recommendation could be validated.`
+          }
+        ],
+        validationSummary: `Exceeded ${TOOL_NAME} tool-call limit before recommendation could be validated.`,
+        completion,
+        promptMode,
+        promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
+        toolLoop: {
+          maxTurns: toolLoopConfig.maxTurns,
+          maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
+          turn,
+          validatorCalls,
+          history
+        }
+      });
+    }
+
+    validatorCalls += 1;
+    const toolResult = executeRecommendationValidatorTool(autoToolArgs);
+    const autoValidationKind = successfulValidatedRecommendation
+      ? (toolResult.valid ? 'final_artifact_revalidation' : 'final_artifact_rejection')
+      : (toolResult.valid ? 'tool_result_auto_validation' : 'validator_rejection');
+
+    history.push({
+      role: 'tool',
+      turn,
+      kind: autoValidationKind,
+      toolName: TOOL_NAME,
+      source: successfulValidatedRecommendation ? 'final_artifact_auto_validation' : 'auto_validate_candidate_json',
+      toolCall: {
+        tool: TOOL_NAME,
+        recommendation: autoToolArgs.recommendation,
+        arguments: autoToolArgs
+      },
+      result: toolResult
+    });
+
+    if (!toolResult.valid) {
+      continue;
+    }
+
+    const parsedRecommendation = parseRecommendationResponse(parsedObject.value);
+    if (!parsedRecommendation.ok) {
+      continue;
+    }
+
+    const validatedRecommendation = toolResult.normalizedRecommendation;
+    const parsedNormalized = normalizeRecommendationForComparison(parsedRecommendation.value);
+    const validatedNormalized = normalizeRecommendationForComparison(validatedRecommendation);
+
+    if (!successfulValidatedRecommendation) {
+      successfulValidatedRecommendation = validatedRecommendation;
+      continue;
+    }
+
+    if (parsedNormalized !== validatedNormalized) {
+      successfulValidatedRecommendation = validatedRecommendation;
+      continue;
+    }
+
+    finalValidation = parsedRecommendation;
+
+    events.emit({
+      kind: 'tool.loop.complete',
+      phase: PHASE_KEY,
+      script: SCRIPT_ID,
+      domain: 'recommendation',
+      attempt: ctx.attempt,
+      attemptInTarget: ctx.attemptInTarget,
+      targetIndex: ctx.targetIndex,
+      validatorCalls,
+      turns: turn,
+      toolName: TOOL_NAME,
+      provider: adapter?.name || null,
+      model: adapter?.model || null,
+    });
+
+    return {
+      completion,
+      parsed: parsedRecommendation.value,
+      validation: parsedRecommendation,
+      requestPrompt: {
+        mode: promptMode,
+        repairSummary: null
+      },
+      toolLoop: {
+        toolName: TOOL_NAME,
+        maxTurns: toolLoopConfig.maxTurns,
+        maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
+        turns: turn,
+        validatorCalls,
+        history,
+        finalRecommendation: validatedRecommendation
+      }
+    };
+  }
+
+  throw createRetryableError(`invalid_output: recommendation tool loop exhausted after ${toolLoopConfig.maxTurns} turns`, {
+    group: 'tool_loop',
+    raw: finalCompletion?.content || null,
+    extracted: null,
+    parseError: null,
+    validationErrors: [
+      {
+        path: '$',
+        code: 'tool_loop_exhausted',
+        message: `Recommendation tool loop exhausted after ${toolLoopConfig.maxTurns} turns.`
+      }
+    ],
+    validationSummary: `Recommendation tool loop exhausted after ${toolLoopConfig.maxTurns} turns. Ensure the model validates the recommendation and then returns final JSON only.`,
+    completion: finalCompletion,
+    promptMode: finalPromptMode,
+    promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
+    toolLoop: {
+      toolName: TOOL_NAME,
+      maxTurns: toolLoopConfig.maxTurns,
+      maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
+      turns: toolLoopConfig.maxTurns,
+      validatorCalls,
+      history,
+      finalValidation: finalValidation ? sanitizeRawCaptureValue(finalValidation) : null
+    }
+  });
+}
 
 /**
  * Main entry point
- *
- * @async
- * @function run
- * @param {object} input - Script input
- * @param {string} input.outputDir - Base output directory
- * @param {object} input.artifacts - Artifacts from previous phases/scripts
- * @param {object} input.config - Pipeline config
- * @returns {Promise<object>} - Script output: { artifacts: object }
  */
 async function run(input) {
   const { outputDir, artifacts = {}, config } = input;
@@ -388,7 +524,6 @@ async function run(input) {
 
   const replayMode = isReplayMode();
 
-  // Verify AI_API_KEY is available for live calls only
   if (!replayMode && !process.env.AI_API_KEY) {
     console.error('   ❌ ERROR: AI_API_KEY environment variable is not set');
     throw new Error('AI_API_KEY is required for recommendations unless DIGITAL_TWIN_MODE=replay');
@@ -396,11 +531,10 @@ async function run(input) {
 
   const configForRecommendation = config || {};
   const retryConfig = getRetryConfig(configForRecommendation);
+  const toolLoopConfig = getToolLoopConfig(configForRecommendation);
 
-  // Ensure output directory exists
   fs.mkdirSync(outputDir, { recursive: true });
 
-  // Extract artifacts from previous phases
   const {
     chunkAnalysis = { chunks: [], totalTokens: 0, videoDuration: 0 },
     metricsData = {}
@@ -454,7 +588,6 @@ async function run(input) {
     const capturePath = writeRawJson(aiRawDir, attemptRelPath, payload);
     events.artifactWrite({ absolutePath: capturePath, role: 'raw.ai.attempt', phase: PHASE_KEY, script: SCRIPT_ID });
 
-    // Legacy pointer file for stable discovery.
     const pointerPath = writeRawJson(aiRawDir, 'recommendation.json', {
       schemaVersion: 2,
       kind: 'pointer',
@@ -479,10 +612,10 @@ async function run(input) {
       throw err;
     }
 
-    const prompt = buildPrompt({ chunks: successfulChunks, metricsData, config: configForRecommendation });
+    const basePrompt = buildPrompt({ chunks: successfulChunks, metricsData, config: configForRecommendation });
 
     const promptRef = captureRaw
-      ? storePromptPayload({ outputDir, payload: prompt })
+      ? storePromptPayload({ outputDir, payload: basePrompt })
       : null;
 
     if (promptRef?.absolutePath) {
@@ -534,25 +667,16 @@ async function run(input) {
           model: adapter?.model || null,
         });
 
-        let completion;
-
         try {
-          completion = await provider.complete({
-            prompt,
-            model: adapter?.model,
-            apiKey: process.env.AI_API_KEY,
-            options: {
-              temperature: 0.2,
-              maxTokens: 900,
-              ...(
-                adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
-                  ? adapter.params
-                  : {}
-              )
-            }
+          const result = await executeRecommendationToolLoop({
+            provider,
+            adapter,
+            basePrompt,
+            toolLoopConfig,
+            promptRef,
+            events,
+            ctx
           });
-
-          const parsed = parseRecommendationResponse(completion.content);
 
           events.emit({
             kind: 'provider.call.end',
@@ -568,11 +692,8 @@ async function run(input) {
             model: adapter?.model || null,
           });
 
-          return { completion, parsed };
+          return result;
         } catch (error) {
-          if (error && typeof error === 'object' && error.aiTargets && !error.aiTargets.completion && typeof completion !== 'undefined') {
-            error.aiTargets.completion = completion;
-          }
           events.emit({
             kind: 'provider.call.end',
             phase: PHASE_KEY,
@@ -624,15 +745,14 @@ async function run(input) {
         if (!captureRaw) return;
 
         const adapter = target?.adapter || null;
-
         const completion = ok
           ? result?.completion
           : error?.aiTargets?.completion;
-
         const errorMessage = ok ? null : (error?.message || String(error));
+        const toolLoop = ok ? result?.toolLoop : error?.aiTargets?.toolLoop;
 
         writeRecommendationRaw({
-          schemaVersion: 2,
+          schemaVersion: 3,
           domain: 'recommendation',
           generatedAt: new Date().toISOString(),
           attempt,
@@ -642,15 +762,30 @@ async function run(input) {
           adapter,
           failover: failover || null,
           promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
+          promptMode: ok ? (result?.requestPrompt?.mode || 'tool_loop') : (error?.aiTargets?.promptMode || 'tool_loop'),
+          repairSummary: ok ? (result?.requestPrompt?.repairSummary || null) : (error?.aiTargets?.validationSummary || null),
           rawResponse: sanitizeRawCaptureValue(completion || null),
           parsed: ok ? (result?.parsed || null) : null,
           parseMeta: ok
             ? sanitizeRawCaptureValue(result?.parsed?._meta || null)
             : sanitizeRawCaptureValue({
+                stage: error?.aiTargets?.group || null,
                 raw: error?.aiTargets?.raw || error?.aiTargets?.completion?.content || null,
                 extracted: error?.aiTargets?.extracted || null,
-                parseError: error?.aiTargets?.parseError || null
+                parseError: error?.aiTargets?.parseError || null,
+                validationSummary: error?.aiTargets?.validationSummary || null,
+                validationErrors: error?.aiTargets?.validationErrors || null
               }),
+          validation: ok
+            ? sanitizeRawCaptureValue({
+                summary: result?.validation?.summary || null,
+                errors: result?.validation?.errors || []
+              })
+            : sanitizeRawCaptureValue({
+                summary: error?.aiTargets?.validationSummary || null,
+                errors: error?.aiTargets?.validationErrors || []
+              }),
+          toolLoop: sanitizeRawCaptureValue(toolLoop || null),
           error: errorMessage,
           errorName: ok ? null : (error?.name || null),
           errorCode: ok ? null : (error?.code || null),
@@ -667,7 +802,8 @@ async function run(input) {
             attempt,
             attemptInTarget,
             targetIndex,
-            targetCount
+            targetCount,
+            toolLoopConfig
           }
         });
       }
@@ -689,6 +825,13 @@ async function run(input) {
         provider: meta?.target?.adapter?.name || null,
         model: meta?.target?.adapter?.model || null,
         failover: meta?.failover || null,
+        toolLoop: {
+          toolName: TOOL_NAME,
+          maxTurns: toolLoopConfig.maxTurns,
+          maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
+          turns: aiResult?.toolLoop?.turns || null,
+          validatorCalls: aiResult?.toolLoop?.validatorCalls || null
+        },
         usage: {
           input: aiResult?.completion?.usage?.input ?? null,
           output: aiResult?.completion?.usage?.output ?? null
@@ -696,10 +839,7 @@ async function run(input) {
       }
     };
 
-    // Create recommendation subdirectory under phase3-report
     const recommendationDir = outputManager.createReportDirectory(outputDir, 'recommendation');
-
-    // Save recommendation JSON
     const recommendationPath = path.join(recommendationDir, 'recommendation.json');
     fs.writeFileSync(recommendationPath, JSON.stringify(recommendation, null, 2), 'utf8');
     events.artifactWrite({ absolutePath: recommendationPath, role: 'artifact', phase: PHASE_KEY, script: SCRIPT_ID });
@@ -737,7 +877,6 @@ async function run(input) {
     });
 
     if (isConfigError) {
-      // Preserve the clear configuration error message (do not wrap as a retry failure).
       throw error;
     }
 
@@ -767,14 +906,13 @@ async function run(input) {
 module.exports = {
   run,
   _private: {
-    extractBalancedJsonObject,
-    normalizeJsonCandidate,
-    tryExtractRecommendationJson,
-    parseRecommendationResponse
+    parseRecommendationResponse,
+    executeRecommendationToolLoop,
+    buildToolLoopPrompt,
+    getToolLoopConfig
   }
 };
 
-// Allow standalone execution for testing
 if (require.main === module) {
   const outputDir = process.argv[2] || 'output/test-recommendation';
 
