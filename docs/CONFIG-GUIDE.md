@@ -107,13 +107,28 @@ ai:
           model: google/gemini-2.5-flash
           params:
             temperature: 0.2
+            max_tokens: 900
+            thinking:
+              level: low
 ```
 
 Supported target keys:
 
 - `adapter.name` (string) — provider adapter name (e.g. `openrouter`, `openai`, `anthropic`, `gemini`)
 - `adapter.model` (string) — model id for that adapter
-- `adapter.params` (object, optional) — forwarded into provider options (engine does not validate its schema)
+- `adapter.params` (object, optional) — provider options plus normalized repo-level controls
+  - `max_tokens` (number) — normalized output token budget
+  - `thinking.level` (`off | low | medium | high`) — normalized reasoning intensity
+  - other keys are still forwarded as provider options for adapter-specific passthrough
+
+Normalized adapter param behavior:
+
+- `adapter.params.max_tokens` is normalized to provider option `maxTokens`
+- `adapter.params.thinking.level` is normalized before provider mapping
+- for `openrouter`, `thinking.level` currently maps to `reasoning` options:
+  - `off` → `{ reasoning: { effort: none, enabled: false } }`
+  - `low` / `medium` / `high` → `{ reasoning: { effort: <level>, enabled: true } }`
+- unsupported normalized controls currently degrade as no-ops unless the underlying adapter implements a mapping
 
 Optional per-domain retry settings:
 
@@ -257,6 +272,8 @@ debug:
 ## Phase 3-only iteration (fast report debugging)
 
 When iterating on **Phase 3** report scripts (metrics/recommendation/emotional-analysis/summary/final-report), you can skip Phase 1 + 2 entirely and reuse an existing run folder.
+
+Only `server/scripts/report/recommendation.cjs` is a current Phase 3 AI lane. The other Phase 3 scripts are computed/aggregation/report-rendering steps and stay outside the validator-tool AI-lane contract.
 
 Use:
 

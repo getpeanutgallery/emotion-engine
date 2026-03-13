@@ -172,7 +172,7 @@ test('Recommendation Script', async (t) => {
     is(capture.toolLoop.history[1].kind, 'tool_result_auto_validation');
   });
 
-  await t.test('forwards adapter params into provider.complete options', async () => {
+  await t.test('forwards normalized adapter params into provider.complete options', async () => {
     let callCount = 0;
     completeImplementation = async () => {
       callCount += 1;
@@ -193,7 +193,17 @@ test('Recommendation Script', async (t) => {
       artifacts: makeArtifacts(),
       config: makeConfig({
         targets: [
-          { adapter: { name: 'openrouter', model: 'test-rec-model', params: { temperature: 0.9, maxTokens: 222 } } }
+          {
+            adapter: {
+              name: 'openrouter',
+              model: 'test-rec-model',
+              params: {
+                temperature: 0.9,
+                max_tokens: 222,
+                thinking: { level: 'low' }
+              }
+            }
+          }
         ]
       })
     });
@@ -203,6 +213,8 @@ test('Recommendation Script', async (t) => {
     property(call, 'options');
     is(call.options.temperature, 0.9);
     is(call.options.maxTokens, 222);
+    assert.deepStrictEqual(call.options.reasoning, { effort: 'low', enabled: true });
+    assert.ok(!Object.prototype.hasOwnProperty.call(call.options, 'thinking'));
   });
 
   await t.test('supports the canonical minimal tool call envelope followed by final JSON', async () => {
@@ -414,11 +426,61 @@ test('Recommendation Script', async (t) => {
     const { capture } = readLatestRecommendationRawCapture(rawRecDir);
     property(capture, 'rawResponse');
     is(capture.rawResponse.content, 'I cannot comply with JSON only. Recommendation: tighten pacing.');
+    property(capture, 'providerRequest');
+    is(capture.providerRequest, null);
+    property(capture, 'providerResponse');
+    is(capture.providerResponse, null);
     property(capture, 'parseMeta');
     is(capture.parseMeta.raw, 'I cannot comply with JSON only. Recommendation: tighten pacing.');
     is(capture.parseMeta.stage, 'parse');
     property(capture, 'validation');
     assert.match(capture.validation.summary, /Response was not valid JSON/);
+  });
+
+  await t.test('persists status/request-id/classification and structured error body from debug fallback when response is absent', async () => {
+    completeImplementation = async () => {
+      const err = new Error('OpenRouter: upstream failure');
+      err.debug = {
+        provider: 'openrouter',
+        response: {
+          status: 503,
+          headers: {
+            'x-request-id': 'req_debug_capture'
+          },
+          body: JSON.stringify({
+            error: {
+              code: 503,
+              message: 'service unavailable',
+              metadata: { provider_name: 'openrouter' }
+            }
+          })
+        }
+      };
+      err.aiTargets = { classification: 'retryable' };
+      throw err;
+    };
+
+    await rejects(recommendationScript.run({
+      outputDir: testOutputDir,
+      artifacts: makeArtifacts(),
+      config: makeConfig({
+        debug: { captureRaw: true },
+        retry: { maxAttempts: 1, backoffMs: 0 }
+      })
+    }), /failed after 1 attempts: OpenRouter: upstream failure/);
+
+    const rawRecDir = path.join(testOutputDir, 'phase3-report', 'raw', 'ai', 'recommendation');
+    const { capture } = readLatestRecommendationRawCapture(rawRecDir);
+    is(capture.errorStatus, 503);
+    is(capture.errorRequestId, 'req_debug_capture');
+    is(capture.errorClassification, 'retryable');
+    assert.deepStrictEqual(capture.errorResponse, {
+      error: {
+        code: 503,
+        message: 'service unavailable',
+        metadata: { provider_name: 'openrouter' }
+      }
+    });
   });
 
   await t.test('repeated malformed tool-call envelopes fail in bounded turns with diagnostic raw capture', async () => {

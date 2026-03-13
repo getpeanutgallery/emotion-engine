@@ -12,7 +12,8 @@
     "test": "node --test test/**/*.test.js",
     "test:providers:check": "node -e \"require('./test/helpers/digital-twin-preflight.cjs').preflightDigitalTwin()\"",
     "test:validate-json": "node test-validate-json.cjs",
-    "validate-configs": "node validate-configs.cjs"
+    "validate-configs": "node validate-configs.cjs",
+    "analyze:recent-errors": "node scripts/analyze-recent-run-errors.cjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1002.0",

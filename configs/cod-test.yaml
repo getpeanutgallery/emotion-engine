@@ -75,79 +75,171 @@ ai:
       - adapter:
           name: openrouter
           model: google/gemini-3.1-flash-lite-preview
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: openai/gpt-audio
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: openai/gpt-audio-mini
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: mistralai/voxtral-small-24b-2507
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
   music:
     targets:
       - adapter:
           name: openrouter
           model: google/gemini-3.1-flash-lite-preview
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: openai/gpt-audio
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: openai/gpt-audio-mini
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: mistralai/voxtral-small-24b-2507
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
   dialogue_stitch:
     targets:
       - adapter:
           name: openrouter
           model: openai/gpt-5.4
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: qwen/qwen3.5-397b-a17b
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: moonshotai/kimi-k2.5
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: z-ai/glm-5
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: minimax/minimax-m2.5
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
   video:
     targets:
       - adapter:
           name: openrouter
           model: qwen/qwen3.5-397b-a17b
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: google/gemini-3.1-pro-preview
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: z-ai/glm-4.6v
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: bytedance-seed/seed-2.0-mini
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
   recommendation:
     targets:
       - adapter:
           name: openrouter
           model: openai/gpt-5.4
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: z-ai/glm-5
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: qwen/qwen3.5-397b-a17b
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: moonshotai/kimi-k2.5
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: minimax/minimax-m2.5
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
       - adapter:
           name: openrouter
           model: google/gemini-3.1-pro-preview
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
           
   # apiKey: injected via AI_API_KEY environment variable

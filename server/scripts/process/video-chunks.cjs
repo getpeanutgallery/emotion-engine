@@ -12,7 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 const { promisify } = require('util');
-const emotionLensesTool = require('tools/emotion-lenses-tool.cjs');
+const emotionLensesTool = require('../../lib/emotion-lenses-tool.cjs');
 const storage = require('../../lib/storage/storage-interface.js');
 const chunkStrategy = require('../../lib/chunk-strategy.cjs');
 const splitStrategy = require('../../lib/split-strategy.cjs');
@@ -23,7 +23,13 @@ const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets
 const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
 const { ensureToolVersionsCaptured } = require('../../lib/tool-versions.cjs');
 const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
-const { executeWithTargets, createRetryableError, getTargetsFromConfig } = require('../../lib/ai-targets.cjs');
+const {
+  executeWithTargets,
+  createRetryableError,
+  getTargetsFromConfig,
+  getPersistedErrorInfo,
+  getProviderForTarget
+} = require('../../lib/ai-targets.cjs');
 const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 
@@ -70,43 +76,13 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function getSchemaFailureReason(state, lenses = []) {
-  if (!state || typeof state !== 'object') {
-    return 'schema_error: state must be an object';
-  }
+function getToolLoopConfig(config = {}) {
+  const toolLoop = config?.ai?.video?.toolLoop || {};
 
-  if (typeof state.summary !== 'string' || state.summary.trim().length === 0) {
-    return 'schema_error: summary must be a non-empty string';
-  }
-
-  if (typeof state.dominant_emotion !== 'string' || state.dominant_emotion.trim().length === 0) {
-    return 'schema_error: dominant_emotion must be a non-empty string';
-  }
-
-  if (typeof state.confidence !== 'number' || Number.isNaN(state.confidence)) {
-    return 'schema_error: confidence must be a number';
-  }
-
-  if (!state.emotions || typeof state.emotions !== 'object' || Array.isArray(state.emotions)) {
-    return 'schema_error: emotions must be an object';
-  }
-
-  for (const lens of lenses) {
-    const emotion = state.emotions[lens];
-    if (!emotion || typeof emotion !== 'object') {
-      return `schema_error: missing emotion entry for lens "${lens}"`;
-    }
-
-    if (typeof emotion.score !== 'number' || Number.isNaN(emotion.score)) {
-      return `schema_error: emotion score for lens "${lens}" must be a number`;
-    }
-
-    if (typeof emotion.reasoning !== 'string') {
-      return `schema_error: emotion reasoning for lens "${lens}" must be a string`;
-    }
-  }
-
-  return null;
+  return {
+    maxTurns: Number.isInteger(toolLoop.maxTurns) && toolLoop.maxTurns > 1 ? toolLoop.maxTurns : 4,
+    maxValidatorCalls: Number.isInteger(toolLoop.maxValidatorCalls) && toolLoop.maxValidatorCalls > 0 ? toolLoop.maxValidatorCalls : 3
+  };
 }
 
 function stringifyRawValue(value) {
@@ -263,6 +239,9 @@ async function run(input) {
         kind: entry?.kind || null,
         chunkIndex: Number.isInteger(entry?.chunkIndex) ? entry.chunkIndex : null,
         splitIndex: Number.isInteger(entry?.splitIndex) ? entry.splitIndex : null,
+        errorStatus: entry?.errorStatus || null,
+        errorRequestId: entry?.errorRequestId || null,
+        errorClassification: entry?.errorClassification || null,
       }
     });
   };
@@ -423,8 +402,10 @@ async function run(input) {
   // Default to keeping processed/intermediate files unless explicitly disabled
   const keepProcessedIntermediates = shouldKeepProcessedIntermediates(config);
   const retryConfig = getRetryConfig(config);
+  const toolLoopConfig = getToolLoopConfig(config);
 
   console.log(`   🔁 Retry config: attempts=${retryConfig.maxAttempts}, backoffMs=${retryConfig.backoffMs}, retryOnParseError=${retryConfig.retryOnParseError}, retryOnProviderError=${retryConfig.retryOnProviderError}`);
+  console.log(`   🧰 Tool loop config: turns=${toolLoopConfig.maxTurns}, validatorCalls=${toolLoopConfig.maxValidatorCalls}`);
 
   // Track extracted chunk files for cleanup
   const extractedChunks = [];
@@ -586,6 +567,11 @@ async function run(input) {
                 config: ctx.configForTarget
               };
 
+              const provider = getProviderForTarget({
+                configForTarget: ctx.configForTarget,
+                target: ctx.target
+              });
+
               const providerCallStart = Date.now();
               events.emit({
                 kind: 'provider.call.start',
@@ -602,9 +588,30 @@ async function run(input) {
                 model: adapter?.model || null,
               });
 
-              let toolResult;
               try {
-                toolResult = await emotionLensesTool.analyze(analyzeInput);
+                const prompt = emotionLensesTool.buildBasePromptFromInput(analyzeInput);
+
+                const promptRef = captureRaw
+                  ? storePromptPayload({ outputDir, payload: prompt })
+                  : null;
+
+                if (promptRef?.absolutePath) {
+                  events.artifactWrite({ absolutePath: promptRef.absolutePath, role: 'raw.prompt', phase: 'phase2-process', script: 'video-chunks' });
+                }
+
+                const toolLoopResult = await emotionLensesTool.executeEmotionAnalysisToolLoop({
+                  provider,
+                  adapter,
+                  toolVariables: toolVariablesForAttempt,
+                  basePrompt: prompt,
+                  toolLoopConfig,
+                  promptRef,
+                  events,
+                  ctx,
+                  apiKey: process.env.AI_API_KEY,
+                  config: ctx.configForTarget
+                });
+
                 events.emit({
                   kind: 'provider.call.end',
                   phase: 'phase2-process',
@@ -620,6 +627,41 @@ async function run(input) {
                   provider: adapter?.name || null,
                   model: adapter?.model || null,
                 });
+
+                const candidateChunkResult = {
+                  chunkIndex,
+                  splitIndex: splitIndex || 0,
+                  startTime,
+                  endTime,
+                  status: 'success',
+                  summary: toolLoopResult?.parsed?.summary,
+                  emotions: toolLoopResult?.parsed?.emotions,
+                  dominant_emotion: toolLoopResult?.parsed?.dominant_emotion,
+                  confidence: toolLoopResult?.parsed?.confidence,
+                  tokens: (toolLoopResult?.completion?.usage?.input || 0) + (toolLoopResult?.completion?.usage?.output || 0),
+                  persona: {
+                    soulPath: toolVariables.soulPath,
+                    goalPath: toolVariables.goalPath,
+                    lenses: toolVariables.variables?.lenses || []
+                  }
+                };
+
+                const parseFailure = getChunkFailureReason(candidateChunkResult);
+                if (parseFailure) {
+                  throw createRetryableError(`invalid_output: ${parseFailure}`, {
+                    group: 'validation',
+                    validationSummary: parseFailure,
+                    toolLoop: toolLoopResult?.toolLoop || null,
+                    completion: toolLoopResult?.completion || null
+                  });
+                }
+
+                return {
+                  completion: toolLoopResult.completion,
+                  toolLoop: toolLoopResult.toolLoop,
+                  promptRef,
+                  chunkResult: candidateChunkResult
+                };
               } catch (error) {
                 events.emit({
                   kind: 'provider.call.end',
@@ -639,42 +681,6 @@ async function run(input) {
                 });
                 throw error;
               }
-              const lenses = analyzeInput?.toolVariables?.variables?.lenses || [];
-              const schemaFailure = getSchemaFailureReason(toolResult?.state, lenses);
-
-              const candidateChunkResult = {
-                chunkIndex,
-                splitIndex: splitIndex || 0,
-                startTime,
-                endTime,
-                status: 'success',
-                summary: toolResult?.state?.summary,
-                emotions: toolResult?.state?.emotions,
-                dominant_emotion: toolResult?.state?.dominant_emotion,
-                confidence: toolResult?.state?.confidence,
-                tokens: (toolResult?.usage?.input || 0) + (toolResult?.usage?.output || 0),
-                persona: {
-                  soulPath: toolVariables.soulPath,
-                  goalPath: toolVariables.goalPath,
-                  lenses: toolVariables.variables?.lenses || []
-                }
-              };
-
-              const parseFailure = getChunkFailureReason(candidateChunkResult);
-              const invalidReason = schemaFailure || parseFailure;
-
-              if (invalidReason) {
-                throw createRetryableError(`invalid_output: ${invalidReason}`, {
-                  group: 'parse',
-                  toolResult,
-                  invalidReason
-                });
-              }
-
-              return {
-                toolResult,
-                chunkResult: candidateChunkResult
-              };
             },
             onAttempt: ({
               ok,
@@ -690,6 +696,8 @@ async function run(input) {
             }) => {
               const attemptKey = String(attempt || '');
               const startedAt = attemptKey && attemptStartMs.has(attemptKey) ? attemptStartMs.get(attemptKey) : null;
+
+              const persistedError = ok ? null : getPersistedErrorInfo(error);
 
               events.emit({
                 kind: 'attempt.end',
@@ -707,29 +715,28 @@ async function run(input) {
                 provider: target?.adapter?.name || null,
                 model: target?.adapter?.model || null,
                 error: ok ? null : (error?.message || String(error)),
+                errorStatus: persistedError?.status || null,
+                errorRequestId: persistedError?.requestId || null,
+                errorClassification: persistedError?.classification || null,
               });
 
               if (!captureRaw) return;
 
               const adapter = target?.adapter || null;
-
-              const toolResult = ok
-                ? result?.toolResult
-                : error?.aiTargets?.toolResult;
+              const completion = ok
+                ? result?.completion
+                : error?.aiTargets?.completion;
+              const toolLoop = ok
+                ? result?.toolLoop
+                : error?.aiTargets?.toolLoop;
+              const promptRef = ok
+                ? result?.promptRef
+                : error?.aiTargets?.promptRef;
 
               const invalidReason = error?.aiTargets?.invalidReason;
               const errorMessage = ok
                 ? null
-                : (invalidReason || error?.message || String(error));
-
-              const promptPayload = toolResult?.prompt || null;
-              const promptRef = promptPayload
-                ? storePromptPayload({ outputDir, payload: promptPayload })
-                : null;
-
-              if (promptRef?.absolutePath) {
-                events.artifactWrite({ absolutePath: promptRef.absolutePath, role: 'raw.prompt', phase: 'phase2-process', script: 'video-chunks' });
-              }
+                : (invalidReason || error?.aiTargets?.validationSummary || error?.message || String(error));
 
               writeChunkRaw(chunkIndex, splitIndex || 0, {
                 chunkIndex,
@@ -743,15 +750,21 @@ async function run(input) {
                 adapter,
                 failover: failover || null,
                 promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
-                rawResponse: toolResult ? extractRawResponse(toolResult) : null,
-                parsed: toolResult?.state || null,
+                rawResponse: typeof completion?.content === 'string'
+                  ? completion.content
+                  : (completion ? JSON.stringify(sanitizeRawCaptureValue(completion)) : null),
+                providerCompletion: completion ? sanitizeRawCaptureValue(completion) : null,
+                parsed: ok ? result?.chunkResult : null,
+                toolLoop: toolLoop ? sanitizeRawCaptureValue(toolLoop) : null,
                 error: errorMessage,
                 errorName: !ok ? (error?.name || null) : null,
                 errorCode: !ok ? (error?.code || null) : null,
-                errorStatus: !ok ? (error?.response?.status || null) : null,
+                errorStatus: !ok ? (persistedError?.status || null) : null,
+                errorRequestId: !ok ? (persistedError?.requestId || null) : null,
+                errorClassification: !ok ? (persistedError?.classification || null) : null,
                 errorStack: !ok && typeof error?.stack === 'string' ? error.stack : null,
-                errorDebug: !ok ? (sanitizeRawCaptureValue(error?.debug) || null) : null,
-                errorResponse: !ok ? (sanitizeRawCaptureValue(error?.response?.data) || null) : null,
+                errorDebug: !ok ? (sanitizeRawCaptureValue(error?.debug || error?.aiTargets) || null) : null,
+                errorResponse: !ok ? (sanitizeRawCaptureValue(persistedError?.response) || null) : null,
                 provider: adapter?.name || (configForTarget?.ai?.provider || 'openrouter'),
                 model: adapter?.model || (configForTarget?.ai?.video?.model || null),
                 requestMeta: buildRequestMeta({
@@ -838,11 +851,15 @@ async function run(input) {
   } catch (error) {
     phaseOutcome = 'failed';
     fatalPhaseError = error;
+    const persistedError = getPersistedErrorInfo(error);
     recordPhaseError({
       kind: 'phase_failure',
       name: error?.name || null,
       message: error?.message || String(error),
-      stack: typeof error?.stack === 'string' ? error.stack : null
+      stack: typeof error?.stack === 'string' ? error.stack : null,
+      errorStatus: persistedError.status,
+      errorRequestId: persistedError.requestId,
+      errorClassification: persistedError.classification
     });
 
     console.error('   ❌ Error processing video chunks:', error.message);

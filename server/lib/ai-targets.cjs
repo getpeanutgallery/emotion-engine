@@ -18,6 +18,11 @@
 
 const aiProviderInterface = require('ai-providers/ai-provider-interface.js');
 
+const NORMALIZED_THINKING_LEVELS = new Set(['off', 'low', 'medium', 'high']);
+const DEFAULT_DEVELOPMENT_MAX_TOKENS = 25000;
+const DEFAULT_DEVELOPMENT_THINKING_LEVEL = 'low';
+const REQUEST_ID_HEADER_PATTERN = /(request[-_]?id|trace[-_]?id|correlation[-_]?id|x-amzn[-_]?requestid|cf-ray|openrouter[-_]?request[-_]?id)/i;
+
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -25,8 +30,100 @@ function sleep(ms) {
 function getErrorStatus(error) {
   const status = error?.response?.status
     ?? error?.debug?.response?.status
+    ?? error?.debug?.providerError?.httpStatus
     ?? error?.status;
   return Number.isInteger(status) ? status : null;
+}
+
+function normalizeErrorHeaders(headers) {
+  if (!headers || typeof headers !== 'object') return {};
+
+  const out = {};
+  for (const [key, value] of Object.entries(headers)) {
+    if (value === undefined || value === null) continue;
+    out[String(key).toLowerCase()] = Array.isArray(value)
+      ? value.map((item) => String(item)).join(',')
+      : String(value);
+  }
+  return out;
+}
+
+function getErrorRequestId(error) {
+  const headers = normalizeErrorHeaders(
+    error?.response?.headers
+    ?? error?.debug?.response?.headers
+    ?? null
+  );
+
+  for (const [key, value] of Object.entries(headers)) {
+    if (REQUEST_ID_HEADER_PATTERN.test(key) && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return null;
+}
+
+function parseDebugResponseBody(body) {
+  if (body === null || body === undefined) return null;
+  if (typeof body === 'object') return body;
+  if (typeof body !== 'string') return null;
+
+  const trimmed = body.trim();
+  if (!trimmed) return null;
+
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    return null;
+  }
+}
+
+function getStructuredDebugProviderError(error) {
+  const providerError = error?.debug?.providerError;
+  if (!providerError || typeof providerError !== 'object') return null;
+
+  const code = providerError.code ?? null;
+  const message = providerError.message ?? error?.message ?? null;
+  const metadata = providerError.metadata ?? null;
+
+  return {
+    error: {
+      ...(code !== null ? { code } : {}),
+      ...(message !== null ? { message } : {}),
+      ...(metadata !== null ? { metadata } : {})
+    }
+  };
+}
+
+function getErrorResponseBody(error) {
+  if (error?.response?.data !== undefined) {
+    return error.response.data;
+  }
+
+  const parsedDebugBody = parseDebugResponseBody(error?.debug?.response?.body);
+  if (parsedDebugBody !== null) {
+    return parsedDebugBody;
+  }
+
+  return getStructuredDebugProviderError(error);
+}
+
+function getErrorClassification(error) {
+  if (typeof error?.aiTargets?.classification === 'string' && error.aiTargets.classification.trim()) {
+    return error.aiTargets.classification.trim();
+  }
+
+  return null;
+}
+
+function getPersistedErrorInfo(error) {
+  return {
+    status: getErrorStatus(error),
+    requestId: getErrorRequestId(error),
+    classification: getErrorClassification(error),
+    response: getErrorResponseBody(error)
+  };
 }
 
 function isAuthError(error) {
@@ -156,6 +253,60 @@ function applyTargetToConfig(config, domain, target) {
         ...(adapterParams !== undefined ? { params: adapterParams } : {})
       }
     }
+  };
+}
+
+function normalizeThinkingLevel(level) {
+  if (typeof level !== 'string') return null;
+  const normalized = level.trim().toLowerCase();
+  return NORMALIZED_THINKING_LEVELS.has(normalized) ? normalized : null;
+}
+
+function normalizeAdapterParamsForProvider(adapter = {}) {
+  const rawParams = adapter?.params;
+  const params = (rawParams && typeof rawParams === 'object' && !Array.isArray(rawParams))
+    ? { ...rawParams }
+    : {};
+
+  if (params.max_tokens === undefined && params.maxTokens === undefined) {
+    params.maxTokens = DEFAULT_DEVELOPMENT_MAX_TOKENS;
+  }
+
+  if (params.thinking === undefined && params.reasoning === undefined) {
+    params.thinking = { level: DEFAULT_DEVELOPMENT_THINKING_LEVEL };
+  }
+
+  if (params.max_tokens !== undefined && params.maxTokens === undefined) {
+    params.maxTokens = params.max_tokens;
+  }
+  delete params.max_tokens;
+
+  const thinking = params.thinking;
+  delete params.thinking;
+
+  const normalizedThinkingLevel = normalizeThinkingLevel(thinking?.level);
+  if (normalizedThinkingLevel) {
+    const adapterName = typeof adapter?.name === 'string' ? adapter.name.trim().toLowerCase() : '';
+    if (adapterName === 'openrouter') {
+      const existingReasoning = params.reasoning && typeof params.reasoning === 'object' && !Array.isArray(params.reasoning)
+        ? params.reasoning
+        : {};
+
+      params.reasoning = {
+        ...existingReasoning,
+        effort: normalizedThinkingLevel === 'off' ? 'none' : normalizedThinkingLevel,
+        enabled: normalizedThinkingLevel !== 'off'
+      };
+    }
+  }
+
+  return params;
+}
+
+function buildProviderOptions({ adapter, defaults = {} } = {}) {
+  return {
+    ...(defaults && typeof defaults === 'object' ? defaults : {}),
+    ...normalizeAdapterParamsForProvider(adapter)
   };
 }
 
@@ -336,8 +487,17 @@ module.exports = {
   normalizeAdapterTarget,
   getProviderForTarget,
   createRetryableError,
+  normalizeThinkingLevel,
+  normalizeAdapterParamsForProvider,
+  buildProviderOptions,
+  DEFAULT_DEVELOPMENT_MAX_TOKENS,
+  DEFAULT_DEVELOPMENT_THINKING_LEVEL,
   isAuthError,
   isCapabilityMismatchError,
   isRetryableRuntimeError,
-  getErrorStatus
+  getErrorStatus,
+  getErrorRequestId,
+  getErrorResponseBody,
+  getErrorClassification,
+  getPersistedErrorInfo
 };

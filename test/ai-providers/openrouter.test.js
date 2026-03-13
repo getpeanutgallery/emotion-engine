@@ -79,6 +79,37 @@ test('accepts baseUrl option', () => {
   openrouter.validate({ apiKey: 'sk-or-valid-key-123456789012345678', baseUrl: 'https://api.example.com' });
 });
 
+test('transformResponse exposes provider request/response payloads', () => {
+  const request = {
+    method: 'POST',
+    url: 'https://openrouter.ai/api/v1/chat/completions',
+    headers: { Authorization: 'Bearer secret', 'Content-Type': 'application/json' },
+    body: {
+      model: 'google/gemini-3.1-pro-preview',
+      messages: [{ role: 'user', content: [{ type: 'text', text: 'hello' }] }],
+      temperature: 0.2,
+      max_tokens: 900,
+      reasoning: { effort: 'low', enabled: true },
+    },
+  };
+  const axiosResponse = {
+    status: 200,
+    headers: { 'x-request-id': 'req_123' },
+    data: {
+      choices: [{ message: { content: 'hello back' } }],
+      usage: { prompt_tokens: 10, completion_tokens: 20, total_tokens: 30 },
+    },
+  };
+
+  const response = openrouter._private.transformResponse(axiosResponse, request);
+  if (response.providerRequest.body.model !== 'google/gemini-3.1-pro-preview') {
+    throw new Error('providerRequest.body.model should be preserved');
+  }
+  if (response.providerResponse.body.usage.total_tokens !== 30) {
+    throw new Error('providerResponse.body should preserve raw usage payload');
+  }
+});
+
 test('rejects invalid baseUrl', () => {
   try {
     openrouter.validate({ apiKey: 'sk-or-valid-key-123456789012345678', baseUrl: 123 });

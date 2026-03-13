@@ -28,6 +28,10 @@ ai:
       - adapter:
           name: openrouter
           model: qwen/qwen-3.5-397b-a17b
+          params:
+            max_tokens: 900
+            thinking:
+              level: low
 
 gather_context:
   - server/scripts/get-context/example-gather.cjs

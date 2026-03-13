@@ -205,6 +205,22 @@ test('Config Loader - validateConfig', async (t) => {
     assert.strictEqual(result.valid, false);
     assert(result.errors.some(e => e.includes('outputDir')));
   });
+
+  await t.test('should allow normalized adapter params objects', () => {
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai: makeAiConfig({
+        videoParams: {
+          max_tokens: 900,
+          thinking: { level: 'low' }
+        }
+      }),
+      process: ['script1.cjs']
+    };
+
+    const result = validateConfig(config);
+    assert.strictEqual(result.valid, true);
+  });
   
   await t.test('should validate parallel execution format', () => {
     const config = {

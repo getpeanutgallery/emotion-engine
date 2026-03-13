@@ -17,7 +17,13 @@ const fs = require('fs');
 const path = require('path');
 const { exec, execSync } = require('child_process');
 const { promisify } = require('util');
-const { executeWithTargets, getProviderForTarget } = require('../../lib/ai-targets.cjs');
+const {
+  executeWithTargets,
+  getProviderForTarget,
+  buildProviderOptions,
+  createRetryableError,
+  getPersistedErrorInfo
+} = require('../../lib/ai-targets.cjs');
 const storage = require('../../lib/storage/storage-interface.js');
 const outputManager = require('../../lib/output-manager.cjs');
 const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
@@ -28,6 +34,18 @@ const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 const { preflightAudio } = require('../../lib/audio-preflight.cjs');
 const { extractAudioChunk } = require('../../lib/audio-chunk-extractor.cjs');
+const {
+  parseAndValidateJsonObject,
+  validateDialogueTranscriptionObject,
+  validateDialogueStitchObject
+} = require('../../lib/structured-output.cjs');
+const {
+  buildDialogueTranscriptionValidatorToolContract,
+  executeDialogueTranscriptionValidatorTool,
+  buildDialogueStitchValidatorToolContract,
+  executeDialogueStitchValidatorTool
+} = require('../../lib/phase1-validator-tools.cjs');
+const { executeLocalValidatorToolLoop } = require('../../lib/local-validator-tool-loop.cjs');
 
 const execAsync = promisify(exec);
 
@@ -44,6 +62,15 @@ function getRetryConfig(config = {}, domain = 'dialogue') {
   return {
     maxAttempts: Number.isInteger(retry.maxAttempts) && retry.maxAttempts > 0 ? retry.maxAttempts : 1,
     backoffMs: Number.isInteger(retry.backoffMs) && retry.backoffMs >= 0 ? retry.backoffMs : 0
+  };
+}
+
+function getToolLoopConfig(config = {}, domain = 'dialogue') {
+  const toolLoop = config?.ai?.[domain]?.toolLoop || {};
+
+  return {
+    maxTurns: Number.isInteger(toolLoop.maxTurns) && toolLoop.maxTurns > 1 ? toolLoop.maxTurns : 4,
+    maxValidatorCalls: Number.isInteger(toolLoop.maxValidatorCalls) && toolLoop.maxValidatorCalls > 0 ? toolLoop.maxValidatorCalls : 3
   };
 }
 
@@ -206,6 +233,8 @@ async function run(input) {
         errorName: entry?.errorName || null,
         errorCode: entry?.errorCode || null,
         errorStatus: entry?.errorStatus || null,
+        errorRequestId: entry?.errorRequestId || null,
+        errorClassification: entry?.errorClassification || null,
       }
     });
   };
@@ -284,6 +313,7 @@ async function run(input) {
     }
 
     const retryConfig = getRetryConfig(config, 'dialogue');
+    const toolLoopConfig = getToolLoopConfig(config, 'dialogue');
 
     const writeDialogueChunkRaw = (chunkIndex, attempt, payload) => {
       if (!captureRaw) return;
@@ -388,26 +418,23 @@ async function run(input) {
           });
 
           try {
-            const completion = await provider.complete({
-              prompt,
-              model: adapter?.model,
+            const toolLoopResult = await executeDialogueTranscriptionToolLoop({
+              provider,
+              adapter,
+              basePrompt: prompt,
+              toolLoopConfig,
+              promptRef,
+              events,
+              ctx,
               apiKey,
-              attachments: [
-                {
-                  type: 'audio',
-                  data: audioBase64,
-                  mimeType: audioMimeType
-                }
-              ],
-              options: {
-                temperature: 0.3,
-                maxTokens: 4096,
-                ...(
-                  adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
-                    ? adapter.params
-                    : {}
-                )
-              }
+              audioBase64,
+              audioMimeType,
+              requireHandoff: false,
+              finalArtifactRules: [
+                'Identify speakers as Speaker 1, Speaker 2, etc.',
+                'Provide accurate timestamps in seconds.',
+                'If no speech is detected, return an empty dialogue_segments array.'
+              ]
             });
 
             events.emit({
@@ -424,13 +451,18 @@ async function run(input) {
               model: adapter?.model || null,
             });
 
-            const dialogueData = parseTranscriptionResponse(completion.content, audioPath, {
-              captureRaw,
-              ffmpegRawDir,
-              ffprobeLogName: 'ffprobe-audio-duration.json'
-            });
+            const dialogueData = {
+              ...toolLoopResult.parsed,
+              totalDuration: typeof toolLoopResult.parsed.totalDuration === 'number'
+                ? toolLoopResult.parsed.totalDuration
+                : getAudioDuration(audioPath, {
+                    captureRaw,
+                    ffmpegRawDir,
+                    ffprobeLogName: 'ffprobe-audio-duration.json'
+                  })
+            };
 
-            return { completion, dialogueData };
+            return { completion: toolLoopResult.completion, dialogueData, toolLoop: toolLoopResult.toolLoop };
           } catch (error) {
             events.emit({
               kind: 'provider.call.end',
@@ -463,6 +495,8 @@ async function run(input) {
           const attemptKey = String(attempt || '');
           const startedAt = attemptKey && attemptStartMs.has(attemptKey) ? attemptStartMs.get(attemptKey) : null;
 
+          const persistedError = ok ? null : getPersistedErrorInfo(error);
+
           events.emit({
             kind: 'attempt.end',
             phase: PHASE_KEY,
@@ -477,6 +511,9 @@ async function run(input) {
             provider: target?.adapter?.name || null,
             model: target?.adapter?.model || null,
             error: ok ? null : (error?.message || String(error)),
+            errorStatus: persistedError?.status || null,
+            errorRequestId: persistedError?.requestId || null,
+            errorClassification: persistedError?.classification || null,
           });
 
           if (!captureRaw) return;
@@ -493,13 +530,16 @@ async function run(input) {
             promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
             rawResponse: ok ? sanitizeRawCaptureValue(result?.completion) : null,
             parsed: ok ? result?.dialogueData : null,
+            toolLoop: ok ? sanitizeRawCaptureValue(result?.toolLoop) : (sanitizeRawCaptureValue(error?.debug?.toolLoop) || null),
             error: ok ? null : (error?.message || String(error)),
             errorName: ok ? null : (error?.name || null),
             errorCode: ok ? null : (error?.code || null),
-            errorStatus: ok ? null : (error?.response?.status || null),
+            errorStatus: ok ? null : (persistedError?.status || null),
+            errorRequestId: ok ? null : (persistedError?.requestId || null),
+            errorClassification: ok ? null : (persistedError?.classification || null),
             errorStack: ok ? null : (typeof error?.stack === 'string' ? error.stack : null),
             errorDebug: ok ? null : (sanitizeRawCaptureValue(error?.debug) || null),
-            errorResponse: ok ? null : (sanitizeRawCaptureValue(error?.response?.data) || null),
+            errorResponse: ok ? null : (sanitizeRawCaptureValue(persistedError?.response) || null),
             provider: adapter?.name || null,
             model: adapter?.model || null,
             requestMeta: {
@@ -645,26 +685,23 @@ async function run(input) {
           });
 
           try {
-            const completion = await provider.complete({
-              prompt: chunkPrompt,
-              model: adapter?.model,
+            const toolLoopResult = await executeDialogueTranscriptionToolLoop({
+              provider,
+              adapter,
+              basePrompt: chunkPrompt,
+              toolLoopConfig,
+              promptRef: chunkPromptRef,
+              events,
+              ctx,
               apiKey,
-              attachments: [
-                {
-                  type: 'audio',
-                  data: audioBase64,
-                  mimeType: audioMimeType
-                }
-              ],
-              options: {
-                temperature: 0.3,
-                maxTokens: 4096,
-                ...(
-                  adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
-                    ? adapter.params
-                    : {}
-                )
-              }
+              audioBase64,
+              audioMimeType,
+              requireHandoff: true,
+              finalArtifactRules: [
+                'Timestamps must be relative to this chunk and start at 0.',
+                'Keep speaker labels consistent with the prior handoff when possible.',
+                'handoffContext must stay brief and continuity-focused.'
+              ]
             });
 
             events.emit({
@@ -682,13 +719,18 @@ async function run(input) {
               model: adapter?.model || null,
             });
 
-            const dialogueData = parseTranscriptionResponse(completion.content, extraction.chunkPath, {
-              captureRaw,
-              ffmpegRawDir,
-              ffprobeLogName: `ffprobe-chunk-${chunkIndex}.json`
-            });
+            const dialogueData = {
+              ...toolLoopResult.parsed,
+              totalDuration: typeof toolLoopResult.parsed.totalDuration === 'number'
+                ? toolLoopResult.parsed.totalDuration
+                : getAudioDuration(extraction.chunkPath, {
+                    captureRaw,
+                    ffmpegRawDir,
+                    ffprobeLogName: `ffprobe-chunk-${chunkIndex}.json`
+                  })
+            };
 
-            return { completion, dialogueData };
+            return { completion: toolLoopResult.completion, dialogueData, toolLoop: toolLoopResult.toolLoop };
           } catch (error) {
             events.emit({
               kind: 'provider.call.end',
@@ -722,6 +764,8 @@ async function run(input) {
           const attemptKey = String(attempt || '');
           const startedAt = attemptKey && attemptStartMs.has(attemptKey) ? attemptStartMs.get(attemptKey) : null;
 
+          const persistedError = ok ? null : getPersistedErrorInfo(error);
+
           events.emit({
             kind: 'attempt.end',
             phase: PHASE_KEY,
@@ -737,6 +781,9 @@ async function run(input) {
             provider: target?.adapter?.name || null,
             model: target?.adapter?.model || null,
             error: ok ? null : (error?.message || String(error)),
+            errorStatus: persistedError?.status || null,
+            errorRequestId: persistedError?.requestId || null,
+            errorClassification: persistedError?.classification || null,
           });
 
           if (!captureRaw) return;
@@ -757,13 +804,16 @@ async function run(input) {
             promptRef: chunkPromptRef ? { sha256: chunkPromptRef.sha256, file: chunkPromptRef.file } : null,
             rawResponse: ok ? sanitizeRawCaptureValue(result?.completion) : null,
             parsed: ok ? result?.dialogueData : null,
+            toolLoop: ok ? sanitizeRawCaptureValue(result?.toolLoop) : (sanitizeRawCaptureValue(error?.debug?.toolLoop) || null),
             error: ok ? null : (error?.message || String(error)),
             errorName: ok ? null : (error?.name || null),
             errorCode: ok ? null : (error?.code || null),
-            errorStatus: ok ? null : (error?.response?.status || null),
+            errorStatus: ok ? null : (persistedError?.status || null),
+            errorRequestId: ok ? null : (persistedError?.requestId || null),
+            errorClassification: ok ? null : (persistedError?.classification || null),
             errorStack: ok ? null : (typeof error?.stack === 'string' ? error.stack : null),
             errorDebug: ok ? null : (sanitizeRawCaptureValue(error?.debug) || null),
-            errorResponse: ok ? null : (sanitizeRawCaptureValue(error?.response?.data) || null),
+            errorResponse: ok ? null : (sanitizeRawCaptureValue(persistedError?.response) || null),
             provider: adapter?.name || null,
             model: adapter?.model || null,
             requestMeta: {
@@ -855,6 +905,7 @@ async function run(input) {
     }
 
     const stitcherRetry = getRetryConfig(config, 'dialogue_stitch');
+    const stitcherToolLoopConfig = getToolLoopConfig(config, 'dialogue_stitch');
 
     const stitcherPrompt = buildDialogueStitcherPrompt(stitchInput);
     const stitcherPromptRef = captureRaw
@@ -932,19 +983,15 @@ async function run(input) {
         });
 
         try {
-          const completion = await provider.complete({
-            prompt: stitcherPrompt,
-            model: adapter?.model,
-            apiKey,
-            options: {
-              temperature: 0.2,
-              maxTokens: 4096,
-              ...(
-                adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
-                  ? adapter.params
-                  : {}
-              )
-            }
+          const toolLoopResult = await executeDialogueStitchToolLoop({
+            provider,
+            adapter,
+            basePrompt: stitcherPrompt,
+            toolLoopConfig: stitcherToolLoopConfig,
+            promptRef: stitcherPromptRef,
+            events,
+            ctx,
+            apiKey
           });
 
           events.emit({
@@ -961,8 +1008,7 @@ async function run(input) {
             model: adapter?.model || null,
           });
 
-          const parsed = parseJsonResponse(completion.content) || {};
-          return { completion, parsed };
+          return { completion: toolLoopResult.completion, parsed: toolLoopResult.parsed, toolLoop: toolLoopResult.toolLoop };
         } catch (error) {
           events.emit({
             kind: 'provider.call.end',
@@ -995,6 +1041,8 @@ async function run(input) {
         const attemptKey = String(attempt || '');
         const startedAt = attemptKey && stitchAttemptStartMs.has(attemptKey) ? stitchAttemptStartMs.get(attemptKey) : null;
 
+        const persistedError = ok ? null : getPersistedErrorInfo(error);
+
         events.emit({
           kind: 'attempt.end',
           phase: PHASE_KEY,
@@ -1009,6 +1057,9 @@ async function run(input) {
           provider: target?.adapter?.name || null,
           model: target?.adapter?.model || null,
           error: ok ? null : (error?.message || String(error)),
+          errorStatus: persistedError?.status || null,
+          errorRequestId: persistedError?.requestId || null,
+          errorClassification: persistedError?.classification || null,
         });
 
         if (!captureRaw) return;
@@ -1026,13 +1077,16 @@ async function run(input) {
           stitchInputRef: stitchInputPath ? path.relative(events.runOutputDir || outputDir, stitchInputPath).split(path.sep).join('/') : null,
           rawResponse: ok ? sanitizeRawCaptureValue(result?.completion) : null,
           parsed: ok ? result?.parsed : null,
+          toolLoop: ok ? sanitizeRawCaptureValue(result?.toolLoop) : (sanitizeRawCaptureValue(error?.debug?.toolLoop) || null),
           error: ok ? null : (error?.message || String(error)),
           errorName: ok ? null : (error?.name || null),
           errorCode: ok ? null : (error?.code || null),
-          errorStatus: ok ? null : (error?.response?.status || null),
+          errorStatus: ok ? null : (persistedError?.status || null),
+          errorRequestId: ok ? null : (persistedError?.requestId || null),
+          errorClassification: ok ? null : (persistedError?.classification || null),
           errorStack: ok ? null : (typeof error?.stack === 'string' ? error.stack : null),
           errorDebug: ok ? null : (sanitizeRawCaptureValue(error?.debug) || null),
-          errorResponse: ok ? null : (sanitizeRawCaptureValue(error?.response?.data) || null),
+          errorResponse: ok ? null : (sanitizeRawCaptureValue(persistedError?.response) || null),
           provider: adapter?.name || null,
           model: adapter?.model || null,
           requestMeta: {
@@ -1090,13 +1144,17 @@ async function run(input) {
     phaseOutcome = 'failed';
     fatalPhaseError = error;
 
+    const persistedError = getPersistedErrorInfo(error);
+
     recordPhaseError({
       level: 'error',
       kind: 'fatal',
       message: error?.message || String(error),
       errorName: error?.name || null,
       errorCode: error?.code || null,
-      errorStatus: error?.response?.status || null
+      errorStatus: persistedError.status,
+      errorRequestId: persistedError.requestId,
+      errorClassification: persistedError.classification
     });
 
     // AI attempts (including errors) are captured via executeWithTargets(onAttempt).
@@ -1228,19 +1286,133 @@ IMPORTANT:
 }
 
 function parseJsonResponse(responseContent) {
-  if (typeof responseContent !== 'string') return null;
+  const parsed = parseAndValidateJsonObject(responseContent, (value) => ({
+    ok: true,
+    value,
+    errors: [],
+    summary: null,
+    meta: { stage: 'validation' }
+  }));
 
-  try {
-    return JSON.parse(responseContent.trim());
-  } catch {
-    const jsonMatch = responseContent.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (!jsonMatch) return null;
-    try {
-      return JSON.parse(jsonMatch[1].trim());
-    } catch {
-      return null;
-    }
+  return parsed.ok ? parsed.value : null;
+}
+
+function parseDialogueStitchResponse(responseContent) {
+  const parsed = parseAndValidateJsonObject(responseContent, validateDialogueStitchObject);
+  if (!parsed.ok) {
+    throw createRetryableError(`invalid_output: ${parsed.summary || 'dialogue stitch output was invalid'}`, {
+      group: parsed.meta?.stage || 'parse',
+      raw: parsed.meta?.raw || responseContent || null,
+      extracted: parsed.meta?.extracted || null,
+      parseError: parsed.meta?.parseError || null,
+      validationErrors: parsed.errors,
+      validationSummary: parsed.summary
+    });
   }
+
+  return parsed.value;
+}
+
+async function executeDialogueTranscriptionToolLoop({
+  provider,
+  adapter,
+  basePrompt,
+  toolLoopConfig,
+  promptRef,
+  events,
+  ctx,
+  apiKey,
+  audioBase64,
+  audioMimeType,
+  requireHandoff = false,
+  finalArtifactRules = []
+}) {
+  const toolContract = buildDialogueTranscriptionValidatorToolContract({ requireHandoff });
+
+  return executeLocalValidatorToolLoop({
+    provider,
+    adapter,
+    basePrompt,
+    toolContract,
+    toolLoopConfig,
+    promptRef,
+    events,
+    ctx,
+    phaseKey: PHASE_KEY,
+    scriptId: SCRIPT_ID,
+    domain: 'dialogue',
+    artifactLabel: requireHandoff ? 'dialogue transcription chunk' : 'dialogue transcription',
+    finalArtifactDescription: requireHandoff
+      ? 'The final artifact must include handoffContext so the next chunk can preserve continuity.'
+      : 'The final artifact must be the full dialogue transcription JSON object.',
+    finalArtifactRules,
+    callProvider: ({ prompt }) => provider.complete({
+      prompt,
+      model: adapter?.model,
+      apiKey,
+      attachments: [
+        {
+          type: 'audio',
+          data: audioBase64,
+          mimeType: audioMimeType
+        }
+      ],
+      options: buildProviderOptions({
+        adapter,
+        defaults: {
+          temperature: 0.3
+        }
+      })
+    }),
+    executeValidatorTool: (args) => executeDialogueTranscriptionValidatorTool(args, { requireHandoff }),
+    normalizeValidatedValue: (value) => JSON.stringify(value)
+  });
+}
+
+async function executeDialogueStitchToolLoop({
+  provider,
+  adapter,
+  basePrompt,
+  toolLoopConfig,
+  promptRef,
+  events,
+  ctx,
+  apiKey
+}) {
+  const toolContract = buildDialogueStitchValidatorToolContract();
+
+  return executeLocalValidatorToolLoop({
+    provider,
+    adapter,
+    basePrompt,
+    toolContract,
+    toolLoopConfig,
+    promptRef,
+    events,
+    ctx,
+    phaseKey: PHASE_KEY,
+    scriptId: SCRIPT_ID,
+    domain: 'dialogue_stitch',
+    artifactLabel: 'dialogue stitch',
+    finalArtifactDescription: 'The final artifact must be the cleaned stitched transcript JSON object.',
+    finalArtifactRules: [
+      'Keep meaning intact and do not invent dialogue.',
+      'auditTrail must describe the major stitch operations that were actually applied.'
+    ],
+    callProvider: ({ prompt }) => provider.complete({
+      prompt,
+      model: adapter?.model,
+      apiKey,
+      options: buildProviderOptions({
+        adapter,
+        defaults: {
+          temperature: 0.2
+        }
+      })
+    }),
+    executeValidatorTool: executeDialogueStitchValidatorTool,
+    normalizeValidatedValue: (value) => JSON.stringify(value)
+  });
 }
 
 function buildChunkTranscriptionPrompt({ chunkIndex, startTime, endTime, priorHandoff } = {}) {
@@ -1317,29 +1489,28 @@ ${JSON.stringify(stitchInput, null, 2)}
  * @param {string} audioPath - Path to audio file (for duration calculation)
  * @returns {Object} - Parsed dialogue data
  */
-function parseTranscriptionResponse(responseContent, audioPath, rawCapture = {}) {
-  const jsonData = parseJsonResponse(responseContent);
+function parseTranscriptionResponse(responseContent, audioPath, rawCapture = {}, { requireHandoff = false } = {}) {
+  const parsed = parseAndValidateJsonObject(
+    responseContent,
+    (value) => validateDialogueTranscriptionObject(value, { requireHandoff })
+  );
 
-  // Fallback structure if parsing fails
-  if (!jsonData) {
-    return {
-      dialogue_segments: [],
-      summary: 'Transcription failed - no speech detected or parsing error',
-      totalDuration: getAudioDuration(audioPath, rawCapture),
-      handoffContext: null
-    };
+  if (!parsed.ok) {
+    throw createRetryableError(`invalid_output: ${parsed.summary || 'dialogue transcription output was invalid'}`, {
+      group: parsed.meta?.stage || 'parse',
+      raw: parsed.meta?.raw || responseContent || null,
+      extracted: parsed.meta?.extracted || null,
+      parseError: parsed.meta?.parseError || null,
+      validationErrors: parsed.errors,
+      validationSummary: parsed.summary
+    });
   }
 
-  // Validate and normalize response
   return {
-    dialogue_segments: Array.isArray(jsonData.dialogue_segments) ? jsonData.dialogue_segments : [],
-    summary: jsonData.summary || 'Dialogue transcription completed',
-    totalDuration: typeof jsonData.totalDuration === 'number'
-      ? jsonData.totalDuration
-      : getAudioDuration(audioPath, rawCapture),
-    handoffContext: typeof jsonData.handoffContext === 'string'
-      ? jsonData.handoffContext
-      : (typeof jsonData.handoff === 'string' ? jsonData.handoff : null)
+    ...parsed.value,
+    totalDuration: typeof parsed.value.totalDuration === 'number'
+      ? parsed.value.totalDuration
+      : getAudioDuration(audioPath, rawCapture)
   };
 }
 

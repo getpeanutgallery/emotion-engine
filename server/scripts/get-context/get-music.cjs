@@ -17,7 +17,13 @@ const fs = require('fs');
 const path = require('path');
 const { exec, execSync } = require('child_process');
 const { promisify } = require('util');
-const { executeWithTargets, getProviderForTarget } = require('../../lib/ai-targets.cjs');
+const {
+  executeWithTargets,
+  getProviderForTarget,
+  buildProviderOptions,
+  createRetryableError,
+  getPersistedErrorInfo
+} = require('../../lib/ai-targets.cjs');
 const outputManager = require('../../lib/output-manager.cjs');
 const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
 const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
@@ -27,6 +33,15 @@ const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 const { preflightAudio } = require('../../lib/audio-preflight.cjs');
 const { extractAudioChunk } = require('../../lib/audio-chunk-extractor.cjs');
+const {
+  parseAndValidateJsonObject,
+  validateMusicAnalysisObject
+} = require('../../lib/structured-output.cjs');
+const {
+  buildMusicAnalysisValidatorToolContract,
+  executeMusicAnalysisValidatorTool
+} = require('../../lib/phase1-validator-tools.cjs');
+const { executeLocalValidatorToolLoop } = require('../../lib/local-validator-tool-loop.cjs');
 
 const execAsync = promisify(exec);
 
@@ -43,6 +58,15 @@ function getRetryConfig(config = {}, domain = 'music') {
   return {
     maxAttempts: Number.isInteger(retry.maxAttempts) && retry.maxAttempts > 0 ? retry.maxAttempts : 1,
     backoffMs: Number.isInteger(retry.backoffMs) && retry.backoffMs >= 0 ? retry.backoffMs : 0
+  };
+}
+
+function getToolLoopConfig(config = {}, domain = 'music') {
+  const toolLoop = config?.ai?.[domain]?.toolLoop || {};
+
+  return {
+    maxTurns: Number.isInteger(toolLoop.maxTurns) && toolLoop.maxTurns > 1 ? toolLoop.maxTurns : 4,
+    maxValidatorCalls: Number.isInteger(toolLoop.maxValidatorCalls) && toolLoop.maxValidatorCalls > 0 ? toolLoop.maxValidatorCalls : 3
   };
 }
 
@@ -204,6 +228,8 @@ async function run(input) {
         errorName: entry?.errorName || null,
         errorCode: entry?.errorCode || null,
         errorStatus: entry?.errorStatus || null,
+        errorRequestId: entry?.errorRequestId || null,
+        errorClassification: entry?.errorClassification || null,
       }
     });
   };
@@ -285,6 +311,7 @@ async function run(input) {
     }
 
     const retryConfig = getRetryConfig(config, 'music');
+    const toolLoopConfig = getToolLoopConfig(config, 'music');
     console.log(`   🔁 Music retry config: attempts=${retryConfig.maxAttempts}, backoffMs=${retryConfig.backoffMs}`);
 
     const chunksDir = captureRaw
@@ -382,26 +409,16 @@ async function run(input) {
             });
 
             try {
-              const completion = await provider.complete({
-                prompt,
-                model: adapter?.model,
+              const toolLoopResult = await executeMusicAnalysisToolLoop({
+                provider,
+                adapter,
+                basePrompt: prompt,
+                toolLoopConfig,
+                promptRef,
+                events,
+                ctx,
                 apiKey,
-                attachments: [
-                  {
-                    type: 'audio',
-                    data: audioBase64,
-                    mimeType: 'audio/wav'
-                  }
-                ],
-                options: {
-                  temperature: 0.5,
-                  maxTokens: 768,
-                  ...(
-                    adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
-                      ? adapter.params
-                      : {}
-                  )
-                }
+                audioBase64
               });
 
               events.emit({
@@ -419,8 +436,18 @@ async function run(input) {
                 model: adapter?.model || null,
               });
 
-              const parsed = parseRollingMusicResponse(completion.content, startTime, endTime);
-              return { completion, parsed };
+              const parsed = {
+                segment: {
+                  start: startTime,
+                  end: endTime,
+                  type: toolLoopResult.parsed.analysis.type,
+                  description: toolLoopResult.parsed.analysis.description,
+                  mood: toolLoopResult.parsed.analysis.mood,
+                  intensity: toolLoopResult.parsed.analysis.intensity
+                },
+                rollingSummary: toolLoopResult.parsed.rollingSummary
+              };
+              return { completion: toolLoopResult.completion, parsed, toolLoop: toolLoopResult.toolLoop };
             } catch (error) {
               events.emit({
                 kind: 'provider.call.end',
@@ -454,6 +481,8 @@ async function run(input) {
             const attemptKey = String(attempt || '');
             const startedAt = attemptKey && attemptStartMs.has(attemptKey) ? attemptStartMs.get(attemptKey) : null;
 
+            const persistedError = ok ? null : getPersistedErrorInfo(error);
+
             events.emit({
               kind: 'attempt.end',
               phase: PHASE_KEY,
@@ -469,6 +498,9 @@ async function run(input) {
               provider: target?.adapter?.name || null,
               model: target?.adapter?.model || null,
               error: ok ? null : (error?.message || String(error)),
+              errorStatus: persistedError?.status || null,
+              errorRequestId: persistedError?.requestId || null,
+              errorClassification: persistedError?.classification || null,
             });
 
             if (!captureRaw) return;
@@ -489,13 +521,16 @@ async function run(input) {
               promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
               rawResponse: ok ? sanitizeRawCaptureValue(result?.completion) : null,
               parsed: ok ? result?.parsed : null,
+              toolLoop: ok ? sanitizeRawCaptureValue(result?.toolLoop) : (sanitizeRawCaptureValue(error?.debug?.toolLoop) || null),
               error: ok ? null : (error?.message || String(error)),
               errorName: ok ? null : (error?.name || null),
               errorCode: ok ? null : (error?.code || null),
-              errorStatus: ok ? null : (error?.response?.status || null),
+              errorStatus: ok ? null : (persistedError?.status || null),
+              errorRequestId: ok ? null : (persistedError?.requestId || null),
+              errorClassification: ok ? null : (persistedError?.classification || null),
               errorStack: ok ? null : (typeof error?.stack === 'string' ? error.stack : null),
               errorDebug: ok ? null : (sanitizeRawCaptureValue(error?.debug) || null),
-              errorResponse: ok ? null : (sanitizeRawCaptureValue(error?.response?.data) || null),
+              errorResponse: ok ? null : (sanitizeRawCaptureValue(persistedError?.response) || null),
               provider: adapter?.name || null,
               model: adapter?.model || null,
               requestMeta: {
@@ -525,13 +560,17 @@ async function run(input) {
         phaseOutcome = 'failed';
         fatalPhaseError = error;
 
+        const persistedError = getPersistedErrorInfo(error);
+
         recordPhaseError({
           level: 'error',
           kind: 'fatal',
           message: error?.message || String(error),
           errorName: error?.name || null,
           errorCode: error?.code || null,
-          errorStatus: error?.response?.status || null,
+          errorStatus: persistedError.status,
+          errorRequestId: persistedError.requestId,
+          errorClassification: persistedError.classification,
           segmentIndex: chunkIndex,
           startTime,
           endTime
@@ -765,19 +804,15 @@ IMPORTANT:
 }
 
 function parseJsonResponse(responseContent) {
-  if (typeof responseContent !== 'string') return null;
+  const parsed = parseAndValidateJsonObject(responseContent, (value) => ({
+    ok: true,
+    value,
+    errors: [],
+    summary: null,
+    meta: { stage: 'validation' }
+  }));
 
-  try {
-    return JSON.parse(responseContent.trim());
-  } catch {
-    const jsonMatch = responseContent.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (!jsonMatch) return null;
-    try {
-      return JSON.parse(jsonMatch[1].trim());
-    } catch {
-      return null;
-    }
-  }
+  return parsed.ok ? parsed.value : null;
 }
 
 function buildRollingAnalysisPrompt(startTime, endTime, rollingSummary) {
@@ -793,9 +828,7 @@ ${roll ? `Rolling summary so far (from previous chunks):\n${roll}\n\n` : ''}Iden
 3. Intensity level from 1-10
 4. Brief description
 
-Return ONLY valid JSON.
-
-Preferred response format:
+Return ONLY valid JSON in this format:
 {
   "analysis": {
     "type": "music|speech|silence|ambient|sfx",
@@ -805,48 +838,87 @@ Preferred response format:
   },
   "chunkSummary": "1-2 sentences",
   "rollingSummary": "Updated rolling summary for the entire audio so far (keep concise)"
-}
-
-Compatibility: If you cannot produce the preferred format, you may return the legacy format:
-{ "type": "...", "description": "...", "mood": "...", "intensity": 5 }`;
+}`;
 }
 
 function parseRollingMusicResponse(responseContent, startTime, endTime) {
-  const jsonData = parseJsonResponse(responseContent);
-
-  if (!jsonData) {
-    return {
-      segment: {
-        start: startTime,
-        end: endTime,
-        type: 'unknown',
-        description: 'Analysis failed',
-        mood: null,
-        intensity: 0
-      },
-      rollingSummary: null
-    };
+  const parsed = parseAndValidateJsonObject(responseContent, validateMusicAnalysisObject);
+  if (!parsed.ok) {
+    throw createRetryableError(`invalid_output: ${parsed.summary || 'music analysis output was invalid'}`, {
+      group: parsed.meta?.stage || 'parse',
+      raw: parsed.meta?.raw || responseContent || null,
+      extracted: parsed.meta?.extracted || null,
+      parseError: parsed.meta?.parseError || null,
+      validationErrors: parsed.errors,
+      validationSummary: parsed.summary
+    });
   }
 
-  const analysis = (jsonData.analysis && typeof jsonData.analysis === 'object') ? jsonData.analysis : jsonData;
-
-  const segment = {
-    start: startTime,
-    end: endTime,
-    type: analysis.type || 'unknown',
-    description: analysis.description || 'No description',
-    mood: analysis.mood || null,
-    intensity: typeof analysis.intensity === 'number' ? analysis.intensity : 0
-  };
-
-  const rollingSummary = typeof jsonData.rollingSummary === 'string'
-    ? jsonData.rollingSummary
-    : (typeof jsonData.rolling_summary === 'string' ? jsonData.rolling_summary : null);
-
   return {
-    segment,
-    rollingSummary: rollingSummary || (typeof jsonData.chunkSummary === 'string' ? jsonData.chunkSummary : null)
+    segment: {
+      start: startTime,
+      end: endTime,
+      type: parsed.value.analysis.type,
+      description: parsed.value.analysis.description,
+      mood: parsed.value.analysis.mood,
+      intensity: parsed.value.analysis.intensity
+    },
+    rollingSummary: parsed.value.rollingSummary
   };
+}
+
+async function executeMusicAnalysisToolLoop({
+  provider,
+  adapter,
+  basePrompt,
+  toolLoopConfig,
+  promptRef,
+  events,
+  ctx,
+  apiKey,
+  audioBase64
+}) {
+  const toolContract = buildMusicAnalysisValidatorToolContract();
+
+  return executeLocalValidatorToolLoop({
+    provider,
+    adapter,
+    basePrompt,
+    toolContract,
+    toolLoopConfig,
+    promptRef,
+    events,
+    ctx,
+    phaseKey: PHASE_KEY,
+    scriptId: SCRIPT_ID,
+    domain: 'music',
+    artifactLabel: 'music analysis',
+    finalArtifactDescription: 'The final artifact must be the music analysis JSON object for this chunk.',
+    finalArtifactRules: [
+      'Report analysis.type, analysis.description, optional analysis.mood, and analysis.intensity.',
+      'Include rollingSummary when you have continuity context from prior chunks.'
+    ],
+    callProvider: ({ prompt }) => provider.complete({
+      prompt,
+      model: adapter?.model,
+      apiKey,
+      attachments: [
+        {
+          type: 'audio',
+          data: audioBase64,
+          mimeType: 'audio/wav'
+        }
+      ],
+      options: buildProviderOptions({
+        adapter,
+        defaults: {
+          temperature: 0.5
+        }
+      })
+    }),
+    executeValidatorTool: executeMusicAnalysisValidatorTool,
+    normalizeValidatedValue: (value) => JSON.stringify(value)
+  });
 }
 
 /**

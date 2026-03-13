@@ -6,6 +6,8 @@ For how to run the repo, start with:
 
 - `README.md` (canonical commands)
 - `docs/CONFIG-GUIDE.md` (current YAML schema)
+- `docs/UNIVERSAL-SCRIPT-RESULT-CONTRACT.md` (future-facing universal success/failure envelope contract)
+- `docs/DETERMINISTIC-RECOVERY-FRAMEWORK.md` (shared deterministic recovery declaration + policy model)
 
 ---
 
@@ -30,11 +32,11 @@ Current scripts (non-exhaustive):
   - `server/scripts/process/video-per-second.cjs`
 
 - Phase 3 (`report`)
-  - `server/scripts/report/metrics.cjs`
-  - `server/scripts/report/recommendation.cjs`
-  - `server/scripts/report/emotional-analysis.cjs`
-  - `server/scripts/report/summary.cjs`
-  - `server/scripts/report/final-report.cjs`
+  - `server/scripts/report/metrics.cjs` *(computed; no live AI call)*
+  - `server/scripts/report/recommendation.cjs` *(AI lane; validator-tool mediated final acceptance)*
+  - `server/scripts/report/emotional-analysis.cjs` *(computed; no live AI call)*
+  - `server/scripts/report/summary.cjs` *(aggregation; no live AI call)*
+  - `server/scripts/report/final-report.cjs` *(rendering; no live AI call)*
   - `server/scripts/report/evaluation.cjs` (legacy combined report)
 
 ---

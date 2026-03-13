@@ -1,0 +1,327 @@
+{
+  "generatedAt": "2026-03-13T15:51:28.586Z",
+  "runDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+  "runName": "cod-test",
+  "totals": {
+    "captureFiles": 49,
+    "loggedErrors": 7
+  },
+  "categories": {
+    "provider_no_content": {
+      "key": "provider_no_content",
+      "label": "Provider returned no content",
+      "taxonomy": "provider_transport",
+      "severity": "high",
+      "count": 11,
+      "phases": {
+        "phase2-process": 11
+      },
+      "models": {
+        "qwen/qwen3.5-397b-a17b": 11
+      },
+      "examples": [
+        "output/cod-test/phase2-process/raw/ai/chunk-0001/split-00/attempt-01/capture.json",
+        "output/cod-test/phase2-process/raw/ai/chunk-0001/split-00/attempt-02/capture.json",
+        "output/cod-test/phase2-process/raw/ai/chunk-0002/split-00/attempt-01/capture.json",
+        "output/cod-test/phase2-process/raw/ai/chunk-0011/split-00/attempt-01/capture.json",
+        "output/cod-test/phase2-process/raw/ai/chunk-0013/split-00/attempt-01/capture.json"
+      ],
+      "notes": "Provider call completed but delivered no usable content payload."
+    },
+    "placeholder_fallback": {
+      "key": "placeholder_fallback",
+      "label": "Parser fell back to placeholder output",
+      "taxonomy": "structured_output",
+      "severity": "high",
+      "count": 3,
+      "phases": {
+        "phase2-process": 3
+      },
+      "models": {
+        "google/gemini-3.1-pro-preview": 2,
+        "z-ai/glm-4.6v": 1
+      },
+      "examples": [
+        "output/cod-test/phase2-process/raw/ai/chunk-0001/split-00/attempt-03/capture.json",
+        "output/cod-test/phase2-process/raw/ai/chunk-0001/split-00/attempt-04/capture.json",
+        "output/cod-test/phase2-process/raw/ai/chunk-0001/split-00/attempt-05/capture.json"
+      ],
+      "notes": "Model returned something syntactically or semantically unusable, forcing placeholder fallback."
+    },
+    "stock_asset_language": {
+      "key": "stock_asset_language",
+      "label": "Suspicious stock-assets / corporate-footage language",
+      "taxonomy": "semantic_anomaly",
+      "severity": "medium",
+      "count": 13,
+      "phases": {
+        "phase2-process": 11,
+        "phase3-report": 2
+      },
+      "models": {
+        "qwen/qwen3.5-397b-a17b": 11,
+        "google/gemini-3.1-pro-preview": 2
+      },
+      "examples": [
+        "output/cod-test/phase2-process/raw/ai/chunk-0005/split-00/attempt-01/capture.json",
+        "output/cod-test/phase2-process/raw/ai/chunk-0006/split-00/attempt-01/capture.json",
+        "output/cod-test/phase2-process/raw/ai/chunk-0010/split-00/attempt-01/capture.json",
+        "output/cod-test/phase2-process/raw/ai/chunk-0012/split-00/attempt-01/capture.json",
+        "output/cod-test/phase2-process/raw/ai/chunk-0018/split-00/attempt-01/capture.json"
+      ],
+      "notes": "Not necessarily a parser failure, but a suspicious semantic pattern worth grounding review."
+    },
+    "invalid_json": {
+      "key": "invalid_json",
+      "label": "Strict JSON output was invalid",
+      "taxonomy": "structured_output",
+      "severity": "high",
+      "count": 3,
+      "phases": {
+        "phase3-report": 3
+      },
+      "models": {
+        "google/gemini-3.1-pro-preview": 2,
+        "bytedance-seed/seed-2.0-mini": 1
+      },
+      "examples": [
+        "output/cod-test/phase3-report/raw/ai/recommendation/attempt-02/capture.json",
+        "output/cod-test/phase3-report/raw/ai/recommendation/attempt-03/capture.json",
+        "output/cod-test/phase3-report/raw/ai/recommendation/attempt-04/capture.json"
+      ],
+      "notes": "The model response could not be parsed as the required final JSON artifact."
+    },
+    "finish_length": {
+      "key": "finish_length",
+      "label": "Generation hit max token limit",
+      "taxonomy": "token_budget",
+      "severity": "medium",
+      "count": 2,
+      "phases": {
+        "phase3-report": 2
+      },
+      "models": {
+        "google/gemini-3.1-pro-preview": 2
+      },
+      "examples": [
+        "output/cod-test/phase3-report/raw/ai/recommendation/attempt-02/capture.json",
+        "output/cod-test/phase3-report/raw/ai/recommendation/attempt-03/capture.json"
+      ],
+      "notes": "Completion terminated for length before a complete structured answer was returned."
+    },
+    "high_reasoning_share": {
+      "key": "high_reasoning_share",
+      "label": "Reasoning token share crowded out final answer budget",
+      "taxonomy": "thinking_budget",
+      "severity": "medium",
+      "count": 2,
+      "phases": {
+        "phase3-report": 2
+      },
+      "models": {
+        "google/gemini-3.1-pro-preview": 2
+      },
+      "examples": [
+        "output/cod-test/phase3-report/raw/ai/recommendation/attempt-02/capture.json",
+        "output/cod-test/phase3-report/raw/ai/recommendation/attempt-03/capture.json"
+      ],
+      "notes": "A large share of completion budget was consumed by reasoning instead of the final machine-readable answer."
+    }
+  },
+  "models": [
+    {
+      "model": "qwen/qwen3.5-397b-a17b",
+      "total": 38,
+      "errors": 11,
+      "errorKinds": [
+        [
+          "provider_no_content",
+          11
+        ]
+      ]
+    },
+    {
+      "model": "google/gemini-3.1-pro-preview",
+      "total": 6,
+      "errors": 4,
+      "errorKinds": [
+        [
+          "finish_length",
+          2
+        ],
+        [
+          "high_reasoning_share",
+          2
+        ],
+        [
+          "invalid_json",
+          2
+        ],
+        [
+          "placeholder_fallback",
+          2
+        ]
+      ]
+    },
+    {
+      "model": "z-ai/glm-4.6v",
+      "total": 2,
+      "errors": 1,
+      "errorKinds": [
+        [
+          "placeholder_fallback",
+          1
+        ]
+      ]
+    },
+    {
+      "model": "bytedance-seed/seed-2.0-mini",
+      "total": 1,
+      "errors": 1,
+      "errorKinds": [
+        [
+          "invalid_json",
+          1
+        ]
+      ]
+    },
+    {
+      "model": "google/gemini-3.1-flash-lite-preview",
+      "total": 2,
+      "errors": 0,
+      "errorKinds": []
+    }
+  ],
+  "stockLanguageExamples": [
+    {
+      "file": "output/cod-test/phase2-process/raw/ai/chunk-0005/split-00/attempt-01/capture.json",
+      "chunkIndex": 5,
+      "summary": "Generic villain exposition with buzzwords ('peace and security') over loud music feels like a corporate ad, not content."
+    },
+    {
+      "file": "output/cod-test/phase2-process/raw/ai/chunk-0006/split-00/attempt-01/capture.json",
+      "chunkIndex": 6,
+      "summary": "30 seconds in and still hearing corporate platitudes? I should've scrolled at 3s."
+    },
+    {
+      "file": "output/cod-test/phase2-process/raw/ai/chunk-0010/split-00/attempt-01/capture.json",
+      "chunkIndex": 10,
+      "summary": "Still drowning in generic military jargon while loud music screams for attention; zero visual payoff after 50 seconds."
+    },
+    {
+      "file": "output/cod-test/phase2-process/raw/ai/chunk-0012/split-00/attempt-01/capture.json",
+      "chunkIndex": 12,
+      "summary": "Still stuck in the same generic military loop with deafening music and zero payoff; I should have scrolled ages ago."
+    },
+    {
+      "file": "output/cod-test/phase2-process/raw/ai/chunk-0018/split-00/attempt-01/capture.json",
+      "chunkIndex": 18,
+      "summary": "Looping generic footage confirms the scroll decision; high-energy music feels wasted on dead visuals."
+    },
+    {
+      "file": "output/cod-test/phase2-process/raw/ai/chunk-0019/split-00/attempt-01/capture.json",
+      "chunkIndex": 19,
+      "summary": "Generic looping visuals clash with high-energy music, confirming an instant scroll within the first 3 seconds."
+    },
+    {
+      "file": "output/cod-test/phase2-process/raw/ai/chunk-0024/split-00/attempt-02/capture.json",
+      "chunkIndex": 24,
+      "summary": "High-energy music can't save generic stock visuals. I'm thumbing away before the 3-second mark because this looks like every other ad I skip."
+    },
+    {
+      "file": "output/cod-test/phase2-process/raw/ai/chunk-0025/split-00/attempt-01/capture.json",
+      "chunkIndex": 25,
+      "summary": "Energetic track is screaming 'pay attention' but the stock footage is screaming 'ignore me'. I'm out before the beat drops."
+    },
+    {
+      "file": "output/cod-test/phase2-process/raw/ai/chunk-0026/split-00/attempt-02/capture.json",
+      "chunkIndex": 26,
+      "summary": "The beat is loud but the visuals are generic stock trash, confirming this is just another corporate ad trying too hard."
+    },
+    {
+      "file": "output/cod-test/phase2-process/raw/ai/chunk-0027/split-00/attempt-01/capture.json",
+      "chunkIndex": 27,
+      "summary": "137 seconds into this corporate cringe fest and still pushing generic stock footage with cliché dialogue."
+    },
+    {
+      "file": "output/cod-test/phase2-process/raw/ai/chunk-0028/split-00/attempt-01/capture.json",
+      "chunkIndex": 28,
+      "summary": "I scrolled away 134 seconds ago. This 0.01s blip is just more generic stock footage noise I never saw."
+    },
+    {
+      "file": "output/cod-test/phase3-report/raw/ai/recommendation/attempt-01/capture.json",
+      "summary": null
+    }
+  ],
+  "hardFailureCategoryCount": 5,
+  "topHardFailure": {
+    "key": "provider_no_content",
+    "label": "Provider returned no content",
+    "taxonomy": "provider_transport",
+    "severity": "high",
+    "count": 11,
+    "phases": {
+      "phase2-process": 11
+    },
+    "models": {
+      "qwen/qwen3.5-397b-a17b": 11
+    },
+    "examples": [
+      "output/cod-test/phase2-process/raw/ai/chunk-0001/split-00/attempt-01/capture.json",
+      "output/cod-test/phase2-process/raw/ai/chunk-0001/split-00/attempt-02/capture.json",
+      "output/cod-test/phase2-process/raw/ai/chunk-0002/split-00/attempt-01/capture.json",
+      "output/cod-test/phase2-process/raw/ai/chunk-0011/split-00/attempt-01/capture.json",
+      "output/cod-test/phase2-process/raw/ai/chunk-0013/split-00/attempt-01/capture.json"
+    ],
+    "notes": "Provider call completed but delivered no usable content payload."
+  },
+  "mostFailureProneModel": {
+    "model": "qwen/qwen3.5-397b-a17b",
+    "total": 38,
+    "errors": 11,
+    "errorKinds": [
+      [
+        "provider_no_content",
+        11
+      ]
+    ]
+  },
+  "hypothesis": {
+    "tokenBudgets": {
+      "verdict": "generalize_now",
+      "rationale": [
+        "2 attempt(s) hit explicit max-token truncation.",
+        "2 attempt(s) spent at least half of completion budget on reasoning.",
+        "3 invalid JSON failure(s) happened in the same lane where truncation showed up."
+      ]
+    },
+    "thinkingControls": {
+      "verdict": "generalize_now",
+      "rationale": [
+        "Low thinking still consumed most of the completion budget in recommendation retries.",
+        "Strict JSON / tool-loop turns are poor places to pay a large reasoning-token tax."
+      ]
+    },
+    "validationTooling": {
+      "verdict": "generalize_now",
+      "rationale": [
+        "3 placeholder-fallback parse failures already prove non-recommendation lanes need structured validation too.",
+        "3 recommendation failures show validator-aware loops help, but only if the lane also has enough output budget to finish."
+      ]
+    },
+    "groundingRisk": {
+      "verdict": "investigate",
+      "rationale": [
+        "13 output artifact(s) used stock-assets / corporate-footage language.",
+        "This might be accurate criticism, but it is also the exact kind of stylistic overreach Derrick flagged for review."
+      ]
+    },
+    "providerStability": {
+      "verdict": "generalize_failover_and_capture",
+      "rationale": [
+        "11 provider-empty responses clustered in Phase 2 before failover recovered some chunks.",
+        "That argues for keeping adapter-normalized error capture and consistent retry/failover policy across all AI lanes."
+      ]
+    }
+  }
+}

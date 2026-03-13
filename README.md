@@ -148,6 +148,9 @@ npm run pipeline -- --config configs/full-analysis.yaml
 
 If you already have a run folder with Phase 1/2 artifacts (default: `output/cod-test`), you can iterate on Phase 3 without rerunning extraction/chunk analysis:
 
+- `server/scripts/report/recommendation.cjs` is the only current Phase 3 AI lane.
+- `metrics`, `emotional-analysis`, `summary`, and `final-report` are computed report scripts that reuse earlier artifacts; they are not validator-tool AI lanes.
+
 ```bash
 npm run pipeline -- --config configs/cod-test-phase3.yaml --verbose
 # equivalent:
@@ -315,6 +318,7 @@ Ensure these exist and match sibling repo layout:
 
 ## Docs
 
+- `docs/AI-LANE-CONTRACT.md` — universal schema / validator contract for structured AI lanes
 - `docs/CONFIG-GUIDE.md` — current YAML schema + examples
 - `docs/DEBUG-CONFIG.md` — `debug.captureRaw` + processed intermediates retention
 - `docs/COD-TEST-GOLDEN-RUN-CHECKLIST.md` — deterministic replay/record checklist for `configs/cod-test.yaml`

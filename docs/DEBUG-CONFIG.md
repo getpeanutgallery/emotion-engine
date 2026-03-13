@@ -32,6 +32,15 @@ What you get:
 
 Raw capture is **phase-scoped** (e.g. `phase2-process/raw/...`). See [Raw output layout](#raw-output-layout).
 
+For failed AI attempts, the capture payloads now persist normalized error fields when available:
+
+- `errorStatus`
+- `errorRequestId`
+- `errorClassification`
+- `errorResponse`
+
+If an adapter wraps transport errors and omits `error.response`, emotion-engine falls back to sanitized `error.debug.response` metadata so the raw artifacts still preserve the status code, request id, and structured provider error body.
+
 ### `debug.keepProcessedIntermediates`
 
 Controls whether intermediate extracted assets are kept under `assets/processed/`.
@@ -127,6 +136,17 @@ When raw AI captures are written, they may include a `promptRef` like:
 ```json
 { "promptRef": { "sha256": "...", "file": "raw/ai/_prompts/<sha256>.json" } }
 ```
+
+Recommendation-lane captures may also include provider boundary artifacts when the adapter exposes them:
+
+```json
+{
+  "providerRequest": { "body": { "max_tokens": 900, "reasoning": { "effort": "low", "enabled": true } } },
+  "providerResponse": { "body": { "choices": [ ... ], "usage": { ... } } }
+}
+```
+
+That makes `phase3-report/raw/ai/recommendation/attempt-XX/capture.json` the canonical place to verify that normalized YAML controls were actually sent to the provider.
 
 ---
 

@@ -26,7 +26,9 @@ const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/ra
 const {
   executeWithTargets,
   getProviderForTarget,
-  createRetryableError
+  createRetryableError,
+  buildProviderOptions,
+  getPersistedErrorInfo
 } = require('../../lib/ai-targets.cjs');
 const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
@@ -268,15 +270,12 @@ async function executeRecommendationToolLoop({
       prompt,
       model: adapter?.model,
       apiKey: process.env.AI_API_KEY,
-      options: {
-        temperature: 0.2,
-        maxTokens: 900,
-        ...(
-          adapter && adapter.params && typeof adapter.params === 'object' && !Array.isArray(adapter.params)
-            ? adapter.params
-            : {}
-        )
-      }
+      options: buildProviderOptions({
+        adapter,
+        defaults: {
+          temperature: 0.2
+        }
+      })
     });
 
     finalCompletion = completion;
@@ -573,6 +572,8 @@ async function run(input) {
         errorName: entry?.errorName || null,
         errorCode: entry?.errorCode || null,
         errorStatus: entry?.errorStatus || null,
+        errorRequestId: entry?.errorRequestId || null,
+        errorClassification: entry?.errorClassification || null,
       }
     });
   };
@@ -726,6 +727,8 @@ async function run(input) {
         const attemptKey = String(attempt || '');
         const startedAt = attemptKey && attemptStartMs.has(attemptKey) ? attemptStartMs.get(attemptKey) : null;
 
+        const persistedError = ok ? null : getPersistedErrorInfo(error);
+
         events.emit({
           kind: 'attempt.end',
           phase: PHASE_KEY,
@@ -740,6 +743,9 @@ async function run(input) {
           provider: target?.adapter?.name || null,
           model: target?.adapter?.model || null,
           error: ok ? null : (error?.message || String(error)),
+          errorStatus: persistedError?.status || null,
+          errorRequestId: persistedError?.requestId || null,
+          errorClassification: persistedError?.classification || null,
         });
 
         if (!captureRaw) return;
@@ -765,6 +771,16 @@ async function run(input) {
           promptMode: ok ? (result?.requestPrompt?.mode || 'tool_loop') : (error?.aiTargets?.promptMode || 'tool_loop'),
           repairSummary: ok ? (result?.requestPrompt?.repairSummary || null) : (error?.aiTargets?.validationSummary || null),
           rawResponse: sanitizeRawCaptureValue(completion || null),
+          providerRequest: sanitizeRawCaptureValue(
+            ok
+              ? (completion?.providerRequest || null)
+              : (error?.aiTargets?.completion?.providerRequest || null)
+          ),
+          providerResponse: sanitizeRawCaptureValue(
+            ok
+              ? (completion?.providerResponse || null)
+              : (error?.aiTargets?.completion?.providerResponse || null)
+          ),
           parsed: ok ? (result?.parsed || null) : null,
           parseMeta: ok
             ? sanitizeRawCaptureValue(result?.parsed?._meta || null)
@@ -789,10 +805,12 @@ async function run(input) {
           error: errorMessage,
           errorName: ok ? null : (error?.name || null),
           errorCode: ok ? null : (error?.code || null),
-          errorStatus: ok ? null : (error?.response?.status || null),
+          errorStatus: ok ? null : (persistedError?.status || null),
+          errorRequestId: ok ? null : (persistedError?.requestId || null),
+          errorClassification: ok ? null : (persistedError?.classification || null),
           errorStack: ok ? null : (typeof error?.stack === 'string' ? error.stack : null),
           errorDebug: ok ? null : (sanitizeRawCaptureValue(error?.debug) || null),
-          errorResponse: ok ? null : (sanitizeRawCaptureValue(error?.response?.data) || null),
+          errorResponse: ok ? null : (sanitizeRawCaptureValue(persistedError?.response) || null),
           provider: adapter?.name || (configForTarget?.ai?.provider || null),
           model: adapter?.model || (configForTarget?.ai?.recommendation?.model || null),
           requestMeta: {
@@ -867,13 +885,17 @@ async function run(input) {
     fatalPhaseError = error;
 
     const isConfigError = error?.code === 'CONFIG_MISSING_RECOMMENDATION_TARGETS';
+    const persistedError = getPersistedErrorInfo(error);
 
     recordPhaseError({
       kind: isConfigError ? 'recommendation_config_invalid' : 'recommendation_failed',
       message: error?.message || String(error),
       errorName: error?.name || null,
       errorCode: error?.code || null,
-      stack: typeof error?.stack === 'string' ? error.stack : null
+      stack: typeof error?.stack === 'string' ? error.stack : null,
+      errorStatus: persistedError.status,
+      errorRequestId: persistedError.requestId,
+      errorClassification: persistedError.classification
     });
 
     if (isConfigError) {

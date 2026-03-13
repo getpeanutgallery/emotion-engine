@@ -38,9 +38,20 @@ const analyzeCalls = [];
 let analyzeImplementation = async (input) => {
   analyzeCalls.push(input);
   return {
-    prompt: 'Test prompt',
-    rawResponse: '{"summary":"Test chunk summary","emotions":{"patience":{"score":7,"reasoning":"Test reasoning"}}}',
-    state: {
+    completion: {
+      content: JSON.stringify({
+        summary: 'Test chunk summary',
+        emotions: {
+          patience: { score: 7, reasoning: 'Test reasoning' },
+          boredom: { score: 3, reasoning: 'Test reasoning' },
+          excitement: { score: 6, reasoning: 'Test reasoning' }
+        },
+        dominant_emotion: 'patience',
+        confidence: 0.85
+      }),
+      usage: { input: 150, output: 100 }
+    },
+    parsed: {
       summary: 'Test chunk summary',
       emotions: {
         patience: { score: 7, reasoning: 'Test reasoning' },
@@ -48,15 +59,22 @@ let analyzeImplementation = async (input) => {
         excitement: { score: 6, reasoning: 'Test reasoning' }
       },
       dominant_emotion: 'patience',
-      confidence: 0.85,
-      previousSummary: ''
+      confidence: 0.85
     },
-    usage: { input: 150, output: 100 }
+    toolLoop: {
+      toolName: 'validate_emotion_analysis_json',
+      turns: 2,
+      validatorCalls: 1,
+      history: [
+        { role: 'tool', kind: 'validator_acceptance' }
+      ]
+    }
   };
 };
 
 const mockEmotionLensesTool = {
-  analyze: async (input) => analyzeImplementation(input)
+  buildBasePromptFromInput: (input) => `Prompt for ${input?.toolVariables?.variables?.lenses?.join(', ') || 'none'}`,
+  executeEmotionAnalysisToolLoop: async (input) => analyzeImplementation(input)
 };
 
 const mockVideoChunkExtractor = {
@@ -81,6 +99,7 @@ const mockChildProcess = {
 };
 
 mockModule('tools/emotion-lenses-tool.cjs', mockEmotionLensesTool);
+mockModule('../../server/lib/emotion-lenses-tool.cjs', mockEmotionLensesTool);
 mockModule('child_process', mockChildProcess);
 mockModule('../../server/lib/video-chunk-extractor.cjs', mockVideoChunkExtractor);
 
@@ -94,9 +113,20 @@ test('Video Chunks Script', async (t) => {
     analyzeImplementation = async (input) => {
       analyzeCalls.push(input);
       return {
-        prompt: 'Test prompt',
-        rawResponse: '{"summary":"Test chunk summary","emotions":{"patience":{"score":7,"reasoning":"Test reasoning"}}}',
-        state: {
+        completion: {
+          content: JSON.stringify({
+            summary: 'Test chunk summary',
+            emotions: {
+              patience: { score: 7, reasoning: 'Test reasoning' },
+              boredom: { score: 3, reasoning: 'Test reasoning' },
+              excitement: { score: 6, reasoning: 'Test reasoning' }
+            },
+            dominant_emotion: 'patience',
+            confidence: 0.85
+          }),
+          usage: { input: 150, output: 100 }
+        },
+        parsed: {
           summary: 'Test chunk summary',
           emotions: {
             patience: { score: 7, reasoning: 'Test reasoning' },
@@ -104,10 +134,16 @@ test('Video Chunks Script', async (t) => {
             excitement: { score: 6, reasoning: 'Test reasoning' }
           },
           dominant_emotion: 'patience',
-          confidence: 0.85,
-          previousSummary: ''
+          confidence: 0.85
         },
-        usage: { input: 150, output: 100 }
+        toolLoop: {
+          toolName: 'validate_emotion_analysis_json',
+          turns: 2,
+          validatorCalls: 1,
+          history: [
+            { role: 'tool', kind: 'validator_acceptance' }
+          ]
+        }
       };
     };
     if (!fs.existsSync(testOutputDir)) fs.mkdirSync(testOutputDir, { recursive: true });
@@ -253,6 +289,34 @@ test('Video Chunks Script', async (t) => {
       is(analyzeCalls[0].config.ai.video.params.maxTokens, 222);
     });
 
+    await tNested.test('passes validator-tool loop config into the phase2 emotion lane', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: {
+              targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ],
+              toolLoop: {
+                maxTurns: 5,
+                maxValidatorCalls: 2
+              }
+            }
+          }
+        }
+      });
+
+      is(analyzeCalls.length > 0, true);
+      is(analyzeCalls[0].toolLoopConfig.maxTurns, 5);
+      is(analyzeCalls[0].toolLoopConfig.maxValidatorCalls, 2);
+    });
+
     await tNested.test('keeps processed chunk files by default', async () => {
       await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',
@@ -380,11 +444,14 @@ test('Video Chunks Script', async (t) => {
 
       property(rawChunk, 'rawResponse');
       property(rawChunk, 'parsed');
+      property(rawChunk, 'toolLoop');
       property(rawChunk, 'provider');
       property(rawChunk, 'model');
       is(rawChunk.model, 'yaml-video-model');
       is(typeof rawChunk.rawResponse, 'string');
       ok(rawChunk.rawResponse.length > 0);
+      is(rawChunk.toolLoop.toolName, 'validate_emotion_analysis_json');
+      is(rawChunk.toolLoop.validatorCalls, 1);
 
       ok(analyzeCalls.length > 0);
       is(analyzeCalls[0]?.config?.debug?.captureRaw, true);
@@ -548,8 +615,19 @@ test('Video Chunks Script', async (t) => {
 
         if (callCount === 1) {
           return {
-            prompt: 'Test prompt',
-            state: {
+            completion: {
+              content: JSON.stringify({
+                summary: 'Analysis completed',
+                emotions: {
+                  patience: { score: 5, reasoning: 'Default - could not parse response' },
+                  boredom: { score: 5, reasoning: 'Default - could not parse response' }
+                },
+                dominant_emotion: 'patience',
+                confidence: 0.5
+              }),
+              usage: { input: 10, output: 10 }
+            },
+            parsed: {
               summary: 'Analysis completed',
               emotions: {
                 patience: { score: 5, reasoning: 'Default - could not parse response' },
@@ -558,13 +636,29 @@ test('Video Chunks Script', async (t) => {
               dominant_emotion: 'patience',
               confidence: 0.5
             },
-            usage: { input: 10, output: 10 }
+            toolLoop: {
+              toolName: 'validate_emotion_analysis_json',
+              turns: 2,
+              validatorCalls: 1,
+              history: [{ role: 'tool', kind: 'validator_acceptance' }]
+            }
           };
         }
 
         return {
-          prompt: 'Test prompt',
-          state: {
+          completion: {
+            content: JSON.stringify({
+              summary: 'Valid chunk summary',
+              emotions: {
+                patience: { score: 8, reasoning: 'Solid hook' },
+                boredom: { score: 2, reasoning: 'Engaging' }
+              },
+              dominant_emotion: 'patience',
+              confidence: 0.9
+            }),
+            usage: { input: 100, output: 50 }
+          },
+          parsed: {
             summary: 'Valid chunk summary',
             emotions: {
               patience: { score: 8, reasoning: 'Solid hook' },
@@ -573,7 +667,12 @@ test('Video Chunks Script', async (t) => {
             dominant_emotion: 'patience',
             confidence: 0.9
           },
-          usage: { input: 100, output: 50 }
+          toolLoop: {
+            toolName: 'validate_emotion_analysis_json',
+            turns: 2,
+            validatorCalls: 1,
+            history: [{ role: 'tool', kind: 'validator_acceptance' }]
+          }
         };
       };
 
@@ -662,8 +761,19 @@ test('Video Chunks Script', async (t) => {
         }
 
         return {
-          prompt: 'Test prompt',
-          state: {
+          completion: {
+            content: JSON.stringify({
+              summary: 'Fallback chunk summary',
+              emotions: {
+                patience: { score: 8, reasoning: 'Recovered on fallback' },
+                boredom: { score: 2, reasoning: 'Still engaging' }
+              },
+              dominant_emotion: 'patience',
+              confidence: 0.9
+            }),
+            usage: { input: 100, output: 50 }
+          },
+          parsed: {
             summary: 'Fallback chunk summary',
             emotions: {
               patience: { score: 8, reasoning: 'Recovered on fallback' },
@@ -672,7 +782,12 @@ test('Video Chunks Script', async (t) => {
             dominant_emotion: 'patience',
             confidence: 0.9
           },
-          usage: { input: 100, output: 50 }
+          toolLoop: {
+            toolName: 'validate_emotion_analysis_json',
+            turns: 2,
+            validatorCalls: 1,
+            history: [{ role: 'tool', kind: 'validator_acceptance' }]
+          }
         };
       };
 

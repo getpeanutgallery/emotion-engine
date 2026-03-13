@@ -71,3 +71,7 @@ ai:
       - adapter:
           name: openrouter
           model: google/gemini-3.1-pro-preview
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low

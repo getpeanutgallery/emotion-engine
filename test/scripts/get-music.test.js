@@ -23,27 +23,34 @@ function mockModule(modulePath, mockExports) {
 
 // Mock AI provider
 const providerConfigCalls = [];
-const mockCompletion = async (options) => ({
-  content: JSON.stringify({
-    type: 'music',
-    description: 'Test music description',
-    mood: 'upbeat',
-    intensity: 7
-  }),
-  usage: {
-    input: 80,
-    output: 60
-  }
-});
+const completionPrompts = [];
+let completeImplementation = async (options) => {
+  completionPrompts.push(String(options?.prompt || ''));
+  return {
+    content: JSON.stringify({
+      analysis: {
+        type: 'music',
+        description: 'Test music description',
+        mood: 'upbeat',
+        intensity: 7
+      },
+      rollingSummary: 'Test rolling summary'
+    }),
+    usage: {
+      input: 80,
+      output: 60
+    }
+  };
+};
 
 const mockAIProvider = {
   getProviderFromConfig: (config) => {
     providerConfigCalls.push(config?.ai?.provider);
-    return { complete: mockCompletion };
+    return { complete: completeImplementation };
   },
   loadProvider: (providerName) => {
     providerConfigCalls.push(providerName);
-    return { complete: mockCompletion };
+    return { complete: completeImplementation };
   },
   getProviderFromEnv: () => {
     throw new Error('getProviderFromEnv should not be used in get-music');
@@ -121,6 +128,25 @@ test('Get Music Script', async (t) => {
 
   t.beforeEach(() => {
     providerConfigCalls.length = 0;
+    completionPrompts.length = 0;
+    completeImplementation = async (options) => {
+      completionPrompts.push(String(options?.prompt || ''));
+      return {
+        content: JSON.stringify({
+          analysis: {
+            type: 'music',
+            description: 'Test music description',
+            mood: 'upbeat',
+            intensity: 7
+          },
+          rollingSummary: 'Test rolling summary'
+        }),
+        usage: {
+          input: 80,
+          output: 60
+        }
+      };
+    };
     if (!fs.existsSync(testOutputDir)) {
       fs.mkdirSync(testOutputDir, { recursive: true });
     }
@@ -183,6 +209,44 @@ test('Get Music Script', async (t) => {
       };
       await getMusicScript.run(input);
       assert.deepEqual(providerConfigCalls, ['gemini']);
+    });
+
+    tNested.test('retries invalid music JSON before succeeding', async () => {
+      let callCount = 0;
+      completeImplementation = async (options) => {
+        callCount += 1;
+        completionPrompts.push(String(options?.prompt || ''));
+        if (callCount === 1) {
+          return {
+            content: JSON.stringify({ type: 'music' }),
+            usage: { input: 5, output: 5 }
+          };
+        }
+
+        return {
+          content: JSON.stringify({
+            analysis: {
+              type: 'music',
+              description: 'Recovered music description',
+              mood: 'energetic',
+              intensity: 8
+            },
+            rollingSummary: 'Recovered summary'
+          }),
+          usage: { input: 6, output: 6 }
+        };
+      };
+
+      const result = await getMusicScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeMusicConfig({
+          retry: { maxAttempts: 2, backoffMs: 0 }
+        })
+      });
+
+      is(callCount, 2);
+      is(result.artifacts.musicData.segments[0].description, 'Recovered music description');
     });
 
     tNested.test('keeps processed music temp files by default', async () => {
@@ -264,8 +328,13 @@ test('Get Music Script', async (t) => {
       is(typeof storedPrompt, 'string');
       ok(storedPrompt.includes('Analyze'));
 
+      ok(completionPrompts.some((prompt) => prompt.includes('LOCAL TOOL LOOP:')));
+      ok(completionPrompts.some((prompt) => prompt.includes('validate_music_analysis_json')));
+
       property(attemptCapture, 'rawResponse');
       property(attemptCapture, 'parsed');
+      property(attemptCapture, 'toolLoop');
+      is(attemptCapture.toolLoop.toolName, 'validate_music_analysis_json');
       is(attemptCapture.model, 'test-music-model');
 
       const metaSummary = JSON.parse(fs.readFileSync(metaSummaryPath, 'utf8'));

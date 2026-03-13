@@ -17,7 +17,7 @@ function mockModule(modulePath, mockExports) {
 // Mock AI provider
 const providerConfigCalls = [];
 const completionPrompts = [];
-const mockCompletion = async (options) => {
+let completeImplementation = async (options) => {
   completionPrompts.push(String(options?.prompt || ''));
 
   // Stitcher call is text-only.
@@ -55,11 +55,11 @@ const mockCompletion = async (options) => {
 const mockAIProvider = {
   getProviderFromConfig: (config) => {
     providerConfigCalls.push(config?.ai?.provider);
-    return { complete: mockCompletion };
+    return { complete: completeImplementation };
   },
   loadProvider: (providerName) => {
     providerConfigCalls.push(providerName);
-    return { complete: mockCompletion };
+    return { complete: completeImplementation };
   },
   getProviderFromEnv: () => {
     throw new Error('getProviderFromEnv should not be used in get-dialogue');
@@ -132,6 +132,39 @@ test('Get Dialogue Script', async (t) => {
 
   t.beforeEach(() => {
     providerConfigCalls.length = 0;
+    completionPrompts.length = 0;
+    completeImplementation = async (options) => {
+      completionPrompts.push(String(options?.prompt || ''));
+
+      if (String(options?.prompt || '').includes('dialogue transcript stitcher')) {
+        return {
+          content: JSON.stringify({
+            cleanedTranscript: 'CLEANED TRANSCRIPT',
+            auditTrail: [{ op: 'merge_boundary', chunkIndex: 0, detail: 'test' }],
+            debug: { refs: [] }
+          }),
+          usage: { input: 100, output: 150 }
+        };
+      }
+
+      return {
+        content: JSON.stringify({
+          dialogue_segments: [
+            {
+              start: 0.5,
+              end: 3.2,
+              speaker: 'Speaker 1',
+              text: 'Test transcription',
+              confidence: 0.95
+            }
+          ],
+          summary: 'Test dialogue summary',
+          handoffContext: 'Speaker 1 continues...',
+          totalDuration: 10.0
+        }),
+        usage: { input: 100, output: 150 }
+      };
+    };
     if (!fs.existsSync(testOutputDir)) fs.mkdirSync(testOutputDir, { recursive: true });
   });
 
@@ -190,6 +223,50 @@ test('Get Dialogue Script', async (t) => {
       };
       await getDialogueScript.run(input);
       assert.deepEqual(providerConfigCalls, ['anthropic']);
+    });
+
+    tNested.test('retries invalid dialogue JSON before succeeding', async () => {
+      let callCount = 0;
+      completeImplementation = async (options) => {
+        callCount += 1;
+        completionPrompts.push(String(options?.prompt || ''));
+
+        if (callCount === 1) {
+          return {
+            content: JSON.stringify({ summary: 'missing required fields' }),
+            usage: { input: 10, output: 10 }
+          };
+        }
+
+        return {
+          content: JSON.stringify({
+            dialogue_segments: [
+              {
+                start: 0,
+                end: 1,
+                speaker: 'Speaker 1',
+                text: 'Recovered',
+                confidence: 0.9
+              }
+            ],
+            summary: 'Recovered dialogue summary',
+            handoffContext: 'Continue',
+            totalDuration: 10
+          }),
+          usage: { input: 11, output: 12 }
+        };
+      };
+
+      const result = await getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeDialogueConfig({
+          retry: { maxAttempts: 2, backoffMs: 0 }
+        })
+      });
+
+      is(callCount, 2);
+      is(result.artifacts.dialogueData.summary, 'Recovered dialogue summary');
     });
 
     tNested.test('keeps processed dialogue temp files by default', async () => {
@@ -266,8 +343,13 @@ test('Get Dialogue Script', async (t) => {
       is(typeof storedPrompt, 'string');
       ok(storedPrompt.includes('Transcribe'));
 
+      ok(completionPrompts.some((prompt) => prompt.includes('LOCAL TOOL LOOP:')));
+      ok(completionPrompts.some((prompt) => prompt.includes('validate_dialogue_transcription_json')));
+
       property(attemptCapture, 'rawResponse');
       property(attemptCapture, 'parsed');
+      property(attemptCapture, 'toolLoop');
+      is(attemptCapture.toolLoop.toolName, 'validate_dialogue_transcription_json');
       is(attemptCapture.model, 'test-dialogue-model');
 
       const metaSummary = JSON.parse(fs.readFileSync(metaSummaryPath, 'utf8'));
@@ -305,6 +387,7 @@ test('Get Dialogue Script', async (t) => {
       is(result.artifacts.dialogueData.cleanedTranscript, 'CLEANED TRANSCRIPT');
 
       ok(completionPrompts.some((p) => p.includes('dialogue transcript stitcher')));
+      ok(completionPrompts.some((p) => p.includes('validate_dialogue_stitch_json')));
 
       const stitchDir = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ai', 'dialogue-stitch');
       ok(fs.existsSync(path.join(stitchDir, 'input.json')));
