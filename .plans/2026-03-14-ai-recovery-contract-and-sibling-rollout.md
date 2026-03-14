@@ -217,6 +217,42 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 
 **Results:** Landed the `ee-d4x.3` computed/report rollout on the shared `ee-d4x.1` contract seam instead of treating Phase 2/3 non-AI scripts as second-class citizens. `video-per-second.cjs`, `metrics.cjs`, `emotional-analysis.cjs`, `summary.cjs`, and `final-report.cjs` now all return lane-specific diagnostics/metrics/primary-artifact hints that the shared runtime persists into canonical success envelopes with `script-results/` and `recovery/` refs. The family now makes its degraded-success boundaries explicit: chunk-derived fallback and partial report rendering stay successful but flagged, while `video-per-second.cjs` now throws a structured `invalid_output` failure when no successful chunks remain to interpolate. `summary.cjs` now prefers canonical `phase3-report/summary/*` report links over the old evaluation root-path assumptions. `evaluation.cjs` was explicitly evaluated and retained as **legacy-only compatibility**, not the canonical Phase 3 path; it now self-reports that status through its diagnostics/metadata instead of silently looking equivalent to the canonical chain. Validation added focused coverage for the computed/report contract rollout, degraded-success envelopes, deterministic next-action behavior for unrecoverable interpolation input, canonical summary-link selection, and the legacy-only evaluation status.
 
+### Task 8: Implement `ee-d4x.4` deterministic tool-wrapper + artifact-production contract rollout in emotion-engine
+
+**Bead ID:** `ee-d4x.4`  
+**SubAgent:** `coder`
+**Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine, claim bead ee-d4x.4 immediately, then roll the universal script-result contract into the deterministic tool-wrapper / artifact-production lanes. Migrate get-metadata plus the relevant extractor/preflight/video/audio/output-persistence helpers onto the shared contract/runtime plumbing from ee-d4x.1, standardize failure categories and deterministic recovery declarations for tooling/artifact lanes, keep degraded-success bounded to genuinely safe cases only, update durable docs and this plan with what actually changed, run relevant validation/tests, commit to main, and close the bead when finished.`
+
+**Folders Created/Deleted/Modified:**
+- `server/lib/`
+- `server/scripts/get-context/`
+- `server/scripts/process/`
+- `test/lib/`
+- `test/scripts/`
+- `docs/`
+- `.plans/`
+
+**Files Created/Deleted/Modified:**
+- `server/lib/tool-wrapper-contract.cjs`
+- `server/lib/script-contract.cjs`
+- `server/lib/audio-preflight.cjs`
+- `server/lib/audio-chunk-extractor.cjs`
+- `server/lib/video-chunk-extractor.cjs`
+- `server/lib/persisted-artifacts.cjs`
+- `server/lib/artifact-manager.cjs`
+- `server/scripts/get-context/get-metadata.cjs`
+- `server/scripts/get-context/get-dialogue.cjs`
+- `server/scripts/get-context/get-music.cjs`
+- `server/scripts/process/video-chunks.cjs`
+- `test/lib/script-contract.test.js`
+- `test/scripts/tool-wrapper-contract.test.js`
+- `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`
+- `.plans/2026-03-14-ai-recovery-contract-and-sibling-rollout.md`
+
+**Status:** ✅ Complete
+
+**Results:** Landed the `ee-d4x.4` deterministic tool-wrapper rollout on the same shared `ee-d4x.1` contract seam rather than leaving tool failures as opaque helper strings. `get-metadata.cjs` now exports an explicit `tool.wrapper.v1` deterministic recovery declaration, returns canonical primary-artifact/metrics metadata, and routes ffprobe exec/parse failures into structured contract fields. Added `server/lib/tool-wrapper-contract.cjs` as the shared deterministic helper for tool-wrapper failure metadata so audio/video extractors, audio preflight, and persistence helpers can all emit stable `failureCategory` / `failureCode` / retryability / path-normalization eligibility without each caller inventing its own shape. `script-contract.cjs` now honors explicit retryability and chooses tool-wrapper deterministic strategy order based on the actual failure shape, allowing missing-path failures to steer into `retry-after-path-normalization` before `re-extract-artifact` while keeping true hard-fail semantics for non-retryable config/dependency cases. `get-dialogue.cjs`, `get-music.cjs`, and `video-chunks.cjs` now preserve helper failure metadata when deterministic extraction/preflight work fails, so those production AI lanes no longer collapse helper failures into generic internal errors. Artifact persistence surfaces (`persisted-artifacts.cjs`, `artifact-manager.cjs`) now throw structured invalid-output / missing-path / write failures instead of raw parse noise. Validation added focused helper + contract coverage for the new deterministic lanes and the full repo `npm test` suite stayed green.
+
 ## Current context from the handoff
 
 - `ee-32e` was the explicit next pickup point from the prior session and is now complete.
@@ -226,6 +262,7 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 - `ee-d4x.1` is now complete on `main`; the shared runtime contract/recovery plumbing is wired through the phase runners and the later lane migrations can build on that substrate instead of inventing their own wrappers.
 - `ee-d4x.2` is now complete on `main`; the four current AI lanes ride the shared envelope/runtime seam, emit explicit bounded recovery metadata, and can perform one bounded same-script AI re-entry after deterministic validator/tool-loop recovery is exhausted.
 - `ee-d4x.3` is now complete on `main`; the computed/report family now rides the same persisted success/failure envelope seam, declares bounded degraded-success behavior, and formally demotes `evaluation.cjs` to a legacy-only compatibility path.
+- `ee-d4x.4` is now complete on `main`; deterministic tool-wrapper and artifact-persistence failures now carry explicit contract metadata, `get-metadata.cjs` has a formal `tool.wrapper.v1` declaration, and missing-path tool failures can deterministically steer into `retry-after-path-normalization` instead of reading like opaque internal crashes.
 - `ee-cwi` remains open for sibling repo implementation rollout, but it is now concretized into child beads `ee-cwi.1` through `ee-cwi.4` with explicit order and bounded repo scope.
 - `ee-vaa` remains open as the final post-rollout sanity sweep, not an early audit substitute.
 - We should not jump to another golden run yet; the architecture/recovery rollout is still in flight.
@@ -236,7 +273,7 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 
 **Status:** ⚠️ Partial
 
-**What We Built:** This plan now covers the full architecture-to-execution breakdown for the unified recovery rollout, and it now includes the first three live implementation beads instead of docs-only planning. The durable doc stack includes: (1) the bounded AI recovery lane contract in `docs/AI-RECOVERY-LANE-CONTRACT.md`, (2) the rollout-family + sibling-boundary map in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`, (3) the strict global guardrail policy in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`, (4) the concrete implementation bead graph in `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`, (5) the shared runtime substrate in `server/lib/script-contract.cjs` + `server/lib/script-runner.cjs` wired through all three phase runners, (6) the live AI-lane rollout for `get-dialogue`, `get-music`, `video-chunks`, and `recommendation` with bounded same-script AI recovery artifacts/runtime plumbing, and now (7) the computed/report rollout for `video-per-second`, `metrics`, `emotional-analysis`, `summary`, and `final-report` with explicit degraded-success semantics and a formal legacy-only decision for `evaluation.cjs`. The bead graph remains explicit and bounded: `ee-d4x.1` shared plumbing -> `ee-d4x.2` AI lanes -> `ee-d4x.3` computed/report lanes -> `ee-d4x.4` deterministic tool-wrapper lanes -> `ee-cwi.1` ai-providers -> `ee-cwi.2` digital-twin-router -> `ee-cwi.3` digital-twin-core -> optional `ee-cwi.4` tools alignment/deprecation -> `ee-vaa` final sanity sweep. Existing open architecture beads are now properly reframed instead of left fuzzy: `ee-cwi` is the sibling-rollout epic with concrete child beads, `ee-vaa` is reserved for post-rollout audit work, and adjacent investigations like `ee-58s`, `ee-5dv`, `ee-2fs`, `ee-0gv`, and `ee-03m` remain intentionally separate unless later evidence proves they are rollout prerequisites.
+**What We Built:** This plan now covers the full architecture-to-execution breakdown for the unified recovery rollout, and it now includes the first four live implementation beads instead of docs-only planning. The durable doc stack includes: (1) the bounded AI recovery lane contract in `docs/AI-RECOVERY-LANE-CONTRACT.md`, (2) the rollout-family + sibling-boundary map in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`, (3) the strict global guardrail policy in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`, (4) the concrete implementation bead graph in `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`, (5) the shared runtime substrate in `server/lib/script-contract.cjs` + `server/lib/script-runner.cjs` wired through all three phase runners, (6) the live AI-lane rollout for `get-dialogue`, `get-music`, `video-chunks`, and `recommendation` with bounded same-script AI recovery artifacts/runtime plumbing, (7) the computed/report rollout for `video-per-second`, `metrics`, `emotional-analysis`, `summary`, and `final-report` with explicit degraded-success semantics and a formal legacy-only decision for `evaluation.cjs`, and now (8) the deterministic tool-wrapper / artifact-production rollout that formalizes helper-side failure metadata, path-normalization vs re-extract next-action selection, and `get-metadata.cjs` participation in the same persisted script-result envelope. The bead graph remains explicit and bounded: `ee-d4x.1` shared plumbing -> `ee-d4x.2` AI lanes -> `ee-d4x.3` computed/report lanes -> `ee-d4x.4` deterministic tool-wrapper lanes -> `ee-cwi.1` ai-providers -> `ee-cwi.2` digital-twin-router -> `ee-cwi.3` digital-twin-core -> optional `ee-cwi.4` tools alignment/deprecation -> `ee-vaa` final sanity sweep. Existing open architecture beads are now properly reframed instead of left fuzzy: `ee-cwi` is the sibling-rollout epic with concrete child beads, `ee-vaa` is reserved for post-rollout audit work, and adjacent investigations like `ee-58s`, `ee-5dv`, `ee-2fs`, `ee-0gv`, and `ee-03m` remain intentionally separate unless later evidence proves they are rollout prerequisites.
 
 **Commits:**
 - `docs: map rollout families and sibling contract scope` (see recent `main` history)
@@ -244,9 +281,10 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 - `docs: add unified recovery execution graph beads`
 - `feat: add shared script recovery plumbing` (see current `main` history)
 - `feat: roll computed report lanes onto script-result contract` (see current `main` history)
+- `feat: roll tool-wrapper lanes onto script-result contract` (current bead)
 
-**Lessons Learned:** Breaking the problem into architecture layers was necessary, but not sufficient; the handoff only became actually executable once the order was encoded in Beads and the remaining investigations were deliberately kept out of the rollout graph. The useful pattern here is: contract docs settle semantics, execution-graph docs settle ownership and order, and Beads settle what is truly blocked by what.
+**Lessons Learned:** Breaking the problem into architecture layers was necessary, but not sufficient; the handoff only became actually executable once the order was encoded in Beads and the remaining investigations were deliberately kept out of the rollout graph. The useful pattern here is: contract docs settle semantics, execution-graph docs settle ownership and order, and Beads settle what is truly blocked by what. For the deterministic lanes, the important refinement was to let explicit retryability override blanket hard-fail categories, otherwise path-fixable tool failures still read as unrecoverable architecture failures.
 
 ---
 
-*Updated on 2026-03-14 after completing beads `ee-32e`, `ee-cib`, `ee-ok2`, `ee-d4x`, `ee-d4x.1`, `ee-d4x.2`, and `ee-d4x.3` contract/rollout implementation work.*
+*Updated on 2026-03-14 after completing beads `ee-32e`, `ee-cib`, `ee-ok2`, `ee-d4x`, `ee-d4x.1`, `ee-d4x.2`, `ee-d4x.3`, and `ee-d4x.4` contract/rollout implementation work.*

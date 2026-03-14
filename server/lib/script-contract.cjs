@@ -444,13 +444,15 @@ function classifyFailure(error, scriptId) {
     category = 'tool';
   } else if (lower.includes('network') || lower.includes('rate limit') || lower.includes('provider') || lower.includes('transport')) {
     category = 'provider_transport';
-  } else if (['ENOENT', 'EACCES', 'EIO'].includes(error?.code)) {
+  } else if (['ENOENT', 'EACCES', 'EIO'].includes(error?.code) || ['ENOENT', 'EACCES', 'EIO'].includes(error?.systemCode)) {
     category = 'io';
   } else if (lower.includes('not found') || lower.includes('missing dependency') || lower.includes('module not found')) {
     category = 'dependency';
   }
 
-  const retryable = ['timeout', 'provider_transport', 'invalid_output', 'tool'].includes(category);
+  const retryable = typeof error?.retryable === 'boolean'
+    ? error.retryable
+    : ['timeout', 'provider_transport', 'invalid_output', 'tool'].includes(category);
   return {
     category,
     code: createFailureCode(scriptId, category, error),
@@ -472,10 +474,33 @@ function resolveConfiguredAiDomain(scriptId) {
   return null;
 }
 
-function inferApplicableStrategies({ declaration, config, scriptId }) {
+function inferApplicableStrategies({ declaration, config, scriptId, failure }) {
   const strategyOrder = [];
   const knownIds = new Set((Array.isArray(declaration?.knownStrategies) ? declaration.knownStrategies : []).map((entry) => entry.id).filter(Boolean));
   const family = declaration?.family || 'none.v1';
+
+  if (family === 'tool.wrapper.v1') {
+    const lowerMessage = String(failure?.message || '').toLowerCase();
+    const sourceError = failure?.sourceError || {};
+    const pathNormalizationEligible = !!sourceError?.pathNormalizationEligible
+      || failure?.category === 'dependency'
+      || lowerMessage.includes('no such file')
+      || lowerMessage.includes('not found')
+      || lowerMessage.includes('invalid path')
+      || lowerMessage.includes('invalid argument');
+
+    if (knownIds.has('retry-after-path-normalization') && pathNormalizationEligible) {
+      strategyOrder.push('retry-after-path-normalization');
+    }
+    if (knownIds.has('re-extract-artifact')) {
+      strategyOrder.push('re-extract-artifact');
+    }
+    if (knownIds.has('retry-after-path-normalization') && !pathNormalizationEligible) {
+      strategyOrder.push('retry-after-path-normalization');
+    }
+
+    return strategyOrder.length > 0 ? strategyOrder : Array.from(knownIds);
+  }
 
   if (family !== 'ai.structured-output.v1') {
     return Array.from(knownIds);
@@ -519,7 +544,7 @@ function inferAttemptedStrategies({ failure, previousExecution, strategyOrder })
 }
 
 function buildDeterministicState({ declaration, failure, previousExecution, recoveryConfig, config, scriptId }) {
-  const strategyOrder = inferApplicableStrategies({ declaration, config, scriptId });
+  const strategyOrder = inferApplicableStrategies({ declaration, config, scriptId, failure });
   const attempted = inferAttemptedStrategies({ failure, previousExecution, strategyOrder });
   const maxAttempts = recoveryConfig?.deterministic?.maxAttemptsPerFailure ?? DEFAULT_RECOVERY_CONFIG.deterministic.maxAttemptsPerFailure;
   const remaining = strategyOrder.filter((strategyId) => !attempted.includes(strategyId));
@@ -576,7 +601,7 @@ function determineNextAction({ failure, deterministicState, aiRecoveryState, fai
 
   const categoryCount = failureCountsByCategory?.[failure.category] || 0;
 
-  if (hardFailCategories.has(failure.category) || hardFailCodes.has(failure.code)) {
+  if (((hardFailCategories.has(failure.category) && !failure.retryable) || hardFailCodes.has(failure.code))) {
     return { policy: 'fail', target: null, humanRequired: false, stopPipelineOnFailure: true };
   }
 
@@ -590,11 +615,11 @@ function determineNextAction({ failure, deterministicState, aiRecoveryState, fai
     }
   }
 
-  if (failure.category === 'config' && categoryCount >= normalized.stopConditions.configFailuresPerLineage) {
+  if (failure.category === 'config' && !failure.retryable && categoryCount >= normalized.stopConditions.configFailuresPerLineage) {
     return { policy: 'fail', target: null, humanRequired: false, stopPipelineOnFailure: true };
   }
 
-  if (failure.category === 'dependency' && categoryCount >= normalized.stopConditions.dependencyFailuresPerLineage) {
+  if (failure.category === 'dependency' && !failure.retryable && categoryCount >= normalized.stopConditions.dependencyFailuresPerLineage) {
     return { policy: 'fail', target: null, humanRequired: false, stopPipelineOnFailure: true };
   }
 

@@ -164,6 +164,14 @@ The AI lanes already have the strongest output discipline. Let them prove the ou
 
 By this point the envelope semantics, degraded-success rules, and lineage bookkeeping should already be stable, making tool-wrapper adoption primarily a classification exercise instead of a design exercise.
 
+**Implementation notes (completed 2026-03-14)**
+
+- `get-metadata.cjs` now exports an explicit `tool.wrapper.v1` deterministic recovery declaration, returns canonical primary-artifact/metrics metadata, and surfaces ffprobe exec vs parse failures through structured contract fields instead of ad-hoc strings.
+- `audio-preflight.cjs`, `audio-chunk-extractor.cjs`, and `video-chunk-extractor.cjs` now emit shared structured failure metadata (`failureCategory`, `failureCode`, retryability, and path-normalization eligibility) so upstream script envelopes can deterministically choose between `retry-after-path-normalization` and `re-extract-artifact`.
+- `get-dialogue.cjs`, `get-music.cjs`, and `video-chunks.cjs` now preserve helper failure metadata when extractor/preflight work fails, so existing AI lanes do not collapse deterministic tool failures back into opaque internal errors.
+- artifact persistence helpers (`persisted-artifacts.cjs`, `artifact-manager.cjs`) now surface malformed JSON / missing output-dir / write failures with explicit contract-friendly categories and codes rather than silent parse noise.
+- validation added focused tool-wrapper coverage for helper failure metadata, persisted-artifact parse failures, and `get-metadata` next-action selection under missing-path failures; full `npm test` remained green afterward.
+
 ---
 
 ### `ee-cwi.1` — Align ai-providers with recovery rollout substrate expectations

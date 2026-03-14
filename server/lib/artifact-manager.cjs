@@ -10,6 +10,12 @@
 
 const fs = require('fs');
 const path = require('path');
+const {
+  createIoFailure,
+  createPathFailure,
+  createInvalidOutputFailure,
+  applyFailureMetadata
+} = require('./tool-wrapper-contract.cjs');
 
 /**
  * Create empty artifact context
@@ -300,14 +306,36 @@ function getPhaseForArtifact(key) {
  */
 async function serializeArtifacts(artifacts, outputDir) {
   const absoluteDir = path.resolve(outputDir);
-  
-  // Ensure output directory exists
-  fs.mkdirSync(absoluteDir, { recursive: true });
-  
-  // Write ONLY the complete artifacts dump to root
+
+  try {
+    fs.mkdirSync(absoluteDir, { recursive: true });
+  } catch (error) {
+    const failure = createIoFailure({
+      stage: 'artifact.persist.write',
+      code: 'ARTIFACT_OUTPUT_DIR_CREATE_FAILED',
+      message: `Failed to create artifacts output directory: ${absoluteDir}`,
+      path: absoluteDir,
+      systemCode: error.code,
+      diagnostics: { originalMessage: error?.message || String(error) }
+    });
+    throw applyFailureMetadata(new Error(failure.error), failure.failure);
+  }
+
   const completePath = path.join(absoluteDir, 'artifacts-complete.json');
-  fs.writeFileSync(completePath, JSON.stringify(artifacts, null, 2), 'utf8');
-  
+  try {
+    fs.writeFileSync(completePath, JSON.stringify(artifacts, null, 2), 'utf8');
+  } catch (error) {
+    const failure = createIoFailure({
+      stage: 'artifact.persist.write',
+      code: 'ARTIFACT_COMPLETE_WRITE_FAILED',
+      message: `Failed to write artifacts-complete.json: ${completePath}`,
+      path: completePath,
+      systemCode: error.code,
+      diagnostics: { originalMessage: error?.message || String(error) }
+    });
+    throw applyFailureMetadata(new Error(failure.error), failure.failure);
+  }
+
   return [completePath];
 }
 
@@ -328,14 +356,33 @@ async function loadArtifacts(inputDir) {
   const absoluteDir = path.resolve(inputDir);
   
   if (!fs.existsSync(absoluteDir)) {
-    throw new Error(`Artifacts directory not found: ${absoluteDir}`);
+    const failure = createPathFailure({
+      stage: 'artifact.persist.read',
+      code: 'ARTIFACT_INPUT_DIR_MISSING',
+      message: `Artifacts directory not found: ${absoluteDir}`,
+      path: absoluteDir
+    });
+    throw applyFailureMetadata(new Error(failure.error), failure.failure);
   }
   
   // Prefer artifacts-complete.json if it exists
   const completePath = path.join(absoluteDir, 'artifacts-complete.json');
   if (fs.existsSync(completePath)) {
     const content = fs.readFileSync(completePath, 'utf8');
-    return JSON.parse(content);
+    try {
+      return JSON.parse(content);
+    } catch (error) {
+      const failure = createInvalidOutputFailure({
+        stage: 'artifact.persist.read',
+        code: 'ARTIFACT_COMPLETE_INVALID_JSON',
+        message: `artifacts-complete.json is invalid: ${completePath}`,
+        diagnostics: {
+          filePath: completePath,
+          parseError: error?.message || String(error)
+        }
+      });
+      throw applyFailureMetadata(new Error(failure.error), failure.failure);
+    }
   }
   
   // Legacy behavior: load individual artifact files

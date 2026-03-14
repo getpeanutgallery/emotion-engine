@@ -22,6 +22,11 @@ const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/ra
 const { ensureToolVersionsCaptured } = require('../../lib/tool-versions.cjs');
 const { ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 const { getEventsLogger } = require('../../lib/events-timeline.cjs');
+const {
+  createCommandFailure,
+  createInvalidOutputFailure,
+  applyFailureMetadata
+} = require('../../lib/tool-wrapper-contract.cjs');
 
 const execAsync = promisify(exec);
 
@@ -60,7 +65,24 @@ async function run(input) {
     const result = await execAsync(command, { maxBuffer: 25 * 1024 * 1024 });
     stdout = result.stdout || '';
     stderr = result.stderr || '';
-    parsed = stdout.trim().length ? JSON.parse(stdout) : {};
+
+    try {
+      parsed = stdout.trim().length ? JSON.parse(stdout) : {};
+    } catch (parseError) {
+      const failure = createInvalidOutputFailure({
+        stage: 'tool.wrapper.ffprobe.parse',
+        code: 'GET_METADATA_INVALID_OUTPUT',
+        message: `get-metadata produced invalid ffprobe JSON: ${parseError.message}`,
+        diagnostics: {
+          tool: 'ffprobe',
+          command,
+          stdout,
+          stderr,
+          parseError: parseError.message
+        }
+      });
+      throw applyFailureMetadata(new Error(failure.error), failure.failure);
+    }
 
     if (captureRaw) {
       writeRawJson(ffmpegRawDir, 'ffprobe-metadata.json', {
@@ -72,8 +94,8 @@ async function run(input) {
       });
     }
   } catch (error) {
-    stdout = error?.stdout || '';
-    stderr = error?.stderr || '';
+    stdout = error?.stdout || stdout || '';
+    stderr = error?.stderr || stderr || '';
 
     if (captureRaw) {
       writeRawJson(ffmpegRawDir, 'ffprobe-metadata.json', {
@@ -93,7 +115,22 @@ async function run(input) {
       where: 'ffprobe'
     });
 
-    throw new Error(`get-metadata failed: ${error?.message || String(error)}`);
+    if (error?.failureCategory) {
+      throw error;
+    }
+
+    const failure = createCommandFailure({
+      stage: 'tool.wrapper.ffprobe.exec',
+      code: 'GET_METADATA_TOOL_FAILED',
+      command: ffprobePath,
+      args: ['-v', 'error', '-print_format', 'json', '-show_format', '-show_streams', assetPath],
+      stdout,
+      stderr,
+      exitCode: error?.code ?? null,
+      message: `get-metadata failed: ${error?.message || String(error)}`,
+      tool: 'ffprobe'
+    });
+    throw applyFailureMetadata(new Error(failure.error), failure.failure);
   }
 
   const metadataData = {
@@ -112,10 +149,32 @@ async function run(input) {
   events.emit({ kind: 'script.end', phase: PHASE_KEY, script: SCRIPT_ID, outcome: 'success' });
 
   return {
+    primaryArtifactKey: 'metadataData',
+    metrics: {
+      streamsCount: Array.isArray(parsed?.streams) ? parsed.streams.length : 0,
+      formatDurationSeconds: Number(parsed?.format?.duration) || null
+    },
+    diagnostics: {
+      degraded: false,
+      warnings: []
+    },
     artifacts: {
       metadataData
     }
   };
 }
 
-module.exports = { run };
+const deterministicRecovery = {
+  script: 'get-metadata',
+  family: 'tool.wrapper.v1',
+  knownStrategies: [
+    { id: 'retry-after-path-normalization', kind: 'repair', consumesAttempt: true, terminalIfUnavailable: false },
+    { id: 're-extract-artifact', kind: 'rerun', consumesAttempt: true, terminalIfUnavailable: false }
+  ],
+  degradedSuccess: {
+    allowed: false,
+    conditions: []
+  }
+};
+
+module.exports = { run, deterministicRecovery };

@@ -33,6 +33,7 @@ const {
 const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
+const { applyFailureMetadata } = require('../../lib/tool-wrapper-contract.cjs');
 
 const execAsync = promisify(exec);
 
@@ -439,7 +440,16 @@ async function run(input) {
           chunkIndex,
           message: extractionResult?.error || 'unknown extraction error'
         });
-        throw new Error(`Failed to extract chunk ${chunkIndex}: ${extractionResult.error}`);
+        const extractionError = new Error(`Failed to extract chunk ${chunkIndex}: ${extractionResult.error}`);
+        applyFailureMetadata(extractionError, extractionResult.failure, {
+          diagnostics: {
+            ...(extractionResult.failure?.diagnostics || {}),
+            chunkIndex,
+            startTime,
+            endTime
+          }
+        });
+        throw extractionError;
       }
 
       const chunkPath = extractionResult.chunkPath;

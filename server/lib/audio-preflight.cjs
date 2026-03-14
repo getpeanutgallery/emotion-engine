@@ -12,6 +12,12 @@
 const fs = require('fs');
 const { execSync } = require('child_process');
 const { ffprobePath } = require('./ffmpeg-path.cjs');
+const {
+  createCommandFailure,
+  createPathFailure,
+  createIoFailure,
+  applyFailureMetadata
+} = require('./tool-wrapper-contract.cjs');
 
 const DEFAULT_BASE64_LIMIT_BYTES = 10 * 1024 * 1024; // ~10MB
 const DEFAULT_HEADROOM_RATIO = 0.9; // keep 10% headroom under provider limit
@@ -46,18 +52,32 @@ function getAudioDurationSeconds(audioPath, rawCapture = {}) {
 
     return parseFloat(stdoutText.trim()) || 0;
   } catch (error) {
+    const stdout = error?.stdout ? error.stdout.toString() : '';
+    const stderr = error?.stderr ? error.stderr.toString() : '';
+
     if (rawCapture?.captureRaw && typeof rawCapture?.rawLogger === 'function') {
       rawCapture.rawLogger({
         tool: 'ffprobe',
         command,
-        stdout: error?.stdout ? error.stdout.toString() : '',
-        stderr: error?.stderr ? error.stderr.toString() : '',
+        stdout,
+        stderr,
         status: 'failed',
         error: error?.message || String(error)
       });
     }
 
-    return 0;
+    const failure = createCommandFailure({
+      stage: 'tool.wrapper.audio-preflight.duration',
+      code: 'AUDIO_PREFLIGHT_DURATION_FAILED',
+      command: ffprobePath,
+      args: ['-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', audioPath],
+      stdout,
+      stderr,
+      exitCode: error?.status ?? error?.code ?? null,
+      message: `audio-preflight could not read duration for ${audioPath}: ${error?.message || String(error)}`,
+      tool: 'ffprobe'
+    });
+    throw applyFailureMetadata(new Error(failure.error), failure.failure);
   }
 }
 
@@ -158,10 +178,38 @@ function computeChunkDurationSeconds({
  */
 function preflightAudio({ audioPath, config, rawCapture } = {}) {
   if (!audioPath || typeof audioPath !== 'string') {
-    throw new Error('audio-preflight: audioPath is required');
+    const failure = createPathFailure({
+      stage: 'tool.wrapper.audio-preflight.input',
+      code: 'AUDIO_PREFLIGHT_PATH_REQUIRED',
+      message: 'audio-preflight: audioPath is required',
+      path: audioPath || null
+    });
+    throw applyFailureMetadata(new Error(failure.error), failure.failure);
   }
 
-  const stats = fs.statSync(audioPath);
+  let stats;
+  try {
+    stats = fs.statSync(audioPath);
+  } catch (error) {
+    const failure = error?.code === 'ENOENT'
+      ? createPathFailure({
+          stage: 'tool.wrapper.audio-preflight.stat',
+          code: 'AUDIO_PREFLIGHT_SOURCE_MISSING',
+          message: `audio-preflight source not found: ${audioPath}`,
+          path: audioPath,
+          systemCode: error.code
+        })
+      : createIoFailure({
+          stage: 'tool.wrapper.audio-preflight.stat',
+          code: 'AUDIO_PREFLIGHT_STAT_FAILED',
+          message: `audio-preflight could not stat source: ${audioPath}`,
+          path: audioPath,
+          systemCode: error.code,
+          diagnostics: { originalMessage: error?.message || String(error) }
+        });
+    throw applyFailureMetadata(new Error(failure.error), failure.failure);
+  }
+
   const sizeBytes = stats.size;
   const durationSeconds = getAudioDurationSeconds(audioPath, rawCapture);
 

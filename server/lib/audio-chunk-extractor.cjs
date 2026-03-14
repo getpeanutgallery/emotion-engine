@@ -13,6 +13,11 @@ const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 const { ffmpegPath } = require('./ffmpeg-path.cjs');
+const {
+  createCommandFailure,
+  createPathFailure,
+  createIoFailure
+} = require('./tool-wrapper-contract.cjs');
 
 function pad(value, width) {
   return String(value).padStart(width, '0');
@@ -20,30 +25,96 @@ function pad(value, width) {
 
 async function extractAudioChunk(audioPath, startTime, endTime, outputDir, chunkIndex, options = {}) {
   if (!audioPath || typeof audioPath !== 'string') {
-    return { success: false, error: 'Invalid audioPath: must be a non-empty string' };
+    return createPathFailure({
+      stage: 'tool.wrapper.audio-chunk.input',
+      code: 'AUDIO_CHUNK_PATH_INVALID',
+      message: 'Invalid audioPath: must be a non-empty string',
+      path: audioPath || null
+    });
   }
 
   if (typeof startTime !== 'number' || startTime < 0) {
-    return { success: false, error: `Invalid startTime: must be a non-negative number, got ${startTime}` };
+    return {
+      success: false,
+      error: `Invalid startTime: must be a non-negative number, got ${startTime}`,
+      failure: {
+        failureCategory: 'config',
+        failureCode: 'AUDIO_CHUNK_START_INVALID',
+        stage: 'tool.wrapper.audio-chunk.input',
+        diagnostics: { startTime },
+        retryable: false,
+        pathNormalizationEligible: false,
+        systemCode: null,
+        payload: null
+      }
+    };
   }
 
   if (typeof endTime !== 'number' || endTime <= startTime) {
-    return { success: false, error: `Invalid endTime: must be greater than startTime (${startTime}), got ${endTime}` };
+    return {
+      success: false,
+      error: `Invalid endTime: must be greater than startTime (${startTime}), got ${endTime}`,
+      failure: {
+        failureCategory: 'config',
+        failureCode: 'AUDIO_CHUNK_END_INVALID',
+        stage: 'tool.wrapper.audio-chunk.input',
+        diagnostics: { startTime, endTime },
+        retryable: false,
+        pathNormalizationEligible: false,
+        systemCode: null,
+        payload: null
+      }
+    };
   }
 
   if (!outputDir || typeof outputDir !== 'string') {
-    return { success: false, error: 'Invalid outputDir: must be a non-empty string' };
+    return createIoFailure({
+      stage: 'tool.wrapper.audio-chunk.output',
+      code: 'AUDIO_CHUNK_OUTPUT_DIR_INVALID',
+      message: 'Invalid outputDir: must be a non-empty string',
+      path: outputDir || null,
+      retryable: false
+    });
   }
 
   if (typeof chunkIndex !== 'number' || chunkIndex < 0) {
-    return { success: false, error: `Invalid chunkIndex: must be a non-negative number, got ${chunkIndex}` };
+    return {
+      success: false,
+      error: `Invalid chunkIndex: must be a non-negative number, got ${chunkIndex}`,
+      failure: {
+        failureCategory: 'config',
+        failureCode: 'AUDIO_CHUNK_INDEX_INVALID',
+        stage: 'tool.wrapper.audio-chunk.input',
+        diagnostics: { chunkIndex },
+        retryable: false,
+        pathNormalizationEligible: false,
+        systemCode: null,
+        payload: null
+      }
+    };
   }
 
   if (!fs.existsSync(audioPath)) {
-    return { success: false, error: `Source audio not found: ${audioPath}` };
+    return createPathFailure({
+      stage: 'tool.wrapper.audio-chunk.source',
+      code: 'AUDIO_CHUNK_SOURCE_MISSING',
+      message: `Source audio not found: ${audioPath}`,
+      path: audioPath
+    });
   }
 
-  fs.mkdirSync(outputDir, { recursive: true });
+  try {
+    fs.mkdirSync(outputDir, { recursive: true });
+  } catch (error) {
+    return createIoFailure({
+      stage: 'tool.wrapper.audio-chunk.output',
+      code: 'AUDIO_CHUNK_OUTPUT_DIR_CREATE_FAILED',
+      message: `Failed to create output directory: ${error.message}`,
+      path: outputDir,
+      systemCode: error.code,
+      diagnostics: { originalMessage: error.message }
+    });
+  }
 
   const outputFilename = `chunk_${pad(chunkIndex, 3)}.wav`;
   const outputPath = path.join(outputDir, outputFilename);
@@ -87,10 +158,18 @@ async function extractAudioChunk(audioPath, startTime, endTime, outputDir, chunk
           });
         }
 
-        return resolve({
-          success: false,
-          error: `FFmpeg exited with code ${code}. stderr: ${stderr.trim()}`
+        const failure = createCommandFailure({
+          stage: 'tool.wrapper.audio-chunk.extract',
+          code: 'AUDIO_CHUNK_FFMPEG_FAILED',
+          command: ffmpegPath,
+          args,
+          stderr,
+          exitCode: code,
+          message: `FFmpeg exited with code ${code}. stderr: ${stderr.trim()}`,
+          tool: 'ffmpeg',
+          outputPath
         });
+        return resolve(failure);
       }
 
       if (!fs.existsSync(outputPath)) {
@@ -108,7 +187,17 @@ async function extractAudioChunk(audioPath, startTime, endTime, outputDir, chunk
             error: 'output_not_created'
           });
         }
-        return resolve({ success: false, error: 'FFmpeg completed but output file was not created' });
+        return resolve(createCommandFailure({
+          stage: 'tool.wrapper.audio-chunk.extract',
+          code: 'AUDIO_CHUNK_OUTPUT_NOT_CREATED',
+          command: ffmpegPath,
+          args,
+          stderr,
+          exitCode: code,
+          message: 'FFmpeg completed but output file was not created',
+          tool: 'ffmpeg',
+          outputPath
+        }));
       }
 
       const fileSize = fs.statSync(outputPath).size;
@@ -145,7 +234,15 @@ async function extractAudioChunk(audioPath, startTime, endTime, outputDir, chunk
         });
       }
 
-      resolve({ success: false, error: `Failed to spawn FFmpeg: ${err.message}` });
+      resolve(createCommandFailure({
+        stage: 'tool.wrapper.audio-chunk.spawn',
+        code: 'AUDIO_CHUNK_FFMPEG_SPAWN_FAILED',
+        command: ffmpegPath,
+        args,
+        message: `Failed to spawn FFmpeg: ${err.message}`,
+        tool: 'ffmpeg',
+        outputPath
+      }));
     });
   });
 }

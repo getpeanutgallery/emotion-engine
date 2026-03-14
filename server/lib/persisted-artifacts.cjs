@@ -17,6 +17,11 @@
 
 const fs = require('fs');
 const path = require('path');
+const {
+  createPathFailure,
+  createInvalidOutputFailure,
+  applyFailureMetadata
+} = require('./tool-wrapper-contract.cjs');
 
 const DEFAULT_LOCATIONS = {
   dialogueData: ['phase1-gather-context', 'dialogue-data.json'],
@@ -27,7 +32,20 @@ const DEFAULT_LOCATIONS = {
 
 function safeReadJson(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
-  return JSON.parse(content);
+  try {
+    return JSON.parse(content);
+  } catch (error) {
+    const failure = createInvalidOutputFailure({
+      stage: 'artifact.persist.read',
+      code: 'PERSISTED_ARTIFACT_INVALID_JSON',
+      message: `Persisted artifact JSON is invalid: ${filePath}`,
+      diagnostics: {
+        filePath,
+        parseError: error?.message || String(error)
+      }
+    });
+    throw applyFailureMetadata(new Error(failure.error), failure.failure);
+  }
 }
 
 function pickKeys(source, keys) {
@@ -54,7 +72,13 @@ function loadPersistedArtifacts(outputDir, options = {}) {
 
   if (!fs.existsSync(absoluteDir)) {
     if (strict) {
-      throw new Error(`Run outputDir does not exist: ${absoluteDir}`);
+      const failure = createPathFailure({
+        stage: 'artifact.persist.lookup',
+        code: 'PERSISTED_ARTIFACT_OUTPUT_DIR_MISSING',
+        message: `Run outputDir does not exist: ${absoluteDir}`,
+        path: absoluteDir
+      });
+      throw applyFailureMetadata(new Error(failure.error), failure.failure);
     }
     return { artifacts: {}, sources: {} };
   }

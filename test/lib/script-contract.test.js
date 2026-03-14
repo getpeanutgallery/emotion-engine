@@ -54,6 +54,10 @@ test('script-contract - deterministic declaration lookup is centralized by famil
   const declaration = lookupDeterministicRecoveryDeclaration({ scriptId: 'recommendation' });
   assert.strictEqual(declaration.family, 'ai.structured-output.v1');
   assert(declaration.knownStrategies.some((entry) => entry.id === 'repair-with-validator-tool-loop'));
+
+  const toolWrapper = lookupDeterministicRecoveryDeclaration({ scriptId: 'get-metadata' });
+  assert.strictEqual(toolWrapper.family, 'tool.wrapper.v1');
+  assert(toolWrapper.knownStrategies.some((entry) => entry.id === 'retry-after-path-normalization'));
 });
 
 test('script-contract - wrapLegacySuccessResult persists canonical success envelope and execution refs', () => {
@@ -135,6 +139,19 @@ test('script-contract - inferApplicableStrategies bounds AI-lane deterministic s
     'failover-next-target',
     'retry-with-lower-thinking'
   ]);
+
+  const toolWrapperDeclaration = lookupDeterministicRecoveryDeclaration({ scriptId: 'get-metadata' });
+  const pathNormalizationFirst = inferApplicableStrategies({
+    declaration: toolWrapperDeclaration,
+    scriptId: 'get-metadata',
+    config: {},
+    failure: {
+      category: 'dependency',
+      message: 'Source video not found',
+      sourceError: { pathNormalizationEligible: true }
+    }
+  });
+  assert.deepStrictEqual(pathNormalizationFirst, ['retry-after-path-normalization', 're-extract-artifact']);
 });
 
 test('script-contract - createFailureResult persists next-action and lineage for shared recovery plumbing', () => {
@@ -173,6 +190,28 @@ test('script-contract - createFailureResult persists next-action and lineage for
   const nextActionPath = path.join(outputDir, 'phase2-process', 'recovery', 'video-chunks', 'next-action.json');
   assert(fs.existsSync(nextActionPath));
   assert.strictEqual(failure.result.artifacts.__scriptExecution['video-chunks'].refs.nextAction, 'phase2-process/recovery/video-chunks/next-action.json');
+
+  const toolWrapperFailure = createFailureResult({
+    phase: 'phase1-gather-context',
+    script: 'get-metadata',
+    config: { name: 'test-run' },
+    outputDir,
+    error: Object.assign(new Error('Source video not found: /tmp/missing.mp4'), {
+      failureCategory: 'dependency',
+      failureCode: 'GET_METADATA_SOURCE_MISSING',
+      retryable: true,
+      pathNormalizationEligible: true
+    }),
+    previousExecution: null,
+    declaration: lookupDeterministicRecoveryDeclaration({ scriptId: 'get-metadata' }),
+    startedAt: new Date('2026-03-14T18:00:03.000Z'),
+    completedAt: new Date('2026-03-14T18:00:04.000Z')
+  });
+
+  assert.strictEqual(toolWrapperFailure.envelope.failure.category, 'dependency');
+  assert.strictEqual(toolWrapperFailure.envelope.failure.retryable, true);
+  assert.strictEqual(toolWrapperFailure.envelope.recoveryPolicy.nextAction.policy, 'deterministic_recovery');
+  assert.strictEqual(toolWrapperFailure.envelope.recoveryPolicy.nextAction.target, 'retry-after-path-normalization');
 });
 
 test('script-contract - createFailureResult advances eligible AI lanes to ai_recovery after applicable deterministic retries are exhausted', () => {

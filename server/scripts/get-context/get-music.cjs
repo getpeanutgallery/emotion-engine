@@ -43,6 +43,7 @@ const {
   executeMusicAnalysisValidatorTool
 } = require('../../lib/phase1-validator-tools.cjs');
 const { executeLocalValidatorToolLoop } = require('../../lib/local-validator-tool-loop.cjs');
+const { applyFailureMetadata } = require('../../lib/tool-wrapper-contract.cjs');
 
 const execAsync = promisify(exec);
 
@@ -345,7 +346,16 @@ async function run(input) {
       );
 
       if (!extraction.success) {
-        throw new Error(`Failed to extract audio chunk ${chunkIndex}: ${extraction.error}`);
+        const extractionError = new Error(`Failed to extract audio chunk ${chunkIndex}: ${extraction.error}`);
+        applyFailureMetadata(extractionError, extraction.failure, {
+          diagnostics: {
+            ...(extraction.failure?.diagnostics || {}),
+            chunkIndex,
+            startTime,
+            endTime
+          }
+        });
+        throw extractionError;
       }
 
       if (captureRaw) {

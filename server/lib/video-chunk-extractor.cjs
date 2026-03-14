@@ -12,6 +12,11 @@ const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 const { ffmpegPath } = require('./ffmpeg-path.cjs');
+const {
+    createCommandFailure,
+    createPathFailure,
+    createIoFailure
+} = require('./tool-wrapper-contract.cjs');
 
 /**
  * Extract a video chunk from a source video file
@@ -34,46 +39,83 @@ const { ffmpegPath } = require('./ffmpeg-path.cjs');
 async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunkIndex, options = {}) {
     // Validate inputs
     if (!videoPath || typeof videoPath !== 'string') {
-        return {
-            success: false,
-            error: 'Invalid videoPath: must be a non-empty string'
-        };
+        return createPathFailure({
+            stage: 'tool.wrapper.video-chunk.input',
+            code: 'VIDEO_CHUNK_PATH_INVALID',
+            message: 'Invalid videoPath: must be a non-empty string',
+            path: videoPath || null
+        });
     }
 
     if (typeof startTime !== 'number' || startTime < 0) {
         return {
             success: false,
-            error: `Invalid startTime: must be a non-negative number, got ${startTime}`
+            error: `Invalid startTime: must be a non-negative number, got ${startTime}`,
+            failure: {
+                failureCategory: 'config',
+                failureCode: 'VIDEO_CHUNK_START_INVALID',
+                stage: 'tool.wrapper.video-chunk.input',
+                diagnostics: { startTime },
+                retryable: false,
+                pathNormalizationEligible: false,
+                systemCode: null,
+                payload: null
+            }
         };
     }
 
     if (typeof endTime !== 'number' || endTime <= startTime) {
         return {
             success: false,
-            error: `Invalid endTime: must be greater than startTime (${startTime}), got ${endTime}`
+            error: `Invalid endTime: must be greater than startTime (${startTime}), got ${endTime}`,
+            failure: {
+                failureCategory: 'config',
+                failureCode: 'VIDEO_CHUNK_END_INVALID',
+                stage: 'tool.wrapper.video-chunk.input',
+                diagnostics: { startTime, endTime },
+                retryable: false,
+                pathNormalizationEligible: false,
+                systemCode: null,
+                payload: null
+            }
         };
     }
 
     if (!outputDir || typeof outputDir !== 'string') {
-        return {
-            success: false,
-            error: 'Invalid outputDir: must be a non-empty string'
-        };
+        return createIoFailure({
+            stage: 'tool.wrapper.video-chunk.output',
+            code: 'VIDEO_CHUNK_OUTPUT_DIR_INVALID',
+            message: 'Invalid outputDir: must be a non-empty string',
+            path: outputDir || null,
+            retryable: false
+        });
     }
 
     if (typeof chunkIndex !== 'number' || chunkIndex < 0) {
         return {
             success: false,
-            error: `Invalid chunkIndex: must be a non-negative number, got ${chunkIndex}`
+            error: `Invalid chunkIndex: must be a non-negative number, got ${chunkIndex}`,
+            failure: {
+                failureCategory: 'config',
+                failureCode: 'VIDEO_CHUNK_INDEX_INVALID',
+                stage: 'tool.wrapper.video-chunk.input',
+                diagnostics: { chunkIndex },
+                retryable: false,
+                pathNormalizationEligible: false,
+                systemCode: null,
+                payload: null
+            }
         };
     }
 
     // Check if source video exists
     if (!fs.existsSync(videoPath)) {
-        return {
-            success: false,
-            error: `Source video not found: ${videoPath}`
-        };
+        return createPathFailure({
+            stage: 'tool.wrapper.video-chunk.source',
+            code: 'VIDEO_CHUNK_SOURCE_MISSING',
+            message: `Source video not found: ${videoPath}`,
+            path: videoPath
+        });
     }
 
     // Ensure output directory exists
@@ -82,10 +124,14 @@ async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunk
             fs.mkdirSync(outputDir, { recursive: true });
         }
     } catch (err) {
-        return {
-            success: false,
-            error: `Failed to create output directory: ${err.message}`
-        };
+        return createIoFailure({
+            stage: 'tool.wrapper.video-chunk.output',
+            code: 'VIDEO_CHUNK_OUTPUT_DIR_CREATE_FAILED',
+            message: `Failed to create output directory: ${err.message}`,
+            path: outputDir,
+            systemCode: err.code,
+            diagnostics: { originalMessage: err.message }
+        });
     }
 
     // Generate output filename
@@ -135,10 +181,17 @@ async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunk
                     });
                 }
                 console.error(`   ⚠️  FFmpeg extraction failed with code ${code}`);
-                return resolve({
-                    success: false,
-                    error: `FFmpeg exited with code ${code}. stderr: ${stderr.trim()}`
-                });
+                return resolve(createCommandFailure({
+                    stage: 'tool.wrapper.video-chunk.extract',
+                    code: 'VIDEO_CHUNK_FFMPEG_FAILED',
+                    command: ffmpegPath,
+                    args,
+                    stderr,
+                    exitCode: code,
+                    message: `FFmpeg exited with code ${code}. stderr: ${stderr.trim()}`,
+                    tool: 'ffmpeg',
+                    outputPath
+                }));
             }
 
             // Verify output file was created
@@ -157,10 +210,17 @@ async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunk
                         error: 'output_not_created'
                     });
                 }
-                return resolve({
-                    success: false,
-                    error: 'FFmpeg completed but output file was not created'
-                });
+                return resolve(createCommandFailure({
+                    stage: 'tool.wrapper.video-chunk.extract',
+                    code: 'VIDEO_CHUNK_OUTPUT_NOT_CREATED',
+                    command: ffmpegPath,
+                    args,
+                    stderr,
+                    exitCode: code,
+                    message: 'FFmpeg completed but output file was not created',
+                    tool: 'ffmpeg',
+                    outputPath
+                }));
             }
 
             const fileSize = fs.statSync(outputPath).size;
@@ -202,10 +262,15 @@ async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunk
                 });
             }
             console.error(`   ⚠️  FFmpeg spawn error: ${err.message}`);
-            resolve({
-                success: false,
-                error: `Failed to spawn FFmpeg: ${err.message}`
-            });
+            resolve(createCommandFailure({
+                stage: 'tool.wrapper.video-chunk.spawn',
+                code: 'VIDEO_CHUNK_FFMPEG_SPAWN_FAILED',
+                command: ffmpegPath,
+                args,
+                message: `Failed to spawn FFmpeg: ${err.message}`,
+                tool: 'ffmpeg',
+                outputPath
+            }));
         });
     });
 }
