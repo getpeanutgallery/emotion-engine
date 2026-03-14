@@ -313,6 +313,47 @@ test('Config Loader - validateConfig', async (t) => {
     assert.strictEqual(result.valid, false);
     assert(result.errors.some(e => e.includes('"debug.captureRaw" must be a boolean')));
   });
+
+  await t.test('should validate YAML-driven recovery policy settings when provided', () => {
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai: makeAiConfig(),
+      gather_context: ['script1.cjs'],
+      recovery: {
+        ai: {
+          enabled: true,
+          adapter: 'google',
+          model: 'gemini-3.1-pro-preview',
+          attempts: { maxPerFailure: 1, maxPerScriptRun: 1, maxPerPipelineRun: 3 },
+          budgets: { maxInputTokens: 12000, maxOutputTokens: 2000, maxTotalTokens: 14000, maxCostUsd: 0.25 }
+        }
+      }
+    };
+
+    const result = validateConfig(config);
+    assert.strictEqual(result.valid, true);
+    assert.strictEqual(result.normalizedRecovery.ai.enabled, true);
+    assert.strictEqual(result.normalizedRecovery.ai.budgets.maxTotalTokens, 14000);
+  });
+
+  await t.test('should fail validation for malformed recovery policy settings', () => {
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai: makeAiConfig(),
+      gather_context: ['script1.cjs'],
+      recovery: {
+        ai: {
+          enabled: 'yes',
+          attempts: { maxPerFailure: -1 }
+        }
+      }
+    };
+
+    const result = validateConfig(config);
+    assert.strictEqual(result.valid, false);
+    assert(result.errors.some(e => e.includes('recovery.ai.enabled')));
+    assert(result.errors.some(e => e.includes('recovery.ai.attempts.maxPerFailure')));
+  });
 });
 
 test('Config Loader - validateConfig AI requirements', async (t) => {

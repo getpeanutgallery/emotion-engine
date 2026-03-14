@@ -8,8 +8,7 @@
  * @module phases/process-runner
  */
 
-const fs = require('fs');
-const path = require('path');
+const { executeScript } = require('../script-runner.cjs');
 
 /**
  * Run Phase 2: Process
@@ -125,53 +124,26 @@ async function runSingleScript(scriptPath, input) {
     config,
     scriptConfig
   } = input;
-  
-  // Resolve script path relative to project root
-  const absoluteScriptPath = path.resolve(process.cwd(), scriptPath);
-  
-  if (!fs.existsSync(absoluteScriptPath)) {
-    throw new Error(`Script not found: ${absoluteScriptPath}`);
-  }
-  
-  console.log(`   Running: ${scriptPath}`);
-  
-  try {
-    // Load and execute script
-    const script = require(absoluteScriptPath);
-    
-    if (typeof script.run !== 'function') {
-      throw new Error(`Script must export a run() function: ${scriptPath}`);
-    }
-    
-    // Build input for script
-    const scriptInput = {
-      assetPath,
-      outputDir,
-      artifacts,
-      config,
-      // Merge tool_variables from config and script-level overrides
-      toolPath: scriptConfig.toolPath || config?.tool_variables?.toolPath,
-      toolVariables: mergeToolVariables(
-        config?.tool_variables,
-        scriptConfig.toolVariables || scriptConfig.tool_variables
-      ),
-      ...scriptConfig
-    };
-    
-    // Execute script
-    const result = await script.run(scriptInput);
-    
-    // Validate output
-    if (!result || typeof result.artifacts !== 'object') {
-      throw new Error(`Script must return { artifacts: object }: ${scriptPath}`);
-    }
-    
-    return result;
-  } catch (error) {
-    console.error(`   ❌ Script failed: ${scriptPath}`);
-    console.error(`      Error: ${error.message}`);
-    throw error;
-  }
+
+  const scriptInput = {
+    assetPath,
+    outputDir,
+    artifacts,
+    config,
+    // Merge tool_variables from config and script-level overrides
+    toolPath: scriptConfig.toolPath || config?.tool_variables?.toolPath,
+    toolVariables: mergeToolVariables(
+      config?.tool_variables,
+      scriptConfig.toolVariables || scriptConfig.tool_variables
+    ),
+    ...scriptConfig
+  };
+
+  return executeScript({
+    phase: 'phase2-process',
+    scriptPath,
+    input: scriptInput
+  });
 }
 
 /**

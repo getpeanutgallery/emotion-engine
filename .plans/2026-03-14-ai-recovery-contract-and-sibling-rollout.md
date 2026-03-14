@@ -117,12 +117,46 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 
 ---
 
+### Task 5: Implement `ee-d4x.1` shared script-result + recovery plumbing in emotion-engine
+
+**Bead ID:** `ee-d4x.1`  
+**SubAgent:** `coder`
+**Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine, claim bead ee-d4x.1 immediately, then implement the shared repo-local plumbing that makes the universal contract executable across script families. Keep lane migrations out of scope except for minimal proving hooks; update durable docs and this active plan with what actually changed; run relevant validation/tests; commit to main; close the bead when finished.`
+
+**Folders Created/Deleted/Modified:**
+- `server/lib/`
+- `server/lib/phases/`
+- `test/lib/`
+- `test/pipeline/`
+- `test/scripts/`
+- `docs/`
+- `.plans/`
+
+**Files Created/Deleted/Modified:**
+- `server/lib/script-contract.cjs`
+- `server/lib/script-runner.cjs`
+- `server/lib/config-loader.cjs`
+- `server/run-pipeline.cjs`
+- `server/lib/phases/gather-context-runner.cjs`
+- `server/lib/phases/process-runner.cjs`
+- `server/lib/phases/report-runner.cjs`
+- `test/lib/script-contract.test.js`
+- `test/pipeline/config-loader.test.js`
+- `test/scripts/phase1-raw-ffmpeg-namespacing.test.js`
+- `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`
+- `.plans/2026-03-14-ai-recovery-contract-and-sibling-rollout.md`
+
+**Status:** ✅ Complete
+
+**Results:** Landed the first bounded implementation pass for `ee-d4x.1` on top of the previously written contract docs. The repo now has a shared runtime contract layer in `server/lib/script-contract.cjs` that builds canonical success/failure envelopes, centralizes deterministic recovery declaration lookup, classifies failures, computes next-action policy, tracks lineage, and persists per-script `script-results/` plus `recovery/` refs. `server/lib/script-runner.cjs` now wraps existing script modules so the phase runners can route all script families through the same contract seam without silently migrating the lane code itself. `config-loader.cjs` and `run-pipeline.cjs` now validate, normalize, and retain YAML-driven `recovery` policy/budget settings at runtime, while the phase runners persist shared execution metadata into `artifacts.__scriptExecution` for downstream migrations. Validation now includes new unit coverage for the contract layer plus recovery-config validation, and the repo-level test suite was brought back to green with a full `npm test` pass; the only extra test change outside the new plumbing coverage was updating the raw ffmpeg namespacing mock payloads so they match the current validator-tool contracts already enforced elsewhere in the suite. Commit: `69845b5` (`feat: add shared script recovery plumbing`).
+
 ## Current context from the handoff
 
 - `ee-32e` was the explicit next pickup point from the prior session and is now complete.
 - `ee-cib` is now complete and the rollout-family + sibling-scope map lives in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`.
 - `ee-ok2` is now complete and the strict global guardrails live in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`.
 - `ee-d4x` is now complete and the concrete implementation graph lives in `docs/IMPLEMENTATION-EXECUTION-GRAPH.md` plus the newly created child beads `ee-d4x.1` through `ee-d4x.4`.
+- `ee-d4x.1` is now complete on `main`; the shared runtime contract/recovery plumbing is wired through the phase runners and the later lane migrations can build on that substrate instead of inventing their own wrappers.
 - `ee-cwi` remains open for sibling repo implementation rollout, but it is now concretized into child beads `ee-cwi.1` through `ee-cwi.4` with explicit order and bounded repo scope.
 - `ee-vaa` remains open as the final post-rollout sanity sweep, not an early audit substitute.
 - We should not jump to another golden run yet; the architecture/recovery rollout is still in flight.
@@ -133,12 +167,13 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 
 **Status:** ⚠️ Partial
 
-**What We Built:** This plan now covers the full architecture-to-execution breakdown for the unified recovery rollout. The durable doc stack now includes: (1) the bounded AI recovery lane contract in `docs/AI-RECOVERY-LANE-CONTRACT.md`, (2) the rollout-family + sibling-boundary map in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`, (3) the strict global guardrail policy in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`, and now (4) the concrete implementation bead graph in `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`. The bead graph is explicit and bounded: `ee-d4x.1` shared plumbing -> `ee-d4x.2` AI lanes -> `ee-d4x.3` computed/report lanes -> `ee-d4x.4` deterministic tool-wrapper lanes -> `ee-cwi.1` ai-providers -> `ee-cwi.2` digital-twin-router -> `ee-cwi.3` digital-twin-core -> optional `ee-cwi.4` tools alignment/deprecation -> `ee-vaa` final sanity sweep. Existing open architecture beads are now properly reframed instead of left fuzzy: `ee-cwi` is the sibling-rollout epic with concrete child beads, `ee-vaa` is reserved for post-rollout audit work, and adjacent investigations like `ee-58s`, `ee-5dv`, `ee-2fs`, `ee-0gv`, and `ee-03m` remain intentionally separate unless later evidence proves they are rollout prerequisites.
+**What We Built:** This plan now covers the full architecture-to-execution breakdown for the unified recovery rollout, and it now includes the first live implementation bead instead of docs-only planning. The durable doc stack includes: (1) the bounded AI recovery lane contract in `docs/AI-RECOVERY-LANE-CONTRACT.md`, (2) the rollout-family + sibling-boundary map in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`, (3) the strict global guardrail policy in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`, (4) the concrete implementation bead graph in `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`, and now (5) the first shared runtime substrate for that graph in `server/lib/script-contract.cjs` + `server/lib/script-runner.cjs` wired through all three phase runners. The bead graph remains explicit and bounded: `ee-d4x.1` shared plumbing -> `ee-d4x.2` AI lanes -> `ee-d4x.3` computed/report lanes -> `ee-d4x.4` deterministic tool-wrapper lanes -> `ee-cwi.1` ai-providers -> `ee-cwi.2` digital-twin-router -> `ee-cwi.3` digital-twin-core -> optional `ee-cwi.4` tools alignment/deprecation -> `ee-vaa` final sanity sweep. Existing open architecture beads are now properly reframed instead of left fuzzy: `ee-cwi` is the sibling-rollout epic with concrete child beads, `ee-vaa` is reserved for post-rollout audit work, and adjacent investigations like `ee-58s`, `ee-5dv`, `ee-2fs`, `ee-0gv`, and `ee-03m` remain intentionally separate unless later evidence proves they are rollout prerequisites.
 
 **Commits:**
 - `docs: map rollout families and sibling contract scope` (see recent `main` history)
 - `docs: define recovery guardrails and budget policy` (see recent `main` history)
 - `docs: add unified recovery execution graph beads`
+- `69845b5` - `feat: add shared script recovery plumbing`
 
 **Lessons Learned:** Breaking the problem into architecture layers was necessary, but not sufficient; the handoff only became actually executable once the order was encoded in Beads and the remaining investigations were deliberately kept out of the rollout graph. The useful pattern here is: contract docs settle semantics, execution-graph docs settle ownership and order, and Beads settle what is truly blocked by what.
 

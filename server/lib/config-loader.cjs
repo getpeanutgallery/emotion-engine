@@ -11,6 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
+const { validateRecoveryConfig } = require('./script-contract.cjs');
 
 /**
  * Load configuration from file (YAML or JSON)
@@ -228,6 +229,12 @@ function validateConfig(config) {
     }
   }
 
+  // Validate recovery configuration when provided
+  const recoveryValidation = validateRecoveryConfig(config.recovery);
+  if (!recoveryValidation.valid) {
+    errors.push(...recoveryValidation.errors);
+  }
+
   // Validate debug configuration when provided
   if (config.debug !== undefined) {
     if (typeof config.debug !== 'object' || config.debug === null || Array.isArray(config.debug)) {
@@ -307,7 +314,8 @@ function validateConfig(config) {
   return {
     valid: errors.length === 0,
     errors,
-    totalScripts
+    totalScripts,
+    normalizedRecovery: recoveryValidation.normalized
   };
 }
 

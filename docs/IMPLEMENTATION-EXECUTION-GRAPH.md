@@ -61,6 +61,19 @@ This is the practical dependency chain currently encoded in Beads. The `../tools
 
 Without this bead, every lane family would invent its own envelope/recovery wiring and the contract would drift immediately.
 
+**Implementation status update — 2026-03-14**
+
+This bead now has its first bounded implementation pass on `main`:
+
+- added `server/lib/script-contract.cjs` as the shared runtime builder for canonical success/failure envelopes, deterministic declaration lookup, failure classification, next-action selection, lineage bookkeeping, and persistence of `script-results/` + `recovery/` refs
+- added `server/lib/script-runner.cjs` so the phase runners can wrap existing legacy script returns without forcing per-lane migration yet
+- wired `server/lib/phases/gather-context-runner.cjs`, `server/lib/phases/process-runner.cjs`, and `server/lib/phases/report-runner.cjs` through the shared runner so every script family now passes through the same contract seam
+- extended `server/lib/config-loader.cjs` + `server/run-pipeline.cjs` to load, validate, normalize, and retain YAML-driven `recovery` policy/budget settings at runtime
+- persisted shared execution metadata under `artifacts.__scriptExecution` plus per-script `phase*/script-results/*.json` and `phase*/recovery/*/{lineage,next-action}.json` refs so later lane migrations can attach richer raw/debug evidence without redesigning the substrate
+- proved the substrate with new tests in `test/lib/script-contract.test.js`, config-loader coverage, and a full `npm test` pass
+
+Per-lane migration is still intentionally deferred to `ee-d4x.2`, `ee-d4x.3`, and `ee-d4x.4`; the current pass establishes the shared plumbing layer and keeps existing script behavior intact unless the new wrapper adds metadata around it.
+
 ---
 
 ### `ee-d4x.2` — Roll unified envelope + recovery contract into emotion-engine AI lanes

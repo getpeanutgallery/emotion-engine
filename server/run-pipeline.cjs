@@ -75,6 +75,7 @@ async function runPipeline(configPath, options = {}) {
   }
   
   console.log(`   ✅ Valid (${validation.totalScripts} script(s) across all phases)`);
+  config.recovery = validation.normalizedRecovery;
   
   // Step 3: Dry run mode
   if (dryRun) {

@@ -30,8 +30,9 @@ const mockCompletion = async (options) => {
             confidence: 0.95
           }
         ],
-        summary: 'Test dialogue summary'
-        // Intentionally omit totalDuration so ffprobe is exercised
+        summary: 'Test dialogue summary',
+        handoffContext: 'Speaker 1 continues...',
+        totalDuration: 10.0
       }),
       usage: { input: 100, output: 150 }
     };
@@ -39,10 +40,13 @@ const mockCompletion = async (options) => {
 
   return {
     content: JSON.stringify({
-      type: 'music',
-      description: 'Test music description',
-      mood: 'upbeat',
-      intensity: 7
+      analysis: {
+        type: 'music',
+        description: 'Test music description',
+        mood: 'upbeat',
+        intensity: 7
+      },
+      rollingSummary: 'Test rolling summary'
     }),
     usage: { input: 80, output: 60 }
   };
