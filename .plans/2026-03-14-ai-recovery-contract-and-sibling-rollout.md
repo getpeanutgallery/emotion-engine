@@ -57,12 +57,14 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- `docs/`
+- `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`
+- `docs/PIPELINE-SCRIPTS.md`
+- `README.md`
 - `.plans/2026-03-14-ai-recovery-contract-and-sibling-rollout.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Added `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md` as the durable architecture map for the next rollout pass, then linked it from `README.md` and `docs/PIPELINE-SCRIPTS.md` so the mapping is discoverable beside the existing contract docs. The new rollout map groups `emotion-engine` into four concrete rollout families: (A) current meaningful AI lanes that already satisfy the validator-tool contract but still need the broader universal success/failure/recovery envelope, (B) computed/aggregation/report-formatting scripts that must adopt the universal script-result contract next, (C) deterministic tool-wrapper/artifact lanes that need explicit failure classifications and recovery declarations, and (D) shared orchestrator plumbing that should land first so the contract is not re-implemented differently per lane. The sibling impact map now explicitly bounds scope to `../ai-providers`, `../digital-twin-router`, `../digital-twin-core`, and conditionally `../tools`, while explicitly excluding `../retry-strategy` and `../goals` from this contract pass. This pass also records which existing beads are reused versus reframed: `ee-cib` is fully satisfied by the mapping/spec work, `ee-cwi` stays open as the sibling rollout epic, and `ee-vaa` remains the post-rollout sanity sweep rather than an early audit substitute. Recommended order is now explicit: shared plumbing in `emotion-engine`, then existing compliant AI lanes, then computed lanes, then tool-wrapper lanes, then sibling repos, then the final sanity sweep.
 
 ---
 
@@ -110,8 +112,9 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 ## Current context from the handoff
 
 - `ee-32e` was the explicit next pickup point from the prior session and is now complete.
-- `ee-cib`, `ee-ok2`, and `ee-d4x` remain the next sequence after that.
-- `ee-cwi` remains open for sibling repo rollout.
+- `ee-cib` is now complete and the rollout-family + sibling-scope map lives in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`.
+- `ee-ok2` and `ee-d4x` remain the next architecture tasks in sequence.
+- `ee-cwi` remains open for sibling repo implementation rollout; this pass resolved sibling scope/order, not the sibling code rollout itself.
 - We should not jump to another golden run yet; the architecture/recovery rollout is still in flight.
 
 ---
@@ -120,13 +123,13 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Completed the missing AI recovery architecture layer in docs. The repo now has an explicit contract for bounded AI recovery between the universal failure envelope and same-script re-entry, but the sibling rollout map, broader guardrail pass, and execution breakdown beads are still pending.
+**What We Built:** Completed the missing AI recovery architecture layer in docs and then completed the next mapping/spec pass for rollout families and sibling repo impact. The repo now has: (1) an explicit bounded AI recovery contract layered on top of the universal failure envelope and deterministic recovery, and (2) a durable rollout map in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md` that names the `emotion-engine` family breakdown, the exact sibling boundary, reused/superseded beads, and the safe implementation order. The remaining architecture tasks are still the guardrail pass (`ee-ok2`) and execution-breakdown pass (`ee-d4x`), followed later by actual implementation rollout.
 
 **Commits:**
-- Pending.
+- `docs: map rollout families and sibling contract scope` (see latest `main` commit for hash)
 
-**Lessons Learned:** Keeping AI recovery as its own durable contract made it easier to keep the architecture auditable: deterministic recovery stays first, YAML owns policy/budgets, and re-entry remains same-script plus schema-preserving instead of turning into a general autonomous fixer.
+**Lessons Learned:** Splitting the work into contract layers first and rollout-surface mapping second made the next implementation order much clearer. The AI-lane validator contract is already strong inside `emotion-engine`; the real remaining architecture risk is now in shared envelope plumbing, computed/tool-wrapper lane adoption, and keeping sibling scope bounded to provider/replay surfaces instead of pretending every nearby repo needs the full script-level contract.
 
 ---
 
-*Updated on 2026-03-14 after completing bead `ee-32e`.*
+*Updated on 2026-03-14 after completing beads `ee-32e` and `ee-cib` planning/mapping work.*

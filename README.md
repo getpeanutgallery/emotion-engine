@@ -319,6 +319,8 @@ Ensure these exist and match sibling repo layout:
 ## Docs
 
 - `docs/AI-LANE-CONTRACT.md` — universal schema / validator contract for structured AI lanes
+- `docs/AI-RECOVERY-LANE-CONTRACT.md` — bounded AI recovery contract, failure package, result schema, and YAML policy shape
+- `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md` — rollout-family map, sibling repo boundary, reused beads, and safe implementation order
 - `docs/CONFIG-GUIDE.md` — current YAML schema + examples
 - `docs/DEBUG-CONFIG.md` — `debug.captureRaw` + processed intermediates retention
 - `docs/COD-TEST-GOLDEN-RUN-CHECKLIST.md` — deterministic replay/record checklist for `configs/cod-test.yaml`
