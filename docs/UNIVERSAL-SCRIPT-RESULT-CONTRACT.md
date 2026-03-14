@@ -19,6 +19,8 @@ This contract is intentionally broader than the AI-lane validator contract. AI l
 
 For the shared declaration model and next-action rules behind `recoveryPolicy.deterministic`, see `docs/DETERMINISTIC-RECOVERY-FRAMEWORK.md`.
 
+For the bounded failure-package, decision/result, YAML budget, and safe re-entry contract behind `recoveryPolicy.aiRecovery`, see `docs/AI-RECOVERY-LANE-CONTRACT.md`.
+
 ---
 
 ## Audit of the current repo state

@@ -2,10 +2,11 @@
 
 This doc defines the shared deterministic recovery model for emotion-engine script results.
 
-It is the companion to `docs/UNIVERSAL-SCRIPT-RESULT-CONTRACT.md`:
+It is the companion to `docs/UNIVERSAL-SCRIPT-RESULT-CONTRACT.md` and `docs/AI-RECOVERY-LANE-CONTRACT.md`:
 
 - the universal contract defines the failure envelope shape
 - this doc defines how scripts declare deterministic recoveries and how that envelope is populated
+- the AI recovery contract defines what happens only after deterministic recovery is exhausted, skipped, or disallowed
 
 The goal is to make deterministic recovery:
 
