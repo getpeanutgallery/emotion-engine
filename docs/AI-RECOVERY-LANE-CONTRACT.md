@@ -32,6 +32,8 @@ The goal is to make AI recovery:
 - safe to re-enter from
 - impossible to loop forever
 
+The strict global ceilings, lineage rules, mandatory capture requirements, degraded-success boundaries, and hard-stop conditions that constrain this lane are defined in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`.
+
 AI recovery is **not** a replacement for deterministic recovery. It is the fallback lane for failures that remain unresolved after deterministic recovery is exhausted, inapplicable, or explicitly skipped by policy.
 
 ---

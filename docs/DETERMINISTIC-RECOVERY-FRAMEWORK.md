@@ -16,6 +16,8 @@ The goal is to make deterministic recovery:
 - compatible with script-local failure codes
 - reusable across script families without flattening them into one fake global schema
 
+The global ceilings, counter semantics, lineage requirements, repeated-failure stop conditions, and override limits for this framework are defined in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`.
+
 ---
 
 ## Scope

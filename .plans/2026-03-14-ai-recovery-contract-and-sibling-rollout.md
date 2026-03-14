@@ -79,12 +79,18 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- `docs/`
+- `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`
+- `docs/UNIVERSAL-SCRIPT-RESULT-CONTRACT.md`
+- `docs/DETERMINISTIC-RECOVERY-FRAMEWORK.md`
+- `docs/AI-RECOVERY-LANE-CONTRACT.md`
+- `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`
+- `docs/PIPELINE-SCRIPTS.md`
+- `README.md`
 - `.plans/2026-03-14-ai-recovery-contract-and-sibling-rollout.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Added `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md` as the strict cross-cutting recovery policy for the whole architecture, then cross-linked it from the universal result, deterministic recovery, AI recovery, rollout-family, pipeline-script, and README docs so the guardrails are part of the durable contract stack rather than a loose note. The policy now makes the previously implicit safety boundaries explicit and auditable: deterministic recovery remains first and capped at 2 declared strategies per failure lineage by default; AI recovery is a one-shot fallback by default (`maxPerFailure: 1`, `maxPerScriptRun: 1`, `maxPerPipelineRun: 3`) with default ceilings of `12000` input tokens, `2000` output tokens, `14000` total tokens, `45000ms`, and `$0.25` cost per attempt. It also settles the counter semantics and loop-prevention model: script-run attempts, deterministic strategy consumption, AI recovery attempts, and provider/validator telemetry are separate counters; lineage may not be reset mid-failure; and the system must be able to prove from artifacts that it did not bounce indefinitely across retries, failover, AI recovery, and same-script re-entry. The doc further defines mandatory raw/debug capture requirements, explicit human-review vs hard-fail boundaries, immediate stop conditions for repeated `config`/`dependency` failures and repeated `internal` failures, and the rule that degraded success is allowed only when the lane-specific schema still holds and downstream continuation is explicitly safe.
 
 ---
 
@@ -113,7 +119,8 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 
 - `ee-32e` was the explicit next pickup point from the prior session and is now complete.
 - `ee-cib` is now complete and the rollout-family + sibling-scope map lives in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`.
-- `ee-ok2` and `ee-d4x` remain the next architecture tasks in sequence.
+- `ee-ok2` is now complete and the strict global guardrails live in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`.
+- `ee-d4x` remains the next architecture task in sequence.
 - `ee-cwi` remains open for sibling repo implementation rollout; this pass resolved sibling scope/order, not the sibling code rollout itself.
 - We should not jump to another golden run yet; the architecture/recovery rollout is still in flight.
 
@@ -123,13 +130,14 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Completed the missing AI recovery architecture layer in docs and then completed the next mapping/spec pass for rollout families and sibling repo impact. The repo now has: (1) an explicit bounded AI recovery contract layered on top of the universal failure envelope and deterministic recovery, and (2) a durable rollout map in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md` that names the `emotion-engine` family breakdown, the exact sibling boundary, reused/superseded beads, and the safe implementation order. The remaining architecture tasks are still the guardrail pass (`ee-ok2`) and execution-breakdown pass (`ee-d4x`), followed later by actual implementation rollout.
+**What We Built:** Completed three consecutive architecture layers for the unified recovery rollout: (1) the bounded AI recovery lane contract in `docs/AI-RECOVERY-LANE-CONTRACT.md`, (2) the rollout-family + sibling-boundary map in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`, and now (3) the strict global guardrail policy in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`. The repo now has an explicit, cross-linked contract stack covering universal success/failure envelopes, deterministic recovery declarations, YAML-driven AI recovery, and the global ceilings/kill conditions that keep recovery auditable. The major settled decisions from this pass are: deterministic recovery stays first and small by default; AI recovery is one-shot per failure lineage by default; script-run/deterministic/AI counters are distinct and lineage-bound; repeated `config`/`dependency` failures stop immediately; repeated `internal` failures stop quickly; missing required raw/debug evidence is terminal or escalated, not ignored; and degraded success is acceptable only when the lane-specific schema still holds and downstream continuation is contract-safe. The main remaining architecture task is now the execution-breakdown bead (`ee-d4x`), followed later by implementation rollout.
 
 **Commits:**
-- `docs: map rollout families and sibling contract scope` (see latest `main` commit for hash)
+- `docs: map rollout families and sibling contract scope` (see recent `main` history)
+- `docs: define recovery guardrails and budget policy` (to be appended by this pass)
 
-**Lessons Learned:** Splitting the work into contract layers first and rollout-surface mapping second made the next implementation order much clearer. The AI-lane validator contract is already strong inside `emotion-engine`; the real remaining architecture risk is now in shared envelope plumbing, computed/tool-wrapper lane adoption, and keeping sibling scope bounded to provider/replay surfaces instead of pretending every nearby repo needs the full script-level contract.
+**Lessons Learned:** Separating the work into four layers turned out to be the right move: universal envelope first, deterministic recovery second, AI recovery third, and global guardrails fourth. The hard part was not inventing more recovery mechanisms; it was drawing auditable stopping lines so the later implementation beads cannot quietly drift into loop-prone or under-observed behavior.
 
 ---
 
-*Updated on 2026-03-14 after completing beads `ee-32e` and `ee-cib` planning/mapping work.*
+*Updated on 2026-03-14 after completing beads `ee-32e`, `ee-cib`, and `ee-ok2` architecture/guardrail work.*

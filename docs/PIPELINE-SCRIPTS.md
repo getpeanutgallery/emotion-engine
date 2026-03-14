@@ -9,6 +9,7 @@ For how to run the repo, start with:
 - `docs/UNIVERSAL-SCRIPT-RESULT-CONTRACT.md` (future-facing universal success/failure envelope contract)
 - `docs/DETERMINISTIC-RECOVERY-FRAMEWORK.md` (shared deterministic recovery declaration + policy model)
 - `docs/AI-RECOVERY-LANE-CONTRACT.md` (bounded AI recovery layer, failure package, result schema, and YAML policy)
+- `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md` (global retry ceilings, lineage rules, capture requirements, and hard-stop policy)
 - `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md` (current rollout-family map and sibling repo boundary for the unified contract)
 
 ---

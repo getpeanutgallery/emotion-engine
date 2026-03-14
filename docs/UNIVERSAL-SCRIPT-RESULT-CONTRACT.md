@@ -21,6 +21,8 @@ For the shared declaration model and next-action rules behind `recoveryPolicy.de
 
 For the bounded failure-package, decision/result, YAML budget, and safe re-entry contract behind `recoveryPolicy.aiRecovery`, see `docs/AI-RECOVERY-LANE-CONTRACT.md`.
 
+For the strict global ceilings, lineage rules, observability requirements, human-review boundaries, and hard-fail stop conditions that constrain both recovery layers, see `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`.
+
 ---
 
 ## Audit of the current repo state

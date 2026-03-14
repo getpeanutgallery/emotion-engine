@@ -320,6 +320,7 @@ Ensure these exist and match sibling repo layout:
 
 - `docs/AI-LANE-CONTRACT.md` — universal schema / validator contract for structured AI lanes
 - `docs/AI-RECOVERY-LANE-CONTRACT.md` — bounded AI recovery contract, failure package, result schema, and YAML policy shape
+- `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md` — strict global guardrails for recovery ceilings, lineage, observability, and kill conditions
 - `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md` — rollout-family map, sibling repo boundary, reused beads, and safe implementation order
 - `docs/CONFIG-GUIDE.md` — current YAML schema + examples
 - `docs/DEBUG-CONFIG.md` — `debug.captureRaw` + processed intermediates retention

@@ -16,6 +16,9 @@ This document maps the next rollout surface for the unified contract now defined
 
 It answers four architecture questions before implementation beads land:
 
+The strict cross-family guardrails that every rollout family must honor are defined in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`; this document maps where those guardrails have to land.
+
+
 1. Which `emotion-engine` scripts belong to which rollout families?
 2. Which families already comply with the older AI-lane validator contract vs still lack the broader system contract?
 3. Which sibling repos are directly impacted by the new contract, and where does sibling scope stop?
