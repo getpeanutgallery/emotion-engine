@@ -187,6 +187,36 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 
 **Results:** Landed the `ee-d4x.2` AI-lane rollout on top of the shared `ee-d4x.1` substrate instead of re-inventing per-lane wrappers. `server/lib/script-contract.cjs` now derives deterministic strategy applicability from the lane's configured retries/targets and classifies `invalid_output` failures explicitly enough to advance exhausted validator/tool-loop failures into the bounded AI recovery policy. `server/lib/script-runner.cjs` now invokes a new `server/lib/ai-recovery-lane.cjs` helper when the contract selects `ai_recovery`, persists recovery artifacts/prompts/results under the phase recovery tree, and re-enters the same script once with a bounded `recoveryRuntime`. The four targeted AI lanes (`get-dialogue`, `get-music`, `video-chunks`, `recommendation`) now export explicit AI-recovery metadata and append bounded repair/context instructions to their existing prompts via `server/lib/ai-recovery-runtime.cjs`, preserving their existing validator/tool-loop semantics while formalizing the outer success/failure + re-entry envelope. Validation covered the contract/runtime seam plus all four AI lanes with focused tests for bounded recovery prompt integration and same-script re-entry behavior.
 
+### Task 7: Implement `ee-d4x.3` computed/report universal envelope rollout in emotion-engine
+
+**Bead ID:** `ee-d4x.3`  
+**SubAgent:** `coder`
+**Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine, claim bead ee-d4x.3 immediately, then roll the universal script-result contract into the computed/report lanes. Migrate video-per-second/metrics/emotional-analysis/summary/final-report onto the shared contract/runtime plumbing from ee-d4x.1, explicitly evaluate evaluation.cjs and decide whether it remains canonical, legacy-only, or retired, update durable docs and this plan with what actually changed, run relevant validation/tests, commit to main, and close the bead when finished.`
+
+**Folders Created/Deleted/Modified:**
+- `server/scripts/process/`
+- `server/scripts/report/`
+- `test/scripts/`
+- `docs/`
+- `.plans/`
+
+**Files Created/Deleted/Modified:**
+- `server/scripts/process/video-per-second.cjs`
+- `server/scripts/report/metrics.cjs`
+- `server/scripts/report/emotional-analysis.cjs`
+- `server/scripts/report/summary.cjs`
+- `server/scripts/report/final-report.cjs`
+- `server/scripts/report/evaluation.cjs`
+- `test/scripts/computed-report-contract.test.js`
+- `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`
+- `docs/PIPELINE-SCRIPTS.md`
+- `docs/UNIVERSAL-SCRIPT-RESULT-CONTRACT.md`
+- `.plans/2026-03-14-ai-recovery-contract-and-sibling-rollout.md`
+
+**Status:** ✅ Complete
+
+**Results:** Landed the `ee-d4x.3` computed/report rollout on the shared `ee-d4x.1` contract seam instead of treating Phase 2/3 non-AI scripts as second-class citizens. `video-per-second.cjs`, `metrics.cjs`, `emotional-analysis.cjs`, `summary.cjs`, and `final-report.cjs` now all return lane-specific diagnostics/metrics/primary-artifact hints that the shared runtime persists into canonical success envelopes with `script-results/` and `recovery/` refs. The family now makes its degraded-success boundaries explicit: chunk-derived fallback and partial report rendering stay successful but flagged, while `video-per-second.cjs` now throws a structured `invalid_output` failure when no successful chunks remain to interpolate. `summary.cjs` now prefers canonical `phase3-report/summary/*` report links over the old evaluation root-path assumptions. `evaluation.cjs` was explicitly evaluated and retained as **legacy-only compatibility**, not the canonical Phase 3 path; it now self-reports that status through its diagnostics/metadata instead of silently looking equivalent to the canonical chain. Validation added focused coverage for the computed/report contract rollout, degraded-success envelopes, deterministic next-action behavior for unrecoverable interpolation input, canonical summary-link selection, and the legacy-only evaluation status.
+
 ## Current context from the handoff
 
 - `ee-32e` was the explicit next pickup point from the prior session and is now complete.
@@ -195,6 +225,7 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 - `ee-d4x` is now complete and the concrete implementation graph lives in `docs/IMPLEMENTATION-EXECUTION-GRAPH.md` plus the newly created child beads `ee-d4x.1` through `ee-d4x.4`.
 - `ee-d4x.1` is now complete on `main`; the shared runtime contract/recovery plumbing is wired through the phase runners and the later lane migrations can build on that substrate instead of inventing their own wrappers.
 - `ee-d4x.2` is now complete on `main`; the four current AI lanes ride the shared envelope/runtime seam, emit explicit bounded recovery metadata, and can perform one bounded same-script AI re-entry after deterministic validator/tool-loop recovery is exhausted.
+- `ee-d4x.3` is now complete on `main`; the computed/report family now rides the same persisted success/failure envelope seam, declares bounded degraded-success behavior, and formally demotes `evaluation.cjs` to a legacy-only compatibility path.
 - `ee-cwi` remains open for sibling repo implementation rollout, but it is now concretized into child beads `ee-cwi.1` through `ee-cwi.4` with explicit order and bounded repo scope.
 - `ee-vaa` remains open as the final post-rollout sanity sweep, not an early audit substitute.
 - We should not jump to another golden run yet; the architecture/recovery rollout is still in flight.
@@ -205,16 +236,17 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 
 **Status:** ⚠️ Partial
 
-**What We Built:** This plan now covers the full architecture-to-execution breakdown for the unified recovery rollout, and it now includes the first two live implementation beads instead of docs-only planning. The durable doc stack includes: (1) the bounded AI recovery lane contract in `docs/AI-RECOVERY-LANE-CONTRACT.md`, (2) the rollout-family + sibling-boundary map in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`, (3) the strict global guardrail policy in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`, (4) the concrete implementation bead graph in `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`, (5) the shared runtime substrate in `server/lib/script-contract.cjs` + `server/lib/script-runner.cjs` wired through all three phase runners, and now (6) the live AI-lane rollout for `get-dialogue`, `get-music`, `video-chunks`, and `recommendation` with bounded same-script AI recovery artifacts/runtime plumbing. The bead graph remains explicit and bounded: `ee-d4x.1` shared plumbing -> `ee-d4x.2` AI lanes -> `ee-d4x.3` computed/report lanes -> `ee-d4x.4` deterministic tool-wrapper lanes -> `ee-cwi.1` ai-providers -> `ee-cwi.2` digital-twin-router -> `ee-cwi.3` digital-twin-core -> optional `ee-cwi.4` tools alignment/deprecation -> `ee-vaa` final sanity sweep. Existing open architecture beads are now properly reframed instead of left fuzzy: `ee-cwi` is the sibling-rollout epic with concrete child beads, `ee-vaa` is reserved for post-rollout audit work, and adjacent investigations like `ee-58s`, `ee-5dv`, `ee-2fs`, `ee-0gv`, and `ee-03m` remain intentionally separate unless later evidence proves they are rollout prerequisites.
+**What We Built:** This plan now covers the full architecture-to-execution breakdown for the unified recovery rollout, and it now includes the first three live implementation beads instead of docs-only planning. The durable doc stack includes: (1) the bounded AI recovery lane contract in `docs/AI-RECOVERY-LANE-CONTRACT.md`, (2) the rollout-family + sibling-boundary map in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`, (3) the strict global guardrail policy in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`, (4) the concrete implementation bead graph in `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`, (5) the shared runtime substrate in `server/lib/script-contract.cjs` + `server/lib/script-runner.cjs` wired through all three phase runners, (6) the live AI-lane rollout for `get-dialogue`, `get-music`, `video-chunks`, and `recommendation` with bounded same-script AI recovery artifacts/runtime plumbing, and now (7) the computed/report rollout for `video-per-second`, `metrics`, `emotional-analysis`, `summary`, and `final-report` with explicit degraded-success semantics and a formal legacy-only decision for `evaluation.cjs`. The bead graph remains explicit and bounded: `ee-d4x.1` shared plumbing -> `ee-d4x.2` AI lanes -> `ee-d4x.3` computed/report lanes -> `ee-d4x.4` deterministic tool-wrapper lanes -> `ee-cwi.1` ai-providers -> `ee-cwi.2` digital-twin-router -> `ee-cwi.3` digital-twin-core -> optional `ee-cwi.4` tools alignment/deprecation -> `ee-vaa` final sanity sweep. Existing open architecture beads are now properly reframed instead of left fuzzy: `ee-cwi` is the sibling-rollout epic with concrete child beads, `ee-vaa` is reserved for post-rollout audit work, and adjacent investigations like `ee-58s`, `ee-5dv`, `ee-2fs`, `ee-0gv`, and `ee-03m` remain intentionally separate unless later evidence proves they are rollout prerequisites.
 
 **Commits:**
 - `docs: map rollout families and sibling contract scope` (see recent `main` history)
 - `docs: define recovery guardrails and budget policy` (see recent `main` history)
 - `docs: add unified recovery execution graph beads`
 - `feat: add shared script recovery plumbing` (see current `main` history)
+- `feat: roll computed report lanes onto script-result contract` (see current `main` history)
 
 **Lessons Learned:** Breaking the problem into architecture layers was necessary, but not sufficient; the handoff only became actually executable once the order was encoded in Beads and the remaining investigations were deliberately kept out of the rollout graph. The useful pattern here is: contract docs settle semantics, execution-graph docs settle ownership and order, and Beads settle what is truly blocked by what.
 
 ---
 
-*Updated on 2026-03-14 after completing beads `ee-32e`, `ee-cib`, `ee-ok2`, and `ee-d4x` contract/rollout-planning work.*
+*Updated on 2026-03-14 after completing beads `ee-32e`, `ee-cib`, `ee-ok2`, `ee-d4x`, `ee-d4x.1`, `ee-d4x.2`, and `ee-d4x.3` contract/rollout implementation work.*

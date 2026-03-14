@@ -32,15 +32,15 @@ Current scripts (non-exhaustive):
 
 - Phase 2 (`process`)
   - `server/scripts/process/video-chunks.cjs`
-  - `server/scripts/process/video-per-second.cjs`
+  - `server/scripts/process/video-per-second.cjs` *(computed; universal script-result contract + degraded-success semantics rolled out)*
 
 - Phase 3 (`report`)
-  - `server/scripts/report/metrics.cjs` *(computed; no live AI call)*
+  - `server/scripts/report/metrics.cjs` *(computed; no live AI call; universal script-result contract rolled out)*
   - `server/scripts/report/recommendation.cjs` *(AI lane; validator-tool mediated final acceptance)*
-  - `server/scripts/report/emotional-analysis.cjs` *(computed; no live AI call)*
-  - `server/scripts/report/summary.cjs` *(aggregation; no live AI call)*
-  - `server/scripts/report/final-report.cjs` *(rendering; no live AI call)*
-  - `server/scripts/report/evaluation.cjs` (legacy combined report)
+  - `server/scripts/report/emotional-analysis.cjs` *(computed; no live AI call; universal script-result contract rolled out)*
+  - `server/scripts/report/summary.cjs` *(aggregation; no live AI call; universal script-result contract rolled out)*
+  - `server/scripts/report/final-report.cjs` *(rendering; no live AI call; universal script-result contract rolled out)*
+  - `server/scripts/report/evaluation.cjs` *(legacy-only combined report retained for compatibility; not the canonical Phase 3 path)*
 
 ---
 

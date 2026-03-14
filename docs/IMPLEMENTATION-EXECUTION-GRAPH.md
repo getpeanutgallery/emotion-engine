@@ -133,6 +133,16 @@ The AI lanes already have the strongest output discipline. Let them prove the ou
 
 ---
 
+**Implementation update — 2026-03-14**
+
+- migrated `video-per-second.cjs`, `metrics.cjs`, `emotional-analysis.cjs`, `summary.cjs`, and `final-report.cjs` onto the shared success/failure envelope seam from `ee-d4x.1`
+- each migrated lane now emits persisted `script-results/` + `recovery/` refs through the shared runtime and declares bounded degraded-success conditions for computed/report outputs instead of relying on ad-hoc logs
+- `video-per-second.cjs` now hard-fails with `invalid_output` when no successful chunks remain, while partial chunk loss / uncovered seconds stay explicit degraded-success cases
+- `summary.cjs` now prefers canonical `phase3-report/summary/*` report links, and `evaluation.cjs` is now explicitly documented as **legacy-only compatibility** rather than the canonical Phase 3 report path
+- validation added focused contract coverage for computed/report lanes, including degraded-success envelopes, deterministic next-action on unrecoverable interpolation input, and the legacy-only evaluation status
+
+---
+
 ### `ee-d4x.4` — Roll universal script-result contract into deterministic tool-wrapper lanes
 
 **Repo owner:** `emotion-engine`  

@@ -75,8 +75,15 @@ async function run(input) {
     console.log(`   ⚠️  Excluding ${failedChunks.length} failed chunks from per-second interpolation`);
   }
 
+  if (successfulChunks.length === 0) {
+    const error = new Error('invalid_output: VideoPerSecond requires at least one successful chunk for interpolation');
+    error.failureCategory = 'invalid_output';
+    throw error;
+  }
+
   // Generate per-second data by interpolating from chunks
   const perSecondData = [];
+  let uncoveredSeconds = 0;
 
   for (let second = 0; second < totalSeconds; second++) {
     // Find the chunk that contains this second
@@ -106,6 +113,7 @@ async function run(input) {
       });
     } else {
       // No chunk covers this second (shouldn't happen, but handle gracefully)
+      uncoveredSeconds++;
       perSecondData.push({
         second,
         timestamp: second,
@@ -143,7 +151,26 @@ async function run(input) {
   console.log(`      Generated ${perSecondData.length} data points`);
   console.log(`      Summary: ${summary}`);
 
+  const warnings = [];
+  if (failedChunks.length > 0) {
+    warnings.push(`Excluded ${failedChunks.length} failed chunk(s) from interpolation.`);
+  }
+  if (uncoveredSeconds > 0) {
+    warnings.push(`Filled ${uncoveredSeconds} uncovered second(s) with unknown placeholder values.`);
+  }
+
   return {
+    primaryArtifactKey: 'perSecondData',
+    metrics: {
+      totalSeconds,
+      successfulChunks: successfulChunks.length,
+      failedChunks: failedChunks.length,
+      uncoveredSeconds
+    },
+    diagnostics: {
+      degraded: warnings.length > 0,
+      warnings
+    },
     artifacts: {
       perSecondData: perSecondArtifact
     }
@@ -228,7 +255,23 @@ function generateSummary(perSecondData, chunks) {
          `Most common dominant emotion: ${mostCommonDominant} (${maxCount} seconds).`;
 }
 
-module.exports = { run };
+const deterministicRecovery = {
+  script: 'video-per-second',
+  family: 'computed.report.v1',
+  knownStrategies: [
+    { id: 'reload-persisted-artifacts', kind: 'rebuild', consumesAttempt: true, terminalIfUnavailable: false },
+    { id: 'recompute-from-upstream-artifacts', kind: 'rebuild', consumesAttempt: true, terminalIfUnavailable: false }
+  ],
+  degradedSuccess: {
+    allowed: true,
+    conditions: [
+      'failed chunks may be excluded from interpolation when at least one successful chunk remains',
+      'uncovered seconds may be emitted as unknown placeholders when downstream consumers can continue safely'
+    ]
+  }
+};
+
+module.exports = { run, deterministicRecovery };
 
 // Allow standalone execution for testing
 if (require.main === module) {

@@ -10,6 +10,7 @@ async function run(input) {
   const { outputDir, artifacts = {}, config } = input;
 
   console.log('   📄 Generating evaluation report (legacy mode)...');
+  console.log('   ⚠️  evaluation.cjs is a legacy compatibility path; prefer metrics/emotional-analysis/summary/final-report for canonical reports.');
   fs.mkdirSync(outputDir, { recursive: true });
 
   const analysisData = {
@@ -43,6 +44,18 @@ async function run(input) {
   console.log(`   ✅ Final report saved to: ${reportPath}`);
 
   return {
+    primaryArtifactKey: 'reportFiles',
+    metrics: {
+      chunksAnalyzed: analysisData.metadata.chunksAnalyzed,
+      totalTokens: analysisData.metadata.totalTokens,
+      duration: analysisData.metadata.videoDuration
+    },
+    diagnostics: {
+      degraded: true,
+      warnings: [
+        'Legacy compatibility wrapper; prefer metrics/emotional-analysis/summary/final-report for canonical report generation.'
+      ]
+    },
     artifacts: {
       reportFiles: {
         main: reportPath,
@@ -155,4 +168,15 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-module.exports = { run };
+const deterministicRecovery = {
+  script: 'evaluation',
+  family: 'computed.report.v1',
+  canonical: false,
+  lifecycle: 'legacy-only',
+  knownStrategies: [
+    { id: 'reload-persisted-artifacts', kind: 'rebuild', consumesAttempt: true, terminalIfUnavailable: false },
+    { id: 'recompute-from-upstream-artifacts', kind: 'rebuild', consumesAttempt: true, terminalIfUnavailable: false }
+  ]
+};
+
+module.exports = { run, deterministicRecovery };

@@ -90,7 +90,28 @@ async function run(input) {
   fs.writeFileSync(metricsPath, JSON.stringify(metrics, null, 2), 'utf8');
   console.log(`   ✅ Metrics saved to: ${metricsPath}`);
 
+  const warnings = [];
+  if (!hasNativePerSecondData && computedPerSecond.length > 0) {
+    warnings.push('Derived per-second metrics from chunkAnalysis because native perSecondData was unavailable.');
+  }
+  if (failedChunks.length > 0) {
+    warnings.push(`Excluded ${failedChunks.length} failed chunk(s) from metrics aggregation.`);
+  }
+  if (computedPerSecond.length === 0) {
+    warnings.push('No usable phase2 emotion timeseries was available; emitted schema-valid placeholder metrics for downstream continuity.');
+  }
+
   return {
+    primaryArtifactKey: 'metricsData',
+    metrics: {
+      totalSeconds: computedPerSecond.length,
+      successfulChunks: successfulChunks.length,
+      failedChunks: failedChunks.length
+    },
+    diagnostics: {
+      degraded: warnings.length > 0,
+      warnings
+    },
     artifacts: {
       metricsData: {
         path: metricsPath,
@@ -311,7 +332,23 @@ function calculateFrictionIndex(perSecondData) {
   return Math.min(100, Math.max(0, frictionIndex));
 }
 
-module.exports = { run };
+const deterministicRecovery = {
+  script: 'metrics',
+  family: 'computed.report.v1',
+  knownStrategies: [
+    { id: 'reload-persisted-artifacts', kind: 'rebuild', consumesAttempt: true, terminalIfUnavailable: false },
+    { id: 'recompute-from-upstream-artifacts', kind: 'rebuild', consumesAttempt: true, terminalIfUnavailable: false }
+  ],
+  degradedSuccess: {
+    allowed: true,
+    conditions: [
+      'metrics may be derived from successful chunkAnalysis when perSecondData is unavailable',
+      'empty placeholder metrics may be emitted only when downstream summary/final-report continuity is explicitly preserved'
+    ]
+  }
+};
+
+module.exports = { run, deterministicRecovery };
 
 if (require.main === module) {
   const outputDir = process.argv[2] || 'output/test';

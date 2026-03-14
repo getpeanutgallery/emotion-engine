@@ -85,7 +85,28 @@ async function run(input) {
   fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2), 'utf8');
   console.log(`   ✅ Summary saved to: ${summaryPath}`);
 
+  const warnings = [];
+  if (!recommendationData?.text) {
+    warnings.push('Recommendation data was missing; emitted default recommendation placeholder text.');
+  }
+  if (!metricsData || Object.keys(metricsData.averages || {}).length === 0) {
+    warnings.push('Metrics data was missing or sparse; summary key metrics were reduced to the available subset.');
+  }
+  if (!emotionalAnalysis || !emotionalAnalysis.path) {
+    warnings.push('Emotional analysis artifact path was unavailable; summary links may be partial.');
+  }
+
   return {
+    primaryArtifactKey: 'summary',
+    metrics: {
+      keyMetricsCount: Object.keys(keyMetrics).length,
+      hasRecommendation: !!recommendation.text,
+      reportPathCount: Object.keys(reportPaths).length
+    },
+    diagnostics: {
+      degraded: warnings.length > 0,
+      warnings
+    },
     artifacts: {
       summary: {
         ...summary,
@@ -212,16 +233,22 @@ function buildReportPaths(outputDir, artifacts) {
     }
   }
 
-  // Final markdown report path (from evaluation.cjs)
-  const finalReportPath = path.join(outputDir, 'FINAL-REPORT.md');
-  if (fs.existsSync(finalReportPath)) {
-    reportPaths.finalReport = finalReportPath;
+  // Final markdown report path (prefer canonical summary/ output, then legacy evaluation root output)
+  const canonicalFinalReportPath = outputManager.getReportPath(outputDir, 'summary', 'FINAL-REPORT.md');
+  const legacyFinalReportPath = path.join(outputDir, 'FINAL-REPORT.md');
+  if (fs.existsSync(canonicalFinalReportPath)) {
+    reportPaths.finalReport = canonicalFinalReportPath;
+  } else if (fs.existsSync(legacyFinalReportPath)) {
+    reportPaths.finalReport = legacyFinalReportPath;
   }
 
-  // Raw analysis data path (from evaluation.cjs)
-  const analysisDataPath = path.join(outputDir, 'analysis-data.json');
-  if (fs.existsSync(analysisDataPath)) {
-    reportPaths.analysisData = analysisDataPath;
+  // Raw analysis data path (prefer canonical summary/ output, then legacy evaluation root output)
+  const canonicalAnalysisDataPath = outputManager.getReportPath(outputDir, 'summary', 'analysis-data.json');
+  const legacyAnalysisDataPath = path.join(outputDir, 'analysis-data.json');
+  if (fs.existsSync(canonicalAnalysisDataPath)) {
+    reportPaths.analysisData = canonicalAnalysisDataPath;
+  } else if (fs.existsSync(legacyAnalysisDataPath)) {
+    reportPaths.analysisData = legacyAnalysisDataPath;
   }
 
   // Summary path (this file)
@@ -230,7 +257,23 @@ function buildReportPaths(outputDir, artifacts) {
   return reportPaths;
 }
 
-module.exports = { run };
+const deterministicRecovery = {
+  script: 'summary',
+  family: 'computed.report.v1',
+  knownStrategies: [
+    { id: 'reload-persisted-artifacts', kind: 'rebuild', consumesAttempt: true, terminalIfUnavailable: false },
+    { id: 'recompute-from-upstream-artifacts', kind: 'rebuild', consumesAttempt: true, terminalIfUnavailable: false }
+  ],
+  degradedSuccess: {
+    allowed: true,
+    conditions: [
+      'summary may emit default recommendation text when recommendation data is absent',
+      'summary may include only the available report links and metrics subsets when optional upstream artifacts are missing'
+    ]
+  }
+};
+
+module.exports = { run, deterministicRecovery };
 
 // Allow standalone execution for testing
 if (require.main === module) {

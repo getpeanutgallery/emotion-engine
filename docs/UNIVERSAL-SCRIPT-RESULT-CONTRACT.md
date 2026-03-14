@@ -127,6 +127,8 @@ Current failure behavior:
 Representative scripts:
 
 - `server/scripts/process/video-per-second.cjs`
+- `server/scripts/report/metrics.cjs`
+- `server/scripts/report/emotional-analysis.cjs`
 - `server/scripts/report/summary.cjs`
 - `server/scripts/report/final-report.cjs`
 
@@ -169,6 +171,12 @@ What is missing:
 - one universal recovery-policy block
 - one universal structured diagnostics block
 - one uniform distinction between **script failed hard** vs **script succeeded with degraded payload**
+
+**Implementation status (2026-03-14):**
+
+- the shared runtime from `ee-d4x.1` is now live for the current AI lanes **and** the computed/report family (`video-per-second`, `metrics`, `emotional-analysis`, `summary`, `final-report`)
+- computed/report lanes now emit the same persisted success/failure envelopes and lineage refs as AI lanes, but use lane-specific degraded-success warnings instead of AI recovery metadata when they can safely continue with partial data
+- `evaluation.cjs` remains available only as a legacy compatibility wrapper and is no longer considered the canonical Phase 3 reporting path
 
 ---
 

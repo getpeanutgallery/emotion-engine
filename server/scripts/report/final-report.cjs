@@ -44,8 +44,8 @@ async function run(input) {
 
   // Extract summary data
   const {
-    duration = chunkAnalysis.videoDuration || 0,
-    totalTokens = chunkAnalysis.totalTokens || 0,
+    duration = summary?.metadata?.videoDuration || chunkAnalysis.videoDuration || 0,
+    totalTokens = summary?.metadata?.totalTokens || chunkAnalysis.totalTokens || 0,
     keyMetrics = {},
     recommendation = { text: 'No recommendation available', reasoning: 'No reasoning provided' }
   } = summary;
@@ -88,7 +88,32 @@ async function run(input) {
   fs.writeFileSync(reportPath, reportContent, 'utf8');
   console.log(`   ✅ Final report saved to: ${reportPath}`);
 
+  const warnings = [];
+  if (!summary || Object.keys(summary).length === 0) {
+    warnings.push('Summary artifact was missing; final report rendered from direct chunkAnalysis fallbacks.');
+  }
+  if (!recommendation?.text || recommendation.text === 'No recommendation available') {
+    warnings.push('Recommendation text was unavailable; final report rendered placeholder recommendation copy.');
+  }
+  if (!keyMetrics || Object.keys(keyMetrics).length === 0) {
+    warnings.push('Key metrics were unavailable; final report rendered with reduced metric detail.');
+  }
+  if (!chunks.length) {
+    warnings.push('Chunk analysis was unavailable; final report rendered without chunk-by-chunk sections.');
+  }
+
   return {
+    primaryArtifactKey: 'finalReport',
+    metrics: {
+      duration,
+      totalTokens,
+      chunksAnalyzed: chunks.length,
+      reportSize: Buffer.byteLength(reportContent, 'utf8')
+    },
+    diagnostics: {
+      degraded: warnings.length > 0,
+      warnings
+    },
     artifacts: {
       finalReport: {
         path: reportPath,
@@ -447,7 +472,23 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-module.exports = { run };
+const deterministicRecovery = {
+  script: 'final-report',
+  family: 'computed.report.v1',
+  knownStrategies: [
+    { id: 'reload-persisted-artifacts', kind: 'rebuild', consumesAttempt: true, terminalIfUnavailable: false },
+    { id: 'recompute-from-upstream-artifacts', kind: 'rebuild', consumesAttempt: true, terminalIfUnavailable: false }
+  ],
+  degradedSuccess: {
+    allowed: true,
+    conditions: [
+      'final report may render with placeholder recommendation/key-metric sections when upstream summary data is incomplete',
+      'final report may omit chunk sections when chunkAnalysis is absent while still preserving canonical output paths'
+    ]
+  }
+};
+
+module.exports = { run, deterministicRecovery };
 
 // Allow standalone execution for testing
 if (require.main === module) {

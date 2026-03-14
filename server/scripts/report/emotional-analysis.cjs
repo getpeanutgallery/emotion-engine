@@ -108,7 +108,29 @@ async function run(input) {
   fs.writeFileSync(emotionalDataPath, JSON.stringify(emotionalData, null, 2), 'utf8');
   console.log(`✅ Emotional analysis saved to: ${emotionalDataPath}`);
 
+  const warnings = [];
+  if (!hasNativePerSecondData && computedPerSecond.length > 0) {
+    warnings.push('Derived emotional analysis timeline from chunkAnalysis because native perSecondData was unavailable.');
+  }
+  if (failedChunks.length > 0) {
+    warnings.push(`Excluded ${failedChunks.length} failed chunk(s) from emotional arc aggregation.`);
+  }
+  if (computedPerSecond.length === 0) {
+    warnings.push('No usable phase2 emotion timeseries was available; emitted schema-valid placeholder emotional analysis for downstream continuity.');
+  }
+
   return {
+    primaryArtifactKey: 'emotionalAnalysis',
+    metrics: {
+      totalSeconds: computedPerSecond.length,
+      successfulChunks: successfulChunks.length,
+      failedChunks: failedChunks.length,
+      criticalMoments: criticalMoments.length
+    },
+    diagnostics: {
+      degraded: warnings.length > 0,
+      warnings
+    },
     artifacts: {
       emotionalAnalysis: {
         path: emotionalDataPath,
@@ -428,7 +450,23 @@ function buildMomentContext(data, triggeredEmotion) {
   return `${triggeredEmotion} threshold crossed. Emotional state: ${emotions}`;
 }
 
-module.exports = { run };
+const deterministicRecovery = {
+  script: 'emotional-analysis',
+  family: 'computed.report.v1',
+  knownStrategies: [
+    { id: 'reload-persisted-artifacts', kind: 'rebuild', consumesAttempt: true, terminalIfUnavailable: false },
+    { id: 'recompute-from-upstream-artifacts', kind: 'rebuild', consumesAttempt: true, terminalIfUnavailable: false }
+  ],
+  degradedSuccess: {
+    allowed: true,
+    conditions: [
+      'emotional arc data may be derived from successful chunkAnalysis when perSecondData is unavailable',
+      'placeholder emotional-analysis outputs are allowed only when downstream summary/final-report continuity is explicitly preserved'
+    ]
+  }
+};
+
+module.exports = { run, deterministicRecovery };
 
 if (require.main === module) {
   const outputDir = process.argv[2] || 'output/test';
