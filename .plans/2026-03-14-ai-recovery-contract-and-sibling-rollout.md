@@ -264,6 +264,7 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 - `ee-d4x.3` is now complete on `main`; the computed/report family now rides the same persisted success/failure envelope seam, declares bounded degraded-success behavior, and formally demotes `evaluation.cjs` to a legacy-only compatibility path.
 - `ee-d4x.4` is now complete on `main`; deterministic tool-wrapper and artifact-persistence failures now carry explicit contract metadata, `get-metadata.cjs` has a formal `tool.wrapper.v1` declaration, and missing-path tool failures can deterministically steer into `retry-after-path-normalization` instead of reading like opaque internal crashes.
 - `ee-cwi` remains open for sibling repo implementation rollout, but it is now concretized into child beads `ee-cwi.1` through `ee-cwi.4` with explicit order and bounded repo scope.
+- `ee-cwi.1` is now in active implementation in `../ai-providers`; the sibling pass is aligning `openai` / `anthropic` / `gemini` / `openrouter` around consistent provider-side `failureCategory` / `failureCode` / `retryable` metadata plus stable `providerRequest` / `providerResponse` capture and sanitized debug payloads, while intentionally keeping script-level envelope ownership upstream in `emotion-engine`.
 - `ee-vaa` remains open as the final post-rollout sanity sweep, not an early audit substitute.
 - We should not jump to another golden run yet; the architecture/recovery rollout is still in flight.
 
