@@ -26,6 +26,8 @@ The strict cross-family guardrails that every rollout family must honor are defi
 
 This is intentionally a **planning/spec** document. It does not claim the rollout is implemented.
 
+For the concrete execution bead graph that implements this rollout order, see `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`.
+
 ---
 
 ## Scope boundary

@@ -107,11 +107,13 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-03-14-ai-recovery-contract-and-sibling-rollout.md`
-- `docs/`
+- `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`
+- `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`
+- `README.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Created the concrete implementation graph in Beads and durable docs instead of leaving the rollout as prose-only architecture. New child implementation beads now encode the bounded dependency order inside `emotion-engine`: `ee-d4x.1` shared plumbing -> `ee-d4x.2` AI lanes -> `ee-d4x.3` computed/report lanes -> `ee-d4x.4` deterministic tool-wrapper lanes. The existing sibling-rollout epic `ee-cwi` is now the bounded cross-repo chain `ee-cwi.1` (`../ai-providers`) -> `ee-cwi.2` (`../digital-twin-router`) -> `ee-cwi.3` (`../digital-twin-core`) -> `ee-cwi.4` (conditional `../tools` alignment/deprecation decision). `ee-vaa` was explicitly reframed as the final post-rollout sanity sweep and wired to depend on `ee-d4x.4` plus `ee-cwi.3`, while keeping `ee-cwi.4` conditional if `../tools` remains relevant. Added `docs/IMPLEMENTATION-EXECUTION-GRAPH.md` as the durable execution map with repo ownership, recommended subagent type, dependency order, and a clear statement that adjacent investigations like `ee-58s`, `ee-5dv`, `ee-2fs`, `ee-0gv`, and `ee-03m` remain separate unless later evidence proves they are prerequisites.
 
 ---
 
@@ -120,8 +122,9 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 - `ee-32e` was the explicit next pickup point from the prior session and is now complete.
 - `ee-cib` is now complete and the rollout-family + sibling-scope map lives in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`.
 - `ee-ok2` is now complete and the strict global guardrails live in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`.
-- `ee-d4x` remains the next architecture task in sequence.
-- `ee-cwi` remains open for sibling repo implementation rollout; this pass resolved sibling scope/order, not the sibling code rollout itself.
+- `ee-d4x` is now complete and the concrete implementation graph lives in `docs/IMPLEMENTATION-EXECUTION-GRAPH.md` plus the newly created child beads `ee-d4x.1` through `ee-d4x.4`.
+- `ee-cwi` remains open for sibling repo implementation rollout, but it is now concretized into child beads `ee-cwi.1` through `ee-cwi.4` with explicit order and bounded repo scope.
+- `ee-vaa` remains open as the final post-rollout sanity sweep, not an early audit substitute.
 - We should not jump to another golden run yet; the architecture/recovery rollout is still in flight.
 
 ---
@@ -130,14 +133,15 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Completed three consecutive architecture layers for the unified recovery rollout: (1) the bounded AI recovery lane contract in `docs/AI-RECOVERY-LANE-CONTRACT.md`, (2) the rollout-family + sibling-boundary map in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`, and now (3) the strict global guardrail policy in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`. The repo now has an explicit, cross-linked contract stack covering universal success/failure envelopes, deterministic recovery declarations, YAML-driven AI recovery, and the global ceilings/kill conditions that keep recovery auditable. The major settled decisions from this pass are: deterministic recovery stays first and small by default; AI recovery is one-shot per failure lineage by default; script-run/deterministic/AI counters are distinct and lineage-bound; repeated `config`/`dependency` failures stop immediately; repeated `internal` failures stop quickly; missing required raw/debug evidence is terminal or escalated, not ignored; and degraded success is acceptable only when the lane-specific schema still holds and downstream continuation is contract-safe. The main remaining architecture task is now the execution-breakdown bead (`ee-d4x`), followed later by implementation rollout.
+**What We Built:** This plan now covers the full architecture-to-execution breakdown for the unified recovery rollout. The durable doc stack now includes: (1) the bounded AI recovery lane contract in `docs/AI-RECOVERY-LANE-CONTRACT.md`, (2) the rollout-family + sibling-boundary map in `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`, (3) the strict global guardrail policy in `docs/RECOVERY-GUARDRAILS-AND-BUDGET-POLICY.md`, and now (4) the concrete implementation bead graph in `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`. The bead graph is explicit and bounded: `ee-d4x.1` shared plumbing -> `ee-d4x.2` AI lanes -> `ee-d4x.3` computed/report lanes -> `ee-d4x.4` deterministic tool-wrapper lanes -> `ee-cwi.1` ai-providers -> `ee-cwi.2` digital-twin-router -> `ee-cwi.3` digital-twin-core -> optional `ee-cwi.4` tools alignment/deprecation -> `ee-vaa` final sanity sweep. Existing open architecture beads are now properly reframed instead of left fuzzy: `ee-cwi` is the sibling-rollout epic with concrete child beads, `ee-vaa` is reserved for post-rollout audit work, and adjacent investigations like `ee-58s`, `ee-5dv`, `ee-2fs`, `ee-0gv`, and `ee-03m` remain intentionally separate unless later evidence proves they are rollout prerequisites.
 
 **Commits:**
 - `docs: map rollout families and sibling contract scope` (see recent `main` history)
-- `docs: define recovery guardrails and budget policy` (to be appended by this pass)
+- `docs: define recovery guardrails and budget policy` (see recent `main` history)
+- `docs: add unified recovery execution graph beads`
 
-**Lessons Learned:** Separating the work into four layers turned out to be the right move: universal envelope first, deterministic recovery second, AI recovery third, and global guardrails fourth. The hard part was not inventing more recovery mechanisms; it was drawing auditable stopping lines so the later implementation beads cannot quietly drift into loop-prone or under-observed behavior.
+**Lessons Learned:** Breaking the problem into architecture layers was necessary, but not sufficient; the handoff only became actually executable once the order was encoded in Beads and the remaining investigations were deliberately kept out of the rollout graph. The useful pattern here is: contract docs settle semantics, execution-graph docs settle ownership and order, and Beads settle what is truly blocked by what.
 
 ---
 
-*Updated on 2026-03-14 after completing beads `ee-32e`, `ee-cib`, and `ee-ok2` architecture/guardrail work.*
+*Updated on 2026-03-14 after completing beads `ee-32e`, `ee-cib`, `ee-ok2`, and `ee-d4x` contract/rollout-planning work.*
