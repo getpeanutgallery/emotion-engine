@@ -180,6 +180,30 @@ test('Video Chunks Script', async (t) => {
       }), /toolVariables\.soulPath and toolVariables\.goalPath are required/);
     });
 
+    await tNested.test('includes bounded recovery addendum when re-entered by the AI recovery lane', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        toolVariables: { soulPath: 'soul.md', goalPath: 'goal.md', variables: { lenses: ['joy'] } },
+        recoveryRuntime: {
+          repairInstructions: ['Return only the final chunk analysis JSON.'],
+          boundedContextSummary: 'Previous output used markdown instead of JSON.'
+        },
+        config: {
+          ai: {
+            video: { targets: [{ adapter: { name: 'openrouter', model: 'yaml-video-model' } }] }
+          },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          }
+        }
+      });
+
+      is(analyzeCalls.length > 0, true);
+      ok(String(analyzeCalls[0].basePrompt).includes('AI RECOVERY RE-ENTRY:'));
+      ok(String(analyzeCalls[0].basePrompt).includes('Return only the final chunk analysis JSON.'));
+    });
+
     await tNested.test('returns correct output structure', async () => {
       const result = await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',

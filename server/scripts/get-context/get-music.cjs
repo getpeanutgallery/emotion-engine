@@ -32,6 +32,7 @@ const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 const { preflightAudio } = require('../../lib/audio-preflight.cjs');
+const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
 const { extractAudioChunk } = require('../../lib/audio-chunk-extractor.cjs');
 const {
   parseAndValidateJsonObject,
@@ -170,6 +171,7 @@ function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, events, phaseOutcom
  */
 async function run(input) {
   const { assetPath, outputDir, config } = input;
+  const recoveryRuntime = getRecoveryRuntime(input);
 
   console.log('   🎵 Extracting and analyzing music/audio from:', assetPath);
 
@@ -352,7 +354,7 @@ async function run(input) {
 
       const audioBase64 = fs.readFileSync(extraction.chunkPath).toString('base64');
 
-      const prompt = buildRollingAnalysisPrompt(startTime, endTime, rollingSummary);
+      const prompt = buildRollingAnalysisPrompt(startTime, endTime, rollingSummary, recoveryRuntime);
       const promptRef = captureRaw
         ? storePromptPayload({ outputDir, payload: prompt })
         : null;
@@ -777,8 +779,8 @@ function getAudioDuration(audioPath, rawCapture = {}) {
  * @param {number} endTime - Segment end time
  * @returns {string} - Analysis prompt
  */
-function buildAnalysisPrompt(startTime, endTime) {
-  return `Analyze the audio in this segment (${startTime.toFixed(1)}s to ${endTime.toFixed(1)}s).
+function buildAnalysisPrompt(startTime, endTime, recoveryRuntime = null) {
+  const prompt = `Analyze the audio in this segment (${startTime.toFixed(1)}s to ${endTime.toFixed(1)}s).
 
 Identify:
 1. Type of audio: music, speech, silence, ambient noise, sound effects
@@ -801,6 +803,8 @@ IMPORTANT:
 - Respond ONLY with valid JSON (no markdown, no explanation)
 - Be specific about the mood and characteristics
 - If it's speech, set type to "speech" and mood to "neutral"`;
+
+  return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }
 
 function parseJsonResponse(responseContent) {
@@ -815,12 +819,12 @@ function parseJsonResponse(responseContent) {
   return parsed.ok ? parsed.value : null;
 }
 
-function buildRollingAnalysisPrompt(startTime, endTime, rollingSummary) {
+function buildRollingAnalysisPrompt(startTime, endTime, rollingSummary, recoveryRuntime = null) {
   const roll = typeof rollingSummary === 'string' && rollingSummary.trim().length > 0
     ? rollingSummary.trim()
     : null;
 
-  return `Analyze the audio in this chunk (${startTime.toFixed(1)}s to ${endTime.toFixed(1)}s).
+  const prompt = `Analyze the audio in this chunk (${startTime.toFixed(1)}s to ${endTime.toFixed(1)}s).
 
 ${roll ? `Rolling summary so far (from previous chunks):\n${roll}\n\n` : ''}Identify:
 1. Type of audio: music, speech, silence, ambient noise, sound effects
@@ -839,6 +843,8 @@ Return ONLY valid JSON in this format:
   "chunkSummary": "1-2 sentences",
   "rollingSummary": "Updated rolling summary for the entire audio so far (keep concise)"
 }`;
+
+  return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }
 
 function parseRollingMusicResponse(responseContent, startTime, endTime) {
@@ -999,7 +1005,16 @@ function generateSummary(segments) {
   return summary.trim();
 }
 
-module.exports = { run };
+module.exports = {
+  run,
+  aiRecovery: {
+    guidance: 'Repair malformed or validator-rejected music analysis JSON while preserving the same segment analysis task and schema.',
+    reentry: {
+      allowedMutableInputs: ['repairInstructions', 'boundedContextSummary'],
+      forbiddenMutableInputs: ['upstreamArtifacts', 'artifactPaths', 'schemaDefinition', 'runtimeBudgets']
+    }
+  }
+};
 
 // Allow standalone execution for testing
 if (require.main === module) {

@@ -9,6 +9,7 @@ const {
   wrapLegacySuccessResult,
   createFailureResult
 } = require('./script-contract.cjs');
+const { attemptAiRecovery } = require('./ai-recovery-lane.cjs');
 
 async function executeScript({ phase, scriptPath, input, failLabel = 'Script' }) {
   const absoluteScriptPath = path.resolve(process.cwd(), scriptPath);
@@ -61,6 +62,40 @@ async function executeScript({ phase, scriptPath, input, failLabel = 'Script' })
       startedAt,
       completedAt: new Date()
     });
+
+    if (failure?.envelope?.recoveryPolicy?.nextAction?.policy === 'ai_recovery'
+      && script?.aiRecovery
+      && input?.config?.recovery?.ai?.enabled
+      && input?.config?.recovery?.ai?.adapter
+      && input?.config?.recovery?.ai?.model) {
+      try {
+        console.log(`   🛟 AI recovery: ${scriptId}`);
+        const recoveryAttempt = await attemptAiRecovery({
+          phase,
+          scriptId,
+          scriptModule: script,
+          input,
+          failureEnvelope: failure.envelope
+        });
+
+        if (recoveryAttempt?.result?.decision?.outcome === 'reenter_script' && recoveryAttempt.reentryInput) {
+          return executeScript({
+            phase,
+            scriptPath,
+            input: recoveryAttempt.reentryInput,
+            failLabel
+          });
+        }
+      } catch (recoveryError) {
+        if (!recoveryError.scriptResult) {
+          recoveryError.scriptResult = failure.envelope;
+        }
+        if (!recoveryError.scriptRecovery) {
+          recoveryError.scriptRecovery = failure.result;
+        }
+        throw recoveryError;
+      }
+    }
 
     error.scriptResult = failure.envelope;
     error.scriptRecovery = failure.result;

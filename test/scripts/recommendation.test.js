@@ -172,6 +172,37 @@ test('Recommendation Script', async (t) => {
     is(capture.toolLoop.history[1].kind, 'tool_result_auto_validation');
   });
 
+  await t.test('includes bounded recovery addendum when re-entered by the AI recovery lane', async () => {
+    let callCount = 0;
+    completeImplementation = async () => {
+      callCount += 1;
+      return {
+        content: JSON.stringify({
+          text: 'Recovered recommendation',
+          reasoning: 'Recovered because the prompt included the repair instructions.',
+          confidence: 0.8,
+          keyFindings: ['Finding 1', 'Finding 2', 'Finding 3'],
+          suggestions: ['Suggestion 1', 'Suggestion 2']
+        }),
+        usage: { input: 42, output: 24 }
+      };
+    };
+
+    await recommendationScript.run({
+      outputDir: testOutputDir,
+      artifacts: makeArtifacts(),
+      recoveryRuntime: {
+        repairInstructions: ['Return only the final recommendation JSON.'],
+        boundedContextSummary: 'Previous output used the wrong wrapper object.'
+      },
+      config: makeConfig()
+    });
+
+    is(callCount, 2);
+    assert.match(providerCalls[0].prompt, /AI RECOVERY RE-ENTRY:/);
+    assert.match(providerCalls[0].prompt, /Return only the final recommendation JSON\./);
+  });
+
   await t.test('forwards normalized adapter params into provider.complete options', async () => {
     let callCount = 0;
     completeImplementation = async () => {

@@ -34,6 +34,7 @@ const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 const { parseJsonObjectInput } = require('../../lib/json-validator.cjs');
 const { parseRecommendationResponse } = require('../../lib/recommendation-validator.cjs');
+const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
 const {
   TOOL_NAME,
   buildRecommendationValidatorToolContract,
@@ -142,7 +143,7 @@ function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, events, phaseOutcom
   }
 }
 
-function buildPrompt({ chunks, metricsData, config }) {
+function buildPrompt({ chunks, metricsData, config, recoveryRuntime = null }) {
   const metricsSummary = {
     averages: metricsData?.averages || null,
     trends: metricsData?.trends || null,
@@ -169,7 +170,7 @@ function buildPrompt({ chunks, metricsData, config }) {
     }
   };
 
-  return [
+  const prompt = [
     'You are an expert short-form video creative director and retention analyst.',
     '',
     'Using the provided chunk-level emotion analysis and computed metrics, generate actionable recommendations to improve viewer retention and emotional impact.',
@@ -192,6 +193,8 @@ function buildPrompt({ chunks, metricsData, config }) {
     'INPUT:',
     JSON.stringify({ pipelineMeta, metricsSummary, chunkSummaries }, null, 2)
   ].join('\n');
+
+  return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }
 
 function buildToolLoopPrompt({ basePrompt, toolContract, history, remainingTurns, remainingValidatorCalls }) {
@@ -531,6 +534,7 @@ async function run(input) {
   const configForRecommendation = config || {};
   const retryConfig = getRetryConfig(configForRecommendation);
   const toolLoopConfig = getToolLoopConfig(configForRecommendation);
+  const recoveryRuntime = getRecoveryRuntime(input);
 
   fs.mkdirSync(outputDir, { recursive: true });
 
@@ -613,7 +617,12 @@ async function run(input) {
       throw err;
     }
 
-    const basePrompt = buildPrompt({ chunks: successfulChunks, metricsData, config: configForRecommendation });
+    const basePrompt = buildPrompt({
+      chunks: successfulChunks,
+      metricsData,
+      config: configForRecommendation,
+      recoveryRuntime
+    });
 
     const promptRef = captureRaw
       ? storePromptPayload({ outputDir, payload: basePrompt })
@@ -927,6 +936,13 @@ async function run(input) {
 
 module.exports = {
   run,
+  aiRecovery: {
+    guidance: 'Repair malformed or validator-rejected recommendation JSON without changing the recommendation task or upstream evidence.',
+    reentry: {
+      allowedMutableInputs: ['repairInstructions', 'boundedContextSummary'],
+      forbiddenMutableInputs: ['upstreamArtifacts', 'artifactPaths', 'schemaDefinition', 'runtimeBudgets']
+    }
+  },
   _private: {
     parseRecommendationResponse,
     executeRecommendationToolLoop,

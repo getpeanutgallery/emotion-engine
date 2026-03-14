@@ -201,6 +201,21 @@ test('Get Dialogue Script', async (t) => {
       ok(Array.isArray(result.artifacts.dialogueData.dialogue_segments));
     });
 
+    tNested.test('includes bounded recovery addendum when re-entered by the AI recovery lane', async () => {
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        recoveryRuntime: {
+          repairInstructions: ['Return only the final dialogue JSON object.'],
+          boundedContextSummary: 'Previous response used markdown fences.'
+        },
+        config: makeDialogueConfig()
+      };
+      await getDialogueScript.run(input);
+      assert.match(completionPrompts[0], /AI RECOVERY RE-ENTRY:/);
+      assert.match(completionPrompts[0], /Return only the final dialogue JSON object\./);
+    });
+
     tNested.test('writes dialogue-data.json to output directory', async () => {
       const input = {
         assetPath: '/path/to/test-video.mp4',

@@ -32,6 +32,7 @@ const {
 } = require('../../lib/ai-targets.cjs');
 const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
+const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
 
 const execAsync = promisify(exec);
 
@@ -190,6 +191,7 @@ async function run(input) {
     toolVariables,
     config
   } = input;
+  const recoveryRuntime = getRecoveryRuntime(input);
 
   console.log('   🎬 Processing video in chunks...');
 
@@ -589,7 +591,7 @@ async function run(input) {
               });
 
               try {
-                const prompt = emotionLensesTool.buildBasePromptFromInput(analyzeInput);
+                const prompt = `${emotionLensesTool.buildBasePromptFromInput(analyzeInput)}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 
                 const promptRef = captureRaw
                   ? storePromptPayload({ outputDir, payload: prompt })
@@ -982,7 +984,16 @@ function getRelevantMusic(musicData, startTime, endTime) {
   });
 }
 
-module.exports = { run };
+module.exports = {
+  run,
+  aiRecovery: {
+    guidance: 'Repair malformed or validator-rejected emotion-analysis JSON while preserving the same chunk-evaluation task, lenses, and upstream artifacts.',
+    reentry: {
+      allowedMutableInputs: ['repairInstructions', 'boundedContextSummary'],
+      forbiddenMutableInputs: ['upstreamArtifacts', 'artifactPaths', 'schemaDefinition', 'runtimeBudgets']
+    }
+  }
+};
 
 // Allow standalone execution for testing
 if (require.main === module) {

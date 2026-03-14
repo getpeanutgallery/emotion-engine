@@ -436,7 +436,7 @@ function classifyFailure(error, scriptId) {
     category = error.failureCategory;
   } else if (lower.includes('timeout') || lower.includes('timed out') || error?.code === 'ETIMEDOUT') {
     category = 'timeout';
-  } else if (lower.includes('invalid json') || lower.includes('malformed json') || lower.includes('validation failed') || lower.includes('schema')) {
+  } else if (lower.includes('invalid_output') || lower.includes('output was invalid') || lower.includes('invalid json') || lower.includes('malformed json') || lower.includes('validation failed') || lower.includes('schema')) {
     category = 'invalid_output';
   } else if (lower.includes('config') || lower.includes('yaml') || lower.includes('missing required')) {
     category = 'config';
@@ -464,12 +464,63 @@ function classifyFailure(error, scriptId) {
   };
 }
 
-function buildDeterministicState({ declaration, failure, previousExecution, recoveryConfig }) {
-  const knownStrategies = Array.isArray(declaration?.knownStrategies) ? declaration.knownStrategies : [];
+function resolveConfiguredAiDomain(scriptId) {
+  if (scriptId === 'get-dialogue') return 'dialogue';
+  if (scriptId === 'get-music') return 'music';
+  if (scriptId === 'video-chunks') return 'video';
+  if (scriptId === 'recommendation') return 'recommendation';
+  return null;
+}
+
+function inferApplicableStrategies({ declaration, config, scriptId }) {
+  const strategyOrder = [];
+  const knownIds = new Set((Array.isArray(declaration?.knownStrategies) ? declaration.knownStrategies : []).map((entry) => entry.id).filter(Boolean));
+  const family = declaration?.family || 'none.v1';
+
+  if (family !== 'ai.structured-output.v1') {
+    return Array.from(knownIds);
+  }
+
+  const domain = resolveConfiguredAiDomain(scriptId);
+  const domainConfig = domain ? (config?.ai?.[domain] || {}) : {};
+  const targets = Array.isArray(domainConfig?.targets) ? domainConfig.targets : [];
+  const retry = domainConfig?.retry || {};
+  const maxAttempts = Number.isInteger(retry.maxAttempts) && retry.maxAttempts > 0 ? retry.maxAttempts : 1;
+  const hasThinking = targets.some((target) => !!target?.adapter?.params?.thinking);
+
+  if (knownIds.has('repair-with-validator-tool-loop')) strategyOrder.push('repair-with-validator-tool-loop');
+  if (knownIds.has('retry-same-target') && maxAttempts > 1) strategyOrder.push('retry-same-target');
+  if (knownIds.has('failover-next-target') && targets.length > 1) strategyOrder.push('failover-next-target');
+  if (knownIds.has('retry-with-lower-thinking') && hasThinking) strategyOrder.push('retry-with-lower-thinking');
+
+  return strategyOrder;
+}
+
+function inferAttemptedStrategies({ failure, previousExecution, strategyOrder }) {
   const attempted = Array.isArray(previousExecution?.recoveryPolicy?.deterministic?.attempted)
     ? previousExecution.recoveryPolicy.deterministic.attempted.slice()
     : [];
-  const strategyOrder = knownStrategies.map((entry) => entry.id).filter(Boolean);
+  const error = failure?.sourceError || null;
+  const aiTargets = error?.aiTargets || {};
+  const diagnosticToolLoop = error?.debug?.toolLoop || aiTargets?.toolLoop;
+
+  const pushAttempted = (strategyId, condition = true) => {
+    if (!condition) return;
+    if (!strategyOrder.includes(strategyId)) return;
+    if (!attempted.includes(strategyId)) attempted.push(strategyId);
+  };
+
+  pushAttempted('repair-with-validator-tool-loop', !!diagnosticToolLoop || failure?.category === 'invalid_output');
+  pushAttempted('retry-same-target', Number.isInteger(aiTargets?.attempts) && aiTargets.attempts > 1);
+  pushAttempted('failover-next-target', Number.isInteger(aiTargets?.targetIndex) && aiTargets.targetIndex > 0);
+  pushAttempted('retry-with-lower-thinking', /thinking/i.test(String(error?.message || '')));
+
+  return attempted;
+}
+
+function buildDeterministicState({ declaration, failure, previousExecution, recoveryConfig, config, scriptId }) {
+  const strategyOrder = inferApplicableStrategies({ declaration, config, scriptId });
+  const attempted = inferAttemptedStrategies({ failure, previousExecution, strategyOrder });
   const maxAttempts = recoveryConfig?.deterministic?.maxAttemptsPerFailure ?? DEFAULT_RECOVERY_CONFIG.deterministic.maxAttemptsPerFailure;
   const remaining = strategyOrder.filter((strategyId) => !attempted.includes(strategyId));
 
@@ -616,7 +667,7 @@ function buildSuccessEnvelope({ phase, script, config, outputDir, runAttempt, st
 
 function buildFailureEnvelope({ phase, script, config, outputDir, runAttempt, startedAt, completedAt, error, declaration, previousExecution, recoveryConfig }) {
   const failure = classifyFailure(error, script);
-  const deterministicState = buildDeterministicState({ declaration, failure, previousExecution, recoveryConfig });
+  const deterministicState = buildDeterministicState({ declaration, failure, previousExecution, recoveryConfig, config, scriptId: script });
   const aiRecoveryState = buildAiRecoveryState({ failure, previousExecution, recoveryConfig });
   const failureCountsByCategory = buildFailureCounts(previousExecution, failure.category);
   const nextAction = determineNextAction({ failure, deterministicState, aiRecoveryState, failureCountsByCategory, recoveryConfig });
@@ -691,13 +742,13 @@ function persistExecutionArtifacts({ outputDir, phase, script, envelope, lineage
   return { resultRef, lineageRef, nextActionRef };
 }
 
-function buildExecutionPatch({ script, envelope, refs, failureCountsByCategory }) {
+function buildExecutionPatch({ script, envelope, refs, failureCountsByCategory, lineage = null }) {
   return {
     __scriptExecution: {
       [script]: {
         status: envelope.status,
         run: envelope.run,
-        lineage: envelope.recoveryPolicy?.lineage || null,
+        lineage: lineage || envelope.recoveryPolicy?.lineage || null,
         failureCountsByCategory: failureCountsByCategory || {},
         recoveryPolicy: envelope.recoveryPolicy || null,
         refs: {
@@ -739,14 +790,14 @@ function wrapLegacySuccessResult({ result, phase, script, config, outputDir, pre
     phase,
     script,
     scriptRunAttempt: runAttempt,
-    deterministicAttemptsUsed: 0,
-    aiRecoveryAttemptsUsed: 0,
+    deterministicAttemptsUsed: previousExecution?.recoveryPolicy?.deterministic?.attemptsUsed || 0,
+    aiRecoveryAttemptsUsed: previousExecution?.recoveryPolicy?.aiRecovery?.attemptsUsed || 0,
     maxAiRecoveryAttempts: normalizeRecoveryConfig(config?.recovery).ai.attempts.maxPerFailure,
     reentryAttemptNumber: Math.max(0, runAttempt - 1)
   };
 
   const refs = persistExecutionArtifacts({ outputDir, phase, script, envelope, lineage });
-  const executionPatch = buildExecutionPatch({ script, envelope, refs, failureCountsByCategory: {} });
+  const executionPatch = buildExecutionPatch({ script, envelope, refs, failureCountsByCategory: {}, lineage });
 
   return {
     ...result,
@@ -801,5 +852,7 @@ module.exports = {
   classifyFailure,
   collectDefaultCaptureRefs,
   persistExecutionArtifacts,
-  buildExecutionPatch
+  buildExecutionPatch,
+  inferApplicableStrategies,
+  inferAttemptedStrategies
 };

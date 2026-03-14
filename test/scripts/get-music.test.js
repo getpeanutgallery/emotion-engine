@@ -159,6 +159,19 @@ test('Get Music Script', async (t) => {
   });
 
   t.test('run function', (tNested) => {
+    tNested.test('includes bounded recovery addendum when re-entered by the AI recovery lane', async () => {
+      await getMusicScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        recoveryRuntime: {
+          repairInstructions: ['Return only the final music analysis JSON.'],
+          boundedContextSummary: 'Previous output used the wrong wrapper object.'
+        },
+        config: makeMusicConfig()
+      });
+      assert.match(completionPrompts[0], /AI RECOVERY RE-ENTRY:/);
+      assert.match(completionPrompts[0], /Return only the final music analysis JSON\./);
+    });
     tNested.test('exports run function', () => {
       is(typeof getMusicScript.run, 'function');
     });

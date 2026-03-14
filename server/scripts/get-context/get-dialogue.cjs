@@ -33,6 +33,7 @@ const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 const { preflightAudio } = require('../../lib/audio-preflight.cjs');
+const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
 const { extractAudioChunk } = require('../../lib/audio-chunk-extractor.cjs');
 const {
   parseAndValidateJsonObject,
@@ -175,6 +176,7 @@ function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, events, phaseOutcom
  */
 async function run(input) {
   const { assetPath, outputDir, config } = input;
+  const recoveryRuntime = getRecoveryRuntime(input);
 
   console.log('   🎤 Extracting and transcribing dialogue from:', assetPath);
 
@@ -358,7 +360,7 @@ async function run(input) {
       const audioMimeType = 'audio/wav';
 
       // Build transcription prompt
-      prompt = buildTranscriptionPrompt();
+      prompt = buildTranscriptionPrompt(recoveryRuntime);
 
       promptRef = captureRaw
         ? storePromptPayload({ outputDir, payload: prompt })
@@ -627,7 +629,8 @@ async function run(input) {
         chunkIndex,
         startTime,
         endTime,
-        priorHandoff: rollingHandoff
+        priorHandoff: rollingHandoff,
+        recoveryRuntime
       });
 
       const chunkPromptRef = captureRaw
@@ -907,7 +910,7 @@ async function run(input) {
     const stitcherRetry = getRetryConfig(config, 'dialogue_stitch');
     const stitcherToolLoopConfig = getToolLoopConfig(config, 'dialogue_stitch');
 
-    const stitcherPrompt = buildDialogueStitcherPrompt(stitchInput);
+    const stitcherPrompt = buildDialogueStitcherPrompt(stitchInput, recoveryRuntime);
     const stitcherPromptRef = captureRaw
       ? storePromptPayload({ outputDir, payload: stitcherPrompt })
       : null;
@@ -1256,8 +1259,8 @@ async function extractAudio(videoPath, outputDir, rawCapture = {}) {
  * @function buildTranscriptionPrompt
  * @returns {string} - Transcription prompt
  */
-function buildTranscriptionPrompt() {
-  return `Transcribe the audio in this file. Identify different speakers and provide timestamps.
+function buildTranscriptionPrompt(recoveryRuntime = null) {
+  const prompt = `Transcribe the audio in this file. Identify different speakers and provide timestamps.
 
 Respond with a JSON object in the following format:
 
@@ -1283,6 +1286,8 @@ IMPORTANT:
 - Provide accurate timestamps in seconds
 - Include confidence scores (0.0 to 1.0)
 - If no speech is detected, return an empty dialogue_segments array`;
+
+  return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }
 
 function parseJsonResponse(responseContent) {
@@ -1415,12 +1420,12 @@ async function executeDialogueStitchToolLoop({
   });
 }
 
-function buildChunkTranscriptionPrompt({ chunkIndex, startTime, endTime, priorHandoff } = {}) {
+function buildChunkTranscriptionPrompt({ chunkIndex, startTime, endTime, priorHandoff, recoveryRuntime = null } = {}) {
   const handoff = typeof priorHandoff === 'string' && priorHandoff.trim().length > 0
     ? priorHandoff.trim()
     : null;
 
-  return `You are transcribing CHUNK ${chunkIndex} of a longer audio file.
+  const prompt = `You are transcribing CHUNK ${chunkIndex} of a longer audio file.
 
 Chunk time window: ${Number(startTime).toFixed(2)}s to ${Number(endTime).toFixed(2)}s (global timeline).
 
@@ -1449,11 +1454,13 @@ Rules:
 - Keep speaker labels consistent with the handoff when possible.
 - If no speech detected, return an empty dialogue_segments array.
 - Keep handoffContext brief (<= ~10 lines).`;
+
+  return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }
 
-function buildDialogueStitcherPrompt(stitchInput) {
+function buildDialogueStitcherPrompt(stitchInput, recoveryRuntime = null) {
   // The stitcher is text-only and must return structured JSON.
-  return `You are a dialogue transcript stitcher.
+  const prompt = `You are a dialogue transcript stitcher.
 
 You are given a mechanically-stitched transcript with chunk boundaries. Your job is to:
 - produce a cleaned, readable transcript (fix punctuation, remove duplicated boundary fragments, normalize speaker labels)
@@ -1479,6 +1486,8 @@ Return ONLY valid JSON with this structure:
 Here is the stitch input (including mechanical transcript):
 ${JSON.stringify(stitchInput, null, 2)}
 `;
+
+  return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }
 
 /**
@@ -1550,7 +1559,16 @@ function getAudioDuration(audioPath, rawCapture = {}) {
   }
 }
 
-module.exports = { run };
+module.exports = {
+  run,
+  aiRecovery: {
+    guidance: 'Repair malformed or validator-rejected dialogue JSON while preserving the same transcript/stitch task and schema.',
+    reentry: {
+      allowedMutableInputs: ['repairInstructions', 'boundedContextSummary'],
+      forbiddenMutableInputs: ['upstreamArtifacts', 'artifactPaths', 'schemaDefinition', 'runtimeBudgets']
+    }
+  }
+};
 
 // Allow standalone execution for testing
 if (require.main === module) {

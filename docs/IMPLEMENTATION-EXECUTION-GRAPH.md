@@ -99,6 +99,14 @@ Per-lane migration is still intentionally deferred to `ee-d4x.2`, `ee-d4x.3`, an
 
 This bead reuses, rather than supersedes, the older validator-contract work (`ee-qqg`, `ee-izr`, and the Phase 1/2/3 validator rollout plans).
 
+**Implementation update — 2026-03-14**
+
+- migrated `get-dialogue.cjs`, `get-music.cjs`, `video-chunks.cjs`, and `recommendation.cjs` onto the shared wrapper/runtime seam from `ee-d4x.1`
+- made AI-lane deterministic strategy applicability explicit from configured retries/targets so exhausted validator/tool-loop attempts now advance into bounded AI recovery instead of reporting an ambiguous generic failure
+- added the bounded AI recovery lane runtime/artifact persistence under `server/lib/ai-recovery-lane.cjs` and re-entry prompt helpers under `server/lib/ai-recovery-runtime.cjs`
+- taught all four AI lanes to honor bounded `repairInstructions` / `boundedContextSummary` prompt addenda on same-script re-entry without widening scope into computed/report lane migration
+- validated the rollout with contract + per-lane tests covering recovery envelopes, AI re-entry, and prompt integration
+
 ---
 
 ### `ee-d4x.3` — Roll universal script-result contract into computed/report lanes
