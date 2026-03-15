@@ -145,19 +145,28 @@ This plan treats `emotion-engine` as the coordination repo, but the actual fixes
 
 ### Task 5: Clean up dependency/runtime clarity and pack docs
 
-**Bead ID:** `Pending`  
+**Bead ID:** `ee-x8i`  
 **SubAgent:** `primary`  
 **Prompt:** `Across the affected repos, clean up the remaining non-blocking drift after the ownership fixes land: refresh dependency clarity where needed, remove misleading runtime indirections, and sync pack/docs mismatches such as digital-twin-openrouter-emotion-engine README vs manifest. Keep this bounded to clarity/documentation/packaging cleanup after the primary ownership corrections are done. Commit to main in each touched repo and report the final cleanup set.`
 
 **Folders Created/Deleted/Modified:**
-- affected repos as needed
+- `../digital-twin-openrouter-emotion-engine/`
+- `../digital-twin-openrouter-emotion-engine/cassettes/`
+- `../digital-twin-openrouter-emotion-engine/test/`
+- `../digital-twin-router/`
+- `.plans/`
 
 **Files Created/Deleted/Modified:**
-- package/lock/docs files as needed
+- `../digital-twin-openrouter-emotion-engine/cassettes/cod-test-golden-20260309-082851.json`
+- `../digital-twin-openrouter-emotion-engine/README.md`
+- `../digital-twin-openrouter-emotion-engine/package.json`
+- `../digital-twin-openrouter-emotion-engine/test/pack.test.js`
+- `../digital-twin-router/README.md`
+- `.plans/2026-03-14-polyrepo-drift-remediation.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed bead `ee-x8i` and kept the cleanup bounded to packaging/docs/runtime clarity drift. In `../digital-twin-openrouter-emotion-engine`, restored the tracked canonical cassette so the manifest, on-disk pack, and docs agree again; rewrote the README to reflect the actual `cod-test-golden-20260309-082851` default cassette; added `package.json#files` so `npm pack` only ships pack artifacts instead of leaking workspace metadata like `.beads/` and `AGENTS.md`; and tightened `test/pack.test.js` to verify manifest-to-cassette alignment and tarball contents against the real cassette schema. In `../digital-twin-router`, updated README installation guidance to match the canonical `git+ssh` polyrepo dependency story and explicitly steer local sibling development toward runtime/test path overrides instead of recommitting `file:` manifests. Validation: `npm test` and `npm pack --dry-run --json` both passed in `../digital-twin-openrouter-emotion-engine`. Commits: `c36b2a9` (`Align openrouter twin pack docs and packaging`), `4ebb84d` (`Clarify canonical digital-twin-router install path`), `c4156ba` (`Record task 5 drift cleanup results`).
 
 ---
 
