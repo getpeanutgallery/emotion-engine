@@ -1,0 +1,143 @@
+# peanut-gallery: polyrepo drift audit for emotion-engine and sibling ownership
+
+**Date:** 2026-03-14  
+**Status:** In Progress  
+**Agent:** Cookie 🍪
+
+---
+
+## Goal
+
+Audit the peanut-gallery polyrepo system to verify we have not drifted away from the intended repo boundaries by reintroducing code into `emotion-engine` that belongs in sibling polyrepos such as `tools`, `ai-providers`, `retry-strategy`, `goals`, `cast`, `digital-twin-router`, or `digital-twin-core`, and to verify that the related digital-twin pack repos have not drifted from the runtime assumptions of the code repos.
+
+---
+
+## Overview
+
+A tools-repo audit surfaced a significant architectural smell: the canonical `emotion-lenses-tool` behavior appears to have migrated back into `emotion-engine`, while the `tools` sibling lags behind as a downstream package surface. Derrick clarified that this is not the intended architecture — the polyrepo sibling should be the place where tool code lives. That means this may not be just a one-off cleanup inside `tools`; it may indicate broader drift away from the intended polyrepo ownership model.
+
+This plan treats the problem as a repo-boundary audit first, not an implementation sprint. Before we move more code around, we need an explicit inventory of what currently lives in `emotion-engine`, what should conceptually live in sibling repos, where imports/runtime resolution actually point today, and whether the present state reflects an intentional exception or an accidental rollback of the polyrepo design.
+
+The audit scope is widened to include the digital-twin pack repos as well, because drift there could leave the code repos technically clean while the replay/cassette ecosystem still diverges from current runtime assumptions. Those pack repos are not primary logic owners in the same sense as `tools` or `ai-providers`, but they are part of the practical polyrepo system Derrick wants verified.
+
+Because the concern spans multiple sibling repos but was discovered from the `emotion-engine` rollout, `emotion-engine` remains the coordination-owning repo for this audit plan. If the audit confirms systemic drift, we can then break remediation into repo-owned implementation beads and move code back to the correct siblings deliberately rather than via ad hoc edits.
+
+---
+
+## Tasks
+
+### Task 1: Reconstruct intended polyrepo ownership model
+
+**Bead ID:** `ee-9s4`  
+**SubAgent:** `research`  
+**Prompt:** `In the peanut-gallery workspace, reconstruct the intended polyrepo ownership model from repo docs, package metadata, import patterns, and historical notes. For each repo in scope (emotion-engine, tools, ai-providers, retry-strategy, goals, cast, digital-twin-router, digital-twin-core, digital-twin-openrouter-emotion-engine, digital-twin-emotion-engine-providers), document its intended responsibility boundary and note any explicit rules about what should not live in emotion-engine.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `docs/`
+
+**Files Created/Deleted/Modified:**
+- `.plans/2026-03-14-polyrepo-drift-audit.md`
+- `docs/POLYREPO-OWNERSHIP-MODEL-AUDIT-2026-03-14.md`
+
+**Status:** ✅ Complete
+
+**Results:** Created `docs/POLYREPO-OWNERSHIP-MODEL-AUDIT-2026-03-14.md` in `emotion-engine` and reconstructed the intended sibling ownership model from durable evidence in repo docs, package metadata, manifests, and live config/import usage. Main findings: `emotion-engine` is the canonical runtime orchestrator and script-contract owner; `ai-providers` owns provider/transport adapters; `retry-strategy` owns generic retry primitives; `goals` and `cast` are content repos; `digital-twin-router` and `digital-twin-core` own replay persistence and cassette schema/core respectively; the digital-twin emotion-engine repos are pack repos; and `tools` is the only materially ambiguous boundary, where current durable docs now treat it as a downstream compatibility package surface rather than the canonical contract owner. Explicit engine-outside boundaries were documented per repo, especially for provider logic, replay/schema ownership, generic retry primitives, and content/pack artifacts.
+
+---
+
+### Task 2: Audit actual runtime/import ownership across emotion-engine and siblings
+
+**Bead ID:** `Pending`  
+**SubAgent:** `primary`  
+**Prompt:** `Audit current import paths, package resolution, duplicated implementations, and pack/runtime assumptions across emotion-engine and the repos in scope. Identify cases where emotion-engine contains code that appears to belong to a sibling polyrepo, where a node_modules sibling package is only a shim into emotion-engine, where sibling code has drifted behind the in-repo copy, or where digital-twin pack layout/fixtures have drifted from the expectations of the code repos.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `docs/`
+
+**Files Created/Deleted/Modified:**
+- `.plans/2026-03-14-polyrepo-drift-audit.md`
+- `docs/` (audit notes if needed)
+
+**Status:** ⏳ Pending
+
+**Results:** Pending.
+
+---
+
+### Task 3: Classify drift findings by severity and ownership correction path
+
+**Bead ID:** `Pending`  
+**SubAgent:** `primary`  
+**Prompt:** `For each drift finding, classify whether it is: (a) intentional/coherent, (b) mild drift but acceptable, (c) real ownership violation requiring code relocation, or (d) ambiguous and needing Derrick’s architectural decision. Propose the correct owning repo for each violation and the safest remediation path.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `docs/`
+
+**Files Created/Deleted/Modified:**
+- `.plans/2026-03-14-polyrepo-drift-audit.md`
+- `docs/` (audit notes if needed)
+
+**Status:** ⏳ Pending
+
+**Results:** Pending.
+
+---
+
+### Task 4: Break confirmed ownership corrections into implementation beads
+
+**Bead ID:** `Pending`  
+**SubAgent:** `primary`  
+**Prompt:** `If the audit confirms real polyrepo drift, translate the findings into concrete implementation beads by owning repo. Include dependency order, whether code should move out of emotion-engine or back into a sibling, and any validation needed to preserve runtime behavior during the correction.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `.beads/`
+- `docs/`
+
+**Files Created/Deleted/Modified:**
+- `.plans/2026-03-14-polyrepo-drift-audit.md`
+- `docs/` (audit notes if needed)
+
+**Status:** ⏳ Pending
+
+**Results:** Pending.
+
+---
+
+## Questions this audit should answer
+
+- Which repos are still truly canonical for their domain?
+- Are there other cases besides `tools` where a sibling package now resolves back into an `emotion-engine` implementation?
+- Did the polyrepo extraction drift back toward a monorepo-in-disguise?
+- Which cases are deliberate convenience wrappers versus actual architectural regressions?
+- Have the digital-twin pack repos drifted from the cassette/runtime assumptions of the current code repos?
+- What code, package wiring, or pack structure needs to move, and in which order, if we want to restore the intended sibling ownership model?
+
+---
+
+## Success Criteria
+
+- We have a clear source-of-truth map for the peanut-gallery polyrepo boundaries.
+- We can point to concrete drift cases instead of relying on hunches.
+- Each confirmed ownership violation has a recommended owning repo and remediation path.
+- We do not begin moving code until Derrick can review the audit findings.
+
+---
+
+## Final Results
+
+**Status:** ⏳ Pending
+
+**What We Built:** Pending.
+
+**Commits:**
+- Pending.
+
+**Lessons Learned:** Pending.
+
+---
+
+*Question for Derrick: Is this audit plan ready to execute, or do you want me to narrow/widen the sibling set before I start the audit?*
