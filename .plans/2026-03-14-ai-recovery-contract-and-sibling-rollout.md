@@ -253,6 +253,26 @@ Task 1 is now complete. The architecture docs now explicitly separate the three 
 
 **Results:** Landed the `ee-d4x.4` deterministic tool-wrapper rollout on the same shared `ee-d4x.1` contract seam rather than leaving tool failures as opaque helper strings. `get-metadata.cjs` now exports an explicit `tool.wrapper.v1` deterministic recovery declaration, returns canonical primary-artifact/metrics metadata, and routes ffprobe exec/parse failures into structured contract fields. Added `server/lib/tool-wrapper-contract.cjs` as the shared deterministic helper for tool-wrapper failure metadata so audio/video extractors, audio preflight, and persistence helpers can all emit stable `failureCategory` / `failureCode` / retryability / path-normalization eligibility without each caller inventing its own shape. `script-contract.cjs` now honors explicit retryability and chooses tool-wrapper deterministic strategy order based on the actual failure shape, allowing missing-path failures to steer into `retry-after-path-normalization` before `re-extract-artifact` while keeping true hard-fail semantics for non-retryable config/dependency cases. `get-dialogue.cjs`, `get-music.cjs`, and `video-chunks.cjs` now preserve helper failure metadata when deterministic extraction/preflight work fails, so those production AI lanes no longer collapse helper failures into generic internal errors. Artifact persistence surfaces (`persisted-artifacts.cjs`, `artifact-manager.cjs`) now throw structured invalid-output / missing-path / write failures instead of raw parse noise. Validation added focused helper + contract coverage for the new deterministic lanes and the full repo `npm test` suite stayed green.
 
+### Task 9: Audit `ee-cwi.4` tools alignment vs deprecation decision
+
+**Bead ID:** `ee-cwi.4`  
+**SubAgent:** `primary`
+**Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/tools, claim bead ee-cwi.4 from the owning emotion-engine Beads context, then perform an audit-first pass only. Determine whether emotion-lenses-tool.cjs is still a maintained sibling runtime surface, measure drift against emotion-engine's canonical lane/runtime/validator contract, identify current usage/import surfaces, record an explicit recommendation plus bounded follow-up tasks, update durable docs in ../tools and this parent plan, commit any doc changes, and leave the bead open unless the audit proves no further work is needed.`
+
+**Folders Created/Deleted/Modified:**
+- `../tools/docs/`
+- `../tools/`
+- `.plans/`
+
+**Files Created/Deleted/Modified:**
+- `../tools/docs/EMOTION-LENSES-ALIGNMENT-AUDIT-2026-03-14.md`
+- `../tools/README.md`
+- `.plans/2026-03-14-ai-recovery-contract-and-sibling-rollout.md`
+
+**Status:** ✅ Audit complete / implementation deferred
+
+**Results:** The audit found that `../tools` is still a real but narrow downstream package surface: `emotion-engine` configs still point at `tools/emotion-lenses-tool.cjs`, tests still import it, and runtime captures still show execution through `node_modules/tools/emotion-lenses-tool.cjs`. But the actual canonical implementation has already moved upstream into `emotion-engine/server/lib/emotion-lenses-tool.cjs`; inside `emotion-engine`, the package entrypoint is now just a shim back to that local canonical file. The `../tools` repo itself remains intentionally maintained enough to matter (real package metadata, passing tests, recent commits), but its standalone implementation has materially drifted from the canonical contract: it still does permissive JSON parsing plus fallback success synthesis, while the canonical engine copy now owns strict structured-output validation, the lane-specific validator-tool contract (`validate_emotion_analysis_json`), explicit invalid-output failure surfacing, and the broader recovery-ready seam. Durable audit notes were added in `../tools/docs/EMOTION-LENSES-ALIGNMENT-AUDIT-2026-03-14.md`, with the explicit recommendation that `../tools` remain only a maintained downstream compatibility surface while contract ownership stays in `emotion-engine`. The recommended next move is a bounded follow-up bead to either re-export/sync the canonical implementation downstream or explicitly reduce/deprecate the package entrypoint; this audit did **not** perform that rollout, so `ee-cwi.4` should stay open.
+
 ## Current context from the handoff
 
 - `ee-32e` was the explicit next pickup point from the prior session and is now complete.
