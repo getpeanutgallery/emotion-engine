@@ -215,7 +215,7 @@ This plan treats `emotion-engine` as the coordination repo, but the actual fixes
 - `c36b2a9` - Align openrouter twin pack docs and packaging
 - `4ebb84d` - Clarify canonical digital-twin-router install path
 - `2d8e337` - Record task 5 drift cleanup results
-- `8faa480` - Record final sanity sweep and canonical config-path note
+- current emotion-engine HEAD - Record final sanity sweep and canonical config-path note
 
 **Lessons Learned:** When a sibling repo is supposed to own runtime behavior, the ownership must be obvious in checked-in imports/configs/tests — not hidden behind local shims, fixture mirrors, or stale install-tree coincidences. Historical audit docs can preserve the before-state, but current README/config/package surfaces need to advertise the live canonical layout so future drift is visible early.
 
