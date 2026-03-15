@@ -92,22 +92,25 @@ This plan treats `emotion-engine` as the coordination repo, but the actual fixes
 
 ### Task 3: Restore canonical provider cassette-pack ownership to `digital-twin-emotion-engine-providers`
 
-**Bead ID:** `Pending`  
+**Bead ID:** `ee-7hv`  
 **SubAgent:** `coder`  
 **Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/digital-twin-emotion-engine-providers, make this sibling repo the canonical owner of the provider test cassette pack again. Reconcile any divergence with emotion-engine/test/fixtures/digital-twin-emotion-engine-providers, choose the canonical cassette/manifest state from the sibling repo perspective, update pack contents/docs as needed, verify pack integrity, commit to main, and report what should now be consumed by emotion-engine tests.`
 
 **Folders Created/Deleted/Modified:**
 - `../digital-twin-emotion-engine-providers/`
 - `../digital-twin-emotion-engine-providers/cassettes/`
+- `../digital-twin-emotion-engine-providers/test/`
 
 **Files Created/Deleted/Modified:**
 - `../digital-twin-emotion-engine-providers/manifest.json`
 - `../digital-twin-emotion-engine-providers/cassettes/providers.json`
 - `../digital-twin-emotion-engine-providers/README.md`
+- `../digital-twin-emotion-engine-providers/package.json`
+- `../digital-twin-emotion-engine-providers/test/manifest.test.js`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed bead `ee-7hv` and restored the sibling pack as the canonical provider-cassette owner by reintroducing `cassettes/providers.json` into the repo with the newer fixture-aligned payload from `emotion-engine/test/fixtures/...`, then documenting that this sibling repo is the source of truth. Chose the sibling repo’s canonical state to be: `manifest.json` continues to expose `defaultCassetteId: "providers"`, while `cassettes/providers.json` now carries the current offline replay payload including the duplicate OpenRouter interaction needed for sequential replay consumption in a single test process. Expanded `README.md` with ownership/consumption guidance for `DIGITAL_TWIN_PACK=../digital-twin-emotion-engine-providers`, tightened `test/manifest.test.js` to verify manifest-declared cassette presence, provider coverage, duplicate OpenRouter coverage, and `npm pack --dry-run` contents, and removed the dead `generate` script from `package.json` so the pack metadata no longer advertises a missing generator. Validation: `npm test` passed (6 assertions in `test/manifest.test.js`) and `npm pack --dry-run` confirmed the tarball now includes `cassettes/providers.json`. Commit: `50c2062` (`Restore canonical provider cassette pack`). Next consumer step for Task 4: point `emotion-engine` provider tests/helpers at `../digital-twin-emotion-engine-providers` and retire the in-repo fixture copy instead of syncing a second authority.
 
 ---
 
