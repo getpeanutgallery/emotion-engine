@@ -70,7 +70,7 @@ function buildToolResult({ validation, toolName, invalidArgsSummary }) {
     valid: validation.ok,
     toolName,
     summary: validation.ok
-      ? 'JSON is valid. Return the final JSON artifact.'
+      ? 'JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.'
       : validation.summary,
     errors: validation.errors,
     normalizedValue: validation.ok ? validation.value : null

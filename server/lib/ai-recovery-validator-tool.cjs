@@ -212,7 +212,7 @@ function validateAiRecoveryDecisionCandidate(candidate) {
     ok: true,
     value: normalized,
     errors: [],
-    summary: 'AI recovery decision is valid. Call the tool if needed, then return the final AI recovery decision JSON artifact.'
+    summary: 'AI recovery decision is valid. The validator returned valid=true. Return the final AI recovery decision JSON artifact with no wrapper.'
   };
 }
 
@@ -235,7 +235,7 @@ function executeAiRecoveryValidatorTool(args) {
     valid: validation.ok,
     toolName: TOOL_NAME,
     summary: validation.ok
-      ? 'AI recovery decision JSON is valid. Return the final JSON artifact.'
+      ? 'AI recovery decision JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.'
       : validation.summary,
     errors: validation.errors,
     normalizedValue: validation.ok ? validation.value : null

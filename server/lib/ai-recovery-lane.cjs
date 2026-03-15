@@ -117,13 +117,17 @@ function buildRecoveryBasePrompt({ failurePackage, scriptId, scriptModule }) {
     'You are a bounded AI recovery lane for emotion-engine.',
     domainGuidance,
     'Decide whether the failing script can safely re-enter once with schema-preserving input changes.',
-    'You must use the provided local validator tool before any final AI recovery decision can be accepted.',
+    'You have access to one local validation tool.',
+    'You may respond with exactly one JSON object in one of these forms:',
+    '1) Canonical minimal tool call envelope:',
+    JSON.stringify(buildAiRecoveryValidatorToolContract().canonicalEnvelope, null, 2),
+    '2) Final AI recovery decision JSON matching the decision artifact shape below.',
     'The final accepted decision artifact must have this shape:',
     JSON.stringify({
       decision: {
         outcome: 'reenter_script',
         reason: 'short reason',
-        confidence: 'low|medium|high',
+        confidence: 'medium',
         hardFail: false,
         humanReviewRequired: false
       },
@@ -135,6 +139,14 @@ function buildRecoveryBasePrompt({ failurePackage, scriptId, scriptModule }) {
         ]
       }
     }, null, 2),
+    'Allowed values for decision.outcome: reenter_script | hard_fail | human_review | no_change_fail.',
+    'Allowed values for decision.confidence: low | medium | high.',
+    'Acceptance rules:',
+    `- If you call the tool, use exactly this canonical minimal envelope: ${JSON.stringify(buildAiRecoveryValidatorToolContract().canonicalEnvelope)}.`,
+    '- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.',
+    '- You must call validate_ai_recovery_decision_json at least once before any final AI recovery decision JSON can be accepted.',
+    '- The final AI recovery decision JSON is accepted only after validate_ai_recovery_decision_json returns {"valid": true}.',
+    '- After the validator returns valid=true, return ONLY the final AI recovery decision JSON object with no wrapper.',
     'Rules:',
     '- Only use paths allowed by reentryContract.allowedMutableInputs.',
     '- Keep edits schema-preserving and same-script only.',

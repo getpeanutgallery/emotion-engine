@@ -212,13 +212,35 @@ No additional sibling repo beyond the listed set was proven relevant during the 
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- in-scope prompt/contract files identified by the audit
-- related tests/docs if needed
+- `server/lib/local-validator-tool-loop.cjs`
+- `server/lib/phase1-validator-tools.cjs`
+- `server/lib/ai-recovery-validator-tool.cjs`
+- `server/lib/ai-recovery-lane.cjs`
+- `server/lib/persona-loader.cjs`
+- `server/scripts/get-context/get-dialogue.cjs`
+- `server/scripts/get-context/get-music.cjs`
+- `server/scripts/report/recommendation.cjs`
+- `docs/UNIVERSAL-SCRIPT-RESULT-CONTRACT.md`
 - `.plans/2026-03-15-cross-repo-ai-prompt-contract-consistency-sweep.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed `ee-mlp` and normalized the live `emotion-engine` prompt-contract surfaces called out by the audit without changing lane behavior beyond keeping the prompt text truthful.
+
+Applied changes:
+- standardized shared validator-loop wording in `server/lib/local-validator-tool-loop.cjs` and the recommendation lane-local wrapper in `server/scripts/report/recommendation.cjs` to use **canonical minimal tool call envelope** language, explicitly forbid wrapper aliases, and keep final acceptance tied to validator success
+- updated `server/lib/ai-recovery-lane.cjs` and `server/lib/ai-recovery-validator-tool.cjs` so the recovery lane now states validator-tool usage as mandatory, shows the canonical minimal envelope, forbids wrapper aliases, and only accepts the final artifact after validator success
+- updated `server/lib/phase1-validator-tools.cjs` success messaging so validator success explicitly means `valid=true` and the final artifact must be returned bare with no wrapper
+- converted remaining live Option B drift in prompt examples:
+  - `server/scripts/get-context/get-music.cjs` now uses concrete JSON examples plus nearby `Allowed values for ...` notes for `type` / `mood`
+  - `server/lib/persona-loader.cjs` now uses a concrete `scroll_risk` example plus an explicit allowed-values note
+  - `docs/UNIVERSAL-SCRIPT-RESULT-CONTRACT.md` now uses concrete enum examples plus nearby allowed-values notes for `failure.category`, `failure.failedUnit.unitType`, and `recoveryPolicy.nextAction.policy`
+- tightened older dialogue/stitch prompt wording in `server/scripts/get-context/get-dialogue.cjs` so it consistently says `Return JSON only` and adds the nearby fixed-value note for `debug.inputKind`
+
+Validation evidence:
+- ran `node --test test/scripts/get-dialogue.test.js test/scripts/get-music.test.js test/scripts/recommendation.test.js test/lib/phase1-validator-tools.test.js test/lib/ai-recovery-validator-tool.test.js test/lib/script-contract.test.js`
+- result: **70 tests passed, 0 failed**
+- no test file changes were required because the prompt wording changes preserved the existing behavioral contract and test expectations
 
 ---
 

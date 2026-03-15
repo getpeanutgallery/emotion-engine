@@ -168,11 +168,12 @@ function buildSystemPrompt(config, options = {}) {
       "boredom": 0-10,
       "excitement": 0-10,
       "thought": "internal monologue in persona voice",
-      "scroll_risk": "low|medium|high|SCROLLING"
+      "scroll_risk": "low"
     }
   ]
 }\n`;
     prompt += `\`\`\`\n`;
+    prompt += `Allowed values for per_second_analysis[].scroll_risk: low | medium | high | SCROLLING.\n`;
     
     return prompt;
 }

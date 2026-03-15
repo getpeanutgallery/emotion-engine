@@ -1291,11 +1291,11 @@ Respond with a JSON object in the following format:
 \`\`\`
 
 IMPORTANT:
-- Respond ONLY with valid JSON (no markdown, no explanation)
+- Return JSON only. No markdown or explanation.
 - Identify speakers as "Speaker 1", "Speaker 2", etc.
-- Provide accurate timestamps in seconds
-- Include confidence scores (0.0 to 1.0)
-- If no speech is detected, return an empty dialogue_segments array`;
+- Provide accurate timestamps in seconds.
+- Include confidence scores from 0.0 to 1.0.
+- If no speech is detected, return an empty dialogue_segments array.`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }
@@ -1441,7 +1441,7 @@ Chunk time window: ${Number(startTime).toFixed(2)}s to ${Number(endTime).toFixed
 
 ${handoff ? `Context from previous chunk (handoff):\n${handoff}\n\n` : ''}Transcribe the audio in this chunk. Identify different speakers and provide timestamps.
 
-Return ONLY valid JSON with this structure:
+Return JSON only with this structure:
 
 {
   "dialogue_segments": [
@@ -1459,10 +1459,10 @@ Return ONLY valid JSON with this structure:
 }
 
 Rules:
-- Respond ONLY with JSON (no markdown).
+- Return JSON only. No markdown.
 - Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.
 - Keep speaker labels consistent with the handoff when possible.
-- If no speech detected, return an empty dialogue_segments array.
+- If no speech is detected, return an empty dialogue_segments array.
 - Keep handoffContext brief (<= ~10 lines).`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
@@ -1478,7 +1478,7 @@ You are given a mechanically-stitched transcript with chunk boundaries. Your job
 - provide an audit trail of the main merge operations and assumptions
 - include debugging references/payloads so downstream tooling can trace back
 
-Return ONLY valid JSON with this structure:
+Return JSON only with this structure:
 
 {
   "cleanedTranscript": "...",
@@ -1492,6 +1492,8 @@ Return ONLY valid JSON with this structure:
     "refs": []
   }
 }
+
+Allowed values for debug.inputKind: dialogue.stitch.input.
 
 Here is the stitch input (including mechanical transcript):
 ${JSON.stringify(stitchInput, null, 2)}

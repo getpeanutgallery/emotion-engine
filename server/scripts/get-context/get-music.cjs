@@ -802,17 +802,20 @@ Respond with a JSON object in the following format:
 
 \`\`\`json
 {
-  "type": "music|speech|silence|ambient|sfx",
+  "type": "music",
   "description": "Brief description of the audio",
-  "mood": "upbeat|calm|tense|sad|energetic|neutral",
+  "mood": "energetic",
   "intensity": 5
 }
 \`\`\`
 
+Allowed values for type: music | speech | silence | ambient | sfx.
+Allowed values for mood: upbeat | calm | tense | sad | energetic | neutral.
+
 IMPORTANT:
-- Respond ONLY with valid JSON (no markdown, no explanation)
-- Be specific about the mood and characteristics
-- If it's speech, set type to "speech" and mood to "neutral"`;
+- Return JSON only. No markdown, no explanation.
+- Be specific about the mood and characteristics.
+- If it's speech, set type to "speech" and mood to "neutral".`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }
@@ -842,17 +845,20 @@ ${roll ? `Rolling summary so far (from previous chunks):\n${roll}\n\n` : ''}Iden
 3. Intensity level from 1-10
 4. Brief description
 
-Return ONLY valid JSON in this format:
+Return JSON only in this format:
 {
   "analysis": {
-    "type": "music|speech|silence|ambient|sfx",
+    "type": "music",
     "description": "Brief description of the audio",
-    "mood": "upbeat|calm|tense|sad|energetic|neutral",
+    "mood": "energetic",
     "intensity": 5
   },
   "chunkSummary": "1-2 sentences",
   "rollingSummary": "Updated rolling summary for the entire audio so far (keep concise)"
-}`;
+}
+
+Allowed values for analysis.type: music | speech | silence | ambient | sfx.
+Allowed values for analysis.mood: upbeat | calm | tense | sad | energetic | neutral.`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }

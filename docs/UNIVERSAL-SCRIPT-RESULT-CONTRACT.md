@@ -479,17 +479,20 @@ Examples that must **not** be marked success:
 
 ```json
 {
-  "category": "provider_transport | invalid_output | validation | config | dependency | tool | io | timeout | internal",
+  "category": "invalid_output",
   "code": "STABLE_MACHINE_CODE",
   "message": "Human-readable explanation",
   "retryable": true,
   "failedOperation": "generate_recommendation",
   "failedUnit": {
-    "unitType": "script | chunk | split | artifact | provider_attempt | tool_call",
+    "unitType": "script",
     "unitId": "recommendation"
   }
 }
 ```
+
+Allowed values for failure.category: provider_transport | invalid_output | validation | config | dependency | tool | io | timeout | internal.
+Allowed values for failure.failedUnit.unitType: script | chunk | split | artifact | provider_attempt | tool_call.
 
 Rules:
 
@@ -550,12 +553,14 @@ Meaning:
 
 ```json
 {
-  "policy": "fail | deterministic_recovery | ai_recovery | human_review",
+  "policy": "deterministic_recovery",
   "target": "retry-next-target",
   "humanRequired": false,
   "stopPipelineOnFailure": true
 }
 ```
+
+Allowed values for recoveryPolicy.nextAction.policy: fail | deterministic_recovery | ai_recovery | human_review.
 
 Meaning:
 

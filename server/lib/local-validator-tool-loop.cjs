@@ -131,14 +131,14 @@ function buildLocalValidatorToolPrompt({
     '',
     'LOCAL TOOL LOOP:',
     'You have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:',
-    '1) Canonical tool call envelope:',
+    '1) Canonical minimal tool call envelope:',
     JSON.stringify(toolContract.canonicalEnvelope, null, 2),
     `2) Final ${artifactLabel} JSON matching the schema above.`,
     '',
     'Acceptance rules:',
     `- The final ${artifactLabel} JSON is accepted only after ${toolContract.name} returns {"valid": true}.`,
-    `- If you call the tool, use exactly this minimal envelope: ${JSON.stringify(toolContract.canonicalEnvelope)}.`,
-    '- Do not add type/toolName/arguments/args/input wrappers around the tool call.',
+    `- If you call the tool, use exactly this canonical minimal envelope: ${JSON.stringify(toolContract.canonicalEnvelope)}.`,
+    '- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.',
     `- If the validator reports problems, revise and either call the tool again or return a revised ${artifactLabel} JSON candidate.`,
     ...(requireExplicitToolCallBeforeFinalArtifact
       ? [`- You must call ${toolContract.name} at least once before any final ${artifactLabel} JSON can be accepted.`]
