@@ -12,12 +12,22 @@
 const fs = require('fs');
 const path = require('path');
 
+const DEFAULT_DIGITAL_TWIN_PACK = path.resolve(__dirname, '..', '..', '..', 'digital-twin-emotion-engine-providers');
+const DEFAULT_DIGITAL_TWIN_CASSETTE = 'providers';
+
+function applyDefaultDigitalTwinEnv() {
+  process.env.DIGITAL_TWIN_PACK = process.env.DIGITAL_TWIN_PACK || DEFAULT_DIGITAL_TWIN_PACK;
+  process.env.DIGITAL_TWIN_CASSETTE = process.env.DIGITAL_TWIN_CASSETTE || DEFAULT_DIGITAL_TWIN_CASSETTE;
+
+  return {
+    pack: process.env.DIGITAL_TWIN_PACK,
+    cassette: process.env.DIGITAL_TWIN_CASSETTE,
+  };
+}
+
 function preflightDigitalTwin() {
   const pack = process.env.DIGITAL_TWIN_PACK;
   const cassette = process.env.DIGITAL_TWIN_CASSETTE;
-
-  const suggestedPack = path.resolve(__dirname, '..', 'fixtures', 'digital-twin-emotion-engine-providers');
-  const suggestedCassette = 'providers';
 
   if (!pack || !cassette) {
     throw new Error(
@@ -29,8 +39,8 @@ function preflightDigitalTwin() {
         '  - DIGITAL_TWIN_CASSETTE (cassette name without .json)',
         '',
         'Example (repo-relative sibling default):',
-        `  DIGITAL_TWIN_PACK=${suggestedPack}`,
-        `  DIGITAL_TWIN_CASSETTE=${suggestedCassette}`,
+        `  DIGITAL_TWIN_PACK=${DEFAULT_DIGITAL_TWIN_PACK}`,
+        `  DIGITAL_TWIN_CASSETTE=${DEFAULT_DIGITAL_TWIN_CASSETTE}`,
         '  npm test',
         '',
         'Expected cassette file location:',
@@ -48,7 +58,7 @@ function preflightDigitalTwin() {
         '',
         'Fix:',
         '  - Set DIGITAL_TWIN_PACK to a valid pack directory, or',
-        `  - Clone the pack next to this repo (suggested): ${suggestedPack}`,
+        `  - Clone the pack next to emotion-engine (suggested): ${DEFAULT_DIGITAL_TWIN_PACK}`,
       ].join('\n')
     );
   }
@@ -78,5 +88,8 @@ function preflightDigitalTwin() {
 }
 
 module.exports = {
+  DEFAULT_DIGITAL_TWIN_PACK,
+  DEFAULT_DIGITAL_TWIN_CASSETTE,
+  applyDefaultDigitalTwinEnv,
   preflightDigitalTwin,
 };

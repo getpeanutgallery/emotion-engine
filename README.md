@@ -271,8 +271,10 @@ node --test test/scripts/get-dialogue.test.js test/scripts/get-music.test.js tes
 
 Provider tests use digital-twin defaults:
 
-- `DIGITAL_TWIN_PACK=test/fixtures/digital-twin-emotion-engine-providers` (included minimal cassette pack)
+- `DIGITAL_TWIN_PACK=../digital-twin-emotion-engine-providers`
 - `DIGITAL_TWIN_CASSETTE=providers`
+
+The sibling `../digital-twin-emotion-engine-providers` repo is the canonical provider cassette pack; `emotion-engine` no longer keeps a mirrored local fixture copy.
 
 If that cassette is missing, tests fail with:
 
@@ -304,7 +306,7 @@ Live calls require `AI_API_KEY`. For `video-chunks` replay mode, `DIGITAL_TWIN_M
 
 ### `Cassette not found: providers`
 
-Set `DIGITAL_TWIN_PACK` and `DIGITAL_TWIN_CASSETTE` to an existing cassette pair, or record new cassettes in the digital-twin repo.
+Set `DIGITAL_TWIN_PACK` and `DIGITAL_TWIN_CASSETTE` to an existing cassette pair, or clone/use the sibling provider pack repo at `../digital-twin-emotion-engine-providers`.
 
 ### Persona/goal path failures
 

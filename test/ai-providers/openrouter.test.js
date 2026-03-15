@@ -5,15 +5,13 @@
  * Run with: node test/ai-providers/openrouter.test.js
  */
 
-const path = require('path');
 const openrouter = require('ai-providers/providers/openrouter.cjs');
 
 // Enable digital twin transport for offline tests
 process.env.NODE_ENV = 'test';
-process.env.DIGITAL_TWIN_PACK = process.env.DIGITAL_TWIN_PACK || path.resolve(__dirname, '..', 'fixtures', 'digital-twin-emotion-engine-providers');
-process.env.DIGITAL_TWIN_CASSETTE = process.env.DIGITAL_TWIN_CASSETTE || 'providers';
 
-const { preflightDigitalTwin } = require('../helpers/digital-twin-preflight.cjs');
+const { applyDefaultDigitalTwinEnv, preflightDigitalTwin } = require('../helpers/digital-twin-preflight.cjs');
+applyDefaultDigitalTwinEnv();
 preflightDigitalTwin();
 
 let passed = 0;

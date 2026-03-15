@@ -10,7 +10,7 @@
   "scripts": {
     "pipeline": "node server/run-pipeline.cjs",
     "test": "node --test test/**/*.test.js",
-    "test:providers:check": "node -e \"require('./test/helpers/digital-twin-preflight.cjs').preflightDigitalTwin()\"",
+    "test:providers:check": "node -e \"const twin=require('./test/helpers/digital-twin-preflight.cjs'); twin.applyDefaultDigitalTwinEnv(); twin.preflightDigitalTwin()\"",
     "test:validate-json": "node test-validate-json.cjs",
     "validate-configs": "node validate-configs.cjs",
     "analyze:recent-errors": "node scripts/analyze-recent-run-errors.cjs"

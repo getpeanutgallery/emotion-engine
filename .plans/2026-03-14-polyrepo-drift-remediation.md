@@ -116,7 +116,7 @@ This plan treats `emotion-engine` as the coordination repo, but the actual fixes
 
 ### Task 4: Remove/reduce the accidental local provider fixture copy in `emotion-engine`
 
-**Bead ID:** `Pending`  
+**Bead ID:** `ee-036`  
 **SubAgent:** `coder`  
 **Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine, stop treating test/fixtures/digital-twin-emotion-engine-providers as the canonical provider cassette owner after Task 3 lands. Switch tests to use the sibling pack repo directly as the dependency-owned source of truth; do not introduce or preserve a local mirror. Remove the current silent-drift state, update tests/helpers/docs accordingly, verify test ergonomics, commit to main, and report the final ownership/consumption pattern.`
 
@@ -125,7 +125,6 @@ This plan treats `emotion-engine` as the coordination repo, but the actual fixes
 - `test/helpers/`
 - `test/ai-providers/`
 - `test/integration/`
-- `docs/`
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
@@ -133,11 +132,14 @@ This plan treats `emotion-engine` as the coordination repo, but the actual fixes
 - `test/helpers/digital-twin-preflight.cjs`
 - `test/ai-providers/*.js`
 - `test/integration/ai-provider-flow.test.js`
+- `README.md`
+- `.env.example`
+- `package.json`
 - `.plans/2026-03-14-polyrepo-drift-remediation.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed bead `ee-036` and cut the replay-backed provider tests/integration flow over to the sibling pack repo by centralizing the default twin-pack resolution in `test/helpers/digital-twin-preflight.cjs`, setting the default path to `../digital-twin-emotion-engine-providers`, and updating all provider/integration tests plus `npm run test:providers:check` to use that helper instead of hardcoding an in-repo fixture path. Retired the accidental local mirror by deleting `test/fixtures/digital-twin-emotion-engine-providers/` entirely. Updated `README.md` and `.env.example` so the documented default ownership/consumption path now matches reality. Validation passed with `npm run test:providers:check` and `node --test test/ai-providers/*.test.js test/integration/ai-provider-flow.test.js` (provider interface + Anthropic + Gemini + OpenAI + OpenRouter + integration all green). Final consumption pattern: `emotion-engine` tests default to `DIGITAL_TWIN_PACK=../digital-twin-emotion-engine-providers` and `DIGITAL_TWIN_CASSETTE=providers`, while still allowing explicit env overrides when needed.
 
 ---
 
