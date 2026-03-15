@@ -12,8 +12,6 @@ const {
   loadPromptPayload,
   getPromptStoreDir,
   getPromptRefFile,
-  toCanonicalPromptRefFile,
-  toLegacyPromptRefFile,
 } = require('../../server/lib/prompt-store.cjs');
 
 function makeTempDir(prefix) {
@@ -47,7 +45,7 @@ test('prompt-store loads canonical prompt refs', () => {
   assert.deepStrictEqual(loaded, payload);
 });
 
-test('prompt-store dual-reads legacy raw/ai/_prompts refs from older runs', () => {
+test('prompt-store rejects legacy raw prompt refs', () => {
   const outputDir = makeTempDir('ee-prompt-store-legacy-');
   const payload = { prompt: 'legacy payload', turns: [1, 2, 3] };
   const legacyRef = 'raw/ai/_prompts/legacy.json';
@@ -56,30 +54,11 @@ test('prompt-store dual-reads legacy raw/ai/_prompts refs from older runs', () =
   fs.mkdirSync(path.dirname(legacyPath), { recursive: true });
   fs.writeFileSync(legacyPath, JSON.stringify(payload, null, 2), 'utf8');
 
-  const loaded = loadPromptPayload({
-    outputDir,
-    promptRef: { sha256: 'legacy', file: legacyRef },
-  });
-
-  assert.deepStrictEqual(loaded, payload);
-});
-
-test('prompt-store falls back across canonical/legacy ref aliases for compatibility', () => {
-  const outputDir = makeTempDir('ee-prompt-store-fallback-');
-  const payload = { prompt: 'cross-read payload' };
-  const legacyRef = 'raw/ai/_prompts/shared.json';
-  const canonicalRef = '_meta/ai/_prompts/shared.json';
-  const canonicalPath = path.join(outputDir, canonicalRef);
-
-  fs.mkdirSync(path.dirname(canonicalPath), { recursive: true });
-  fs.writeFileSync(canonicalPath, JSON.stringify(payload, null, 2), 'utf8');
-
-  const loadedViaLegacyRef = loadPromptPayload({
-    outputDir,
-    promptRef: { sha256: 'shared', file: legacyRef },
-  });
-
-  assert.deepStrictEqual(loadedViaLegacyRef, payload);
-  assert.strictEqual(toCanonicalPromptRefFile(legacyRef), canonicalRef);
-  assert.strictEqual(toLegacyPromptRefFile(canonicalRef), legacyRef);
+  assert.throws(
+    () => loadPromptPayload({
+      outputDir,
+      promptRef: { sha256: 'legacy', file: legacyRef },
+    }),
+    /_meta\/ai\/_prompts\/<sha>\.json path/
+  );
 });

@@ -344,7 +344,6 @@ When `debug.captureRaw: true`, the scripts persist (best-effort):
   - `output.json`
 
 And they emit `artifact.write` events in `_meta/events.jsonl` pointing to these files.
-(Historical runs may still have the timeline at `raw/_meta/events.jsonl`.)
 
 ---
 

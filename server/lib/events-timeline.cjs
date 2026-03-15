@@ -10,9 +10,6 @@
  *
  * This file is intended to be stable and append-only, providing a chronological
  * view of the pipeline execution.
- *
- * Historical runs may still contain:
- *   <runOutputDir>/raw/_meta/events.jsonl
  */
 
 const fs = require('fs');

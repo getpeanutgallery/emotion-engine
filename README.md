@@ -235,10 +235,6 @@ phase3-report/raw/
 
 _meta/ai/_prompts/<sha256>.json         # prompt payloads (run-level)
 _meta/events.jsonl                      # run timeline (run-level)
-
-Historical runs may still contain:
-raw/ai/_prompts/<sha256>.json           # legacy prompt payload path
-raw/_meta/events.jsonl                  # legacy run timeline path
 ```
 
 ### Processed intermediates retention

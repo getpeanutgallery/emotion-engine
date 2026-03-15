@@ -67,7 +67,6 @@ If multiple are present, `keepProcessedIntermediates` wins.
 The orchestrator maintains a run-level, append-only timeline at:
 
 - `_meta/events.jsonl`
-- historical runs may still contain `raw/_meta/events.jsonl`
 
 This is **enabled by default**. You can explicitly disable emission with:
 
@@ -136,13 +135,6 @@ When raw AI captures are written, they may include a `promptRef` like:
 
 ```json
 { "promptRef": { "sha256": "...", "file": "_meta/ai/_prompts/<sha256>.json" } }
-```
-
-Historical runs may still use the legacy run-root `raw/` locations:
-
-```text
-output/<run-name>/raw/_meta/events.jsonl
-output/<run-name>/raw/ai/_prompts/<sha256>.json
 ```
 
 Recommendation-lane captures may also include provider boundary artifacts when the adapter exposes them:

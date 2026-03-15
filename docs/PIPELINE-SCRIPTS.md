@@ -76,7 +76,6 @@ Some scripts also consume `tool_variables` (persona/goal/lenses, etc.).
 - Run timeline: `output/<run>/_meta/events.jsonl`
 - Raw AI/ffmpeg capture (when enabled): `output/<run>/phase*/raw/`
 - Stored prompt payloads (referenced via `promptRef`): `output/<run>/_meta/ai/_prompts/`
-- Historical runs may still show `output/<run>/raw/_meta/events.jsonl` and `output/<run>/raw/ai/_prompts/`
 
 See `docs/DEBUG-CONFIG.md`.
 
