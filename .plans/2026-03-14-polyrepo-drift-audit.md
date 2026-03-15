@@ -48,7 +48,7 @@ Because the concern spans multiple sibling repos but was discovered from the `em
 
 ### Task 2: Audit actual runtime/import ownership across emotion-engine and siblings
 
-**Bead ID:** `Pending`  
+**Bead ID:** `ee-duf`  
 **SubAgent:** `primary`  
 **Prompt:** `Audit current import paths, package resolution, duplicated implementations, and pack/runtime assumptions across emotion-engine and the repos in scope. Identify cases where emotion-engine contains code that appears to belong to a sibling polyrepo, where a node_modules sibling package is only a shim into emotion-engine, where sibling code has drifted behind the in-repo copy, or where digital-twin pack layout/fixtures have drifted from the expectations of the code repos.`
 
@@ -58,11 +58,11 @@ Because the concern spans multiple sibling repos but was discovered from the `em
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-03-14-polyrepo-drift-audit.md`
-- `docs/` (audit notes if needed)
+- `docs/POLYREPO-DRIFT-FINDINGS-AUDIT-2026-03-14.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Created `docs/POLYREPO-DRIFT-FINDINGS-AUDIT-2026-03-14.md` as the durable evidence-based runtime drift audit. Confirmed two high-signal drift areas: (1) `tools` no longer acts as the effective runtime owner of `emotion-lenses-tool` because `emotion-engine/node_modules/tools/emotion-lenses-tool.cjs` is a local shim back into `emotion-engine/server/lib/emotion-lenses-tool.cjs`, while the sibling repo’s own `tools/emotion-lenses-tool.cjs` has materially lagged behind the engine-local implementation; and (2) the provider cassette-pack boundary has drifted because `emotion-engine` tests default to `test/fixtures/digital-twin-emotion-engine-providers`, while the sibling repo `../digital-twin-emotion-engine-providers` exists as the nominal pack owner and its `providers.json` cassette has already diverged from the in-engine fixture copy. Also documented a medium pack-doc drift in `../digital-twin-openrouter-emotion-engine` where README examples still describe the older `openrouter-emotion-engine` cassette while `manifest.json` now points at `cod-test-golden-20260309-082851`. Notable non-drift findings were also recorded: `ai-providers` still owns provider/transport logic, `digital-twin-router` + `digital-twin-core` still own replay/schema logic, and `retry-strategy`, `goals`, and `cast` do not show current code reabsorption into `emotion-engine`.
 
 ---
 
