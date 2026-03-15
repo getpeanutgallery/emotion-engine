@@ -117,8 +117,43 @@ const RAW_PHASE_KEY_ALIASES = {
   'phase1-extract': 'phase1-gather-context'
 };
 
+const PHASE_EXECUTION_SURFACES = ['raw', 'script-results', 'recovery'];
+
 function resolveRawPhaseKey(phaseKey) {
   return RAW_PHASE_KEY_ALIASES[phaseKey] || phaseKey;
+}
+
+/**
+ * Clear only the execution surfaces for a single phase.
+ *
+ * This keeps prior-phase persisted artifacts available for partial reruns
+ * (for example, Phase 3-only hydration) while removing stale raw captures,
+ * per-script execution results, and recovery traces for the phase that is
+ * about to execute again.
+ *
+ * @param {string} outputDir - Base output directory path (run or phase dir)
+ * @param {string} phaseKey - Phase key
+ * @returns {{ phaseDir: string, phaseKey: string, clearedPaths: string[] }}
+ */
+function clearPhaseExecutionSurfaces(outputDir, phaseKey) {
+  const runOutputDir = resolveRunOutputDir(outputDir);
+  const resolvedPhaseKey = resolveRawPhaseKey(phaseKey);
+  const phaseDir = path.join(runOutputDir, resolvedPhaseKey);
+  const clearedPaths = [];
+
+  fs.mkdirSync(phaseDir, { recursive: true });
+
+  for (const surface of PHASE_EXECUTION_SURFACES) {
+    const surfacePath = path.join(phaseDir, surface);
+    if (fs.existsSync(surfacePath)) {
+      fs.rmSync(surfacePath, { recursive: true, force: true });
+      clearedPaths.push(surfacePath);
+    }
+  }
+
+  fs.mkdirSync(path.join(phaseDir, 'raw'), { recursive: true });
+
+  return { phaseDir, phaseKey: resolvedPhaseKey, clearedPaths };
 }
 
 /**
@@ -372,6 +407,7 @@ module.exports = {
   createAssetsDirectory,
   createReportDirectory,
   createRawDirectories,
+  clearPhaseExecutionSurfaces,
   getPhaseRawDirectory,
   getReportPath,
   copyInputAssets,

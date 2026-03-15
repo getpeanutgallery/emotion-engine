@@ -670,6 +670,26 @@ test('Recommendation Script', async (t) => {
     is(pointer.latestAttempt, 1);
   });
 
+  await t.test('rewrites stale phase error meta on a clean rerun', async () => {
+    const rawMetaDir = path.join(testOutputDir, 'phase3-report', 'raw', '_meta');
+    fs.mkdirSync(rawMetaDir, { recursive: true });
+    fs.writeFileSync(path.join(rawMetaDir, 'errors.jsonl'), '{"type":"stale_error"}\n', 'utf8');
+
+    await recommendationScript.run({
+      outputDir: testOutputDir,
+      artifacts: makeArtifacts(),
+      config: makeConfig({ debug: { captureRaw: true } })
+    });
+
+    const errorsPath = path.join(rawMetaDir, 'errors.jsonl');
+    const summaryPath = path.join(rawMetaDir, 'errors.summary.json');
+    is(fs.readFileSync(errorsPath, 'utf8'), '');
+
+    const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+    is(summary.totalErrors, 0);
+    is(summary.outcome, 'success');
+  });
+
   await t.test('hard-stops on capability mismatch (no retry, no failover)', async () => {
     completeImplementation = async () => {
       const err = new Error('model does not support attachments');

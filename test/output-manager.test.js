@@ -12,6 +12,7 @@ const {
   createAssetsDirectory,
   createReportDirectory,
   createRawDirectories,
+  clearPhaseExecutionSurfaces,
   getPhaseRawDirectory,
   getReportPath,
   copyInputAssets,
@@ -166,6 +167,50 @@ test('getPhaseRawDirectory supports legacy phase1 key and maps to canonical phas
   const phase1Raw = getPhaseRawDirectory(testOutputDir, 'phase1-extract');
   if (!phase1Raw.endsWith(path.join('phase1-gather-context', 'raw'))) {
     throw new Error(`Legacy phase1 key did not resolve to canonical phase1 raw path: ${phase1Raw}`);
+  }
+});
+
+test('clearPhaseExecutionSurfaces removes only the targeted phase execution surfaces', () => {
+  const phase3Dir = path.join(testOutputDir, 'phase3-report');
+  const phase2Dir = path.join(testOutputDir, 'phase2-process');
+
+  fs.mkdirSync(path.join(phase3Dir, 'raw', '_meta'), { recursive: true });
+  fs.mkdirSync(path.join(phase3Dir, 'script-results'), { recursive: true });
+  fs.mkdirSync(path.join(phase3Dir, 'recovery', 'recommendation'), { recursive: true });
+  fs.mkdirSync(path.join(phase3Dir, 'recommendation'), { recursive: true });
+  fs.mkdirSync(path.join(phase2Dir), { recursive: true });
+
+  fs.writeFileSync(path.join(phase3Dir, 'raw', '_meta', 'errors.jsonl'), '{"stale":true}\n');
+  fs.writeFileSync(path.join(phase3Dir, 'script-results', 'recommendation.success.json'), '{}');
+  fs.writeFileSync(path.join(phase3Dir, 'recovery', 'recommendation', 'lineage.json'), '{}');
+  fs.writeFileSync(path.join(phase3Dir, 'recommendation', 'recommendation.json'), '{"keep":true}');
+  fs.writeFileSync(path.join(phase2Dir, 'chunk-analysis.json'), '{"hydrate":true}');
+
+  const result = clearPhaseExecutionSurfaces(testOutputDir, 'phase3-report');
+
+  if (!result.phaseDir.endsWith(path.join('phase3-report'))) {
+    throw new Error(`Wrong phase dir: ${result.phaseDir}`);
+  }
+  if (result.phaseKey !== 'phase3-report') {
+    throw new Error(`Wrong phase key: ${result.phaseKey}`);
+  }
+  if (!fs.existsSync(path.join(phase3Dir, 'raw'))) {
+    throw new Error('Phase 3 raw dir should be recreated empty for the next run');
+  }
+  if (fs.existsSync(path.join(phase3Dir, 'raw', '_meta', 'errors.jsonl'))) {
+    throw new Error('Phase 3 stale raw contents should be removed');
+  }
+  if (fs.existsSync(path.join(phase3Dir, 'script-results'))) {
+    throw new Error('Phase 3 script-results dir should be removed');
+  }
+  if (fs.existsSync(path.join(phase3Dir, 'recovery'))) {
+    throw new Error('Phase 3 recovery dir should be removed');
+  }
+  if (!fs.existsSync(path.join(phase3Dir, 'recommendation', 'recommendation.json'))) {
+    throw new Error('Phase 3 persisted report artifact should be preserved');
+  }
+  if (!fs.existsSync(path.join(phase2Dir, 'chunk-analysis.json'))) {
+    throw new Error('Prior-phase hydration artifact should be preserved');
   }
 });
 

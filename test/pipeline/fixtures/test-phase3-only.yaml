@@ -1,0 +1,31 @@
+# Test phase3-only pipeline for hygiene rerun tests
+name: "Pipeline Phase3-Only Test"
+description: "Phase3-only configuration that reuses an existing run output directory"
+version: "1.0.0"
+
+asset:
+  inputPath: ".cache/videos/test.mp4"
+  outputDir: "output/pipeline-test"
+
+ai:
+  dialogue:
+    targets:
+      - adapter:
+          name: openrouter
+          model: test-dialogue-model
+  music:
+    targets:
+      - adapter:
+          name: openrouter
+          model: test-music-model
+  video:
+    targets:
+      - adapter:
+          name: openrouter
+          model: test-video-model
+
+report:
+  - server/scripts/report/example-report.cjs
+
+settings:
+  test_mode: true

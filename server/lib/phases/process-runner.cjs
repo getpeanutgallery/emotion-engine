@@ -9,6 +9,7 @@
  */
 
 const { executeScript } = require('../script-runner.cjs');
+const { clearPhaseExecutionSurfaces } = require('../output-manager.cjs');
 
 /**
  * Run Phase 2: Process
@@ -73,6 +74,8 @@ async function runProcess(input) {
     return { artifacts };
   }
   
+  clearPhaseExecutionSurfaces(outputDir, 'phase2-process');
+
   console.log(`⚙️  Phase 2: Process (${isParallel ? 'parallel' : 'sequential'}, ${scriptList.length} script(s))`);
   
   let phaseArtifacts = { ...artifacts };

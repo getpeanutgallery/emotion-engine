@@ -108,12 +108,10 @@ function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, events, phaseOutcom
   fs.mkdirSync(rawMetaDir, { recursive: true });
   const errorsPath = path.join(rawMetaDir, 'errors.jsonl');
 
-  if (phaseErrors.length > 0) {
-    const lines = phaseErrors.map((e) => JSON.stringify(e)).join('\n') + '\n';
-    fs.appendFileSync(errorsPath, lines, 'utf8');
-  } else if (!fs.existsSync(errorsPath)) {
-    fs.writeFileSync(errorsPath, '', 'utf8');
-  }
+  const lines = phaseErrors.length > 0
+    ? phaseErrors.map((e) => JSON.stringify(e)).join('\n') + '\n'
+    : '';
+  fs.writeFileSync(errorsPath, lines, 'utf8');
 
   if (events) {
     events.artifactWrite({ absolutePath: errorsPath, role: 'raw.meta', phase: PHASE_KEY, script: SCRIPT_ID });

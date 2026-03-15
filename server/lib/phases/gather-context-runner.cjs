@@ -9,6 +9,7 @@
  */
 
 const { executeScript } = require('../script-runner.cjs');
+const { clearPhaseExecutionSurfaces } = require('../output-manager.cjs');
 
 /**
  * Run Phase 1: Gather Context
@@ -58,6 +59,8 @@ async function runGatherContext(input) {
     return { artifacts };
   }
   
+  clearPhaseExecutionSurfaces(outputDir, 'phase1-gather-context');
+
   console.log(`📥 Phase 1: Gather Context (${isParallel ? 'parallel' : 'sequential'}, ${scriptList.length} script(s))`);
   
   let phaseArtifacts = { ...artifacts };
