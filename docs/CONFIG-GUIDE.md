@@ -187,8 +187,8 @@ Example:
 
 ```yaml
 tool_variables:
-  soulPath: "cast/impatient-teenager/SOUL.md"
-  goalPath: "goals/video-ad-evaluation.md"
+  soulPath: "../cast/impatient-teenager/SOUL.md"
+  goalPath: "../goals/video-ad-evaluation.md"
   variables:
     lenses: [patience, boredom, excitement]
 ```

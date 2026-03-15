@@ -166,13 +166,13 @@ This plan treats `emotion-engine` as the coordination repo, but the actual fixes
 
 **Status:** ✅ Complete
 
-**Results:** Claimed bead `ee-x8i` and kept the cleanup bounded to packaging/docs/runtime clarity drift. In `../digital-twin-openrouter-emotion-engine`, restored the tracked canonical cassette so the manifest, on-disk pack, and docs agree again; rewrote the README to reflect the actual `cod-test-golden-20260309-082851` default cassette; added `package.json#files` so `npm pack` only ships pack artifacts instead of leaking workspace metadata like `.beads/` and `AGENTS.md`; and tightened `test/pack.test.js` to verify manifest-to-cassette alignment and tarball contents against the real cassette schema. In `../digital-twin-router`, updated README installation guidance to match the canonical `git+ssh` polyrepo dependency story and explicitly steer local sibling development toward runtime/test path overrides instead of recommitting `file:` manifests. Validation: `npm test` and `npm pack --dry-run --json` both passed in `../digital-twin-openrouter-emotion-engine`. Commits: `c36b2a9` (`Align openrouter twin pack docs and packaging`), `4ebb84d` (`Clarify canonical digital-twin-router install path`), `c4156ba` (`Record task 5 drift cleanup results`).
+**Results:** Claimed bead `ee-x8i` and kept the cleanup bounded to packaging/docs/runtime clarity drift. In `../digital-twin-openrouter-emotion-engine`, restored the tracked canonical cassette so the manifest, on-disk pack, and docs agree again; rewrote the README to reflect the actual `cod-test-golden-20260309-082851` default cassette; added `package.json#files` so `npm pack` only ships pack artifacts instead of leaking workspace metadata like `.beads/` and `AGENTS.md`; and tightened `test/pack.test.js` to verify manifest-to-cassette alignment and tarball contents against the real cassette schema. In `../digital-twin-router`, updated README installation guidance to match the canonical `git+ssh` polyrepo dependency story and explicitly steer local sibling development toward runtime/test path overrides instead of recommitting `file:` manifests. Validation: `npm test` and `npm pack --dry-run --json` both passed in `../digital-twin-openrouter-emotion-engine`. Commits: `c36b2a9` (`Align openrouter twin pack docs and packaging`), `4ebb84d` (`Clarify canonical digital-twin-router install path`), `2d8e337` (`Record task 5 drift cleanup results`).
 
 ---
 
 ### Task 6: Run final polyrepo sanity sweep
 
-**Bead ID:** `Pending`  
+**Bead ID:** `ee-bkv`  
 **SubAgent:** `primary`  
 **Prompt:** `After all ownership corrections land, run a final sanity sweep across emotion-engine, tools, ai-providers, digital-twin-router, digital-twin-core, digital-twin-emotion-engine-providers, and digital-twin-openrouter-emotion-engine. Verify that runtime ownership is visible from source, tests point at the correct canonical repos, and no silent local shims or duplicate fixture truths remain. Update the remediation plan with final results, commit any final doc notes, and report blockers if any remain.`
 
@@ -182,11 +182,11 @@ This plan treats `emotion-engine` as the coordination repo, but the actual fixes
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-03-14-polyrepo-drift-remediation.md`
-- `docs/` if needed
+- `docs/CONFIG-GUIDE.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed bead `ee-bkv` and ran a final cross-repo sanity sweep over `emotion-engine`, `tools`, `ai-providers`, `digital-twin-router`, `digital-twin-core`, `digital-twin-emotion-engine-providers`, and `digital-twin-openrouter-emotion-engine`. Source ownership is now visible again from the checked-in code: `emotion-engine/server/scripts/process/video-chunks.cjs` imports `../../../../tools/emotion-lenses-tool.cjs`; engine configs point at `../tools`, `../cast`, and `../goals`; provider replay tests default through `test/helpers/digital-twin-preflight.cjs` to `../digital-twin-emotion-engine-providers`; `tools/README.md` and `digital-twin-emotion-engine-providers/README.md` explicitly declare canonical ownership; and `digital-twin-router` / `digital-twin-openrouter-emotion-engine` packaging/docs now match the shipped layout. The prior duplicate fixture truth is gone (`emotion-engine/test/fixtures/digital-twin-emotion-engine-providers` absent), and the prior engine-local canonical file is gone (`emotion-engine/server/lib/emotion-lenses-tool.cjs` absent). Validation passed across the corrected seam repos: `emotion-engine` config validation plus focused seam tests/provider replay tests, `tools` tests, `ai-providers` tests, `digital-twin-router` tests, `digital-twin-core` tests, `digital-twin-emotion-engine-providers` tests, and `digital-twin-openrouter-emotion-engine` tests plus `npm pack --dry-run --json`. One bounded follow-up note from the sweep: a stale local install tree can still preserve historical `node_modules/tools` contents until dependencies are refreshed, but the checked-in source/package surfaces no longer encode the shimmed ownership model; this is a workspace refresh concern, not a blocker for closing the drift remediation itself. Also updated `docs/CONFIG-GUIDE.md` so the tool-variable example now shows the actual sibling-relative `../cast` / `../goals` layout.
 
 ---
 
@@ -203,14 +203,21 @@ This plan treats `emotion-engine` as the coordination repo, but the actual fixes
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Restored the intended polyrepo ownership seams. `tools` is again the canonical owner of `emotion-lenses-tool`; `emotion-engine` now consumes that sibling surface directly in runtime/tests/configs; `digital-twin-emotion-engine-providers` is again the canonical provider replay pack; the in-engine provider fixture mirror is gone; and the remaining affected twin-pack/router docs and packaging describe the actual canonical layout.
 
 **Commits:**
-- Pending.
+- `76eb2bf` - Restore canonical emotion lenses tool contract
+- `530b502` - Restore sibling tools ownership for emotion lenses
+- `50c2062` - Restore canonical provider cassette pack
+- `c16690f` - Cut provider tests over to sibling twin pack
+- `c36b2a9` - Align openrouter twin pack docs and packaging
+- `4ebb84d` - Clarify canonical digital-twin-router install path
+- `2d8e337` - Record task 5 drift cleanup results
+- `8faa480` - Record final sanity sweep and canonical config-path note
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** When a sibling repo is supposed to own runtime behavior, the ownership must be obvious in checked-in imports/configs/tests — not hidden behind local shims, fixture mirrors, or stale install-tree coincidences. Historical audit docs can preserve the before-state, but current README/config/package surfaces need to advertise the live canonical layout so future drift is visible early.
 
 ---
 
