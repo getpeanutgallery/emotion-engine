@@ -1,7 +1,7 @@
 # peanut-gallery: polyrepo drift audit for emotion-engine and sibling ownership
 
 **Date:** 2026-03-14  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -88,22 +88,21 @@ Because the concern spans multiple sibling repos but was discovered from the `em
 
 ### Task 4: Break confirmed ownership corrections into implementation beads
 
-**Bead ID:** `Pending`  
+**Bead ID:** `Superseded by remediation plan`  
 **SubAgent:** `primary`  
 **Prompt:** `If the audit confirms real polyrepo drift, translate the findings into concrete implementation beads by owning repo. Include dependency order, whether code should move out of emotion-engine or back into a sibling, and any validation needed to preserve runtime behavior during the correction.`
 
 **Folders Created/Deleted/Modified:**
 - `.plans/`
-- `.beads/`
 - `docs/`
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-03-14-polyrepo-drift-audit.md`
-- `docs/` (audit notes if needed)
+- `.plans/2026-03-14-polyrepo-drift-remediation.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Task 4 was satisfied by turning the audit conclusions into the dedicated remediation plan `.plans/2026-03-14-polyrepo-drift-remediation.md`, then executing that remediation to completion. The audit did not need a separate standalone bead graph beyond that follow-on plan.
 
 ---
 
@@ -129,15 +128,17 @@ Because the concern spans multiple sibling repos but was discovered from the `em
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Completed a full ownership-model + runtime-drift audit across the peanut-gallery polyrepo, identified the real violations (`tools` ownership drift and provider twin-pack ownership drift), classified the findings, and converted them into the executed remediation plan that restored sibling ownership. The audit also verified that the rest of the sibling boundaries remained coherent and did not indicate a general monorepo collapse.
 
 **Commits:**
-- Pending.
+- `36a4d7f` - docs: add polyrepo ownership model audit
+- `8ebf15e` - docs: record polyrepo runtime drift findings
+- `dd43cea` - docs: classify polyrepo drift findings
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** The useful pattern here was to separate intended ownership, actual runtime resolution, and remediation planning. The architecture smell looked broad at first, but the audit narrowed it to two real ownership violations and avoided unnecessary churn in repos whose boundaries were already healthy.
 
 ---
 
-*Current hold point: Task 4 remains pending. The main open architectural decision from Task 3 is whether `digital-twin-emotion-engine-providers` or `emotion-engine/test/fixtures/digital-twin-emotion-engine-providers` should be the canonical owner of provider test cassettes before remediation beads are created.*
+*Closed after Derrick confirmed the sibling repos should remain canonical and the follow-on remediation plan was executed.*

@@ -75,8 +75,8 @@ This cleanup should stay narrow. The goal is not another architecture pass; it i
 **What We Built:** Refreshed and verified the local `emotion-engine` install/runtime tree so the installed dependency ownership now visibly matches the corrected polyrepo model. The durable repo artifact is the completed hygiene plan documenting both the reinstall validation and the follow-up runtime ownership verification.
 
 **Commits:**
-- `37cbf53` - docs: record dependency refresh hygiene results
-- Task 2 final verification commit recorded in git history / handoff summary
+- `dc60935` - docs: record dependency refresh hygiene results
+- `278bc8b` - docs: polish dependency hygiene final results
 
 **Lessons Learned:** For this polyrepo seam, the lockfile and source manifests were already correct; the meaningful post-remediation risk was stale local install state. The fastest trustworthy hygiene proof was a three-part check: dependency graph (`npm ls`), actual runtime resolution (`require.resolve` + `realpath` + `require()`), and a stale-shim sweep for `file:` / `link:` / `workspace:` or symlinked mirrors. Non-blocking note: no further remediation is needed from this pass, but runtime hygiene verification should stay distinct from any future live-provider behavior debugging.
 
