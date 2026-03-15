@@ -44,10 +44,10 @@ settings:
 debug:
   captureRaw: true
 
-# Tool variables (use full paths)
+# Tool variables (paths should be absolute or relative to ../tools)
 tool_variables:
-  soulPath: "cast/impatient-teenager/SOUL.md"
-  goalPath: "goals/video-ad-evaluation.md"
+  soulPath: "../cast/impatient-teenager/SOUL.md"
+  goalPath: "../goals/video-ad-evaluation.md"
   
   file_transfer: "base64"  # Options: "base64", "web_url", "youtube_url"
   maxFileSize: 10485760    # 10MB in bytes (OpenRouter limit)

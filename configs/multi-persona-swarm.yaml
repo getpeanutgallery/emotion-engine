@@ -36,29 +36,29 @@ gather_context:
 process:
   parallel:
     - script: server/scripts/process/video-chunks.cjs
-      toolPath: tools/emotion-lenses-tool.cjs
+      toolPath: ../tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "cast/impatient-teenager/SOUL.md"
-        goalPath: "goals/video-ad-evaluation.md"
+        soulPath: "../cast/impatient-teenager/SOUL.md"
+        goalPath: "../goals/video-ad-evaluation.md"
         variables:
           lenses:
             - patience
             - boredom
     - script: server/scripts/process/video-chunks.cjs
-      toolPath: tools/emotion-lenses-tool.cjs
+      toolPath: ../tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "cast/skeptical-cfo/SOUL.md"
-        goalPath: "goals/video-ad-evaluation.md"
+        soulPath: "../cast/skeptical-cfo/SOUL.md"
+        goalPath: "../goals/video-ad-evaluation.md"
         variables:
           lenses:
             - patience
             - boredom
             - skepticism
     - script: server/scripts/process/video-chunks.cjs
-      toolPath: tools/emotion-lenses-tool.cjs
+      toolPath: ../tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "cast/optimistic-gen-z/SOUL.md"
-        goalPath: "goals/video-ad-evaluation.md"
+        soulPath: "../cast/optimistic-gen-z/SOUL.md"
+        goalPath: "../goals/video-ad-evaluation.md"
         variables:
           lenses:
             - excitement

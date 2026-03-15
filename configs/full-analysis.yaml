@@ -19,10 +19,10 @@ gather_context:
 process:
   sequential:
     - script: server/scripts/process/video-chunks.cjs
-      toolPath: tools/emotion-lenses-tool.cjs
+      toolPath: ../tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "cast/impatient-teenager/SOUL.md"
-        goalPath: "goals/video-ad-evaluation.md"
+        soulPath: "../cast/impatient-teenager/SOUL.md"
+        goalPath: "../goals/video-ad-evaluation.md"
         variables:
           lenses:
             - patience
@@ -44,8 +44,8 @@ settings:
 
 # Tool variables
 tool_variables:
-  soulPath: "cast/impatient-teenager/SOUL.md"
-  goalPath: "goals/video-ad-evaluation.md"
+  soulPath: "../cast/impatient-teenager/SOUL.md"
+  goalPath: "../goals/video-ad-evaluation.md"
   variables:
     lenses:
       - patience

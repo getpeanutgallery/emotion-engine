@@ -41,10 +41,10 @@ debug:
   keepTempFiles: true        # Keep ffmpeg extracts, chunk files for debugging
   keepProcessedAssets: true  # Copy to assets/processed/
 
-# Tool variables (paths must be absolute or relative to workspace)
+# Tool variables (paths must be absolute or relative to ../tools)
 tool_variables:
-  soulPath: "cast/impatient-teenager/SOUL.md"
-  goalPath: "goals/video-ad-evaluation.md"
+  soulPath: "../cast/impatient-teenager/SOUL.md"
+  goalPath: "../goals/video-ad-evaluation.md"
   variables:
     lenses:
       - patience

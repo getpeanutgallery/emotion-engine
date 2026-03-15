@@ -12,7 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 const { promisify } = require('util');
-const emotionLensesTool = require('../../lib/emotion-lenses-tool.cjs');
+const emotionLensesTool = require('../../../../tools/emotion-lenses-tool.cjs');
 const storage = require('../../lib/storage/storage-interface.js');
 const chunkStrategy = require('../../lib/chunk-strategy.cjs');
 const splitStrategy = require('../../lib/split-strategy.cjs');
@@ -36,6 +36,32 @@ const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/a
 const { applyFailureMetadata } = require('../../lib/tool-wrapper-contract.cjs');
 
 const execAsync = promisify(exec);
+const ENGINE_REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
+const TOOLS_REPO_ROOT = path.resolve(ENGINE_REPO_ROOT, '..', 'tools');
+
+function normalizeToolRepoPath(inputPath) {
+  if (!inputPath || path.isAbsolute(inputPath)) return inputPath;
+
+  const directToolsPath = path.resolve(TOOLS_REPO_ROOT, inputPath);
+  if (fs.existsSync(directToolsPath)) {
+    return inputPath;
+  }
+
+  if (inputPath.startsWith('cast/')) {
+    return `../${inputPath}`;
+  }
+
+  if (inputPath.startsWith('goals/')) {
+    return `../${inputPath}`;
+  }
+
+  const legacyEnginePath = path.resolve(ENGINE_REPO_ROOT, inputPath);
+  if (fs.existsSync(legacyEnginePath)) {
+    return path.relative(TOOLS_REPO_ROOT, legacyEnginePath);
+  }
+
+  return inputPath;
+}
 
 function isReplayMode() {
   return (process.env.DIGITAL_TWIN_MODE || '').trim().toLowerCase() === 'replay';
@@ -382,6 +408,8 @@ async function run(input) {
 
   const normalizedToolVariables = {
     ...toolVariables,
+    soulPath: normalizeToolRepoPath(toolVariables?.soulPath),
+    goalPath: normalizeToolRepoPath(toolVariables?.goalPath),
     variables: {
       ...(toolVariables?.variables || {}),
       model: videoModel

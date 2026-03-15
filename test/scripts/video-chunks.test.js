@@ -98,8 +98,7 @@ const mockChildProcess = {
   execSync: () => Buffer.from('16.0')
 };
 
-mockModule('tools/emotion-lenses-tool.cjs', mockEmotionLensesTool);
-mockModule('../../server/lib/emotion-lenses-tool.cjs', mockEmotionLensesTool);
+mockModule('../../../tools/emotion-lenses-tool.cjs', mockEmotionLensesTool);
 mockModule('child_process', mockChildProcess);
 mockModule('../../server/lib/video-chunk-extractor.cjs', mockVideoChunkExtractor);
 
@@ -202,6 +201,35 @@ test('Video Chunks Script', async (t) => {
       is(analyzeCalls.length > 0, true);
       ok(String(analyzeCalls[0].basePrompt).includes('AI RECOVERY RE-ENTRY:'));
       ok(String(analyzeCalls[0].basePrompt).includes('Return only the final chunk analysis JSON.'));
+    });
+
+    await tNested.test('normalizes legacy engine-relative soul/goal paths for the sibling tools repo', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {
+          dialogueData: { dialogue_segments: [], summary: '' },
+          musicData: { segments: [] }
+        },
+        toolVariables: {
+          soulPath: 'cast/impatient-teenager/SOUL.md',
+          goalPath: 'goals/video-ad-evaluation.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [{ adapter: { name: 'openrouter', model: 'yaml-video-model' } }] }
+          },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 16 } }
+          },
+          settings: { max_chunks: 1 }
+        }
+      });
+
+      is(analyzeCalls.length > 0, true);
+      is(analyzeCalls[0].toolVariables.soulPath, '../cast/impatient-teenager/SOUL.md');
+      is(analyzeCalls[0].toolVariables.goalPath, '../goals/video-ad-evaluation.md');
     });
 
     await tNested.test('returns correct output structure', async () => {

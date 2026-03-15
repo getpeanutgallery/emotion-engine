@@ -37,8 +37,9 @@ const mockAIProvider = {
 };
 
 mockModule('ai-providers/ai-provider-interface.js', mockAIProvider);
+mockModule('../../../tools/node_modules/ai-providers/ai-provider-interface.js', mockAIProvider);
 
-const emotionLensesTool = require('tools/emotion-lenses-tool.cjs');
+const emotionLensesTool = require('../../../tools/emotion-lenses-tool.cjs');
 
 test('Emotion Lenses Tool', async (t) => {
   const testOutputDir = '/tmp/test-emotion-lenses-tool';

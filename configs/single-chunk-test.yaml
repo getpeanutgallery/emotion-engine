@@ -37,8 +37,8 @@ settings:
       jitter: true
 
 tool_variables:
-  soulPath: "cast/impatient-teenager/SOUL.md"
-  goalPath: "goals/video-ad-evaluation.md"
+  soulPath: "../cast/impatient-teenager/SOUL.md"
+  goalPath: "../goals/video-ad-evaluation.md"
   
   file_transfer: "base64"
   maxFileSize: 10485760

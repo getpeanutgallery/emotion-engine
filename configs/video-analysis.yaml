@@ -43,20 +43,20 @@ gather_context:
 process:
   sequential:
     - script: server/scripts/process/video-chunks.cjs
-      toolPath: tools/emotion-lenses-tool.cjs
+      toolPath: ../tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "cast/impatient-teenager/SOUL.md"
-        goalPath: "goals/video-ad-evaluation.md"
+        soulPath: "../cast/impatient-teenager/SOUL.md"
+        goalPath: "../goals/video-ad-evaluation.md"
         variables:
           lenses:
             - patience
             - boredom
             - excitement
     - script: server/scripts/process/video-per-second.cjs
-      toolPath: tools/emotion-lenses-tool.cjs
+      toolPath: ../tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "cast/impatient-teenager/SOUL.md"
-        goalPath: "goals/video-ad-evaluation.md"
+        soulPath: "../cast/impatient-teenager/SOUL.md"
+        goalPath: "../goals/video-ad-evaluation.md"
         variables:
           lenses:
             - patience
@@ -97,10 +97,10 @@ debug:
   keepTempFiles: false       # Keep ffmpeg extracts, chunk files for debugging
   keepProcessedAssets: true  # Copy to assets/processed/
 
-# Tool variables (paths must be absolute or relative to workspace)
+# Tool variables (paths must be absolute or relative to ../tools)
 tool_variables:
-  soulPath: "cast/impatient-teenager/SOUL.md"
-  goalPath: "goals/video-ad-evaluation.md"
+  soulPath: "../cast/impatient-teenager/SOUL.md"
+  goalPath: "../goals/video-ad-evaluation.md"
   
   file_transfer:
     strategy: "base64"       # Options: "base64", "web_url", "youtube_url"
