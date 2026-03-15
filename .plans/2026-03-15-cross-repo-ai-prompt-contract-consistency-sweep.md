@@ -236,9 +236,51 @@ No additional sibling repo beyond the listed set was proven relevant during the 
 - only in-scope sibling files
 - `.plans/2026-03-15-cross-repo-ai-prompt-contract-consistency-sweep.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed `ee-heh`, applied the agreed wording standard to the only audited sibling repo that proved to own a live prompt-contract surface: `../tools`.
+
+#### Repos/files touched
+
+**Changed in `../tools`:**
+- `../tools/emotion-lenses-tool.cjs`
+  - kept the JSON example concrete for `dominant_emotion` (`"patience"` instead of a descriptive placeholder) and added the required Option B note:
+    - `Allowed values for dominant_emotion: <lens1> | <lens2> | ...`
+- `../tools/test/emotion-lenses-tool.test.js`
+  - added an assertion that the prompt includes the explicit Option B allowed-values line
+- `../tools/README.md`
+  - documented that the tools-owned contract surface now follows Option B for closed string fields and uses the shared validator-tool wording standard
+- `../tools/docs/EMOTION-LENSES-ALIGNMENT-AUDIT-2026-03-14.md`
+  - added a 2026-03-15 addendum recording the sibling-repo wording sweep, the exact prompt-surface change, and why the shared loop file stayed untouched
+
+**Intentionally not changed in `../tools`:**
+- `../tools/lib/local-validator-tool-loop.cjs`
+  - rechecked and left unchanged because it already matched the agreed validator-tool wording standard:
+    - `The final <artifact> JSON is accepted only after <toolName> returns {"valid": true}.`
+    - `Do not add type/toolName/arguments/args/input wrappers around the tool call.`
+    - `After the validator returns valid=true, return ONLY the final <artifact> JSON object with no wrapper.`
+
+**Sibling repos intentionally untouched for this pass:**
+- `../ai-providers`
+- `../digital-twin-router`
+- `../digital-twin-core`
+- `../digital-twin-openrouter-emotion-engine`
+- `../digital-twin-emotion-engine-providers`
+
+The audit had already shown these do not own real prompt/validator contract text for this sweep, so no fake consistency edits were made.
+
+#### Validation evidence
+
+Checks run in `../tools`:
+- `node --test test/emotion-lenses-tool.test.js`
+- `git grep -n "accepted only after\|Do not add type/toolName/arguments/args/input wrappers\|valid=true" lib/local-validator-tool-loop.cjs`
+- `git grep -n "Allowed values for dominant_emotion" emotion-lenses-tool.cjs README.md docs/EMOTION-LENSES-ALIGNMENT-AUDIT-2026-03-14.md test/emotion-lenses-tool.test.js`
+
+Expected evidence after the change:
+- the prompt builder emits the Option B allowed-values note for `dominant_emotion`
+- the test suite asserts that note
+- the shared loop wording remains exact and already compliant
+- only `../tools` changed among sibling repos
 
 ---
 
