@@ -1,7 +1,7 @@
 # peanut-gallery: local dependency refresh hygiene after polyrepo drift remediation
 
 **Date:** 2026-03-15  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -45,21 +45,19 @@ This cleanup should stay narrow. The goal is not another architecture pass; it i
 
 ### Task 2: Verify installed runtime ownership visibility
 
-**Bead ID:** `Pending`  
+**Bead ID:** `ee-06k`  
 **SubAgent:** `primary`  
 **Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine, verify that the refreshed local install tree reflects the corrected ownership model. Check the installed tools/ai-providers/digital-twin surfaces actually resolve as expected, confirm no stale local shim or hidden local mirror remains in the install tree for the corrected seams, and document the final hygiene result in the active plan. Commit any final doc/plan updates to main and report the verification findings.`
 
 **Folders Created/Deleted/Modified:**
 - `.plans/`
-- `docs/` if needed
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-03-15-local-dependency-refresh-hygiene.md`
-- `docs/` if needed
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed bead `ee-06k` and verified the refreshed runtime tree from the installed artifacts rather than source assumptions. `npm ls --all` showed the expected ownership chain: top-level `tools`, `ai-providers`, `retry-strategy`, `goals`, and `cast` resolve from GitHub `git+ssh`, `tools` consumes the same deduped top-level `ai-providers`, `ai-providers` consumes `digital-twin-router`, and `digital-twin-router` consumes `digital-twin-core`. Direct `require.resolve(.../package.json)` and `fs.realpathSync()` checks confirmed those surfaces resolve to real directories under `emotion-engine/node_modules/` rather than sibling repo paths or symlink shims, and direct `require()` checks loaded the expected exported APIs for `tools`, `ai-providers`, `digital-twin-router`, and `digital-twin-core`. `npm run test:providers:check` also passed, confirming the installed digital-twin-facing test surface still resolves against the expected cassette-pack convention. A targeted sweep of `package-lock.json`, installed package manifests, and directory structure found no `file:` / `link:` / `workspace:` seams, no workspace-relative paths, no hidden duplicate copies of the corrected seam packages, and no symlinked local mirror for `tools`, `ai-providers`, `digital-twin-router`, `digital-twin-core`, `retry-strategy`, `goals`, or `cast`. Non-blocking note: this verification confirms installed ownership visibility and resolution hygiene, but it does not attempt a live provider call or introduce any new remediation work.
 
 ---
 
@@ -72,14 +70,15 @@ This cleanup should stay narrow. The goal is not another architecture pass; it i
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Refreshed and verified the local `emotion-engine` install/runtime tree so the installed dependency ownership now visibly matches the corrected polyrepo model. The durable repo artifact is the completed hygiene plan documenting both the reinstall validation and the follow-up runtime ownership verification.
 
 **Commits:**
-- Pending.
+- `37cbf53` - docs: record dependency refresh hygiene results
+- `5bdf078` - docs: finalize installed runtime hygiene verification
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** For this polyrepo seam, the lockfile and source manifests were already correct; the meaningful post-remediation risk was stale local install state. The fastest trustworthy hygiene proof was a three-part check: dependency graph (`npm ls`), actual runtime resolution (`require.resolve` + `realpath` + `require()`), and a stale-shim sweep for `file:` / `link:` / `workspace:` or symlinked mirrors. Non-blocking note: no further remediation is needed from this pass, but runtime hygiene verification should stay distinct from any future live-provider behavior debugging.
 
 ---
 
