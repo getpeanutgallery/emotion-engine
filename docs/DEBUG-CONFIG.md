@@ -12,7 +12,7 @@ If you want a runnable example, start with `configs/cod-test.yaml`.
 debug:
   captureRaw: true                 # write raw AI/ffmpeg captures into phase*/raw/
   keepProcessedIntermediates: true # default (set false to auto-clean assets/processed)
-  # captureRawEvents: true         # default (writes raw/_meta/events.jsonl)
+  # captureRawEvents: true         # default (writes _meta/events.jsonl)
 ```
 
 ---
@@ -66,7 +66,8 @@ If multiple are present, `keepProcessedIntermediates` wins.
 
 The orchestrator maintains a run-level, append-only timeline at:
 
-- `raw/_meta/events.jsonl`
+- `_meta/events.jsonl`
+- historical runs may still contain `raw/_meta/events.jsonl`
 
 This is **enabled by default**. You can explicitly disable emission with:
 
@@ -121,20 +122,27 @@ phaseX-.../raw/
     ... (tool version snapshots)
 ```
 
-### Run-level raw (`raw/`)
+### Run-level metadata (`_meta/`)
 
-Independently of phase raw capture, the run also has a run-level `raw/` folder:
+Independently of phase raw capture, the run also has a run-level `_meta/` folder:
 
 ```text
-output/<run-name>/raw/
-  _meta/events.jsonl          # pipeline timeline (JSONL)
-  ai/_prompts/<sha256>.json   # stored prompt payloads (when captureRaw is enabled)
+output/<run-name>/_meta/
+  events.jsonl               # pipeline timeline (JSONL)
+  ai/_prompts/<sha256>.json  # stored prompt payloads (when captureRaw is enabled)
 ```
 
 When raw AI captures are written, they may include a `promptRef` like:
 
 ```json
-{ "promptRef": { "sha256": "...", "file": "raw/ai/_prompts/<sha256>.json" } }
+{ "promptRef": { "sha256": "...", "file": "_meta/ai/_prompts/<sha256>.json" } }
+```
+
+Historical runs may still use the legacy run-root `raw/` locations:
+
+```text
+output/<run-name>/raw/_meta/events.jsonl
+output/<run-name>/raw/ai/_prompts/<sha256>.json
 ```
 
 Recommendation-lane captures may also include provider boundary artifacts when the adapter exposes them:

@@ -6,10 +6,13 @@
  * Raw events timeline capture.
  *
  * Always emits (creates) a run-level file:
- *   <runOutputDir>/raw/_meta/events.jsonl
+ *   <runOutputDir>/_meta/events.jsonl
  *
  * This file is intended to be stable and append-only, providing a chronological
  * view of the pipeline execution.
+ *
+ * Historical runs may still contain:
+ *   <runOutputDir>/raw/_meta/events.jsonl
  */
 
 const fs = require('fs');
@@ -94,7 +97,7 @@ function getEventsLogger({ outputDir, config } = {}) {
   }
 
   const enabled = shouldCaptureRawEvents(config);
-  const eventsPath = path.join(runOutputDir, 'raw', '_meta', 'events.jsonl');
+  const eventsPath = path.join(runOutputDir, '_meta', 'events.jsonl');
 
   // Always create the file (even when disabled) so tooling can rely on it.
   ensureFileExists(eventsPath);

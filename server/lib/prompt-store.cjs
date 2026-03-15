@@ -6,16 +6,24 @@
  * Prompt payload dedupe store.
  *
  * Writes prompt payloads once under:
- *   <runOutputDir>/raw/ai/_prompts/<sha256>.json
+ *   <runOutputDir>/_meta/ai/_prompts/<sha256>.json
  *
  * Attempt capture payloads should reference prompts via:
- *   { promptRef: { sha256, file: 'raw/ai/_prompts/<sha256>.json' } }
+ *   { promptRef: { sha256, file: '_meta/ai/_prompts/<sha256>.json' } }
+ *
+ * Compatibility:
+ * - canonical prompt refs now use `_meta/ai/_prompts/...`
+ * - loaders also accept legacy `raw/ai/_prompts/...` refs for older runs
  */
 
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const outputManager = require('./output-manager.cjs');
+
+const CANONICAL_PROMPT_PREFIX = '_meta/ai/_prompts/';
+const LEGACY_PROMPT_PREFIX = 'raw/ai/_prompts/';
+const ACCEPTED_PROMPT_PREFIXES = [CANONICAL_PROMPT_PREFIX, LEGACY_PROMPT_PREFIX];
 
 function stableStringify(value) {
   const seen = new WeakSet();
@@ -45,11 +53,47 @@ function sha256Hex(text) {
 
 function getPromptStoreDir(outputDir) {
   const runOutputDir = outputManager.resolveRunOutputDir(path.resolve(outputDir));
-  return path.join(runOutputDir, 'raw', 'ai', '_prompts');
+  return path.join(runOutputDir, '_meta', 'ai', '_prompts');
 }
 
 function getPromptRefFile(sha256) {
-  return `raw/ai/_prompts/${sha256}.json`;
+  return `${CANONICAL_PROMPT_PREFIX}${sha256}.json`;
+}
+
+function toLegacyPromptRefFile(refFile) {
+  if (typeof refFile !== 'string') return null;
+  if (refFile.startsWith(LEGACY_PROMPT_PREFIX)) return refFile;
+  if (refFile.startsWith(CANONICAL_PROMPT_PREFIX)) {
+    return `${LEGACY_PROMPT_PREFIX}${refFile.slice(CANONICAL_PROMPT_PREFIX.length)}`;
+  }
+  return null;
+}
+
+function toCanonicalPromptRefFile(refFile) {
+  if (typeof refFile !== 'string') return null;
+  if (refFile.startsWith(CANONICAL_PROMPT_PREFIX)) return refFile;
+  if (refFile.startsWith(LEGACY_PROMPT_PREFIX)) {
+    return `${CANONICAL_PROMPT_PREFIX}${refFile.slice(LEGACY_PROMPT_PREFIX.length)}`;
+  }
+  return null;
+}
+
+function resolvePromptPayloadPath(runOutputDir, refFile) {
+  const candidates = [];
+  if (typeof refFile === 'string') candidates.push(refFile);
+
+  const canonical = toCanonicalPromptRefFile(refFile);
+  const legacy = toLegacyPromptRefFile(refFile);
+
+  if (canonical && !candidates.includes(canonical)) candidates.push(canonical);
+  if (legacy && !candidates.includes(legacy)) candidates.push(legacy);
+
+  for (const candidate of candidates) {
+    const absolutePath = path.join(runOutputDir, candidate);
+    if (fs.existsSync(absolutePath)) return absolutePath;
+  }
+
+  return path.join(runOutputDir, candidates[0] || String(refFile || ''));
 }
 
 function storePromptPayload({ outputDir, payload }) {
@@ -80,11 +124,11 @@ function loadPromptPayload({ outputDir, promptRef }) {
   const runOutputDir = outputManager.resolveRunOutputDir(path.resolve(outputDir));
   const refFile = promptRef.file;
 
-  if (typeof refFile !== 'string' || !refFile.startsWith('raw/ai/_prompts/')) {
-    throw new Error('loadPromptPayload: promptRef.file must be a raw/ai/_prompts/<sha>.json path');
+  if (typeof refFile !== 'string' || !ACCEPTED_PROMPT_PREFIXES.some((prefix) => refFile.startsWith(prefix))) {
+    throw new Error('loadPromptPayload: promptRef.file must be a _meta/ai/_prompts/<sha>.json or legacy raw/ai/_prompts/<sha>.json path');
   }
 
-  const absolutePath = path.join(runOutputDir, refFile);
+  const absolutePath = resolvePromptPayloadPath(runOutputDir, refFile);
   const text = fs.readFileSync(absolutePath, 'utf8');
   return JSON.parse(text);
 }
@@ -107,4 +151,6 @@ module.exports = {
   resolvePromptFromAttemptCapture,
   getPromptRefFile,
   getPromptStoreDir,
+  toCanonicalPromptRefFile,
+  toLegacyPromptRefFile,
 };

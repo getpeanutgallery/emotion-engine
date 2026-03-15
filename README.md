@@ -175,8 +175,8 @@ output/<run-name>/
 ├── phase1-gather-context/
 ├── phase2-process/
 ├── phase3-report/
-├── raw/
-│   ├── _meta/events.jsonl           # run timeline (append-only JSONL)
+├── _meta/
+│   ├── events.jsonl                 # run timeline (append-only JSONL)
 │   └── ai/_prompts/<sha256>.json    # stored prompt payloads (referenced via promptRef)
 └── artifacts-complete.json          # final serialized artifact context
 ```
@@ -233,8 +233,12 @@ phase2-process/raw/
 phase3-report/raw/
   ...
 
-raw/ai/_prompts/<sha256>.json           # prompt payloads (run-level)
-raw/_meta/events.jsonl                 # run timeline (run-level)
+_meta/ai/_prompts/<sha256>.json         # prompt payloads (run-level)
+_meta/events.jsonl                      # run timeline (run-level)
+
+Historical runs may still contain:
+raw/ai/_prompts/<sha256>.json           # legacy prompt payload path
+raw/_meta/events.jsonl                  # legacy run timeline path
 ```
 
 ### Processed intermediates retention

@@ -66,7 +66,7 @@ test('script-contract - wrapLegacySuccessResult persists canonical success envel
   fs.mkdirSync(phaseRawMetaDir, { recursive: true });
   fs.writeFileSync(path.join(phaseRawMetaDir, 'errors.summary.json'), JSON.stringify({ ok: true }), 'utf8');
 
-  const promptFile = path.join(outputDir, 'raw', 'ai', '_prompts', 'abc.json');
+  const promptFile = path.join(outputDir, '_meta', 'ai', '_prompts', 'abc.json');
   fs.mkdirSync(path.dirname(promptFile), { recursive: true });
   fs.writeFileSync(promptFile, JSON.stringify({ prompt: 'hello' }), 'utf8');
 
@@ -75,7 +75,7 @@ test('script-contract - wrapLegacySuccessResult persists canonical success envel
       artifacts: {
         dialogueData: {
           summary: 'hello world',
-          promptRef: { sha256: 'abc', file: 'raw/ai/_prompts/abc.json' }
+          promptRef: { sha256: 'abc', file: '_meta/ai/_prompts/abc.json' }
         }
       }
     },
@@ -90,7 +90,7 @@ test('script-contract - wrapLegacySuccessResult persists canonical success envel
 
   assert.strictEqual(wrapped.scriptResult.status, 'success');
   assert.strictEqual(wrapped.scriptResult.payload.artifactKey, 'dialogueData');
-  assert(wrapped.scriptResult.diagnostics.captureRefs.includes('raw/ai/_prompts/abc.json'));
+  assert(wrapped.scriptResult.diagnostics.captureRefs.includes('_meta/ai/_prompts/abc.json'));
   assert(wrapped.scriptResult.diagnostics.captureRefs.includes('phase1-gather-context/raw/_meta/errors.summary.json'));
 
   const resultPath = path.join(outputDir, 'phase1-gather-context', 'script-results', 'get-dialogue.success.json');
