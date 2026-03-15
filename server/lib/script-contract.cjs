@@ -31,6 +31,10 @@ const DEFAULT_RECOVERY_CONFIG = Object.freeze({
       maxTotalTokens: 14000,
       maxCostUsd: 0.25
     },
+    toolLoop: {
+      maxTurns: 4,
+      maxValidatorCalls: 3
+    },
     context: {
       maxSnippetChars: 8000,
       maxRawRefs: 12,
@@ -238,6 +242,8 @@ function validateRecoveryConfig(recoveryConfig) {
   validateInteger(errors, ai.budgets?.maxOutputTokens, 'recovery.ai.budgets.maxOutputTokens', { min: 0 });
   validateInteger(errors, ai.budgets?.maxTotalTokens, 'recovery.ai.budgets.maxTotalTokens', { min: 0 });
   validateNumber(errors, ai.budgets?.maxCostUsd, 'recovery.ai.budgets.maxCostUsd', { min: 0, nullable: true });
+  validateInteger(errors, ai.toolLoop?.maxTurns, 'recovery.ai.toolLoop.maxTurns', { min: 2 });
+  validateInteger(errors, ai.toolLoop?.maxValidatorCalls, 'recovery.ai.toolLoop.maxValidatorCalls', { min: 1 });
 
   validateInteger(errors, ai.context?.maxSnippetChars, 'recovery.ai.context.maxSnippetChars', { min: 0 });
   validateInteger(errors, ai.context?.maxRawRefs, 'recovery.ai.context.maxRawRefs', { min: 0 });

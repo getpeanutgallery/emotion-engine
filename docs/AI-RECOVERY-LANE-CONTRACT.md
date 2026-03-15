@@ -50,6 +50,44 @@ It applies to recovery for meaningful scripts whose failures already conform to 
 
 It does **not** authorize open-ended planner behavior, broad repo rewrites, or freeform multi-step agent loops.
 
+### Mandatory recovery validator-tool contract
+
+The live AI recovery lane now uses a dedicated lane-specific validator tool:
+
+- **Tool name:** `validate_ai_recovery_decision_json`
+- **Canonical tool-call envelope:**
+
+```json
+{
+  "tool": "validate_ai_recovery_decision_json",
+  "recoveryDecision": {
+    "decision": {
+      "outcome": "reenter_script",
+      "reason": "Short bounded reason.",
+      "confidence": "medium",
+      "hardFail": false,
+      "humanReviewRequired": false
+    },
+    "revisedInput": {
+      "kind": "same-script-revised-input",
+      "changes": [
+        { "path": "repairInstructions", "op": "set", "value": ["Return valid JSON only."] },
+        { "path": "boundedContextSummary", "op": "set", "value": "Previous output was malformed JSON." }
+      ]
+    }
+  }
+}
+```
+
+Hard rules for the validator-tool lane:
+
+- the model must call the validator tool before any final recovery decision can be accepted
+- the final accepted artifact must still be the bare decision JSON object, not the tool envelope
+- only `repairInstructions` and `boundedContextSummary` may be mutated in `revisedInput.changes`
+- only `set` operations are allowed
+- terminal outcomes (`hard_fail`, `human_review`, `no_change_fail`) must not carry non-empty `revisedInput.changes`
+- malformed envelopes, forbidden mutation paths, or out-of-contract decision shapes must fail deterministically rather than falling back to plain direct JSON acceptance
+
 The AI recovery lane is allowed to reason about:
 
 - why the script failed
@@ -805,7 +843,7 @@ This doc defines the durable target contract.
 
 ### 2026-03-15 implementation note
 
-The shared recovery runtime is now live in checked-in code (`server/lib/script-contract.cjs`, `server/lib/script-runner.cjs`, and `server/lib/ai-recovery-lane.cjs`) and the current same-script AI recovery path is wired for the four meaningful AI lanes:
+The shared recovery runtime is now live in checked-in code (`server/lib/script-contract.cjs`, `server/lib/script-runner.cjs`, `server/lib/ai-recovery-lane.cjs`, and `server/lib/ai-recovery-validator-tool.cjs`) and the current same-script AI recovery path is wired for the four meaningful AI lanes:
 
 - `server/scripts/get-context/get-dialogue.cjs`
 - `server/scripts/get-context/get-music.cjs`
@@ -815,6 +853,7 @@ The shared recovery runtime is now live in checked-in code (`server/lib/script-c
 A few parts of this doc were broader than the current implementation and are now bounded here explicitly:
 
 - the live re-entry patch surface is currently limited to `repairInstructions` and `boundedContextSummary`
+- the recovery model is now required to use `validate_ai_recovery_decision_json` before final acceptance; malformed or out-of-contract recovery decisions do not fall back to plain direct JSON acceptance
 - the emitted `revisedInput.kind` is currently `same-script-revised-input`
 - `recovery.ai.context.includePromptRef` and `includeProviderMetadata` remain valid config fields, but the current failure-package builder only opportunistically records a prompt ref and does not yet inject provider metadata into `context`
 - activation is still config-driven at run time: the lane only runs when YAML enables `recovery.ai.enabled` and provides a recovery `adapter` + `model`

@@ -60,14 +60,23 @@ The owning repo is `emotion-engine`, because the recovery lane, validator loop, 
 
 **Files Created/Deleted/Modified:**
 - `server/lib/ai-recovery-lane.cjs`
-- any new recovery validator helper/contract file(s)
-- relevant tests
+- `server/lib/ai-recovery-validator-tool.cjs`
+- `server/lib/local-validator-tool-loop.cjs`
+- `server/lib/script-contract.cjs`
+- `test/lib/ai-recovery-validator-tool.test.js`
+- `test/lib/script-contract.test.js`
 - `docs/AI-RECOVERY-LANE-CONTRACT.md`
 - `.plans/2026-03-15-validator-tool-loop-for-ai-recovery.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:**
+- Replaced the AI recovery lane's direct `parseJsonObjectInput(...)` acceptance path with a dedicated `validate_ai_recovery_decision_json` validator-tool contract in `server/lib/ai-recovery-validator-tool.cjs`.
+- Routed recovery completions through the shared `executeLocalValidatorToolLoop(...)` path, with a new `requireExplicitToolCallBeforeFinalArtifact` enforcement knob so this lane now **requires** an explicit validator-tool call before the final decision artifact is accepted.
+- Preserved the bounded mutable-input contract: only `repairInstructions` and `boundedContextSummary` survive normalization into the re-entry package, and terminal outcomes reject non-empty `revisedInput.changes`.
+- Added deterministic failure artifacts for malformed/out-of-contract recovery decisions: failed recovery attempts now persist `result.json`, `response.json`, and `tool-loop.json` with `decision.outcome = "no_change_fail"` instead of silently accepting plain JSON.
+- Added/updated targeted coverage in `test/lib/ai-recovery-validator-tool.test.js` and `test/lib/script-contract.test.js`.
+- Validation evidence: `node --test test/lib/ai-recovery-validator-tool.test.js test/lib/script-contract.test.js` ✅ (14 tests passed).
 
 ---
 

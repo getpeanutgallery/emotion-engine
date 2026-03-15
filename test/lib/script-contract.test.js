@@ -287,28 +287,57 @@ test('script-runner - executeScript performs one bounded AI recovery re-entry fo
   delete require.cache[aiRecoveryPath];
   delete require.cache[runnerPath];
 
+  let recoveryCallCount = 0;
   require.cache[providerModulePath] = {
     exports: {
       getProviderFromConfig: () => ({
-        complete: async () => ({
-          content: JSON.stringify({
-            decision: {
-              outcome: 'reenter_script',
-              reason: 'Repair the JSON shape without changing meaning.',
-              confidence: 'medium',
-              hardFail: false,
-              humanReviewRequired: false
-            },
-            revisedInput: {
-              kind: 'same-script-revised-input',
-              changes: [
-                { path: 'repairInstructions', op: 'set', value: ['Return the required metadataData JSON only.'] },
-                { path: 'boundedContextSummary', op: 'set', value: 'Prior output was malformed JSON.' }
-              ]
-            }
-          }),
-          usage: { input: 111, output: 44 }
-        })
+        complete: async () => {
+          recoveryCallCount += 1;
+          if (recoveryCallCount === 1) {
+            return {
+              content: JSON.stringify({
+                tool: 'validate_ai_recovery_decision_json',
+                recoveryDecision: {
+                  decision: {
+                    outcome: 'reenter_script',
+                    reason: 'Repair the JSON shape without changing meaning.',
+                    confidence: 'medium',
+                    hardFail: false,
+                    humanReviewRequired: false
+                  },
+                  revisedInput: {
+                    kind: 'same-script-revised-input',
+                    changes: [
+                      { path: 'repairInstructions', op: 'set', value: ['Return the required metadataData JSON only.'] },
+                      { path: 'boundedContextSummary', op: 'set', value: 'Prior output was malformed JSON.' }
+                    ]
+                  }
+                }
+              }),
+              usage: { input: 111, output: 44 }
+            };
+          }
+
+          return {
+            content: JSON.stringify({
+              decision: {
+                outcome: 'reenter_script',
+                reason: 'Repair the JSON shape without changing meaning.',
+                confidence: 'medium',
+                hardFail: false,
+                humanReviewRequired: false
+              },
+              revisedInput: {
+                kind: 'same-script-revised-input',
+                changes: [
+                  { path: 'repairInstructions', op: 'set', value: ['Return the required metadataData JSON only.'] },
+                  { path: 'boundedContextSummary', op: 'set', value: 'Prior output was malformed JSON.' }
+                ]
+              }
+            }),
+            usage: { input: 111, output: 44 }
+          };
+        }
       }),
       loadProvider: () => ({ complete: async () => { throw new Error('unexpected'); } })
     },
@@ -350,8 +379,101 @@ test('script-runner - executeScript performs one bounded AI recovery re-entry fo
   });
 
   assert.strictEqual(result.scriptResult.status, 'success');
+  assert.strictEqual(recoveryCallCount, 2);
   assert.strictEqual(result.artifacts.__scriptExecution.recommendation.lineage.aiRecoveryAttemptsUsed, 1);
   assert.deepStrictEqual(result.artifacts.recommendationData.repairInstructions, ['Return the required metadataData JSON only.']);
   assert.strictEqual(result.artifacts.recommendationData.boundedContextSummary, 'Prior output was malformed JSON.');
   assert(fs.existsSync(path.join(outputDir, 'phase3-report', 'recovery', 'recommendation', 'ai-recovery', 'attempt-01', 'result.json')));
+});
+
+test('script-runner - AI recovery refuses direct final JSON when the validator tool was never called', async () => {
+  const providerModulePath = require.resolve('ai-providers/ai-provider-interface.js', { paths: [__dirname] });
+  const aiTargetsPath = require.resolve('../../server/lib/ai-targets.cjs', { paths: [__dirname] });
+  const aiRecoveryPath = require.resolve('../../server/lib/ai-recovery-lane.cjs', { paths: [__dirname] });
+  const runnerPath = require.resolve('../../server/lib/script-runner.cjs', { paths: [__dirname] });
+
+  delete require.cache[providerModulePath];
+  delete require.cache[aiTargetsPath];
+  delete require.cache[aiRecoveryPath];
+  delete require.cache[runnerPath];
+
+  let recoveryCallCount = 0;
+  require.cache[providerModulePath] = {
+    exports: {
+      getProviderFromConfig: () => ({
+        complete: async () => {
+          recoveryCallCount += 1;
+          return {
+            content: JSON.stringify({
+              decision: {
+                outcome: 'reenter_script',
+                reason: 'Attempt a retry without using the tool.',
+                confidence: 'medium',
+                hardFail: false,
+                humanReviewRequired: false
+              },
+              revisedInput: {
+                kind: 'same-script-revised-input',
+                changes: [
+                  { path: 'repairInstructions', op: 'set', value: ['Return the required metadataData JSON only.'] }
+                ]
+              }
+            }),
+            usage: { input: 51, output: 19 }
+          };
+        }
+      }),
+      loadProvider: () => ({ complete: async () => { throw new Error('unexpected'); } })
+    },
+    loaded: true,
+    id: providerModulePath,
+    filename: providerModulePath
+  };
+
+  const { executeScript: executeScriptWithRecovery } = require('../../server/lib/script-runner.cjs');
+
+  const scriptDir = makeTempDir('ee-script-module-recovery-no-tool-');
+  const scriptPath = path.join(scriptDir, 'recommendation.cjs');
+  fs.writeFileSync(scriptPath, `'use strict';\nmodule.exports = {\n  aiRecovery: {\n    guidance: 'repair recommendation json',\n    reentry: {\n      allowedMutableInputs: ['repairInstructions', 'boundedContextSummary'],\n      forbiddenMutableInputs: ['upstreamArtifacts']\n    }\n  },\n  run: async (input) => {\n    if (!input.recoveryRuntime) {\n      const error = new Error('invalid_output: malformed recommendation json');\n      error.aiTargets = { attempts: 1, targetIndex: 0, targetCount: 1, toolLoop: { turns: 3 } };\n      throw error;\n    }\n    return { artifacts: { recommendationData: { ok: true } } };\n  }\n};\n`, 'utf8');
+
+  const outputDir = makeTempDir('ee-script-runner-recovery-no-tool-');
+  await assert.rejects(
+    () => executeScriptWithRecovery({
+      phase: 'phase3-report',
+      scriptPath,
+      input: {
+        outputDir,
+        config: {
+          name: 'runner-test',
+          ai: {
+            recommendation: {
+              retry: { maxAttempts: 1 },
+              targets: [{ adapter: { name: 'openrouter', model: 'test-recommendation-model' } }]
+            }
+          },
+          recovery: {
+            ai: {
+              enabled: true,
+              adapter: 'google',
+              model: 'gemini-3.1-pro-preview',
+              toolLoop: {
+                maxTurns: 2,
+                maxValidatorCalls: 2
+              }
+            }
+          }
+        },
+        artifacts: {}
+      }
+    }),
+    /invalid_output: malformed recommendation json/
+  );
+
+  assert.strictEqual(recoveryCallCount, 2);
+  const resultPath = path.join(outputDir, 'phase3-report', 'recovery', 'recommendation', 'ai-recovery', 'attempt-01', 'result.json');
+  assert(fs.existsSync(resultPath));
+  const result = JSON.parse(fs.readFileSync(resultPath, 'utf8'));
+  assert.strictEqual(result.status, 'failed');
+  assert.strictEqual(result.decision.outcome, 'no_change_fail');
+  assert.match(result.decision.reason, /must call validate_ai_recovery_decision_json/i);
 });

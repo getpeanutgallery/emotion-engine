@@ -123,7 +123,8 @@ function buildLocalValidatorToolPrompt({
   remainingValidatorCalls,
   artifactLabel,
   finalArtifactDescription,
-  finalArtifactRules = []
+  finalArtifactRules = [],
+  requireExplicitToolCallBeforeFinalArtifact = false
 }) {
   return [
     basePrompt,
@@ -139,6 +140,9 @@ function buildLocalValidatorToolPrompt({
     `- If you call the tool, use exactly this minimal envelope: ${JSON.stringify(toolContract.canonicalEnvelope)}.`,
     '- Do not add type/toolName/arguments/args/input wrappers around the tool call.',
     `- If the validator reports problems, revise and either call the tool again or return a revised ${artifactLabel} JSON candidate.`,
+    ...(requireExplicitToolCallBeforeFinalArtifact
+      ? [`- You must call ${toolContract.name} at least once before any final ${artifactLabel} JSON can be accepted.`]
+      : []),
     `- After the validator returns valid=true, return ONLY the final ${artifactLabel} JSON object with no wrapper.`,
     '- Do not emit markdown, prose, or multiple objects.',
     ...(finalArtifactDescription ? ['', finalArtifactDescription] : []),
@@ -176,7 +180,8 @@ async function executeLocalValidatorToolLoop({
   executeValidatorTool,
   normalizeValidatedValue = defaultNormalizeForComparison,
   autoValidationKind = 'tool_result_auto_validation',
-  finalArtifactAcceptedKind = 'final_artifact_revalidation'
+  finalArtifactAcceptedKind = 'final_artifact_revalidation',
+  requireExplicitToolCallBeforeFinalArtifact = false
 }) {
   const history = [];
   let successfulValidatedValue = null;
@@ -195,7 +200,8 @@ async function executeLocalValidatorToolLoop({
       remainingValidatorCalls,
       artifactLabel,
       finalArtifactDescription,
-      finalArtifactRules
+      finalArtifactRules,
+      requireExplicitToolCallBeforeFinalArtifact
     });
 
     const promptMode = turn === 1 ? 'tool_loop' : 'tool_loop_followup';
@@ -291,6 +297,30 @@ async function executeLocalValidatorToolLoop({
           summary: toolCall.summary,
           errors: toolCall.errors || [],
           malformedEnvelope: true
+        }
+      });
+      continue;
+    }
+
+    if (requireExplicitToolCallBeforeFinalArtifact && !successfulValidatedValue) {
+      history.push({
+        role: 'tool',
+        turn,
+        kind: 'missing_required_tool_call',
+        toolName: toolContract.name,
+        source: 'model_output',
+        toolCall: null,
+        result: {
+          ok: false,
+          valid: false,
+          toolName: toolContract.name,
+          summary: `You must call ${toolContract.name} and receive valid=true before returning the final ${artifactLabel} JSON.`,
+          errors: [{
+            path: '$',
+            code: 'required_tool_call_missing',
+            message: `Call ${toolContract.name} before returning the final ${artifactLabel} JSON.`
+          }],
+          malformedEnvelope: false
         }
       });
       continue;
@@ -395,6 +425,10 @@ async function executeLocalValidatorToolLoop({
     };
   }
 
+  const lastMissingRequiredToolCall = [...history].reverse().find((entry) => entry?.kind === 'missing_required_tool_call');
+  const exhaustedSummary = lastMissingRequiredToolCall?.result?.summary
+    || `${artifactLabel} tool loop exhausted after ${toolLoopConfig.maxTurns} turns. Ensure the model validates the ${artifactLabel} and then returns final JSON only.`;
+
   throw createRetryableError(`invalid_output: ${artifactLabel} tool loop exhausted after ${toolLoopConfig.maxTurns} turns`, {
     group: 'tool_loop',
     raw: finalCompletion?.content || null,
@@ -402,10 +436,10 @@ async function executeLocalValidatorToolLoop({
     parseError: null,
     validationErrors: [{
       path: '$',
-      code: 'tool_loop_exhausted',
-      message: `${artifactLabel} tool loop exhausted after ${toolLoopConfig.maxTurns} turns.`
+      code: lastMissingRequiredToolCall ? 'required_tool_call_missing' : 'tool_loop_exhausted',
+      message: lastMissingRequiredToolCall?.result?.errors?.[0]?.message || `${artifactLabel} tool loop exhausted after ${toolLoopConfig.maxTurns} turns.`
     }],
-    validationSummary: `${artifactLabel} tool loop exhausted after ${toolLoopConfig.maxTurns} turns. Ensure the model validates the ${artifactLabel} and then returns final JSON only.`,
+    validationSummary: exhaustedSummary,
     completion: finalCompletion,
     promptMode: finalPromptMode,
     promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
