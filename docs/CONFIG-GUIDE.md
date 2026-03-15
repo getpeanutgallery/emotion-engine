@@ -144,6 +144,98 @@ ai:
 
 ---
 
+## Recovery config
+
+Recovery config is validated and normalized by `server/lib/script-contract.cjs` (`validateRecoveryConfig(...)` / `normalizeRecoveryConfig(...)`).
+
+Important runtime behavior:
+
+- omitting `recovery:` is valid and falls back to repo defaults
+- the default is **AI recovery disabled**
+- AI recovery only runs for scripts that export `aiRecovery` metadata and only when YAML sets:
+  - `recovery.ai.enabled: true`
+  - `recovery.ai.adapter`
+  - `recovery.ai.model`
+- the current checked-in AI recovery re-entry surface is intentionally narrow: `repairInstructions` and `boundedContextSummary`
+
+Current AI-recovery-capable lanes:
+
+- `server/scripts/get-context/get-dialogue.cjs`
+- `server/scripts/get-context/get-music.cjs`
+- `server/scripts/process/video-chunks.cjs`
+- `server/scripts/report/recommendation.cjs`
+
+Canonical shape:
+
+```yaml
+recovery:
+  deterministic:
+    maxAttemptsPerFailure: 2
+    maxRepeatedStrategyUsesPerFailure: 1
+
+  ai:
+    enabled: true
+    lane: structured-output-repair
+    adapter: openrouter
+    model: openai/gpt-5.4
+    temperature: 0
+    timeoutMs: 45000
+
+    attempts:
+      maxPerFailure: 1
+      maxPerScriptRun: 1
+      maxPerPipelineRun: 3
+
+    budgets:
+      maxInputTokens: 12000
+      maxOutputTokens: 2000
+      maxTotalTokens: 14000
+      maxCostUsd: 0.25
+
+    context:
+      maxSnippetChars: 8000
+      maxRawRefs: 12
+      includePromptRef: true
+      includeLastInvalidOutput: true
+      includeValidationSummary: true
+      includeProviderMetadata: true
+
+    reentry:
+      mode: same-script-revised-input
+      allowPromptPatch: true
+      allowBoundedContextSummary: true
+      allowSchemaPreservingInputPatch: true
+      allowArtifactMutation: false
+      allowBudgetMutation: false
+      allowCrossScriptReroute: false
+
+    hardFailCategories: [config, dependency, io]
+    humanReviewCategories: [internal]
+
+    capture:
+      persistPrompt: true
+      persistResponse: true
+      persistDecision: true
+      persistRawEvidenceRefs: true
+
+  stopConditions:
+    internalFailuresPerLineage: 2
+    configFailuresPerLineage: 1
+    dependencyFailuresPerLineage: 1
+```
+
+Minimal activation example:
+
+```yaml
+recovery:
+  ai:
+    enabled: true
+    adapter: openrouter
+    model: openai/gpt-5.4
+```
+
+---
+
 ## Phases and script lists
 
 At least **one** script across all phases is required.

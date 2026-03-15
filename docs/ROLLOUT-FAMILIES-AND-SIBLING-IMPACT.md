@@ -24,9 +24,20 @@ The strict cross-family guardrails that every rollout family must honor are defi
 3. Which sibling repos are directly impacted by the new contract, and where does sibling scope stop?
 4. What implementation order is safest, and which existing beads are reused vs superseded?
 
-This is intentionally a **planning/spec** document. It does not claim the rollout is implemented.
+This is intentionally a **planning/spec** document. It records the rollout map as it stood on 2026-03-14.
 
-For the concrete execution bead graph that implements this rollout order, see `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`.
+### 2026-03-15 closure addendum
+
+The implementation status has moved forward materially since this map was first written. The pre-implementation gap language below should now be read as bounded historical planning context, not as the current live state.
+
+As of 2026-03-15:
+
+- shared contract plumbing (`ee-d4x.1`) is implemented in `emotion-engine`
+- the four meaningful AI lanes (`ee-d4x.2`) now run through the shared envelope/runtime seam and can invoke bounded same-script AI recovery
+- computed/report lanes (`ee-d4x.3`) and deterministic tool-wrapper lanes (`ee-d4x.4`) are also rolled onto the shared script-result contract
+- the sibling `tools` cutover later landed, so Phase 2 now consumes `../tools/emotion-lenses-tool.cjs` directly rather than an engine-local canonical copy
+
+For the concrete execution bead graph that implemented this order, see `docs/IMPLEMENTATION-EXECUTION-GRAPH.md`.
 
 ---
 
@@ -78,7 +89,7 @@ These lanes already satisfy the repo's **AI-lane validator-tool contract** (`doc
 - supporting validators/helpers:
   - `server/lib/local-validator-tool-loop.cjs`
   - `server/lib/phase1-validator-tools.cjs`
-  - `server/lib/emotion-lenses-tool.cjs`
+  - `../tools/emotion-lenses-tool.cjs`
   - `server/lib/recommendation-validator.cjs`
   - `server/lib/recommendation-validator-tool.cjs`
   - `server/lib/structured-output.cjs`

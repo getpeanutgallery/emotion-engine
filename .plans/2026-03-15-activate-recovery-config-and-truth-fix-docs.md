@@ -77,9 +77,24 @@ No config-schema or test code changes were required because the recovery schema/
 - `.plans/2026-03-15-activate-recovery-config-and-truth-fix-docs.md`
 - any small current-state pointer updates that are clearly needed
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Truth-fixed the active recovery/config docs and added bounded closure notes to the historical rollout records instead of rewriting them in place. Exact files changed for this task:
+- `docs/AI-RECOVERY-LANE-CONTRACT.md`
+- `docs/CONFIG-GUIDE.md`
+- `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md`
+- `.plans/2026-03-14-ai-recovery-contract-and-sibling-rollout.md`
+- `../tools/docs/EMOTION-LENSES-ALIGNMENT-AUDIT-2026-03-14.md`
+- `.plans/2026-03-15-activate-recovery-config-and-truth-fix-docs.md`
+
+Findings recorded in the doc fixes:
+- `docs/AI-RECOVERY-LANE-CONTRACT.md` now matches the checked-in implementation more closely: the live re-entry patch surface is `repairInstructions` + `boundedContextSummary`, and the live `revisedInput.kind` is `same-script-revised-input`.
+- `docs/CONFIG-GUIDE.md` now documents the live `recovery:` YAML surface validated by `server/lib/script-contract.cjs`, including the fact that omission is valid and defaults AI recovery to disabled unless a config explicitly enables it with `adapter` + `model`.
+- `docs/ROLLOUT-FAMILIES-AND-SIBLING-IMPACT.md` now carries a 2026-03-15 closure addendum so its pre-implementation gap language is not mistaken for current state, and its Phase 2 helper reference now points at the live sibling-owned `../tools/emotion-lenses-tool.cjs` path.
+- `.plans/2026-03-14-ai-recovery-contract-and-sibling-rollout.md` now has explicit closure addenda marking the old `ee-cwi.4` audit text as historical and clarifying that the later direct `../tools` cutover already landed.
+- `../tools/docs/EMOTION-LENSES-ALIGNMENT-AUDIT-2026-03-14.md` now carries a closure addendum instead of an open-ended follow-up note, so it no longer implies the engine-local ownership removal is still undone.
+
+Validation for this task was documentary rather than behavioral: reviewed the docs against the live implementation/config seams in `server/lib/script-contract.cjs`, `server/lib/script-runner.cjs`, `server/lib/ai-recovery-lane.cjs`, `server/scripts/process/video-chunks.cjs`, `configs/cod-test.yaml`, `configs/cod-test-phase3.yaml`, and `../tools/README.md`, then confirmed clean patch formatting with `git diff --check` in both repos.
 
 ---
 

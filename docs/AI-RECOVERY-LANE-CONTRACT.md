@@ -210,7 +210,6 @@ The AI recovery lane consumes a **failure package** assembled from the script's 
     "mode": "same-script-revised-input",
     "script": "recommendation",
     "allowedMutableInputs": [
-      "promptPackage",
       "repairInstructions",
       "boundedContextSummary"
     ],
@@ -298,7 +297,7 @@ The AI recovery lane itself must emit a durable machine-readable result.
     "humanReviewRequired": false
   },
   "revisedInput": {
-    "kind": "prompt_package_patch",
+    "kind": "same-script-revised-input",
     "targetScript": "recommendation",
     "changes": [
       {
@@ -718,7 +717,25 @@ The orchestrator must not infer extra attempts from logs, heuristics, or “seem
 
 ## Compatibility and rollout guidance
 
-This doc defines the durable target contract. The repo is not yet fully migrated to it.
+This doc defines the durable target contract.
+
+### 2026-03-15 implementation note
+
+The shared recovery runtime is now live in checked-in code (`server/lib/script-contract.cjs`, `server/lib/script-runner.cjs`, and `server/lib/ai-recovery-lane.cjs`) and the current same-script AI recovery path is wired for the four meaningful AI lanes:
+
+- `server/scripts/get-context/get-dialogue.cjs`
+- `server/scripts/get-context/get-music.cjs`
+- `server/scripts/process/video-chunks.cjs`
+- `server/scripts/report/recommendation.cjs`
+
+A few parts of this doc were broader than the current implementation and are now bounded here explicitly:
+
+- the live re-entry patch surface is currently limited to `repairInstructions` and `boundedContextSummary`
+- the emitted `revisedInput.kind` is currently `same-script-revised-input`
+- `recovery.ai.context.includePromptRef` and `includeProviderMetadata` remain valid config fields, but the current failure-package builder only opportunistically records a prompt ref and does not yet inject provider metadata into `context`
+- activation is still config-driven at run time: the lane only runs when YAML enables `recovery.ai.enabled` and provides a recovery `adapter` + `model`
+
+Read the sections below as the durable contract, with the bullets above reflecting the narrower checked-in implementation as of 2026-03-15.
 
 During rollout:
 
