@@ -52,6 +52,8 @@ It does **not** authorize open-ended planner behavior, broad repo rewrites, or f
 
 ### Mandatory recovery validator-tool contract
 
+The live AI recovery lane now uses a dedicated lane-specific validator tool. Its prompt wording should follow the shared cross-repo wording standard in `docs/AI-LANE-CONTRACT.md` for Option B enum notes, canonical minimal envelopes, wrapper-key prohibitions, and final acceptance after validator success.
+
 The live AI recovery lane now uses a dedicated lane-specific validator tool:
 
 - **Tool name:** `validate_ai_recovery_decision_json`

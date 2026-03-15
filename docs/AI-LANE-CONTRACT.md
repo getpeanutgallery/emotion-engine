@@ -187,6 +187,81 @@ At minimum, repo docs or lane-family docs must make these things discoverable:
 
 A lane is not fully compliant if the implementation is strict but the contract is invisible to future maintainers.
 
+### Cross-repo prompt-contract wording standard
+
+Use these exact wording rules anywhere this repo family documents or prompts a meaningful AI lane. This is the canonical wording standard for `emotion-engine` and downstream sibling surfaces.
+
+#### 1) Option B enum documentation
+
+Use **Option B throughout** for closed string fields:
+
+- keep example JSON concrete
+- do **not** place pipe-placeholder enums such as `"foo|bar|baz"` inside example JSON
+- for every closed enum-like string field, add an explicit nearby allowed-values note
+
+Mechanical wording template:
+
+- `Allowed values for <jsonPath>: <value1> | <value2> | <value3>.`
+
+Preferred pattern:
+
+```json
+{
+  "decision": {
+    "outcome": "reenter_script"
+  }
+}
+```
+
+Allowed-values note placed immediately below or beside the example:
+
+- `Allowed values for decision.outcome: reenter_script | hard_fail | human_review | no_change_fail.`
+
+#### 2) Validator-tool usage wording
+
+When a lane requires validator-tool mediation, use this exact acceptance wording:
+
+- `You have access to one local validation tool.`
+- `You may respond with exactly one JSON object in one of these forms:`
+- `If you call the tool, use exactly this minimal envelope: <canonicalEnvelope>.`
+- `The final <artifactLabel> JSON is accepted only after <toolName> returns {"valid": true}.`
+- `After the validator returns valid=true, return ONLY the final <artifactLabel> JSON object with no wrapper.`
+
+If the lane requires an explicit tool call before any final artifact is accepted, add this exact line:
+
+- `You must call <toolName> at least once before any final <artifactLabel> JSON can be accepted.`
+
+#### 3) Canonical tool-envelope wording
+
+Whenever the prompt shows the validator-tool call shape, describe it as the **canonical minimal envelope** and show the exact JSON object:
+
+- `Canonical tool call envelope:`
+- `<canonicalEnvelope rendered as JSON>`
+
+Use the real lane key in the envelope (`transcription`, `stitch`, `musicAnalysis`, `emotionAnalysis`, `recommendation`, `recoveryDecision`, etc.). Do not document alias envelope shapes as alternatives.
+
+#### 4) Wrapper-key prohibition wording
+
+Use this exact prohibition sentence in validator-tool prompts unless a lane has an even stricter lane-local addition:
+
+- `Do not add type/toolName/arguments/args/input wrappers around the tool call.`
+
+This wording is the shared baseline. If a lane also rejects other alias keys in parsing, keep the prompt wording additive rather than replacing this baseline sentence.
+
+#### 5) Final acceptance after validator success wording
+
+Use the same acceptance sequence everywhere:
+
+1. validator-tool usage is the only pre-acceptance validation path
+2. validator success means the tool returned `{"valid": true}`
+3. only after that success may the model return the bare final artifact JSON
+4. the final accepted artifact is the bare artifact object, never the tool envelope
+
+Mechanical wording pair:
+
+- `The final <artifactLabel> JSON is accepted only after <toolName> returns {"valid": true}.`
+- `After the validator returns valid=true, return ONLY the final <artifactLabel> JSON object with no wrapper.`
+
 ---
 
 ## Enforcement levels
