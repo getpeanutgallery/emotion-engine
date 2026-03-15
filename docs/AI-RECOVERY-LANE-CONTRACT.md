@@ -298,7 +298,6 @@ The AI recovery lane itself must emit a durable machine-readable result.
   },
   "revisedInput": {
     "kind": "same-script-revised-input",
-    "targetScript": "recommendation",
     "changes": [
       {
         "path": "repairInstructions",
@@ -314,8 +313,7 @@ The AI recovery lane itself must emit a durable machine-readable result.
         "op": "set",
         "value": "Previous output failed final JSON parsing near the object tail; keep the same semantic content but regenerate a syntactically valid object."
       }
-    ],
-    "candidateInputRef": "output/cod-test/phase3-report/recovery/recommendation-ai-recovery-input.json"
+    ]
   },
   "budgets": {
     "inputTokensUsed": 6421,
@@ -366,6 +364,93 @@ Rules:
 - AI recovery must not emit a vague “maybe retry” result.
 - It must produce either a concrete revised-input package or a terminal/escalation decision.
 - `hard_fail` and `no_change_fail` are distinct: `hard_fail` means policy says stop; `no_change_fail` means recovery could not safely improve the input.
+
+### Dedicated validator-tool contract for the recovery lane
+
+The AI recovery lane must use its own local validator tool before any recovery decision is accepted.
+
+**Tool name:** `validate_ai_recovery_decision_json`
+
+**Canonical tool-call envelope:**
+
+```json
+{
+  "tool": "validate_ai_recovery_decision_json",
+  "recoveryDecision": {
+    "decision": {
+      "outcome": "reenter_script",
+      "reason": "Previous failure was malformed JSON after deterministic validator retries; one bounded same-script repair is safe.",
+      "confidence": "medium",
+      "hardFail": false,
+      "humanReviewRequired": false
+    },
+    "revisedInput": {
+      "kind": "same-script-revised-input",
+      "changes": [
+        {
+          "path": "repairInstructions",
+          "op": "set",
+          "value": [
+            "Return one JSON object only.",
+            "Do not include markdown fences."
+          ]
+        },
+        {
+          "path": "boundedContextSummary",
+          "op": "set",
+          "value": "Previous output failed final JSON parsing near the object tail."
+        }
+      ]
+    }
+  }
+}
+```
+
+**Accepted decision values:**
+
+- `reenter_script`
+- `hard_fail`
+- `human_review`
+- `no_change_fail`
+
+**Canonical revised-input shape:**
+
+```json
+{
+  "kind": "same-script-revised-input",
+  "changes": [
+    {
+      "path": "repairInstructions",
+      "op": "set",
+      "value": ["non-empty instruction string"]
+    },
+    {
+      "path": "boundedContextSummary",
+      "op": "set",
+      "value": "non-empty bounded context summary"
+    }
+  ]
+}
+```
+
+**Validator-enforced bounded constraints:**
+
+1. The only accepted tool-call envelope is exactly `{"tool":"validate_ai_recovery_decision_json","recoveryDecision":{...}}`; no wrapper aliases like `toolName`, `arguments`, `args`, `input`, or extra top-level keys are allowed.
+2. `recoveryDecision` must be a JSON object with a required `decision` object and an optional `revisedInput` object.
+3. `decision.outcome` must be one of `reenter_script`, `hard_fail`, `human_review`, or `no_change_fail`.
+4. `decision.reason` must be a non-empty string. `decision.confidence` must be one of `low`, `medium`, or `high`.
+5. `decision.hardFail` and `decision.humanReviewRequired` must be booleans and stay semantically aligned with `decision.outcome`:
+   - `reenter_script` => `hardFail: false`, `humanReviewRequired: false`
+   - `hard_fail` => `hardFail: true`, `humanReviewRequired: false`
+   - `human_review` => `hardFail: false`, `humanReviewRequired: true`
+   - `no_change_fail` => `hardFail: false`, `humanReviewRequired: false`
+6. `revisedInput` is **required** when `decision.outcome === "reenter_script"` and **forbidden** for `hard_fail`, `human_review`, and `no_change_fail`.
+7. `revisedInput.kind` must be exactly `same-script-revised-input`.
+8. `revisedInput.changes` must be a non-empty array when present, with at most two entries total and no duplicate `path` values.
+9. Each change must use `op: "set"` and may target only `repairInstructions` or `boundedContextSummary`.
+10. `repairInstructions` must be an array of non-empty strings. `boundedContextSummary` must be a non-empty string.
+11. No change may mutate budgets, schema, upstream artifacts, output contract versions, or cross-script routing. Any path outside `repairInstructions` and `boundedContextSummary` is invalid.
+12. Even after the validator accepts a recovery decision, the subsequent same-script re-entry must still pass the original lane-specific validator-tool and normal script/result contracts.
 
 ### Result failure semantics
 
@@ -563,13 +648,12 @@ Meaning:
 
 ### Allowed mutations by default
 
-Unless the script family explicitly narrows this further, AI recovery may propose changes only to:
+In the current checked-in implementation, AI recovery may propose changes only to:
 
-- repair instructions
-- bounded context summaries
-- prompt package wording
-- schema-preserving input normalization fields
-- references to already-existing raw evidence or summarized snippets
+- `repairInstructions`
+- `boundedContextSummary`
+
+Those are the only accepted same-script revised-input paths for the recovery validator-tool contract.
 
 ### Forbidden mutations by default
 
