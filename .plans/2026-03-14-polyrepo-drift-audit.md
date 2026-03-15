@@ -68,7 +68,7 @@ Because the concern spans multiple sibling repos but was discovered from the `em
 
 ### Task 3: Classify drift findings by severity and ownership correction path
 
-**Bead ID:** `Pending`  
+**Bead ID:** `ee-hdr`  
 **SubAgent:** `primary`  
 **Prompt:** `For each drift finding, classify whether it is: (a) intentional/coherent, (b) mild drift but acceptable, (c) real ownership violation requiring code relocation, or (d) ambiguous and needing Derrick’s architectural decision. Propose the correct owning repo for each violation and the safest remediation path.`
 
@@ -78,11 +78,11 @@ Because the concern spans multiple sibling repos but was discovered from the `em
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-03-14-polyrepo-drift-audit.md`
-- `docs/` (audit notes if needed)
+- `docs/POLYREPO-DRIFT-CLASSIFICATION-AND-REMEDIATION-2026-03-14.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Created bead `ee-hdr`, claimed it, and wrote `docs/POLYREPO-DRIFT-CLASSIFICATION-AND-REMEDIATION-2026-03-14.md` as the durable classification/remediation note. Classification outcome: the two `tools` findings are real ownership violations requiring relocation back to the sibling `tools` repo; the dependency-pin/local-installed-rewrite finding is packaging clarity drift that should be cleaned up alongside the `tools` correction but is not its own relocation driver; the provider twin-pack duplication between `emotion-engine/test/fixtures/...` and `../digital-twin-emotion-engine-providers` is the one finding that still needs Derrick’s architectural decision because both sibling-pack-canonical and engine-local-fixture-canonical models are coherent; and the `digital-twin-openrouter-emotion-engine` README mismatch is mild docs drift. The note also records correct owning repo recommendations, safest remediation paths, migration risks/validation needs, and blocker-vs-deferrable guidance for each finding.
 
 ---
 
@@ -140,4 +140,4 @@ Because the concern spans multiple sibling repos but was discovered from the `em
 
 ---
 
-*Question for Derrick: Is this audit plan ready to execute, or do you want me to narrow/widen the sibling set before I start the audit?*
+*Current hold point: Task 4 remains pending. The main open architectural decision from Task 3 is whether `digital-twin-emotion-engine-providers` or `emotion-engine/test/fixtures/digital-twin-emotion-engine-providers` should be the canonical owner of provider test cassettes before remediation beads are created.*
