@@ -76,7 +76,7 @@ This cleanup should stay narrow. The goal is not another architecture pass; it i
 
 **Commits:**
 - `37cbf53` - docs: record dependency refresh hygiene results
-- `5bdf078` - docs: finalize installed runtime hygiene verification
+- Task 2 final verification commit recorded in git history / handoff summary
 
 **Lessons Learned:** For this polyrepo seam, the lockfile and source manifests were already correct; the meaningful post-remediation risk was stale local install state. The fastest trustworthy hygiene proof was a three-part check: dependency graph (`npm ls`), actual runtime resolution (`require.resolve` + `realpath` + `require()`), and a stale-shim sweep for `file:` / `link:` / `workspace:` or symlinked mirrors. Non-blocking note: no further remediation is needed from this pass, but runtime hygiene verification should stay distinct from any future live-provider behavior debugging.
 
