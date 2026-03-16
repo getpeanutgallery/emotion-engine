@@ -113,6 +113,91 @@ function getToolLoopConfig(config = {}) {
   };
 }
 
+function resolveChunkMaxFileSize(config = {}) {
+  const flat = config?.tool_variables?.maxFileSize;
+  if (Number.isInteger(flat) && flat > 0) return flat;
+
+  const nested = config?.tool_variables?.file_transfer?.maxFileSize;
+  if (Number.isInteger(nested) && nested > 0) return nested;
+
+  return null;
+}
+
+function normalizeSplitFactor(value) {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) return null;
+  if (value > 1) return 1 / value;
+  if (value < 1) return value;
+  return null;
+}
+
+function resolveSplitConfig(config = {}) {
+  const canonical = config?.tool_variables?.chunk_strategy?.split || {};
+  const legacy = config?.tool_variables?.split_strategy || {};
+
+  const enabled = canonical.enabled !== undefined
+    ? canonical.enabled !== false
+    : (legacy.enabled !== undefined ? legacy.enabled !== false : true);
+
+  return {
+    enabled,
+    maxSplits: Number.isInteger(canonical.max_splits) && canonical.max_splits > 0
+      ? canonical.max_splits
+      : (Number.isInteger(legacy.maxSplits) && legacy.maxSplits > 0 ? legacy.maxSplits : 5),
+    splitFactor: normalizeSplitFactor(canonical.split_factor)
+      ?? normalizeSplitFactor(legacy.splitFactor)
+      ?? 0.5
+  };
+}
+
+function resolveVideoTransferConfig(config = {}, toolVariables = {}) {
+  const canonical = config?.tool_variables?.file_transfer || {};
+  const legacyValue = config?.tool_variables?.file_transfer;
+  const toolScoped = toolVariables?.file_transfer || {};
+
+  const strategy = typeof canonical?.strategy === 'string' && canonical.strategy.trim().length > 0
+    ? canonical.strategy.trim()
+    : (typeof legacyValue === 'string' && legacyValue.trim().length > 0
+      ? legacyValue.trim()
+      : (typeof toolScoped?.strategy === 'string' && toolScoped.strategy.trim().length > 0
+        ? toolScoped.strategy.trim()
+        : 'base64'));
+
+  const mimeType = typeof canonical?.mimeType === 'string' && canonical.mimeType.trim().length > 0
+    ? canonical.mimeType.trim()
+    : (typeof toolScoped?.mimeType === 'string' && toolScoped.mimeType.trim().length > 0
+      ? toolScoped.mimeType.trim()
+      : 'video/mp4');
+
+  return { strategy, mimeType };
+}
+
+const TERMINAL_MICRO_CHUNK_SKIP_SECONDS = 1;
+
+function trimPreviousSummary(summary, maxChars = 400) {
+  if (typeof summary !== 'string') return '';
+  const trimmed = summary.trim();
+  if (trimmed.length <= maxChars) return trimmed;
+  return `${trimmed.slice(0, Math.max(0, maxChars - 1)).trimEnd()}…`;
+}
+
+function shouldSkipTerminalProviderChunk({
+  chunkIndex,
+  numChunks,
+  splitIndex,
+  splitCount,
+  durationSeconds,
+  thresholdSeconds = TERMINAL_MICRO_CHUNK_SKIP_SECONDS
+} = {}) {
+  const isTerminalChunk = Number.isInteger(chunkIndex) && Number.isInteger(numChunks) && chunkIndex === (numChunks - 1);
+  const isTerminalSplit = Number.isInteger(splitIndex) && Number.isInteger(splitCount) && splitIndex === (splitCount - 1);
+  const duration = Number(durationSeconds);
+
+  if (!isTerminalChunk || !isTerminalSplit) return false;
+  if (!Number.isFinite(duration) || duration < 0) return false;
+
+  return duration < thresholdSeconds;
+}
+
 function stringifyRawValue(value) {
   if (typeof value === 'string') {
     return value;
@@ -423,7 +508,7 @@ async function run(input) {
   // Create phase directory for artifacts
   const phaseDir = outputManager.createPhaseDirectory(outputDir, 'phase2-process');
   
-  // Create directory for processed chunks (replaces .temp-chunks)
+  // Create directories for processed chunk assets
   const chunksDir = path.join(outputDir, 'assets', 'processed', 'chunks');
   fs.mkdirSync(chunksDir, { recursive: true });
 
@@ -434,11 +519,15 @@ async function run(input) {
   const keepProcessedIntermediates = shouldKeepProcessedIntermediates(config);
   const retryConfig = getRetryConfig(config);
   const toolLoopConfig = getToolLoopConfig(config);
+  const maxFileSize = resolveChunkMaxFileSize(config);
+  const splitConfig = resolveSplitConfig(config);
+  const videoTransferConfig = resolveVideoTransferConfig(config, normalizedToolVariables);
 
   console.log(`   🔁 Retry config: attempts=${retryConfig.maxAttempts}, backoffMs=${retryConfig.backoffMs}, retryOnParseError=${retryConfig.retryOnParseError}, retryOnProviderError=${retryConfig.retryOnProviderError}`);
   console.log(`   🧰 Tool loop config: turns=${toolLoopConfig.maxTurns}, validatorCalls=${toolLoopConfig.maxValidatorCalls}`);
+  console.log(`   🎞️  Video attachment transport: strategy=${videoTransferConfig.strategy}, mimeType=${videoTransferConfig.mimeType}`);
 
-  // Track extracted chunk files for cleanup
+  // Track extracted assets for cleanup
   const extractedChunks = [];
 
   try {
@@ -484,23 +573,28 @@ async function run(input) {
       extractedChunks.push(chunkPath);
 
       // Check file size against maxFileSize config
-      const maxFileSize = config?.tool_variables?.file_transfer?.maxFileSize;
       let chunksToProcess = [chunkPath];
 
       if (maxFileSize) {
         const stats = fs.statSync(chunkPath);
         if (stats.size > maxFileSize) {
+          if (!splitConfig.enabled) {
+            throw new Error(
+              `Chunk ${chunkIndex + 1} exceeds max file size but chunk splitting is disabled ` +
+              `(${(stats.size / 1024 / 1024).toFixed(2)}MB > ${(maxFileSize / 1024 / 1024).toFixed(2)}MB)`
+            );
+          }
+
           console.log(`   ⚠️  Chunk ${chunkIndex + 1} exceeds max file size (${(stats.size / 1024 / 1024).toFixed(2)}MB > ${(maxFileSize / 1024 / 1024).toFixed(2)}MB), splitting...`);
-          
-          const splitConfig = config?.tool_variables?.split_strategy || {};
+
           let splitResults;
 
           try {
             splitResults = splitStrategy.splitChunk(
               chunkPath,
               maxFileSize,
-              splitConfig.maxSplits || 5,
-              splitConfig.splitFactor || 0.5,
+              splitConfig.maxSplits,
+              splitConfig.splitFactor,
               0,
               {
                 rawLogger: (logName, payload) => writeFfmpegRawLog(logName, payload)
@@ -515,25 +609,70 @@ async function run(input) {
             });
             throw error;
           }
-          
+
           // Remove original chunk from extractedChunks since it's been split
           extractedChunks.splice(extractedChunks.indexOf(chunkPath), 1);
-          
+
           // Add split chunks to extractedChunks for cleanup
           splitResults.forEach(splitPath => extractedChunks.push(splitPath));
           chunksToProcess = splitResults;
         }
       }
 
+      const splitDurations = await Promise.all(
+        chunksToProcess.map((candidatePath, candidateIndex) => getVideoDuration(
+          candidatePath,
+          captureRaw
+            ? ((logName, payload) => writeFfmpegRawLog(`split-duration-${chunkIndex}-${candidateIndex}.json`, payload))
+            : null
+        ))
+      );
+
+      const boundedChunkDuration = Math.max(0, endTime - startTime);
+      const normalizedSplitDurations = splitDurations.map((value) => {
+        const numeric = Number(value);
+        return numeric > 0 ? numeric : 0;
+      });
+      const totalSplitDuration = normalizedSplitDurations.reduce((sum, value) => sum + value, 0);
+      const fallbackSplitDuration = chunksToProcess.length > 0
+        ? boundedChunkDuration / chunksToProcess.length
+        : boundedChunkDuration;
+      let splitCursor = startTime;
+
       // Process each chunk (original or split chunks)
       for (let splitIndex = 0; splitIndex < chunksToProcess.length; splitIndex++) {
         const currentChunkPath = chunksToProcess[splitIndex];
+        const actualSplitDuration = normalizedSplitDurations[splitIndex] > 0
+          ? normalizedSplitDurations[splitIndex]
+          : fallbackSplitDuration;
+        const proportionalSplitDuration = totalSplitDuration > 0 && boundedChunkDuration > 0
+          ? (actualSplitDuration / totalSplitDuration) * boundedChunkDuration
+          : actualSplitDuration;
+        const splitStartTime = Number(splitCursor.toFixed(3));
+        const remainingChunkWindow = Math.max(0, endTime - splitStartTime);
+        const splitDuration = Number(Math.max(0, Math.min(remainingChunkWindow, proportionalSplitDuration)).toFixed(3));
+        const splitEndTime = Number(Math.min(endTime, splitStartTime + splitDuration).toFixed(3));
+        splitCursor = splitEndTime;
+
+        if (shouldSkipTerminalProviderChunk({
+          chunkIndex,
+          numChunks,
+          splitIndex,
+          splitCount: chunksToProcess.length,
+          durationSeconds: splitDuration
+        })) {
+          console.log(
+            `      ⏭️  Skipping terminal provider-facing micro-chunk under ${TERMINAL_MICRO_CHUNK_SKIP_SECONDS}s ` +
+            `(${splitDuration.toFixed(3)}s at ${splitStartTime.toFixed(3)}s-${splitEndTime.toFixed(3)}s)`
+          );
+          continue;
+        }
 
         // Get relevant dialogue for this chunk
-        const dialogueContext = getRelevantDialogue(dialogueData, startTime, endTime);
+        const dialogueContext = getRelevantDialogue(dialogueData, splitStartTime, splitEndTime);
 
         // Get relevant music for this chunk
-        const musicContext = getRelevantMusic(musicData, startTime, endTime);
+        const musicContext = getRelevantMusic(musicData, splitStartTime, splitEndTime);
 
         const chunkLabel = `Chunk ${chunkIndex + 1}${splitIndex > 0 ? `.${splitIndex + 1}` : ''}`;
 
@@ -542,9 +681,11 @@ async function run(input) {
             chunkPath: currentChunkPath,
             chunkIndex,
             splitIndex: splitIndex || 0,
-            startTime,
-            endTime,
-            duration: endTime - startTime
+            startTime: splitStartTime,
+            endTime: splitEndTime,
+            duration: splitDuration,
+            transferStrategy: videoTransferConfig.strategy,
+            mimeType: videoTransferConfig.mimeType
           },
           dialogueContext: {
             segments: dialogueContext
@@ -553,7 +694,7 @@ async function run(input) {
             segments: musicContext
           },
           previousState: {
-            summary: previousSummary,
+            summary: trimPreviousSummary(previousSummary),
             emotions: results.length > 0 ? results[results.length - 1].emotions : {}
           }
         };
@@ -643,6 +784,7 @@ async function run(input) {
                   provider,
                   adapter,
                   toolVariables: toolVariablesForAttempt,
+                  videoContext: analyzeInput.videoContext,
                   basePrompt: prompt,
                   toolLoopConfig,
                   promptRef,
@@ -671,8 +813,8 @@ async function run(input) {
                 const candidateChunkResult = {
                   chunkIndex,
                   splitIndex: splitIndex || 0,
-                  startTime,
-                  endTime,
+                  startTime: splitStartTime,
+                  endTime: splitEndTime,
                   status: 'success',
                   summary: toolLoopResult?.parsed?.summary,
                   emotions: toolLoopResult?.parsed?.emotions,
@@ -781,8 +923,8 @@ async function run(input) {
               writeChunkRaw(chunkIndex, splitIndex || 0, {
                 chunkIndex,
                 splitIndex: splitIndex || 0,
-                startTime,
-                endTime,
+                startTime: splitStartTime,
+                endTime: splitEndTime,
                 attempt,
                 attemptInTarget,
                 targetIndex,
@@ -917,7 +1059,6 @@ async function run(input) {
     if (keepProcessedIntermediates) {
       console.log(`   💾 Keeping extracted chunk files in ${chunksDir}`);
     } else {
-      // Clean up extracted chunk files
       try {
         for (const chunkPath of extractedChunks) {
           if (fs.existsSync(chunkPath)) {
@@ -930,12 +1071,14 @@ async function run(input) {
       }
     }
 
-    // Cleanup temp chunks directory if empty
+    // Cleanup processed asset directories if empty
     try {
-      if (fs.existsSync(chunksDir)) {
-        const files = fs.readdirSync(chunksDir);
-        if (files.length === 0) {
-          fs.rmSync(chunksDir, { recursive: true, force: true });
+      for (const assetDir of [chunksDir]) {
+        if (fs.existsSync(assetDir)) {
+          const files = fs.readdirSync(assetDir);
+          if (files.length === 0) {
+            fs.rmSync(assetDir, { recursive: true, force: true });
+          }
         }
       }
     } catch (e) {
@@ -1044,7 +1187,7 @@ if (require.main === module) {
   console.log('');
   console.log('⚠️  This script requires:');
   console.log('   - AI_API_KEY environment variable');
-  console.log('   - ffmpeg installed for frame extraction');
+  console.log('   - ffmpeg/ffprobe installed for chunk extraction');
   console.log('   - toolVariables with soulPath and goalPath');
   console.log('');
   console.log('Example usage:');

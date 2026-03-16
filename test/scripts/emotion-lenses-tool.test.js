@@ -95,13 +95,22 @@ test('Emotion Lenses Tool', async (t) => {
           goalPath,
           variables: { lenses: ['patience', 'boredom'] }
         },
-        videoContext: { duration: 8, frames: [] },
+        videoContext: {
+          chunkPath: __filename,
+          mimeType: 'video/mp4',
+          transferStrategy: 'base64',
+          duration: 8,
+          startTime: 0,
+          endTime: 8
+        },
         dialogueContext: { segments: [{ start: 0, end: 2, speaker: 'Speaker 1', text: 'Hello' }] },
         musicContext: { segments: [{ start: 0, end: 8, type: 'music', mood: 'tense', intensity: 6 }] },
         previousState: { summary: 'Earlier chunk was measured.' }
       });
 
       ok(prompt.includes('Return JSON only.'));
+      ok(prompt.includes('Ground your judgment in the attached video chunk first'));
+      ok(prompt.includes('Attached video chunk: video/mp4 (base64)'));
       ok(prompt.includes('dominant_emotion must match one of the configured lens names'));
       ok(prompt.includes('"patience"'));
       ok(prompt.includes('"boredom"'));
@@ -170,7 +179,12 @@ test('Emotion Lenses Tool', async (t) => {
           goalPath,
           variables: { lenses: ['patience', 'boredom', 'excitement'] }
         },
-        videoContext: { frames: [], duration: 8 },
+        videoContext: {
+          chunkPath: __filename,
+          mimeType: 'video/mp4',
+          transferStrategy: 'base64',
+          duration: 8
+        },
         dialogueContext: { segments: [] },
         musicContext: { segments: [] },
         previousState: { summary: '', emotions: {} },
@@ -188,6 +202,11 @@ test('Emotion Lenses Tool', async (t) => {
       is(result.state.summary, 'Test chunk analysis');
       is(result.state.emotions.patience.score, 7);
       is(lastCompletionOptions.model, 'yaml-video-model');
+      is(lastCompletionOptions.attachments.length, 1);
+      is(lastCompletionOptions.attachments[0].type, 'video');
+      is(lastCompletionOptions.attachments[0].mimeType, 'video/mp4');
+      ok(typeof lastCompletionOptions.attachments[0].data === 'string');
+      ok(lastCompletionOptions.attachments[0].data.length > 0);
     });
 
     await tNested.test('throws on invalid variables', async () => {

@@ -1,20 +1,15 @@
-name: COD Test Pipeline
-description: Test pipeline for cod.mp4 video (2 chunks max)
+name: COD Late Window Grounding Check
+description: Focused late-window grounding revalidation after FFmpeg/config/visual-grounding fixes
 version: '1.0'
 asset:
-  inputPath: examples/videos/emotion-tests/cod.mp4
-  outputDir: output/cod-test
+  inputPath: output/validation-fixtures/cod-late-70-90.mp4
+  outputDir: output/cod-late-window-grounding-check
 gather_context:
   - server/scripts/get-context/get-dialogue.cjs
   - server/scripts/get-context/get-music.cjs
 process:
   - server/scripts/process/video-chunks.cjs
-report:
-  - server/scripts/report/metrics.cjs
-  - server/scripts/report/recommendation.cjs
-  - server/scripts/report/emotional-analysis.cjs
-  - server/scripts/report/summary.cjs
-  - server/scripts/report/final-report.cjs
+report: []
 settings:
   chunk_duration: 8
   max_chunks: 100
@@ -30,11 +25,10 @@ settings:
   ffmpeg:
     audio:
       loglevel: error
-      codec: libmp3lame
-      bitrate: 192k
-      sample_rate_hz: 44100
-      channels: 2
-      container: mp3
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
     video:
       compress:
         vcodec: libx264
@@ -56,6 +50,8 @@ settings:
         size_headroom_ratio: 0.95
 debug:
   captureRaw: true
+  keepTempFiles: true
+  keepProcessedAssets: true
 recovery:
   deterministic:
     maxAttemptsPerFailure: 2
@@ -104,27 +100,6 @@ ai:
             max_tokens: 25000
             thinking:
               level: low
-      - adapter:
-          name: openrouter
-          model: openai/gpt-audio
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
-      - adapter:
-          name: openrouter
-          model: openai/gpt-audio-mini
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
-      - adapter:
-          name: openrouter
-          model: mistralai/voxtral-small-24b-2507
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
   music:
     targets:
       - adapter:
@@ -134,60 +109,11 @@ ai:
             max_tokens: 25000
             thinking:
               level: low
-      - adapter:
-          name: openrouter
-          model: openai/gpt-audio
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
-      - adapter:
-          name: openrouter
-          model: openai/gpt-audio-mini
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
-      - adapter:
-          name: openrouter
-          model: mistralai/voxtral-small-24b-2507
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
   dialogue_stitch:
     targets:
       - adapter:
           name: openrouter
           model: openai/gpt-5.4
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
-      - adapter:
-          name: openrouter
-          model: qwen/qwen3.5-397b-a17b
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
-      - adapter:
-          name: openrouter
-          model: moonshotai/kimi-k2.5
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
-      - adapter:
-          name: openrouter
-          model: z-ai/glm-5
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
-      - adapter:
-          name: openrouter
-          model: minimax/minimax-m2.5
           params:
             max_tokens: 25000
             thinking:
@@ -227,41 +153,6 @@ ai:
       - adapter:
           name: openrouter
           model: openai/gpt-5.4
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
-      - adapter:
-          name: openrouter
-          model: z-ai/glm-5
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
-      - adapter:
-          name: openrouter
-          model: qwen/qwen3.5-397b-a17b
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
-      - adapter:
-          name: openrouter
-          model: moonshotai/kimi-k2.5
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
-      - adapter:
-          name: openrouter
-          model: minimax/minimax-m2.5
-          params:
-            max_tokens: 25000
-            thinking:
-              level: low
-      - adapter:
-          name: openrouter
-          model: google/gemini-3.1-pro-preview
           params:
             max_tokens: 25000
             thinking:

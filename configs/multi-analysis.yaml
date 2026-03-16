@@ -1,21 +1,9 @@
-# Multi-Analysis Pipeline
-# Run independent analyses in parallel.
-#
-# NOTE:
-# This repo currently only includes the emotion analysis process script
-# (video-chunks / video-per-second). Brand/OCR + graphs/assets scripts referenced
-# in older docs/configs are not present here.
-
-name: "Multi-Analysis Pipeline"
-description: "Parallel pipeline (emotion analysis only; brand/OCR stubs removed)"
-version: "1.0"
-
-# Asset configuration (self-contained - no CLI args needed)
+name: Multi-Analysis Pipeline
+description: Parallel pipeline (emotion analysis only; brand/OCR stubs removed)
+version: '1.0'
 asset:
-  inputPath: "examples/videos/emotion-tests/cod.mp4"
-  outputDir: "output/multi-test"
-
-# AI provider configuration (git-safe - secrets injected via env vars)
+  inputPath: examples/videos/emotion-tests/cod.mp4
+  outputDir: output/multi-test
 ai:
   dialogue:
     targets:
@@ -32,32 +20,51 @@ ai:
       - adapter:
           name: openrouter
           model: qwen/qwen-3.5-397b-a17b
-
 gather_context:
   - server/scripts/get-context/get-dialogue.cjs
   - server/scripts/get-context/get-music.cjs
-
-# Phase 2: Process video (PARALLEL)
 process:
   parallel:
     - script: server/scripts/process/video-chunks.cjs
       toolPath: ../tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "../cast/impatient-teenager/SOUL.md"
-        goalPath: "../goals/video-ad-evaluation.md"
+        soulPath: ../cast/impatient-teenager/SOUL.md
+        goalPath: ../goals/video-ad-evaluation.md
         variables:
           lenses:
             - patience
             - boredom
             - excitement
-
-# Phase 3: Generate report
 report:
   - server/scripts/report/evaluation.cjs
-
-# Global settings
 settings:
-  chunk_duration: 8          # seconds per chunk
-  max_chunks: 4              # limit chunks for testing
-  api_request_delay: 1000    # milliseconds between API calls
-  chunk_quality: "medium"    # low|medium|high
+  chunk_duration: 8
+  max_chunks: 4
+  api_request_delay: 1000
+  chunk_quality: medium
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95

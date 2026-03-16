@@ -1,14 +1,9 @@
-# Full Video Analysis Pipeline (Parallel)
-# Example configuration - phase 2 runs multiple analyses in parallel.
-
-name: "Multi-Persona Parallel Video Analysis"
-description: "Same video analyzed by multiple personas in parallel"
-version: "1.0"
-
+name: Multi-Persona Parallel Video Analysis
+description: Same video analyzed by multiple personas in parallel
+version: '1.0'
 asset:
-  inputPath: "examples/videos/emotion-tests/cod.mp4"
-  outputDir: "output/cod-test-parallel"
-
+  inputPath: examples/videos/emotion-tests/cod.mp4
+  outputDir: output/cod-test-parallel
 ai:
   dialogue:
     targets:
@@ -28,18 +23,21 @@ ai:
       - adapter:
           name: openrouter
           model: qwen/qwen-3.5-397b-a17b
-
+  recommendation:
+    targets:
+      - adapter:
+          name: openrouter
+          model: openai/gpt-5.4
 gather_context:
   - server/scripts/get-context/get-dialogue.cjs
   - server/scripts/get-context/get-music.cjs
-
 process:
   parallel:
     - script: server/scripts/process/video-chunks.cjs
       toolPath: ../tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "../cast/impatient-teenager/SOUL.md"
-        goalPath: "../goals/video-ad-evaluation.md"
+        soulPath: ../cast/impatient-teenager/SOUL.md
+        goalPath: ../goals/video-ad-evaluation.md
         variables:
           lenses:
             - patience
@@ -48,8 +46,8 @@ process:
     - script: server/scripts/process/video-chunks.cjs
       toolPath: ../tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "../cast/skeptical-cfo/SOUL.md"
-        goalPath: "../goals/video-ad-evaluation.md"
+        soulPath: ../cast/skeptical-cfo/SOUL.md
+        goalPath: ../goals/video-ad-evaluation.md
         variables:
           lenses:
             - skepticism
@@ -58,40 +56,61 @@ process:
     - script: server/scripts/process/video-chunks.cjs
       toolPath: ../tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "../cast/optimistic-gen-z/SOUL.md"
-        goalPath: "../goals/video-ad-evaluation.md"
+        soulPath: ../cast/optimistic-gen-z/SOUL.md
+        goalPath: ../goals/video-ad-evaluation.md
         variables:
           lenses:
             - excitement
             - fomo
             - joy
-
 report:
   - server/scripts/report/metrics.cjs
   - server/scripts/report/recommendation.cjs
   - server/scripts/report/emotional-analysis.cjs
   - server/scripts/report/summary.cjs
   - server/scripts/report/final-report.cjs
-
 settings:
   chunk_duration: 8
   max_chunks: 4
   api_request_delay: 1000
-  chunk_quality: "medium"
+  chunk_quality: medium
   music_segment_duration: 30
   retry_strategy:
-    type: "exponential-backoff"
+    type: exponential-backoff
     config:
       maxRetries: 3
       initialDelayMs: 1000
       maxDelayMs: 10000
       exponentialBase: 2
       jitter: true
-
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95
 debug:
   keepTempFiles: false
   keepProcessedAssets: true
-
-# Tool variables (paths must be absolute or relative to ../tools)
 tool_variables:
-  goalPath: "../goals/video-ad-evaluation.md"
+  goalPath: ../goals/video-ad-evaluation.md

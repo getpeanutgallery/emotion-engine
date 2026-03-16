@@ -1,16 +1,9 @@
-# Full Video Analysis Pipeline (Sequential)
-# This is the default configuration - scripts run one after another
-
-name: "Full Video Analysis Pipeline"
-description: "Complete emotion analysis with dialogue, music, and video processing"
-version: "1.0"
-
-# Asset configuration (self-contained - no CLI args needed)
+name: Full Video Analysis Pipeline
+description: Complete emotion analysis with dialogue, music, and video processing
+version: '1.0'
 asset:
-  inputPath: "examples/videos/emotion-tests/cod.mp4"
-  outputDir: "output/cod-test"
-
-# AI provider configuration (git-safe - secrets injected via env vars)
+  inputPath: examples/videos/emotion-tests/cod.mp4
+  outputDir: output/cod-test
 ai:
   dialogue:
     targets:
@@ -30,23 +23,21 @@ ai:
       - adapter:
           name: openrouter
           model: qwen/qwen-3.5-397b-a17b
-  # apiKey: NEVER put API keys in YAML - use environment variables
-  # baseUrl: Optional custom endpoint
-
-# Phase 1: Gather context from video
+  recommendation:
+    targets:
+      - adapter:
+          name: openrouter
+          model: openai/gpt-5.4
 gather_context:
   - server/scripts/get-context/get-dialogue.cjs
   - server/scripts/get-context/get-music.cjs
-
-# Phase 2: Process video (SEQUENTIAL - default)
-# Each script receives output from the previous script
 process:
   sequential:
     - script: server/scripts/process/video-chunks.cjs
       toolPath: ../tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "../cast/impatient-teenager/SOUL.md"
-        goalPath: "../goals/video-ad-evaluation.md"
+        soulPath: ../cast/impatient-teenager/SOUL.md
+        goalPath: ../goals/video-ad-evaluation.md
         variables:
           lenses:
             - patience
@@ -55,73 +46,79 @@ process:
     - script: server/scripts/process/video-per-second.cjs
       toolPath: ../tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "../cast/impatient-teenager/SOUL.md"
-        goalPath: "../goals/video-ad-evaluation.md"
+        soulPath: ../cast/impatient-teenager/SOUL.md
+        goalPath: ../goals/video-ad-evaluation.md
         variables:
           lenses:
             - patience
             - boredom
             - excitement
-
-# Phase 3: Generate reports
 report:
   - server/scripts/report/metrics.cjs
   - server/scripts/report/recommendation.cjs
   - server/scripts/report/emotional-analysis.cjs
   - server/scripts/report/summary.cjs
   - server/scripts/report/final-report.cjs
-
-# Global settings
 settings:
-  chunk_duration: 8          # seconds per chunk
-  max_chunks: 4              # limit chunks for testing
-  api_request_delay: 1000    # milliseconds between API calls
-  chunk_quality: "medium"    # low|medium|high
-  music_segment_duration: 30 # seconds per music analysis segment
+  chunk_duration: 8
+  max_chunks: 4
+  api_request_delay: 1000
+  chunk_quality: medium
+  music_segment_duration: 30
   retry_strategy:
-    type: "exponential-backoff"  # Options: "none", "fixed-delay", "exponential-backoff", "adaptive"
+    type: exponential-backoff
     config:
       maxRetries: 3
       initialDelayMs: 1000
       maxDelayMs: 10000
       exponentialBase: 2
       jitter: true
-
-# Debug settings (for development/testing)
-# When keepTempFiles: true, intermediate files are saved to:
-#   - phase1-gather-context/assets/processed/dialogue/<timestamp>/
-#   - phase1-gather-context/assets/processed/music/<timestamp>/
-#   - phase2-process/assets/processed/chunks/<timestamp>/
-# See: docs/DEBUG-CONFIG.md for details
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95
 debug:
-  keepTempFiles: false       # Keep ffmpeg extracts, chunk files for debugging
-  keepProcessedAssets: true  # Copy to assets/processed/
-
-# Tool variables (paths must be absolute or relative to ../tools)
+  keepTempFiles: false
+  keepProcessedAssets: true
 tool_variables:
-  soulPath: "../cast/impatient-teenager/SOUL.md"
-  goalPath: "../goals/video-ad-evaluation.md"
-  
+  soulPath: ../cast/impatient-teenager/SOUL.md
+  goalPath: ../goals/video-ad-evaluation.md
   file_transfer:
-    strategy: "base64"       # Options: "base64", "web_url", "youtube_url"
-    mimeType: "video/mp4"
-    maxFileSize: 10485760    # 10MB in bytes (OpenRouter limit)
-  
+    strategy: base64
+    mimeType: video/mp4
+    maxFileSize: 10485760
   chunk_strategy:
-    type: "duration-based"   # Options: "duration-based", "size-based", "count-based"
+    type: duration-based
     config:
-      duration: 8            # seconds (for duration-based)
-    
+      duration: 8
     split:
       enabled: true
-      max_splits: 3          # Recursive split limit (configurable)
-      split_factor: 2        # Divide chunk duration by this factor each split
-  
+      max_splits: 3
+      split_factor: 2
   variables:
     lenses:
       - patience
       - boredom
       - excitement
-
-
-# See also: configs/video-analysis-parallel.yaml (parallel processing example)

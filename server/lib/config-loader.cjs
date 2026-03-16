@@ -12,6 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 const { validateRecoveryConfig } = require('./script-contract.cjs');
+const { validateFfmpegSettings } = require('./ffmpeg-config.cjs');
 
 /**
  * Load configuration from file (YAML or JSON)
@@ -228,6 +229,8 @@ function validateConfig(config) {
       validateTargets('recommendation');
     }
   }
+
+  errors.push(...validateFfmpegSettings(config));
 
   // Validate recovery configuration when provided
   const recoveryValidation = validateRecoveryConfig(config.recovery);

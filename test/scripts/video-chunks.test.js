@@ -369,6 +369,237 @@ test('Video Chunks Script', async (t) => {
       is(analyzeCalls[0].toolLoopConfig.maxValidatorCalls, 2);
     });
 
+    await tNested.test('extracts bounded frame metadata and passes it into the emotion lane', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+          },
+          settings: { max_chunks: 1 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          }
+        }
+      });
+
+      is(analyzeCalls.length > 0, true);
+      is(analyzeCalls[0].videoContext.chunkPath.endsWith('chunk-0.mp4'), true);
+      is(analyzeCalls[0].videoContext.mimeType, 'video/mp4');
+      is(analyzeCalls[0].videoContext.transferStrategy, 'base64');
+      is('frames' in analyzeCalls[0].videoContext, false);
+    });
+
+    await tNested.test('passes videoContext into the validator-tool loop so the canonical video chunk can be attached', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+          },
+          settings: { max_chunks: 1 }
+        }
+      });
+
+      is(analyzeCalls.length > 0, true);
+      is(analyzeCalls[0].videoContext.chunkIndex, 0);
+      is(analyzeCalls[0].videoContext.chunkPath.endsWith('chunk-0.mp4'), true);
+      is(analyzeCalls[0].videoContext.transferStrategy, 'base64');
+    });
+
+    await tNested.test('skips a final provider-facing video chunk shorter than 1 second', async () => {
+      const result = await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+          },
+          settings: { max_chunks: 2 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 15.5 } }
+          }
+        }
+      });
+
+      is(analyzeCalls.length, 1);
+      is(result.artifacts.chunkAnalysis.chunks.length, 1);
+      is(result.artifacts.chunkAnalysis.statusSummary.total, 1);
+      is(result.artifacts.chunkAnalysis.chunks[0].chunkIndex, 0);
+    });
+
+    await tNested.test('keeps a final provider-facing video chunk that is exactly 1 second long', async () => {
+      const result = await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+          },
+          settings: { max_chunks: 2 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 15 } }
+          }
+        }
+      });
+
+      is(analyzeCalls.length, 2);
+      is(result.artifacts.chunkAnalysis.chunks.length, 2);
+      is(result.artifacts.chunkAnalysis.statusSummary.total, 2);
+      is(result.artifacts.chunkAnalysis.chunks[1].chunkIndex, 1);
+    });
+
+    await tNested.test('uses canonical chunk split settings and flat maxFileSize when splitting oversized chunks', async () => {
+      const splitCalls = [];
+      const localAnalyzeCalls = [];
+      const originalCacheEntries = {};
+      const modulePaths = [
+        '../../../tools/emotion-lenses-tool.cjs',
+        'child_process',
+        '../../server/lib/video-chunk-extractor.cjs',
+        '../../server/lib/split-strategy.cjs',
+        '../../server/scripts/process/video-chunks.cjs'
+      ].map((modulePath) => require.resolve(modulePath, { paths: [__dirname] }));
+
+      for (const absolutePath of modulePaths) {
+        originalCacheEntries[absolutePath] = require.cache[absolutePath];
+        delete require.cache[absolutePath];
+      }
+
+      const localMockEmotionLensesTool = {
+        buildBasePromptFromInput: () => 'Prompt',
+        executeEmotionAnalysisToolLoop: async (input) => {
+          localAnalyzeCalls.push(input);
+          return {
+            completion: {
+              content: JSON.stringify({
+                summary: 'Split chunk summary',
+                emotions: { patience: { score: 7, reasoning: 'Visible evidence' } },
+                dominant_emotion: 'patience',
+                confidence: 0.8
+              }),
+              usage: { input: 10, output: 5 }
+            },
+            parsed: {
+              summary: 'Split chunk summary',
+              emotions: { patience: { score: 7, reasoning: 'Visible evidence' } },
+              dominant_emotion: 'patience',
+              confidence: 0.8
+            },
+            toolLoop: { toolName: 'validate_emotion_analysis_json', turns: 1, validatorCalls: 1, history: [] }
+          };
+        }
+      };
+
+      const localMockChildProcess = {
+        exec: (cmd, callback) => {
+          if (cmd.includes('ffprobe')) {
+            callback?.(null, { stdout: '4.0', stderr: '' });
+          } else {
+            callback?.(null, { stdout: '', stderr: '' });
+          }
+          return { on: () => {} };
+        },
+        execSync: () => Buffer.from('4.0')
+      };
+
+      const localMockVideoChunkExtractor = {
+        extractVideoChunk: async (assetPath, startTime, endTime, chunksDir, chunkIndex) => {
+          const chunkPath = path.join(chunksDir, `chunk-${chunkIndex}.mp4`);
+          fs.mkdirSync(chunksDir, { recursive: true });
+          fs.writeFileSync(chunkPath, 'X'.repeat(64));
+          return { success: true, chunkPath };
+        }
+      };
+
+      const localMockSplitStrategy = {
+        splitChunk: (chunkPath, maxFileSize, maxSplits, splitFactor) => {
+          splitCalls.push({ chunkPath, maxFileSize, maxSplits, splitFactor });
+          const splitPath = `${chunkPath}.part0.mp4`;
+          fs.writeFileSync(splitPath, 'split chunk');
+          return [splitPath];
+        }
+      };
+
+      mockModule('../../../tools/emotion-lenses-tool.cjs', localMockEmotionLensesTool);
+      mockModule('child_process', localMockChildProcess);
+      mockModule('../../server/lib/video-chunk-extractor.cjs', localMockVideoChunkExtractor);
+      mockModule('../../server/lib/split-strategy.cjs', localMockSplitStrategy);
+
+      const isolatedVideoChunksScript = require('../../server/scripts/process/video-chunks.cjs');
+
+      try {
+        await isolatedVideoChunksScript.run({
+          assetPath: '/path/to/test-video.mp4',
+          outputDir: testOutputDir,
+          artifacts: {},
+          toolVariables: {
+            soulPath: '/path/to/SOUL.md',
+            goalPath: '/path/to/GOAL.md',
+            variables: { lenses: ['patience'] }
+          },
+          config: {
+            ai: {
+              video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+            },
+            settings: { max_chunks: 1 },
+            tool_variables: {
+              maxFileSize: 16,
+              chunk_strategy: {
+                type: 'duration-based',
+                config: { chunkDuration: 8 },
+                split: {
+                  enabled: true,
+                  max_splits: 3,
+                  split_factor: 2
+                }
+              }
+            }
+          }
+        });
+      } finally {
+        for (const absolutePath of modulePaths) {
+          delete require.cache[absolutePath];
+        }
+        for (const [absolutePath, entry] of Object.entries(originalCacheEntries)) {
+          if (entry) require.cache[absolutePath] = entry;
+        }
+      }
+
+      is(splitCalls.length, 1);
+      is(splitCalls[0].maxFileSize, 16);
+      is(splitCalls[0].maxSplits, 3);
+      is(splitCalls[0].splitFactor, 0.5);
+      is(localAnalyzeCalls.length, 1);
+      is(localAnalyzeCalls[0].videoContext.duration, 4);
+    });
+
     await tNested.test('keeps processed chunk files by default', async () => {
       await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',

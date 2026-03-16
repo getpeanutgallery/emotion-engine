@@ -24,8 +24,10 @@ function mockModule(modulePath, mockExports) {
 // Mock AI provider
 const providerConfigCalls = [];
 const completionPrompts = [];
+const completionOptions = [];
 let completeImplementation = async (options) => {
   completionPrompts.push(String(options?.prompt || ''));
+  completionOptions.push(options || {});
   return {
     content: JSON.stringify({
       analysis: {
@@ -103,7 +105,7 @@ mockModule('child_process', mockChildProcess);
 // Require module under test
 const getMusicScript = require('../../server/scripts/get-context/get-music.cjs');
 
-function makeMusicConfig({ adapterName = 'openrouter', model = 'test-music-model', params, retry } = {}) {
+function makeMusicConfig({ adapterName = 'openrouter', model = 'test-music-model', params, retry, ffmpegAudio } = {}) {
   return {
     ai: {
       music: {
@@ -118,6 +120,17 @@ function makeMusicConfig({ adapterName = 'openrouter', model = 'test-music-model
           }
         ]
       }
+    },
+    settings: {
+      ffmpeg: {
+        audio: ffmpegAudio || {
+          loglevel: 'error',
+          codec: 'pcm_s16le',
+          sample_rate_hz: 16000,
+          channels: 1,
+          container: 'wav'
+        }
+      }
     }
   };
 }
@@ -129,8 +142,10 @@ test('Get Music Script', async (t) => {
   t.beforeEach(() => {
     providerConfigCalls.length = 0;
     completionPrompts.length = 0;
+    completionOptions.length = 0;
     completeImplementation = async (options) => {
       completionPrompts.push(String(options?.prompt || ''));
+      completionOptions.push(options || {});
       return {
         content: JSON.stringify({
           analysis: {
@@ -275,6 +290,28 @@ test('Get Music Script', async (t) => {
       ok(fs.existsSync(processedMusicDir));
       ok(fs.existsSync(path.join(processedMusicDir, 'audio.wav')));
       ok(fs.existsSync(path.join(processedMusicDir, 'chunks', 'chunk_000.wav')));
+    });
+
+    tNested.test('uses configured MP3 extraction bitrate and attachment mime type', async () => {
+      await getMusicScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeMusicConfig({
+          ffmpegAudio: {
+            loglevel: 'error',
+            codec: 'libmp3lame',
+            bitrate: '192k',
+            sample_rate_hz: 44100,
+            channels: 2,
+            container: 'mp3'
+          }
+        })
+      });
+
+      const processedMusicDir = path.join(testOutputDir, 'assets', 'processed', 'music');
+      ok(fs.existsSync(path.join(processedMusicDir, 'audio.mp3')));
+      ok(fs.existsSync(path.join(processedMusicDir, 'chunks', 'chunk_000.mp3')));
+      assert.equal(completionOptions[0]?.attachments?.[0]?.mimeType, 'audio/mpeg');
     });
 
     tNested.test('cleans processed music temp files when debug.keepProcessedIntermediates=false', async () => {

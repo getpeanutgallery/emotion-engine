@@ -1,59 +1,67 @@
-# Full Analysis Pipeline Configuration
-# Complete emotion analysis with dialogue, music, and video processing
-
-name: "Full Video Analysis Pipeline"
-description: "Complete emotion analysis with dialogue, music, and video processing"
-version: "1.0"
-
-# Asset configuration
+name: Full Video Analysis Pipeline
+description: Complete emotion analysis with dialogue, music, and video processing
+version: '1.0'
 asset:
-  inputPath: ".cache/videos/test-video.mp4"
-  outputDir: "output/full-analysis"
-
-# Gather context from video (dialogue and music)
+  inputPath: .cache/videos/test-video.mp4
+  outputDir: output/full-analysis
 gather_context:
   - server/scripts/get-context/get-dialogue.cjs
   - server/scripts/get-context/get-music.cjs
-
-# Process video with emotion analysis
 process:
   sequential:
     - script: server/scripts/process/video-chunks.cjs
       toolPath: ../tools/emotion-lenses-tool.cjs
       tool_variables:
-        soulPath: "../cast/impatient-teenager/SOUL.md"
-        goalPath: "../goals/video-ad-evaluation.md"
+        soulPath: ../cast/impatient-teenager/SOUL.md
+        goalPath: ../goals/video-ad-evaluation.md
         variables:
           lenses:
             - patience
             - boredom
             - excitement
     - script: server/scripts/process/video-per-second.cjs
-
-# Generate comprehensive report
 report:
   - server/scripts/report/evaluation.cjs
-
-# Settings
 settings:
   chunk_duration: 8
-  max_chunks: 10  # Analyze up to 10 chunks (80 seconds of video)
+  max_chunks: 10
   api_request_delay: 1000
-  chunk_quality: "medium"
+  chunk_quality: medium
   music_segment_duration: 30
-
-# Tool variables
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95
 tool_variables:
-  soulPath: "../cast/impatient-teenager/SOUL.md"
-  goalPath: "../goals/video-ad-evaluation.md"
+  soulPath: ../cast/impatient-teenager/SOUL.md
+  goalPath: ../goals/video-ad-evaluation.md
   variables:
     lenses:
       - patience
       - boredom
       - excitement
-
-# AI provider configuration
-
 ai:
   dialogue:
     targets:

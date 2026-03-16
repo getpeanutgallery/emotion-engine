@@ -1,58 +1,56 @@
-# Quick Test Pipeline Configuration
-# Minimal pipeline for testing the Emotion Engine v8.0 scripts
-
-name: "Quick Test Pipeline"
-description: "Minimal pipeline for testing (1 process script only, 2 chunks max)"
-version: "1.0"
-
-# Asset configuration
+name: Quick Test Pipeline
+description: Minimal pipeline for testing (1 process script only, 2 chunks max)
+version: '1.0'
 asset:
-  inputPath: ".cache/videos/test-video.mp4"
-  outputDir: "output/quick-test"
-
-# Skip context gathering for speed (or enable for full test)
+  inputPath: .cache/videos/test-video.mp4
+  outputDir: output/quick-test
 gather_context: []
-# gather_context:
-#   - server/scripts/get-context/get-dialogue.cjs
-#   - server/scripts/get-context/get-music.cjs
-
-# Process with video-chunks (limited to 2 chunks for fast testing)
 process:
   - server/scripts/process/video-chunks.cjs
-
-# Generate evaluation report
 report:
   - server/scripts/report/evaluation.cjs
-
-# Settings for quick testing
 settings:
   chunk_duration: 8
-  max_chunks: 2  # Only 2 chunks for fast testing
+  max_chunks: 2
   api_request_delay: 500
   music_segment_duration: 30
-
-# Debug settings (for development/testing)
-# When keepTempFiles: true, intermediate files are saved to:
-#   - phase1-gather-context/assets/processed/dialogue/<timestamp>/
-#   - phase1-gather-context/assets/processed/music/<timestamp>/
-#   - phase2-process/assets/processed/chunks/<timestamp>/
-# See: docs/DEBUG-CONFIG.md for details
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95
 debug:
-  keepTempFiles: true        # Keep ffmpeg extracts, chunk files for debugging
-  keepProcessedAssets: true  # Copy to assets/processed/
-
-# Tool variables (paths must be absolute or relative to ../tools)
+  keepTempFiles: true
+  keepProcessedAssets: true
 tool_variables:
-  soulPath: "../cast/impatient-teenager/SOUL.md"
-  goalPath: "../goals/video-ad-evaluation.md"
+  soulPath: ../cast/impatient-teenager/SOUL.md
+  goalPath: ../goals/video-ad-evaluation.md
   variables:
     lenses:
       - patience
       - boredom
       - excitement
-
-# AI provider configuration (API key injected via environment)
-
 ai:
   dialogue:
     targets:

@@ -1,47 +1,49 @@
-# Phase 3-only pipeline for fast iteration on report scripts.
-#
-# This config intentionally skips Phase 1 + Phase 2 work and reuses an existing
-# run folder that already contains Phase 1/2 artifacts (e.g. output/cod-test).
-#
-# NOTE: Phase 3 still needs prior artifacts (especially phase2 chunk-analysis).
-#       The orchestrator will attempt to hydrate artifacts from outputDir and
-#       will fail early with a clear error if required files are missing.
-
-name: "COD Test Pipeline (Phase 3 only)"
-description: "Run only Phase 3 report scripts using existing Phase 1/2 artifacts in output/cod-test"
-version: "1.0"
-
+name: COD Test Pipeline (Phase 3 only)
+description: Run only Phase 3 report scripts using existing Phase 1/2 artifacts in output/cod-test
+version: '1.0'
 asset:
-  # Required by config validation. For Phase 3 runs, prefer keeping this identical to
-  # the original run that produced output/cod-test to avoid confusion.
-  inputPath: "examples/videos/emotion-tests/cod.mp4"
-
-  # IMPORTANT: points at an existing run folder with Phase 1 + Phase 2 artifacts.
-  # This is what makes Phase 3 fast.
-  outputDir: "output/cod-test"
-
-# No Phase 1/2 work in this config.
+  inputPath: examples/videos/emotion-tests/cod.mp4
+  outputDir: output/cod-test
 gather_context: []
 process: []
-
-# Phase 3 report scripts only.
 report:
   - server/scripts/report/metrics.cjs
   - server/scripts/report/recommendation.cjs
   - server/scripts/report/emotional-analysis.cjs
   - server/scripts/report/summary.cjs
   - server/scripts/report/final-report.cjs
-
-# Keep settings aligned with the original run where possible (especially if the
-# report scripts rely on config-derived parameters).
 settings:
   chunk_duration: 8
   max_chunks: 100
   api_request_delay: 500
-
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95
 debug:
   captureRaw: true
-
 recovery:
   deterministic:
     maxAttemptsPerFailure: 2
@@ -62,9 +64,6 @@ recovery:
       maxOutputTokens: 2000
       maxTotalTokens: 14000
       maxCostUsd: 0.25
-
-# AI config is required by schema and may be used by Phase 3 scripts (notably recommendation).
-# We keep these aligned with configs/cod-test.yaml.
 ai:
   dialogue:
     targets:
@@ -81,9 +80,6 @@ ai:
       - adapter:
           name: openrouter
           model: google/gemini-3.1-pro-preview
-
-  # Recommendation is Phase 3 only. If omitted, the script will inherit ai.video.targets,
-  # but we define it explicitly so Phase3-only runs are self-contained.
   recommendation:
     retry:
       maxAttempts: 3

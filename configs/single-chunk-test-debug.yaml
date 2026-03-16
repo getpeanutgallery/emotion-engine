@@ -1,66 +1,74 @@
-# Single Chunk Test with Debug - Verify Chunks Are Kept
-# Test with debug mode to verify chunks are kept for debugging
-# Output structure: phase1-gather-context/, phase2-process/, phase3-report/
-
-name: "Single Chunk Test with Debug"
-description: "Test with debug=true to verify chunks are kept in assets/processed/chunks/"
-version: "1.0"
-
+name: Single Chunk Test with Debug
+description: Test with debug=true to verify chunks are kept in assets/processed/chunks/
+version: '1.0'
 asset:
-  inputPath: "examples/videos/emotion-tests/cod.mp4"
-  outputDir: "output/single-chunk-test-debug"
-
+  inputPath: examples/videos/emotion-tests/cod.mp4
+  outputDir: output/single-chunk-test-debug
 gather_context:
   - server/scripts/get-context/get-dialogue.cjs
   - server/scripts/get-context/get-music.cjs
-
 process:
   - server/scripts/process/video-chunks.cjs
-
 report: []
-
 settings:
   chunk_duration: 5
   max_chunks: 1
   api_request_delay: 500
   retry_strategy:
-    type: "exponential-backoff"
+    type: exponential-backoff
     config:
       maxRetries: 3
       initialDelayMs: 1000
       maxDelayMs: 10000
       exponentialBase: 2
       jitter: true
-
-# Debug settings - keeps temp files for inspection
-# Files saved to: phase2-process/assets/processed/chunks/<timestamp>/
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95
 debug:
   keepTempFiles: true
   keepProcessedAssets: true
-
 tool_variables:
-  soulPath: "../cast/impatient-teenager/SOUL.md"
-  goalPath: "../goals/video-ad-evaluation.md"
-  
-  file_transfer: "base64"
+  soulPath: ../cast/impatient-teenager/SOUL.md
+  goalPath: ../goals/video-ad-evaluation.md
+  file_transfer: base64
   maxFileSize: 10485760
-  
   chunk_strategy:
-    type: "duration-based"
+    type: duration-based
     config:
       chunkDuration: 5
-    
     split:
       enabled: true
       max_splits: 3
       split_factor: 2
-  
   variables:
     lenses:
       - patience
       - boredom
       - excitement
-
 ai:
   dialogue:
     targets:

@@ -14,6 +14,11 @@ const path = require('path');
 const { spawn } = require('child_process');
 const { ffmpegPath } = require('./ffmpeg-path.cjs');
 const {
+  buildAudioExtractArgs,
+  getAudioOutputExtension,
+  getRequiredAudioConfig
+} = require('./ffmpeg-config.cjs');
+const {
   createCommandFailure,
   createPathFailure,
   createIoFailure
@@ -116,21 +121,35 @@ async function extractAudioChunk(audioPath, startTime, endTime, outputDir, chunk
     });
   }
 
-  const outputFilename = `chunk_${pad(chunkIndex, 3)}.wav`;
-  const outputPath = path.join(outputDir, outputFilename);
+  let ffmpegAudioConfig;
+  try {
+    ffmpegAudioConfig = options.ffmpegAudioConfig || getRequiredAudioConfig(options.config);
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+      failure: {
+        failureCategory: 'config',
+        failureCode: 'AUDIO_CHUNK_FFMPEG_CONFIG_INVALID',
+        stage: 'tool.wrapper.audio-chunk.config',
+        diagnostics: { message: error.message },
+        retryable: false,
+        pathNormalizationEligible: false,
+        systemCode: null,
+        payload: null
+      }
+    };
+  }
 
-  // Extract and normalize audio to 16kHz mono PCM WAV to match existing get-dialogue/get-music behavior.
-  const args = [
-    '-v', 'error',
-    '-i', audioPath,
-    '-ss', startTime.toString(),
-    '-t', (endTime - startTime).toString(),
-    '-acodec', 'pcm_s16le',
-    '-ar', '16000',
-    '-ac', '1',
-    '-y',
-    outputPath
-  ];
+  const outputFilename = `chunk_${pad(chunkIndex, 3)}.${getAudioOutputExtension(ffmpegAudioConfig)}`;
+  const outputPath = path.join(outputDir, outputFilename);
+  const args = buildAudioExtractArgs({
+    inputPath: audioPath,
+    outputPath,
+    ffmpegAudioConfig,
+    startTime,
+    durationSeconds: endTime - startTime
+  });
 
   const rawLogger = typeof options.rawLogger === 'function' ? options.rawLogger : null;
 

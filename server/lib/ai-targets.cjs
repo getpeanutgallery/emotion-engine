@@ -49,6 +49,10 @@ function normalizeErrorHeaders(headers) {
 }
 
 function getErrorRequestId(error) {
+  if (typeof error?.requestId === 'string' && error.requestId.trim()) {
+    return error.requestId.trim();
+  }
+
   const headers = normalizeErrorHeaders(
     error?.response?.headers
     ?? error?.debug?.response?.headers
@@ -62,6 +66,29 @@ function getErrorRequestId(error) {
   }
 
   return null;
+}
+
+function preserveWrappedTransportMetadata(error) {
+  if (!error || typeof error !== 'object') return error;
+
+  const debugCode = typeof error?.debug?.error?.code === 'string' && error.debug.error.code.trim()
+    ? error.debug.error.code.trim()
+    : null;
+  if (!error.code && debugCode) {
+    error.code = debugCode;
+  }
+
+  const status = getErrorStatus(error);
+  if (!Number.isInteger(error.status) && Number.isInteger(status)) {
+    error.status = status;
+  }
+
+  const requestId = getErrorRequestId(error);
+  if ((typeof error.requestId !== 'string' || !error.requestId.trim()) && requestId) {
+    error.requestId = requestId;
+  }
+
+  return error;
 }
 
 function parseDebugResponseBody(body) {
@@ -406,7 +433,7 @@ async function executeWithTargets({
           }
         };
       } catch (error) {
-        lastError = error;
+        lastError = preserveWrappedTransportMetadata(error);
 
         let classification = 'fatal';
         if (isAuthError(error)) classification = 'auth';
@@ -497,6 +524,7 @@ module.exports = {
   isRetryableRuntimeError,
   getErrorStatus,
   getErrorRequestId,
+  preserveWrappedTransportMetadata,
   getErrorResponseBody,
   getErrorClassification,
   getPersistedErrorInfo

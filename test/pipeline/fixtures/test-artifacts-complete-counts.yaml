@@ -1,11 +1,9 @@
-name: "Artifacts Complete Count Test"
-description: "Ensures artifacts-complete.json matches phase artifact array counts"
-version: "1.0.0"
-
+name: Artifacts Complete Count Test
+description: Ensures artifacts-complete.json matches phase artifact array counts
+version: 1.0.0
 asset:
-  inputPath: ".cache/videos/test.mp4"
-  outputDir: "test/pipeline/fixtures/artifacts-count-output"
-
+  inputPath: .cache/videos/test.mp4
+  outputDir: test/pipeline/fixtures/artifacts-count-output
 ai:
   dialogue:
     targets:
@@ -22,12 +20,36 @@ ai:
       - adapter:
           name: openrouter
           model: test-video-model
-
 gather_context:
   - test/pipeline/fixtures/scripts/phase1-array-artifacts.cjs
-
 process:
   - test/pipeline/fixtures/scripts/phase2-array-artifacts.cjs
-
 report:
   - test/pipeline/fixtures/scripts/phase3-noop-report.cjs
+settings:
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95

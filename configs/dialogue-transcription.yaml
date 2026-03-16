@@ -1,16 +1,9 @@
-# Dialogue Transcription Pipeline
-# Transcribe audio and generate a simple report (no persona evaluation)
-
-name: "Dialogue Transcription Pipeline"
-description: "Transcribe audio and generate a simple report (no persona evaluation)"
-version: "1.0"
-
-# Asset configuration (self-contained - no CLI args needed)
+name: Dialogue Transcription Pipeline
+description: Transcribe audio and generate a simple report (no persona evaluation)
+version: '1.0'
 asset:
-  inputPath: ".cache/audio/meeting.mp3"
-  outputDir: "output/transcription"
-
-# AI provider configuration (git-safe - secrets injected via env vars)
+  inputPath: .cache/audio/meeting.mp3
+  outputDir: output/transcription
 ai:
   dialogue:
     targets:
@@ -27,20 +20,36 @@ ai:
       - adapter:
           name: openrouter
           model: qwen/qwen-3.5-397b-a17b
-
-# Gather dialogue from audio/video
 gather_context:
   - server/scripts/get-context/get-dialogue.cjs
-
-# Skip persona-based processing
 process: []
-
-# Generate a basic report (includes dialogueData if present)
 report:
   - server/scripts/report/evaluation.cjs
-
-# Global settings
 settings:
   api_request_delay: 1000
-
-# Use case: Transcribe meetings, interviews, or podcasts without persona evaluation.
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95

@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 const { ffmpegPath, ffprobePath } = require('./ffmpeg-path.cjs');
+const { buildVideoCompressArgs } = require('./ffmpeg-config.cjs');
 
 /**
  * Compress a video chunk to meet size requirements
@@ -18,7 +19,7 @@ const { ffmpegPath, ffprobePath } = require('./ffmpeg-path.cjs');
  * @param {number} maxSizeBytes - Maximum target size in bytes
  * @returns {Promise<{success: boolean, originalSize: number, compressedSize: number}>}
  */
-async function compressChunk(inputPath, outputPath, maxSizeBytes) {
+async function compressChunk(inputPath, outputPath, maxSizeBytes, config) {
     const originalSize = fs.statSync(inputPath).size;
     
     // If already under target, just copy
@@ -49,19 +50,14 @@ async function compressChunk(inputPath, outputPath, maxSizeBytes) {
     const targetSizeBytes = maxSizeBytes * 0.9;
     const targetBitrateKbps = Math.floor((targetSizeBytes * 8) / duration);
     
-    // Build FFmpeg command with progressive quality reduction
-    const args = [
-        '-i', inputPath,
-        '-c:v', 'libx264',
-        '-preset', 'fast',
-        '-max_width', '1280',  // Max width, maintain aspect ratio
-        '-r', '24',            // Target 24fps
-        '-b:v', `${targetBitrateKbps}k`,
-        '-c:a', 'aac',
-        '-b:a', '128k',
-        '-y',                  // Overwrite output
-        outputPath
-    ];
+    const args = buildVideoCompressArgs({
+        inputPath,
+        outputPath,
+        maxSizeBytes,
+        durationSeconds: duration,
+        config,
+        aggressive: false
+    });
     
     return new Promise((resolve, reject) => {
         const ffmpeg = spawn(ffmpegPath, args);
@@ -91,7 +87,7 @@ async function compressChunk(inputPath, outputPath, maxSizeBytes) {
             // If still too large, try again with more aggressive settings
             if (compressedSize > maxSizeBytes) {
                 console.log(`   ⚠️  Still over target, trying more aggressive compression...`);
-                return compressChunkAggressive(inputPath, outputPath, maxSizeBytes, originalSize)
+                return compressChunkAggressive(inputPath, outputPath, maxSizeBytes, originalSize, config)
                     .then(resolve)
                     .catch(() => {
                         fs.copyFileSync(inputPath, outputPath);
@@ -121,25 +117,16 @@ async function compressChunk(inputPath, outputPath, maxSizeBytes) {
 /**
  * More aggressive compression fallback
  */
-async function compressChunkAggressive(inputPath, outputPath, maxSizeBytes, originalSize) {
+async function compressChunkAggressive(inputPath, outputPath, maxSizeBytes, originalSize, config) {
     const duration = await getDuration(inputPath);
-    const targetSizeBytes = maxSizeBytes * 0.95;
-    const targetBitrateKbps = Math.floor((targetSizeBytes * 8) / duration);
-    
-    const args = [
-        '-i', inputPath,
-        '-c:v', 'libx264',
-        '-preset', 'slow',
-        '-vf', 'scale=\'min(1280,iw)\':-1:force_original_aspect_ratio=decrease',
-        '-r', '24',
-        '-b:v', `${targetBitrateKbps}k`,
-        '-maxrate', `${Math.floor(targetBitrateKbps * 1.2)}k`,
-        '-bufsize', `${Math.floor(targetBitrateKbps * 2)}k`,
-        '-c:a', 'aac',
-        '-b:a', '96k',
-        '-y',
-        outputPath
-    ];
+    const args = buildVideoCompressArgs({
+        inputPath,
+        outputPath,
+        maxSizeBytes,
+        durationSeconds: duration,
+        config,
+        aggressive: true
+    });
     
     return new Promise((resolve, reject) => {
         const ffmpeg = spawn(ffmpegPath, args);

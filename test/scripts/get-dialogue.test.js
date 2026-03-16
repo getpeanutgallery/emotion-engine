@@ -17,8 +17,10 @@ function mockModule(modulePath, mockExports) {
 // Mock AI provider
 const providerConfigCalls = [];
 const completionPrompts = [];
+const completionOptions = [];
 let completeImplementation = async (options) => {
   completionPrompts.push(String(options?.prompt || ''));
+  completionOptions.push(options || {});
 
   // Stitcher call is text-only.
   if (String(options?.prompt || '').includes('dialogue transcript stitcher')) {
@@ -108,7 +110,7 @@ mockModule('child_process', mockChildProcess);
 
 const getDialogueScript = require('../../server/scripts/get-context/get-dialogue.cjs');
 
-function makeDialogueConfig({ adapterName = 'openrouter', model = 'test-dialogue-model', params, retry } = {}) {
+function makeDialogueConfig({ adapterName = 'openrouter', model = 'test-dialogue-model', params, retry, ffmpegAudio } = {}) {
   return {
     ai: {
       dialogue: {
@@ -123,6 +125,17 @@ function makeDialogueConfig({ adapterName = 'openrouter', model = 'test-dialogue
           }
         ]
       }
+    },
+    settings: {
+      ffmpeg: {
+        audio: ffmpegAudio || {
+          loglevel: 'error',
+          codec: 'pcm_s16le',
+          sample_rate_hz: 16000,
+          channels: 1,
+          container: 'wav'
+        }
+      }
     }
   };
 }
@@ -133,8 +146,10 @@ test('Get Dialogue Script', async (t) => {
   t.beforeEach(() => {
     providerConfigCalls.length = 0;
     completionPrompts.length = 0;
+    completionOptions.length = 0;
     completeImplementation = async (options) => {
       completionPrompts.push(String(options?.prompt || ''));
+      completionOptions.push(options || {});
 
       if (String(options?.prompt || '').includes('dialogue transcript stitcher')) {
         return {
@@ -298,6 +313,27 @@ test('Get Dialogue Script', async (t) => {
       ok(fs.existsSync(path.join(processedDialogueDir, 'audio.wav')));
     });
 
+    tNested.test('uses configured MP3 extraction bitrate and attachment mime type', async () => {
+      await getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeDialogueConfig({
+          ffmpegAudio: {
+            loglevel: 'error',
+            codec: 'libmp3lame',
+            bitrate: '192k',
+            sample_rate_hz: 44100,
+            channels: 2,
+            container: 'mp3'
+          }
+        })
+      });
+
+      const processedDialogueDir = path.join(testOutputDir, 'assets', 'processed', 'dialogue');
+      ok(fs.existsSync(path.join(processedDialogueDir, 'audio.mp3')));
+      assert.equal(completionOptions[0]?.attachments?.[0]?.mimeType, 'audio/mpeg');
+    });
+
     tNested.test('cleans processed dialogue temp files when debug.keepProcessedIntermediates=false', async () => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
@@ -380,6 +416,7 @@ test('Get Dialogue Script', async (t) => {
         config: {
           ...makeDialogueConfig({ adapterName: 'openrouter' }),
           settings: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).settings,
             // Force chunking with a tiny budget.
             audio_base64_max_bytes: 10,
             audio_base64_headroom_ratio: 0.9

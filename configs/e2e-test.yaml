@@ -1,16 +1,9 @@
-# End-to-End Test Configuration
-# Tests full pipeline with parallel execution
-
-name: "E2E Test Pipeline"
-description: "End-to-end test with parallel script execution"
-version: "1.0.0"
-
-# Asset configuration
+name: E2E Test Pipeline
+description: End-to-end test with parallel script execution
+version: 1.0.0
 asset:
-  inputPath: ".cache/videos/e2e-test.mp4"
-  outputDir: "output/e2e-test"
-
-# AI provider configuration (git-safe - secrets injected via env vars)
+  inputPath: .cache/videos/e2e-test.mp4
+  outputDir: output/e2e-test
 ai:
   dialogue:
     targets:
@@ -27,29 +20,51 @@ ai:
       - adapter:
           name: openrouter
           model: qwen/qwen-3.5-397b-a17b
-
-# Phase 1: Gather Context (parallel)
 gather_context:
   parallel:
     - script: server/scripts/get-context/example-gather.cjs
-
-# Phase 2: Process (parallel - simulating multi-persona swarm)
 process:
   parallel:
     - script: server/scripts/process/example-process.cjs
       toolVariables:
-        persona: "persona-1"
-        lenses: ["patience", "boredom"]
+        persona: persona-1
+        lenses:
+          - patience
+          - boredom
     - script: server/scripts/process/example-process.cjs
       toolVariables:
-        persona: "persona-2"
-        lenses: ["excitement", "joy"]
-
-# Phase 3: Report
+        persona: persona-2
+        lenses:
+          - excitement
+          - joy
 report:
   - server/scripts/report/example-report.cjs
-
-# Global settings
 settings:
   test_mode: true
   e2e_test: true
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95

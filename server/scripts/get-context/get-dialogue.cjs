@@ -15,8 +15,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { exec, execSync } = require('child_process');
-const { promisify } = require('util');
+const { spawn, execSync } = require('child_process');
 const {
   executeWithTargets,
   getProviderForTarget,
@@ -36,6 +35,13 @@ const { preflightAudio } = require('../../lib/audio-preflight.cjs');
 const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
 const { extractAudioChunk } = require('../../lib/audio-chunk-extractor.cjs');
 const {
+  buildAudioExtractArgs,
+  formatCommand,
+  getAudioMimeType,
+  getAudioOutputExtension,
+  getRequiredAudioConfig
+} = require('../../lib/ffmpeg-config.cjs');
+const {
   parseAndValidateJsonObject,
   validateDialogueTranscriptionObject,
   validateDialogueStitchObject
@@ -49,13 +55,46 @@ const {
 const { executeLocalValidatorToolLoop } = require('../../lib/local-validator-tool-loop.cjs');
 const { applyFailureMetadata } = require('../../lib/tool-wrapper-contract.cjs');
 
-const execAsync = promisify(exec);
-
 const PHASE_KEY = 'phase1-gather-context';
 const SCRIPT_ID = 'get-dialogue';
 
 function pad(value, width) {
   return String(value).padStart(width, '0');
+}
+
+function runCommand(command, args) {
+  return new Promise((resolve, reject) => {
+    const proc = spawn(command, args);
+    let stdout = '';
+    let stderr = '';
+
+    proc.stdout?.on('data', (data) => {
+      stdout += data.toString();
+    });
+
+    proc.stderr?.on('data', (data) => {
+      stderr += data.toString();
+    });
+
+    proc.on('close', (code) => {
+      if (code === 0) {
+        resolve({ stdout, stderr });
+        return;
+      }
+
+      const error = new Error(`${command} exited with code ${code}`);
+      error.code = code;
+      error.stdout = stdout;
+      error.stderr = stderr;
+      reject(error);
+    });
+
+    proc.on('error', (error) => {
+      error.stdout = stdout;
+      error.stderr = stderr;
+      reject(error);
+    });
+  });
 }
 
 function getRetryConfig(config = {}, domain = 'dialogue') {
@@ -275,7 +314,8 @@ async function run(input) {
     const audioPath = await extractAudio(assetPath, tempDir, {
       captureRaw,
       ffmpegRawDir,
-      logName: 'extract-audio.json'
+      logName: 'extract-audio.json',
+      config
     });
 
     const preflight = preflightAudio({
@@ -357,7 +397,7 @@ async function run(input) {
       // --------------------
       // Convert audio to base64 for AI provider
       const audioBase64 = fs.readFileSync(audioPath).toString('base64');
-      const audioMimeType = 'audio/wav';
+      const audioMimeType = getAudioMimeType(config);
 
       // Build transcription prompt
       prompt = buildTranscriptionPrompt(recoveryRuntime);
@@ -608,6 +648,7 @@ async function run(input) {
         chunksDir,
         chunkIndex,
         {
+          config,
           rawLogger: captureRaw
             ? (payload) => writeRawJson(ffmpegRawDir, `extract-chunk-${chunkIndex}.json`, payload)
             : null
@@ -632,7 +673,7 @@ async function run(input) {
       }
 
       const audioBase64 = fs.readFileSync(extraction.chunkPath).toString('base64');
-      const audioMimeType = 'audio/wav';
+      const audioMimeType = getAudioMimeType(config);
 
       const chunkPrompt = buildChunkTranscriptionPrompt({
         chunkIndex,
@@ -1211,7 +1252,8 @@ async function run(input) {
  * @returns {Promise<string>} - Path to extracted audio file
  */
 async function extractAudio(videoPath, outputDir, rawCapture = {}) {
-  const audioPath = path.join(outputDir, 'audio.wav');
+  const ffmpegAudioConfig = getRequiredAudioConfig(rawCapture.config);
+  const audioPath = path.join(outputDir, `audio.${getAudioOutputExtension(ffmpegAudioConfig)}`);
 
   // Check if input is already audio
   const ext = path.extname(videoPath).toLowerCase();
@@ -1232,15 +1274,21 @@ async function extractAudio(videoPath, outputDir, rawCapture = {}) {
     return audioPath;
   }
 
-  const command = `"${ffmpegPath}" -v error -i "${videoPath}" -vn -acodec pcm_s16le -ar 16000 -ac 1 -y "${audioPath}"`;
+  const args = buildAudioExtractArgs({
+    inputPath: videoPath,
+    outputPath: audioPath,
+    ffmpegAudioConfig,
+    disableVideo: true
+  });
+  const command = formatCommand(ffmpegPath, args);
 
-  // Extract audio from video using ffmpeg
   try {
-    const { stdout, stderr } = await execAsync(command);
+    const { stdout, stderr } = await runCommand(ffmpegPath, args);
     if (rawCapture.captureRaw) {
       writeRawJson(rawCapture.ffmpegRawDir, rawCapture.logName || 'extract-audio.json', {
         tool: 'ffmpeg',
         command,
+        args,
         stdout,
         stderr,
         status: 'success'
@@ -1252,6 +1300,7 @@ async function extractAudio(videoPath, outputDir, rawCapture = {}) {
       writeRawJson(rawCapture.ffmpegRawDir, rawCapture.logName || 'extract-audio.json', {
         tool: 'ffmpeg',
         command,
+        args,
         stdout: error.stdout || '',
         stderr: error.stderr || '',
         status: 'failed',

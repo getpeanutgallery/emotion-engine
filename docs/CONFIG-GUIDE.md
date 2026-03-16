@@ -347,6 +347,54 @@ And they emit `artifact.write` events in `_meta/events.jsonl` pointing to these 
 
 ---
 
+## FFmpeg settings (required)
+
+`settings.ffmpeg` is now the canonical source of truth for Phase 1 audio extraction/chunking and shared video compression helpers. Validation fails hard if this block or its required keys are missing.
+
+```yaml
+settings:
+  ffmpeg:
+    audio:
+      loglevel: "error"
+      codec: "pcm_s16le"
+      # Optional for lossy formats; required for MP3 extraction.
+      # Example MP3 lane: codec: "libmp3lame", bitrate: "192k", container: "mp3"
+      bitrate: "192k"
+      sample_rate_hz: 16000
+      channels: 1
+      container: "wav"
+
+    video:
+      compress:
+        vcodec: "libx264"
+        preset: "fast"
+        max_width: 1280
+        fps: 24
+        audio_codec: "aac"
+        audio_bitrate: "128k"
+        size_headroom_ratio: 0.9
+
+      compress_aggressive:
+        vcodec: "libx264"
+        preset: "slow"
+        fps: 24
+        audio_codec: "aac"
+        audio_bitrate: "96k"
+        vf: "scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease"
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2.0
+        size_headroom_ratio: 0.95
+```
+
+Notes:
+
+- `settings.ffmpeg.audio.container` controls the generated audio filename extension (for example `audio.wav`, `chunk_000.wav`, `audio.mp3`).
+- `settings.ffmpeg.audio.bitrate` is optional for lossless extraction, but required when extracting MP3 (`codec: libmp3lame`, `container: mp3`) so lossy quality is explicit in YAML instead of hidden in FFmpeg defaults.
+- `settings.ffmpeg.video.compress.size_headroom_ratio` and `settings.ffmpeg.video.compress_aggressive.size_headroom_ratio` drive bitrate targeting from `maxSizeBytes` and clip duration.
+- There are no legacy defaults for these knobs anymore; update every pipeline YAML when introducing a new config.
+
+---
+
 ## Debug flags
 
 See `docs/DEBUG-CONFIG.md` for details.

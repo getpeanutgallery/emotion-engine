@@ -1,17 +1,9 @@
-# Example Pipeline Configuration
-# Uses example scripts to test the full pipeline flow
-
-name: "Example Pipeline Test"
-description: "Test configuration using example scripts (no AI calls)"
-version: "1.0.0"
-
-# Asset configuration
+name: Example Pipeline Test
+description: Test configuration using example scripts (no AI calls)
+version: 1.0.0
 asset:
-  inputPath: ".cache/videos/test.mp4"
-  outputDir: "output/example-pipeline"
-
-# AI provider configuration
-
+  inputPath: .cache/videos/test.mp4
+  outputDir: output/example-pipeline
 ai:
   dialogue:
     targets:
@@ -32,19 +24,37 @@ ai:
             max_tokens: 900
             thinking:
               level: low
-
 gather_context:
   - server/scripts/get-context/example-gather.cjs
-
-# Phase 2: Process (sequential)
 process:
   - server/scripts/process/example-process.cjs
-
-# Phase 3: Report
 report:
   - server/scripts/report/example-report.cjs
-
-# Global settings
 settings:
   test_mode: true
-
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95

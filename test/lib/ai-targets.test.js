@@ -9,9 +9,12 @@ const {
   DEFAULT_DEVELOPMENT_THINKING_LEVEL,
   getErrorStatus,
   getErrorRequestId,
+  preserveWrappedTransportMetadata,
   getErrorResponseBody,
   getErrorClassification,
-  getPersistedErrorInfo
+  getPersistedErrorInfo,
+  isRetryableRuntimeError,
+  executeWithTargets
 } = require('../../server/lib/ai-targets.cjs');
 
 test('normalizeThinkingLevel accepts normalized levels case-insensitively', () => {
@@ -201,4 +204,92 @@ test('getErrorResponseBody synthesizes OpenRouter-style error payload from debug
       }
     }
   });
+});
+
+test('preserveWrappedTransportMetadata lifts code, status, and requestId from wrapped debug payloads', () => {
+  const error = new Error('OpenRouter: aborted');
+  error.name = 'OpenRouterError';
+  error.debug = {
+    provider: 'openrouter',
+    error: {
+      code: 'ECONNRESET',
+      message: 'aborted'
+    },
+    response: {
+      status: 502,
+      headers: {
+        'x-request-id': 'req_wrapped_123'
+      }
+    }
+  };
+
+  const preserved = preserveWrappedTransportMetadata(error);
+
+  assert.equal(preserved, error);
+  assert.equal(error.code, 'ECONNRESET');
+  assert.equal(error.status, 502);
+  assert.equal(error.requestId, 'req_wrapped_123');
+  assert.equal(getErrorRequestId(error), 'req_wrapped_123');
+});
+
+test('preserveWrappedTransportMetadata enables retryable classification for wrapped transport aborts', () => {
+  const error = new Error('OpenRouter: aborted');
+  error.name = 'OpenRouterError';
+  error.debug = {
+    provider: 'openrouter',
+    error: {
+      code: 'ECONNRESET',
+      message: 'aborted'
+    }
+  };
+
+  assert.equal(isRetryableRuntimeError(error), false);
+  preserveWrappedTransportMetadata(error);
+  assert.equal(error.code, 'ECONNRESET');
+  assert.equal(isRetryableRuntimeError(error), true);
+});
+
+test('executeWithTargets retries wrapped transport aborts after metadata preservation', async () => {
+  let attempts = 0;
+  const wrappedAbort = new Error('OpenRouter: aborted');
+  wrappedAbort.name = 'OpenRouterError';
+  wrappedAbort.debug = {
+    provider: 'openrouter',
+    error: {
+      code: 'ECONNRESET',
+      message: 'aborted'
+    },
+    response: {
+      headers: {
+        'x-request-id': 'req_retry_123'
+      }
+    }
+  };
+
+  const result = await executeWithTargets({
+    config: {
+      ai: {
+        provider: 'openrouter',
+        video: {
+          targets: [
+            { adapter: { name: 'openrouter', model: 'primary-model' } }
+          ]
+        }
+      }
+    },
+    domain: 'video',
+    retry: { maxAttempts: 2, backoffMs: 0 },
+    replayMode: true,
+    operation: async () => {
+      attempts += 1;
+      if (attempts === 1) throw wrappedAbort;
+      return { ok: true };
+    }
+  });
+
+  assert.equal(attempts, 2);
+  assert.deepEqual(result.result, { ok: true });
+  assert.equal(wrappedAbort.code, 'ECONNRESET');
+  assert.equal(wrappedAbort.requestId, 'req_retry_123');
+  assert.equal(wrappedAbort.aiTargets.classification, 'retryable');
 });

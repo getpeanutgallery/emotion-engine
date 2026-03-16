@@ -139,15 +139,17 @@ async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunk
     const outputFilename = `chunk_${chunkIndex.toString().padStart(3, '0')}${ext}`;
     const outputPath = path.join(outputDir, outputFilename);
 
+    const durationSeconds = endTime - startTime;
+
     // Build FFmpeg command
     // -ss: seek to start time (before -i for fast seek)
-    // -to: stop at end time
+    // -t: extract a bounded duration window relative to the seek point
     // -c copy: copy streams without re-encoding (fast)
     // -y: overwrite output file if exists
     const args = [
         '-ss', startTime.toString(),
         '-i', videoPath,
-        '-to', endTime.toString(),
+        '-t', durationSeconds.toString(),
         '-c', 'copy',
         '-y',
         outputPath

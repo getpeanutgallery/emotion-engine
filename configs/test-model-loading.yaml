@@ -1,15 +1,9 @@
-# Test Model Loading from YAML
-# This config tests if models are loaded from YAML, not env vars
-
-name: "Test Model Loading"
-description: "Verify models load from YAML config, not env vars"
-version: "1.0"
-
+name: Test Model Loading
+description: Verify models load from YAML config, not env vars
+version: '1.0'
 asset:
-  inputPath: "examples/videos/emotion-tests/cod.mp4"
-  outputDir: "output/test-model-loading"
-
-# AI configuration - this SHOULD be used by the code
+  inputPath: examples/videos/emotion-tests/cod.mp4
+  outputDir: output/test-model-loading
 ai:
   dialogue:
     targets:
@@ -26,20 +20,39 @@ ai:
       - adapter:
           name: openrouter
           model: google/gemini-2.5-flash
-
 gather_context:
   - server/scripts/get-context/get-dialogue.cjs
-
-# Skip processing for this test
 process: []
-
-# Simple report (legacy evaluation wrapper)
 report:
   - server/scripts/report/evaluation.cjs
-
 settings:
   api_request_delay: 1000
-
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95
 debug:
   keepTempFiles: false
   keepProcessedAssets: true

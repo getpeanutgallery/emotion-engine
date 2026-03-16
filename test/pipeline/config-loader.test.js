@@ -18,6 +18,42 @@ const {
   isParallelPhase
 } = require('../../server/lib/config-loader.cjs');
 
+function makeFfmpegSettings() {
+  return {
+    ffmpeg: {
+      audio: {
+        loglevel: 'error',
+        codec: 'pcm_s16le',
+        sample_rate_hz: 16000,
+        channels: 1,
+        container: 'wav'
+      },
+      video: {
+        compress: {
+          vcodec: 'libx264',
+          preset: 'fast',
+          max_width: 1280,
+          fps: 24,
+          audio_codec: 'aac',
+          audio_bitrate: '128k',
+          size_headroom_ratio: 0.9
+        },
+        compress_aggressive: {
+          vcodec: 'libx264',
+          preset: 'slow',
+          fps: 24,
+          audio_codec: 'aac',
+          audio_bitrate: '96k',
+          vf: "scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease",
+          maxrate_multiplier: 1.2,
+          bufsize_multiplier: 2,
+          size_headroom_ratio: 0.95
+        }
+      }
+    }
+  };
+}
+
 function makeAiConfig({
   adapterName = 'openrouter',
   dialogueModel = 'qwen/qwen-3.5-397b-a17b',
@@ -142,6 +178,7 @@ test('Config Loader - validateConfig', async (t) => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
       gather_context: ['script1.cjs', 'script2.cjs']
     };
     
@@ -154,6 +191,7 @@ test('Config Loader - validateConfig', async (t) => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
       process: ['script1.cjs']
     };
     
@@ -166,6 +204,7 @@ test('Config Loader - validateConfig', async (t) => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
       report: ['script1.cjs']
     };
     
@@ -215,6 +254,7 @@ test('Config Loader - validateConfig', async (t) => {
           thinking: { level: 'low' }
         }
       }),
+      settings: makeFfmpegSettings(),
       process: ['script1.cjs']
     };
 
@@ -226,6 +266,7 @@ test('Config Loader - validateConfig', async (t) => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
       gather_context: {
         parallel: [
           { script: 'script1.cjs' },
@@ -243,6 +284,7 @@ test('Config Loader - validateConfig', async (t) => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
       process: {
         sequential: [
           { script: 'script1.cjs' },
@@ -260,6 +302,7 @@ test('Config Loader - validateConfig', async (t) => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
       gather_context: ['script1.cjs'],
       debug: {
         keepProcessedIntermediates: false
@@ -274,6 +317,7 @@ test('Config Loader - validateConfig', async (t) => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
       gather_context: ['script1.cjs'],
       debug: {
         keepProcessedIntermediates: 'nope'
@@ -289,6 +333,7 @@ test('Config Loader - validateConfig', async (t) => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
       gather_context: ['script1.cjs'],
       debug: {
         captureRaw: true
@@ -303,6 +348,7 @@ test('Config Loader - validateConfig', async (t) => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
       gather_context: ['script1.cjs'],
       debug: {
         captureRaw: 'yes'
@@ -318,6 +364,7 @@ test('Config Loader - validateConfig', async (t) => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
       gather_context: ['script1.cjs'],
       recovery: {
         ai: {
@@ -340,6 +387,7 @@ test('Config Loader - validateConfig', async (t) => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
       gather_context: ['script1.cjs'],
       recovery: {
         ai: {
@@ -354,6 +402,34 @@ test('Config Loader - validateConfig', async (t) => {
     assert(result.errors.some(e => e.includes('recovery.ai.enabled')));
     assert(result.errors.some(e => e.includes('recovery.ai.attempts.maxPerFailure')));
   });
+
+  await t.test('should fail validation when settings.ffmpeg is missing', () => {
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai: makeAiConfig(),
+      gather_context: ['script1.cjs']
+    };
+
+    const result = validateConfig(config);
+    assert.strictEqual(result.valid, false);
+    assert(result.errors.some(e => e.includes('Missing required "settings.ffmpeg"')));
+  });
+
+  await t.test('should fail validation when settings.ffmpeg video bitrate is invalid', () => {
+    const settings = makeFfmpegSettings();
+    settings.ffmpeg.video.compress.audio_bitrate = '128';
+
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai: makeAiConfig(),
+      settings,
+      gather_context: ['script1.cjs']
+    };
+
+    const result = validateConfig(config);
+    assert.strictEqual(result.valid, false);
+    assert(result.errors.some(e => e.includes('settings.ffmpeg.video.compress.audio_bitrate')));
+  });
 });
 
 test('Config Loader - validateConfig AI requirements', async (t) => {
@@ -361,6 +437,7 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
       gather_context: ['script1.cjs']
     };
 
@@ -378,6 +455,7 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
           backoffMs: 500
         }
       }),
+      settings: makeFfmpegSettings(),
       gather_context: ['script1.cjs']
     };
 
@@ -395,6 +473,7 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
           retryOnParseError: true
         }
       }),
+      settings: makeFfmpegSettings(),
       gather_context: ['script1.cjs']
     };
 
@@ -510,6 +589,7 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
       gather_context: ['script1.cjs']
     };
 
