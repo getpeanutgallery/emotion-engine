@@ -319,9 +319,21 @@ Expected evidence after the change:
 **Files Created/Deleted/Modified:**
 - `.plans/2026-03-15-cross-repo-ai-prompt-contract-consistency-sweep.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Verified the audited cross-repo prompt-contract surfaces now match the agreed standard and that the sweep is complete without forcing fake edits into repos that do not own prompt-contract text. Cross-repo evidence gathered in this final verification step:
+- `grep -RIn "Allowed values for" server docs` in `emotion-engine` now shows the agreed Option B pattern on the remaining audited enum surfaces, including `server/lib/persona-loader.cjs`, `server/lib/ai-recovery-lane.cjs`, `server/scripts/get-context/get-dialogue.cjs`, `server/scripts/get-context/get-music.cjs`, and `docs/UNIVERSAL-SCRIPT-RESULT-CONTRACT.md`.
+- `grep -RIn "Allowed values for" ../tools` confirms the sibling prompt owner now also follows the same Option B wording in `../tools/emotion-lenses-tool.cjs`, `../tools/README.md`, and the updated test.
+- Targeted prompt-contract regression coverage passes in `emotion-engine`: `node --test test/scripts/get-dialogue.test.js test/scripts/get-music.test.js test/scripts/recommendation.test.js test/lib/phase1-validator-tools.test.js test/lib/ai-recovery-validator-tool.test.js test/lib/script-contract.test.js` ✅ (70 passed, 0 failed).
+- Config parsing and next-run readiness still pass after the wording sweep: `npm run validate-configs` ✅ and `node server/run-pipeline.cjs --config configs/cod-test-phase3.yaml --dry-run` ✅.
+
+Intentionally untouched repos remain correctly documented as no-op for this sweep because they do not own meaningful AI prompt/validator-contract text: `../ai-providers`, `../digital-twin-router`, `../digital-twin-core`, `../digital-twin-openrouter-emotion-engine`, and `../digital-twin-emotion-engine-providers`.
+
+The next truthful paid lane is still the same: run the live Phase3-only validation first, now with (a) explicit recovery activation, (b) mandatory validator-tool mediation in the AI recovery lane, and (c) prompt-contract wording normalized across the real system surfaces. Exact next command from repo root:
+- `node server/run-pipeline.cjs --config configs/cod-test-phase3.yaml --verbose`
+
+If that succeeds, the next full-run lane remains:
+- `node server/run-pipeline.cjs --config configs/cod-test.yaml --verbose`
 
 ---
 
@@ -380,14 +392,17 @@ If a repo does not actually own a prompt-contract surface, document that and lea
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** A full-system prompt-contract consistency sweep across the emotion-engine system. The work now records: (1) the actual audit scope across all listed repos, (2) the durable wording standard for Option B enum documentation and validator-tool prompt language, (3) remediation of the real prompt-contract owners in `emotion-engine` and `../tools`, and (4) final verification that the in-scope cross-repo surfaces now match the agreed standard while the non-owning sibling repos were correctly left unchanged.
 
 **Commits:**
-- Pending.
+- `d032407` — `Define prompt contract wording standard`
+- `b0bb55b` — `Normalize prompt contract wording surfaces`
+- `cb13e6f` in `../tools` — `Align emotion-lenses prompt contract wording`
+- `a455dcb` — `Document sibling prompt contract sweep`
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** The system-wide drift risk was real, but narrower than the repo list implied. The right move was to audit the whole system, prove ownership boundaries, then normalize the actual prompt-contract owners instead of making ceremonial edits in transport/cassette repos that do not own prompt text. That preserves consistency without muddying repo responsibility.
 
 ---
 

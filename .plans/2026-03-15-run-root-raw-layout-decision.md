@@ -161,15 +161,39 @@ Compatibility caveats:
 **Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine, verify the new run-root metadata/debug layout after implementation. Confirm docs match the code, promptRef compatibility works as intended, and a representative dry-run or focused test leaves a clearer output tree than before. Update this plan with exact evidence and decide whether ee-0gv can close fully.`
 
 **Folders Created/Deleted/Modified:**
-- `output/`
 - `.plans/`
+- representative temp output under `/tmp/ee-run-root-verify-ZW6LLo`
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-03-15-run-root-raw-layout-decision.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Verified the implementation, docs, compatibility behavior, and a representative output tree.
+
+Verification evidence:
+- **Focused regression suite passed:**
+  - `node --test test/lib/prompt-store.test.js test/lib/script-contract.test.js test/scripts/get-dialogue.test.js test/scripts/get-music.test.js test/scripts/video-chunks.test.js`
+  - Result: `78` tests passed, `0` failed.
+- **Code/docs alignment checked:**
+  - `server/lib/events-timeline.cjs` documents and writes canonical run timeline to `_meta/events.jsonl`.
+  - `server/lib/prompt-store.cjs` documents and writes canonical prompt refs to `_meta/ai/_prompts/<sha>.json`, while accepting legacy `raw/ai/_prompts/<sha>.json` reads.
+  - `README.md`, `docs/DEBUG-CONFIG.md`, `docs/CONFIG-GUIDE.md`, and `docs/PIPELINE-SCRIPTS.md` all describe `_meta/events.jsonl` + `_meta/ai/_prompts/...` as canonical and legacy `raw/...` locations as historical.
+- **Representative output tree / dry-run-style verification:**
+  - Created a minimal representative run root at `/tmp/ee-run-root-verify-ZW6LLo` by invoking `storePromptPayload()` and `getEventsLogger()` directly, then writing a phase raw capture that references the stored prompt.
+  - Root entries were only `_meta/` and `phase1-gather-context/`; there was **no** run-root `raw/` directory.
+  - Observed canonical files:
+    - `/tmp/ee-run-root-verify-ZW6LLo/_meta/events.jsonl`
+    - `/tmp/ee-run-root-verify-ZW6LLo/_meta/ai/_prompts/b4c025762bf66a03ab5270f31624dcd9c1219cf4817d263884778e434fa04e59.json`
+    - `/tmp/ee-run-root-verify-ZW6LLo/phase1-gather-context/raw/ai/dialogue-transcription/attempt-01/capture.json`
+  - The capture payload contained canonical `promptRef.file = "_meta/ai/_prompts/b4c025762bf66a03ab5270f31624dcd9c1219cf4817d263884778e434fa04e59.json"`.
+  - The timeline recorded the phase raw artifact path while living at run-root `_meta/events.jsonl`, which makes the ownership split clearer than the old mixed run-root `raw/` namespace.
+- **Compatibility check:**
+  - In the same representative run root, `loadPromptPayload()` successfully loaded the canonical stored prompt when given a **legacy** ref file of `raw/ai/_prompts/b4c025762bf66a03ab5270f31624dcd9c1219cf4817d263884778e434fa04e59.json` (`legacyLoadedMatches: true`).
+  - This matches the explicit regression coverage in `test/lib/prompt-store.test.js` for canonical writes, canonical reads, legacy reads, and alias fallback.
+
+Decision on parent bead:
+- The evidence now supports closing `ee-0gv` fully. The canonical layout decision was implemented, documented, regression-tested, and verified with a representative output tree showing the clearer run-root `_meta/` vs phase-scoped `raw/` split.
 
 ---
 
@@ -220,15 +244,15 @@ Proceed now with bead `ee-lgb`.
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Resolved the run-root layout ambiguity by making run-level metadata canonical under `_meta/` while preserving phase-local debug evidence under `phase*/raw/`. The implementation now single-writes the run timeline to `_meta/events.jsonl`, single-writes stored prompts to `_meta/ai/_prompts/<sha>.json`, preserves promptRef compatibility for historical `raw/ai/_prompts/...` refs, and documents the old `raw/...` locations as legacy-only.
 
 **Commits:**
-- Pending.
+- Pending in this task scope.
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** The cleanest migration was single-write + dual-read rather than dual-write. Keeping the `_prompts` anchor stable while moving only the run-root namespace minimized reader churn and made the output tree obviously easier to browse.
 
 ---
 
-*Drafted on 2026-03-15*
+*Completed on 2026-03-15*

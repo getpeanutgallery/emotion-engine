@@ -1,7 +1,7 @@
 # emotion-engine: run artifact hygiene before full cod-test
 
 **Date:** 2026-03-15  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -135,11 +135,39 @@ Scope outcome:
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-03-15-run-artifact-hygiene-before-full-cod-test.md`
-- verification artifacts from the focused rerun/check
+- `output/pipeline-test/verification-artifact-hygiene.json`
+- focused local rerun artifacts under `output/pipeline-test/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Verified the hygiene fix with the smallest meaningful local rerun/check instead of a paid live provider call: a focused fixture-backed Phase 3-only rerun against a reused run root.
+
+Exact check performed:
+1. Ran the full local fixture pipeline once to hydrate `output/pipeline-test/` using `test/pipeline/fixtures/test-pipeline.yaml`.
+2. Injected deliberately stale Phase 3 execution artifacts into that same reused run root:
+   - `output/pipeline-test/phase3-report/raw/_meta/errors.jsonl`
+   - `output/pipeline-test/phase3-report/raw/ai/recommendation/attempt-99/capture.json`
+   - `output/pipeline-test/phase3-report/script-results/example-report.success.json`
+   - `output/pipeline-test/phase3-report/recovery/example-report/lineage.json`
+3. Re-ran only Phase 3 using `test/pipeline/fixtures/test-phase3-only.yaml`.
+4. Wrote a machine-readable verification snapshot to `output/pipeline-test/verification-artifact-hygiene.json`.
+
+Fresh evidence that stale artifacts no longer mix into the rerun output:
+- `output/pipeline-test/phase3-report/raw/_meta/errors.jsonl` is absent after the Phase 3-only rerun (`staleErrorsRemoved: true`).
+- `output/pipeline-test/phase3-report/raw/ai/recommendation/attempt-99/capture.json` is absent after the Phase 3-only rerun (`staleCaptureRemoved: true`).
+- `output/pipeline-test/phase3-report/raw/` exists but is empty immediately after the rerun (`phase3RawEntries: []` in `output/pipeline-test/verification-artifact-hygiene.json`), proving the stale raw surface was cleared and recreated instead of merged forward.
+- `output/pipeline-test/phase3-report/script-results/example-report.success.json` was regenerated with a non-placeholder payload (`scriptResultSize: 1154`), replacing the injected stale `{}` file.
+- `output/pipeline-test/phase3-report/recovery/example-report/lineage.json` was regenerated with fresh lineage content (`recoveryLineageSize: 293`; preview shows `failureId: "example-report:phase3-report:attempt-1"`), replacing the injected stale `{}` placeholder.
+- Prior-phase hydration still works: `output/pipeline-test/phase2-process/script-results/example-process.success.json` remained present (`priorPhaseArtifactPreserved: true`).
+
+Artifact paths recorded for inspection:
+- `output/pipeline-test/verification-artifact-hygiene.json`
+- `output/pipeline-test/phase3-report/raw/`
+- `output/pipeline-test/phase3-report/script-results/example-report.success.json`
+- `output/pipeline-test/phase3-report/recovery/example-report/lineage.json`
+- `output/pipeline-test/phase2-process/script-results/example-process.success.json`
+
+Conclusion: the bounded cleanup fix behaves as intended on a reused run root. A fresh Phase 3 rerun no longer inherits stale Phase 3 error/capture/recovery/script-result artifacts, while upstream Phase 2 hydration artifacts remain available.
 
 ---
 
@@ -155,9 +183,18 @@ Scope outcome:
 **Files Created/Deleted/Modified:**
 - `.plans/2026-03-15-run-artifact-hygiene-before-full-cod-test.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Synthesized the diagnosis, bounded fix, and verification evidence into a final readiness decision. The stale-artifact problem identified in Task 1 was real: reused `output/cod-test` phase paths let old Phase 3 raw captures, `errors.jsonl`, and recovery/script-result files sit beside fresh outputs, which made a healthy rerun look misleadingly dirty. Task 2 fixed that at the correct seam by clearing only the currently executing phase's bounded execution surfaces (`<phase>/raw`, `<phase>/script-results`, `<phase>/recovery`) before the phase runs, while preserving prior-phase hydration artifacts needed by Phase3-only reruns. Task 3 then proved the fix on a reused run root: deliberately injected stale Phase 3 artifacts were removed on rerun, fresh script-result and recovery lineage files were regenerated, and prior-phase Phase 2 artifacts remained present.
+
+Readiness decision: **yes, the repo is now truthfully ready for the full `cod-test`.** Artifact hygiene is no longer a blocker. That decision rests on the combined evidence chain:
+1. Earlier today, the live upgraded Phase3-only validation already succeeded end-to-end on the real paid path (`.plans/2026-03-15-live-phase3-validation-under-upgraded-recovery.md`), producing success contracts for all five Phase 3 scripts and exercising validator-tool mediation without needing recovery re-entry.
+2. This hygiene lane removed the only remaining known truthfulness gap from that success case: stale Phase 3 artifacts no longer survive into the next rerun and misrepresent current-run health.
+3. The full config still dry-runs clean after the hygiene changes: `node server/run-pipeline.cjs --config configs/cod-test.yaml --dry-run` ✅.
+
+Truthful caveat: this lane verified output trustworthiness, not every possible live-provider behavior in the full multi-phase run. But given the already-green live Phase 3 validation plus the now-clean rerun artifact lifecycle, there is no honest reason to stall on more hygiene work before the acceptance run.
+
+**Next command/lane to run:** `node server/run-pipeline.cjs --config configs/cod-test.yaml --verbose`
 
 ---
 
@@ -183,14 +220,14 @@ Task 2 depends on Task 1. Task 3 depends on Task 2. Task 4 depends on Tasks 1-3.
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** A bounded artifact-hygiene fix for reused run roots in `emotion-engine`. Phase reruns now clear only the currently executing phase's volatile execution surfaces before work begins, per-phase error meta no longer inherits stale prior-run failures, and the verification evidence shows a reused Phase 3 run root can be rerun cleanly without losing upstream hydration artifacts.
 
 **Commits:**
-- Pending.
+- `49e63ab` - Fix stale phase rerun artifacts
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** Static run roots are fine only if volatile per-phase execution surfaces are treated as disposable. Reusing `output/cod-test` without clearing phase-local raw/error/recovery/script-result directories made successful reruns look unhealthy and undermined human trust in the artifacts. The right boundary was phase-local cleanup, not a broad run-root wipe.
 
 ---
 

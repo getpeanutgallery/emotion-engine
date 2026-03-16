@@ -69,9 +69,27 @@ Validation evidence:
 **Files Created/Deleted/Modified:**
 - `.plans/2026-03-15-remove-legacy-run-root-raw-compat.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Verified `_meta/...` is now the only supported run-level runtime path.
+
+Exact evidence:
+- Runtime writers are canonical-only:
+  - `server/lib/events-timeline.cjs:97` writes the run timeline only to `path.join(runOutputDir, '_meta', 'events.jsonl')`.
+  - `server/lib/prompt-store.cjs:21-24,51,72-75` defines `CANONICAL_PROMPT_PREFIX = '_meta/ai/_prompts/'`, stores prompt payloads under `output/<run>/_meta/ai/_prompts/`, and returns canonical `promptRef.file` values.
+- Runtime readers reject legacy run-root prompt refs:
+  - `server/lib/prompt-store.cjs:90-93` throws unless `promptRef.file` starts with `_meta/ai/_prompts/`.
+  - `test/lib/prompt-store.test.js:47-63` is an explicit regression test that a legacy `raw/ai/_prompts/legacy.json` ref is rejected.
+- Docs/tests match the code:
+  - Canonical `_meta/...` docs now appear in `README.md:236-237`, `docs/DEBUG-CONFIG.md:124-137`, `docs/CONFIG-GUIDE.md:346`, and `docs/PIPELINE-SCRIPTS.md:76-78`.
+  - `git grep -nE 'raw/_meta/events\\.jsonl|raw/ai/_prompts' -- README.md docs server test ':(exclude).plans/**'` now reports only `test/lib/prompt-store.test.js:51` (the negative legacy-fixture test). No runtime code or shipped docs still advertise legacy run-root `raw/...` support.
+  - `test/lib/script-contract.test.js:78-93` asserts canonical `_meta/ai/_prompts/abc.json` capture refs.
+- Validation run:
+  - `node --test test/lib/prompt-store.test.js test/lib/script-contract.test.js` → 13/13 passing.
+
+Caveats:
+- Historical markdown plan files in `.plans/` still mention old run-root `raw/...` paths as part of prior work history; that is documentation history, not active runtime behavior.
+- Phase-scoped debug/error artifacts under `phase*/raw/_meta/...` remain valid and are intentionally unaffected; this verification is specifically about run-level metadata/prompt refs.
 
 ---
 
@@ -95,14 +113,14 @@ Task 2 depends on Task 1.
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Verified the legacy run-root `raw/...` compatibility removal is complete: run-level metadata now lives only under `_meta/events.jsonl` and `_meta/ai/_prompts/<sha>.json`, runtime prompt loading rejects legacy `raw/ai/_prompts/...` refs, and shipped docs/tests consistently describe/assert the canonical `_meta/...` layout.
 
 **Commits:**
-- Pending.
+- None in this verification task; updated the active plan with exact evidence.
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** The clean cutoff is now explicit in code and tests. The only remaining `raw/...` mentions tied to run-level history are archived plan notes, while live phase-scoped `phase*/raw/_meta/...` debugging remains a separate and still-valid contract.
 
 ---
 

@@ -111,9 +111,24 @@ Validation for this task was documentary rather than behavioral: reviewed the do
 **Files Created/Deleted/Modified:**
 - `.plans/2026-03-15-activate-recovery-config-and-truth-fix-docs.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Verified the repo is now truthfully ready for the next paid Phase3-only validation. Evidence checked after Tasks 1 and 2 landed: (1) both runnable validation configs now contain an explicit top-level `recovery:` block with bounded AI recovery activation (`configs/cod-test.yaml:47-66`, `configs/cod-test-phase3.yaml:45-64`), including the required gate fields `recovery.ai.enabled: true`, `adapter: openrouter`, and `model: google/gemini-3.1-pro-preview`; (2) config parsing and dry-run validation still pass with recovery enabled; and (3) the previously stale recovery/config/history docs were truth-fixed so the docs layer no longer contradicts the checked-in implementation. Fresh readiness evidence gathered in this task:
+- `git status --short` shows no new functional config drift after the Task 1 / Task 2 commits; only the expected local plan-tracking update remains uncommitted during this verification step.
+- `npm run validate-configs` ✅
+- `node server/run-pipeline.cjs --config configs/cod-test-phase3.yaml --dry-run` ✅
+- direct grep verification confirms both configs carry the active `recovery` block and required AI activation keys.
+
+Truthful next paid lane:
+1. run the Phase3-only live validation first, now that recovery is actually enabled in config;
+2. inspect the resulting recovery artifacts / raw captures if recommendation still fails;
+3. only then decide whether to continue to full `configs/cod-test.yaml` or branch into a narrower bug lane like `ee-5dv` / `ee-2fs`.
+
+Exact next command to run from repo root:
+- `node server/run-pipeline.cjs --config configs/cod-test-phase3.yaml --verbose`
+
+If that Phase3-only run succeeds under the activated recovery config, the next full-run lane should be:
+- `node server/run-pipeline.cjs --config configs/cod-test.yaml --verbose`
 
 ---
 
@@ -138,14 +153,16 @@ Task 3 depends on Tasks 1 and 2.
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** A bounded activation-and-truth-fix pass that turned the recovery architecture from “implemented but not actually exercised by the runnable validation configs” into a truthful, ready-for-validation repo state. The plan now records: (1) explicit bounded `recovery:` activation in `configs/cod-test.yaml` and `configs/cod-test-phase3.yaml`, (2) documentation of the live YAML activation gate and narrower same-script re-entry semantics, (3) closure/current-state addenda on the March 14 rollout/history docs so they are no longer misleading, and (4) final readiness verification showing the next paid lane is now meaningfully the live Phase3-only run.
 
 **Commits:**
-- Pending.
+- `d02991f` — `Activate bounded recovery in validation configs`
+- `85269ae` — `docs: truth-fix recovery rollout records`
+- `abc7786` in `../tools` — `docs: close emotion lenses alignment audit note`
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** The difference between “architecture landed” and “system is ready to validate” was one layer lower than the code itself: runnable YAML activation and truthful docs. Getting that layer right matters because otherwise a paid validation run can give the illusion of testing a new recovery path while silently exercising the old disabled state instead.
 
 ---
 

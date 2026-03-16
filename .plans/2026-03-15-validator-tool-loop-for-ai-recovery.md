@@ -93,9 +93,22 @@ The owning repo is `emotion-engine`, because the recovery lane, validator loop, 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-03-15-validator-tool-loop-for-ai-recovery.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Verified the repo is now ready for the next paid Phase3-only run with the stronger AI recovery contract in place. Readiness evidence from this task:
+- `server/lib/ai-recovery-validator-tool.cjs` now defines the dedicated lane validator `validate_ai_recovery_decision_json`, and grep verification confirms the recovery lane prompt explicitly requires validator-tool usage before final acceptance.
+- `server/lib/ai-recovery-lane.cjs` now tells the recovery model: `You must use the provided local validator tool before any final AI recovery decision can be accepted.` and `Call the validator tool before returning the final decision artifact.`
+- Targeted validator/recovery tests pass: `node --test test/lib/ai-recovery-validator-tool.test.js test/lib/script-contract.test.js` ✅ (14/14).
+- Config validation still passes with recovery enabled: `npm run validate-configs` ✅.
+- Phase3-only config still dry-runs cleanly: `node server/run-pipeline.cjs --config configs/cod-test-phase3.yaml --dry-run` ✅.
+
+This means the next live run will now validate the stronger path Derrick asked for: bounded AI recovery with mandatory lane-specific validator-tool mediation instead of direct final JSON parsing. The truthful next paid lane remains a live Phase3-only run first, followed by inspection of the resulting recovery artifacts if it still fails, and only then a decision on full `cod-test`.
+
+Exact next command to run from repo root:
+- `node server/run-pipeline.cjs --config configs/cod-test-phase3.yaml --verbose`
+
+If that succeeds under the upgraded recovery lane, the next full-run lane remains:
+- `node server/run-pipeline.cjs --config configs/cod-test.yaml --verbose`
 
 ---
 
@@ -120,14 +133,15 @@ Task 3 depends on Tasks 1 and 2.
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** A bounded upgrade of the AI recovery lane from parse-only JSON acceptance to mandatory validator-tool mediation. The repo now has: (1) a dedicated lane-specific validator-tool contract (`validate_ai_recovery_decision_json`), (2) recovery prompts that explicitly require validator-tool use before final decision acceptance, (3) validator-tool-loop enforcement in the live AI recovery lane implementation, (4) deterministic rejection and artifact persistence for malformed/out-of-contract recovery decisions, and (5) final readiness verification showing the next Phase3-only run will exercise the stronger recovery path rather than the old direct-parse fallback.
 
 **Commits:**
-- Pending.
+- `e75f6ef` — `Define AI recovery validator tool contract`
+- `6141468` — `Require validator tool loop for AI recovery lane`
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** The gap was not just structural validation but acceptance-path discipline. Even a bounded recovery lane can quietly weaken the architecture if it is allowed to bypass the same validator-tool contract used everywhere else. The fix was to make the acceptance path itself consistent, not just the output schema.
 
 ---
 
