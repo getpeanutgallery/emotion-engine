@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-09-closeout-scripts-audit-and-session-handoff
+---
 # Closeout: scripts audit issue + session handoff + repo push check
 
 **Date:** 2026-03-09  

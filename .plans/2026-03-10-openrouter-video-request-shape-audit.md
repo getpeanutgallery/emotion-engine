@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-openrouter-video-request-shape-audit
+---
 # emotion-engine: OpenRouter video request shape audit
 
 **Date:** 2026-03-10  

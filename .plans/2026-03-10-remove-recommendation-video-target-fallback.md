@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-remove-recommendation-video-target-fallback
+---
 # emotion-engine: remove recommendation fallback to video targets (hard fail when missing)
 
 **Date:** 2026-03-10  

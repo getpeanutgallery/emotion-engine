@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-09-video-yaml-add-failover-targets
+---
 # emotion-engine: add video YAML failover targets (mitigate OpenRouter qwen no-content)
 
 **Date:** 2026-03-09  

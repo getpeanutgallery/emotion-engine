@@ -1,3 +1,10 @@
+---
+plan_id: plan-2026-03-12-convert-legacy-issues-to-beads
+bead_ids:
+  - ee-5bx
+  - ee-c28
+  - ee-p5u
+---
 # emotion-engine: convert legacy `.issues/` into Beads + plans
 
 **Date:** 2026-03-12  

@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-13-schema-validator-rollout-across-ai-lanes
+---
 # emotion-engine: schema + validator rollout across all AI lanes
 
 **Date:** 2026-03-13  

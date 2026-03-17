@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-issue-run-root-raw-folder-location
+---
 # emotion-engine: issue — run root `raw/` folder location
 
 **Date:** 2026-03-10  

@@ -1,3 +1,9 @@
+---
+plan_id: plan-2026-03-15-open-beads-triage-before-full-cod-test
+bead_ids:
+  - ee-83q
+  - ee-o96
+---
 # emotion-engine: open Beads triage before full cod-test
 
 **Date:** 2026-03-15  

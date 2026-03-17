@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-issue-phase3-only-config
+---
 # emotion-engine: issue — Phase3-only config for fast iteration
 
 **Date:** 2026-03-10  

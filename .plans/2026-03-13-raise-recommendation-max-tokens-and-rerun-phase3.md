@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-13-raise-recommendation-max-tokens-and-rerun-phase3
+bead_ids:
+  - ee-i7b
+---
 # emotion-engine: raise recommendation max_tokens and rerun Phase 3
 
 **Date:** 2026-03-13  

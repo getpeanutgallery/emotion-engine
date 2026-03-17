@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-13-propagate-cod-test-settings-and-review-open-beads
+bead_ids:
+  - ee-83x
+---
 # emotion-engine: propagate recommendation settings into cod-test and review open beads
 
 **Date:** 2026-03-13  

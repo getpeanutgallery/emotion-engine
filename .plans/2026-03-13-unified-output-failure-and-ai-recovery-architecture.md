@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-13-unified-output-failure-and-ai-recovery-architecture
+bead_ids:
+  - Pending
+---
 # emotion-engine: unified output contracts, failure contracts, and AI recovery architecture
 
 **Date:** 2026-03-13  

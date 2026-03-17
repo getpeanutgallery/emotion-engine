@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-13-universal-schema-validator-contract
+bead_ids:
+  - ee-qqg
+---
 # emotion-engine: define universal schema/validator contract for AI lanes
 
 **Date:** 2026-03-13  

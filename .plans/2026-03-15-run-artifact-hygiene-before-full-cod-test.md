@@ -1,3 +1,11 @@
+---
+plan_id: plan-2026-03-15-run-artifact-hygiene-before-full-cod-test
+bead_ids:
+  - ee-0kg
+  - ee-4yk
+  - ee-clj
+  - ee-odo
+---
 # emotion-engine: run artifact hygiene before full cod-test
 
 **Date:** 2026-03-15  

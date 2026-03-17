@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-13-generalize-ai-config-validation-and-grounding-followups
+---
 # emotion-engine: generalize AI config, validation, debug capture, and grounding follow-ups
 
 **Date:** 2026-03-13  

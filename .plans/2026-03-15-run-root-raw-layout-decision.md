@@ -1,3 +1,10 @@
+---
+plan_id: plan-2026-03-15-run-root-raw-layout-decision
+bead_ids:
+  - ee-0gv
+  - ee-lgb
+  - ee-me3
+---
 # emotion-engine: run-root raw layout decision
 
 **Date:** 2026-03-15  

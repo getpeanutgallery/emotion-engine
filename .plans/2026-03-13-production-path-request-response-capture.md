@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-13-production-path-request-response-capture
+bead_ids:
+  - ee-jmi
+---
 # emotion-engine: capture exact production request/response for Phase 3 recommendation
 
 **Date:** 2026-03-13  

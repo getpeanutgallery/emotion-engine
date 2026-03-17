@@ -1,3 +1,10 @@
+---
+plan_id: plan-2026-03-15-live-phase3-validation-under-upgraded-recovery
+bead_ids:
+  - ee-a7d
+  - ee-0og
+  - ee-1kq
+---
 # emotion-engine: live Phase3 validation under upgraded recovery
 
 **Date:** 2026-03-15  

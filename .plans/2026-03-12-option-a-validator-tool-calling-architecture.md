@@ -1,3 +1,9 @@
+---
+plan_id: plan-2026-03-12-option-a-validator-tool-calling-architecture
+bead_ids:
+  - ee-7kn
+  - ee-5dv
+---
 # emotion-engine: Option A — true validator tool-calling architecture for Phase 3 recommendation
 
 **Date:** 2026-03-12  

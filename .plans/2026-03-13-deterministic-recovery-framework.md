@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-13-deterministic-recovery-framework
+bead_ids:
+  - ee-cjg
+---
 # emotion-engine: define deterministic recovery framework
 
 **Date:** 2026-03-13  

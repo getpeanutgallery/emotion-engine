@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-09-add-adapter-smoketest-and-oauth-issues
+---
 # Add issues: adapter smoketests + OAuth architecture
 
 **Date:** 2026-03-09  

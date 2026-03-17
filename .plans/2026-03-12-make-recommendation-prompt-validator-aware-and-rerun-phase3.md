@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-12-make-recommendation-prompt-validator-aware-and-rerun-phase3
+---
 # emotion-engine: make recommendation prompt validator-aware + rerun live Phase3
 
 **Date:** 2026-03-12  

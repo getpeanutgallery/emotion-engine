@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-09-nuke-legacy-and-sync-readme-docs
+---
 # emotion-engine: nuke legacy + sync README/docs to polyrepo reality
 
 **Date:** 2026-03-09  

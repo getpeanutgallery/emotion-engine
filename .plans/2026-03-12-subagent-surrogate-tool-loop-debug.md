@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-12-subagent-surrogate-tool-loop-debug
+---
 # emotion-engine: debug Phase3 validator tool loop using a subagent surrogate
 
 **Date:** 2026-03-12  

@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-issue-categorize-error-responses
+---
 # emotion-engine: issue — categorize error responses by type + frequency
 
 **Date:** 2026-03-10  

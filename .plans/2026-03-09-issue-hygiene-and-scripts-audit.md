@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-09-issue-hygiene-and-scripts-audit
+---
 # emotion-engine: issue hygiene + scripts audit kickoff
 
 **Date:** 2026-03-09  

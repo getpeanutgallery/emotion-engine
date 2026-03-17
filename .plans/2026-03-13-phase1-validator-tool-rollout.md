@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-13-phase1-validator-tool-rollout
+bead_ids:
+  - ee-ixy
+---
 # emotion-engine: Phase 1 validator-tool rollout for dialogue, music, and stitch lanes
 
 **Date:** 2026-03-13  

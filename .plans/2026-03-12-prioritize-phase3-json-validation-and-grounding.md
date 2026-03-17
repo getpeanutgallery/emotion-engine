@@ -1,3 +1,9 @@
+---
+plan_id: plan-2026-03-12-prioritize-phase3-json-validation-and-grounding
+bead_ids:
+  - ee-kyk
+  - ee-5dv
+---
 # emotion-engine: prioritize Phase 3 JSON validation + grounding work
 
 **Date:** 2026-03-12  

@@ -1,3 +1,9 @@
+---
+plan_id: plan-2026-03-13-phase3-validator-tool-rollout-and-doc-cleanup
+bead_ids:
+  - ee-3y8
+  - ee-x2r
+---
 # emotion-engine: Phase 3/report validator-tool rollout + contract doc cleanup
 
 **Date:** 2026-03-13  

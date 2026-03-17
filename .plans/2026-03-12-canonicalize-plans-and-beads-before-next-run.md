@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-12-canonicalize-plans-and-beads-before-next-run
+---
 # emotion-engine: canonicalize plans + Beads before next live cod-test run
 
 **Date:** 2026-03-12  

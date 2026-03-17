@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-issue-recommendation-inputs-audit
+---
 # emotion-engine: issue — audit recommendation AI inputs (hallucination concerns)
 
 **Date:** 2026-03-10  

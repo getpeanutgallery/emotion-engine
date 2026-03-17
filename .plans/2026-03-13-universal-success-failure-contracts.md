@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-13-universal-success-failure-contracts
+bead_ids:
+  - ee-0f7
+---
 # emotion-engine: define universal success/failure JSON contracts
 
 **Date:** 2026-03-13  

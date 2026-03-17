@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-issue-triage-and-parallel-plan
+---
 # emotion-engine: issue triage + parallel execution plan
 
 **Date:** 2026-03-10  

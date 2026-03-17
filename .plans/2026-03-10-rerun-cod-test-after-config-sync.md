@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-rerun-cod-test-after-config-sync
+---
 # emotion-engine: rerun cod-test after config sync
 
 **Date:** 2026-03-10  

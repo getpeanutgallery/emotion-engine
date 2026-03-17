@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-review-remaining-issues-and-polyrepo
+---
 # emotion-engine: review remaining issues + polyrepo siblings
 
 **Date:** 2026-03-10  

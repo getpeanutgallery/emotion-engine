@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-13-phase2-validator-tool-rollout
+bead_ids:
+  - ee-izr
+---
 # emotion-engine: Phase 2 validator-tool rollout for chunk and emotion analysis lanes
 
 **Date:** 2026-03-13  

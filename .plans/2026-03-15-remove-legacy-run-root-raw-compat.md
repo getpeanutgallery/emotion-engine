@@ -1,3 +1,9 @@
+---
+plan_id: plan-2026-03-15-remove-legacy-run-root-raw-compat
+bead_ids:
+  - ee-0ok
+  - ee-1i5
+---
 # emotion-engine: remove legacy run-root raw compatibility
 
 **Date:** 2026-03-15  

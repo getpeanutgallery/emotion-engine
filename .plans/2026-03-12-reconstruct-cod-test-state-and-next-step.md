@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-12-reconstruct-cod-test-state-and-next-step
+---
 # emotion-engine: reconstruct cod-test state + plan next golden-run push
 
 **Date:** 2026-03-12  

@@ -1,3 +1,13 @@
+---
+plan_id: plan-2026-03-13-pre-golden-run-bead-sequence
+bead_ids:
+  - ee-1er
+  - ee-9or
+  - ee-03m
+  - ee-0gv
+  - ee-2fs
+  - ee-5dv
+---
 # emotion-engine: pre-golden-run bead execution sequence
 
 **Date:** 2026-03-13  

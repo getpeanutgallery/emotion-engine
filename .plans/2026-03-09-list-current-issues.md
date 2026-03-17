@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-09-list-current-issues
+---
 # emotion-engine: list current issues
 
 **Date:** 2026-03-09  

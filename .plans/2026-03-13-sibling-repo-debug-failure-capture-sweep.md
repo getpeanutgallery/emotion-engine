@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-13-sibling-repo-debug-failure-capture-sweep
+bead_ids:
+  - ee-sxq
+---
 # emotion-engine: extend normalized debug/failure capture across sibling repos
 
 **Date:** 2026-03-13  

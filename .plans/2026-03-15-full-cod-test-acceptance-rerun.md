@@ -1,3 +1,10 @@
+---
+plan_id: plan-2026-03-15-full-cod-test-acceptance-rerun
+bead_ids:
+  - ee-av6
+  - ee-7ru
+  - ee-4sx
+---
 # emotion-engine: full cod-test acceptance rerun
 
 **Date:** 2026-03-15  

@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-13-cod-test-explicit-ai-settings
+bead_ids:
+  - ee-cri
+---
 # emotion-engine: set explicit AI settings for every cod-test lane
 
 **Date:** 2026-03-13  

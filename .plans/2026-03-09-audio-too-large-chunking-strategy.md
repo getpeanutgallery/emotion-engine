@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-09-audio-too-large-chunking-strategy
+---
 # emotion-engine: audio-too-large chunking strategy (Phase1)
 
 **Date:** 2026-03-09  

@@ -1,3 +1,11 @@
+---
+plan_id: plan-2026-03-15-verify-recovery-rollout-and-polyrepo-drift
+bead_ids:
+  - ee-ce9
+  - ee-dkv
+  - ee-vaa
+  - ee-fyk
+---
 # emotion-engine: verify recovery rollout and polyrepo drift
 
 **Date:** 2026-03-15  

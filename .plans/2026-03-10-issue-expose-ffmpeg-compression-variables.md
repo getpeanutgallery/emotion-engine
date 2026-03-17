@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-issue-expose-ffmpeg-compression-variables
+---
 # emotion-engine: issue — expose ffmpeg compression variables via YAML (clean-break)
 
 **Date:** 2026-03-10  

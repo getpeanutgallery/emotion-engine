@@ -1,3 +1,12 @@
+---
+plan_id: plan-2026-03-14-ai-recovery-contract-and-sibling-rollout
+bead_ids:
+  - ee-32e
+  - ee-cib
+  - ee-ok2
+  - ee-d4x
+  - ee-cwi
+---
 # emotion-engine: AI recovery contract and sibling repo rollout continuation
 
 **Date:** 2026-03-14  

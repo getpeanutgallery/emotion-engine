@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-stream-b-phase3-only-and-recommendation-audit
+---
 # emotion-engine: Stream B (Phase3-only config) + recommendation.cjs audit
 
 **Date:** 2026-03-10  

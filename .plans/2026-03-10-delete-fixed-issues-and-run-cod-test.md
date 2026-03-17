@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-delete-fixed-issues-and-run-cod-test
+---
 # emotion-engine: delete resolved issues + run fresh cod-test
 
 **Date:** 2026-03-10  

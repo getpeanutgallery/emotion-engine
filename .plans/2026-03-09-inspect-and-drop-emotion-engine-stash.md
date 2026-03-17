@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-09-inspect-and-drop-emotion-engine-stash
+---
 # emotion-engine: inspect and clean local git stash
 
 **Date:** 2026-03-09  

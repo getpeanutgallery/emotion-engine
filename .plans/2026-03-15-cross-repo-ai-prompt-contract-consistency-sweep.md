@@ -1,3 +1,12 @@
+---
+plan_id: plan-2026-03-15-cross-repo-ai-prompt-contract-consistency-sweep
+bead_ids:
+  - ee-yy2
+  - ee-5a5
+  - ee-mlp
+  - ee-heh
+  - ee-4rf
+---
 # emotion-engine: cross-repo AI prompt-contract consistency sweep
 
 **Date:** 2026-03-15  

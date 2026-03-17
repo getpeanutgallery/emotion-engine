@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-09-captureraw-meta-triple-implementation
+---
 # captureRaw/meta: events.jsonl + prompt dedupe + provider debug consistency
 
 **Date:** 2026-03-09  

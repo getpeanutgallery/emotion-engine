@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-next-issues-parallel-execution
+---
 # emotion-engine: next issues + parallel execution
 
 **Date:** 2026-03-10  

@@ -1,3 +1,10 @@
+---
+plan_id: plan-2026-03-15-activate-recovery-config-and-truth-fix-docs
+bead_ids:
+  - ee-cfx
+  - ee-nau
+  - ee-9be
+---
 # emotion-engine: activate recovery config and truth-fix docs
 
 **Date:** 2026-03-15  

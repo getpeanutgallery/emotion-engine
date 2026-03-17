@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-13-yaml-configurable-thinking-and-token-budgets
+bead_ids:
+  - ee-9gp
+---
 # emotion-engine: expose thinking level and token budget controls in YAML
 
 **Date:** 2026-03-13  

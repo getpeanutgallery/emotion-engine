@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-run-phase3-only-and-report-recommendation
+---
 # emotion-engine: run Phase3-only cod-test + report recommendation + model used
 
 **Date:** 2026-03-10  

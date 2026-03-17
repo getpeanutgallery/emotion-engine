@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-13-generalize-ai-defaults-overrides-and-json-validation
+bead_ids:
+  - ee-of5
+---
 # emotion-engine: generalize AI defaults, override support, and JSON validation
 
 **Date:** 2026-03-13  

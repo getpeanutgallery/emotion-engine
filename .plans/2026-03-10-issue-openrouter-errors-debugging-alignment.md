@@ -1,3 +1,6 @@
+---
+plan_id: plan-2026-03-10-issue-openrouter-errors-debugging-alignment
+---
 # emotion-engine: issue — align OpenRouter error/debug handling with official guide (unified shape)
 
 **Date:** 2026-03-10  

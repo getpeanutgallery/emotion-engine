@@ -1,3 +1,10 @@
+---
+plan_id: plan-2026-03-15-validator-tool-loop-for-ai-recovery
+bead_ids:
+  - ee-qq5
+  - ee-m4p
+  - ee-eij
+---
 # emotion-engine: put AI recovery behind the validator-tool loop
 
 **Date:** 2026-03-15  

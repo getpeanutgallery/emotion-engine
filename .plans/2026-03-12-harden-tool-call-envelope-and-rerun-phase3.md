@@ -1,3 +1,9 @@
+---
+plan_id: plan-2026-03-12-harden-tool-call-envelope-and-rerun-phase3
+bead_ids:
+  - ee-n51
+  - ee-5dv
+---
 # emotion-engine: harden validator tool-call envelope + rerun live Phase3
 
 **Date:** 2026-03-12  
