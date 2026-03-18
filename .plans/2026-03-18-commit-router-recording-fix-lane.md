@@ -43,9 +43,15 @@ This final lane is purely about durable repo state. It needs to capture the exac
 - `.plans/2026-03-18-refresh-router-dependency-and-rerun-record-mode.md`
 - `.plans/2026-03-18-commit-router-recording-fix-lane.md`
 
-**Status:** 🔄 In Progress
+**Status:** ✅ Complete
 
-**Results:** Pre-commit state in `emotion-engine` was intentionally narrow to the recording-fix lane. Tracked modified files: `docs/DEBUG-CONFIG.md` and `server/lib/events-timeline.cjs`. Untracked lane files ready to add: `test/lib/events-timeline.test.js`, `.plans/2026-03-18-fix-record-labeling-and-enable-real-cassette-recording.md`, `.plans/2026-03-18-refresh-router-dependency-and-rerun-record-mode.md`, and this coordination plan. A separate modified plan, `.plans/2026-03-18-commit-reset-and-investigate-cassette-recording.md`, was present in the worktree but is from an earlier lane and is not part of this commit. Runtime dependency repointing under `node_modules/` was verified as local-only/gitignored state and will not be committed.
+**Results:** Pre-commit state in `emotion-engine` was intentionally narrow to the recording-fix lane. Tracked modified files were `docs/DEBUG-CONFIG.md` and `server/lib/events-timeline.cjs`. Untracked lane files added were `test/lib/events-timeline.test.js`, `.plans/2026-03-18-fix-record-labeling-and-enable-real-cassette-recording.md`, `.plans/2026-03-18-refresh-router-dependency-and-rerun-record-mode.md`, and this coordination plan. A separate modified plan, `.plans/2026-03-18-commit-reset-and-investigate-cassette-recording.md`, was present in the worktree but is from an earlier lane and was intentionally left out of this commit. Runtime dependency repointing under `node_modules/` was verified as local-only/gitignored state and was not committed.
+
+Committed as `d954091` with message `fix: record truthful live mode and document router recording lane`.
+
+Push result: `git push origin main` over SSH succeeded (`7584143..d954091`, `main -> main`).
+
+Remaining changes after the push: the repo is not fully clean because `.plans/2026-03-18-commit-reset-and-investigate-cassette-recording.md` remains modified from an earlier, separate lane; no additional recording-fix source/docs/test changes remain unstaged.
 
 ---
 
