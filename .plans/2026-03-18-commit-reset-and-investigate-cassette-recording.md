@@ -71,14 +71,14 @@ There were **no tracked file modifications** and no staged changes. The only rep
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ⚠️ Partial
 
-**What We Built:** Pending.
+**What We Built:** Task 1 is complete: the repo's reset/rerun truth has now been preserved in git and pushed to `main` via SSH. The working tree at commit time contained only two new plan files documenting the completed reset/rerun lane and the follow-up cassette-investigation lane; no tracked source or output files were modified. Task 2 remains open for the cassette-recording investigation.
 
 **Commits:**
-- Pending.
+- `5216cf6` - docs: record reset rerun and cassette follow-up plans
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** For this lane, the truthful commit surface was narrower than expected: after the reset cleanup and successful rerun, the only uncommitted repo-local changes in `emotion-engine` were the two plan documents. The cassette-question should be investigated separately rather than inferred from this documentation-only commit.
 
 ---
 
