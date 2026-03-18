@@ -13,6 +13,8 @@ bead_ids:
 **Status:** In Progress  
 **Agent:** Cookie 🍪
 
+> **Historical status note (2026-03-18):** This plan is preserved as a 2026-03-14 execution snapshot, not current rollout truth. The AI-recovery rollout later completed: `ee-d4x.1` through `ee-d4x.4`, `ee-cwi.1` through `ee-cwi.4`, and the final sweep bead `ee-vaa` are all now closed. Use this file for historical sequencing/details; use later verification/cleanup plans and current Beads state for live status.
+
 ---
 
 ## Goal

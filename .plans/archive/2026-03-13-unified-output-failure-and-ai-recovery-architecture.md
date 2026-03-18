@@ -9,6 +9,8 @@ bead_ids:
 **Status:** In Progress  
 **Agent:** Cookie 🍪
 
+> **Historical status note (2026-03-18):** This plan captures the architecture-definition moment before the rollout was split into concrete execution beads. It is no longer the active execution truth: the design was carried forward into the 2026-03-14 continuation plan, implemented across the `ee-d4x.*` / `ee-cwi.*` chain, and later verified/closed via `ee-vaa`. Keep this file as the historical design snapshot; use later plans and Beads for current status.
+
 ---
 
 ## Goal

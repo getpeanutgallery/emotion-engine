@@ -7,6 +7,8 @@ plan_id: plan-2026-03-13-schema-validator-rollout-across-ai-lanes
 **Status:** In Progress  
 **Agent:** Cookie 🍪
 
+> **Historical status note (2026-03-18):** This file is an earlier planning artifact that was overtaken the same day by the broader unified success/failure/recovery architecture work and then concretized in the 2026-03-14 rollout plan. Treat it as a historical proposal, not a live in-progress rollout source of truth. The sibling-rollout epic `ee-cwi` and final sweep bead `ee-vaa` referenced by this planning line are now closed.
+
 ---
 
 ## Goal

@@ -14,6 +14,8 @@ bead_ids:
 **Status:** In Progress  
 **Agent:** Cookie 🍪
 
+> **Historical status note (2026-03-18):** This sequencing plan was superseded before completion by the broader output-contract / recovery-rollout work that started on 2026-03-13 and continued on 2026-03-14. The remaining steps here (`ee-03m`, `ee-0gv`, `ee-2fs`, `ee-5dv`) did not become the active "next do these in order, then run golden" truth. Preserve this file as the pre-rollout intent snapshot only; check current Beads + later plans for live execution state.
+
 ---
 
 ## Goal
