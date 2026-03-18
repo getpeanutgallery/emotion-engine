@@ -46,7 +46,7 @@ Primary owning repo is `emotion-engine`, because the reset plan, rerun artifacts
 - `?? .plans/2026-03-18-commit-reset-and-investigate-cassette-recording.md`
 - `?? .plans/2026-03-18-reset-state-and-rerun-cod-test.md`
 
-There were **no tracked file modifications** and no staged changes. The only repo-local changes from the reset/rerun lane were these two new plan documents, so the commit intentionally contains plan/history documentation only rather than source or artifact changes. This task then staged those two plan files, committed them, and pushed the resulting commit to `main` over the existing SSH remote.
+There were **no tracked file modifications** and no staged changes. The only repo-local changes from the reset/rerun lane were these two new plan documents, so the first commit intentionally contained plan/history documentation only rather than source or artifact changes. After that initial push, this plan was updated with the exact Task 1 outcome and commit metadata, and that documentation update was committed and pushed as a second small follow-up commit. Final pushed `main` HEAD for Task 1 is `7d0f009`.
 
 ---
 
@@ -77,6 +77,7 @@ There were **no tracked file modifications** and no staged changes. The only rep
 
 **Commits:**
 - `5216cf6` - docs: record reset rerun and cassette follow-up plans
+- `7d0f009` - docs: update Task 1 commit results
 
 **Lessons Learned:** For this lane, the truthful commit surface was narrower than expected: after the reset cleanup and successful rerun, the only uncommitted repo-local changes in `emotion-engine` were the two plan documents. The cassette-question should be investigated separately rather than inferred from this documentation-only commit.
 
