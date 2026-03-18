@@ -68,7 +68,9 @@ The orchestrator maintains a run-level, append-only timeline at:
 
 - `_meta/events.jsonl`
 
-This is **enabled by default**. You can explicitly disable emission with:
+This is **enabled by default**. Each emitted event includes a truthful `mode` field: `live` for normal runs, `record` when `DIGITAL_TWIN_MODE=record`, and `replay` when `DIGITAL_TWIN_MODE=replay`.
+
+You can explicitly disable emission with:
 
 ```yaml
 debug:

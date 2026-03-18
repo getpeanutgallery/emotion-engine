@@ -19,9 +19,11 @@ const outputManager = require('./output-manager.cjs');
 const SCHEMA_VERSION = 1;
 
 function getCaptureMode() {
-  return (process.env.DIGITAL_TWIN_MODE || '').trim().toLowerCase() === 'replay'
-    ? 'replay'
-    : 'record';
+  const mode = (process.env.DIGITAL_TWIN_MODE || '').trim().toLowerCase();
+
+  if (mode === 'replay') return 'replay';
+  if (mode === 'record') return 'record';
+  return 'live';
 }
 
 function shouldCaptureRawEvents(config) {
