@@ -94,22 +94,29 @@ Closed the only stale open investigation bead, `ee-0ta`, with the explicit reaso
 - repo-tracked files in touched repos
 - `.plans/2026-03-18-investigate-record-mode-provider-transport-hang-and-wrap.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Inspected git status in `emotion-engine`, `../digital-twin-router`, `../tools`, and nearby sibling repos carrying runtime artifacts. Only `emotion-engine` had durable tracked source/plan changes from this lane, so it was the only repo committed and pushed.
+
+Committed `emotion-engine` as `6c51f4b` (`Archive record-mode investigation plans and keep provider-await breadcrumbs`) and pushed successfully over SSH with `origin/main` advancing `3a73bb9 -> 6c51f4b`.
+
+Intentionally uncommitted local-only state after the wrap:
+- `emotion-engine/package.json` and `emotion-engine/package-lock.json` still point at a local `git+file:///.../digital-twin-router` override/lock resolution used for investigation refresh work; left uncommitted because it is machine-local install-tree state, not durable repo truth.
+- `digital-twin-openrouter-emotion-engine` still has local cassette churn (`D cassettes/cod-test-golden-20260309-082851.json` plus new `cod-test-record-20260318-*.json` artifacts); left uncommitted as runtime investigation output.
+- `digital-twin-router` still has untracked local-only `digital-twin-router-1.0.0.tgz` and `.beads/.beads-credential-key`; `tools` has untracked `.beads/.beads-credential-key`. No sibling repo had durable tracked changes to commit.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Preserved the exact next-session provider-await handoff, archived the superseded investigation plans, and pushed the durable `emotion-engine` wrap state while explicitly leaving machine-local dependency overrides and runtime artifacts uncommitted.
 
 **Commits:**
-- Pending.
+- `6c51f4b` - Archive record-mode investigation plans and keep provider-await breadcrumbs
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** The repo-truth wrap needs to separate durable source/plan evidence from machine-local refresh state. Local `git+file` dependency overrides and fresh cassette artifacts are useful for investigation, but they should stay out of committed history unless they are intentionally being promoted into durable repo state.
 
 ---
 
