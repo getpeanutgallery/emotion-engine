@@ -1,7 +1,7 @@
 # emotion-engine: commit router recording fix lane
 
 **Date:** 2026-03-18  
-**Status:** Draft  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -66,25 +66,36 @@ Remaining changes after the push: the repo is not fully clean because `.plans/20
 - `emotion-engine/.plans/`
 
 **Files Created/Deleted/Modified:**
-- router fix files in `digital-twin-router`
-- `.plans/2026-03-18-commit-router-recording-fix-lane.md`
+- `digital-twin-router/README.md`
+- `digital-twin-router/index.js`
+- `digital-twin-router/test/index.test.js`
+- `emotion-engine/.plans/2026-03-18-commit-router-recording-fix-lane.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Pre-commit state in `digital-twin-router` was limited to the first-write cassette routing fix. Tracked modified files were `README.md`, `index.js`, and `test/index.test.js`. The code change makes record mode prefer an existing canonical `cassettes/` directory even when it is intentionally empty, the test covers first-write recording into that subdirectory, and the README now documents the behavior. An untracked local Beads credential file, `.beads/.beads-credential-key`, was present in the worktree but is unrelated runtime state and was not part of the commit.
+
+Committed as `770313a5e3bcab42cb380b3da28501d975aca031` with message `fix: keep first-write recordings in cassettes dir`.
+
+Verification: `npm test` passed (`29` tests).
+
+Push result: `git push origin main` over SSH succeeded (`4ebb84d..770313a`, `main -> main`).
+
+Remaining changes after the push: the repo is not fully clean because untracked local runtime file `.beads/.beads-credential-key` remains present; no tracked source/docs/test changes from the first-write fix remain unstaged.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Preserved the full recording-fix lane in git across both repos: `emotion-engine` now truthfully labels live/replay/record events and includes regression coverage plus coordination plans, while `digital-twin-router` now writes first-use record-mode cassettes into the canonical `cassettes/` directory even when the pack starts intentionally empty.
 
 **Commits:**
-- Pending.
+- `d954091` - `fix: record truthful live mode and document router recording lane`
+- `770313a5e3bcab42cb380b3da28501d975aca031` - `fix: keep first-write recordings in cassettes dir`
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** First-write record mode should treat the existence of `cassettes/` as authoritative even when the directory is empty; checking for preexisting cassette files caused new recordings to spill into the pack root. Final commit lanes also need to document unrelated leftover workspace state explicitly instead of implying full cleanliness.
 
 ---
 

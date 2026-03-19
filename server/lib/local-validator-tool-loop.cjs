@@ -207,7 +207,42 @@ async function executeLocalValidatorToolLoop({
     const promptMode = turn === 1 ? 'tool_loop' : 'tool_loop_followup';
     finalPromptMode = promptMode;
 
+    if (events) {
+      events.emit({
+        kind: 'tool.loop.provider.await.start',
+        phase: phaseKey,
+        script: scriptId,
+        domain,
+        attempt: ctx?.attempt,
+        attemptInTarget: ctx?.attemptInTarget,
+        targetIndex: ctx?.targetIndex,
+        turn,
+        promptMode,
+        toolName: toolContract.name,
+        provider: adapter?.name || null,
+        model: adapter?.model || null,
+      });
+    }
+
     const completion = await callProvider({ provider, adapter, prompt, turn, promptMode });
+
+    if (events) {
+      events.emit({
+        kind: 'tool.loop.provider.await.end',
+        phase: phaseKey,
+        script: scriptId,
+        domain,
+        attempt: ctx?.attempt,
+        attemptInTarget: ctx?.attemptInTarget,
+        targetIndex: ctx?.targetIndex,
+        turn,
+        promptMode,
+        toolName: toolContract.name,
+        provider: adapter?.name || null,
+        model: adapter?.model || null,
+      });
+    }
+
     finalCompletion = completion;
     const rawContent = completion?.content;
 
