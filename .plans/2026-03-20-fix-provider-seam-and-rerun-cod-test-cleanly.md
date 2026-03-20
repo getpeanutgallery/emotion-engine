@@ -507,7 +507,7 @@ New active question from Derrick that must be answered before the next full reru
   - `../tools` -> `2a6a037` (`Require injected provider in emotion lenses tool`) pushed to `origin/main`
   - `../ai-providers` -> `44b7221` (`Add provider-owned OpenRouter transport timeout`) pushed to `origin/main`
   - `../digital-twin-openrouter-emotion-engine` -> `0931fe5` (`Add provider seam investigation cassettes`) pushed to `origin/main`
-  - `emotion-engine` -> `b495a7b` (`emotion-engine: Document cod-test timeout fix and preserve artifacts`) pushed to `origin/main`
+  - `emotion-engine` -> `12d00ae` (`emotion-engine: Document cod-test timeout fix and preserve artifacts`) pushed to `origin/main`
 - Requested artifacts handled truthfully:
   - committed the clean/pass and investigation **output artifacts** in `emotion-engine` (forced add from ignored `output/` + `*.log` surfaces)
   - committed the smaller investigation cassettes in `digital-twin-openrouter-emotion-engine` that fit normal GitHub Git limits
@@ -537,7 +537,7 @@ New active question from Derrick that must be answered before the next full reru
 - `2a6a037` - tools: Require injected provider in emotion lenses tool
 - `44b7221` - ai-providers: Add provider-owned OpenRouter transport timeout
 - `0931fe5` - digital-twin-openrouter-emotion-engine: Add provider seam investigation cassettes
-- `b495a7b` - emotion-engine: emotion-engine: Document cod-test timeout fix and preserve artifacts
+- `12d00ae` - emotion-engine: emotion-engine: Document cod-test timeout fix and preserve artifacts
 
 **Lessons Learned:**
 - The strongest proven lever on the current blocker is timeout policy on the first Phase 2 video lane, not another node_modules-era seam patch.
