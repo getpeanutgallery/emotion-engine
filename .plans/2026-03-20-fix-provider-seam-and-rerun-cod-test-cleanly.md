@@ -529,7 +529,7 @@ New active question from Derrick that must be answered before the next full reru
 
 ## Final Results
 
-**Status:** ⚠️ Partial
+**Status:** ✅ Complete
 
 **What We Built:** Sealed the stale `tools/node_modules/ai-providers` fallback in source-owned `../tools/emotion-lenses-tool.cjs`, added a provider-owned OpenRouter transport timeout in `../ai-providers`, proved the broad user-directed `1200000ms` all-provider timeout rollout was a regression, then restored the evidence-based narrow timeout policy in `configs/cod-test.yaml` and `configs/cod-test-ee-af2-timeoutprobe.yaml` by keeping `ai.video.targets[0].adapter.params.timeoutMs: 10000` while returning `recovery.ai.timeoutMs` to `45000` and removing the broad rollout elsewhere. With that restored config posture, a fresh clean full `cod-test` acceptance rerun completed successfully. The durable source/config/test/plan changes are now committed and pushed in their owning repos, the machine-local `git+file` override leak was removed from commit candidates, and the requested logs/output artifacts plus the push-safe investigation cassettes were preserved in Git.
 
