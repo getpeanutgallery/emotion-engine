@@ -1,0 +1,79 @@
+{
+  "chunkIndex": 11,
+  "splitIndex": 0,
+  "startTime": 55,
+  "endTime": 60,
+  "attempt": 2,
+  "attemptInTarget": 2,
+  "targetIndex": 0,
+  "targetCount": 4,
+  "adapter": {
+    "name": "openrouter",
+    "model": "qwen/qwen3.5-397b-a17b",
+    "params": {
+      "max_tokens": 25000,
+      "timeoutMs": 10000,
+      "thinking": {
+        "level": "low"
+      }
+    }
+  },
+  "failover": null,
+  "promptRef": null,
+  "rawResponse": null,
+  "providerCompletion": null,
+  "parsed": null,
+  "toolLoop": null,
+  "error": "OpenRouter: timeout of 10000ms exceeded",
+  "errorName": "OpenRouterError",
+  "errorCode": "ECONNABORTED",
+  "errorStatus": null,
+  "errorRequestId": null,
+  "errorClassification": "retryable",
+  "errorStack": "AxiosError: timeout of 10000ms exceeded\n    at RedirectableRequest.handleRequestTimeout (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/axios/dist/node/axios.cjs:3836:13)\n    at RedirectableRequest.emit (node:events:508:20)\n    at Timeout._onTimeout (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/follow-redirects/index.js:221:12)\n    at listOnTimeout (node:internal/timers:605:17)\n    at process.processTimers (node:internal/timers:541:7)\n    at Axios.request (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/axios/dist/node/axios.cjs:5110:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async runRequest (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:268:22)\n    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/digital-twin-router/index.js:578:28)\n    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:336:14)\n    at async executeLocalValidatorToolLoop (/home/derrick/.openclaw/workspace/projects/peanut-gallery/tools/lib/local-validator-tool-loop.cjs:204:24)\n    at async operation (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/process/video-chunks.cjs:783:40)\n    at async executeWithTargets (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/ai-targets.cjs:418:24)\n    at async Object.run (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/process/video-chunks.cjs:705:52)\n    at async executeScript (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/script-runner.cjs:33:20)",
+  "errorDebug": {
+    "provider": "openrouter",
+    "request": {
+      "method": "POST",
+      "url": "https://openrouter.ai/api/v1/chat/completions",
+      "model": "qwen/qwen3.5-397b-a17b",
+      "contentTypes": [
+        "text",
+        "video_url"
+      ],
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "error": {
+      "name": "OpenRouterError",
+      "message": "OpenRouter: timeout of 10000ms exceeded",
+      "code": "ECONNABORTED",
+      "isAxiosError": false
+    }
+  },
+  "errorResponse": null,
+  "provider": "openrouter",
+  "model": "qwen/qwen3.5-397b-a17b",
+  "requestMeta": {
+    "adapter": {
+      "name": "openrouter",
+      "model": "qwen/qwen3.5-397b-a17b",
+      "params": {
+        "max_tokens": 25000,
+        "timeoutMs": 10000,
+        "thinking": {
+          "level": "low"
+        }
+      }
+    },
+    "provider": "openrouter",
+    "model": "qwen/qwen3.5-397b-a17b",
+    "chunkIndex": 11,
+    "splitIndex": 0,
+    "attempt": 2,
+    "attemptInTarget": 2,
+    "targetIndex": 0,
+    "targetCount": 4
+  }
+}

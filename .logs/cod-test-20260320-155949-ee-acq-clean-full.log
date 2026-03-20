@@ -1,0 +1,493 @@
+[dotenv@17.3.1] injecting env (0) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+🚀 Emotion Engine Pipeline Orchestrator
+========================================
+
+📄 Loading configuration...
+   Config loaded: configs/cod-test.yaml
+   Name: COD Test Pipeline
+   Description: Test pipeline for cod.mp4 video (2 chunks max)
+✅ Validating configuration...
+   ✅ Valid (8 script(s) across all phases)
+📁 Setting up assets directory...
+   ✅ Assets directory created at /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/input
+   ✅ Raw directories ready:
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase1-gather-context/raw
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase2-process/raw
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/raw
+
+🎯 Executing pipeline...
+
+📥 Phase 1: Gather Context (sequential, 2 script(s))
+   Running: server/scripts/get-context/get-dialogue.cjs
+   🎤 Extracting and transcribing dialogue from: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/examples/videos/emotion-tests/cod.mp4
+   🔁 Dialogue retry config: attempts=1, backoffMs=0
+   🤖 Calling AI provider for transcription...
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+   ✅ Dialogue extraction complete
+      Output: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase1-gather-context/dialogue-data.json
+      Found 18 dialogue segments
+      Total duration: 220.0s
+   💾 Keeping dialogue temp files in /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/processed/dialogue
+   Running: server/scripts/get-context/get-music.cjs
+   🎵 Extracting and analyzing music/audio from: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/examples/videos/emotion-tests/cod.mp4
+   📊 Audio duration: 140.0s (1 chunk(s))
+   🔁 Music retry config: attempts=1, backoffMs=0
+   Analyzing chunk 1/1 (0.0s - 140.0s)...
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+   ✅ Music/audio analysis complete
+      Output: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase1-gather-context/music-data.json
+      Found 1 segment(s)
+      Music detected: Yes
+   💾 Keeping music temp files in /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/processed/music
+   ✅ Phase 1 complete
+
+⚙️  Phase 2: Process (sequential, 1 script(s))
+   Running: server/scripts/process/video-chunks.cjs
+   🎬 Processing video in chunks...
+   📊 Video duration: 140.0s
+   📦 Processing 29 chunks (max_chunks: 100)
+   📋 Config values:
+      - chunkDuration: 5
+      - max_chunks: 100
+      - video duration: 140.017s
+      - calculated chunks: 29
+      - processing: 29 chunks
+   📁 Phase directory: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase2-process
+   📁 Chunks directory: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/processed/chunks
+   🔁 Retry config: attempts=2, backoffMs=500, retryOnParseError=true, retryOnProviderError=true
+   🧰 Tool loop config: turns=4, validatorCalls=3
+   🎞️  Video attachment transport: strategy=base64, mimeType=video/mp4
+   Processing chunk 1/29 (0.0s - 5.0s)...
+   🎬 Extracting chunk 0: 0s → 5s
+   ✅ Chunk extracted: 2.01MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 1 analyzed (9435 tokens)
+   Processing chunk 2/29 (5.0s - 10.0s)...
+   🎬 Extracting chunk 1: 5s → 10s
+   ✅ Chunk extracted: 2.92MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 2 analyzed (7893 tokens)
+   Processing chunk 3/29 (10.0s - 15.0s)...
+   🎬 Extracting chunk 2: 10s → 15s
+   ✅ Chunk extracted: 2.02MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 3 analyzed (10332 tokens)
+   Processing chunk 4/29 (15.0s - 20.0s)...
+   🎬 Extracting chunk 3: 15s → 20s
+   ✅ Chunk extracted: 2.18MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 4 analyzed (9614 tokens) after 2 attempts
+   Processing chunk 5/29 (20.0s - 25.0s)...
+   🎬 Extracting chunk 4: 20s → 25s
+   ✅ Chunk extracted: 2.26MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 5 analyzed (11389 tokens)
+   Processing chunk 6/29 (25.0s - 30.0s)...
+   🎬 Extracting chunk 5: 25s → 30s
+   ✅ Chunk extracted: 2.22MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 6 analyzed (10935 tokens)
+   Processing chunk 7/29 (30.0s - 35.0s)...
+   🎬 Extracting chunk 6: 30s → 35s
+   ✅ Chunk extracted: 1.90MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 7 analyzed (5735 tokens)
+   Processing chunk 8/29 (35.0s - 40.0s)...
+   🎬 Extracting chunk 7: 35s → 40s
+   ✅ Chunk extracted: 2.78MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 8 analyzed (10952 tokens)
+   Processing chunk 9/29 (40.0s - 45.0s)...
+   🎬 Extracting chunk 8: 40s → 45s
+   ✅ Chunk extracted: 2.90MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 9 analyzed (9038 tokens) after 2 attempts
+   Processing chunk 10/29 (45.0s - 50.0s)...
+   🎬 Extracting chunk 9: 45s → 50s
+   ✅ Chunk extracted: 1.95MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 10 analyzed (5586 tokens)
+   Processing chunk 11/29 (50.0s - 55.0s)...
+   🎬 Extracting chunk 10: 50s → 55s
+   ✅ Chunk extracted: 2.21MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 11 analyzed (17017 tokens)
+   Processing chunk 12/29 (55.0s - 60.0s)...
+   🎬 Extracting chunk 11: 55s → 60s
+   ✅ Chunk extracted: 2.22MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 12 analyzed (5285 tokens) after 3 attempts
+   Processing chunk 13/29 (60.0s - 65.0s)...
+   🎬 Extracting chunk 12: 60s → 65s
+   ✅ Chunk extracted: 2.71MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 13 analyzed (10220 tokens)
+   Processing chunk 14/29 (65.0s - 70.0s)...
+   🎬 Extracting chunk 13: 65s → 70s
+   ✅ Chunk extracted: 2.72MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 14 analyzed (9614 tokens)
+   Processing chunk 15/29 (70.0s - 75.0s)...
+   🎬 Extracting chunk 14: 70s → 75s
+   ✅ Chunk extracted: 2.22MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 15 analyzed (9886 tokens)
+   Processing chunk 16/29 (75.0s - 80.0s)...
+   🎬 Extracting chunk 15: 75s → 80s
+   ✅ Chunk extracted: 2.50MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 16 analyzed (4373 tokens) after 3 attempts
+   Processing chunk 17/29 (80.0s - 85.0s)...
+   🎬 Extracting chunk 16: 80s → 85s
+   ✅ Chunk extracted: 2.33MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 17 analyzed (7306 tokens)
+   Processing chunk 18/29 (85.0s - 90.0s)...
+   🎬 Extracting chunk 17: 85s → 90s
+   ✅ Chunk extracted: 2.73MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 18 analyzed (5280 tokens) after 3 attempts
+   Processing chunk 19/29 (90.0s - 95.0s)...
+   🎬 Extracting chunk 18: 90s → 95s
+   ✅ Chunk extracted: 2.30MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 19 analyzed (11080 tokens)
+   Processing chunk 20/29 (95.0s - 100.0s)...
+   🎬 Extracting chunk 19: 95s → 100s
+   ✅ Chunk extracted: 2.56MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 20 analyzed (5592 tokens)
+   Processing chunk 21/29 (100.0s - 105.0s)...
+   🎬 Extracting chunk 20: 100s → 105s
+   ✅ Chunk extracted: 2.15MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 21 analyzed (5603 tokens)
+   Processing chunk 22/29 (105.0s - 110.0s)...
+   🎬 Extracting chunk 21: 105s → 110s
+   ✅ Chunk extracted: 1.98MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 22 analyzed (9161 tokens) after 2 attempts
+   Processing chunk 23/29 (110.0s - 115.0s)...
+   🎬 Extracting chunk 22: 110s → 115s
+   ✅ Chunk extracted: 2.24MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 23 analyzed (5471 tokens) after 2 attempts
+   Processing chunk 24/29 (115.0s - 120.0s)...
+   🎬 Extracting chunk 23: 115s → 120s
+   ✅ Chunk extracted: 2.46MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 24 analyzed (9016 tokens)
+   Processing chunk 25/29 (120.0s - 125.0s)...
+   🎬 Extracting chunk 24: 120s → 125s
+   ✅ Chunk extracted: 2.89MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 25 analyzed (10989 tokens) after 2 attempts
+   Processing chunk 26/29 (125.0s - 130.0s)...
+   🎬 Extracting chunk 25: 125s → 130s
+   ✅ Chunk extracted: 2.51MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 26 analyzed (9746 tokens)
+   Processing chunk 27/29 (130.0s - 135.0s)...
+   🎬 Extracting chunk 26: 130s → 135s
+   ✅ Chunk extracted: 2.40MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 27 analyzed (20509 tokens)
+   Processing chunk 28/29 (135.0s - 140.0s)...
+   🎬 Extracting chunk 27: 135s → 140s
+   ✅ Chunk extracted: 2.52MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+      ✅ Chunk 28 analyzed (11116 tokens)
+   Processing chunk 29/29 (140.0s - 140.0s)...
+   🎬 Extracting chunk 28: 140s → 140.017s
+   ✅ Chunk extracted: 0.10MB (0.016999999999995907s)
+      ⏭️  Skipping terminal provider-facing micro-chunk under 1s (0.017s at 140.000s-140.017s)
+   ✅ Video chunk analysis complete
+      Artifact path: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase2-process/chunk-analysis.json
+      Total tokens used: 258173
+      Average per successful chunk: 9220 tokens
+   💾 Keeping extracted chunk files in /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/processed/chunks
+   ✅ Phase 2 complete
+
+📊 Phase 3: Report (sequential, 5 script(s))
+   Running: server/scripts/report/metrics.cjs
+   📊 Calculating emotion metrics...
+   📈 Computing averages per emotion lens...
+   🎯 Finding peak moments...
+   📊 Analyzing emotional trends...
+   ⚡ Calculating friction index...
+   ✅ Metrics saved to: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json
+   Running: server/scripts/report/recommendation.cjs
+   🤖 Generating AI recommendation...
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-155949-ee-acq-clean-full
+   ✅ Recommendation saved to: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json
+   Running: server/scripts/report/emotional-analysis.cjs
+💓 Performing deep emotional analysis...
+📊 Analyzing emotional breakdown per chunk...
+📈 Building emotional arc data...
+⚠️  Calculating scroll risk timeline...
+🎯 Identifying critical emotional moments...
+✅ Emotional analysis saved to: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json
+   Running: server/scripts/report/summary.cjs
+📋 Aggregating report data into summary...
+   📊 Building metadata...
+   📈 Extracting key metrics...
+   💡 Extracting recommendation...
+   🔗 Building report paths...
+   ✅ Summary saved to: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json
+   Running: server/scripts/report/final-report.cjs
+   📄 Generating final markdown report...
+   ✅ Analysis data saved to: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json
+   📝 Building report structure...
+   ✅ Final report saved to: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md
+   ✅ Phase 3 complete
+
+💾 Saving final artifacts...
+   ✅ Saved 1 file(s) to /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test
+
+✅ Pipeline complete!
+========================================
+Total scripts executed: 8
+Output directory: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test
+Artifacts saved: 1 files
+
+EXIT_STATUS=0

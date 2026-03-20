@@ -1,0 +1,133 @@
+{
+  "dialogue_segments": [
+    {
+      "start": 0,
+      "end": 6,
+      "speaker": "Speaker 1",
+      "text": "They want you afraid. Fear makes you easier to control.",
+      "confidence": 0.98
+    },
+    {
+      "start": 9,
+      "end": 11,
+      "speaker": "Speaker 1",
+      "text": "It's time to wake up.",
+      "confidence": 0.95
+    },
+    {
+      "start": 12,
+      "end": 16,
+      "speaker": "Speaker 2",
+      "text": "Your streets, so once again run red with your blood.",
+      "confidence": 0.92
+    },
+    {
+      "start": 17,
+      "end": 21,
+      "speaker": "Speaker 3",
+      "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+      "confidence": 0.96
+    },
+    {
+      "start": 22,
+      "end": 24,
+      "speaker": "Speaker 1",
+      "text": "Menendez is a terrorist.",
+      "confidence": 0.98
+    },
+    {
+      "start": 24,
+      "end": 27,
+      "speaker": "Speaker 1",
+      "text": "We're bringing peace and security to the world.",
+      "confidence": 0.97
+    },
+    {
+      "start": 27,
+      "end": 30,
+      "speaker": "Speaker 4",
+      "text": "He refuses to let me go.",
+      "confidence": 0.94
+    },
+    {
+      "start": 30,
+      "end": 33,
+      "speaker": "Speaker 5",
+      "text": "Stop looking backwards, David, but what matters is what we do next.",
+      "confidence": 0.95
+    },
+    {
+      "start": 35,
+      "end": 37,
+      "speaker": "Speaker 5",
+      "text": "A lot of people counting on us for answers.",
+      "confidence": 0.93
+    },
+    {
+      "start": 51,
+      "end": 53,
+      "speaker": "Speaker 6",
+      "text": "Spectre one report.",
+      "confidence": 0.91
+    },
+    {
+      "start": 54,
+      "end": 55,
+      "speaker": "Speaker 7",
+      "text": "Need a sit rep.",
+      "confidence": 0.92
+    },
+    {
+      "start": 101,
+      "end": 103,
+      "speaker": "Speaker 8",
+      "text": "This isn't real.",
+      "confidence": 0.95
+    },
+    {
+      "start": 103,
+      "end": 104,
+      "speaker": "Speaker 9",
+      "text": "The hell it ain't!",
+      "confidence": 0.96
+    },
+    {
+      "start": 138,
+      "end": 140,
+      "speaker": "Speaker 10",
+      "text": "Pull it together, man!",
+      "confidence": 0.94
+    },
+    {
+      "start": 140,
+      "end": 143,
+      "speaker": "Speaker 11",
+      "text": "So eager to leave, David.",
+      "confidence": 0.92
+    },
+    {
+      "start": 143,
+      "end": 147,
+      "speaker": "Speaker 11",
+      "text": "Killing the man is a hell of a lot easier than killing the idea.",
+      "confidence": 0.95
+    },
+    {
+      "start": 148,
+      "end": 150,
+      "speaker": "Speaker 12",
+      "text": "You were never cut out to be a Mason.",
+      "confidence": 0.96
+    },
+    {
+      "start": 152,
+      "end": 155,
+      "speaker": "Speaker 13",
+      "text": "No more games. This ends now.",
+      "confidence": 0.97
+    }
+  ],
+  "summary": "A montage of intense dialogue featuring various characters discussing conflict, terrorism, and personal stakes, likely from a Call of Duty game trailer.",
+  "totalDuration": 220,
+  "handoffContext": null
+}

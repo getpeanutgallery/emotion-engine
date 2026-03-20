@@ -1,0 +1,52 @@
+{
+  "contractVersion": "ee.script-result/v1",
+  "status": "success",
+  "phase": "phase1-gather-context",
+  "script": "get-music",
+  "run": {
+    "configName": "COD Test Pipeline",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+    "startedAt": "2026-03-20T19:08:01.247Z",
+    "completedAt": "2026-03-20T19:08:14.612Z",
+    "durationMs": 13365,
+    "attempt": 1
+  },
+  "payload": {
+    "artifactKey": "musicData",
+    "data": {
+      "segments": [
+        {
+          "start": 0,
+          "end": 140.042449,
+          "type": "music",
+          "description": "An intense, high-energy action trailer score featuring dramatic orchestral elements, electronic beats, and sound effects like explosions and gunshots, layered with voiceover dialogue.",
+          "mood": "energetic",
+          "intensity": 9
+        }
+      ],
+      "summary": "The audio is a high-intensity action trailer featuring dramatic music, sound effects, and dialogue.",
+      "hasMusic": true
+    }
+  },
+  "artifacts": {
+    "primary": {
+      "key": "musicData",
+      "path": "phase1-gather-context/music-data.json",
+      "mediaType": "application/json"
+    },
+    "additional": []
+  },
+  "metrics": {
+    "tokensTotal": null,
+    "warningsCount": 0
+  },
+  "diagnostics": {
+    "warnings": [],
+    "degraded": false,
+    "debugCaptureEnabled": true,
+    "captureRefs": [
+      "phase1-gather-context/raw/_meta/errors.jsonl",
+      "phase1-gather-context/raw/_meta/errors.summary.json"
+    ]
+  }
+}

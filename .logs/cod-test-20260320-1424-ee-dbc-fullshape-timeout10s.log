@@ -1,0 +1,126 @@
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+🚀 Emotion Engine Pipeline Orchestrator
+========================================
+
+📄 Loading configuration...
+   Config loaded: configs/cod-test.yaml
+   Name: COD Test Pipeline
+   Description: Test pipeline for cod.mp4 video (2 chunks max)
+✅ Validating configuration...
+   ✅ Valid (8 script(s) across all phases)
+📁 Setting up assets directory...
+   ✅ Assets directory created at /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/input
+   ✅ Raw directories ready:
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase1-gather-context/raw
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase2-process/raw
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/raw
+
+🎯 Executing pipeline...
+
+📥 Phase 1: Gather Context (sequential, 2 script(s))
+   Running: server/scripts/get-context/get-dialogue.cjs
+   🎤 Extracting and transcribing dialogue from: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/examples/videos/emotion-tests/cod.mp4
+   🔁 Dialogue retry config: attempts=1, backoffMs=0
+   🤖 Calling AI provider for transcription...
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+   ✅ Dialogue extraction complete
+      Output: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase1-gather-context/dialogue-data.json
+      Found 20 dialogue segments
+      Total duration: 219.0s
+   💾 Keeping dialogue temp files in /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/processed/dialogue
+   Running: server/scripts/get-context/get-music.cjs
+   🎵 Extracting and analyzing music/audio from: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/examples/videos/emotion-tests/cod.mp4
+   📊 Audio duration: 140.0s (1 chunk(s))
+   🔁 Music retry config: attempts=1, backoffMs=0
+   Analyzing chunk 1/1 (0.0s - 140.0s)...
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+   ✅ Music/audio analysis complete
+      Output: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase1-gather-context/music-data.json
+      Found 1 segment(s)
+      Music detected: Yes
+   💾 Keeping music temp files in /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/processed/music
+   ✅ Phase 1 complete
+
+⚙️  Phase 2: Process (sequential, 1 script(s))
+   Running: server/scripts/process/video-chunks.cjs
+   🎬 Processing video in chunks...
+   📊 Video duration: 140.0s
+   📦 Processing 29 chunks (max_chunks: 100)
+   📋 Config values:
+      - chunkDuration: 5
+      - max_chunks: 100
+      - video duration: 140.017s
+      - calculated chunks: 29
+      - processing: 29 chunks
+   📁 Phase directory: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase2-process
+   📁 Chunks directory: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/processed/chunks
+   🔁 Retry config: attempts=2, backoffMs=500, retryOnParseError=true, retryOnProviderError=true
+   🧰 Tool loop config: turns=4, validatorCalls=3
+   🎞️  Video attachment transport: strategy=base64, mimeType=video/mp4
+   Processing chunk 1/29 (0.0s - 5.0s)...
+   🎬 Extracting chunk 0: 0s → 5s
+   ✅ Chunk extracted: 2.01MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+      ✅ Chunk 1 analyzed (9467 tokens)
+   Processing chunk 2/29 (5.0s - 10.0s)...
+   🎬 Extracting chunk 1: 5s → 10s
+   ✅ Chunk extracted: 2.92MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+      ✅ Chunk 2 analyzed (10056 tokens)
+   Processing chunk 3/29 (10.0s - 15.0s)...
+   🎬 Extracting chunk 2: 10s → 15s
+   ✅ Chunk extracted: 2.02MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+      ✅ Chunk 3 analyzed (11123 tokens)
+   Processing chunk 4/29 (15.0s - 20.0s)...
+   🎬 Extracting chunk 3: 15s → 20s
+   ✅ Chunk extracted: 2.18MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+      ✅ Chunk 4 analyzed (9840 tokens) after 2 attempts
+   Processing chunk 5/29 (20.0s - 25.0s)...
+   🎬 Extracting chunk 4: 20s → 25s
+   ✅ Chunk extracted: 2.26MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260320-1424-ee-dbc-fullshape-timeout10s

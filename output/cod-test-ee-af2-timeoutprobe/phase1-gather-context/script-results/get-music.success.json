@@ -1,0 +1,52 @@
+{
+  "contractVersion": "ee.script-result/v1",
+  "status": "success",
+  "phase": "phase1-gather-context",
+  "script": "get-music",
+  "run": {
+    "configName": "COD Test Pipeline (ee-af2 timeout probe)",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-ee-af2-timeoutprobe",
+    "startedAt": "2026-03-20T18:32:56.397Z",
+    "completedAt": "2026-03-20T18:33:13.348Z",
+    "durationMs": 16951,
+    "attempt": 1
+  },
+  "payload": {
+    "artifactKey": "musicData",
+    "data": {
+      "segments": [
+        {
+          "start": 0,
+          "end": 140.042449,
+          "type": "music",
+          "description": "An intense, action-packed movie trailer featuring dramatic dialogue and a driving, suspenseful orchestral score.",
+          "mood": "energetic",
+          "intensity": 8
+        }
+      ],
+      "summary": "The audio features an intense, action-oriented movie trailer with dramatic dialogue and a driving, suspenseful score.",
+      "hasMusic": true
+    }
+  },
+  "artifacts": {
+    "primary": {
+      "key": "musicData",
+      "path": "phase1-gather-context/music-data.json",
+      "mediaType": "application/json"
+    },
+    "additional": []
+  },
+  "metrics": {
+    "tokensTotal": null,
+    "warningsCount": 0
+  },
+  "diagnostics": {
+    "warnings": [],
+    "degraded": false,
+    "debugCaptureEnabled": true,
+    "captureRefs": [
+      "phase1-gather-context/raw/_meta/errors.jsonl",
+      "phase1-gather-context/raw/_meta/errors.summary.json"
+    ]
+  }
+}

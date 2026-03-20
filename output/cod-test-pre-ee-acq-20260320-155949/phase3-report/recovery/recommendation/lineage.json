@@ -1,0 +1,11 @@
+{
+  "failureId": "recommendation:phase3-report:attempt-1",
+  "parentFailureId": null,
+  "phase": "phase3-report",
+  "script": "recommendation",
+  "scriptRunAttempt": 1,
+  "deterministicAttemptsUsed": 0,
+  "aiRecoveryAttemptsUsed": 0,
+  "maxAiRecoveryAttempts": 1,
+  "reentryAttemptNumber": 0
+}

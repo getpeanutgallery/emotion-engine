@@ -1,0 +1,85 @@
+{
+  "chunkIndex": 11,
+  "splitIndex": 0,
+  "startTime": 55,
+  "endTime": 60,
+  "attempt": 1,
+  "attemptInTarget": 1,
+  "targetIndex": 0,
+  "targetCount": 4,
+  "adapter": {
+    "name": "openrouter",
+    "model": "qwen/qwen3.5-397b-a17b",
+    "params": {
+      "max_tokens": 25000,
+      "timeoutMs": 10000,
+      "thinking": {
+        "level": "low"
+      }
+    }
+  },
+  "failover": null,
+  "promptRef": null,
+  "rawResponse": null,
+  "providerCompletion": null,
+  "parsed": null,
+  "toolLoop": null,
+  "error": "OpenRouter: No content in response",
+  "errorName": "OpenRouterNoContentError",
+  "errorCode": null,
+  "errorStatus": 200,
+  "errorRequestId": "9df76328cb88288e-MIA",
+  "errorClassification": "retryable",
+  "errorStack": "OpenRouterNoContentError: OpenRouter: No content in response\n    at createNoContentError (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/utils/provider-debug.cjs:309:15)\n    at transformResponse (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:245:17)\n    at runRequest (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:276:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/digital-twin-router/index.js:578:28)\n    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:336:14)\n    at async executeLocalValidatorToolLoop (/home/derrick/.openclaw/workspace/projects/peanut-gallery/tools/lib/local-validator-tool-loop.cjs:204:24)\n    at async operation (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/process/video-chunks.cjs:783:40)\n    at async executeWithTargets (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/ai-targets.cjs:418:24)\n    at async Object.run (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/process/video-chunks.cjs:705:52)",
+  "errorDebug": {
+    "provider": "openrouter",
+    "request": {
+      "method": "POST",
+      "url": "https://openrouter.ai/api/v1/chat/completions",
+      "model": "qwen/qwen3.5-397b-a17b",
+      "contentTypes": [
+        "text",
+        "video_url"
+      ],
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "cf-ray": "9df76328cb88288e-MIA"
+      },
+      "body": "{\n  \"id\": \"gen-1774037710-8mJPu8kasWzigrUumAnz\",\n  \"object\": \"chat.completion\",\n  \"created\": 1774037710,\n  \"model\": \"qwen/qwen3.5-397b-a17b-20260216\",\n  \"provider\": \"Together\",\n  \"system_fingerprint\": null,\n  \"choices\": [\n    {\n      \"index\": 0,\n      \"logprobs\": null,\n      \"finish_reason\": \"length\",\n      \"native_finish_reason\": \"length\",\n      \"message\": {\n        \"role\": \"assistant\",\n        \"content\": null,\n        \"refusal\": null,\n        \"reasoning\": \"Thinking Process:\\n\\n1.  **Analyze the Request:**\\n    *   **Persona:** Alex \\\"The Scroller\\\" Chen (Gen Z, impatient, TikTok-native, harsh critic).\\n    *   **Goal:** Evaluate a video chunk (5s duration, 55.0s-60.0s window) based on emotional lenses (patience, boredom, excitement).\\n    *   **Input:** Two images representing the video chunk (0.9s and 4.4s timestamps within the chunk).\\n    *   **Context:** Previous summary mentions glitchy red diagnostics -> tactical squad -> green/red lit corridors. Music is tense (intensity 8).\\n    *   **Output Format:** JSON only. No markdown fences. Must use the local validation tool loop first.\\n    *   **Tool Contract:** I need to call `validate_emotion_analysis_json` with the specific envelope structure first. Then, if valid, return the final JSON.\\n    *   **Constraints:** Remaining turns: 4. Remaining validator calls: 3. I must start with the tool call.\\n\\n2.  **Analyze the Video Chunk (Images):**\\n    *   **Image 1 (0.9s):** Dark, teal/red lighting. Tactical figures (soldiers/operators) moving quickly. Looks like a corridor or indoor environment. High energy, action-oriented.\\n    *   **Image 2 (4.4s):** Bright, outdoor scene. \\\"NEW LIFE II\\\" text overlay (glitchy/stylized). Destroyed buildings, debris, sunny sky. Looks like a game title card or map reveal.\\n    *   **Transition:** From dark indoor action to bright outdoor title reveal.\\n    *   **Persona Reaction (Alex):**\\n        *   *Hook:* The action is immediate (0.9s). No logo intro seen here (previous summary said diagnostics earlier).\\n        *   *Visuals:* High contrast (dark teal/red vs bright sun). Good pattern interrupt.\\n        *   *Text:* \\\"NEW LIFE II\\\" appears clearly.\\n        *   *Boredom:* Low. Action is fast.\\n        *   *Excitement:* High. Visuals are punchy.\\n        *   *Patience:* Moderate/High. I want to see what happens next.\\n\\n3.  **Draft Emotion Analysis:**\\n    *   **Summary:** Tactical squad runs through teal/red corridor then cuts to bright outdoor destruction with \\\"NEW LIFE II\\\" title.\\n    *   **Patience:** Score 7. Reasoning: The cut from action to title keeps me waiting for the next beat.\\n    *   **Boredom:** Score 3. Reasoning: Fast pacing, high contrast visuals prevent scrolling.\\n    *   **Excitement:** Score 8. Reasoning: Action sequence + title reveal creates hype.\\n    *   **Dominant Emotion:** Excitement (highest score).\\n    *   **Confidence:** 0.85 (Visuals are clear).\\n\\n4.  **Construct Tool Call:**\\n    *   Must match the canonical envelope exactly.\\n    *   `tool`: \\\"validate_emotion_analysis_json\\\"\\n    *   `emotionAnalysis`: The draft object above.\\n\\n5.  **Refine for Persona (Alex):**\\n    *   Ensure reasoning sounds like the evaluation criteria (Gen Z attention span).\\n    *   *Patience:* 7/10 (I'll wait for the next cut).\\n    *   *Boredom:* 2/10 (No dead air).\\n    *   *Excitement:* 8/10 (Visual punch).\\n\\n6.  **Final Check of Tool Envelope:**\\n    *   The prompt specifies: `{\\\"tool\\\":\\\"validate_emotion_analysis_json\\\",\\\"emotionAnalysis\\\":{...}}`.\\n    *   No markdown fences.\\n    *   Single JSON object.\\n\\n7.  **Step 1: Send Tool Call.**\\n    *   Wait, I need to make sure I follow the instruction: \\\"You may respond with exactly one JSON object in one of these forms: 1) Canonical tool call envelope... 2) Final emotion analysis JSON...\\\"\\n    *   I must start with the tool call.\\n\\n    *   *Correction on Scores:* Looking at the images again.\\n        *   0.9s: Action.\\n        *   4.4s: Title card \\\"NEW LIFE II\\\".\\n        *   For a Gen Z scroller, title cards can be boring if they linger. But this is only 5s total. The transition is key.\\n        *   Patience: 7 (I'm willing to watch the title).\\n        *   Boredom: 3 (It's not static for long).\\n        *   Excitement: 8 (The action + title combo works).\\n        *   Dominant: Excitement.\\n\\n    *   *Wait, one constraint:* \\\"dominant_emotion must match one of the configured lens names.\\\" (patience | boredom | excitement).\\n    *   *Wait, another constraint:* \\\"Each emotions.<lens>.score must be between 1 and 10.\\\"\\n    *   *Wait, another constraint:* \\\"confidence must be between 0 and 1.\\\"\\n\\n    *   *Tool Call Structure:*\\n        ```json\\n        {\\n          \\\"tool\\\": \\\"validate_emotion_analysis_json\\\",\\n          \\\"emotionAnalysis\\\": {\\n            \\\"summary\\\": \\\"Tactical squad runs through teal/red corridor then cuts to bright outdoor destruction with 'NEW LIFE II' title.\\\",\\n            \\\"emotions\\\": {\\n              \\\"patience\\\": { \\\"score\\\": 7, \\\"reasoning\\\": \\\"Fast cut keeps me waiting for the next beat.\\\" },\\n              \\\"boredom\\\": { \\\"score\\\": 3, \\\"reasoning\\\": \\\"High contrast visuals prevent scrolling.\\\" },\\n              \\\"excitement\\\": { \\\"score\\\": 8, \\\"reasoning\\\": \\\"Action sequence + title reveal creates hype.\\\" }\\n            },\\n            \\\"dominant_emotion\\\": \\\"excitement\\\",\\n            \\\"confidence\\\": 0.85\\n          }\\n        }\\n        ```\\n\\n    *   *Wait, I need to check the instruction again:* \\\"If you call the tool, use exactly this minimal envelope: {\\\"tool\\\":\\\"validate_emotion_analysis_json\\\",\\\"emotionAnalysis\\\":{\\\"summary\\\":\\\"The speaker stays calm and measured while tension slowly rises.\\\",\\\"emotions\\\":{\\\"patience\\\":{\\\"score\\\":6,\\\"reasoning\\\":\\\"patience evidence from the chunk.\\\"},\\\"boredom\\\":{\\\"score\\\":6,\\\"reasoning\\\":\\\"boredom evidence from the chunk.\\\"},\\\"excitement\\\":{\\\"score\\\":6,\\\"reasoning\\\":\\\"excitement evidence from the chunk.\\\"}},\\\"dominant_emotion\\\":\\\"patience\\\",\\\"confidence\\\":0.82}}.\\\"\\n    *   Actually, the instruction says \\\"use exactly this minimal envelope\\\" as an *example* of the structure, but implies I should use *my* data. The example text (\\\"The speaker stays calm...\\\") is likely a placeholder in the instruction description, but I should use my actual analysis data.\\n    *   However, looking closely at the instruction: \\\"If you call the tool, use exactly this minimal envelope: {...}\\\". This might be a strict template requirement or just an example of the *shape*. Usually, in these tasks, I need to populate the shape with my actual data. The example text inside the quote is likely illustrative of the *structure*, not the *content* I must force. I will populate with my actual analysis.\\n    *   Wait, reading further: \\\"Acceptance rules: - The final emotion analysis JSON is accepted only after validate_emotion_analysis_json returns {\\\"valid\\\": true}. - If you call the tool, use exactly this minimal envelope: {\\\"tool\\\":\\\"validate_emotion_analysis_json\\\",\\\"emotionAnalysis\\\":{...}}.\\\"\\n    *   Okay, I will construct the tool call with my actual data.\\n\\n    *   *Wait, one more check:* The prompt says \\\"Return JSON only. Do not use markdown fences...\\\".\\n    *   I need to output the tool call JSON first.\\n\\n    *   *Wait, looking at the conversation state:* It's empty `[]`. I am starting fresh.\\n    *   *Wait, looking at the images:* The first image is dark/action. The second is bright/title.\\n    *   *Wait, looking at the persona:* Alex \\\"The Scroller\\\".\\n    *   *Wait, looking at the goal:* Evaluate emotional content (patience, boredom, excitement).\\n\\n    *   *Decision:* I will send the tool call first.\\n\\n    *   *Wait, I need to be careful about the \\\"summary\\\" field in the tool call.* The example shows \\\"The speaker stays calm and measured while tension slowly rises.\\\" This is clearly generic text. I should replace it with my actual summary.\\n    *   *Wait, I need to be careful about the \\\"reasoning\\\" fields.* The example shows \\\"patience evidence from the chunk.\\\" I should replace with actual reasoning.\\n\\n    *   *Let's build the tool call.*\\n\\n    *   *Wait, I see a potential issue:* The instruction says \\\"If you call \n...[truncated 161914 chars]"
+    },
+    "error": {
+      "name": "OpenRouterNoContentError",
+      "message": "OpenRouter: No content in response",
+      "isAxiosError": false
+    }
+  },
+  "errorResponse": null,
+  "provider": "openrouter",
+  "model": "qwen/qwen3.5-397b-a17b",
+  "requestMeta": {
+    "adapter": {
+      "name": "openrouter",
+      "model": "qwen/qwen3.5-397b-a17b",
+      "params": {
+        "max_tokens": 25000,
+        "timeoutMs": 10000,
+        "thinking": {
+          "level": "low"
+        }
+      }
+    },
+    "provider": "openrouter",
+    "model": "qwen/qwen3.5-397b-a17b",
+    "chunkIndex": 11,
+    "splitIndex": 0,
+    "attempt": 1,
+    "attemptInTarget": 1,
+    "targetIndex": 0,
+    "targetCount": 4
+  }
+}

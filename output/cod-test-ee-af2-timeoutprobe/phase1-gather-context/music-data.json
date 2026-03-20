@@ -1,0 +1,14 @@
+{
+  "segments": [
+    {
+      "start": 0,
+      "end": 140.042449,
+      "type": "music",
+      "description": "An intense, action-packed movie trailer featuring dramatic dialogue and a driving, suspenseful orchestral score.",
+      "mood": "energetic",
+      "intensity": 8
+    }
+  ],
+  "summary": "The audio features an intense, action-oriented movie trailer with dramatic dialogue and a driving, suspenseful score.",
+  "hasMusic": true
+}

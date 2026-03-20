@@ -1,0 +1,14 @@
+{
+  "segments": [
+    {
+      "start": 0,
+      "end": 140.042449,
+      "type": "music",
+      "description": "Dramatic, high-intensity cinematic trailer music with aggressive percussion and tense orchestral elements, underscoring intense dialogue.",
+      "mood": "tense",
+      "intensity": 8
+    }
+  ],
+  "summary": "The audio is a high-intensity movie trailer featuring dramatic orchestral music and tense, confrontational dialogue.",
+  "hasMusic": true
+}

@@ -1,0 +1,14 @@
+{
+  "segments": [
+    {
+      "start": 0,
+      "end": 140.042449,
+      "type": "music",
+      "description": "An intense, high-energy action trailer score featuring dramatic orchestral elements, electronic beats, and sound effects like explosions and gunshots, layered with voiceover dialogue.",
+      "mood": "energetic",
+      "intensity": 9
+    }
+  ],
+  "summary": "The audio is a high-intensity action trailer featuring dramatic music, sound effects, and dialogue.",
+  "hasMusic": true
+}

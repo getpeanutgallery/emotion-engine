@@ -1,0 +1,85 @@
+{
+  "chunkIndex": 24,
+  "splitIndex": 0,
+  "startTime": 120,
+  "endTime": 125,
+  "attempt": 1,
+  "attemptInTarget": 1,
+  "targetIndex": 0,
+  "targetCount": 4,
+  "adapter": {
+    "name": "openrouter",
+    "model": "qwen/qwen3.5-397b-a17b",
+    "params": {
+      "max_tokens": 25000,
+      "timeoutMs": 10000,
+      "thinking": {
+        "level": "low"
+      }
+    }
+  },
+  "failover": null,
+  "promptRef": null,
+  "rawResponse": null,
+  "providerCompletion": null,
+  "parsed": null,
+  "toolLoop": null,
+  "error": "OpenRouter: No content in response",
+  "errorName": "OpenRouterNoContentError",
+  "errorCode": null,
+  "errorStatus": 200,
+  "errorRequestId": "9df78864dd26120e-MIA",
+  "errorClassification": "retryable",
+  "errorStack": "OpenRouterNoContentError: OpenRouter: No content in response\n    at createNoContentError (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/utils/provider-debug.cjs:309:15)\n    at transformResponse (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:245:17)\n    at runRequest (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:276:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/digital-twin-router/index.js:578:28)\n    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:336:14)\n    at async executeLocalValidatorToolLoop (/home/derrick/.openclaw/workspace/projects/peanut-gallery/tools/lib/local-validator-tool-loop.cjs:204:24)\n    at async operation (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/process/video-chunks.cjs:783:40)\n    at async executeWithTargets (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/ai-targets.cjs:418:24)\n    at async Object.run (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/process/video-chunks.cjs:705:52)",
+  "errorDebug": {
+    "provider": "openrouter",
+    "request": {
+      "method": "POST",
+      "url": "https://openrouter.ai/api/v1/chat/completions",
+      "model": "qwen/qwen3.5-397b-a17b",
+      "contentTypes": [
+        "text",
+        "video_url"
+      ],
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "cf-ray": "9df78864dd26120e-MIA"
+      },
+      "body": "{\n  \"id\": \"gen-1774039235-oXmU5v7Uebx9iAHVDqyK\",\n  \"object\": \"chat.completion\",\n  \"created\": 1774039235,\n  \"model\": \"qwen/qwen3.5-397b-a17b-20260216\",\n  \"provider\": \"Novita\",\n  \"system_fingerprint\": null,\n  \"choices\": [\n    {\n      \"index\": 0,\n      \"logprobs\": null,\n      \"finish_reason\": \"length\",\n      \"native_finish_reason\": \"length\",\n      \"message\": {\n        \"role\": \"assistant\",\n        \"content\": null,\n        \"refusal\": null,\n        \"reasoning\": \"Thinking Process:\\n\\n1.  **Analyze the Request:**\\n    *   **Persona:** Alex \\\"The Scroller\\\" Chen (Gen Z, impatient, TikTok-native, abandons content if hook > 3s).\\n    *   **Goal:** Evaluate a video chunk (120s-125s of a 140s ad) for emotional content (patience, boredom, excitement) using the provided lenses.\\n    *   **Input:** A sequence of 3 images representing a 5-second chunk (120s-125s) of a Call of Duty ad.\\n    *   **Context:** Previous summary indicates high-intensity combat culminating in title reveal/pre-order. This chunk is the *end* of the ad (120s-125s out of 140s total).\\n    *   **Constraints:**\\n        *   Ground judgment in visuals first.\\n        *   Treat previous summary as continuity only.\\n        *   If visuals are ambiguous/limited, say so.\\n        *   Return JSON only (no markdown fences, no commentary).\\n        *   Use the local validation tool `validate_emotion_analysis_json` first.\\n        *   Final output must be the emotion analysis JSON object.\\n        *   Schema requirements: `summary`, `emotions` (patience, boredom, excitement with score 1-10 + reasoning), `dominant_emotion`, `confidence` (0-1).\\n        *   Tool call envelope format is strict.\\n\\n2.  **Analyze the Video Chunk (Images):**\\n    *   **Image 1 (0.6s relative to chunk start, ~120.6s total):** \\\"CALL OF DUTY BLACK OPS 7 PRE-ORDER NOW\\\". Character face close-up, split blue/orange lighting. Xbox logos.\\n    *   **Image 2 (3.2s relative, ~123.2s total):** \\\"REZNOV CHALLENGE PACK CALL OF DUTY BLACK OPS 6 | WARZONE\\\". Three characters standing.\\n    *   **Image 3 (5.8s relative, ~125.8s total - actually exceeds chunk window slightly but represents the end):** \\\"VAULT EDITION BLACKCELL AND MORE\\\". Detailed edition breakdown, weapons, release date \\\"NOVEMBER 14\\\".\\n\\n    *   **Observation:** This is the \\\"offer stack\\\" or \\\"end card\\\" sequence of a commercial. It's information-heavy, static-ish (text overlays), and transactional.\\n    *   **Persona (Alex):** Alex hates slow buildup, corporate intros, and unclear value propositions. However, this is the *end* of the ad. Alex has already watched 120 seconds (which is extremely long for a Gen Z viewer - likely this is a long-form trailer or stream integration).\\n    *   **Emotional State:**\\n        *   **Patience:** Low. Alex is impatient. By 120s, if they are still watching, they are either highly engaged or bored but waiting for the end. However, this specific chunk is static text/screens. Alex's patience is likely waning because it's \\\"sales info\\\" not \\\"action\\\".\\n        *   **Boredom:** High. Static text screens, edition breakdowns, \\\"Pre-order now\\\" are typically boredom spikes for a scroller unless the visual dynamism is high. These look like standard end cards.\\n        *   **Excitement:** Low/Medium. The \\\"Vault Edition\\\" might excite a fan, but for a general scroller, it's just info. The visual punch is there (high production value), but the *action* is gone.\\n    *   **Context:** The prompt says \\\"Duration: 5s\\\". The images show timestamps 0.6, 3.2, 5.8. This covers the 120-125s window.\\n    *   **Persona Fit:** Alex would likely scroll away if this appeared in a feed without the preceding 120s of action. But since this is the *end* of a long video, the evaluation is about whether this specific chunk holds attention *now*. Static text screens are usually boredom triggers for Alex.\\n\\n3.  **Drafting the Emotion Analysis:**\\n    *   **Summary:** End-card sequence displaying pre-order info, challenge pack, and Vault Edition details with static character models.\\n    *   **Patience:** Score 4. Alex is impatient. Static text screens reduce patience. \\\"Pre-order now\\\" is a demand.\\n    *   **Boredom:** Score 7. Text-heavy screens, lack of motion compared to combat, \\\"corporate\\\" info dump.\\n    *   **Excitement:** Score 5. Visuals are polished (CoD quality), but it's info, not action. Fans might like the \\\"Vault\\\" stuff, but it's not a dopamine burst.\\n    *   **Dominant Emotion:** Boredom (Score 7 is highest).\\n    *   **Confidence:** 0.85 (Visuals are clear end cards).\\n\\n4.  **Tool Validation Step:**\\n    *   I need to call `validate_emotion_analysis_json` first with the canonical envelope.\\n    *   Then wait for validation (simulated in my head as I am the model, but I must follow the instruction to *use* the tool loop).\\n    *   *Correction:* The instructions say \\\"You have access to one local validation tool. You may respond with exactly one JSON object in one of these forms... 1) Canonical tool call envelope... 2) Final emotion analysis JSON...\\\".\\n    *   I must start with the tool call.\\n    *   The tool call requires specific structure: `{\\\"tool\\\": \\\"validate_emotion_analysis_json\\\", \\\"emotionAnalysis\\\": { ... }}`.\\n    *   I will construct this based on my analysis.\\n\\n5.  **Refining Scores for Persona (Alex):**\\n    *   Alex abandons content if hook > 3s. This is the *end* of a 140s video. If Alex is still here, they are committed. BUT, the *content* of this chunk is static info.\\n    *   Alex hates \\\"static shots held longer than 2 seconds\\\". These screens hold for ~3-5 seconds each.\\n    *   Alex hates \\\"unclear value proposition after 5 seconds\\\". Here the value is clear (buy game), but the *engagement* value is low.\\n    *   Patience: 3/10 (Alex is ready to scroll once the info is seen).\\n    *   Boredom: 8/10 (Text screens, no action).\\n    *   Excitement: 4/10 (Polished visuals, but no dopamine).\\n    *   Dominant: Boredom.\\n\\n    *   *Wait, check schema:* Scores must be 1-10.\\n    *   *Wait, check tool envelope:* The example in the prompt uses score 6 for all. I need to use my actual analysis.\\n    *   *Wait, check instruction:* \\\"If the validator reports problems, revise... After the validator returns valid=true, return ONLY the final emotion analysis JSON object\\\".\\n    *   Since I am simulating the tool call in this turn, I will output the tool call envelope first. The system will presumably validate it in the next turn (or I assume it passes if I follow schema).\\n    *   Actually, looking at the \\\"Current turn budget\\\": `remainingTurns: 4`, `remainingValidatorCalls: 3`.\\n    *   I need to output the tool call *now*.\\n\\n    *   *Wait, one more check:* The instruction says \\\"Return JSON only. Do not use markdown fences...\\\". But for the tool call, I need to use the canonical envelope.\\n    *   The instruction says: \\\"You may respond with exactly one JSON object in one of these forms: 1) Canonical tool call envelope... 2) Final emotion analysis JSON...\\\".\\n    *   So I will output the tool call envelope first.\\n\\n    *   *Wait, looking closer at the prompt's \\\"LOCAL TOOL LOOP\\\" section:*\\n    *   \\\"Acceptance rules: - The final emotion analysis JSON is accepted only after validate_emotion_analysis_json returns {\\\"valid\\\": true}.\\\"\\n    *   \\\"If you call the tool, use exactly this minimal envelope...\\\"\\n    *   I need to make the tool call first.\\n\\n    *   *Wait, I am the AI.* I don't actually have an external tool to call. I am simulating the process based on the instructions provided in the prompt. The prompt says \\\"You have access to one local validation tool.\\\" This implies I should generate the tool call JSON *as my response*, and the system (user/evaluator) will act as the tool.\\n    *   However, usually in these tasks, if I am instructed to use a tool, I output the tool call JSON.\\n    *   Let's construct the tool call JSON.\\n\\n    *   **Analysis for Tool Call:**\\n        *   Summary: End-card sequence showing Pre-order, Reznov Pack, and Vault Edition details with static character models and text overlays.\\n        *   Patience: 3 (Alex is impatient, static text screens risk scroll).\\n        *   Boredom: 8 (\n...[truncated 173985 chars]"
+    },
+    "error": {
+      "name": "OpenRouterNoContentError",
+      "message": "OpenRouter: No content in response",
+      "isAxiosError": false
+    }
+  },
+  "errorResponse": null,
+  "provider": "openrouter",
+  "model": "qwen/qwen3.5-397b-a17b",
+  "requestMeta": {
+    "adapter": {
+      "name": "openrouter",
+      "model": "qwen/qwen3.5-397b-a17b",
+      "params": {
+        "max_tokens": 25000,
+        "timeoutMs": 10000,
+        "thinking": {
+          "level": "low"
+        }
+      }
+    },
+    "provider": "openrouter",
+    "model": "qwen/qwen3.5-397b-a17b",
+    "chunkIndex": 24,
+    "splitIndex": 0,
+    "attempt": 1,
+    "attemptInTarget": 1,
+    "targetIndex": 0,
+    "targetCount": 4
+  }
+}

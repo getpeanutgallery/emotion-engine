@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 2,
+  "kind": "pointer",
+  "updatedAt": "2026-03-20T19:43:32.868Z",
+  "latestAttempt": 1,
+  "target": {
+    "dir": "attempt-01",
+    "file": "attempt-01/capture.json"
+  }
+}

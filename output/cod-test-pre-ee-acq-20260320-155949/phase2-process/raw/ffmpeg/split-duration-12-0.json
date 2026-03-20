@@ -1,0 +1,7 @@
+{
+  "tool": "ffprobe",
+  "command": "\"/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ffprobe-static/bin/linux/x64/ffprobe\" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/processed/chunks/chunk_012.mp4\"",
+  "stdout": "5.048000\n",
+  "stderr": "",
+  "status": "success"
+}

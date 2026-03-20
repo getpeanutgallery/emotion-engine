@@ -1,0 +1,2690 @@
+{
+  "generatedAt": "2026-03-20T19:43:32.873Z",
+  "pipelineVersion": "1.0",
+  "implementationStatus": {
+    "state": "computed",
+    "dataSource": "derived-from-phase2.chunkAnalysis"
+  },
+  "summary": {
+    "totalChunks": 28,
+    "failedChunks": 0,
+    "totalSeconds": 140,
+    "videoDuration": 140.017,
+    "criticalMomentsCount": 14,
+    "averageScrollRisk": 0.49285714285714355
+  },
+  "chunkAnalysis": [
+    {
+      "chunkIndex": 0,
+      "startTime": 0,
+      "endTime": 5,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.3,
+        "boredom": 0.7,
+        "excitement": 0.4
+      },
+      "emotionalVelocity": {
+        "patience": 0.3,
+        "boredom": 0.7,
+        "excitement": 0.4
+      },
+      "scrollRisk": 0.6599999999999999,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 0.7
+      },
+      "emotionalSignature": "low-patience-high-boredom-moderate-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 1,
+      "startTime": 5,
+      "endTime": 10,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.2,
+        "boredom": 0.9,
+        "excitement": 0.3
+      },
+      "emotionalVelocity": {
+        "patience": 0.04,
+        "boredom": 0.18,
+        "excitement": 0.06
+      },
+      "scrollRisk": 0.77,
+      "scrollRiskLevel": "critical",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 0.9
+      },
+      "emotionalSignature": "low-patience-high-boredom-low-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 2,
+      "startTime": 10,
+      "endTime": 15,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.4,
+        "boredom": 0.6,
+        "excitement": 0.5
+      },
+      "emotionalVelocity": {
+        "patience": 0.04,
+        "boredom": 0.06,
+        "excitement": 0.05
+      },
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 0.6
+      },
+      "emotionalSignature": "moderate-patience-moderate-boredom-moderate-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 3,
+      "startTime": 15,
+      "endTime": 20,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.8,
+        "boredom": 0.2,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": 0.05,
+        "boredom": -0.049999999999999996,
+        "excitement": 0.05
+      },
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": {
+        "emotion": "excitement",
+        "score": 0.9
+      },
+      "emotionalSignature": "high-patience-low-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 4,
+      "startTime": 20,
+      "endTime": 25,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.7,
+        "boredom": 0.2,
+        "excitement": 0.8
+      },
+      "emotionalVelocity": {
+        "patience": 0.04499999999999999,
+        "boredom": -0.06000000000000001,
+        "excitement": 0.04500000000000001
+      },
+      "scrollRisk": 0.34,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": {
+        "emotion": "excitement",
+        "score": 0.8
+      },
+      "emotionalSignature": "high-patience-low-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 5,
+      "startTime": 25,
+      "endTime": 30,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.4,
+        "boredom": 0.6,
+        "excitement": 0.5
+      },
+      "emotionalVelocity": {
+        "patience": 0.010000000000000009,
+        "boredom": -0.01499999999999998,
+        "excitement": 0.009999999999999998
+      },
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 0.6
+      },
+      "emotionalSignature": "moderate-patience-moderate-boredom-moderate-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 6,
+      "startTime": 30,
+      "endTime": 35,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.5,
+        "boredom": 0.6,
+        "excitement": 0.5
+      },
+      "emotionalVelocity": {
+        "patience": -0.009999999999999986,
+        "boredom": 0.01999999999999999,
+        "excitement": -0.020000000000000007
+      },
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 0.6
+      },
+      "emotionalSignature": "moderate-patience-moderate-boredom-moderate-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 7,
+      "startTime": 35,
+      "endTime": 40,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.8,
+        "boredom": 0.2,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": 0.004999999999999993,
+        "boredom": 2.7755575615628915e-18,
+        "excitement": 0.0050000000000000044
+      },
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": {
+        "emotion": "excitement",
+        "score": 0.9
+      },
+      "emotionalSignature": "high-patience-low-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 8,
+      "startTime": 40,
+      "endTime": 45,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.8,
+        "boredom": 0.2,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": 0.025,
+        "boredom": -0.02,
+        "excitement": 0.025
+      },
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": {
+        "emotion": "excitement",
+        "score": 0.9
+      },
+      "emotionalSignature": "high-patience-low-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 9,
+      "startTime": 45,
+      "endTime": 50,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.6,
+        "boredom": 0.3,
+        "excitement": 0.8
+      },
+      "emotionalVelocity": {
+        "patience": 0.014999999999999996,
+        "boredom": -0.02999999999999999,
+        "excitement": 0.030000000000000006
+      },
+      "scrollRisk": 0.38,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": {
+        "emotion": "excitement",
+        "score": 0.8
+      },
+      "emotionalSignature": "moderate-patience-low-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 10,
+      "startTime": 50,
+      "endTime": 55,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.8,
+        "boredom": 0.2,
+        "excitement": 0.7
+      },
+      "emotionalVelocity": {
+        "patience": 0.015000000000000013,
+        "boredom": -0.020000000000000007,
+        "excitement": -1.1102230246251566e-17
+      },
+      "scrollRisk": 0.37,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": {
+        "emotion": "patience",
+        "score": 0.8
+      },
+      "emotionalSignature": "high-patience-low-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 11,
+      "startTime": 55,
+      "endTime": 60,
+      "duration": 5,
+      "emotions": {
+        "patience": 1,
+        "boredom": 1,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": 0.020000000000000007,
+        "boredom": 0.08,
+        "excitement": -1.1102230246251566e-17
+      },
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": {
+        "emotion": "patience",
+        "score": 1
+      },
+      "emotionalSignature": "high-patience-high-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 12,
+      "startTime": 60,
+      "endTime": 65,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.8,
+        "boredom": 1,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": 0.01000000000000002,
+        "boredom": 0.075,
+        "excitement": 0.0050000000000000044
+      },
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 1
+      },
+      "emotionalSignature": "high-patience-high-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 13,
+      "startTime": 65,
+      "endTime": 70,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.9,
+        "boredom": 1,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": 0.020000000000000007,
+        "boredom": 0.075,
+        "excitement": 0.01499999999999999
+      },
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 1
+      },
+      "emotionalSignature": "high-patience-high-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 14,
+      "startTime": 70,
+      "endTime": 75,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.9,
+        "boredom": 1,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": 0,
+        "boredom": 0.04,
+        "excitement": 0.009999999999999986
+      },
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 1
+      },
+      "emotionalSignature": "high-patience-high-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 15,
+      "startTime": 75,
+      "endTime": 80,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.8,
+        "boredom": 0.2,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": -0.009999999999999998,
+        "boredom": -0.08,
+        "excitement": -1.1102230246251566e-17
+      },
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": {
+        "emotion": "excitement",
+        "score": 0.9
+      },
+      "emotionalSignature": "high-patience-low-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 16,
+      "startTime": 80,
+      "endTime": 85,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.9,
+        "boredom": 1,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": 0.004999999999999982,
+        "boredom": 0,
+        "excitement": -1.1102230246251566e-17
+      },
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 1
+      },
+      "emotionalSignature": "high-patience-high-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 17,
+      "startTime": 85,
+      "endTime": 90,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.8,
+        "boredom": 0.2,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": -0.010000000000000009,
+        "boredom": -0.08,
+        "excitement": -1.1102230246251566e-17
+      },
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": {
+        "emotion": "excitement",
+        "score": 0.9
+      },
+      "emotionalSignature": "high-patience-low-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 18,
+      "startTime": 90,
+      "endTime": 95,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.8,
+        "boredom": 0.2,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": -0.004999999999999993,
+        "boredom": -0.04000000000000001,
+        "excitement": -1.1102230246251566e-17
+      },
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": {
+        "emotion": "excitement",
+        "score": 0.9
+      },
+      "emotionalSignature": "high-patience-low-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 19,
+      "startTime": 95,
+      "endTime": 100,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.8,
+        "boredom": 0.2,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": -0.005000000000000016,
+        "boredom": -0.039999999999999994,
+        "excitement": -1.1102230246251566e-17
+      },
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": {
+        "emotion": "excitement",
+        "score": 0.9
+      },
+      "emotionalSignature": "high-patience-low-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 20,
+      "startTime": 100,
+      "endTime": 105,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.9,
+        "boredom": 0.2,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": 0.0050000000000000044,
+        "boredom": -0.04000000000000001,
+        "excitement": -1.1102230246251566e-17
+      },
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": {
+        "emotion": "patience",
+        "score": 0.9
+      },
+      "emotionalSignature": "high-patience-low-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 21,
+      "startTime": 105,
+      "endTime": 110,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.8,
+        "boredom": 0.2,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": 1.1102230246251566e-17,
+        "boredom": 2.7755575615628915e-18,
+        "excitement": -1.1102230246251566e-17
+      },
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": {
+        "emotion": "excitement",
+        "score": 0.9
+      },
+      "emotionalSignature": "high-patience-low-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 22,
+      "startTime": 110,
+      "endTime": 115,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.9,
+        "boredom": 1,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": 0.010000000000000009,
+        "boredom": 0.08,
+        "excitement": -1.1102230246251566e-17
+      },
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 1
+      },
+      "emotionalSignature": "high-patience-high-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 23,
+      "startTime": 115,
+      "endTime": 120,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.8,
+        "boredom": 0.2,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": -0.005000000000000016,
+        "boredom": 2.7755575615628915e-18,
+        "excitement": -1.1102230246251566e-17
+      },
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": {
+        "emotion": "excitement",
+        "score": 0.9
+      },
+      "emotionalSignature": "high-patience-low-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 24,
+      "startTime": 120,
+      "endTime": 125,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.2,
+        "boredom": 0.9,
+        "excitement": 0.3
+      },
+      "emotionalVelocity": {
+        "patience": -0.06499999999999999,
+        "boredom": 0.07,
+        "excitement": -0.06000000000000001
+      },
+      "scrollRisk": 0.77,
+      "scrollRiskLevel": "critical",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 0.9
+      },
+      "emotionalSignature": "low-patience-high-boredom-low-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 25,
+      "startTime": 125,
+      "endTime": 130,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.4,
+        "boredom": 0.7,
+        "excitement": 0.6
+      },
+      "emotionalVelocity": {
+        "patience": -0.04500000000000002,
+        "boredom": 0.009999999999999998,
+        "excitement": -0.030000000000000016
+      },
+      "scrollRisk": 0.6,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 0.7
+      },
+      "emotionalSignature": "moderate-patience-high-boredom-moderate-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 26,
+      "startTime": 130,
+      "endTime": 135,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.9,
+        "boredom": 1,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": 0.0050000000000000044,
+        "boredom": 0.039999999999999994,
+        "excitement": -1.1102230246251566e-17
+      },
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 1
+      },
+      "emotionalSignature": "high-patience-high-boredom-high-excitement",
+      "dataPoints": 5
+    },
+    {
+      "chunkIndex": 27,
+      "startTime": 135,
+      "endTime": 140,
+      "duration": 5,
+      "emotions": {
+        "patience": 0.8,
+        "boredom": 1,
+        "excitement": 0.9
+      },
+      "emotionalVelocity": {
+        "patience": 0.029999999999999992,
+        "boredom": 0.045,
+        "excitement": 0.030000000000000016
+      },
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": {
+        "emotion": "boredom",
+        "score": 1
+      },
+      "emotionalSignature": "high-patience-high-boredom-high-excitement",
+      "dataPoints": 5
+    }
+  ],
+  "failedChunkDetails": [],
+  "emotionalArc": {
+    "timestamps": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139
+    ],
+    "emotions": {
+      "patience": [
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ],
+      "boredom": [
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "excitement": [
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9
+      ]
+    },
+    "smoothedEmotions": {
+      "patience": [
+        0.3,
+        0.3,
+        0.3,
+        0.27999999999999997,
+        0.25999999999999995,
+        0.24,
+        0.21999999999999997,
+        0.2,
+        0.24000000000000005,
+        0.27999999999999997,
+        0.32,
+        0.36,
+        0.4,
+        0.4800000000000001,
+        0.5599999999999999,
+        0.64,
+        0.72,
+        0.8,
+        0.78,
+        0.7600000000000001,
+        0.74,
+        0.7200000000000001,
+        0.7,
+        0.6399999999999999,
+        0.5799999999999998,
+        0.5199999999999999,
+        0.45999999999999996,
+        0.4,
+        0.42000000000000004,
+        0.44000000000000006,
+        0.45999999999999996,
+        0.48,
+        0.5,
+        0.5599999999999999,
+        0.6199999999999999,
+        0.68,
+        0.74,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.76,
+        0.7200000000000001,
+        0.68,
+        0.64,
+        0.6,
+        0.64,
+        0.6799999999999999,
+        0.72,
+        0.76,
+        0.8,
+        0.8400000000000001,
+        0.8800000000000001,
+        0.9199999999999999,
+        0.96,
+        1,
+        0.96,
+        0.9199999999999999,
+        0.8799999999999999,
+        0.8400000000000001,
+        0.8,
+        0.8200000000000001,
+        0.8400000000000001,
+        0.86,
+        0.8800000000000001,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8800000000000001,
+        0.86,
+        0.8400000000000001,
+        0.82,
+        0.8,
+        0.8200000000000001,
+        0.8400000000000001,
+        0.86,
+        0.8800000000000001,
+        0.9,
+        0.8800000000000001,
+        0.86,
+        0.8400000000000001,
+        0.82,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8200000000000001,
+        0.8400000000000001,
+        0.86,
+        0.8800000000000001,
+        0.9,
+        0.8800000000000001,
+        0.86,
+        0.8400000000000001,
+        0.82,
+        0.8,
+        0.8200000000000001,
+        0.8400000000000001,
+        0.86,
+        0.8800000000000001,
+        0.9,
+        0.8800000000000001,
+        0.86,
+        0.8400000000000001,
+        0.82,
+        0.8,
+        0.68,
+        0.5600000000000002,
+        0.44000000000000006,
+        0.31999999999999995,
+        0.2,
+        0.24000000000000005,
+        0.27999999999999997,
+        0.32,
+        0.36,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        0.8800000000000001,
+        0.86,
+        0.8400000000000001,
+        0.82,
+        0.8,
+        0.8,
+        0.8000000000000002
+      ],
+      "boredom": [
+        0.6999999999999998,
+        0.7,
+        0.7,
+        0.74,
+        0.7799999999999999,
+        0.82,
+        0.86,
+        0.9,
+        0.8400000000000001,
+        0.78,
+        0.72,
+        0.66,
+        0.6,
+        0.52,
+        0.43999999999999995,
+        0.36,
+        0.27999999999999997,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.27999999999999997,
+        0.36000000000000004,
+        0.44000000000000006,
+        0.52,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.52,
+        0.43999999999999995,
+        0.36,
+        0.27999999999999997,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.22000000000000003,
+        0.24000000000000005,
+        0.26,
+        0.28,
+        0.3,
+        0.27999999999999997,
+        0.25999999999999995,
+        0.24,
+        0.21999999999999997,
+        0.2,
+        0.36,
+        0.52,
+        0.6799999999999999,
+        0.8400000000000001,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0.8400000000000001,
+        0.68,
+        0.5200000000000001,
+        0.36,
+        0.2,
+        0.36,
+        0.52,
+        0.6799999999999999,
+        0.8400000000000001,
+        1,
+        0.8400000000000001,
+        0.68,
+        0.5200000000000001,
+        0.36,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.36,
+        0.52,
+        0.6799999999999999,
+        0.8400000000000001,
+        1,
+        0.8400000000000001,
+        0.68,
+        0.5200000000000001,
+        0.36,
+        0.2,
+        0.34,
+        0.48,
+        0.62,
+        0.76,
+        0.9,
+        0.86,
+        0.8200000000000001,
+        0.78,
+        0.74,
+        0.7,
+        0.76,
+        0.82,
+        0.8800000000000001,
+        0.9400000000000001,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "excitement": [
+        0.4000000000000001,
+        0.4,
+        0.4,
+        0.38,
+        0.36000000000000004,
+        0.34,
+        0.32,
+        0.3,
+        0.33999999999999997,
+        0.38,
+        0.42000000000000004,
+        0.45999999999999996,
+        0.5,
+        0.58,
+        0.6599999999999999,
+        0.74,
+        0.82,
+        0.9,
+        0.8800000000000001,
+        0.86,
+        0.8400000000000001,
+        0.82,
+        0.8,
+        0.74,
+        0.68,
+        0.62,
+        0.5599999999999999,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.58,
+        0.6599999999999999,
+        0.74,
+        0.82,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8800000000000001,
+        0.86,
+        0.8400000000000001,
+        0.82,
+        0.8,
+        0.78,
+        0.7600000000000001,
+        0.74,
+        0.7200000000000001,
+        0.7,
+        0.74,
+        0.7799999999999999,
+        0.82,
+        0.86,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.78,
+        0.6599999999999999,
+        0.5399999999999999,
+        0.42000000000000004,
+        0.3,
+        0.36,
+        0.42000000000000004,
+        0.48,
+        0.54,
+        0.6,
+        0.6599999999999999,
+        0.72,
+        0.78,
+        0.8400000000000001,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9
+      ]
+    },
+    "windowSize": 5
+  },
+  "scrollRiskTimeline": [
+    {
+      "timestamp": 0,
+      "scrollRisk": 0.6599999999999999,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 1,
+      "scrollRisk": 0.6599999999999999,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 2,
+      "scrollRisk": 0.6599999999999999,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 3,
+      "scrollRisk": 0.6599999999999999,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 4,
+      "scrollRisk": 0.6599999999999999,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 5,
+      "scrollRisk": 0.77,
+      "scrollRiskLevel": "critical",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 6,
+      "scrollRisk": 0.77,
+      "scrollRiskLevel": "critical",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 7,
+      "scrollRisk": 0.77,
+      "scrollRiskLevel": "critical",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 8,
+      "scrollRisk": 0.77,
+      "scrollRiskLevel": "critical",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 9,
+      "scrollRisk": 0.77,
+      "scrollRiskLevel": "critical",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 10,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 11,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 12,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 13,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 14,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 15,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 16,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 17,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 18,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 19,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 20,
+      "scrollRisk": 0.34,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 21,
+      "scrollRisk": 0.34,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 22,
+      "scrollRisk": 0.34,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 23,
+      "scrollRisk": 0.34,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 24,
+      "scrollRisk": 0.34,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 25,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 26,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 27,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 28,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 29,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 30,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 31,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 32,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 33,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 34,
+      "scrollRisk": 0.59,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 35,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 36,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 37,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 38,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 39,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 40,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 41,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 42,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 43,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 44,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 45,
+      "scrollRisk": 0.38,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 46,
+      "scrollRisk": 0.38,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 47,
+      "scrollRisk": 0.38,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 48,
+      "scrollRisk": 0.38,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 49,
+      "scrollRisk": 0.38,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 50,
+      "scrollRisk": 0.37,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 51,
+      "scrollRisk": 0.37,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 52,
+      "scrollRisk": 0.37,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 53,
+      "scrollRisk": 0.37,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 54,
+      "scrollRisk": 0.37,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 55,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 56,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 57,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 58,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 59,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 60,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 61,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 62,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 63,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 64,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 65,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 66,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 67,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 68,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 69,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 70,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 71,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 72,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 73,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 74,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 75,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 76,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 77,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 78,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 79,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 80,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 81,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 82,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 83,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 84,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 85,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 86,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 87,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 88,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 89,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 90,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 91,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 92,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 93,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 94,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 95,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 96,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 97,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 98,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 99,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 100,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 101,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 102,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 103,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 104,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "patience"
+    },
+    {
+      "timestamp": 105,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 106,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 107,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 108,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 109,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 110,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 111,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 112,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 113,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 114,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 115,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 116,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 117,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 118,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 119,
+      "scrollRisk": 0.31,
+      "scrollRiskLevel": "medium",
+      "dominantEmotion": "excitement"
+    },
+    {
+      "timestamp": 120,
+      "scrollRisk": 0.77,
+      "scrollRiskLevel": "critical",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 121,
+      "scrollRisk": 0.77,
+      "scrollRiskLevel": "critical",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 122,
+      "scrollRisk": 0.77,
+      "scrollRiskLevel": "critical",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 123,
+      "scrollRisk": 0.77,
+      "scrollRiskLevel": "critical",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 124,
+      "scrollRisk": 0.77,
+      "scrollRiskLevel": "critical",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 125,
+      "scrollRisk": 0.6,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 126,
+      "scrollRisk": 0.6,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 127,
+      "scrollRisk": 0.6,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 128,
+      "scrollRisk": 0.6,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 129,
+      "scrollRisk": 0.6,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 130,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 131,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 132,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 133,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 134,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 135,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 136,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 137,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 138,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    },
+    {
+      "timestamp": 139,
+      "scrollRisk": 0.63,
+      "scrollRiskLevel": "high",
+      "dominantEmotion": "boredom"
+    }
+  ],
+  "criticalMoments": [
+    {
+      "timestamp": 55,
+      "emotion": "boredom",
+      "type": "threshold-high",
+      "score": 1,
+      "previousScore": 0.2,
+      "threshold": 0.7,
+      "chunkIndex": 11,
+      "severity": 0.75,
+      "context": "boredom threshold crossed. Emotional state: patience: 100%, boredom: 100%, excitement: 90%"
+    },
+    {
+      "timestamp": 80,
+      "emotion": "boredom",
+      "type": "threshold-high",
+      "score": 1,
+      "previousScore": 0.2,
+      "threshold": 0.7,
+      "chunkIndex": 16,
+      "severity": 0.75,
+      "context": "boredom threshold crossed. Emotional state: patience: 90%, boredom: 100%, excitement: 90%"
+    },
+    {
+      "timestamp": 110,
+      "emotion": "boredom",
+      "type": "threshold-high",
+      "score": 1,
+      "previousScore": 0.2,
+      "threshold": 0.7,
+      "chunkIndex": 22,
+      "severity": 0.75,
+      "context": "boredom threshold crossed. Emotional state: patience: 90%, boredom: 100%, excitement: 90%"
+    },
+    {
+      "timestamp": 120,
+      "emotion": "boredom",
+      "type": "threshold-high",
+      "score": 0.9,
+      "previousScore": 0.2,
+      "threshold": 0.7,
+      "chunkIndex": 24,
+      "severity": 0.75,
+      "context": "boredom threshold crossed. Emotional state: patience: 20%, boredom: 90%, excitement: 30%"
+    },
+    {
+      "timestamp": 75,
+      "emotion": "boredom",
+      "type": "threshold-low",
+      "score": 0.2,
+      "previousScore": 1,
+      "threshold": 0.3,
+      "chunkIndex": 15,
+      "severity": 0.65,
+      "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
+    },
+    {
+      "timestamp": 85,
+      "emotion": "boredom",
+      "type": "threshold-low",
+      "score": 0.2,
+      "previousScore": 1,
+      "threshold": 0.3,
+      "chunkIndex": 17,
+      "severity": 0.65,
+      "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
+    },
+    {
+      "timestamp": 115,
+      "emotion": "boredom",
+      "type": "threshold-low",
+      "score": 0.2,
+      "previousScore": 1,
+      "threshold": 0.3,
+      "chunkIndex": 23,
+      "severity": 0.65,
+      "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
+    },
+    {
+      "timestamp": 120,
+      "emotion": "excitement",
+      "type": "threshold-low",
+      "score": 0.3,
+      "previousScore": 0.9,
+      "threshold": 0.3,
+      "chunkIndex": 24,
+      "severity": 0.6000000000000001,
+      "context": "excitement threshold crossed. Emotional state: patience: 20%, boredom: 90%, excitement: 30%"
+    },
+    {
+      "timestamp": 15,
+      "emotion": "excitement",
+      "type": "threshold-high",
+      "score": 0.9,
+      "previousScore": 0.5,
+      "threshold": 0.7,
+      "chunkIndex": 3,
+      "severity": 0.6,
+      "context": "excitement threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
+    },
+    {
+      "timestamp": 35,
+      "emotion": "excitement",
+      "type": "threshold-high",
+      "score": 0.9,
+      "previousScore": 0.5,
+      "threshold": 0.7,
+      "chunkIndex": 7,
+      "severity": 0.6,
+      "context": "excitement threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
+    },
+    {
+      "timestamp": 130,
+      "emotion": "excitement",
+      "type": "threshold-high",
+      "score": 0.9,
+      "previousScore": 0.6,
+      "threshold": 0.7,
+      "chunkIndex": 26,
+      "severity": 0.55,
+      "context": "excitement threshold crossed. Emotional state: patience: 90%, boredom: 100%, excitement: 90%"
+    },
+    {
+      "timestamp": 15,
+      "emotion": "boredom",
+      "type": "threshold-low",
+      "score": 0.2,
+      "previousScore": 0.6,
+      "threshold": 0.3,
+      "chunkIndex": 3,
+      "severity": 0.44999999999999996,
+      "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
+    },
+    {
+      "timestamp": 35,
+      "emotion": "boredom",
+      "type": "threshold-low",
+      "score": 0.2,
+      "previousScore": 0.6,
+      "threshold": 0.3,
+      "chunkIndex": 7,
+      "severity": 0.44999999999999996,
+      "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
+    },
+    {
+      "timestamp": 5,
+      "emotion": "excitement",
+      "type": "threshold-low",
+      "score": 0.3,
+      "previousScore": 0.4,
+      "threshold": 0.3,
+      "chunkIndex": 1,
+      "severity": 0.3500000000000001,
+      "context": "excitement threshold crossed. Emotional state: patience: 20%, boredom: 90%, excitement: 30%"
+    }
+  ]
+}

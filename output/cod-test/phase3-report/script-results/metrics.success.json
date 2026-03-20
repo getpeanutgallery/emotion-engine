@@ -1,0 +1,112 @@
+{
+  "contractVersion": "ee.script-result/v1",
+  "status": "success",
+  "phase": "phase3-report",
+  "script": "metrics",
+  "run": {
+    "configName": "COD Test Pipeline",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+    "startedAt": "2026-03-20T20:53:30.630Z",
+    "completedAt": "2026-03-20T20:53:30.632Z",
+    "durationMs": 2,
+    "attempt": 1
+  },
+  "payload": {
+    "artifactKey": "metricsData",
+    "data": {
+      "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
+      "generatedAt": "2026-03-20T20:53:30.632Z",
+      "averages": {
+        "patience": 0.6464285714285717,
+        "boredom": 0.44642857142857206,
+        "excitement": 0.7499999999999999
+      },
+      "peakMoments": {
+        "patience": {
+          "highest": {
+            "timestamp": 80,
+            "score": 1
+          },
+          "lowest": {
+            "timestamp": 125,
+            "score": 0.2
+          }
+        },
+        "boredom": {
+          "highest": {
+            "timestamp": 40,
+            "score": 1
+          },
+          "lowest": {
+            "timestamp": 5,
+            "score": 0.2
+          }
+        },
+        "excitement": {
+          "highest": {
+            "timestamp": 40,
+            "score": 0.9
+          },
+          "lowest": {
+            "timestamp": 125,
+            "score": 0.3
+          }
+        }
+      },
+      "trends": {
+        "patience": {
+          "direction": "stable",
+          "change": -0.007142857142856673,
+          "firstHalfAverage": 0.6499999999999996,
+          "secondHalfAverage": 0.6428571428571429
+        },
+        "boredom": {
+          "direction": "stable",
+          "change": 0.03571428571428509,
+          "firstHalfAverage": 0.42857142857142877,
+          "secondHalfAverage": 0.46428571428571386
+        },
+        "excitement": {
+          "direction": "stable",
+          "change": 0.028571428571427693,
+          "firstHalfAverage": 0.7357142857142853,
+          "secondHalfAverage": 0.764285714285713
+        }
+      },
+      "frictionIndex": 100,
+      "implementationStatus": {
+        "state": "computed",
+        "dataSource": "derived-from-phase2.chunkAnalysis"
+      },
+      "summary": {
+        "averages": 3,
+        "peakMoments": 3,
+        "trends": 3,
+        "frictionIndex": 100
+      }
+    }
+  },
+  "artifacts": {
+    "primary": {
+      "key": "metricsData",
+      "path": "phase3-report/metrics/metrics.json",
+      "mediaType": "application/json"
+    },
+    "additional": []
+  },
+  "metrics": {
+    "tokensTotal": null,
+    "warningsCount": 1,
+    "totalSeconds": 140,
+    "successfulChunks": 28,
+    "failedChunks": 0
+  },
+  "diagnostics": {
+    "warnings": [
+      "Derived per-second metrics from chunkAnalysis because native perSecondData was unavailable."
+    ],
+    "degraded": true,
+    "debugCaptureEnabled": true,
+    "captureRefs": []
+  }
+}

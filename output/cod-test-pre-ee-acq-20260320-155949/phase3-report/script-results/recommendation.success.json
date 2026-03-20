@@ -1,0 +1,70 @@
+{
+  "contractVersion": "ee.script-result/v1",
+  "status": "success",
+  "phase": "phase3-report",
+  "script": "recommendation",
+  "run": {
+    "configName": "COD Test Pipeline",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+    "startedAt": "2026-03-20T19:43:00.175Z",
+    "completedAt": "2026-03-20T19:43:32.868Z",
+    "durationMs": 32693,
+    "attempt": 1
+  },
+  "payload": {
+    "artifactKey": "recommendationData",
+    "data": {
+      "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
+      "generatedAt": "2026-03-20T19:43:32.868Z",
+      "text": "Rebuild the first 15 seconds around the strongest mid-trailer payoff instead of the current generic setup. The biggest retention gain will come from replacing the text-led cold open and cliché villain exposition with an immediate high-stakes visual hook, then maintaining that tempo with faster pattern interrupts before the audience settles into boredom. Keep the back-half action density, but trim or redesign the late sales-card section so the CTA feels like a payoff rather than a hard stop.",
+      "reasoning": "The current opening is the clearest weakness: patience is lowest at 5s (0.2), excitement is also lowest at 5s (0.3), and boredom is already very high in the first two chunks, driven by the 'RISING TENSIONS' text and generic destruction setup. By contrast, the trailer's strongest emotional performance begins at 15-25s, where boredom drops to 0.2 and excitement peaks at 0.9 around 15s thanks to clearer stakes, faster motion, and more distinctive visuals. Metrics also show excitement and patience rise in the second half, which suggests the asset improves once it stops explaining and starts delivering spectacle. However, boredom remains relatively high on average (0.56) and spikes again at 55s in the summary metrics, indicating the pacing still has friction despite strong action passages. The friction index of 100 reinforces that there are too many moments where the trailer asks for patience before earning it. The late post-title sales section also creates a sharp disengagement risk, with patience dropping to 0.2 and boredom rising to 0.9 on dense edition screens. Visual evidence is limited for 5-10s, so validate this recommendation by checking full footage there and confirming whether a stronger visual interrupt can be inserted earlier.",
+      "confidence": 0.92,
+      "keyFindings": [
+        "The weakest retention zone is the first 10 seconds, where the hook underperforms and boredom dominates.",
+        "Patience and excitement both trend upward across the video, meaning the concept gets stronger once the trailer reaches action-first sections.",
+        "The 15-25s segment is the clearest model for the opening: high stakes, fast pacing, low boredom, and peak excitement.",
+        "Several mid-video dips are tied to cliché dialogue and slower exposition, especially around 25-35s.",
+        "The action-heavy run from roughly 35s onward sustains strong retention with repeated novelty, location changes, and constant motion.",
+        "The post-title sales screens are a major retention leak because static text and dense offer breakdowns interrupt momentum."
+      ],
+      "suggestions": [
+        "Cut the 'RISING TENSIONS' opener entirely and open on the most visually novel, high-stakes image from the 15-25s material or later action montage.",
+        "Move a clear stakes reveal earlier so viewers understand the scale immediately instead of waiting through generic setup.",
+        "Front-load one distinctive pattern interrupt within the first 3 seconds, such as the most surreal or highest-contrast shot, before any exposition.",
+        "Reduce or rewrite cliché villain and motivational dialogue in the 10-35s range; let visuals carry threat and scale.",
+        "Compress the 25-35s section by removing slower dialogue beats and keeping only shots that introduce new visual information.",
+        "Match the first 15 seconds to the cadence of the 35s onward action run, with no static shot or title card lingering too long.",
+        "If title cards like '2035' or location reveals stay in, keep them ultra-brief and attached to motion rather than isolated on screen.",
+        "Remove any behind-the-scenes-looking material, such as visible green screen or camera rig reveals, unless the intent is explicitly meta.",
+        "Replace dense Vault Edition info screens with a shorter, motion-led CTA that keeps gameplay or action running underneath.",
+        "If marketing information must remain, split it into faster cards with one benefit per beat instead of a wall of text.",
+        "End on action first, then brand/payoff, then a minimal CTA so the final memory is adrenaline rather than a sales screen."
+      ],
+      "summary": {
+        "hasRecommendation": true,
+        "confidence": 0.92
+      }
+    }
+  },
+  "artifacts": {
+    "primary": {
+      "key": "recommendationData",
+      "path": "phase3-report/recommendation/recommendation.json",
+      "mediaType": "application/json"
+    },
+    "additional": []
+  },
+  "metrics": {
+    "tokensTotal": null,
+    "warningsCount": 0
+  },
+  "diagnostics": {
+    "warnings": [],
+    "degraded": false,
+    "debugCaptureEnabled": true,
+    "captureRefs": [
+      "phase3-report/raw/_meta/errors.jsonl",
+      "phase3-report/raw/_meta/errors.summary.json"
+    ]
+  }
+}

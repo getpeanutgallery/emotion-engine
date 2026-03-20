@@ -1,0 +1,102 @@
+[dotenv@17.3.1] injecting env (3) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+🚀 Emotion Engine Pipeline Orchestrator
+========================================
+
+📄 Loading configuration...
+   Config loaded: configs/cod-test-ee-af2-timeoutprobe.yaml
+   Name: COD Test Pipeline (ee-af2 timeout probe)
+   Description: Bounded probe for Phase 2 chunk-4 retry/failover behavior under lower provider timeout
+✅ Validating configuration...
+   ✅ Valid (3 script(s) across all phases)
+📁 Setting up assets directory...
+   ✅ Assets directory created at /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-ee-af2-timeoutprobe/assets/input
+   ✅ Raw directories ready:
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-ee-af2-timeoutprobe/phase1-gather-context/raw
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-ee-af2-timeoutprobe/phase2-process/raw
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-ee-af2-timeoutprobe/phase3-report/raw
+
+🎯 Executing pipeline...
+
+📥 Phase 1: Gather Context (sequential, 2 script(s))
+   Running: server/scripts/get-context/get-dialogue.cjs
+   🎤 Extracting and transcribing dialogue from: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/examples/videos/emotion-tests/cod.mp4
+   🔁 Dialogue retry config: attempts=1, backoffMs=0
+   🤖 Calling AI provider for transcription...
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260318-202023
+   ✅ Dialogue extraction complete
+      Output: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-ee-af2-timeoutprobe/phase1-gather-context/dialogue-data.json
+      Found 18 dialogue segments
+      Total duration: 220.0s
+   💾 Keeping dialogue temp files in /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-ee-af2-timeoutprobe/assets/processed/dialogue
+   Running: server/scripts/get-context/get-music.cjs
+   🎵 Extracting and analyzing music/audio from: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/examples/videos/emotion-tests/cod.mp4
+   📊 Audio duration: 140.0s (1 chunk(s))
+   🔁 Music retry config: attempts=1, backoffMs=0
+   Analyzing chunk 1/1 (0.0s - 140.0s)...
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260318-202023
+   ✅ Music/audio analysis complete
+      Output: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-ee-af2-timeoutprobe/phase1-gather-context/music-data.json
+      Found 1 segment(s)
+      Music detected: Yes
+   💾 Keeping music temp files in /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-ee-af2-timeoutprobe/assets/processed/music
+   ✅ Phase 1 complete
+
+⚙️  Phase 2: Process (sequential, 1 script(s))
+   Running: server/scripts/process/video-chunks.cjs
+   🎬 Processing video in chunks...
+   📊 Video duration: 140.0s
+   📦 Processing 5 chunks (max_chunks: 5)
+   📋 Config values:
+      - chunkDuration: 5
+      - max_chunks: 5
+      - video duration: 140.017s
+      - calculated chunks: 29
+      - processing: 5 chunks
+   📁 Phase directory: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-ee-af2-timeoutprobe/phase2-process
+   📁 Chunks directory: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-ee-af2-timeoutprobe/assets/processed/chunks
+   🔁 Retry config: attempts=2, backoffMs=500, retryOnParseError=true, retryOnProviderError=true
+   🧰 Tool loop config: turns=4, validatorCalls=3
+   🎞️  Video attachment transport: strategy=base64, mimeType=video/mp4
+   Processing chunk 1/5 (0.0s - 5.0s)...
+   🎬 Extracting chunk 0: 0s → 5s
+   ✅ Chunk extracted: 2.01MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260318-202023
+      ✅ Chunk 1 analyzed (9618 tokens)
+   Processing chunk 2/5 (5.0s - 10.0s)...
+   🎬 Extracting chunk 1: 5s → 10s
+   ✅ Chunk extracted: 2.92MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260318-202023
+      ✅ Chunk 2 analyzed (8196 tokens)
+   Processing chunk 3/5 (10.0s - 15.0s)...
+   🎬 Extracting chunk 2: 10s → 15s
+   ✅ Chunk extracted: 2.02MB (5s)
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.realTransport.await.end cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.start cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.engine.record.await.end cassette=cod-test-record-20260318-202023
+[digital-twin-router] record.realTransport.await.start cassette=cod-test-record-20260318-202023

@@ -1,0 +1,59 @@
+{
+  "contractVersion": "ee.script-result/v1",
+  "status": "success",
+  "phase": "phase3-report",
+  "script": "final-report",
+  "run": {
+    "configName": "COD Test Pipeline",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+    "startedAt": "2026-03-20T19:43:32.875Z",
+    "completedAt": "2026-03-20T19:43:32.884Z",
+    "durationMs": 9,
+    "attempt": 1
+  },
+  "payload": {
+    "artifactKey": "finalReport",
+    "data": {
+      "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md",
+      "analysisDataPath": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json",
+      "generatedAt": "2026-03-20T19:43:32.884Z",
+      "summary": {
+        "duration": 140.017,
+        "totalTokens": 276527,
+        "chunksAnalyzed": 28,
+        "reportSize": 18723
+      }
+    }
+  },
+  "artifacts": {
+    "primary": {
+      "key": "finalReport",
+      "path": "phase3-report/summary/FINAL-REPORT.md",
+      "mediaType": "text/markdown"
+    },
+    "additional": [
+      {
+        "key": "finalReport:analysisData",
+        "path": "phase3-report/summary/analysis-data.json",
+        "mediaType": "application/json"
+      }
+    ]
+  },
+  "metrics": {
+    "tokensTotal": null,
+    "warningsCount": 0,
+    "duration": 140.017,
+    "totalTokens": 276527,
+    "chunksAnalyzed": 28,
+    "reportSize": 18723
+  },
+  "diagnostics": {
+    "warnings": [],
+    "degraded": false,
+    "debugCaptureEnabled": true,
+    "captureRefs": [
+      "phase3-report/raw/_meta/errors.jsonl",
+      "phase3-report/raw/_meta/errors.summary.json"
+    ]
+  }
+}

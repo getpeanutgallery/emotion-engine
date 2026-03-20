@@ -1,0 +1,228 @@
+{
+  "contractVersion": "ee.script-result/v1",
+  "status": "success",
+  "phase": "phase2-process",
+  "script": "video-chunks",
+  "run": {
+    "configName": "COD Test Pipeline (ee-af2 timeout probe)",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-ee-af2-timeoutprobe",
+    "startedAt": "2026-03-20T18:26:56.915Z",
+    "completedAt": "2026-03-20T18:39:53.745Z",
+    "durationMs": 776830,
+    "attempt": 1
+  },
+  "payload": {
+    "artifactKey": "chunkAnalysis",
+    "data": {
+      "chunks": [
+        {
+          "chunkIndex": 0,
+          "splitIndex": 0,
+          "startTime": 0,
+          "endTime": 5,
+          "status": "success",
+          "summary": "Glitchy corporate trailer intro with 'RISING TENSIONS' text and cliché dystopian dialogue that triggers immediate skepticism.",
+          "emotions": {
+            "patience": {
+              "score": 2,
+              "reasoning": "The 'RISING TENSIONS' text and dark cluttered opening are explicit dealbreakers for this persona, draining patience instantly."
+            },
+            "boredom": {
+              "score": 8,
+              "reasoning": "Generic 'fear/control' dialogue feels inauthentic and corporate, triggering the 'cringe = instant scroll' response."
+            },
+            "excitement": {
+              "score": 4,
+              "reasoning": "Energetic music and fast cuts provide some stimulus, but the cliché content undermines genuine engagement."
+            }
+          },
+          "dominant_emotion": "boredom",
+          "confidence": 0.9,
+          "tokens": 17059,
+          "persona": {
+            "soulPath": "../cast/impatient-teenager/SOUL.md",
+            "goalPath": "../goals/video-ad-evaluation.md",
+            "lenses": [
+              "patience",
+              "boredom",
+              "excitement"
+            ]
+          }
+        },
+        {
+          "chunkIndex": 1,
+          "splitIndex": 0,
+          "startTime": 5,
+          "endTime": 10,
+          "status": "success",
+          "summary": "Fast-paced dystopian chaos with collapsing highways and glitch effects keeps attention high, but the cliché dialogue and dark corridor shot risk triggering skepticism about the content's authenticity.",
+          "emotions": {
+            "patience": {
+              "score": 5,
+              "reasoning": "Visual hooks hit every 1-2 seconds which helps, but the corporate dystopian vibe makes me ready to scroll if it gets preachy."
+            },
+            "boredom": {
+              "score": 3,
+              "reasoning": "Too much on-screen action and rapid cuts to feel boring, despite the generic theme."
+            },
+            "excitement": {
+              "score": 7,
+              "reasoning": "Collapsing infrastructure and glitch art create a high-energy visual spectacle that demands attention."
+            }
+          },
+          "dominant_emotion": "excitement",
+          "confidence": 0.85,
+          "tokens": 10547,
+          "persona": {
+            "soulPath": "../cast/impatient-teenager/SOUL.md",
+            "goalPath": "../goals/video-ad-evaluation.md",
+            "lenses": [
+              "patience",
+              "boredom",
+              "excitement"
+            ]
+          }
+        },
+        {
+          "chunkIndex": 2,
+          "splitIndex": 0,
+          "startTime": 10,
+          "endTime": 15,
+          "status": "success",
+          "summary": "A generic city skyline shot transitions into a literal title card for Call of Duty, followed by cliché villain dialogue and a burning street scene.",
+          "emotions": {
+            "patience": {
+              "score": 2,
+              "reasoning": "A static title card right in the middle of the video is exactly the kind of corporate branding that makes me want to instantly scroll away."
+            },
+            "boredom": {
+              "score": 8,
+              "reasoning": "The dialogue 'It's time to wake up' and 'streets shall run red' is incredibly cliché, and the logo drop completely kills any momentum."
+            },
+            "excitement": {
+              "score": 3,
+              "reasoning": "The transition to the burning street has some energy, but the cringe dialogue and the logo screen drain almost all the hype."
+            }
+          },
+          "dominant_emotion": "boredom",
+          "confidence": 0.9,
+          "tokens": 4627,
+          "persona": {
+            "soulPath": "../cast/impatient-teenager/SOUL.md",
+            "goalPath": "../goals/video-ad-evaluation.md",
+            "lenses": [
+              "patience",
+              "boredom",
+              "excitement"
+            ]
+          }
+        },
+        {
+          "chunkIndex": 3,
+          "splitIndex": 0,
+          "startTime": 15,
+          "endTime": 20,
+          "status": "success",
+          "summary": "A glitchy villain face on a damaged screen transitions to a holographic war map displaying a massive death toll, followed by a large explosion.",
+          "emotions": {
+            "patience": {
+              "score": 3,
+              "reasoning": "15 seconds in is eternity for me; the cheesy villain dialogue ('run red with blood') makes me want to scroll, only the visuals keep me here."
+            },
+            "boredom": {
+              "score": 2,
+              "reasoning": "Too many fast cuts and high-stakes visuals (death tally, fire) to feel bored, even if the narrative feels generic."
+            },
+            "excitement": {
+              "score": 7,
+              "reasoning": "The shocking death toll number and energetic music create a genuine spike in arousal that overrides the cringe dialogue."
+            }
+          },
+          "dominant_emotion": "excitement",
+          "confidence": 0.85,
+          "tokens": 9260,
+          "persona": {
+            "soulPath": "../cast/impatient-teenager/SOUL.md",
+            "goalPath": "../goals/video-ad-evaluation.md",
+            "lenses": [
+              "patience",
+              "boredom",
+              "excitement"
+            ]
+          }
+        },
+        {
+          "chunkIndex": 4,
+          "splitIndex": 0,
+          "startTime": 20,
+          "endTime": 25,
+          "status": "success",
+          "summary": "Rapid cuts of military action (missile truck, explosion) and a '2035' title card transition to a news anchor and soldiers, underscored by serious dialogue about a global terrorist threat.",
+          "emotions": {
+            "patience": {
+              "score": 8,
+              "reasoning": "Fast cuts and clear stakes (terrorist threat) keep my thumb from scrolling."
+            },
+            "boredom": {
+              "score": 3,
+              "reasoning": "Constant motion and high-intensity imagery leave no room for disengagement."
+            },
+            "excitement": {
+              "score": 7,
+              "reasoning": "Action is engaging, but the 'bringing peace' dialogue feels a bit like corporate propaganda which lowers the cool factor slightly."
+            }
+          },
+          "dominant_emotion": "patience",
+          "confidence": 0.85,
+          "tokens": 20519,
+          "persona": {
+            "soulPath": "../cast/impatient-teenager/SOUL.md",
+            "goalPath": "../goals/video-ad-evaluation.md",
+            "lenses": [
+              "patience",
+              "boredom",
+              "excitement"
+            ]
+          }
+        }
+      ],
+      "totalTokens": 62012,
+      "statusSummary": {
+        "total": 5,
+        "successful": 5,
+        "failed": 0,
+        "failedChunkIndexes": []
+      },
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "config": {
+          "chunkDuration": 8,
+          "numChunks": 5
+        }
+      },
+      "videoDuration": 140.017
+    }
+  },
+  "artifacts": {
+    "primary": {
+      "key": "chunkAnalysis",
+      "path": "phase2-process/chunk-analysis.json",
+      "mediaType": "application/json"
+    },
+    "additional": []
+  },
+  "metrics": {
+    "tokensTotal": 62012,
+    "warningsCount": 0
+  },
+  "diagnostics": {
+    "warnings": [],
+    "degraded": false,
+    "debugCaptureEnabled": true,
+    "captureRefs": [
+      "phase2-process/raw/_meta/errors.jsonl",
+      "phase2-process/raw/_meta/errors.summary.json"
+    ]
+  }
+}

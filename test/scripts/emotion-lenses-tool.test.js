@@ -188,6 +188,7 @@ test('Emotion Lenses Tool', async (t) => {
         dialogueContext: { segments: [] },
         musicContext: { segments: [] },
         previousState: { summary: '', emotions: {} },
+        provider: mockAIProvider.getProviderFromConfig(),
         config: {
           ai: {
             provider: 'openrouter',
@@ -211,6 +212,35 @@ test('Emotion Lenses Tool', async (t) => {
 
     await tNested.test('throws on invalid variables', async () => {
       await rejects(emotionLensesTool.analyze({ toolVariables: null }), /toolVariables is required/);
+    });
+
+    await tNested.test('hard-fails when provider is not injected explicitly', async () => {
+      await rejects(
+        emotionLensesTool.analyze({
+          toolVariables: {
+            soulPath,
+            goalPath,
+            variables: { lenses: ['patience'] }
+          },
+          videoContext: {
+            chunkPath: __filename,
+            mimeType: 'video/mp4',
+            transferStrategy: 'base64',
+            duration: 8
+          },
+          dialogueContext: { segments: [] },
+          musicContext: { segments: [] },
+          previousState: { summary: '', emotions: {} },
+          config: {
+            ai: {
+              provider: 'openrouter',
+              video: { model: 'yaml-video-model' }
+            }
+          },
+          apiKey: 'override-key'
+        }),
+        /provider must be injected explicitly/
+      );
     });
   });
 });

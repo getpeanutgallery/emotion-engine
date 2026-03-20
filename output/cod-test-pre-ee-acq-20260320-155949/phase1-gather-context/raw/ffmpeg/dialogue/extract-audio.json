@@ -1,0 +1,24 @@
+{
+  "tool": "ffmpeg",
+  "command": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ffmpeg-static/ffmpeg -v error -i /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/examples/videos/emotion-tests/cod.mp4 -vn -acodec libmp3lame -b:a 192k -ar 44100 -ac 2 -y /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/processed/dialogue/audio.mp3",
+  "args": [
+    "-v",
+    "error",
+    "-i",
+    "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/examples/videos/emotion-tests/cod.mp4",
+    "-vn",
+    "-acodec",
+    "libmp3lame",
+    "-b:a",
+    "192k",
+    "-ar",
+    "44100",
+    "-ac",
+    "2",
+    "-y",
+    "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/processed/dialogue/audio.mp3"
+  ],
+  "stdout": "",
+  "stderr": "",
+  "status": "success"
+}

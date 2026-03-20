@@ -1,0 +1,52 @@
+{
+  "contractVersion": "ee.script-result/v1",
+  "status": "success",
+  "phase": "phase1-gather-context",
+  "script": "get-music",
+  "run": {
+    "configName": "COD Test Pipeline",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+    "startedAt": "2026-03-20T19:59:57.595Z",
+    "completedAt": "2026-03-20T20:00:09.854Z",
+    "durationMs": 12259,
+    "attempt": 1
+  },
+  "payload": {
+    "artifactKey": "musicData",
+    "data": {
+      "segments": [
+        {
+          "start": 0,
+          "end": 140.042449,
+          "type": "music",
+          "description": "Dramatic, high-intensity cinematic trailer music with aggressive percussion and tense orchestral elements, underscoring intense dialogue.",
+          "mood": "tense",
+          "intensity": 8
+        }
+      ],
+      "summary": "The audio is a high-intensity movie trailer featuring dramatic orchestral music and tense, confrontational dialogue.",
+      "hasMusic": true
+    }
+  },
+  "artifacts": {
+    "primary": {
+      "key": "musicData",
+      "path": "phase1-gather-context/music-data.json",
+      "mediaType": "application/json"
+    },
+    "additional": []
+  },
+  "metrics": {
+    "tokensTotal": null,
+    "warningsCount": 0
+  },
+  "diagnostics": {
+    "warnings": [],
+    "degraded": false,
+    "debugCaptureEnabled": true,
+    "captureRefs": [
+      "phase1-gather-context/raw/_meta/errors.jsonl",
+      "phase1-gather-context/raw/_meta/errors.summary.json"
+    ]
+  }
+}

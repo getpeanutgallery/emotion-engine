@@ -1,0 +1,112 @@
+{
+  "contractVersion": "ee.script-result/v1",
+  "status": "success",
+  "phase": "phase3-report",
+  "script": "metrics",
+  "run": {
+    "configName": "COD Test Pipeline",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+    "startedAt": "2026-03-20T19:43:00.173Z",
+    "completedAt": "2026-03-20T19:43:00.175Z",
+    "durationMs": 2,
+    "attempt": 1
+  },
+  "payload": {
+    "artifactKey": "metricsData",
+    "data": {
+      "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
+      "generatedAt": "2026-03-20T19:43:00.175Z",
+      "averages": {
+        "patience": 0.7035714285714286,
+        "boredom": 0.5607142857142864,
+        "excitement": 0.7714285714285727
+      },
+      "peakMoments": {
+        "patience": {
+          "highest": {
+            "timestamp": 55,
+            "score": 1
+          },
+          "lowest": {
+            "timestamp": 5,
+            "score": 0.2
+          }
+        },
+        "boredom": {
+          "highest": {
+            "timestamp": 55,
+            "score": 1
+          },
+          "lowest": {
+            "timestamp": 15,
+            "score": 0.2
+          }
+        },
+        "excitement": {
+          "highest": {
+            "timestamp": 15,
+            "score": 0.9
+          },
+          "lowest": {
+            "timestamp": 5,
+            "score": 0.3
+          }
+        }
+      },
+      "trends": {
+        "patience": {
+          "direction": "increasing",
+          "change": 0.121428571428571,
+          "firstHalfAverage": 0.6428571428571428,
+          "secondHalfAverage": 0.7642857142857138
+        },
+        "boredom": {
+          "direction": "stable",
+          "change": 0.02142857142857124,
+          "firstHalfAverage": 0.5499999999999998,
+          "secondHalfAverage": 0.5714285714285711
+        },
+        "excitement": {
+          "direction": "increasing",
+          "change": 0.1285714285714279,
+          "firstHalfAverage": 0.707142857142857,
+          "secondHalfAverage": 0.8357142857142849
+        }
+      },
+      "frictionIndex": 100,
+      "implementationStatus": {
+        "state": "computed",
+        "dataSource": "derived-from-phase2.chunkAnalysis"
+      },
+      "summary": {
+        "averages": 3,
+        "peakMoments": 3,
+        "trends": 3,
+        "frictionIndex": 100
+      }
+    }
+  },
+  "artifacts": {
+    "primary": {
+      "key": "metricsData",
+      "path": "phase3-report/metrics/metrics.json",
+      "mediaType": "application/json"
+    },
+    "additional": []
+  },
+  "metrics": {
+    "tokensTotal": null,
+    "warningsCount": 1,
+    "totalSeconds": 140,
+    "successfulChunks": 28,
+    "failedChunks": 0
+  },
+  "diagnostics": {
+    "warnings": [
+      "Derived per-second metrics from chunkAnalysis because native perSecondData was unavailable."
+    ],
+    "degraded": true,
+    "debugCaptureEnabled": true,
+    "captureRefs": []
+  }
+}

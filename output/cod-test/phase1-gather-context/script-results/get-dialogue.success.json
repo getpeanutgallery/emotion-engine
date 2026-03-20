@@ -1,0 +1,171 @@
+{
+  "contractVersion": "ee.script-result/v1",
+  "status": "success",
+  "phase": "phase1-gather-context",
+  "script": "get-dialogue",
+  "run": {
+    "configName": "COD Test Pipeline",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+    "startedAt": "2026-03-20T19:59:49.179Z",
+    "completedAt": "2026-03-20T19:59:57.594Z",
+    "durationMs": 8415,
+    "attempt": 1
+  },
+  "payload": {
+    "artifactKey": "dialogueData",
+    "data": {
+      "dialogue_segments": [
+        {
+          "start": 0,
+          "end": 6,
+          "speaker": "Speaker 1",
+          "text": "They want you afraid. Fear makes you easier to control.",
+          "confidence": 0.98
+        },
+        {
+          "start": 8.5,
+          "end": 10,
+          "speaker": "Speaker 1",
+          "text": "It's time to wake up.",
+          "confidence": 0.95
+        },
+        {
+          "start": 12,
+          "end": 16.5,
+          "speaker": "Speaker 2",
+          "text": "Your streets, so once again run red with your blood.",
+          "confidence": 0.96
+        },
+        {
+          "start": 16.5,
+          "end": 20.5,
+          "speaker": "Speaker 3",
+          "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+          "confidence": 0.97
+        },
+        {
+          "start": 22,
+          "end": 24,
+          "speaker": "Speaker 1",
+          "text": "Menendez is a terrorist.",
+          "confidence": 0.98
+        },
+        {
+          "start": 24,
+          "end": 27,
+          "speaker": "Speaker 1",
+          "text": "We're bringing peace and security to the world.",
+          "confidence": 0.95
+        },
+        {
+          "start": 27.5,
+          "end": 29.5,
+          "speaker": "Speaker 4",
+          "text": "He refuses to let me go.",
+          "confidence": 0.94
+        },
+        {
+          "start": 30,
+          "end": 33.5,
+          "speaker": "Speaker 5",
+          "text": "Stop looking backwards, David, but what matters is what we do next.",
+          "confidence": 0.96
+        },
+        {
+          "start": 35,
+          "end": 37,
+          "speaker": "Speaker 5",
+          "text": "A lot of people counting on us, Francis.",
+          "confidence": 0.95
+        },
+        {
+          "start": 51,
+          "end": 52.5,
+          "speaker": "Speaker 6",
+          "text": "Specter, one report.",
+          "confidence": 0.92
+        },
+        {
+          "start": 54,
+          "end": 55,
+          "speaker": "Speaker 6",
+          "text": "Need a sitrep.",
+          "confidence": 0.93
+        },
+        {
+          "start": 101,
+          "end": 102,
+          "speaker": "Speaker 7",
+          "text": "This isn't real.",
+          "confidence": 0.95
+        },
+        {
+          "start": 102.5,
+          "end": 104,
+          "speaker": "Speaker 2",
+          "text": "The hell it ain't!",
+          "confidence": 0.96
+        },
+        {
+          "start": 138,
+          "end": 139.5,
+          "speaker": "Speaker 5",
+          "text": "Pull it together, man!",
+          "confidence": 0.97
+        },
+        {
+          "start": 140.5,
+          "end": 143,
+          "speaker": "Speaker 5",
+          "text": "So eager to leave, David.",
+          "confidence": 0.94
+        },
+        {
+          "start": 143,
+          "end": 146.5,
+          "speaker": "Speaker 5",
+          "text": "Killing the man is a hell of a lot easier than killing the idea.",
+          "confidence": 0.96
+        },
+        {
+          "start": 148,
+          "end": 150.5,
+          "speaker": "Speaker 1",
+          "text": "You were never cut out to be a Mason.",
+          "confidence": 0.95
+        },
+        {
+          "start": 152.5,
+          "end": 155,
+          "speaker": "Speaker 5",
+          "text": "No more games. This ends now.",
+          "confidence": 0.97
+        }
+      ],
+      "summary": "A montage of intense dialogue featuring various characters discussing conflict, terrorism, and personal stakes, likely from a Call of Duty game trailer.",
+      "totalDuration": 220,
+      "handoffContext": null
+    }
+  },
+  "artifacts": {
+    "primary": {
+      "key": "dialogueData",
+      "path": "phase1-gather-context/dialogue-data.json",
+      "mediaType": "application/json"
+    },
+    "additional": []
+  },
+  "metrics": {
+    "tokensTotal": null,
+    "warningsCount": 0
+  },
+  "diagnostics": {
+    "warnings": [],
+    "degraded": false,
+    "debugCaptureEnabled": true,
+    "captureRefs": [
+      "phase1-gather-context/raw/_meta/errors.jsonl",
+      "phase1-gather-context/raw/_meta/errors.summary.json"
+    ]
+  }
+}

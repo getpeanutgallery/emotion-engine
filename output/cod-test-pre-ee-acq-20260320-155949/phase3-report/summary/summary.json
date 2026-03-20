@@ -1,0 +1,84 @@
+{
+  "metadata": {
+    "generatedAt": "2026-03-20T19:43:32.874Z",
+    "pipelineVersion": "1.0",
+    "videoDuration": 140.017,
+    "chunksAnalyzed": 28,
+    "failedChunks": 0,
+    "totalSeconds": 140,
+    "totalTokens": 276527
+  },
+  "keyMetrics": {
+    "averages": {
+      "patience": 0.7035714285714286,
+      "boredom": 0.5607142857142864,
+      "excitement": 0.7714285714285727
+    },
+    "peakMoments": {
+      "patience": {
+        "highest": {
+          "timestamp": 55,
+          "score": 1
+        },
+        "lowest": {
+          "timestamp": 5,
+          "score": 0.2
+        }
+      },
+      "boredom": {
+        "highest": {
+          "timestamp": 55,
+          "score": 1
+        },
+        "lowest": {
+          "timestamp": 15,
+          "score": 0.2
+        }
+      },
+      "excitement": {
+        "highest": {
+          "timestamp": 15,
+          "score": 0.9
+        },
+        "lowest": {
+          "timestamp": 5,
+          "score": 0.3
+        }
+      }
+    },
+    "trends": {
+      "patience": {
+        "direction": "increasing",
+        "change": 0.121428571428571,
+        "firstHalfAverage": 0.6428571428571428,
+        "secondHalfAverage": 0.7642857142857138
+      },
+      "boredom": {
+        "direction": "stable",
+        "change": 0.02142857142857124,
+        "firstHalfAverage": 0.5499999999999998,
+        "secondHalfAverage": 0.5714285714285711
+      },
+      "excitement": {
+        "direction": "increasing",
+        "change": 0.1285714285714279,
+        "firstHalfAverage": 0.707142857142857,
+        "secondHalfAverage": 0.8357142857142849
+      }
+    },
+    "frictionIndex": 100
+  },
+  "recommendation": {
+    "text": "Rebuild the first 15 seconds around the strongest mid-trailer payoff instead of the current generic setup. The biggest retention gain will come from replacing the text-led cold open and cliché villain exposition with an immediate high-stakes visual hook, then maintaining that tempo with faster pattern interrupts before the audience settles into boredom. Keep the back-half action density, but trim or redesign the late sales-card section so the CTA feels like a payoff rather than a hard stop.",
+    "reasoning": "The current opening is the clearest weakness: patience is lowest at 5s (0.2), excitement is also lowest at 5s (0.3), and boredom is already very high in the first two chunks, driven by the 'RISING TENSIONS' text and generic destruction setup. By contrast, the trailer's strongest emotional performance begins at 15-25s, where boredom drops to 0.2 and excitement peaks at 0.9 around 15s thanks to clearer stakes, faster motion, and more distinctive visuals. Metrics also show excitement and patience rise in the second half, which suggests the asset improves once it stops explaining and starts delivering spectacle. However, boredom remains relatively high on average (0.56) and spikes again at 55s in the summary metrics, indicating the pacing still has friction despite strong action passages. The friction index of 100 reinforces that there are too many moments where the trailer asks for patience before earning it. The late post-title sales section also creates a sharp disengagement risk, with patience dropping to 0.2 and boredom rising to 0.9 on dense edition screens. Visual evidence is limited for 5-10s, so validate this recommendation by checking full footage there and confirming whether a stronger visual interrupt can be inserted earlier.",
+    "confidence": 0.92
+  },
+  "reportPaths": {
+    "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
+    "recommendation": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
+    "emotionalAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json",
+    "finalReport": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md",
+    "analysisData": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json",
+    "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json"
+  }
+}

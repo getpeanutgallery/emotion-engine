@@ -1,0 +1,11 @@
+{
+  "failureId": "video-chunks:phase2-process:attempt-1",
+  "parentFailureId": null,
+  "phase": "phase2-process",
+  "script": "video-chunks",
+  "scriptRunAttempt": 1,
+  "deterministicAttemptsUsed": 0,
+  "aiRecoveryAttemptsUsed": 0,
+  "maxAiRecoveryAttempts": 1,
+  "reentryAttemptNumber": 0
+}

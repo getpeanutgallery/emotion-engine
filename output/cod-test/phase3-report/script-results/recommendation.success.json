@@ -1,0 +1,71 @@
+{
+  "contractVersion": "ee.script-result/v1",
+  "status": "success",
+  "phase": "phase3-report",
+  "script": "recommendation",
+  "run": {
+    "configName": "COD Test Pipeline",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+    "startedAt": "2026-03-20T20:53:30.632Z",
+    "completedAt": "2026-03-20T20:54:18.121Z",
+    "durationMs": 47489,
+    "attempt": 1
+  },
+  "payload": {
+    "artifactKey": "recommendationData",
+    "data": {
+      "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
+      "generatedAt": "2026-03-20T20:54:18.120Z",
+      "text": "The strongest retention gain will come from rebuilding the opening 5 seconds and removing the late static promo block. Start with the most distinctive gameplay/action imagery instead of glitch text and generic trailer language, then keep the mid-video montage energy as the model for the rest of the cut. End on a cleaner title/CTA beat rather than dense edition screens so the final emotional impression stays high.",
+      "reasoning": "The current hook is the weakest structural point: boredom is highest at the start chunk level, with the opening 0-5s dominated by boredom and specifically flagged as generic and corporate-feeling. By contrast, the video's best retention/emotion zone is the action-heavy middle, especially around 40s and 80-105s, where boredom drops to 0.1-0.2 and excitement rises to 0.9 while patience remains high. The metrics support this pattern: average excitement is strong at 0.75, but average boredom is still elevated at 0.45, indicating avoidable drag despite strong footage. The friction index of 100 suggests the edit contains too many anti-retention moments relative to the persona, especially branding, exposition, and info-dump screens. The late 120-130s section is the clearest drop risk, with patience bottoming at 0.2 and excitement at 0.3 when static Vault Edition and DLC details appear. Stable overall trends hide these localized failures, so the best edits are not broad tonal changes but precise restructuring of the hook, exposition beats, and CTA packaging.",
+      "confidence": 0.92,
+      "keyFindings": [
+        "0-5s is a major vulnerability: opening boredom is high and the glitch text/corporate-trailer feel creates immediate skip risk.",
+        "The best-performing material is the fast, distinctive action montage from roughly the 40s through the early 100s, where boredom is consistently minimal and excitement peaks.",
+        "Exposition-heavy or dialogue-led beats around 15-35s create smaller but repeated friction, even when visuals stay polished.",
+        "The title reveal works better than the upsell: excitement remains high near the finale until dense promo/info screens appear.",
+        "Patience is stable on average, but the lowest patience point occurs at 125s, showing the static edition breakdown is the biggest late retention leak.",
+        "Excitement slightly improves in the second half, proving the footage itself is strong enough if weaker framing elements are trimmed."
+      ],
+      "suggestions": [
+        "Replace the opening 'RISING TENSIONS' style setup with the most visually unique gameplay/action shot from the strongest mid-video sections.",
+        "Move one standout image early—such as the weird butterfly visual, wingsuit/mech material, cyberpunk parkour, or aircraft explosion—to create a first-second curiosity spike.",
+        "Cut or heavily shorten generic voiceover lines about fear, control, peace, and security; let stakes come from images and shorter, sharper dialogue fragments.",
+        "Compress the 10-35s exposition run by reducing title-card holds, map explanation, and briefing/cemetery beats so the video reaches premium action sooner.",
+        "Use the 40-45s pacing as the benchmark: no dead air, no static cards, and a pattern interrupt every 1-2 beats.",
+        "If branding is necessary, overlay title/date/location information on moving footage instead of isolating it on static full-screen cards.",
+        "Fix or hide immersion-breaking shots such as the visible green-screen corridor moment, since polish issues reduce trust even during action.",
+        "Keep the gameplay transition prominent; the shift into playable footage around the 55-65s range is one of the clearest momentum builders and should arrive earlier if possible.",
+        "After the main title reveal, avoid dense DLC/Vault Edition breakdown screens entirely or reduce them to a very brief end card with minimal text.",
+        "If an edition upsell must stay, place it after the primary ending beat as a separate cutdown/version rather than interrupting the emotional peak of the trailer.",
+        "Finish on one last high-intensity visual plus a simple CTA/logo lockup, instead of asking the viewer to read a cluttered sales screen.",
+        "Create a shorter social cut that opens with peak footage and ends at the title reveal, since the data suggests the promo-heavy tail is hurting emotional carryover."
+      ],
+      "summary": {
+        "hasRecommendation": true,
+        "confidence": 0.92
+      }
+    }
+  },
+  "artifacts": {
+    "primary": {
+      "key": "recommendationData",
+      "path": "phase3-report/recommendation/recommendation.json",
+      "mediaType": "application/json"
+    },
+    "additional": []
+  },
+  "metrics": {
+    "tokensTotal": null,
+    "warningsCount": 0
+  },
+  "diagnostics": {
+    "warnings": [],
+    "degraded": false,
+    "debugCaptureEnabled": true,
+    "captureRefs": [
+      "phase3-report/raw/_meta/errors.jsonl",
+      "phase3-report/raw/_meta/errors.summary.json"
+    ]
+  }
+}

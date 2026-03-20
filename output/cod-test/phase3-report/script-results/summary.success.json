@@ -1,0 +1,125 @@
+{
+  "contractVersion": "ee.script-result/v1",
+  "status": "success",
+  "phase": "phase3-report",
+  "script": "summary",
+  "run": {
+    "configName": "COD Test Pipeline",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+    "startedAt": "2026-03-20T20:54:18.126Z",
+    "completedAt": "2026-03-20T20:54:18.127Z",
+    "durationMs": 1,
+    "attempt": 1
+  },
+  "payload": {
+    "artifactKey": "summary",
+    "data": {
+      "metadata": {
+        "generatedAt": "2026-03-20T20:54:18.126Z",
+        "pipelineVersion": "1.0",
+        "videoDuration": 140.017,
+        "chunksAnalyzed": 28,
+        "failedChunks": 0,
+        "totalSeconds": 140,
+        "totalTokens": 258173
+      },
+      "keyMetrics": {
+        "averages": {
+          "patience": 0.6464285714285717,
+          "boredom": 0.44642857142857206,
+          "excitement": 0.7499999999999999
+        },
+        "peakMoments": {
+          "patience": {
+            "highest": {
+              "timestamp": 80,
+              "score": 1
+            },
+            "lowest": {
+              "timestamp": 125,
+              "score": 0.2
+            }
+          },
+          "boredom": {
+            "highest": {
+              "timestamp": 40,
+              "score": 1
+            },
+            "lowest": {
+              "timestamp": 5,
+              "score": 0.2
+            }
+          },
+          "excitement": {
+            "highest": {
+              "timestamp": 40,
+              "score": 0.9
+            },
+            "lowest": {
+              "timestamp": 125,
+              "score": 0.3
+            }
+          }
+        },
+        "trends": {
+          "patience": {
+            "direction": "stable",
+            "change": -0.007142857142856673,
+            "firstHalfAverage": 0.6499999999999996,
+            "secondHalfAverage": 0.6428571428571429
+          },
+          "boredom": {
+            "direction": "stable",
+            "change": 0.03571428571428509,
+            "firstHalfAverage": 0.42857142857142877,
+            "secondHalfAverage": 0.46428571428571386
+          },
+          "excitement": {
+            "direction": "stable",
+            "change": 0.028571428571427693,
+            "firstHalfAverage": 0.7357142857142853,
+            "secondHalfAverage": 0.764285714285713
+          }
+        },
+        "frictionIndex": 100
+      },
+      "recommendation": {
+        "text": "The strongest retention gain will come from rebuilding the opening 5 seconds and removing the late static promo block. Start with the most distinctive gameplay/action imagery instead of glitch text and generic trailer language, then keep the mid-video montage energy as the model for the rest of the cut. End on a cleaner title/CTA beat rather than dense edition screens so the final emotional impression stays high.",
+        "reasoning": "The current hook is the weakest structural point: boredom is highest at the start chunk level, with the opening 0-5s dominated by boredom and specifically flagged as generic and corporate-feeling. By contrast, the video's best retention/emotion zone is the action-heavy middle, especially around 40s and 80-105s, where boredom drops to 0.1-0.2 and excitement rises to 0.9 while patience remains high. The metrics support this pattern: average excitement is strong at 0.75, but average boredom is still elevated at 0.45, indicating avoidable drag despite strong footage. The friction index of 100 suggests the edit contains too many anti-retention moments relative to the persona, especially branding, exposition, and info-dump screens. The late 120-130s section is the clearest drop risk, with patience bottoming at 0.2 and excitement at 0.3 when static Vault Edition and DLC details appear. Stable overall trends hide these localized failures, so the best edits are not broad tonal changes but precise restructuring of the hook, exposition beats, and CTA packaging.",
+        "confidence": 0.92
+      },
+      "reportPaths": {
+        "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
+        "recommendation": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
+        "emotionalAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json",
+        "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json"
+      },
+      "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json",
+      "generatedAt": "2026-03-20T20:54:18.126Z"
+    }
+  },
+  "artifacts": {
+    "primary": {
+      "key": "summary",
+      "path": "phase3-report/summary/summary.json",
+      "mediaType": "application/json"
+    },
+    "additional": []
+  },
+  "metrics": {
+    "tokensTotal": null,
+    "warningsCount": 0,
+    "keyMetricsCount": 4,
+    "hasRecommendation": true,
+    "reportPathCount": 4
+  },
+  "diagnostics": {
+    "warnings": [],
+    "degraded": false,
+    "debugCaptureEnabled": true,
+    "captureRefs": [
+      "phase3-report/raw/_meta/errors.jsonl",
+      "phase3-report/raw/_meta/errors.summary.json"
+    ]
+  }
+}

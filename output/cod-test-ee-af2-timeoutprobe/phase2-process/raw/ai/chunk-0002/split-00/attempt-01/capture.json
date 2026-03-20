@@ -1,0 +1,85 @@
+{
+  "chunkIndex": 2,
+  "splitIndex": 0,
+  "startTime": 10,
+  "endTime": 15,
+  "attempt": 1,
+  "attemptInTarget": 1,
+  "targetIndex": 0,
+  "targetCount": 4,
+  "adapter": {
+    "name": "openrouter",
+    "model": "qwen/qwen3.5-397b-a17b",
+    "params": {
+      "max_tokens": 25000,
+      "timeoutMs": 10000,
+      "thinking": {
+        "level": "low"
+      }
+    }
+  },
+  "failover": null,
+  "promptRef": null,
+  "rawResponse": null,
+  "providerCompletion": null,
+  "parsed": null,
+  "toolLoop": null,
+  "error": "OpenRouter: No content in response",
+  "errorName": "OpenRouterNoContentError",
+  "errorCode": null,
+  "errorStatus": 200,
+  "errorRequestId": "9df6d086fb5174b6-MIA",
+  "errorClassification": "retryable",
+  "errorStack": "OpenRouterNoContentError: OpenRouter: No content in response\n    at createNoContentError (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/utils/provider-debug.cjs:309:15)\n    at transformResponse (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:245:17)\n    at runRequest (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:276:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/digital-twin-router/index.js:578:28)\n    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:336:14)\n    at async executeLocalValidatorToolLoop (/home/derrick/.openclaw/workspace/projects/peanut-gallery/tools/lib/local-validator-tool-loop.cjs:204:24)\n    at async operation (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/process/video-chunks.cjs:783:40)\n    at async executeWithTargets (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/ai-targets.cjs:418:24)\n    at async Object.run (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/process/video-chunks.cjs:705:52)",
+  "errorDebug": {
+    "provider": "openrouter",
+    "request": {
+      "method": "POST",
+      "url": "https://openrouter.ai/api/v1/chat/completions",
+      "model": "qwen/qwen3.5-397b-a17b",
+      "contentTypes": [
+        "text",
+        "video_url"
+      ],
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "cf-ray": "9df6d086fb5174b6-MIA"
+      },
+      "body": "{\n  \"id\": \"gen-1774031704-fRbz53I0heVssQB6I8ja\",\n  \"object\": \"chat.completion\",\n  \"created\": 1774031704,\n  \"model\": \"qwen/qwen3.5-397b-a17b-20260216\",\n  \"provider\": \"Parasail\",\n  \"system_fingerprint\": null,\n  \"choices\": [\n    {\n      \"index\": 0,\n      \"logprobs\": null,\n      \"finish_reason\": null,\n      \"native_finish_reason\": null,\n      \"error\": {\n        \"code\": 502,\n        \"message\": \"Network connection lost.\",\n        \"metadata\": {\n          \"error_type\": \"provider_unavailable\"\n        }\n      },\n      \"message\": {\n        \"role\": \"assistant\",\n        \"content\": null,\n        \"refusal\": null,\n        \"reasoning\": \"Thinking Process:\\n\\n1.  **Analyze the Request:**\\n    *   **Goal:** Evaluate the emotional content of a specific video chunk (10.0s-15.0s) based on provided frames/context.\\n    *   **Persona:** Alex \\\"The Scroller\\\" Chen (Impatient Teenager, Gen Z, harsh critic, attention span < 3s).\\n    *   **Input:** Video frames (0.0s - 4.8s shown in the prompt, but the context says \\\"Chunk window: 10.0s-15.0s\\\"). Wait, there's a discrepancy. The prompt provides frames labeled 0.0s to 4.8s, but the \\\"CONTEXT\\\" section says \\\"Chunk window: 10.0s-15.0s\\\" and provides dialogue for 9.0s-16.0s.\\n    *   **Constraint:** I need to follow the `SOUL.md` (Persona) and `GOAL.md` (Evaluation) but the specific instruction here is to \\\"Analyze the emotional content of this video chunk using the following lenses: patience, boredom, excitement.\\\" and return a specific JSON structure.\\n    *   **Tool Use:** I must use the `validate_emotion_analysis_json` tool before returning the final JSON.\\n    *   **Discrepancy Check:** The provided images are timestamped 0.0s to 4.8s. However, the context says \\\"Chunk window: 10.0s-15.0s\\\" and dialogue is 9.0s-16.0s. This suggests the provided images might be from the *start* of the video, but the evaluation context is asking about a later chunk (10-15s). However, I only have visual evidence for 0.0s-4.8s.\\n    *   **Instruction:** \\\"Ground your judgment in the attached video chunk first, then use dialogue and music as supporting context. Treat previous summary as continuity only. Do not let it override what is visible in this chunk. If the visuals are ambiguous, limited, or absent, say so plainly and do not invent unseen actions or scenes.\\\"\\n    *   **Problem:** The visual frames provided (0.0s-4.8s) do *not* match the chunk window (10.0s-15.0s). The frames show a cityscape, logo, glitch text, and a broken screen with a face. The dialogue provided (\\\"It's time to wake up\\\", \\\"Your streets... run red with your blood\\\") suggests a later narrative point.\\n    *   **Resolution:** I must evaluate based on the *provided visual evidence* while acknowledging the context provided in the prompt instructions. However, the prompt says \\\"Attached video chunk: video/mp4 (base64)\\\" but I only see images. I must treat the images provided as the visual evidence for *this* evaluation turn, even if the timestamps on the images (0.0-4.8s) conflict with the \\\"Chunk window: 10.0s-15.0s\\\" metadata. Actually, looking closely at the prompt structure, this is likely a simulation where I need to act as the persona evaluating the *provided frames* but the metadata says 10-15s.\\n    *   **Correction:** Wait, the prompt says \\\"Attached video chunk: video/mp4 (base64)\\\" but I cannot see base64. I see 10 images. The images are timestamped 0.0s to 4.8s. The context says \\\"Chunk window: 10.0s-15.0s\\\". This is a conflict.\\n    *   **Standard Procedure for Conflicts:** The instruction says \\\"Ground your judgment in the attached video chunk first\\\". The images *are* the attached chunk visually. The metadata \\\"Chunk window: 10.0s-15.0s\\\" might be a label error in the simulation setup, or I am evaluating the *start* of the video (0-5s) but the context block is mislabeled.\\n    *   **Wait, looking at the images:**\\n        *   0.0s-1.0s: Cityscape, smoke, sunset.\\n        *   1.0s-2.5s: \\\"CALL OF DUTY BLACK OPS 7\\\" logo.\\n        *   2.5s: Glitch text \\\"RISING TENSIONS\\\".\\n        *   3.0s-4.8s: Broken screen with a face, fire, someone walking past.\\n    *   **Looking at the Context Dialogue:** \\\"9.0s-11.0s: Speaker 1: It's time to wake up.\\\" \\\"12.0s-16.0s: Speaker 2: Your streets, so once again run red with your blood.\\\"\\n    *   **Looking at the Persona:** Alex \\\"The Scroller\\\". They hate logo animations, corporate intros, slow buildup.\\n    *   **Decision:** I will evaluate based on the *visuals provided* (0.0s-4.8s) because the instruction says \\\"Ground your judgment in the attached video chunk first\\\". The metadata \\\"10.0s-15.0s\\\" is likely incorrect relative to the images provided (which clearly show 0.0s-4.8s). However, the dialogue provided corresponds to the 10-15s window. This is a tricky simulation constraint.\\n    *   **Actually, re-reading the instruction:** \\\"CONTEXT ... Chunk window: 10.0s-15.0s ... Attached video chunk: video/mp4 (base64)\\\". The images provided *are* the video chunk representation. The timestamps on the images (0.0s - 4.8s) contradict the \\\"Chunk window: 10.0s-15.0s\\\".\\n    *   **Hypothesis:** The system is testing me on the *images provided*. The timestamps on the images (0.0, 0.5, 1.0...) are the ground truth for *this* chunk. The \\\"Chunk window: 10.0s-15.0s\\\" in the text context might be a leftover from a previous turn or a mistake. However, the dialogue provided (9.0s-16.0s) aligns with the 10-15s window.\\n    *   **Critical Instruction:** \\\"If the visuals are ambiguous, limited, or absent, say so plainly and do not invent unseen actions or scenes.\\\"\\n    *   **Strategy:** I will acknowledge the visual content (Logo, City, Broken Screen) which corresponds to the *start* of a trailer (0-5s), but the context says 10-15s. If I strictly follow \\\"Ground your judgment in the attached video chunk first\\\", I must evaluate what I see. What I see is a Logo Animation (1.0-2.5s) which the persona *hates*.\\n    *   **Wait, one more check:** The prompt says \\\"Previous Summary... The chunk maintains high visual intensity with warzone imagery...\\\". This implies we are mid-video. But the images show the Title Card \\\"CALL OF DUTY BLACK OPS 7\\\". Title cards usually happen at the start or end.\\n    *   **Okay, I need to be careful.** The instruction says \\\"Ground your judgment in the attached video chunk first\\\". The attached images are 0.0s to 4.8s. I will treat this as the visual evidence. The persona hates logo animations.\\n    *   **Tool Requirement:** I *must* call `validate_emotion_analysis_json` first.\\n\\n    *   **Drafting the Analysis (Internal):**\\n        *   **Visuals:** Cityscape -> Logo Animation -> Glitch Text -> Broken Screen/Face.\\n        *   **Persona Reaction:** \\\"0.0s and it's already a dark, cluttered mess... Logo animations at the start... Hard pass.\\\" (From SOUL.md examples).\\n        *   **Patience:** Low. The logo animation (1.0-2.5s) is a known trigger for scrolling.\\n        *   **Boredom:** High during the logo static shot.\\n        *   **Excitement:** Low. It feels generic corporate.\\n        *   **Conflict:** The dialogue provided (\\\"Wake up\\\", \\\"Streets run red\\\") is intense, but the visuals (Logo) are static.\\n        *   **Decision:** I will score based on the Persona's hatred of logos and slow intros, which matches the visual evidence of the Title Card.\\n\\n    *   **Wait, I need to check the Tool Call Format:**\\n        *   Envelope: `{\\\"tool\\\":\\\"validate_emotion_analysis_json\\\",\\\"emotionAnalysis\\\":{...}}`\\n        *   Inside `emotionAnalysis`: `summary`, `emotions` (patience, boredom, excitement), `dominant_emotion`, `confidence`.\\n\\n    *   **Refining the Scores based on Persona:**\\n        *   **Patience:** 2/10. Logo animations are explicitly listed in \\\"What I Can't Stand\\\".\\n        *   **Boredom:** 8/10. Static logo shots are death for retention.\\n        *   **Excitement:** 3/10. Maybe the glitch effect helps slightly, but it's still a logo.\\n        *   **Dominant:** Boredom (or Patience low? The schema asks for dominant emotion from the list. If Boredom is 8 and Patience is 2 (low score), Boredom is the *intense* emotion. Wait, the schema says \\\"Score (1-10): How intense is this emotion?\n...[truncated 58390 chars]"
+    },
+    "error": {
+      "name": "OpenRouterNoContentError",
+      "message": "OpenRouter: No content in response",
+      "isAxiosError": false
+    }
+  },
+  "errorResponse": null,
+  "provider": "openrouter",
+  "model": "qwen/qwen3.5-397b-a17b",
+  "requestMeta": {
+    "adapter": {
+      "name": "openrouter",
+      "model": "qwen/qwen3.5-397b-a17b",
+      "params": {
+        "max_tokens": 25000,
+        "timeoutMs": 10000,
+        "thinking": {
+          "level": "low"
+        }
+      }
+    },
+    "provider": "openrouter",
+    "model": "qwen/qwen3.5-397b-a17b",
+    "chunkIndex": 2,
+    "splitIndex": 0,
+    "attempt": 1,
+    "attemptInTarget": 1,
+    "targetIndex": 0,
+    "targetCount": 4
+  }
+}

@@ -1,0 +1,3270 @@
+{
+  "assetsDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/input",
+  "dialogueData": {
+    "dialogue_segments": [
+      {
+        "start": 0,
+        "end": 5.2,
+        "speaker": "Speaker 1",
+        "text": "They want you afraid. Fear makes you easier to control.",
+        "confidence": 0.98
+      },
+      {
+        "start": 9,
+        "end": 10.5,
+        "speaker": "Speaker 1",
+        "text": "It's time to wake up.",
+        "confidence": 0.95
+      },
+      {
+        "start": 13,
+        "end": 17,
+        "speaker": "Speaker 2",
+        "text": "Your streets, so once again, run red with your blood.",
+        "confidence": 0.96
+      },
+      {
+        "start": 17.5,
+        "end": 21.5,
+        "speaker": "Speaker 1",
+        "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+        "confidence": 0.97
+      },
+      {
+        "start": 23,
+        "end": 24,
+        "speaker": "Speaker 1",
+        "text": "Menendez is a terrorist.",
+        "confidence": 0.94
+      },
+      {
+        "start": 24,
+        "end": 27,
+        "speaker": "Speaker 1",
+        "text": "We're bringing peace and security to the world.",
+        "confidence": 0.95
+      },
+      {
+        "start": 28,
+        "end": 29.5,
+        "speaker": "Speaker 2",
+        "text": "He refuses to let me go.",
+        "confidence": 0.93
+      },
+      {
+        "start": 30,
+        "end": 33,
+        "speaker": "Speaker 1",
+        "text": "Stop looking backwards, David, but what matters is what we do next.",
+        "confidence": 0.96
+      },
+      {
+        "start": 35,
+        "end": 36.5,
+        "speaker": "Speaker 3",
+        "text": "A lot of people counting on us for answers.",
+        "confidence": 0.94
+      },
+      {
+        "start": 51.5,
+        "end": 52.5,
+        "speaker": "Speaker 4",
+        "text": "Specter one, report.",
+        "confidence": 0.92
+      },
+      {
+        "start": 54.5,
+        "end": 55.5,
+        "speaker": "Speaker 4",
+        "text": "Need a sitrep.",
+        "confidence": 0.91
+      },
+      {
+        "start": 102,
+        "end": 103,
+        "speaker": "Speaker 2",
+        "text": "This isn't real.",
+        "confidence": 0.95
+      },
+      {
+        "start": 103,
+        "end": 104,
+        "speaker": "Speaker 1",
+        "text": "The hell it ain't!",
+        "confidence": 0.96
+      },
+      {
+        "start": 138,
+        "end": 139,
+        "speaker": "Speaker 3",
+        "text": "Pull it together, man.",
+        "confidence": 0.94
+      },
+      {
+        "start": 140.5,
+        "end": 142,
+        "speaker": "Speaker 2",
+        "text": "So eager to leave, David.",
+        "confidence": 0.95
+      },
+      {
+        "start": 143,
+        "end": 146,
+        "speaker": "Speaker 2",
+        "text": "Killing a man is a hell of a lot easier than killing the idea.",
+        "confidence": 0.97
+      },
+      {
+        "start": 148,
+        "end": 150,
+        "speaker": "Speaker 2",
+        "text": "You were never cut out to be a Mason.",
+        "confidence": 0.96
+      },
+      {
+        "start": 153,
+        "end": 155,
+        "speaker": "Speaker 1",
+        "text": "No more games. This ends now.",
+        "confidence": 0.98
+      },
+      {
+        "start": 202,
+        "end": 205,
+        "speaker": "Speaker 5",
+        "text": "Get the Reznov challenge pack when you pre-order now.",
+        "confidence": 0.99
+      }
+    ],
+    "summary": "This audio clip features a dramatic, cinematic trailer for a Call of Duty video game, likely Black Ops II, featuring dialogue about global unrest, terrorism, and personal conflict between characters, concluding with a promotional message for a pre-order bonus.",
+    "totalDuration": 140,
+    "handoffContext": null
+  },
+  "__scriptExecution": {
+    "get-dialogue": {
+      "status": "success",
+      "run": {
+        "configName": "COD Test Pipeline",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+        "startedAt": "2026-03-20T19:07:42.230Z",
+        "completedAt": "2026-03-20T19:08:01.246Z",
+        "durationMs": 19016,
+        "attempt": 1
+      },
+      "lineage": {
+        "failureId": "get-dialogue:phase1-gather-context:attempt-1",
+        "parentFailureId": null,
+        "phase": "phase1-gather-context",
+        "script": "get-dialogue",
+        "scriptRunAttempt": 1,
+        "deterministicAttemptsUsed": 0,
+        "aiRecoveryAttemptsUsed": 0,
+        "maxAiRecoveryAttempts": 1,
+        "reentryAttemptNumber": 0
+      },
+      "failureCountsByCategory": {},
+      "recoveryPolicy": null,
+      "refs": {
+        "result": "phase1-gather-context/script-results/get-dialogue.success.json",
+        "lineage": "phase1-gather-context/recovery/get-dialogue/lineage.json",
+        "nextAction": null
+      }
+    },
+    "get-music": {
+      "status": "success",
+      "run": {
+        "configName": "COD Test Pipeline",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+        "startedAt": "2026-03-20T19:08:01.247Z",
+        "completedAt": "2026-03-20T19:08:14.612Z",
+        "durationMs": 13365,
+        "attempt": 1
+      },
+      "lineage": {
+        "failureId": "get-music:phase1-gather-context:attempt-1",
+        "parentFailureId": null,
+        "phase": "phase1-gather-context",
+        "script": "get-music",
+        "scriptRunAttempt": 1,
+        "deterministicAttemptsUsed": 0,
+        "aiRecoveryAttemptsUsed": 0,
+        "maxAiRecoveryAttempts": 1,
+        "reentryAttemptNumber": 0
+      },
+      "failureCountsByCategory": {},
+      "recoveryPolicy": null,
+      "refs": {
+        "result": "phase1-gather-context/script-results/get-music.success.json",
+        "lineage": "phase1-gather-context/recovery/get-music/lineage.json",
+        "nextAction": null
+      }
+    },
+    "video-chunks": {
+      "status": "success",
+      "run": {
+        "configName": "COD Test Pipeline",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+        "startedAt": "2026-03-20T19:08:14.613Z",
+        "completedAt": "2026-03-20T19:43:00.171Z",
+        "durationMs": 2085558,
+        "attempt": 1
+      },
+      "lineage": {
+        "failureId": "video-chunks:phase2-process:attempt-1",
+        "parentFailureId": null,
+        "phase": "phase2-process",
+        "script": "video-chunks",
+        "scriptRunAttempt": 1,
+        "deterministicAttemptsUsed": 0,
+        "aiRecoveryAttemptsUsed": 0,
+        "maxAiRecoveryAttempts": 1,
+        "reentryAttemptNumber": 0
+      },
+      "failureCountsByCategory": {},
+      "recoveryPolicy": null,
+      "refs": {
+        "result": "phase2-process/script-results/video-chunks.success.json",
+        "lineage": "phase2-process/recovery/video-chunks/lineage.json",
+        "nextAction": null
+      }
+    },
+    "metrics": {
+      "status": "success",
+      "run": {
+        "configName": "COD Test Pipeline",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+        "startedAt": "2026-03-20T19:43:00.173Z",
+        "completedAt": "2026-03-20T19:43:00.175Z",
+        "durationMs": 2,
+        "attempt": 1
+      },
+      "lineage": {
+        "failureId": "metrics:phase3-report:attempt-1",
+        "parentFailureId": null,
+        "phase": "phase3-report",
+        "script": "metrics",
+        "scriptRunAttempt": 1,
+        "deterministicAttemptsUsed": 0,
+        "aiRecoveryAttemptsUsed": 0,
+        "maxAiRecoveryAttempts": 1,
+        "reentryAttemptNumber": 0
+      },
+      "failureCountsByCategory": {},
+      "recoveryPolicy": null,
+      "refs": {
+        "result": "phase3-report/script-results/metrics.success.json",
+        "lineage": "phase3-report/recovery/metrics/lineage.json",
+        "nextAction": null
+      }
+    },
+    "recommendation": {
+      "status": "success",
+      "run": {
+        "configName": "COD Test Pipeline",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+        "startedAt": "2026-03-20T19:43:00.175Z",
+        "completedAt": "2026-03-20T19:43:32.868Z",
+        "durationMs": 32693,
+        "attempt": 1
+      },
+      "lineage": {
+        "failureId": "recommendation:phase3-report:attempt-1",
+        "parentFailureId": null,
+        "phase": "phase3-report",
+        "script": "recommendation",
+        "scriptRunAttempt": 1,
+        "deterministicAttemptsUsed": 0,
+        "aiRecoveryAttemptsUsed": 0,
+        "maxAiRecoveryAttempts": 1,
+        "reentryAttemptNumber": 0
+      },
+      "failureCountsByCategory": {},
+      "recoveryPolicy": null,
+      "refs": {
+        "result": "phase3-report/script-results/recommendation.success.json",
+        "lineage": "phase3-report/recovery/recommendation/lineage.json",
+        "nextAction": null
+      }
+    },
+    "emotional-analysis": {
+      "status": "success",
+      "run": {
+        "configName": "COD Test Pipeline",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+        "startedAt": "2026-03-20T19:43:32.868Z",
+        "completedAt": "2026-03-20T19:43:32.873Z",
+        "durationMs": 5,
+        "attempt": 1
+      },
+      "lineage": {
+        "failureId": "emotional-analysis:phase3-report:attempt-1",
+        "parentFailureId": null,
+        "phase": "phase3-report",
+        "script": "emotional-analysis",
+        "scriptRunAttempt": 1,
+        "deterministicAttemptsUsed": 0,
+        "aiRecoveryAttemptsUsed": 0,
+        "maxAiRecoveryAttempts": 1,
+        "reentryAttemptNumber": 0
+      },
+      "failureCountsByCategory": {},
+      "recoveryPolicy": null,
+      "refs": {
+        "result": "phase3-report/script-results/emotional-analysis.success.json",
+        "lineage": "phase3-report/recovery/emotional-analysis/lineage.json",
+        "nextAction": null
+      }
+    },
+    "summary": {
+      "status": "success",
+      "run": {
+        "configName": "COD Test Pipeline",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+        "startedAt": "2026-03-20T19:43:32.874Z",
+        "completedAt": "2026-03-20T19:43:32.874Z",
+        "durationMs": 0,
+        "attempt": 1
+      },
+      "lineage": {
+        "failureId": "summary:phase3-report:attempt-1",
+        "parentFailureId": null,
+        "phase": "phase3-report",
+        "script": "summary",
+        "scriptRunAttempt": 1,
+        "deterministicAttemptsUsed": 0,
+        "aiRecoveryAttemptsUsed": 0,
+        "maxAiRecoveryAttempts": 1,
+        "reentryAttemptNumber": 0
+      },
+      "failureCountsByCategory": {},
+      "recoveryPolicy": null,
+      "refs": {
+        "result": "phase3-report/script-results/summary.success.json",
+        "lineage": "phase3-report/recovery/summary/lineage.json",
+        "nextAction": null
+      }
+    },
+    "final-report": {
+      "status": "success",
+      "run": {
+        "configName": "COD Test Pipeline",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+        "startedAt": "2026-03-20T19:43:32.875Z",
+        "completedAt": "2026-03-20T19:43:32.884Z",
+        "durationMs": 9,
+        "attempt": 1
+      },
+      "lineage": {
+        "failureId": "final-report:phase3-report:attempt-1",
+        "parentFailureId": null,
+        "phase": "phase3-report",
+        "script": "final-report",
+        "scriptRunAttempt": 1,
+        "deterministicAttemptsUsed": 0,
+        "aiRecoveryAttemptsUsed": 0,
+        "maxAiRecoveryAttempts": 1,
+        "reentryAttemptNumber": 0
+      },
+      "failureCountsByCategory": {},
+      "recoveryPolicy": null,
+      "refs": {
+        "result": "phase3-report/script-results/final-report.success.json",
+        "lineage": "phase3-report/recovery/final-report/lineage.json",
+        "nextAction": null
+      }
+    }
+  },
+  "musicData": {
+    "segments": [
+      {
+        "start": 0,
+        "end": 140.042449,
+        "type": "music",
+        "description": "An intense, high-energy action trailer score featuring dramatic orchestral elements, electronic beats, and sound effects like explosions and gunshots, layered with voiceover dialogue.",
+        "mood": "energetic",
+        "intensity": 9
+      }
+    ],
+    "summary": "The audio is a high-intensity action trailer featuring dramatic music, sound effects, and dialogue.",
+    "hasMusic": true
+  },
+  "chunkAnalysis": {
+    "chunks": [
+      {
+        "chunkIndex": 0,
+        "splitIndex": 0,
+        "startTime": 0,
+        "endTime": 5,
+        "status": "success",
+        "summary": "Opens with hated 'RISING TENSIONS' text triggering immediate scroll risk, followed by fast but generic sci-fi destruction shots.",
+        "emotions": {
+          "patience": {
+            "score": 3,
+            "reasoning": "The 'RISING TENSIONS' text at 0.0s is explicitly listed as a dealbreaker, dropping willingness to watch immediately."
+          },
+          "boredom": {
+            "score": 7,
+            "reasoning": "Despite fast cuts, the cliché intro and generic sci-fi tropes feel unoriginal and corporate."
+          },
+          "excitement": {
+            "score": 4,
+            "reasoning": "Visuals are energetic but feel like standard trailer fare without a unique hook."
+          }
+        },
+        "dominant_emotion": "boredom",
+        "confidence": 0.85,
+        "tokens": 9892,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 1,
+        "splitIndex": 0,
+        "startTime": 5,
+        "endTime": 10,
+        "status": "success",
+        "summary": "Visual evidence for this 5-10s window is limited (provided images cover 0-5s); dialogue at 9s ('wake up') suggests continued thriller tone without new visual hook.",
+        "emotions": {
+          "patience": {
+            "score": 2,
+            "reasoning": "Hook failed at 0-3s (RISING TENSIONS); Alex's 3-second rule means patience is critically depleted by 5s."
+          },
+          "boredom": {
+            "score": 9,
+            "reasoning": "Generic destruction tropes and conspiracy dialogue trigger instant cringe/disengagement for this persona."
+          },
+          "excitement": {
+            "score": 3,
+            "reasoning": "High music intensity fails to compensate for lack of authentic visual hook or clear value proposition."
+          }
+        },
+        "dominant_emotion": "boredom",
+        "confidence": 0.75,
+        "tokens": 10953,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 2,
+        "splitIndex": 0,
+        "startTime": 10,
+        "endTime": 15,
+        "status": "success",
+        "summary": "Chaotic city visuals transition to a logo, then a broken screen with a face amidst fire, paired with intense music and threatening dialogue.",
+        "emotions": {
+          "patience": {
+            "score": 4,
+            "reasoning": "Visuals shift quickly but the broken screen shot risks feeling static; generic 'villain monologue' tropes test my tolerance."
+          },
+          "boredom": {
+            "score": 6,
+            "reasoning": "High music intensity helps, but the broken screen visual lacks the pattern interrupts I need every 5 seconds to stay locked in."
+          },
+          "excitement": {
+            "score": 5,
+            "reasoning": "The explosion/cityscape hook was strong, but the dialogue feels cliché ('run red with blood'), keeping excitement moderate."
+          }
+        },
+        "dominant_emotion": "boredom",
+        "confidence": 0.78,
+        "tokens": 12105,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 3,
+        "splitIndex": 0,
+        "startTime": 15,
+        "endTime": 20,
+        "status": "success",
+        "summary": "A damaged screen displays a villain's face amidst fire, cutting to a holographic global map with a rising death toll and an explosion.",
+        "emotions": {
+          "patience": {
+            "score": 8,
+            "reasoning": "High stakes (death tally) and fast pacing prevent the urge to scroll; clear value prop maintains willingness to watch."
+          },
+          "boredom": {
+            "score": 2,
+            "reasoning": "Constant visual motion, glitch effects, and intense music keep disengagement extremely low."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Massive global stakes (258M deaths) and energetic music create peak arousal and curiosity."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.9,
+        "tokens": 9264,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 4,
+        "splitIndex": 0,
+        "startTime": 20,
+        "endTime": 25,
+        "status": "success",
+        "summary": "Glitchy military vehicle transition cuts to fiery '2035' title card while dialogue defines the villain.",
+        "emotions": {
+          "patience": {
+            "score": 7,
+            "reasoning": "Fast cuts and clear text keep me from scrolling, though I'm mid-video so patience is naturally lower."
+          },
+          "boredom": {
+            "score": 2,
+            "reasoning": "High intensity visuals (fire, trucks) and loud music prevent boredom spikes."
+          },
+          "excitement": {
+            "score": 8,
+            "reasoning": "'2035' hook and explosion imagery match the energetic music, creating a hype moment."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.85,
+        "tokens": 10551,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 5,
+        "splitIndex": 0,
+        "startTime": 25,
+        "endTime": 30,
+        "status": "success",
+        "summary": "High-tech robot visuals clash with cliché villain dialogue, ending on a slow dialogue cut.",
+        "emotions": {
+          "patience": {
+            "score": 4,
+            "reasoning": "Pacing slows at the end with the cut to dialogue; Alex's 3-second rule makes this risky."
+          },
+          "boredom": {
+            "score": 6,
+            "reasoning": "Dialogue uses generic corporate villain tropes ('peace and security') which Alex hates."
+          },
+          "excitement": {
+            "score": 5,
+            "reasoning": "Robot visuals and high-intensity music provide energy, but the content feels familiar."
+          }
+        },
+        "dominant_emotion": "boredom",
+        "confidence": 0.85,
+        "tokens": 5753,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 6,
+        "splitIndex": 0,
+        "startTime": 30,
+        "endTime": 35,
+        "status": "success",
+        "summary": "A fast-paced montage showing soldiers, a cemetery conversation, and a futuristic jet, overlaid with generic motivational dialogue and intense music.",
+        "emotions": {
+          "patience": {
+            "score": 5,
+            "reasoning": "The rapid cuts prevent immediate scrolling, but the scripted dialogue makes me hesitant to invest further attention."
+          },
+          "boredom": {
+            "score": 6,
+            "reasoning": "The line 'Stop looking backwards, David' feels like cliché movie talk that triggers my 'fake' alarm, raising disengagement."
+          },
+          "excitement": {
+            "score": 5,
+            "reasoning": "High-energy music and jet visuals provide a spark, but the polished CGI lacks the authentic grit I prefer."
+          }
+        },
+        "dominant_emotion": "boredom",
+        "confidence": 0.78,
+        "tokens": 10659,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 7,
+        "splitIndex": 0,
+        "startTime": 35,
+        "endTime": 40,
+        "status": "success",
+        "summary": "Fast-paced sequence transitioning from aerial jet maneuver to squad briefing then immediate tactical engagement.",
+        "emotions": {
+          "patience": {
+            "score": 8,
+            "reasoning": "Visuals change every 2-3 seconds preventing stagnation; high production value keeps Alex engaged."
+          },
+          "boredom": {
+            "score": 2,
+            "reasoning": "Intensity 9 music and action cuts eliminate dead air; no generic corporate intros present."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Futuristic combat visuals and high-stakes dialogue align with Alex's preference for immediate visual punch."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.9,
+        "tokens": 16153,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 8,
+        "splitIndex": 0,
+        "startTime": 40,
+        "endTime": 45,
+        "status": "success",
+        "summary": "High-intensity tactical combat sequence with explosions and stylized visual effects (red butterflies) in a futuristic setting.",
+        "emotions": {
+          "patience": {
+            "score": 8,
+            "reasoning": "Fast pacing and immediate action prevent the urge to scroll; no dead air."
+          },
+          "boredom": {
+            "score": 2,
+            "reasoning": "Constant movement, explosions, and visual stimuli leave no room for disengagement."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Explosions, gunfights, and sci-fi elements deliver the required dopamine burst."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.9,
+        "tokens": 9239,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 9,
+        "splitIndex": 0,
+        "startTime": 45,
+        "endTime": 50,
+        "status": "success",
+        "summary": "Tactical squad moves through a green-screen corridor before transitioning into a red-lit combat zone, revealing camera rigs and VFX setup.",
+        "emotions": {
+          "patience": {
+            "score": 6,
+            "reasoning": "Fast pacing keeps me from scrolling, but seeing green screens and camera rigs makes me question if this is the final product."
+          },
+          "boredom": {
+            "score": 3,
+            "reasoning": "Constant movement and the sudden lighting shift to red prevent any dead air or disengagement."
+          },
+          "excitement": {
+            "score": 8,
+            "reasoning": "High-intensity music matches the tactical action, and the red light surge at the end creates a genuine hype spike."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.85,
+        "tokens": 5711,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 10,
+        "splitIndex": 0,
+        "startTime": 50,
+        "endTime": 55,
+        "status": "success",
+        "summary": "Tactical squad moves through red-lit corridors with urgent radio chatter while high-intensity music drives the pace.",
+        "emotions": {
+          "patience": {
+            "score": 8,
+            "reasoning": "Fast cuts and constant movement prevent scroll impulse despite generic dialogue."
+          },
+          "boredom": {
+            "score": 2,
+            "reasoning": "Visually dense with no static shots or dead air."
+          },
+          "excitement": {
+            "score": 7,
+            "reasoning": "High energy music and action visuals, though military jargon feels cliché."
+          }
+        },
+        "dominant_emotion": "patience",
+        "confidence": 0.85,
+        "tokens": 10220,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 11,
+        "splitIndex": 0,
+        "startTime": 55,
+        "endTime": 60,
+        "status": "success",
+        "summary": "Squad escapes red corridor into a freefall skydive, transitioning rapidly to a sunny Nicaragua location reveal.",
+        "emotions": {
+          "patience": {
+            "score": 10,
+            "reasoning": "Relentless pacing and immediate action leave no room to scroll; visual stakes are clear instantly."
+          },
+          "boredom": {
+            "score": 1,
+            "reasoning": "Constant motion and drastic scene change from red interior to blue sky prevent any disengagement."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "The vertical drop and sudden daylight transition create a major adrenaline spike and curiosity about the location."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.95,
+        "tokens": 9776,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 12,
+        "splitIndex": 0,
+        "startTime": 60,
+        "endTime": 65,
+        "status": "success",
+        "summary": "Chaotic action sequence with soldiers running through explosions and surreal giant knives falling from the sky in a sunny, dusty environment.",
+        "emotions": {
+          "patience": {
+            "score": 8,
+            "reasoning": "Fast pacing and constant visual changes keep me from scrolling; no dead air."
+          },
+          "boredom": {
+            "score": 1,
+            "reasoning": "Zero boredom; too much surreal chaos and action to look away."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Giant falling knives and explosions hit the dopamine need for novelty and intensity."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.95,
+        "tokens": 11169,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 13,
+        "splitIndex": 0,
+        "startTime": 65,
+        "endTime": 70,
+        "status": "success",
+        "summary": "High-intensity action sequence featuring soldiers on floating debris, a 'LOS ANGELES' title card, and chaotic combat with crashing aircraft and surreal physics.",
+        "emotions": {
+          "patience": {
+            "score": 9,
+            "reasoning": "Immediate visual hook with surreal floating rocks and soldiers; no slow buildup keeps the thumb from scrolling."
+          },
+          "boredom": {
+            "score": 1,
+            "reasoning": "Rapid cuts and constant motion prevent any disengagement; too much visual information to zone out."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Explosions, futuristic tech, and surreal physics create high arousal and curiosity about the game world."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.9,
+        "tokens": 9818,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 14,
+        "splitIndex": 0,
+        "startTime": 70,
+        "endTime": 75,
+        "status": "success",
+        "summary": "Fast-paced urban combat with explosions cuts to a surreal 'ANGOLA' title card over floating islands, then immediately into jungle warfare.",
+        "emotions": {
+          "patience": {
+            "score": 9,
+            "reasoning": "Zero dead air; constant motion and location shifts keep attention locked."
+          },
+          "boredom": {
+            "score": 1,
+            "reasoning": "Visual overload and high stakes prevent any disengagement."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Explosions, gunfights, and surreal physics trigger high arousal."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.95,
+        "tokens": 8836,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 15,
+        "splitIndex": 0,
+        "startTime": 75,
+        "endTime": 80,
+        "status": "success",
+        "summary": "Intense jungle combat shifts to FPS gameplay, then a futuristic aircraft, ending with a neon 'TOKYO' title card.",
+        "emotions": {
+          "patience": {
+            "score": 8,
+            "reasoning": "Zero filler. Cuts straight from action to action. Respects my 3-second rule."
+          },
+          "boredom": {
+            "score": 2,
+            "reasoning": "Visuals change every second. Jungle, FPS, aircraft, city. No static shots."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Dual wielding, explosions, futuristic tech, neon aesthetics. Music intensity matches the chaos."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.9,
+        "tokens": 7879,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 16,
+        "splitIndex": 0,
+        "startTime": 80,
+        "endTime": 85,
+        "status": "success",
+        "summary": "Fast-paced montage transitioning from neon rooftop parkour to futuristic aircraft combat over water, ending on a snowy scene.",
+        "emotions": {
+          "patience": {
+            "score": 9,
+            "reasoning": "Rapid scene changes and constant motion prevent any urge to scroll; visual interest is maintained throughout."
+          },
+          "boredom": {
+            "score": 1,
+            "reasoning": "Zero static shots or dead air; high-intensity action keeps disengagement at bay."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Neon aesthetics, parkour jump, and explosions deliver high dopamine hits matching the energetic music."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.95,
+        "tokens": 10661,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 17,
+        "splitIndex": 0,
+        "startTime": 85,
+        "endTime": 90,
+        "status": "success",
+        "summary": "A cinematic intro establishing an Alaska setting with aurora borealis, quickly transitioning into intense tactical combat with soldiers, helicopters, and explosions.",
+        "emotions": {
+          "patience": {
+            "score": 8,
+            "reasoning": "The location card is brief and visually stunning, immediately followed by action, preventing the scroll instinct."
+          },
+          "boredom": {
+            "score": 2,
+            "reasoning": "Constant motion, explosions, and combat keep the dopamine hits coming; no dead air."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "High-octane action, cool aesthetic (green aurora + tactical gear), and immediate stakes grab attention."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.9,
+        "tokens": 9659,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 18,
+        "splitIndex": 0,
+        "startTime": 90,
+        "endTime": 95,
+        "status": "success",
+        "summary": "High-intensity tactical action with helicopters and soldiers on a rooftop, matching the energetic music.",
+        "emotions": {
+          "patience": {
+            "score": 8,
+            "reasoning": "Visual stakes (combat/helicopter) keep me waiting for the outcome rather than scrolling."
+          },
+          "boredom": {
+            "score": 2,
+            "reasoning": "Dynamic movement and combat visuals prevent dead air or static shots."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Combat visuals combined with high music intensity (9/10) hit the dopamine need."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.9,
+        "tokens": 11812,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 19,
+        "splitIndex": 0,
+        "startTime": 95,
+        "endTime": 100,
+        "status": "success",
+        "summary": "Fast cuts show combat mechs in a hangar, a red explosion transition, and a soldier aiming a weapon in a desert setting.",
+        "emotions": {
+          "patience": {
+            "score": 8,
+            "reasoning": "Rapid cuts and constant visual movement prevent the urge to scroll; no static shots exceed 2 seconds."
+          },
+          "boredom": {
+            "score": 2,
+            "reasoning": "High-intensity action and frequent scene changes keep disengagement minimal."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Mecha visuals, explosion effects, and combat stance align perfectly with the energetic music intensity."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.9,
+        "tokens": 9478,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 20,
+        "splitIndex": 0,
+        "startTime": 100,
+        "endTime": 105,
+        "status": "success",
+        "summary": "Soldiers breach a doorway followed by rapid cuts of a knife, tactical aiming, and ominous red lighting.",
+        "emotions": {
+          "patience": {
+            "score": 9,
+            "reasoning": "Fast pacing and immediate action keep the thumb from scrolling."
+          },
+          "boredom": {
+            "score": 2,
+            "reasoning": "Constant visual changes and high intensity prevent disengagement."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Energetic music, combat visuals, and tense dialogue create high arousal."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.9,
+        "tokens": 9749,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 21,
+        "splitIndex": 0,
+        "startTime": 105,
+        "endTime": 110,
+        "status": "success",
+        "summary": "Fast-paced sequence showing a digital tunnel, a memorial tombstone for Frank Woods, and soldiers gearing up in a high-tech facility.",
+        "emotions": {
+          "patience": {
+            "score": 8,
+            "reasoning": "Rapid cuts every second prevent boredom and align with short attention span needs."
+          },
+          "boredom": {
+            "score": 2,
+            "reasoning": "Constant visual changes and high-intensity music leave no room for disengagement."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Tactical imagery, mystery hook (tombstone), and energetic music create high arousal."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.9,
+        "tokens": 13019,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 22,
+        "splitIndex": 0,
+        "startTime": 110,
+        "endTime": 115,
+        "status": "success",
+        "summary": "Soldiers sprint through an explosion-filled warehouse as a heavy mech suit advances, followed by a tactical close-up and a massive fireball.",
+        "emotions": {
+          "patience": {
+            "score": 9,
+            "reasoning": "Fast cuts and immediate action prevent any urge to scroll; no dead air."
+          },
+          "boredom": {
+            "score": 1,
+            "reasoning": "Constant visual chaos and high stakes keep disengagement at zero."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Mechs and explosions hit the dopamine need, matching the energetic music intensity."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.95,
+        "tokens": 5570,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 23,
+        "splitIndex": 0,
+        "startTime": 115,
+        "endTime": 120,
+        "status": "success",
+        "summary": "Soldiers navigate a chaotic, explosion-lit dockyard before the screen cuts to the Black Ops 7 title card and pre-order CTA.",
+        "emotions": {
+          "patience": {
+            "score": 8,
+            "reasoning": "The relentless action and cinematic payoff keep me watching despite my usual impulse to scroll."
+          },
+          "boredom": {
+            "score": 2,
+            "reasoning": "Constant motion, explosions, and visual noise leave zero dead air for disengagement to set in."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "The high-stakes climax and clear title drop deliver the dopamine hit and closure I need."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.95,
+        "tokens": 9800,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 24,
+        "splitIndex": 0,
+        "startTime": 120,
+        "endTime": 125,
+        "status": "success",
+        "summary": "The video transitions from the Black Ops 7 title card to pre-order incentives, displaying character skins and a dense Vault Edition breakdown screen.",
+        "emotions": {
+          "patience": {
+            "score": 2,
+            "reasoning": "This is the post-hook sales pitch; my thumb is already hovering to scroll because the main content is over."
+          },
+          "boredom": {
+            "score": 9,
+            "reasoning": "Static title cards and walls of text about editions are instant boredom spikes for a scroller."
+          },
+          "excitement": {
+            "score": 3,
+            "reasoning": "The character skins offer minor visual interest, but the heavy marketing push feels like a cash grab."
+          }
+        },
+        "dominant_emotion": "boredom",
+        "confidence": 0.92,
+        "tokens": 11548,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 25,
+        "splitIndex": 0,
+        "startTime": 125,
+        "endTime": 130,
+        "status": "success",
+        "summary": "The chunk begins with a dense, static Vault Edition sales screen that lingers for over two seconds, then cuts abruptly to high-energy gameplay footage featuring soldiers and a robot tank.",
+        "emotions": {
+          "patience": {
+            "score": 4,
+            "reasoning": "Static info screen tests the 3-second hook limit; thumb is hovering over scroll until the action starts."
+          },
+          "boredom": {
+            "score": 7,
+            "reasoning": "Static shots held longer than 2 seconds trigger immediate disengagement risk per persona profile."
+          },
+          "excitement": {
+            "score": 6,
+            "reasoning": "Gameplay transition provides a visual punch and dopamine hit, but it arrives late in the chunk."
+          }
+        },
+        "dominant_emotion": "boredom",
+        "confidence": 0.9,
+        "tokens": 7936,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 26,
+        "splitIndex": 0,
+        "startTime": 130,
+        "endTime": 135,
+        "status": "success",
+        "summary": "Rapid-fire gameplay montage featuring futuristic combat, explosions, and squad movement synced to high-energy music.",
+        "emotions": {
+          "patience": {
+            "score": 9,
+            "reasoning": "Immediate action from frame one respects the 3-second rule; no static intros or dead air."
+          },
+          "boredom": {
+            "score": 1,
+            "reasoning": "Constant visual cuts, explosions, and movement prevent any disengagement or scroll risk."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "High-intensity combat visuals and energetic audio create strong positive arousal and dopamine hits."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.95,
+        "tokens": 9745,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 27,
+        "splitIndex": 0,
+        "startTime": 135,
+        "endTime": 140,
+        "status": "success",
+        "summary": "Rapid-fire combat montage featuring explosions and squad tactics, culminating in the Xbox logo.",
+        "emotions": {
+          "patience": {
+            "score": 8,
+            "reasoning": "Fast pacing and clear climax maintain willingness to watch despite being the outro."
+          },
+          "boredom": {
+            "score": 1,
+            "reasoning": "Constant visual stimulation and action prevent any disengagement."
+          },
+          "excitement": {
+            "score": 9,
+            "reasoning": "Explosions, intense music, and urgent dialogue create peak arousal."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.9,
+        "tokens": 9572,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      }
+    ],
+    "totalTokens": 276527,
+    "statusSummary": {
+      "total": 28,
+      "successful": 28,
+      "failed": 0,
+      "failedChunkIndexes": []
+    },
+    "persona": {
+      "soulPath": "../cast/impatient-teenager/SOUL.md",
+      "goalPath": "../goals/video-ad-evaluation.md",
+      "config": {
+        "chunkDuration": 8,
+        "numChunks": 29
+      }
+    },
+    "videoDuration": 140.017
+  },
+  "metricsData": {
+    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
+    "generatedAt": "2026-03-20T19:43:00.175Z",
+    "averages": {
+      "patience": 0.7035714285714286,
+      "boredom": 0.5607142857142864,
+      "excitement": 0.7714285714285727
+    },
+    "peakMoments": {
+      "patience": {
+        "highest": {
+          "timestamp": 55,
+          "score": 1
+        },
+        "lowest": {
+          "timestamp": 5,
+          "score": 0.2
+        }
+      },
+      "boredom": {
+        "highest": {
+          "timestamp": 55,
+          "score": 1
+        },
+        "lowest": {
+          "timestamp": 15,
+          "score": 0.2
+        }
+      },
+      "excitement": {
+        "highest": {
+          "timestamp": 15,
+          "score": 0.9
+        },
+        "lowest": {
+          "timestamp": 5,
+          "score": 0.3
+        }
+      }
+    },
+    "trends": {
+      "patience": {
+        "direction": "increasing",
+        "change": 0.121428571428571,
+        "firstHalfAverage": 0.6428571428571428,
+        "secondHalfAverage": 0.7642857142857138
+      },
+      "boredom": {
+        "direction": "stable",
+        "change": 0.02142857142857124,
+        "firstHalfAverage": 0.5499999999999998,
+        "secondHalfAverage": 0.5714285714285711
+      },
+      "excitement": {
+        "direction": "increasing",
+        "change": 0.1285714285714279,
+        "firstHalfAverage": 0.707142857142857,
+        "secondHalfAverage": 0.8357142857142849
+      }
+    },
+    "frictionIndex": 100,
+    "implementationStatus": {
+      "state": "computed",
+      "dataSource": "derived-from-phase2.chunkAnalysis"
+    },
+    "summary": {
+      "averages": 3,
+      "peakMoments": 3,
+      "trends": 3,
+      "frictionIndex": 100
+    }
+  },
+  "recommendationData": {
+    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
+    "generatedAt": "2026-03-20T19:43:32.868Z",
+    "text": "Rebuild the first 15 seconds around the strongest mid-trailer payoff instead of the current generic setup. The biggest retention gain will come from replacing the text-led cold open and cliché villain exposition with an immediate high-stakes visual hook, then maintaining that tempo with faster pattern interrupts before the audience settles into boredom. Keep the back-half action density, but trim or redesign the late sales-card section so the CTA feels like a payoff rather than a hard stop.",
+    "reasoning": "The current opening is the clearest weakness: patience is lowest at 5s (0.2), excitement is also lowest at 5s (0.3), and boredom is already very high in the first two chunks, driven by the 'RISING TENSIONS' text and generic destruction setup. By contrast, the trailer's strongest emotional performance begins at 15-25s, where boredom drops to 0.2 and excitement peaks at 0.9 around 15s thanks to clearer stakes, faster motion, and more distinctive visuals. Metrics also show excitement and patience rise in the second half, which suggests the asset improves once it stops explaining and starts delivering spectacle. However, boredom remains relatively high on average (0.56) and spikes again at 55s in the summary metrics, indicating the pacing still has friction despite strong action passages. The friction index of 100 reinforces that there are too many moments where the trailer asks for patience before earning it. The late post-title sales section also creates a sharp disengagement risk, with patience dropping to 0.2 and boredom rising to 0.9 on dense edition screens. Visual evidence is limited for 5-10s, so validate this recommendation by checking full footage there and confirming whether a stronger visual interrupt can be inserted earlier.",
+    "confidence": 0.92,
+    "keyFindings": [
+      "The weakest retention zone is the first 10 seconds, where the hook underperforms and boredom dominates.",
+      "Patience and excitement both trend upward across the video, meaning the concept gets stronger once the trailer reaches action-first sections.",
+      "The 15-25s segment is the clearest model for the opening: high stakes, fast pacing, low boredom, and peak excitement.",
+      "Several mid-video dips are tied to cliché dialogue and slower exposition, especially around 25-35s.",
+      "The action-heavy run from roughly 35s onward sustains strong retention with repeated novelty, location changes, and constant motion.",
+      "The post-title sales screens are a major retention leak because static text and dense offer breakdowns interrupt momentum."
+    ],
+    "suggestions": [
+      "Cut the 'RISING TENSIONS' opener entirely and open on the most visually novel, high-stakes image from the 15-25s material or later action montage.",
+      "Move a clear stakes reveal earlier so viewers understand the scale immediately instead of waiting through generic setup.",
+      "Front-load one distinctive pattern interrupt within the first 3 seconds, such as the most surreal or highest-contrast shot, before any exposition.",
+      "Reduce or rewrite cliché villain and motivational dialogue in the 10-35s range; let visuals carry threat and scale.",
+      "Compress the 25-35s section by removing slower dialogue beats and keeping only shots that introduce new visual information.",
+      "Match the first 15 seconds to the cadence of the 35s onward action run, with no static shot or title card lingering too long.",
+      "If title cards like '2035' or location reveals stay in, keep them ultra-brief and attached to motion rather than isolated on screen.",
+      "Remove any behind-the-scenes-looking material, such as visible green screen or camera rig reveals, unless the intent is explicitly meta.",
+      "Replace dense Vault Edition info screens with a shorter, motion-led CTA that keeps gameplay or action running underneath.",
+      "If marketing information must remain, split it into faster cards with one benefit per beat instead of a wall of text.",
+      "End on action first, then brand/payoff, then a minimal CTA so the final memory is adrenaline rather than a sales screen."
+    ],
+    "summary": {
+      "hasRecommendation": true,
+      "confidence": 0.92
+    }
+  },
+  "emotionalAnalysis": {
+    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json",
+    "generatedAt": "2026-03-20T19:43:32.873Z",
+    "summary": {
+      "totalChunks": 28,
+      "failedChunks": 0,
+      "totalSeconds": 140,
+      "videoDuration": 140.017,
+      "criticalMomentsCount": 14,
+      "averageScrollRisk": 0.49285714285714355
+    },
+    "implementationStatus": {
+      "state": "computed",
+      "dataSource": "derived-from-phase2.chunkAnalysis"
+    },
+    "chunkAnalysis": [
+      {
+        "chunkIndex": 0,
+        "startTime": 0,
+        "endTime": 5,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.3,
+          "boredom": 0.7,
+          "excitement": 0.4
+        },
+        "emotionalVelocity": {
+          "patience": 0.3,
+          "boredom": 0.7,
+          "excitement": 0.4
+        },
+        "scrollRisk": 0.6599999999999999,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 0.7
+        },
+        "emotionalSignature": "low-patience-high-boredom-moderate-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 1,
+        "startTime": 5,
+        "endTime": 10,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.2,
+          "boredom": 0.9,
+          "excitement": 0.3
+        },
+        "emotionalVelocity": {
+          "patience": 0.04,
+          "boredom": 0.18,
+          "excitement": 0.06
+        },
+        "scrollRisk": 0.77,
+        "scrollRiskLevel": "critical",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 0.9
+        },
+        "emotionalSignature": "low-patience-high-boredom-low-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 2,
+        "startTime": 10,
+        "endTime": 15,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.4,
+          "boredom": 0.6,
+          "excitement": 0.5
+        },
+        "emotionalVelocity": {
+          "patience": 0.04,
+          "boredom": 0.06,
+          "excitement": 0.05
+        },
+        "scrollRisk": 0.59,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 0.6
+        },
+        "emotionalSignature": "moderate-patience-moderate-boredom-moderate-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 3,
+        "startTime": 15,
+        "endTime": 20,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.05,
+          "boredom": -0.049999999999999996,
+          "excitement": 0.05
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 4,
+        "startTime": 20,
+        "endTime": 25,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.7,
+          "boredom": 0.2,
+          "excitement": 0.8
+        },
+        "emotionalVelocity": {
+          "patience": 0.04499999999999999,
+          "boredom": -0.06000000000000001,
+          "excitement": 0.04500000000000001
+        },
+        "scrollRisk": 0.34,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.8
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 5,
+        "startTime": 25,
+        "endTime": 30,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.4,
+          "boredom": 0.6,
+          "excitement": 0.5
+        },
+        "emotionalVelocity": {
+          "patience": 0.010000000000000009,
+          "boredom": -0.01499999999999998,
+          "excitement": 0.009999999999999998
+        },
+        "scrollRisk": 0.59,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 0.6
+        },
+        "emotionalSignature": "moderate-patience-moderate-boredom-moderate-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 6,
+        "startTime": 30,
+        "endTime": 35,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.5,
+          "boredom": 0.6,
+          "excitement": 0.5
+        },
+        "emotionalVelocity": {
+          "patience": -0.009999999999999986,
+          "boredom": 0.01999999999999999,
+          "excitement": -0.020000000000000007
+        },
+        "scrollRisk": 0.59,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 0.6
+        },
+        "emotionalSignature": "moderate-patience-moderate-boredom-moderate-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 7,
+        "startTime": 35,
+        "endTime": 40,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.004999999999999993,
+          "boredom": 2.7755575615628915e-18,
+          "excitement": 0.0050000000000000044
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 8,
+        "startTime": 40,
+        "endTime": 45,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.025,
+          "boredom": -0.02,
+          "excitement": 0.025
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 9,
+        "startTime": 45,
+        "endTime": 50,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.6,
+          "boredom": 0.3,
+          "excitement": 0.8
+        },
+        "emotionalVelocity": {
+          "patience": 0.014999999999999996,
+          "boredom": -0.02999999999999999,
+          "excitement": 0.030000000000000006
+        },
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.8
+        },
+        "emotionalSignature": "moderate-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 10,
+        "startTime": 50,
+        "endTime": 55,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.7
+        },
+        "emotionalVelocity": {
+          "patience": 0.015000000000000013,
+          "boredom": -0.020000000000000007,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.37,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "patience",
+          "score": 0.8
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 11,
+        "startTime": 55,
+        "endTime": 60,
+        "duration": 5,
+        "emotions": {
+          "patience": 1,
+          "boredom": 1,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.020000000000000007,
+          "boredom": 0.08,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "patience",
+          "score": 1
+        },
+        "emotionalSignature": "high-patience-high-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 12,
+        "startTime": 60,
+        "endTime": 65,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 1,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.01000000000000002,
+          "boredom": 0.075,
+          "excitement": 0.0050000000000000044
+        },
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 1
+        },
+        "emotionalSignature": "high-patience-high-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 13,
+        "startTime": 65,
+        "endTime": 70,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.9,
+          "boredom": 1,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.020000000000000007,
+          "boredom": 0.075,
+          "excitement": 0.01499999999999999
+        },
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 1
+        },
+        "emotionalSignature": "high-patience-high-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 14,
+        "startTime": 70,
+        "endTime": 75,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.9,
+          "boredom": 1,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0,
+          "boredom": 0.04,
+          "excitement": 0.009999999999999986
+        },
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 1
+        },
+        "emotionalSignature": "high-patience-high-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 15,
+        "startTime": 75,
+        "endTime": 80,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": -0.009999999999999998,
+          "boredom": -0.08,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 16,
+        "startTime": 80,
+        "endTime": 85,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.9,
+          "boredom": 1,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.004999999999999982,
+          "boredom": 0,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 1
+        },
+        "emotionalSignature": "high-patience-high-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 17,
+        "startTime": 85,
+        "endTime": 90,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": -0.010000000000000009,
+          "boredom": -0.08,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 18,
+        "startTime": 90,
+        "endTime": 95,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": -0.004999999999999993,
+          "boredom": -0.04000000000000001,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 19,
+        "startTime": 95,
+        "endTime": 100,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": -0.005000000000000016,
+          "boredom": -0.039999999999999994,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 20,
+        "startTime": 100,
+        "endTime": 105,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.9,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.0050000000000000044,
+          "boredom": -0.04000000000000001,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "patience",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 21,
+        "startTime": 105,
+        "endTime": 110,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 1.1102230246251566e-17,
+          "boredom": 2.7755575615628915e-18,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 22,
+        "startTime": 110,
+        "endTime": 115,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.9,
+          "boredom": 1,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.010000000000000009,
+          "boredom": 0.08,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 1
+        },
+        "emotionalSignature": "high-patience-high-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 23,
+        "startTime": 115,
+        "endTime": 120,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": -0.005000000000000016,
+          "boredom": 2.7755575615628915e-18,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 24,
+        "startTime": 120,
+        "endTime": 125,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.2,
+          "boredom": 0.9,
+          "excitement": 0.3
+        },
+        "emotionalVelocity": {
+          "patience": -0.06499999999999999,
+          "boredom": 0.07,
+          "excitement": -0.06000000000000001
+        },
+        "scrollRisk": 0.77,
+        "scrollRiskLevel": "critical",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 0.9
+        },
+        "emotionalSignature": "low-patience-high-boredom-low-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 25,
+        "startTime": 125,
+        "endTime": 130,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.4,
+          "boredom": 0.7,
+          "excitement": 0.6
+        },
+        "emotionalVelocity": {
+          "patience": -0.04500000000000002,
+          "boredom": 0.009999999999999998,
+          "excitement": -0.030000000000000016
+        },
+        "scrollRisk": 0.6,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 0.7
+        },
+        "emotionalSignature": "moderate-patience-high-boredom-moderate-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 26,
+        "startTime": 130,
+        "endTime": 135,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.9,
+          "boredom": 1,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.0050000000000000044,
+          "boredom": 0.039999999999999994,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 1
+        },
+        "emotionalSignature": "high-patience-high-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      {
+        "chunkIndex": 27,
+        "startTime": 135,
+        "endTime": 140,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 1,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.029999999999999992,
+          "boredom": 0.045,
+          "excitement": 0.030000000000000016
+        },
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 1
+        },
+        "emotionalSignature": "high-patience-high-boredom-high-excitement",
+        "dataPoints": 5
+      }
+    ],
+    "emotionalArc": {
+      "timestamps": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139
+      ],
+      "emotions": {
+        "patience": [
+          0.3,
+          0.3,
+          0.3,
+          0.3,
+          0.3,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8
+        ],
+        "boredom": [
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.3,
+          0.3,
+          0.3,
+          0.3,
+          0.3,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "excitement": [
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.3,
+          0.3,
+          0.3,
+          0.3,
+          0.3,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.3,
+          0.3,
+          0.3,
+          0.3,
+          0.3,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ]
+      },
+      "smoothedEmotions": {
+        "patience": [
+          0.3,
+          0.3,
+          0.3,
+          0.27999999999999997,
+          0.25999999999999995,
+          0.24,
+          0.21999999999999997,
+          0.2,
+          0.24000000000000005,
+          0.27999999999999997,
+          0.32,
+          0.36,
+          0.4,
+          0.4800000000000001,
+          0.5599999999999999,
+          0.64,
+          0.72,
+          0.8,
+          0.78,
+          0.7600000000000001,
+          0.74,
+          0.7200000000000001,
+          0.7,
+          0.6399999999999999,
+          0.5799999999999998,
+          0.5199999999999999,
+          0.45999999999999996,
+          0.4,
+          0.42000000000000004,
+          0.44000000000000006,
+          0.45999999999999996,
+          0.48,
+          0.5,
+          0.5599999999999999,
+          0.6199999999999999,
+          0.68,
+          0.74,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.76,
+          0.7200000000000001,
+          0.68,
+          0.64,
+          0.6,
+          0.64,
+          0.6799999999999999,
+          0.72,
+          0.76,
+          0.8,
+          0.8400000000000001,
+          0.8800000000000001,
+          0.9199999999999999,
+          0.96,
+          1,
+          0.96,
+          0.9199999999999999,
+          0.8799999999999999,
+          0.8400000000000001,
+          0.8,
+          0.8200000000000001,
+          0.8400000000000001,
+          0.86,
+          0.8800000000000001,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.8200000000000001,
+          0.8400000000000001,
+          0.86,
+          0.8800000000000001,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8200000000000001,
+          0.8400000000000001,
+          0.86,
+          0.8800000000000001,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.8200000000000001,
+          0.8400000000000001,
+          0.86,
+          0.8800000000000001,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.68,
+          0.5600000000000002,
+          0.44000000000000006,
+          0.31999999999999995,
+          0.2,
+          0.24000000000000005,
+          0.27999999999999997,
+          0.32,
+          0.36,
+          0.4,
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.8,
+          0.8000000000000002
+        ],
+        "boredom": [
+          0.6999999999999998,
+          0.7,
+          0.7,
+          0.74,
+          0.7799999999999999,
+          0.82,
+          0.86,
+          0.9,
+          0.8400000000000001,
+          0.78,
+          0.72,
+          0.66,
+          0.6,
+          0.52,
+          0.43999999999999995,
+          0.36,
+          0.27999999999999997,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.27999999999999997,
+          0.36000000000000004,
+          0.44000000000000006,
+          0.52,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.52,
+          0.43999999999999995,
+          0.36,
+          0.27999999999999997,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.22000000000000003,
+          0.24000000000000005,
+          0.26,
+          0.28,
+          0.3,
+          0.27999999999999997,
+          0.25999999999999995,
+          0.24,
+          0.21999999999999997,
+          0.2,
+          0.36,
+          0.52,
+          0.6799999999999999,
+          0.8400000000000001,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0.8400000000000001,
+          0.68,
+          0.5200000000000001,
+          0.36,
+          0.2,
+          0.36,
+          0.52,
+          0.6799999999999999,
+          0.8400000000000001,
+          1,
+          0.8400000000000001,
+          0.68,
+          0.5200000000000001,
+          0.36,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.36,
+          0.52,
+          0.6799999999999999,
+          0.8400000000000001,
+          1,
+          0.8400000000000001,
+          0.68,
+          0.5200000000000001,
+          0.36,
+          0.2,
+          0.34,
+          0.48,
+          0.62,
+          0.76,
+          0.9,
+          0.86,
+          0.8200000000000001,
+          0.78,
+          0.74,
+          0.7,
+          0.76,
+          0.82,
+          0.8800000000000001,
+          0.9400000000000001,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "excitement": [
+          0.4000000000000001,
+          0.4,
+          0.4,
+          0.38,
+          0.36000000000000004,
+          0.34,
+          0.32,
+          0.3,
+          0.33999999999999997,
+          0.38,
+          0.42000000000000004,
+          0.45999999999999996,
+          0.5,
+          0.58,
+          0.6599999999999999,
+          0.74,
+          0.82,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.74,
+          0.68,
+          0.62,
+          0.5599999999999999,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.58,
+          0.6599999999999999,
+          0.74,
+          0.82,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.78,
+          0.7600000000000001,
+          0.74,
+          0.7200000000000001,
+          0.7,
+          0.74,
+          0.7799999999999999,
+          0.82,
+          0.86,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.78,
+          0.6599999999999999,
+          0.5399999999999999,
+          0.42000000000000004,
+          0.3,
+          0.36,
+          0.42000000000000004,
+          0.48,
+          0.54,
+          0.6,
+          0.6599999999999999,
+          0.72,
+          0.78,
+          0.8400000000000001,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9
+        ]
+      },
+      "windowSize": 5
+    }
+  },
+  "summary": {
+    "metadata": {
+      "generatedAt": "2026-03-20T19:43:32.874Z",
+      "pipelineVersion": "1.0",
+      "videoDuration": 140.017,
+      "chunksAnalyzed": 28,
+      "failedChunks": 0,
+      "totalSeconds": 140,
+      "totalTokens": 276527
+    },
+    "keyMetrics": {
+      "averages": {
+        "patience": 0.7035714285714286,
+        "boredom": 0.5607142857142864,
+        "excitement": 0.7714285714285727
+      },
+      "peakMoments": {
+        "patience": {
+          "highest": {
+            "timestamp": 55,
+            "score": 1
+          },
+          "lowest": {
+            "timestamp": 5,
+            "score": 0.2
+          }
+        },
+        "boredom": {
+          "highest": {
+            "timestamp": 55,
+            "score": 1
+          },
+          "lowest": {
+            "timestamp": 15,
+            "score": 0.2
+          }
+        },
+        "excitement": {
+          "highest": {
+            "timestamp": 15,
+            "score": 0.9
+          },
+          "lowest": {
+            "timestamp": 5,
+            "score": 0.3
+          }
+        }
+      },
+      "trends": {
+        "patience": {
+          "direction": "increasing",
+          "change": 0.121428571428571,
+          "firstHalfAverage": 0.6428571428571428,
+          "secondHalfAverage": 0.7642857142857138
+        },
+        "boredom": {
+          "direction": "stable",
+          "change": 0.02142857142857124,
+          "firstHalfAverage": 0.5499999999999998,
+          "secondHalfAverage": 0.5714285714285711
+        },
+        "excitement": {
+          "direction": "increasing",
+          "change": 0.1285714285714279,
+          "firstHalfAverage": 0.707142857142857,
+          "secondHalfAverage": 0.8357142857142849
+        }
+      },
+      "frictionIndex": 100
+    },
+    "recommendation": {
+      "text": "Rebuild the first 15 seconds around the strongest mid-trailer payoff instead of the current generic setup. The biggest retention gain will come from replacing the text-led cold open and cliché villain exposition with an immediate high-stakes visual hook, then maintaining that tempo with faster pattern interrupts before the audience settles into boredom. Keep the back-half action density, but trim or redesign the late sales-card section so the CTA feels like a payoff rather than a hard stop.",
+      "reasoning": "The current opening is the clearest weakness: patience is lowest at 5s (0.2), excitement is also lowest at 5s (0.3), and boredom is already very high in the first two chunks, driven by the 'RISING TENSIONS' text and generic destruction setup. By contrast, the trailer's strongest emotional performance begins at 15-25s, where boredom drops to 0.2 and excitement peaks at 0.9 around 15s thanks to clearer stakes, faster motion, and more distinctive visuals. Metrics also show excitement and patience rise in the second half, which suggests the asset improves once it stops explaining and starts delivering spectacle. However, boredom remains relatively high on average (0.56) and spikes again at 55s in the summary metrics, indicating the pacing still has friction despite strong action passages. The friction index of 100 reinforces that there are too many moments where the trailer asks for patience before earning it. The late post-title sales section also creates a sharp disengagement risk, with patience dropping to 0.2 and boredom rising to 0.9 on dense edition screens. Visual evidence is limited for 5-10s, so validate this recommendation by checking full footage there and confirming whether a stronger visual interrupt can be inserted earlier.",
+      "confidence": 0.92
+    },
+    "reportPaths": {
+      "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
+      "recommendation": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
+      "emotionalAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json",
+      "finalReport": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md",
+      "analysisData": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json",
+      "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json"
+    },
+    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json",
+    "generatedAt": "2026-03-20T19:43:32.874Z"
+  },
+  "summaryData": {
+    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json",
+    "generatedAt": "2026-03-20T19:43:32.874Z",
+    "metadata": {
+      "generatedAt": "2026-03-20T19:43:32.874Z",
+      "pipelineVersion": "1.0",
+      "videoDuration": 140.017,
+      "chunksAnalyzed": 28,
+      "failedChunks": 0,
+      "totalSeconds": 140,
+      "totalTokens": 276527
+    },
+    "keyMetricsCount": 4,
+    "hasRecommendation": true
+  },
+  "finalReport": {
+    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md",
+    "analysisDataPath": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json",
+    "generatedAt": "2026-03-20T19:43:32.884Z",
+    "summary": {
+      "duration": 140.017,
+      "totalTokens": 276527,
+      "chunksAnalyzed": 28,
+      "reportSize": 18723
+    }
+  }
+}

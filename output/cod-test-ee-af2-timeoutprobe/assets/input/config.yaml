@@ -1,0 +1,264 @@
+name: COD Test Pipeline (ee-af2 timeout probe)
+description: Bounded probe for Phase 2 chunk-4 retry/failover behavior under lower provider timeout
+version: '1.0'
+asset:
+  inputPath: examples/videos/emotion-tests/cod.mp4
+  outputDir: output/cod-test-ee-af2-timeoutprobe
+gather_context:
+  - server/scripts/get-context/get-dialogue.cjs
+  - server/scripts/get-context/get-music.cjs
+process:
+  - server/scripts/process/video-chunks.cjs
+report: []
+settings:
+  chunk_duration: 8
+  max_chunks: 5
+  api_request_delay: 500
+  retry_strategy:
+    type: exponential-backoff
+    config:
+      maxRetries: 3
+      initialDelayMs: 1000
+      maxDelayMs: 10000
+      exponentialBase: 2
+      jitter: true
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: libmp3lame
+      bitrate: 192k
+      sample_rate_hz: 44100
+      channels: 2
+      container: mp3
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95
+debug:
+  captureRaw: true
+recovery:
+  deterministic:
+    maxAttemptsPerFailure: 2
+    maxRepeatedStrategyUsesPerFailure: 1
+  ai:
+    enabled: true
+    lane: structured-output-repair
+    adapter: openrouter
+    model: google/gemini-3.1-pro-preview
+    temperature: 0
+    timeoutMs: 45000
+    attempts:
+      maxPerFailure: 1
+      maxPerScriptRun: 1
+      maxPerPipelineRun: 3
+    budgets:
+      maxInputTokens: 12000
+      maxOutputTokens: 2000
+      maxTotalTokens: 14000
+      maxCostUsd: 0.25
+tool_variables:
+  soulPath: ../cast/impatient-teenager/SOUL.md
+  goalPath: ../goals/video-ad-evaluation.md
+  file_transfer: base64
+  maxFileSize: 10485760
+  chunk_strategy:
+    type: duration-based
+    config:
+      chunkDuration: 5
+    split:
+      enabled: true
+      max_splits: 3
+      split_factor: 2
+  variables:
+    lenses:
+      - patience
+      - boredom
+      - excitement
+ai:
+  dialogue:
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-flash-lite-preview
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: openai/gpt-audio
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: openai/gpt-audio-mini
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: mistralai/voxtral-small-24b-2507
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+  music:
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-flash-lite-preview
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: openai/gpt-audio
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: openai/gpt-audio-mini
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: mistralai/voxtral-small-24b-2507
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+  dialogue_stitch:
+    targets:
+      - adapter:
+          name: openrouter
+          model: openai/gpt-5.4
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: qwen/qwen3.5-397b-a17b
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: moonshotai/kimi-k2.5
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: z-ai/glm-5
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: minimax/minimax-m2.5
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+  video:
+    targets:
+      - adapter:
+          name: openrouter
+          model: qwen/qwen3.5-397b-a17b
+          params:
+            max_tokens: 25000
+            timeoutMs: 10000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-pro-preview
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: z-ai/glm-4.6v
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: bytedance-seed/seed-2.0-mini
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+  recommendation:
+    targets:
+      - adapter:
+          name: openrouter
+          model: openai/gpt-5.4
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: z-ai/glm-5
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: qwen/qwen3.5-397b-a17b
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: moonshotai/kimi-k2.5
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: minimax/minimax-m2.5
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-pro-preview
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low

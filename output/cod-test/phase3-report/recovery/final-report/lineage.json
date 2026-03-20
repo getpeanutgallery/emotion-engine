@@ -1,0 +1,11 @@
+{
+  "failureId": "final-report:phase3-report:attempt-1",
+  "parentFailureId": null,
+  "phase": "phase3-report",
+  "script": "final-report",
+  "scriptRunAttempt": 1,
+  "deterministicAttemptsUsed": 0,
+  "aiRecoveryAttemptsUsed": 0,
+  "maxAiRecoveryAttempts": 1,
+  "reentryAttemptNumber": 0
+}

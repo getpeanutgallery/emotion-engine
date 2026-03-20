@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 2,
+  "kind": "pointer",
+  "updatedAt": "2026-03-20T19:28:36.477Z",
+  "chunkIndex": 14,
+  "splitIndex": 0,
+  "latestAttempt": 1,
+  "target": {
+    "dir": "chunk-0014/split-00/attempt-01",
+    "file": "chunk-0014/split-00/attempt-01/capture.json"
+  }
+}
