@@ -254,12 +254,84 @@ Readiness for `ee-1of`:
 - `.logs/`
 
 **Files Created/Deleted/Modified:**
-- rerun artifacts to be determined
+- `output/_archives/cod-test-phase1-review-pre-ee-1of/`
+- `.logs/archive/cod-test-phase1-review-20260322-ee-9bh.log`
+- `.logs/cod-test-phase1-review-20260322-ee-1of.log`
+- `output/cod-test-phase1-review/`
 - `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Preserved the pre-fix Phase 1-only packet, then reran the exact same Phase 1-only config cleanly into the canonical review output path.
+
+Exact commands run:
+- `mkdir -p output/_archives .logs/archive`
+- `rm -rf output/_archives/cod-test-phase1-review-pre-ee-1of`
+- `cp -a output/cod-test-phase1-review output/_archives/cod-test-phase1-review-pre-ee-1of`
+- `cp -a .logs/cod-test-phase1-review-20260322-ee-9bh.log .logs/archive/cod-test-phase1-review-20260322-ee-9bh.log`
+- `node validate-configs.cjs`
+- `node server/run-pipeline.cjs --config configs/cod-test-phase1-review.yaml --dry-run`
+- `rm -rf output/cod-test-phase1-review`
+- `unset DIGITAL_TWIN_MODE DIGITAL_TWIN_PACK DIGITAL_TWIN_CASSETTE OPENROUTER_TIMEOUT_MS || true`
+- `set -a && [ -f .env ] && . ./.env && set +a`
+- `node server/run-pipeline.cjs --config configs/cod-test-phase1-review.yaml --verbose 2>&1 | tee .logs/cod-test-phase1-review-20260322-ee-1of.log`
+
+Terminal outcome:
+- config validation passed
+- dry run passed
+- live rerun completed successfully with exit code `0`
+- exactly `2` scripts executed (`get-dialogue`, `get-music`)
+- no Phase 2 / Phase 3 work was run
+
+Preserved output / log / artifact paths:
+- archived pre-fix packet: `output/_archives/cod-test-phase1-review-pre-ee-1of/`
+- archived pre-fix log: `.logs/archive/cod-test-phase1-review-20260322-ee-9bh.log`
+- fresh rerun log: `.logs/cod-test-phase1-review-20260322-ee-1of.log`
+- fresh output root: `output/cod-test-phase1-review/`
+- fresh artifacts manifest: `output/cod-test-phase1-review/artifacts-complete.json`
+- fresh run events: `output/cod-test-phase1-review/_meta/events.jsonl`
+- fresh dialogue artifact: `output/cod-test-phase1-review/phase1-gather-context/dialogue-data.json`
+- fresh music artifact: `output/cod-test-phase1-review/phase1-gather-context/music-data.json`
+- fresh dialogue success envelope: `output/cod-test-phase1-review/phase1-gather-context/script-results/get-dialogue.success.json`
+- fresh music success envelope: `output/cod-test-phase1-review/phase1-gather-context/script-results/get-music.success.json`
+- fresh raw error summary: `output/cod-test-phase1-review/phase1-gather-context/raw/_meta/errors.summary.json`
+- fresh dialogue FFmpeg plan: `output/cod-test-phase1-review/phase1-gather-context/raw/ffmpeg/dialogue/chunk-plan.json`
+- fresh music FFmpeg plan: `output/cod-test-phase1-review/phase1-gather-context/raw/ffmpeg/music/chunk-plan.json`
+
+Fresh rerun evidence:
+- `output/cod-test-phase1-review/phase1-gather-context/raw/_meta/errors.summary.json` reports `outcome: success` and `totalErrors: 0`
+- rerun log shows dialogue completed with `12` segments and `Total duration: 140.0s`
+- rerun log shows music completed with `5` segments and `Audio duration: 140.0s (5 analysis chunk(s) from 1 transport chunk(s))`
+
+Comparison against the immediately previous Phase 1-only review packet (`output/_archives/cod-test-phase1-review-pre-ee-1of/`):
+- Dialogue timing truthfulness is fixed:
+  - prior review artifact reported `totalDuration: 220`
+  - fresh rerun reports `totalDuration: 140.042449`
+  - the prior packet contained trailing dialogue segments beyond the real source runtime (`140.5-146`, `147.5-150`, `152-155`)
+  - the fresh rerun no longer has any dialogue segment outside the real measured source duration; the final segment is clipped to `140-140.042449`
+- Dialogue shape changed further during the truthful rerun:
+  - prior review packet had `15` dialogue segments and `5` speaker profiles
+  - fresh rerun has `12` dialogue segments and `10` speaker profiles
+  - the rerun split early combined lines more aggressively (`"They want you afraid..."` and `"It's time to wake up."` are now separate) and collapsed the trailer-end threat into one clipped final line instead of three impossible post-runtime segments
+- Music packet remained structurally `5` windows, but quality regressed materially:
+  - the pre-fix review packet described all five windows as active trailer audio/music/speech
+  - the fresh rerun labeled `60-90` as `silence` with `"The audio file provided is only 30 seconds long..."`
+  - the fresh rerun labeled `90-120` as `silence` with `"No audio content available for this time range."`
+  - those two silence claims are not trustworthy as trailer analysis and are worse than the previous Phase 1-only review packet
+
+Comparison against the original clean cod-test baseline in `output/cod-test/`:
+- Dialogue is now more truthful than both earlier artifacts on timing: baseline still reports `totalDuration: 220` and has no speaker profiles, while the rerun uses the real source duration and preserves speaker profiles/speaker IDs.
+- Music is still more granular than the original baseline (five windows instead of one whole-trailer segment), but this rerun's two hallucinated silence windows make the semantic quality worse than the earlier Phase 1-only review packet.
+
+Truthful quality summary:
+- Dialogue artifact quality: **improved but not fully clean.** The specific `ee-rr0` goal succeeded: total duration now matches the real source runtime and the obvious out-of-bounds trailing segments are gone. However, the rerun still has one internal consistency defect: `speaker_profiles[spk_004].grounded.linked_segment_indexes` includes `12` even though the rerun contains only `12` dialogue segments indexed `0..11`.
+- Music artifact quality: **not trustworthy enough yet.** The packet keeps the desired 30-second segmentation, but this rerun hallucinated missing audio in the `60-90` and `90-120` windows, so the regenerated music review artifact is not a stable truthful input for a careful before/after Phase 2 comparison.
+
+Readiness judgment for `ee-0ky`:
+- **Still blocked.** Dialogue timing truthfulness is now fixed, which removes the original blocker for this rerun, but the regenerated Phase 1 packet is still not trustworthy enough overall to justify the 3-chunk Phase 2 comparison. The concrete remaining blockers are:
+  - invalid speaker-profile linkage (`spk_004` references nonexistent segment index `12`)
+  - music analysis quality regression / hallucinated silence in the middle windows (`60-90`, `90-120`)
+- Recommended next move before `ee-0ky`: tighten the speaker-profile normalization/index bookkeeping and investigate why the 30-second music analysis rerun can falsely report no audio for middle windows even on a clean successful run, then rerun this same Phase 1-only review config once more.
 
 ---
 
@@ -330,14 +402,15 @@ Readiness for `ee-1of`:
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, and Task 2 added and executed a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`. Task 2b then fixed the remaining dialogue timing truthfulness bug at the owning Phase 1 persistence surface inside `server/scripts/get-context/get-dialogue.cjs`: persisted dialogue output now uses the measured source runtime as `totalDuration`, clamps/drops out-of-range segments before the final speaker-profile normalization pass, and applies the same truthfulness guard to chunk-local dialogue before stitch-back into source time. That leaves `ee-1of` as the next ready step: rerun the Phase 1-only review config and confirm the regenerated artifacts are trustworthy enough to unblock `ee-0ky`.
+**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, and Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`. Task 2c then reran the same Phase 1-only review config cleanly and preserved a before/after packet. The rerun confirms the timing fix worked: dialogue now persists the real runtime (`140.042449`) and no longer emits the old impossible post-runtime dialogue segments. However, the regenerated Phase 1 packet still is not trustworthy enough to unblock `ee-0ky`: one speaker profile references a nonexistent segment index, and the music artifact regressed by hallucinating silence in the `60-90` and `90-120` windows.
 
 **Commits:**
 - `71e0c2b` - Add grounded dialogue speaker contract
 - `84c4b93` - Update plan with final commit hash
-- pending local commit for the dialogue timing fix + plan update
+- `5f9dc5b` - Fix dialogue timing truthfulness
+- pending local commit for the rerun verdict / plan update
 
-**Lessons Learned:** The richer speaker contract and richer music segmentation are both useful, but schema truth is only part of the story; timing truth still matters. The real owning fix surface was not the validator schema or a sibling package — it was the Phase 1 dialogue persistence step that still trusted model-supplied duration values. Fixing that at the point where the real runtime is already known kept the change small, truthful, and easy to regression-test.
+**Lessons Learned:** The timing fix solved the exact duration-overrun bug, but a clean exit code is not the same thing as a trustworthy review packet. For this lane, Phase 1 readiness depends on three separate truths lining up at once: time ranges must stay inside the real source duration, speaker-profile linkage must stay internally consistent, and music window analysis must describe the actual audio rather than hallucinating missing content.
 
 ---
 
