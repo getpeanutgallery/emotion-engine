@@ -18,6 +18,8 @@ function mockModule(modulePath, mockExports) {
 const providerConfigCalls = [];
 const completionPrompts = [];
 const completionOptions = [];
+let mockExtractedAudioData = Buffer.from('mock audio data');
+let mockExtractedChunkData = Buffer.from('mock audio chunk');
 let completeImplementation = async (options) => {
   completionPrompts.push(String(options?.prompt || ''));
   completionOptions.push(options || {});
@@ -76,7 +78,7 @@ const mockChildProcess = {
       const outputPath = match[1];
       try {
         fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-        fs.writeFileSync(outputPath, Buffer.from('mock audio data'));
+        fs.writeFileSync(outputPath, mockExtractedAudioData);
       } catch (e) {
         console.warn('Mock failed to create file:', e.message);
       }
@@ -91,7 +93,7 @@ const mockChildProcess = {
     const outputPath = args[args.length - 1];
     try {
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-      fs.writeFileSync(outputPath, Buffer.from('mock audio chunk'));
+      fs.writeFileSync(outputPath, mockExtractedChunkData);
     } catch {
       // ignore
     }
@@ -147,6 +149,8 @@ test('Get Dialogue Script', async (t) => {
     providerConfigCalls.length = 0;
     completionPrompts.length = 0;
     completionOptions.length = 0;
+    mockExtractedAudioData = Buffer.from('mock audio data');
+    mockExtractedChunkData = Buffer.from('mock audio chunk');
     completeImplementation = async (options) => {
       completionPrompts.push(String(options?.prompt || ''));
       completionOptions.push(options || {});
@@ -446,6 +450,124 @@ test('Get Dialogue Script', async (t) => {
       ok(fs.existsSync(path.join(stitchDir, 'input.json')));
       ok(fs.existsSync(path.join(stitchDir, 'output.json')));
       ok(fs.existsSync(path.join(stitchDir, 'mechanical-transcript.txt')));
+    });
+
+    tNested.test('clamps whole-file totalDuration and segments to the real source runtime', async () => {
+      completeImplementation = async (options) => {
+        completionPrompts.push(String(options?.prompt || ''));
+        completionOptions.push(options || {});
+
+        return {
+          content: JSON.stringify({
+            dialogue_segments: [
+              {
+                start: 8.5,
+                end: 12.5,
+                speaker: 'Speaker 1',
+                text: 'Late line',
+                confidence: 0.95
+              },
+              {
+                start: 13,
+                end: 14,
+                speaker: 'Speaker 2',
+                text: 'Impossible overrun',
+                confidence: 0.8
+              }
+            ],
+            summary: 'Overrun test',
+            totalDuration: 220
+          }),
+          usage: { input: 100, output: 150 }
+        };
+      };
+
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeDialogueConfig()
+      };
+
+      const result = await getDialogueScript.run(input);
+      is(result.artifacts.dialogueData.totalDuration, 10);
+      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ start, end, text }) => ({ start, end, text })), [
+        { start: 8.5, end: 10, text: 'Late line' }
+      ]);
+      ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => segment.start >= 0 && segment.end <= 10 && segment.end > segment.start));
+    });
+
+    tNested.test('clamps chunk-local overruns before stitching back to source time', async () => {
+      completeImplementation = async (options) => {
+        completionPrompts.push(String(options?.prompt || ''));
+        completionOptions.push(options || {});
+
+        if (String(options?.prompt || '').includes('dialogue transcript stitcher')) {
+          return {
+            content: JSON.stringify({
+              cleanedTranscript: 'CLEANED TRANSCRIPT',
+              auditTrail: [{ op: 'merge_boundary', chunkIndex: 0, detail: 'test' }],
+              debug: { refs: [] }
+            }),
+            usage: { input: 100, output: 150 }
+          };
+        }
+
+        return {
+          content: JSON.stringify({
+            dialogue_segments: [
+              {
+                start: 3.5,
+                end: 7.5,
+                speaker: 'Speaker 1',
+                text: 'Chunk tail',
+                confidence: 0.95
+              },
+              {
+                start: 8,
+                end: 9,
+                speaker: 'Speaker 2',
+                text: 'Chunk impossible overrun',
+                confidence: 0.8
+              }
+            ],
+            summary: 'Chunk overrun test',
+            handoffContext: 'Continue carefully',
+            totalDuration: 220
+          }),
+          usage: { input: 100, output: 150 }
+        };
+      };
+
+      mockExtractedAudioData = Buffer.alloc(2000, 1);
+      mockExtractedChunkData = Buffer.alloc(1000, 1);
+
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ...makeDialogueConfig({ adapterName: 'openrouter' }),
+          settings: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).settings,
+            audio_base64_max_bytes: 10,
+            audio_base64_headroom_ratio: 0.9
+          },
+          ai: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).ai,
+            dialogue_stitch: {
+              targets: [
+                { adapter: { name: 'openrouter', model: 'test-stitch-model' } }
+              ]
+            }
+          }
+        }
+      };
+
+      const result = await getDialogueScript.run(input);
+      is(result.artifacts.dialogueData.totalDuration, 10);
+      ok(result.artifacts.dialogueData.dialogue_segments.length >= 1);
+      ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => segment.start >= 0 && segment.end <= 10 && segment.end > segment.start));
+      ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => segment.text !== 'Chunk impossible overrun'));
+      ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.text === 'Chunk tail'));
     });
   });
 

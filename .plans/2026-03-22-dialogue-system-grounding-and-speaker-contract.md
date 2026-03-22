@@ -1,3 +1,14 @@
+---
+plan_id: plan-2026-03-22-dialogue-system-grounding-and-speaker-contract
+bead_ids:
+  - ee-tad
+  - ee-9bh
+  - ee-rr0
+  - ee-1of
+  - ee-0ky
+  - ee-9hk
+  - ee-avf
+---
 # emotion-engine: dialogue system grounding and speaker contract
 
 **Date:** 2026-03-22  
@@ -187,6 +198,71 @@ Readiness judgment for `ee-0ky` next:
 
 ---
 
+### Task 2b: Fix Phase 1 dialogue timing truthfulness
+
+**Bead ID:** `ee-rr0`  
+**SubAgent:** `coder`  
+**Prompt:** `Investigate and fix why the fresh Phase 1-only dialogue artifact still reports totalDuration=220 and emits dialogue segments beyond the real source duration (~140.042449s). Trace the exact timing source and normalization path, land the smallest truthful fix so persisted dialogue timing stays within the real source runtime, add/update tests, and do not modify node_modules. If the owning fix surface somehow resolves to a sibling polyrepo, make the change there, commit/push there, then refresh emotion-engine cleanly as needed. Update this plan with exact files changed, commands, tests, and readiness for the rerun bead ee-1of.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `server/`
+- `test/`
+- sibling owning repos only if truly required
+
+**Files Created/Deleted/Modified:**
+- `server/scripts/get-context/get-dialogue.cjs`
+- `test/scripts/get-dialogue.test.js`
+- `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
+
+**Status:** ✅ Complete
+
+**Results:** Investigation traced the bad timing to `server/scripts/get-context/get-dialogue.cjs`, not a sibling polyrepo package. In the within-budget Phase 1 dialogue path, the script persisted `toolLoopResult.parsed.totalDuration` directly when the model supplied one, so the model's hallucinated `220` overrode the real runtime even though `preflightAudio()` had already measured the source duration truthfully. The chunked path already used `preflight.durationSeconds` for final `totalDuration`, but it still accepted chunk-local segment overruns before offsetting them back into source time.
+
+Owning fix surface and code changes landed entirely in `emotion-engine`:
+- `server/scripts/get-context/get-dialogue.cjs`
+  - added `normalizeDialogueDataToDuration()` to clamp/drop segment ranges against the known real duration, rerun `validateDialogueTranscriptionObject()`, and always persist the measured runtime as `totalDuration`
+  - changed the within-budget path to use `preflight.durationSeconds` instead of trusting the model's `totalDuration`
+  - changed each chunk transcription path to normalize against the chunk's true runtime before offsetting segments into source time
+- `test/scripts/get-dialogue.test.js`
+  - added regression coverage proving whole-file dialogue output no longer persists `totalDuration: 220` or out-of-range segments
+  - added chunked regression coverage proving overrun segments are bounded/dropped before stitch-back into source time
+
+Commands run:
+- `bd update ee-rr0 --status in_progress --json`
+- `node --test test/scripts/get-dialogue.test.js test/lib/phase1-validator-tools.test.js test/scripts/video-chunks.test.js`
+- `npm test`
+
+Test results:
+- targeted dialogue/validator/video-chunk tests passed
+- full suite passed: `311` tests green via `npm test`
+
+Readiness for `ee-1of`:
+- **Ready.** The timing truthfulness bug is fixed at the owning Phase 1 dialogue persistence surface, covered by regression tests, and ready for the planned rerun of `configs/cod-test-phase1-review.yaml`.
+
+---
+
+### Task 2c: Rerun the Phase 1-only cod-test review after the timing fix
+
+**Bead ID:** `ee-1of`  
+**SubAgent:** `primary`  
+**Prompt:** `After ee-rr0 lands, rerun configs/cod-test-phase1-review.yaml and confirm whether dialogue/music artifacts are now trustworthy enough to unblock the 3-chunk Phase 2 comparison. Preserve exact commands, logs, output paths, and comparison notes against the previous Phase 1-only review run. Close ee-1of only after the rerun verdict is documented truthfully in this plan.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `output/`
+- `.logs/`
+
+**Files Created/Deleted/Modified:**
+- rerun artifacts to be determined
+- `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
+
+**Status:** ⏳ Pending
+
+**Results:** Pending.
+
+---
+
 ### Task 3: Run a 3-chunk Phase 2 comparison against the original stored cod-test run
 
 **Bead ID:** `ee-0ky`  
@@ -254,14 +330,14 @@ Readiness judgment for `ee-0ky` next:
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, and Task 2 added and executed a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`. The fresh review artifacts now show both halves Derrick wanted to inspect together before any 3-chunk Phase 2 comparison: dialogue with persisted anonymous `speaker_id` + `speaker_profiles`, and music with reviewable 30s time windows instead of a single whole-trailer segment. The Phase 1-only run itself was clean, but it also surfaced a remaining trust issue in dialogue timing: `dialogue-data.json` still reports `totalDuration: 220` and several segment ranges extending beyond the real `140.042449s` source runtime. Because of that, `ee-0ky` should not start yet; the next truthful step is to tighten/regenerate the Phase 1 dialogue timing before attempting the 3-chunk Phase 2 comparison.
+**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, and Task 2 added and executed a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`. Task 2b then fixed the remaining dialogue timing truthfulness bug at the owning Phase 1 persistence surface inside `server/scripts/get-context/get-dialogue.cjs`: persisted dialogue output now uses the measured source runtime as `totalDuration`, clamps/drops out-of-range segments before the final speaker-profile normalization pass, and applies the same truthfulness guard to chunk-local dialogue before stitch-back into source time. That leaves `ee-1of` as the next ready step: rerun the Phase 1-only review config and confirm the regenerated artifacts are trustworthy enough to unblock `ee-0ky`.
 
 **Commits:**
 - `71e0c2b` - Add grounded dialogue speaker contract
 - `84c4b93` - Update plan with final commit hash
-- pending local commit for `configs/cod-test-phase1-review.yaml` and this plan update
+- pending local commit for the dialogue timing fix + plan update
 
-**Lessons Learned:** The richer speaker contract and richer music segmentation are both useful, but schema truth is only part of the story; timing truth still matters. A Phase 1 review packet can look structurally better while still being unfit for downstream chunk-level comparison if its dialogue timestamps drift past the real source duration. That makes this Phase 1-only checkpoint valuable: it let us separate “contract shape is better” from “artifacts are ready to ground Phase 2.”
+**Lessons Learned:** The richer speaker contract and richer music segmentation are both useful, but schema truth is only part of the story; timing truth still matters. The real owning fix surface was not the validator schema or a sibling package — it was the Phase 1 dialogue persistence step that still trusted model-supplied duration values. Fixing that at the point where the real runtime is already known kept the change small, truthful, and easy to regression-test.
 
 ---
 

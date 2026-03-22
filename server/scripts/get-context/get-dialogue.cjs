@@ -62,6 +62,43 @@ function pad(value, width) {
   return String(value).padStart(width, '0');
 }
 
+function clampNumber(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function normalizeDialogueDataToDuration(dialogueData, actualDuration, { requireHandoff = false } = {}) {
+  const boundedDuration = Number.isFinite(actualDuration) && actualDuration >= 0 ? actualDuration : 0;
+  const inputSegments = Array.isArray(dialogueData?.dialogue_segments) ? dialogueData.dialogue_segments : [];
+
+  const clampedSegments = inputSegments.map((segment) => {
+    const start = Number.isFinite(segment?.start) ? clampNumber(segment.start, 0, boundedDuration) : 0;
+    const end = Number.isFinite(segment?.end) ? clampNumber(segment.end, 0, boundedDuration) : start;
+
+    if (end <= start) return null;
+
+    return {
+      ...segment,
+      start,
+      end
+    };
+  }).filter(Boolean);
+
+  const normalized = validateDialogueTranscriptionObject({
+    ...dialogueData,
+    dialogue_segments: clampedSegments,
+    totalDuration: boundedDuration
+  }, { requireHandoff });
+
+  if (!normalized.ok) {
+    throw new Error(normalized.summary || 'Failed to normalize dialogue timing to source duration.');
+  }
+
+  return {
+    ...normalized.value,
+    ...(dialogueData?.cleanedTranscript ? { cleanedTranscript: dialogueData.cleanedTranscript } : {})
+  };
+}
+
 function runCommand(command, args) {
   return new Promise((resolve, reject) => {
     const proc = spawn(command, args);
@@ -464,16 +501,8 @@ async function run(input) {
               model: adapter?.model || null,
             });
 
-            const dialogueData = {
-              ...toolLoopResult.parsed,
-              totalDuration: typeof toolLoopResult.parsed.totalDuration === 'number'
-                ? toolLoopResult.parsed.totalDuration
-                : getAudioDuration(audioPath, {
-                    captureRaw,
-                    ffmpegRawDir,
-                    ffprobeLogName: 'ffprobe-audio-duration.json'
-                  })
-            };
+            const actualDuration = preflight.durationSeconds;
+            const dialogueData = normalizeDialogueDataToDuration(toolLoopResult.parsed, actualDuration);
 
             return { completion: toolLoopResult.completion, dialogueData, toolLoop: toolLoopResult.toolLoop };
           } catch (error) {
@@ -744,16 +773,8 @@ async function run(input) {
               model: adapter?.model || null,
             });
 
-            const dialogueData = {
-              ...toolLoopResult.parsed,
-              totalDuration: typeof toolLoopResult.parsed.totalDuration === 'number'
-                ? toolLoopResult.parsed.totalDuration
-                : getAudioDuration(extraction.chunkPath, {
-                    captureRaw,
-                    ffmpegRawDir,
-                    ffprobeLogName: `ffprobe-chunk-${chunkIndex}.json`
-                  })
-            };
+            const actualDuration = endTime - startTime;
+            const dialogueData = normalizeDialogueDataToDuration(toolLoopResult.parsed, actualDuration, { requireHandoff: true });
 
             return { completion: toolLoopResult.completion, dialogueData, toolLoop: toolLoopResult.toolLoop };
           } catch (error) {
