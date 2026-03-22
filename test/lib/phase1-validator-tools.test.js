@@ -34,6 +34,67 @@ test('dialogue transcription validator tool enforces required handoff fields', (
   assert.match(result.summary, /handoffContext/i);
 });
 
+test('dialogue transcription validator normalizes grounded speaker linkage and inferred abstention', () => {
+  const result = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', text: 'Hello', confidence: 0.9 },
+        { start: 1.1, end: 2, speaker: 'Speaker 1', text: 'Again', confidence: 0.88 },
+        { start: 2.1, end: 3, speaker: 'Speaker 2', text: 'Hi', confidence: 0.76 }
+      ],
+      summary: 'Chunk summary',
+      totalDuration: 3
+    }
+  });
+
+  assert.equal(result.valid, true);
+  assert.equal(result.normalizedValue.dialogue_segments[0].speaker_id, 'spk_001');
+  assert.equal(result.normalizedValue.dialogue_segments[1].speaker_id, 'spk_001');
+  assert.equal(result.normalizedValue.dialogue_segments[2].speaker_id, 'spk_002');
+  assert.deepEqual(result.normalizedValue.speaker_profiles[0].grounded.linked_segment_indexes, [0, 1]);
+  assert.equal(result.normalizedValue.speaker_profiles[0].inferred_traits.abstained, true);
+  assert.equal(result.normalizedValue.speaker_profiles[0].inferred_traits.traits.length, 0);
+});
+
+
+test('dialogue transcription validator preserves inferred traits separately from grounded data', () => {
+  const result = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', speaker_id: 'spk_007', text: 'Hello', confidence: 0.9 }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'spk_007',
+          label: 'Speaker 1',
+          grounded: {
+            confidence: 0.83,
+            linked_segment_indexes: [0],
+            acoustic_descriptors: [
+              { label: 'calm, measured delivery', confidence: 0.62 }
+            ],
+            acoustic_descriptors_abstained: false
+          },
+          inferred_traits: {
+            disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
+            traits: [
+              { trait: 'accent', value: 'possibly Midwestern US', confidence: 0.31, note: 'guess' }
+            ],
+            abstained: false
+          }
+        }
+      ],
+      summary: 'Chunk summary',
+      totalDuration: 1
+    }
+  });
+
+  assert.equal(result.valid, true);
+  assert.equal(result.normalizedValue.speaker_profiles[0].grounded.acoustic_descriptors[0].label, 'calm, measured delivery');
+  assert.equal(result.normalizedValue.speaker_profiles[0].inferred_traits.traits[0].trait, 'accent');
+  assert.equal(result.normalizedValue.speaker_profiles[0].inferred_traits.traits[0].value, 'possibly Midwestern US');
+});
+
 test('dialogue stitch validator tool validates stitched transcript payloads', () => {
   const contract = buildDialogueStitchValidatorToolContract();
   assert.equal(contract.name, 'validate_dialogue_stitch_json');

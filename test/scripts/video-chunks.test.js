@@ -35,6 +35,7 @@ function readLatestChunkRawCapture(rawAiDir, chunkIndex, splitIndex = 0) {
 }
 
 const analyzeCalls = [];
+const promptBuildInputs = [];
 let analyzeImplementation = async (input) => {
   analyzeCalls.push(input);
   return {
@@ -74,6 +75,7 @@ let analyzeImplementation = async (input) => {
 
 const mockEmotionLensesTool = {
   buildBasePromptFromInput: (input) => {
+    promptBuildInputs.push(input);
     const lenses = input?.toolVariables?.variables?.lenses?.join(', ') || 'none';
     const musicSummary = input?.musicContext?.summary || 'none';
     const musicDetails = Array.isArray(input?.musicContext?.segments)
@@ -116,6 +118,7 @@ test('Video Chunks Script', async (t) => {
 
   t.beforeEach(() => {
     analyzeCalls.length = 0;
+    promptBuildInputs.length = 0;
     analyzeImplementation = async (input) => {
       analyzeCalls.push(input);
       return {
@@ -461,6 +464,58 @@ test('Video Chunks Script', async (t) => {
       ok(String(analyzeCalls[0].basePrompt).includes('Music summary: Trailer-wide music stays tense and cinematic.'));
       ok(String(analyzeCalls[0].basePrompt).includes('Music details: Opening pulse'));
       ok(!String(analyzeCalls[0].basePrompt).includes('Escalates into pounding percussion'));
+    });
+
+    await tNested.test('passes grounded speaker profiles into the emotion lane alongside dialogue segments', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {
+          dialogueData: {
+            dialogue_segments: [
+              { start: 0, end: 4, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hello', confidence: 0.92 }
+            ],
+            speaker_profiles: [
+              {
+                speaker_id: 'spk_001',
+                label: 'Speaker 1',
+                grounded: {
+                  confidence: 0.81,
+                  linked_segment_indexes: [0],
+                  acoustic_descriptors: [{ label: 'measured delivery', confidence: 0.58 }],
+                  acoustic_descriptors_abstained: false
+                },
+                inferred_traits: {
+                  disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
+                  traits: [],
+                  abstained: true
+                }
+              }
+            ],
+            summary: 'Dialogue summary'
+          }
+        },
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+          },
+          settings: { max_chunks: 1 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          }
+        }
+      });
+
+      is(promptBuildInputs.length > 0, true);
+      is(Array.isArray(promptBuildInputs[0].dialogueContext.segments), true);
+      is(Array.isArray(promptBuildInputs[0].dialogueContext.speakers), true);
+      is(promptBuildInputs[0].dialogueContext.speakers[0].speaker_id, 'spk_001');
+      is(promptBuildInputs[0].dialogueContext.speakers[0].grounded.linked_segment_indexes[0], 0);
     });
 
     await tNested.test('skips a final provider-facing video chunk shorter than 1 second', async () => {

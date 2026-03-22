@@ -83,16 +83,39 @@ function buildDialogueTranscriptionValidatorToolContract({ requireHandoff = fals
     argumentKey: 'transcription',
     description: 'Validate a Phase 1 dialogue transcription JSON candidate against the required local schema before final submission.',
     candidateDescription: requireHandoff
-      ? 'Candidate dialogue transcription JSON with dialogue_segments, summary, handoffContext, and totalDuration.'
-      : 'Candidate dialogue transcription JSON with dialogue_segments, summary, and totalDuration.',
+      ? 'Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, and totalDuration.'
+      : 'Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, and totalDuration.',
     example: {
       dialogue_segments: [
         {
           start: 0,
           end: 1.2,
           speaker: 'Speaker 1',
+          speaker_id: 'spk_001',
           text: 'Hello there',
           confidence: 0.95
+        }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'spk_001',
+          label: 'Speaker 1',
+          grounded: {
+            confidence: 0.82,
+            linked_segment_indexes: [0],
+            acoustic_descriptors: [
+              {
+                label: 'steady, conversational delivery',
+                confidence: 0.61
+              }
+            ],
+            acoustic_descriptors_abstained: false
+          },
+          inferred_traits: {
+            disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
+            traits: [],
+            abstained: true
+          }
         }
       ],
       summary: 'Short summary of the dialogue.',

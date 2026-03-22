@@ -658,7 +658,8 @@ async function run(input) {
             mimeType: videoTransferConfig.mimeType
           },
           dialogueContext: {
-            segments: dialogueContext
+            segments: dialogueContext,
+            speakers: Array.isArray(dialogueData?.speaker_profiles) ? dialogueData.speaker_profiles : []
           },
           musicContext: {
             summary: typeof musicData?.summary === 'string' ? musicData.summary : '',

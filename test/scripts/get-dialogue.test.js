@@ -202,6 +202,7 @@ test('Get Dialogue Script', async (t) => {
       property(result, 'artifacts');
       property(result.artifacts, 'dialogueData');
       property(result.artifacts.dialogueData, 'dialogue_segments');
+      property(result.artifacts.dialogueData, 'speaker_profiles');
       property(result.artifacts.dialogueData, 'summary');
       property(result.artifacts.dialogueData, 'totalDuration');
     });
@@ -480,6 +481,7 @@ test('Get Dialogue Script', async (t) => {
       property(segment, 'start');
       property(segment, 'end');
       property(segment, 'speaker');
+      property(segment, 'speaker_id');
       property(segment, 'text');
       property(segment, 'confidence');
     });
@@ -506,6 +508,36 @@ test('Get Dialogue Script', async (t) => {
       const segment = result.artifacts.dialogueData.dialogue_segments[0];
       ok(segment.confidence >= 0);
       ok(segment.confidence <= 1);
+    });
+
+    tNested.test('speaker profiles separate grounded linkage from inferred traits', async () => {
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeDialogueConfig()
+      };
+      const result = await getDialogueScript.run(input);
+      const profile = result.artifacts.dialogueData.speaker_profiles[0];
+      property(profile, 'speaker_id');
+      property(profile, 'grounded');
+      property(profile.grounded, 'linked_segment_indexes');
+      property(profile.grounded, 'acoustic_descriptors');
+      property(profile.grounded, 'acoustic_descriptors_abstained');
+      property(profile, 'inferred_traits');
+      property(profile.inferred_traits, 'traits');
+      property(profile.inferred_traits, 'abstained');
+      is(profile.grounded.linked_segment_indexes[0], 0);
+    });
+
+    tNested.test('transcription prompt instructs grounded vs inferred speaker separation', async () => {
+      const input = {
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeDialogueConfig()
+      };
+      await getDialogueScript.run(input);
+      ok(completionPrompts[0].includes('speaker_profiles'));
+      ok(completionPrompts[0].includes('grounded speaker identity separate from inferred_traits'));
     });
   });
 });

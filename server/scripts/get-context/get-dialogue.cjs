@@ -443,8 +443,9 @@ async function run(input) {
               audioMimeType,
               requireHandoff: false,
               finalArtifactRules: [
-                'Identify speakers as Speaker 1, Speaker 2, etc.',
+                'Identify speakers as Speaker 1, Speaker 2, etc. for human-readable labels, while reusing anonymous speaker_id values for same-speaker linkage.',
                 'Provide accurate timestamps in seconds.',
+                'Keep grounded speaker identity separate from any inferred_traits guesswork.',
                 'If no speech is detected, return an empty dialogue_segments array.'
               ]
             });
@@ -722,7 +723,8 @@ async function run(input) {
               requireHandoff: true,
               finalArtifactRules: [
                 'Timestamps must be relative to this chunk and start at 0.',
-                'Keep speaker labels consistent with the prior handoff when possible.',
+                'Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.',
+                'Keep grounded speaker identity separate from any inferred_traits guesswork.',
                 'handoffContext must stay brief and continuity-focused.'
               ]
             });
@@ -1139,10 +1141,19 @@ async function run(input) {
       ? stitchParsed.cleanedTranscript
       : (typeof stitchParsed.cleaned_transcript === 'string' ? stitchParsed.cleaned_transcript : null);
 
-    const dialogueData = {
+    const normalizedDialogueValidation = validateDialogueTranscriptionObject({
       dialogue_segments: chunkSegments,
       summary: cleanedTranscript || 'Chunked transcription completed',
       totalDuration: preflight.durationSeconds,
+      ...(rollingHandoff ? { handoffContext: rollingHandoff } : {})
+    });
+
+    if (!normalizedDialogueValidation.ok) {
+      throw new Error(normalizedDialogueValidation.summary || 'Failed to normalize chunked dialogue contract.');
+    }
+
+    const dialogueData = {
+      ...normalizedDialogueValidation.value,
       ...(cleanedTranscript ? { cleanedTranscript } : {})
     };
 
@@ -1299,8 +1310,28 @@ Respond with a JSON object in the following format:
       "start": 0.0,
       "end": 5.2,
       "speaker": "Speaker 1",
+      "speaker_id": "spk_001",
       "text": "Transcribed text here",
       "confidence": 0.95
+    }
+  ],
+  "speaker_profiles": [
+    {
+      "speaker_id": "spk_001",
+      "label": "Speaker 1",
+      "grounded": {
+        "confidence": 0.82,
+        "linked_segment_indexes": [0],
+        "acoustic_descriptors": [
+          { "label": "steady, conversational delivery", "confidence": 0.61 }
+        ],
+        "acoustic_descriptors_abstained": false
+      },
+      "inferred_traits": {
+        "disclaimer": "Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.",
+        "traits": [],
+        "abstained": true
+      }
     }
   ],
   "summary": "Brief summary of the dialogue content",
@@ -1310,9 +1341,12 @@ Respond with a JSON object in the following format:
 
 IMPORTANT:
 - Return JSON only. No markdown or explanation.
-- Identify speakers as "Speaker 1", "Speaker 2", etc.
+- Identify speakers as "Speaker 1", "Speaker 2", etc. for display labels, but also reuse anonymous speaker_id values like "spk_001" when segments belong to the same speaker.
 - Provide accurate timestamps in seconds.
 - Include confidence scores from 0.0 to 1.0.
+- Keep grounded speaker identity separate from inferred_traits.
+- Grounded data should only include anonymous speaker IDs, same-speaker linkage, and cautious acoustic descriptors that are actually supported by the audio.
+- inferred_traits is optional and must stay clearly speculative / non-authoritative. If unsure, leave traits empty and set abstained=true.
 - If no speech is detected, return an empty dialogue_segments array.`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
@@ -1467,8 +1501,26 @@ Return JSON only with this structure:
       "start": 0.0,
       "end": 5.2,
       "speaker": "Speaker 1",
+      "speaker_id": "spk_001",
       "text": "Transcribed text here",
       "confidence": 0.95
+    }
+  ],
+  "speaker_profiles": [
+    {
+      "speaker_id": "spk_001",
+      "label": "Speaker 1",
+      "grounded": {
+        "confidence": 0.82,
+        "linked_segment_indexes": [0],
+        "acoustic_descriptors": [],
+        "acoustic_descriptors_abstained": true
+      },
+      "inferred_traits": {
+        "disclaimer": "Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.",
+        "traits": [],
+        "abstained": true
+      }
     }
   ],
   "summary": "Brief summary for THIS chunk",
@@ -1479,7 +1531,9 @@ Return JSON only with this structure:
 Rules:
 - Return JSON only. No markdown.
 - Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.
-- Keep speaker labels consistent with the handoff when possible.
+- Keep speaker labels and anonymous speaker_id values consistent with the handoff when possible.
+- Keep grounded speaker identity separate from inferred_traits.
+- Use inferred_traits only for speculative guesswork and leave it abstained when unsure.
 - If no speech is detected, return an empty dialogue_segments array.
 - Keep handoffContext brief (<= ~10 lines).`;
 
