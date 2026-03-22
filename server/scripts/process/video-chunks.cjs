@@ -20,7 +20,7 @@ const videoChunkExtractor = require('../../lib/video-chunk-extractor.cjs');
 const outputManager = require('../../lib/output-manager.cjs');
 const { getChunkFailureReason } = require('../../lib/chunk-analysis-status.cjs');
 const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets-policy.cjs');
-const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
+const { shouldCaptureRaw, getRawPhaseDir, sanitizeRawCaptureValue, writeRawJson } = require('../../lib/raw-capture.cjs');
 const { ensureToolVersionsCaptured } = require('../../lib/tool-versions.cjs');
 const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 const {
@@ -216,36 +216,6 @@ function extractRawResponse(toolResult) {
     || stringifyRawValue(toolResult?.providerResponse)
     || stringifyRawValue(toolResult?.completion)
     || null;
-}
-
-function sanitizeRawCaptureValue(value, depth = 0, seen = new WeakSet()) {
-  if (value === null || value === undefined) return value;
-  if (depth > 8) return '[Truncated]';
-
-  if (typeof value === 'string') {
-    if (value.startsWith('Bearer ')) return 'Bearer [REDACTED]';
-    return value;
-  }
-
-  if (typeof value !== 'object') return value;
-
-  if (seen.has(value)) return '[Circular]';
-  seen.add(value);
-
-  if (Array.isArray(value)) {
-    return value.map((item) => sanitizeRawCaptureValue(item, depth + 1, seen));
-  }
-
-  const out = {};
-  for (const [key, item] of Object.entries(value)) {
-    if (/authorization/i.test(key) || /api[_-]?key/i.test(key)) {
-      out[key] = '[REDACTED]';
-      continue;
-    }
-    out[key] = sanitizeRawCaptureValue(item, depth + 1, seen);
-  }
-
-  return out;
 }
 
 function buildRequestMeta({ chunkIndex, splitIndex, attempt, attemptInTarget, targetIndex, targetCount, adapter }) {

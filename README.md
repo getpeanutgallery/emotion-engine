@@ -28,6 +28,12 @@ npm run pipeline -- --config <config.yaml>
 
 The orchestrator (`server/run-pipeline.cjs`) loads YAML/JSON config, validates it, runs scripts in 3 phases, and writes artifacts to `output/...`.
 
+### Secret-safety guardrails
+
+- Raw AI/debug captures are sanitized before they are written: Authorization headers, API key fields, bearer tokens, and common key-shaped strings are redacted automatically.
+- New `output/` artifacts and `/.logs/` debug logs should not be committed. Run `npm run check:secrets` before committing, or enable the included hook with `git config core.hooksPath .githooks`.
+- If you intentionally need to share a raw capture for debugging, inspect the generated JSON anyway—automatic redaction is a guardrail, not a license to commit whole run folders.
+
 > `npm exec emotion-engine` (bin shim → `server/run-pipeline.cjs`) is supported and equivalent to `npm run pipeline`.
 
 ---

@@ -22,7 +22,7 @@ const path = require('path');
 
 const outputManager = require('../../lib/output-manager.cjs');
 const { splitChunksByStatus } = require('../../lib/chunk-analysis-status.cjs');
-const { shouldCaptureRaw, getRawPhaseDir, writeRawJson } = require('../../lib/raw-capture.cjs');
+const { shouldCaptureRaw, getRawPhaseDir, sanitizeRawCaptureValue, writeRawJson } = require('../../lib/raw-capture.cjs');
 const {
   executeWithTargets,
   getProviderForTarget,
@@ -69,36 +69,6 @@ function getToolLoopConfig(config = {}) {
     maxTurns: Number.isInteger(toolLoop.maxTurns) && toolLoop.maxTurns > 1 ? toolLoop.maxTurns : 4,
     maxValidatorCalls: Number.isInteger(toolLoop.maxValidatorCalls) && toolLoop.maxValidatorCalls > 0 ? toolLoop.maxValidatorCalls : 3
   };
-}
-
-function sanitizeRawCaptureValue(value, depth = 0, seen = new WeakSet()) {
-  if (value === null || value === undefined) return value;
-  if (depth > 8) return '[Truncated]';
-
-  if (typeof value === 'string') {
-    if (value.startsWith('Bearer ')) return 'Bearer [REDACTED]';
-    return value;
-  }
-
-  if (typeof value !== 'object') return value;
-
-  if (seen.has(value)) return '[Circular]';
-  seen.add(value);
-
-  if (Array.isArray(value)) {
-    return value.map((item) => sanitizeRawCaptureValue(item, depth + 1, seen));
-  }
-
-  const out = {};
-  for (const [key, item] of Object.entries(value)) {
-    if (/authorization/i.test(key) || /api[_-]?key/i.test(key)) {
-      out[key] = '[REDACTED]';
-      continue;
-    }
-    out[key] = sanitizeRawCaptureValue(item, depth + 1, seen);
-  }
-
-  return out;
 }
 
 function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, events, phaseOutcome, fatalPhaseError, phaseErrors }) {
