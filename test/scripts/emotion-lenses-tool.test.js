@@ -104,7 +104,17 @@ test('Emotion Lenses Tool', async (t) => {
           endTime: 8
         },
         dialogueContext: { segments: [{ start: 0, end: 2, speaker: 'Speaker 1', text: 'Hello' }] },
-        musicContext: { segments: [{ start: 0, end: 8, type: 'music', mood: 'tense', intensity: 6 }] },
+        musicContext: {
+          summary: 'Trailer-wide music stays tense and cinematic.',
+          segments: [{
+            start: 0,
+            end: 8,
+            type: 'music',
+            description: 'Aggressive percussion hits under the opening threat.',
+            mood: 'tense',
+            intensity: 6
+          }]
+        },
         previousState: { summary: 'Earlier chunk was measured.' }
       });
 
@@ -116,6 +126,83 @@ test('Emotion Lenses Tool', async (t) => {
       ok(prompt.includes('"boredom"'));
       ok(prompt.includes('Previous Summary'));
       ok(prompt.includes('Speaker 1'));
+      ok(prompt.includes('Trailer-wide context: Trailer-wide music stays tense and cinematic.'));
+      ok(prompt.includes('- Active chunk cues:'));
+      ok(prompt.includes('detail: Aggressive percussion hits under the opening threat.'));
+    });
+
+    await tNested.test('clips overlapping Phase 1 context to the active chunk window in the built prompt', () => {
+      const prompt = emotionLensesTool.buildBasePromptFromInput({
+        toolVariables: {
+          soulPath,
+          goalPath,
+          variables: { lenses: ['patience', 'boredom'] }
+        },
+        videoContext: {
+          chunkPath: __filename,
+          mimeType: 'video/mp4',
+          transferStrategy: 'base64',
+          duration: 5,
+          startTime: 5,
+          endTime: 10
+        },
+        dialogueContext: { segments: [{ start: 0, end: 6, speaker: 'Speaker 1', text: 'They want you afraid.' }] },
+        musicContext: {
+          summary: 'The trailer stays high-intensity and tense overall.',
+          segments: [{
+            start: 0,
+            end: 140.042449,
+            type: 'music',
+            description: 'Sustained tense orchestral pulse with pounding percussion.',
+            mood: 'tense',
+            intensity: 8
+          }]
+        },
+        previousState: { summary: '' }
+      });
+
+      ok(prompt.includes('- 5.0s-6.0s: Speaker 1: They want you afraid.'));
+      ok(prompt.includes('Trailer-wide context: The trailer stays high-intensity and tense overall.'));
+      ok(prompt.includes('- 5.0s-10.0s: music, detail: Sustained tense orchestral pulse with pounding percussion., mood: tense, intensity: 8'));
+      ok(!prompt.includes('0.0s-6.0s: Speaker 1'));
+      ok(!prompt.includes('0.0s-140.0s: music'));
+    });
+
+    await tNested.test('preserves full music summary and description text in the built prompt', () => {
+      const longSummary = 'Trailer-wide arc: the cue starts with a hush, swells through dread, pivots into bruising percussion, then keeps layering anxious strings without ever fully releasing the pressure before the end card lands.';
+      const longDescription = 'Detailed cue: low brass pulses creep underneath a brittle riser, then syncopated percussion stomps in while scraped strings and distorted impacts keep ratcheting the tension higher instead of resolving cleanly.';
+      const prompt = emotionLensesTool.buildBasePromptFromInput({
+        toolVariables: {
+          soulPath,
+          goalPath,
+          variables: { lenses: ['patience'] }
+        },
+        videoContext: {
+          chunkPath: __filename,
+          mimeType: 'video/mp4',
+          transferStrategy: 'base64',
+          duration: 5,
+          startTime: 10,
+          endTime: 15
+        },
+        dialogueContext: { segments: [] },
+        musicContext: {
+          summary: longSummary,
+          segments: [{
+            start: 10,
+            end: 15,
+            type: 'music',
+            description: longDescription,
+            mood: 'tense',
+            intensity: 9
+          }]
+        },
+        previousState: { summary: '' }
+      });
+
+      ok(prompt.includes(`Trailer-wide context: ${longSummary}`));
+      ok(prompt.includes(`detail: ${longDescription}`));
+      ok(!prompt.includes('…'));
     });
   });
 

@@ -691,7 +691,9 @@ async function run(input) {
             segments: dialogueContext
           },
           musicContext: {
-            segments: musicContext
+            summary: typeof musicData?.summary === 'string' ? musicData.summary : '',
+            segments: musicContext,
+            totalSegments: Array.isArray(musicData?.segments) ? musicData.segments.length : 0
           },
           previousState: {
             summary: trimPreviousSummary(previousSummary),

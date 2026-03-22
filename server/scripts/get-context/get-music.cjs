@@ -30,7 +30,7 @@ const { ensureToolVersionsCaptured } = require('../../lib/tool-versions.cjs');
 const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
-const { preflightAudio } = require('../../lib/audio-preflight.cjs');
+const { preflightAudio, planTimeChunks } = require('../../lib/audio-preflight.cjs');
 const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
 const { extractAudioChunk } = require('../../lib/audio-chunk-extractor.cjs');
 const {
@@ -53,6 +53,7 @@ const { applyFailureMetadata } = require('../../lib/tool-wrapper-contract.cjs');
 
 const PHASE_KEY = 'phase1-gather-context';
 const SCRIPT_ID = 'get-music';
+const DEFAULT_MUSIC_ANALYSIS_WINDOW_SECONDS = 30;
 
 function pad(value, width) {
   return String(value).padStart(width, '0');
@@ -139,6 +140,49 @@ function sanitizeRawCaptureValue(value, depth = 0, seen = new WeakSet()) {
   }
 
   return out;
+}
+
+function resolveMusicAnalysisWindowSeconds(config = {}) {
+  const configured = config?.ai?.music?.analysisWindowSeconds;
+  if (Number.isFinite(configured) && configured > 0) {
+    return configured;
+  }
+
+  return DEFAULT_MUSIC_ANALYSIS_WINDOW_SECONDS;
+}
+
+function buildMusicAnalysisChunkPlan(preflight, config = {}) {
+  const transportChunks = Array.isArray(preflight?.chunkPlan) ? preflight.chunkPlan : [];
+  if (transportChunks.length === 0) {
+    return [];
+  }
+
+  const maxWindowSeconds = resolveMusicAnalysisWindowSeconds(config);
+  const analysisChunks = [];
+  let nextIndex = 0;
+
+  for (const transportChunk of transportChunks) {
+    const transportDuration = Math.max(0, (transportChunk?.endTime ?? 0) - (transportChunk?.startTime ?? 0));
+    const effectiveWindowSeconds = Math.min(maxWindowSeconds, transportDuration || maxWindowSeconds);
+
+    const localPlan = planTimeChunks({
+      durationSeconds: transportDuration,
+      chunkDurationSeconds: effectiveWindowSeconds
+    });
+
+    for (const localChunk of localPlan) {
+      analysisChunks.push({
+        index: nextIndex,
+        startTime: (transportChunk.startTime || 0) + localChunk.startTime,
+        endTime: (transportChunk.startTime || 0) + localChunk.endTime,
+        duration: localChunk.duration,
+        transportChunkIndex: transportChunk.index
+      });
+      nextIndex += 1;
+    }
+  }
+
+  return analysisChunks;
 }
 
 function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, events, phaseOutcome, fatalPhaseError, phaseErrors }) {
@@ -325,21 +369,33 @@ async function run(input) {
       trace: preflight.trace
     });
 
+    const analysisChunkPlan = buildMusicAnalysisChunkPlan(preflight, config);
+
     if (captureRaw) {
+      const analysisWindowSeconds = resolveMusicAnalysisWindowSeconds(config);
       const planPath = writeRawJson(ffmpegRawDir, 'chunk-plan.json', {
-        schemaVersion: 1,
+        schemaVersion: 2,
         kind: 'audio.chunk.plan',
         domain: 'music',
         createdAt: new Date().toISOString(),
-        trace: preflight.trace,
-        chunks: preflight.chunkPlan
+        transportTrace: preflight.trace,
+        analysisPolicy: {
+          kind: 'fixed-window-within-transport-budget',
+          maxWindowSeconds: analysisWindowSeconds
+        },
+        transportChunks: preflight.chunkPlan,
+        chunks: analysisChunkPlan,
+        analysisTrace: {
+          chunks: analysisChunkPlan.length,
+          maxWindowSeconds: analysisWindowSeconds
+        }
       });
       events.artifactWrite({ absolutePath: planPath, role: 'raw.ffmpeg.plan', phase: PHASE_KEY, script: SCRIPT_ID });
     }
 
     const duration = preflight.durationSeconds;
 
-    console.log(`   📊 Audio duration: ${duration.toFixed(1)}s (${preflight.chunkPlan.length} chunk(s))`);
+    console.log(`   📊 Audio duration: ${duration.toFixed(1)}s (${analysisChunkPlan.length} analysis chunk(s) from ${preflight.chunkPlan.length} transport chunk(s))`);
 
     const segments = [];
     let hasMusic = false;
@@ -363,12 +419,12 @@ async function run(input) {
     let rollingSummary = '';
 
     // Analyze each chunk sequentially (rolling-summary carry)
-    for (const chunk of preflight.chunkPlan) {
+    for (const chunk of analysisChunkPlan) {
       const chunkIndex = chunk.index;
       const startTime = chunk.startTime;
       const endTime = chunk.endTime;
 
-      console.log(`   Analyzing chunk ${chunkIndex + 1}/${preflight.chunkPlan.length} (${startTime.toFixed(1)}s - ${endTime.toFixed(1)}s)...`);
+      console.log(`   Analyzing chunk ${chunkIndex + 1}/${analysisChunkPlan.length} (${startTime.toFixed(1)}s - ${endTime.toFixed(1)}s)...`);
 
       const extraction = await extractAudioChunk(
         audioPath,

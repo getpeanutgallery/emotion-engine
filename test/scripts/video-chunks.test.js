@@ -73,7 +73,14 @@ let analyzeImplementation = async (input) => {
 };
 
 const mockEmotionLensesTool = {
-  buildBasePromptFromInput: (input) => `Prompt for ${input?.toolVariables?.variables?.lenses?.join(', ') || 'none'}`,
+  buildBasePromptFromInput: (input) => {
+    const lenses = input?.toolVariables?.variables?.lenses?.join(', ') || 'none';
+    const musicSummary = input?.musicContext?.summary || 'none';
+    const musicDetails = Array.isArray(input?.musicContext?.segments)
+      ? input.musicContext.segments.map((segment) => segment.description || segment.mood || segment.type).join(' | ')
+      : 'none';
+    return `Prompt for ${lenses}\nMusic summary: ${musicSummary}\nMusic details: ${musicDetails}`;
+  },
   executeEmotionAnalysisToolLoop: async (input) => analyzeImplementation(input)
 };
 
@@ -419,6 +426,41 @@ test('Video Chunks Script', async (t) => {
       is(analyzeCalls[0].videoContext.chunkIndex, 0);
       is(analyzeCalls[0].videoContext.chunkPath.endsWith('chunk-0.mp4'), true);
       is(analyzeCalls[0].videoContext.transferStrategy, 'base64');
+    });
+
+    await tNested.test('passes trailer-wide music summary plus chunk-overlapping music segments into the emotion lane', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {
+          musicData: {
+            summary: 'Trailer-wide music stays tense and cinematic.',
+            segments: [
+              { start: 0, end: 8, type: 'music', description: 'Opening pulse', mood: 'tense', intensity: 6 },
+              { start: 8, end: 16, type: 'music', description: 'Escalates into pounding percussion', mood: 'energetic', intensity: 9 }
+            ]
+          }
+        },
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+          },
+          settings: { max_chunks: 1 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          }
+        }
+      });
+
+      is(analyzeCalls.length > 0, true);
+      ok(String(analyzeCalls[0].basePrompt).includes('Music summary: Trailer-wide music stays tense and cinematic.'));
+      ok(String(analyzeCalls[0].basePrompt).includes('Music details: Opening pulse'));
+      ok(!String(analyzeCalls[0].basePrompt).includes('Escalates into pounding percussion'));
     });
 
     await tNested.test('skips a final provider-facing video chunk shorter than 1 second', async () => {

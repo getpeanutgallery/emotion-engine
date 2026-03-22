@@ -25,6 +25,7 @@ function mockModule(modulePath, mockExports) {
 const providerConfigCalls = [];
 const completionPrompts = [];
 const completionOptions = [];
+let mockDurationSeconds = 30;
 let completeImplementation = async (options) => {
   completionPrompts.push(String(options?.prompt || ''));
   completionOptions.push(options || {});
@@ -92,7 +93,7 @@ const mockChildProcess = {
   },
   execSync: (cmd) => {
     if (cmd.includes('ffprobe')) {
-      return Buffer.from('30.0'); // Mock duration
+      return Buffer.from(String(mockDurationSeconds));
     }
     return Buffer.from('');
   }
@@ -143,6 +144,7 @@ test('Get Music Script', async (t) => {
     providerConfigCalls.length = 0;
     completionPrompts.length = 0;
     completionOptions.length = 0;
+    mockDurationSeconds = 30;
     completeImplementation = async (options) => {
       completionPrompts.push(String(options?.prompt || ''));
       completionOptions.push(options || {});
@@ -227,6 +229,27 @@ test('Get Music Script', async (t) => {
       const data = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
       property(data, 'segments');
       property(data, 'summary');
+    });
+
+    tNested.test('splits long music analysis into bounded time windows even when transport preflight stays within budget', async () => {
+      mockDurationSeconds = 140.042449;
+
+      const result = await getMusicScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeMusicConfig()
+      });
+
+      is(result.artifacts.musicData.segments.length, 5);
+      is(result.artifacts.musicData.segments[0].start, 0);
+      is(result.artifacts.musicData.segments[0].end, 30);
+      is(result.artifacts.musicData.segments[1].start, 30);
+      is(result.artifacts.musicData.segments[1].end, 60);
+      is(result.artifacts.musicData.segments[4].start, 120);
+      is(result.artifacts.musicData.segments[4].end, 140.042449);
+      is(completionPrompts.length, 5);
+      ok(completionPrompts[0].includes('0.0s to 30.0s'));
+      ok(completionPrompts[4].includes('120.0s to 140.0s'));
     });
 
     tNested.test('selects provider from YAML config.ai.provider', async () => {
