@@ -173,6 +173,7 @@ Results:
 
 **Commits:**
 - `71e0c2b` - Add grounded dialogue speaker contract
+- `84c4b93` - Update plan with final commit hash
 
 **Lessons Learned:** The most durable truth boundary is not “ask the model for demographic facts,” it is “persist grounded anonymous linkage by default, and force anything trait-like into an explicitly speculative lane with abstention.” That keeps the current system honest while still making future downstream experimentation possible.
 
