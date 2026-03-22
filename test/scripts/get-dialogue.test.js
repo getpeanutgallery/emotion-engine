@@ -464,15 +464,36 @@ test('Get Dialogue Script', async (t) => {
                 start: 8.5,
                 end: 12.5,
                 speaker: 'Speaker 1',
+                speaker_id: 'spk_001',
                 text: 'Late line',
                 confidence: 0.95
               },
               {
                 start: 13,
                 end: 14,
-                speaker: 'Speaker 2',
+                speaker: 'Speaker 1',
+                speaker_id: 'spk_001',
                 text: 'Impossible overrun',
                 confidence: 0.8
+              }
+            ],
+            speaker_profiles: [
+              {
+                speaker_id: 'spk_001',
+                label: 'Speaker 1',
+                grounded: {
+                  confidence: 0.83,
+                  linked_segment_indexes: [0, 1],
+                  acoustic_descriptors: [
+                    { label: 'calm, measured delivery', confidence: 0.62 }
+                  ],
+                  acoustic_descriptors_abstained: false
+                },
+                inferred_traits: {
+                  disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
+                  traits: [],
+                  abstained: true
+                }
               }
             ],
             summary: 'Overrun test',
@@ -493,6 +514,7 @@ test('Get Dialogue Script', async (t) => {
       assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ start, end, text }) => ({ start, end, text })), [
         { start: 8.5, end: 10, text: 'Late line' }
       ]);
+      assert.deepEqual(result.artifacts.dialogueData.speaker_profiles[0].grounded.linked_segment_indexes, [0]);
       ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => segment.start >= 0 && segment.end <= 10 && segment.end > segment.start));
     });
 

@@ -302,9 +302,7 @@ function normalizeDialogueSpeakerContract(dialogue_segments, speaker_profiles = 
       grounded: {
         confidence: profile.grounded?.confidence ?? null,
         confidence_abstained: profile.grounded?.confidence === null || profile.grounded?.confidence === undefined,
-        linked_segment_indexes: Array.isArray(profile.grounded?.linked_segment_indexes)
-          ? [...profile.grounded.linked_segment_indexes]
-          : [],
+        linked_segment_indexes: [],
         acoustic_descriptors: Array.isArray(profile.grounded?.acoustic_descriptors)
           ? [...profile.grounded.acoustic_descriptors]
           : [],

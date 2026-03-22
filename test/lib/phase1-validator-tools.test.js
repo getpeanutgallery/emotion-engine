@@ -95,6 +95,42 @@ test('dialogue transcription validator preserves inferred traits separately from
   assert.equal(result.normalizedValue.speaker_profiles[0].inferred_traits.traits[0].value, 'possibly Midwestern US');
 });
 
+test('dialogue transcription validator rebuilds linked segment indexes from the final segment array', () => {
+  const result = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 4', speaker_id: 'spk_004', text: 'Hello', confidence: 0.9 },
+        { start: 1.1, end: 2, speaker: 'Speaker 2', speaker_id: 'spk_002', text: 'Hi', confidence: 0.82 },
+        { start: 2.1, end: 3, speaker: 'Speaker 4', speaker_id: 'spk_004', text: 'Back again', confidence: 0.88 }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'spk_004',
+          label: 'Speaker 4',
+          grounded: {
+            confidence: 0.83,
+            linked_segment_indexes: [4, 12],
+            acoustic_descriptors: [
+              { label: 'calm, measured delivery', confidence: 0.62 }
+            ],
+            acoustic_descriptors_abstained: false
+          },
+          inferred_traits: {
+            disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
+            traits: [],
+            abstained: true
+          }
+        }
+      ],
+      summary: 'Chunk summary',
+      totalDuration: 3
+    }
+  });
+
+  assert.equal(result.valid, true);
+  assert.deepEqual(result.normalizedValue.speaker_profiles.find((profile) => profile.speaker_id === 'spk_004').grounded.linked_segment_indexes, [0, 2]);
+});
+
 test('dialogue stitch validator tool validates stitched transcript payloads', () => {
   const contract = buildDialogueStitchValidatorToolContract();
   assert.equal(contract.name, 'validate_dialogue_stitch_json');

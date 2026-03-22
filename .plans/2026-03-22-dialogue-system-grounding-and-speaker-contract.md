@@ -5,6 +5,9 @@ bead_ids:
   - ee-9bh
   - ee-rr0
   - ee-1of
+  - ee-7o0
+  - ee-wt0
+  - ee-l0a1
   - ee-0ky
   - ee-9hk
   - ee-avf
@@ -332,6 +335,100 @@ Readiness judgment for `ee-0ky`:
   - invalid speaker-profile linkage (`spk_004` references nonexistent segment index `12`)
   - music analysis quality regression / hallucinated silence in the middle windows (`60-90`, `90-120`)
 - Recommended next move before `ee-0ky`: tighten the speaker-profile normalization/index bookkeeping and investigate why the 30-second music analysis rerun can falsely report no audio for middle windows even on a clean successful run, then rerun this same Phase 1-only review config once more.
+
+---
+
+### Task 2d: Fix speaker-profile linked segment index bookkeeping
+
+**Bead ID:** `ee-7o0`  
+**SubAgent:** `coder`  
+**Prompt:** `Investigate and fix why the fresh Phase 1-only rerun can persist speaker_profiles with invalid linked_segment_indexes after timing normalization. Land the smallest truthful fix so linked_segment_indexes always refer to valid entries in the final persisted dialogue_segments array. Add/update tests, do not modify node_modules, and if the owning surface somehow lives in a sibling polyrepo, fix it there and refresh emotion-engine cleanly afterward. Update this plan with exact files changed, commands, tests, and what was actually fixed.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `server/`
+- `test/`
+- sibling owning repos only if truly required
+
+**Files Created/Deleted/Modified:**
+- `server/lib/structured-output.cjs`
+- `test/lib/phase1-validator-tools.test.js`
+- `test/scripts/get-dialogue.test.js`
+- `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
+
+**Status:** ✅ Complete
+
+**Results:** Investigation traced the drift to the core speaker-contract normalizer in `server/lib/structured-output.cjs`, not a sibling polyrepo package. The bug was narrow: `normalizeDialogueSpeakerContract()` preserved model/input `grounded.linked_segment_indexes` from incoming `speaker_profiles` and then appended indexes discovered from the current `dialogue_segments`. After `ee-rr0` timing normalization dropped/clamped invalid segments, stale indexes from the pre-normalized shape could survive even though the final persisted `dialogue_segments` array was shorter. That is how a rerun could keep `spk_004.linked_segment_indexes: [4, 12]` when the final array only had indexes `0..11`.
+
+Smallest truthful fix landed in-repo:
+- `server/lib/structured-output.cjs`
+  - changed `normalizeDialogueSpeakerContract()` to rebuild `grounded.linked_segment_indexes` entirely from the final normalized `dialogue_segments` array instead of carrying forward model-supplied indexes
+  - grounded confidence/acoustic descriptors and inferred traits are still preserved; only the derived linkage field is recomputed from truth
+- `test/lib/phase1-validator-tools.test.js`
+  - added a regression proving stale profile indexes like `[4, 12]` are discarded and rebuilt as the real final segment indexes (for the fixture, `[0, 2]`)
+- `test/scripts/get-dialogue.test.js`
+  - expanded the whole-file timing-normalization regression so a speaker profile arrives with two linked indexes, one segment is dropped by runtime clamping, and the persisted profile now correctly collapses to `[0]`
+
+Commands run:
+- `bd update ee-7o0 --status in_progress --json`
+- `node --test test/lib/phase1-validator-tools.test.js test/scripts/get-dialogue.test.js`
+- `npm test`
+
+Test results:
+- targeted regression run passed
+- full suite passed: `312` tests green via `npm test`
+
+Scope / truth note:
+- no `node_modules` changes were made
+- no sibling polyrepo/package refresh was required
+- this task intentionally stayed narrow on speaker-profile index bookkeeping and did not touch the separate music false-silence lane (`ee-wt0`)
+
+Readiness for `ee-l0a1` / downstream rerun:
+- dialogue speaker-profile linkage bookkeeping is now truthful at the contract-normalization layer, so future persisted `speaker_profiles[*].grounded.linked_segment_indexes` should always refer to valid entries in the final persisted `dialogue_segments` array
+- overall Phase 1 review readiness is still also gated by the separate music issue in `ee-wt0`
+
+---
+
+### Task 2e: Investigate false silence in Phase 1 music windows
+
+**Bead ID:** `ee-wt0`  
+**SubAgent:** `coder`  
+**Prompt:** `Investigate why the fresh Phase 1-only rerun falsely labeled the 60-90 and 90-120 music windows as silence/no audio. Determine whether the bug is in chunk planning, prompt/input assembly, model output normalization, or artifact persistence, then land the smallest truthful fix. Add/update tests as needed, do not modify node_modules, and if the owning fix surface truly lives in a sibling polyrepo, land it there and refresh emotion-engine cleanly afterward. Update this plan with exact findings, files changed, commands, tests, and whether the music artifact is trustworthy after the fix.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `server/`
+- `test/`
+- sibling owning repos only if truly required
+
+**Files Created/Deleted/Modified:**
+- source/test files to be determined
+- `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
+
+**Status:** ⏳ Pending
+
+**Results:** Pending.
+
+---
+
+### Task 2f: Rerun the Phase 1-only review after dialogue/music cleanup
+
+**Bead ID:** `ee-l0a1`  
+**SubAgent:** `primary`  
+**Prompt:** `After ee-7o0 and ee-wt0 land, rerun configs/cod-test-phase1-review.yaml and determine whether the regenerated dialogue/music review packet is finally trustworthy enough to unblock ee-0ky. Preserve exact commands, logs, output paths, and comparison notes against the previous Phase 1-only packets. Close ee-l0a1 only after the rerun verdict is documented truthfully in this plan.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `output/`
+- `.logs/`
+
+**Files Created/Deleted/Modified:**
+- rerun artifacts to be determined
+- `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
+
+**Status:** ⏳ Pending
+
+**Results:** Pending.
 
 ---
 
