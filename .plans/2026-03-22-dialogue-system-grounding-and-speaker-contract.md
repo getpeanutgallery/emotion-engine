@@ -92,13 +92,98 @@ Results:
 - `.logs/`
 
 **Files Created/Deleted/Modified:**
-- modified or new Phase 1-only cod-test config
-- validation artifacts to be determined
+- `configs/cod-test-phase1-review.yaml`
+- `.logs/cod-test-phase1-review-20260322-ee-9bh.log`
+- `output/cod-test-phase1-review/`
 - `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Created the smallest truthful Phase 1-only review config in-repo and ran it cleanly.
+
+Exact config path:
+- `configs/cod-test-phase1-review.yaml`
+
+What the config does:
+- keeps only `gather_context` scripts:
+  - `server/scripts/get-context/get-dialogue.cjs`
+  - `server/scripts/get-context/get-music.cjs`
+- sets `process: []` and `report: []`
+- writes to isolated output root `output/cod-test-phase1-review`
+- explicitly pins `ai.music.analysisWindowSeconds: 30` so the richer post-`ee-3kf` music windowing is preserved for review rather than relying on an implicit default
+
+Validation commands run:
+- `node validate-configs.cjs`
+- `node server/run-pipeline.cjs --config configs/cod-test-phase1-review.yaml --dry-run`
+- `unset DIGITAL_TWIN_MODE DIGITAL_TWIN_PACK DIGITAL_TWIN_CASSETTE OPENROUTER_TIMEOUT_MS || true && set -a && [ -f .env ] && . ./.env && set +a && node server/run-pipeline.cjs --config configs/cod-test-phase1-review.yaml --verbose 2>&1 | tee .logs/cod-test-phase1-review-20260322-ee-9bh.log`
+
+Terminal outcome:
+- Phase 1-only pipeline completed successfully
+- exit code `0`
+- exactly 2 scripts executed
+- no Phase 2 / Phase 3 work was run
+
+Exact output / log / artifact paths:
+- log: `.logs/cod-test-phase1-review-20260322-ee-9bh.log`
+- output root: `output/cod-test-phase1-review/`
+- artifacts manifest: `output/cod-test-phase1-review/artifacts-complete.json`
+- run events: `output/cod-test-phase1-review/_meta/events.jsonl`
+- dialogue artifact: `output/cod-test-phase1-review/phase1-gather-context/dialogue-data.json`
+- music artifact: `output/cod-test-phase1-review/phase1-gather-context/music-data.json`
+- dialogue success envelope: `output/cod-test-phase1-review/phase1-gather-context/script-results/get-dialogue.success.json`
+- music success envelope: `output/cod-test-phase1-review/phase1-gather-context/script-results/get-music.success.json`
+- dialogue FFmpeg plan: `output/cod-test-phase1-review/phase1-gather-context/raw/ffmpeg/dialogue/chunk-plan.json`
+- music FFmpeg/analysis plan: `output/cod-test-phase1-review/phase1-gather-context/raw/ffmpeg/music/chunk-plan.json`
+- raw Phase 1 error summary: `output/cod-test-phase1-review/phase1-gather-context/raw/_meta/errors.summary.json`
+
+Runtime evidence preserved from the clean Phase 1-only run:
+- `output/cod-test-phase1-review/phase1-gather-context/raw/_meta/errors.summary.json` reports `outcome: success` and `totalErrors: 0`
+- `output/cod-test-phase1-review/phase1-gather-context/raw/ffmpeg/music/chunk-plan.json` now shows the intended two-level behavior:
+  - `transportChunks: 1`
+  - `analysisPolicy.kind: fixed-window-within-transport-budget`
+  - `analysisPolicy.maxWindowSeconds: 30`
+  - `chunks: 5`
+- dialogue still used a single transport-safe chunk in `output/cod-test-phase1-review/phase1-gather-context/raw/ffmpeg/dialogue/chunk-plan.json`
+
+Comparison against the prior known clean cod-test run in `output/cod-test/`:
+- Dialogue contract improved materially:
+  - prior `output/cod-test/phase1-gather-context/dialogue-data.json` had `18` segments, `0` persisted `speaker_id` values, and no `speaker_profiles`
+  - new `output/cod-test-phase1-review/phase1-gather-context/dialogue-data.json` has `15` segments, all `15` with persisted `speaker_id`, plus `5` `speaker_profiles`
+  - each new profile now separates grounded linkage/acoustic descriptors from speculative traits; in this run the speculative layer abstained on all profiles rather than inventing traits
+- Music artifact improved materially:
+  - prior `output/cod-test/phase1-gather-context/music-data.json` persisted a single whole-trailer segment (`0` → `140.042449`)
+  - new `output/cod-test-phase1-review/phase1-gather-context/music-data.json` persists `5` time-scoped segments:
+    - `0-30`
+    - `30-60`
+    - `60-90`
+    - `90-120`
+    - `120-140.042449`
+  - this is the exact Phase 1 shape Derrick asked to review alongside dialogue before any 3-chunk Phase 2 comparison
+
+Concise review packet for Derrick (dialogue + music together):
+- Start here:
+  - `output/cod-test-phase1-review/phase1-gather-context/dialogue-data.json`
+  - `output/cod-test-phase1-review/phase1-gather-context/music-data.json`
+- Fast supporting evidence:
+  - `output/cod-test-phase1-review/phase1-gather-context/raw/ffmpeg/music/chunk-plan.json`
+  - `output/cod-test-phase1-review/phase1-gather-context/script-results/get-dialogue.success.json`
+  - `output/cod-test-phase1-review/phase1-gather-context/script-results/get-music.success.json`
+- What looks good:
+  - dialogue now exposes anonymous same-speaker IDs and explicit speaker profiles with grounded vs inferred separation
+  - music is no longer collapsed to one whole-trailer segment; it is now reviewable in 30s windows while keeping a trailer-wide summary
+  - the run itself is clean (`exit 0`, no Phase 1 raw errors)
+- What to scrutinize carefully:
+  - speaker grouping/label plausibility across recurring lines for `spk_001`..`spk_005`
+  - whether the 30s music windows are semantically useful enough for the upcoming Phase 2 prompt review
+
+Trust blocker / no-overclaim note:
+- The new dialogue artifact still reports `totalDuration: 220` even though the source audio duration recorded in the Phase 1 FFmpeg traces is `140.042449s`.
+- It also still contains several dialogue segments extending beyond the source runtime (for example `140.5-146`, `147.5-150`, and `152-155`).
+- That means the new speaker contract shape is present and reviewable, but the dialogue timing itself is **not yet trustworthy enough** to treat as clean chunk-grounding evidence for the next `ee-0ky` 3-chunk Phase 2 comparison.
+
+Readiness judgment for `ee-0ky` next:
+- **Not ready yet.** Music review artifacts are good enough to inspect, but the dialogue timing overrun / `220s` duration mismatch is a real trust blocker for a truthful chunk-level before/after Phase 2 comparison.
+- Recommended next move before `ee-0ky`: tighten the Phase 1 dialogue timing contract so segment ranges stay inside the real source duration, then re-run this same Phase 1-only config once to regenerate the review packet on trustworthy timing.
 
 ---
 
@@ -169,13 +254,14 @@ Results:
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`. Phase 1 dialogue artifacts now persist anonymous speaker IDs, explicit same-speaker linkage, cautious acoustic descriptor handling with abstention, and a clearly separated speculative `inferred_traits` layer. Phase 2 prompt-building now receives those speaker profiles as structured context. Remaining plan work is the validation/execution follow-through in `ee-9bh`, `ee-0ky`, and `ee-9hk`.
+**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, and Task 2 added and executed a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`. The fresh review artifacts now show both halves Derrick wanted to inspect together before any 3-chunk Phase 2 comparison: dialogue with persisted anonymous `speaker_id` + `speaker_profiles`, and music with reviewable 30s time windows instead of a single whole-trailer segment. The Phase 1-only run itself was clean, but it also surfaced a remaining trust issue in dialogue timing: `dialogue-data.json` still reports `totalDuration: 220` and several segment ranges extending beyond the real `140.042449s` source runtime. Because of that, `ee-0ky` should not start yet; the next truthful step is to tighten/regenerate the Phase 1 dialogue timing before attempting the 3-chunk Phase 2 comparison.
 
 **Commits:**
 - `71e0c2b` - Add grounded dialogue speaker contract
 - `84c4b93` - Update plan with final commit hash
+- pending local commit for `configs/cod-test-phase1-review.yaml` and this plan update
 
-**Lessons Learned:** The most durable truth boundary is not “ask the model for demographic facts,” it is “persist grounded anonymous linkage by default, and force anything trait-like into an explicitly speculative lane with abstention.” That keeps the current system honest while still making future downstream experimentation possible.
+**Lessons Learned:** The richer speaker contract and richer music segmentation are both useful, but schema truth is only part of the story; timing truth still matters. A Phase 1 review packet can look structurally better while still being unfit for downstream chunk-level comparison if its dialogue timestamps drift past the real source duration. That makes this Phase 1-only checkpoint valuable: it let us separate “contract shape is better” from “artifacts are ready to ground Phase 2.”
 
 ---
 
