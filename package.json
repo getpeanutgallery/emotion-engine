@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1002.0",
-    "ai-providers": "github:getpeanutgallery/ai-providers#44b7221cd4b0d343127e462e2f425ab879b71df9",
+    "ai-providers": "github:getpeanutgallery/ai-providers#7273fd804d5e502939c4cbc992d24e5a0542f268",
     "axios": "^1.13.6",
     "cast": "git+ssh://git@github.com/getpeanutgallery/cast.git#main",
     "dotenv": "^17.3.1",
