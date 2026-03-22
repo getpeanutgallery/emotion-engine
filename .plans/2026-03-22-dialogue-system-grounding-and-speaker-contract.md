@@ -172,7 +172,7 @@ Results:
 **What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`. Phase 1 dialogue artifacts now persist anonymous speaker IDs, explicit same-speaker linkage, cautious acoustic descriptor handling with abstention, and a clearly separated speculative `inferred_traits` layer. Phase 2 prompt-building now receives those speaker profiles as structured context. Remaining plan work is the validation/execution follow-through in `ee-9bh`, `ee-0ky`, and `ee-9hk`.
 
 **Commits:**
-- `83d59a0` - Add grounded dialogue speaker contract
+- `71e0c2b` - Add grounded dialogue speaker contract
 
 **Lessons Learned:** The most durable truth boundary is not “ask the model for demographic facts,” it is “persist grounded anonymous linkage by default, and force anything trait-like into an explicitly speculative lane with abstention.” That keeps the current system honest while still making future downstream experimentation possible.
 
