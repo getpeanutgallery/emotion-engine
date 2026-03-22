@@ -117,6 +117,17 @@ test('Phase1 raw ffmpeg/ffprobe logs are namespaced by script', async (t) => {
           ]
         }
       },
+      settings: {
+        ffmpeg: {
+          audio: {
+            loglevel: 'error',
+            codec: 'pcm_s16le',
+            sample_rate_hz: 16000,
+            channels: 1,
+            container: 'wav'
+          }
+        }
+      },
       debug: { captureRaw: true, keepProcessedIntermediates: false }
     }
   });
@@ -130,6 +141,17 @@ test('Phase1 raw ffmpeg/ffprobe logs are namespaced by script', async (t) => {
           targets: [
             { adapter: { name: 'openai', model: 'test-music-model' } }
           ]
+        }
+      },
+      settings: {
+        ffmpeg: {
+          audio: {
+            loglevel: 'error',
+            codec: 'pcm_s16le',
+            sample_rate_hz: 16000,
+            channels: 1,
+            container: 'wav'
+          }
         }
       },
       debug: { captureRaw: true, keepProcessedIntermediates: false }

@@ -18,16 +18,16 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1002.0",
+    "ai-providers": "github:getpeanutgallery/ai-providers#44b7221cd4b0d343127e462e2f425ab879b71df9",
     "axios": "^1.13.6",
-    "ai-providers": "git+ssh://git@github.com/getpeanutgallery/ai-providers.git#1a6dc181d646fe350ac2acc248f7036ef9a71bae",
     "cast": "git+ssh://git@github.com/getpeanutgallery/cast.git#main",
     "dotenv": "^17.3.1",
     "ffmpeg-static": "^5.2.0",
     "ffprobe-static": "^3.1.0",
+    "goals": "git+ssh://git@github.com/getpeanutgallery/goals.git#main",
     "js-yaml": "^4.1.0",
     "retry-strategy": "git+ssh://git@github.com/getpeanutgallery/retry-strategy.git#main",
-    "tools": "git+ssh://git@github.com/getpeanutgallery/tools.git#main",
-    "goals": "git+ssh://git@github.com/getpeanutgallery/goals.git#main"
+    "tools": "git+ssh://git@github.com/getpeanutgallery/tools.git#main"
   },
   "engines": {
     "node": ">=18.0.0"
