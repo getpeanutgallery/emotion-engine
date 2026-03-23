@@ -1079,6 +1079,9 @@ Commands run:
 - `node - <<'NODE' ... copyInputAssets(outputDir, config, assetPath, configPath) ... NODE`
 - `npm test`
 
+Commit:
+- `a993af9` - Fix persona asset staging into output packages
+
 Verification / restage evidence:
 - before restage, the canonical comparison packet contained only:
   - `output/cod-test-phase2-3chunk-comparison/assets/input/cod.mp4`
@@ -1131,7 +1134,7 @@ Scope / ownership note:
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`, Task 2g fixed the remaining dialogue-tail normalization defect by preventing a long overrun line from surviving as a fake micro-tail at trailer end, and Task 2i then landed the dialogue timing-stability guard plus the slimmed inferred-traits contract revision in `server/scripts/get-context/get-dialogue.cjs` / `server/lib/structured-output.cjs`. Task 2h reran the real Phase 1-only review packet after the dialogue-tail fix, Task 3 executed the downstream 3-chunk Phase 2 comparison via `configs/cod-test-phase2-3chunk-comparison.yaml`, and Task 2j has now rerun that dialogue-focused comparison lane after `ee-mgv0`, preserving both a transient failed attempt and the successful verification rerun artifacts. That latest rerun confirms the specific human-reviewed misalignment bug is resolved in the comparison artifact (`"It's time to wake up."` moved from `0.9-1.1s` to `8.5-10.5s`) and confirms the persisted inferred-traits structure no longer includes the old disclaimer/abstained fields while remaining separate from grounded speaker identity/linkage fields. The overall plan remains partial only because Task 4 (music-window cadence decision) and Task 5 (optional inferred-traits experiment) are still pending.
+**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`, Task 2g fixed the remaining dialogue-tail normalization defect by preventing a long overrun line from surviving as a fake micro-tail at trailer end, and Task 2i then landed the dialogue timing-stability guard plus the slimmed inferred-traits contract revision in `server/scripts/get-context/get-dialogue.cjs` / `server/lib/structured-output.cjs`. Task 2h reran the real Phase 1-only review packet after the dialogue-tail fix, Task 3 executed the downstream 3-chunk Phase 2 comparison via `configs/cod-test-phase2-3chunk-comparison.yaml`, and Task 2j has now rerun that dialogue-focused comparison lane after `ee-mgv0`, preserving both a transient failed attempt and the successful verification rerun artifacts. That latest rerun confirms the specific human-reviewed misalignment bug is resolved in the comparison artifact (`"It's time to wake up."` moved from `0.9-1.1s` to `8.5-10.5s`) and confirms the persisted inferred-traits structure no longer includes the old disclaimer/abstained fields while remaining separate from grounded speaker identity/linkage fields. Task 6 (`ee-8hwt`) then fixed the output-package persona staging bug in `server/lib/output-manager.cjs`, added regression coverage in `test/output-manager.test.js`, and restaged the canonical `output/cod-test-phase2-3chunk-comparison/` packet so `assets/input/personas/SOUL.md` and `assets/input/personas/GOAL.md` are now present with hashes matching the exact source persona files used by the run. The overall plan remains partial only because Task 4 (music-window cadence decision) and Task 5 (optional inferred-traits experiment) are still pending.
 
 **Commits:**
 - `71e0c2b` - Add grounded dialogue speaker contract
@@ -1142,6 +1145,7 @@ Scope / ownership note:
 - `ab816d3` - Fix dialogue tail timing normalization
 - `0109e52` - Stabilize dialogue timing and slim inferred traits
 - `8f5c2d7` - Document ee-ecok dialogue validation rerun
+- `a993af9` - Fix persona asset staging into output packages
 
 **Lessons Learned:** A green Phase 1 rerun is necessary but not sufficient. For this lane, readiness depended on at least five truths lining up at once: segment ranges had to stay inside the real source duration, speaker-profile linkage had to match the final segment array, music prompts had to be grounded to the attached local chunk instead of the global trailer duration, clipped tail dialogue could not survive as fake micro-precision at the trailer boundary, and the final live rerun had to empirically confirm all of those fixes together before downstream chunk-level comparisons could be trusted.
 
