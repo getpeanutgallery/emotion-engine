@@ -778,6 +778,104 @@ Git / readiness:
 
 ---
 
+### Task 2j: Rerun dialogue-focused validation after the timeline + inferred-traits changes
+
+**Bead ID:** `ee-ecok`  
+**SubAgent:** `primary`  
+**Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine, execute bead ee-ecok and follow the active plan at .plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md. Hard rules: claim the bead at start with bd update ee-ecok --status in_progress --json; do NOT modify anything under node_modules; if the owning fix surface is in a sibling polyrepo, make the change there, commit and push in the owning repo, then refresh/update emotion-engine packages cleanly as needed; commit and push durable changes to main by default; update the active plan with what actually happened before finishing; close the bead when complete with an exact reason. Task goal: rerun the dialogue-focused validation after the dialogue timeline misalignment fix and inferred-traits contract revision, then determine whether the bug appears resolved in the new output. Required work: rerun the relevant validation config(s) cleanly, preserve exact commands/logs/output paths/comparison notes, inspect whether "It's time to wake up." is still misplaced near 0.9s-1.1s or now lands closer to the real ~8s-10s position, confirm dialogue-data.json now omits inferred-traits disclaimer/abstained while keeping inferred traits structurally separate from grounded speaker identity fields, update this active plan with the rerun verdict and exact artifact paths for human review, then close ee-ecok with an exact reason.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `output/`
+- `.logs/`
+
+**Files Created/Deleted/Modified:**
+- `output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-ecok/`
+- `output/_archives/cod-test-phase2-3chunk-comparison-ee-ecok-first-attempt/`
+- `.logs/archive/cod-test-phase2-3chunk-comparison-20260322-ee-0ky-rerun.log`
+- `.logs/archive/cod-test-phase2-3chunk-comparison-20260322-ee-ecok-first-attempt.log`
+- `.logs/cod-test-phase2-3chunk-comparison-20260322-ee-ecok.log`
+- `.logs/cod-test-phase2-3chunk-comparison-20260322-ee-ecok-rerun.log`
+- `output/cod-test-phase2-3chunk-comparison/`
+- `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
+
+**Status:** ✅ Complete
+
+**Results:** Preserved the stale pre-fix comparison packet, attempted a clean rerun, preserved the first failed attempt, then reran the same comparison config successfully after the transient dialogue-provider failure.
+
+Exact commands run:
+- `mkdir -p output/_archives .logs/archive && rm -rf output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-ecok && cp -a output/cod-test-phase2-3chunk-comparison output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-ecok && cp -a .logs/cod-test-phase2-3chunk-comparison-20260322-ee-0ky-rerun.log .logs/archive/cod-test-phase2-3chunk-comparison-20260322-ee-0ky-rerun.log && node validate-configs.cjs && node server/run-pipeline.cjs --config configs/cod-test-phase2-3chunk-comparison.yaml --dry-run && rm -rf output/cod-test-phase2-3chunk-comparison && unset DIGITAL_TWIN_MODE DIGITAL_TWIN_PACK DIGITAL_TWIN_CASSETTE OPENROUTER_TIMEOUT_MS || true && set -a && [ -f .env ] && . ./.env && set +a && node server/run-pipeline.cjs --config configs/cod-test-phase2-3chunk-comparison.yaml --verbose 2>&1 | tee .logs/cod-test-phase2-3chunk-comparison-20260322-ee-ecok.log`
+- `mkdir -p output/_archives .logs/archive && rm -rf output/_archives/cod-test-phase2-3chunk-comparison-ee-ecok-first-attempt && mv output/cod-test-phase2-3chunk-comparison output/_archives/cod-test-phase2-3chunk-comparison-ee-ecok-first-attempt && cp -a .logs/cod-test-phase2-3chunk-comparison-20260322-ee-ecok.log .logs/archive/cod-test-phase2-3chunk-comparison-20260322-ee-ecok-first-attempt.log && unset DIGITAL_TWIN_MODE DIGITAL_TWIN_PACK DIGITAL_TWIN_CASSETTE OPENROUTER_TIMEOUT_MS || true && set -a && [ -f .env ] && . ./.env && set +a && node server/run-pipeline.cjs --config configs/cod-test-phase2-3chunk-comparison.yaml --verbose 2>&1 | tee .logs/cod-test-phase2-3chunk-comparison-20260322-ee-ecok-rerun.log`
+
+First-attempt preservation note:
+- the first clean rerun failed during chunked Phase 1 dialogue transcription before a new canonical packet was produced
+- preserved failed output root: `output/_archives/cod-test-phase2-3chunk-comparison-ee-ecok-first-attempt/`
+- preserved failed log copy: `.logs/archive/cod-test-phase2-3chunk-comparison-20260322-ee-ecok-first-attempt.log`
+- exact raw failure evidence:
+  - `output/_archives/cod-test-phase2-3chunk-comparison-ee-ecok-first-attempt/phase1-gather-context/raw/ai/dialogue-chunks/chunk-0002/attempt-01/capture.json`
+  - `output/_archives/cod-test-phase2-3chunk-comparison-ee-ecok-first-attempt/phase1-gather-context/raw/ai/dialogue-chunks/chunk-0002/attempt-02/capture.json`
+- truthful cause: the primary dialogue target (`google/gemini-3.1-flash-lite-preview`) exceeded the local validator tool-call limit on chunk `0002`, then the fallback target (`openai/gpt-audio`) hit the known OpenRouter 400 path; no code changes were made in this verification bead because the second live rerun succeeded cleanly and the task goal here was rerun/inspection rather than a new implementation lane
+
+Successful rerun terminal outcome:
+- config validation passed
+- dry run passed
+- live rerun completed successfully with exit code `0`
+- exactly `3` scripts executed (`get-dialogue`, `get-music`, `video-chunks`)
+- Phase 1 dialogue ran through the new timing-stability guard: `Dialogue chunking enabled via timing-stability guard over 60s, chunking into 8 chunks (~20.0s each)`
+- Phase 2 processed exactly `3` chunks (`0-5`, `5-10`, `10-15`)
+- no Phase 3 report scripts were run
+
+Preserved output / log / artifact paths:
+- archived stale pre-fix packet: `output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-ecok/`
+- archived stale baseline-for-this-rerun log: `.logs/archive/cod-test-phase2-3chunk-comparison-20260322-ee-0ky-rerun.log`
+- archived first failed attempt packet: `output/_archives/cod-test-phase2-3chunk-comparison-ee-ecok-first-attempt/`
+- archived first failed attempt log: `.logs/archive/cod-test-phase2-3chunk-comparison-20260322-ee-ecok-first-attempt.log`
+- successful first-attempt log (failed run): `.logs/cod-test-phase2-3chunk-comparison-20260322-ee-ecok.log`
+- successful rerun log: `.logs/cod-test-phase2-3chunk-comparison-20260322-ee-ecok-rerun.log`
+- fresh output root: `output/cod-test-phase2-3chunk-comparison/`
+- fresh artifacts manifest: `output/cod-test-phase2-3chunk-comparison/artifacts-complete.json`
+- fresh run events: `output/cod-test-phase2-3chunk-comparison/_meta/events.jsonl`
+- fresh Phase 1 dialogue artifact: `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/dialogue-data.json`
+- fresh Phase 1 music artifact: `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/music-data.json`
+- fresh Phase 2 chunk analysis artifact: `output/cod-test-phase2-3chunk-comparison/phase2-process/chunk-analysis.json`
+- fresh Phase 2 success envelope: `output/cod-test-phase2-3chunk-comparison/phase2-process/script-results/video-chunks.success.json`
+- fresh raw Phase 1 error summary: `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw/_meta/errors.summary.json`
+
+Fresh rerun evidence:
+- `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw/_meta/errors.summary.json` reports `outcome: success` and `totalErrors: 0`
+- rerun log shows dialogue completed successfully in chunked mode with `23` dialogue segments and `Total duration: 140.0s`
+- rerun log shows music completed with `5` segments and `Music detected: Yes`
+- rerun log shows Phase 2 completed for exactly three chunks, with chunk 3 succeeding after 2 attempts
+
+Comparison against the stale pre-fix comparison packet (`output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-ecok/`):
+- The concrete dialogue-timeline bug appears resolved in the new output:
+  - stale packet placed `"It's time to wake up."` at `0.9 -> 1.1`
+  - fresh rerun places the same line at `8.5 -> 10.5`
+  - this now lands near the expected real-video position (`~8s-10s`) and is broadly aligned with the trusted earlier review packet (`output/cod-test-phase1-review/phase1-gather-context/dialogue-data.json` placed it at `9.2 -> 11.0`)
+- Dialogue artifact shape also improved materially:
+  - stale packet had `30` dialogue segments and `5` speaker profiles
+  - fresh rerun has `23` dialogue segments and `2` speaker profiles
+  - fresh rerun still uses the truthful source duration `140.042449`
+- The inferred-traits contract revision is present in the persisted artifact:
+  - stale packet speaker profiles used `inferred_traits: { disclaimer, traits, abstained }`
+  - fresh rerun speaker profiles use only `inferred_traits: { traits }`
+  - `inferred_traits` remains structurally separate from `grounded`, which still holds the speaker-linkage / confidence / acoustic-descriptor fields
+- Important truth note on reviewability:
+  - the old explicit disclaimer text is gone
+  - the old `abstained` concept is gone
+  - but this specific rerun still emitted empty `traits: []` arrays for both speaker profiles, so the contract is revised correctly without yet producing non-empty inferred traits in this output packet
+
+Comparison against the earlier trusted Phase 1 review packet (`output/cod-test-phase1-review/phase1-gather-context/dialogue-data.json`):
+- the fresh rerun now agrees with the review packet on the key human-verified timing question for `"It's time to wake up."` (fresh `8.5 -> 10.5`, review packet `9.2 -> 11.0`, both far from the bad `0.9 -> 1.1` placement)
+- the fresh rerun advances the contract shape beyond that older review packet, because the older review packet was generated before `ee-mgv0` and still persisted the old `inferred_traits.disclaimer` / `abstained` fields
+- the older review packet still had more speaker-profile granularity (`6` profiles vs `2` in this rerun), so the new rerun is better on the verified timing bug and contract slim-down but not strictly better on every representational dimension
+
+Verdict for human review:
+- **Yes, the specific dialogue-timeline bug appears resolved in the new comparison artifact.** The concrete bad line is no longer misplaced near the opening second and now lands in the expected `~8s-10s` region.
+- **Yes, the inferred-traits structure revision landed in persisted output.** `dialogue-data.json` no longer includes the explicit disclaimer text or the `abstained` concept, and inferred traits remain separated from grounded speaker identity/linkage fields.
+- **Caution:** this rerun validates the contract shape and the specific timing fix Derrick wanted to inspect, but it does **not** prove the system now emits rich non-empty inferred traits in practice; this packet's `traits` arrays are still empty.
+- **Caution:** the successful rerun still differs from the earlier Phase 1 review packet in speaker-profile count/segmentation density, so treat the artifact as a successful bug-fix verification packet rather than a final statement that every dialogue-shape stability question is solved forever.
+
 ### Task 3: Run a 3-chunk Phase 2 comparison against the original stored cod-test run
 
 **Bead ID:** `ee-0ky`  
@@ -946,7 +1044,7 @@ Bottom-line judgment for this bead:
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`, and Task 2g fixed the remaining dialogue-tail normalization defect by preventing a long overrun line from surviving as a fake micro-tail at trailer end. Task 2h then reran the real Phase 1-only review packet after that final dialogue-tail fix. Task 3 has now executed the downstream 3-chunk Phase 2 comparison via `configs/cod-test-phase2-3chunk-comparison.yaml`, preserving both the first failed attempt and the successful rerun artifacts. The comparison shows that richer Phase 1 dialogue/music context is definitely being consumed in Phase 2 and is net improving chunk judgments, especially for chunks `0` and `1`, while also surfacing one caution: the successful rerun dialogue packet expanded to a noisier `30`-segment artifact and chunk `2` demonstrates that the context lane is helpful but not yet stable enough to call fully canonical. The overall plan remains partial only because Task 4 (music-window cadence decision) and Task 5 (optional inferred-traits experiment) are still pending.
+**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`, Task 2g fixed the remaining dialogue-tail normalization defect by preventing a long overrun line from surviving as a fake micro-tail at trailer end, and Task 2i then landed the dialogue timing-stability guard plus the slimmed inferred-traits contract revision in `server/scripts/get-context/get-dialogue.cjs` / `server/lib/structured-output.cjs`. Task 2h reran the real Phase 1-only review packet after the dialogue-tail fix, Task 3 executed the downstream 3-chunk Phase 2 comparison via `configs/cod-test-phase2-3chunk-comparison.yaml`, and Task 2j has now rerun that dialogue-focused comparison lane after `ee-mgv0`, preserving both a transient failed attempt and the successful verification rerun artifacts. That latest rerun confirms the specific human-reviewed misalignment bug is resolved in the comparison artifact (`"It's time to wake up."` moved from `0.9-1.1s` to `8.5-10.5s`) and confirms the persisted inferred-traits structure no longer includes the old disclaimer/abstained fields while remaining separate from grounded speaker identity/linkage fields. The overall plan remains partial only because Task 4 (music-window cadence decision) and Task 5 (optional inferred-traits experiment) are still pending.
 
 **Commits:**
 - `71e0c2b` - Add grounded dialogue speaker contract
@@ -955,6 +1053,7 @@ Bottom-line judgment for this bead:
 - `937d52d` - Fix speaker profile linked segment indexes
 - `30888f5` - Ground Phase 1 music chunk prompts
 - `ab816d3` - Fix dialogue tail timing normalization
+- `0109e52` - Stabilize dialogue timing and slim inferred traits
 
 **Lessons Learned:** A green Phase 1 rerun is necessary but not sufficient. For this lane, readiness depended on at least five truths lining up at once: segment ranges had to stay inside the real source duration, speaker-profile linkage had to match the final segment array, music prompts had to be grounded to the attached local chunk instead of the global trailer duration, clipped tail dialogue could not survive as fake micro-precision at the trailer boundary, and the final live rerun had to empirically confirm all of those fixes together before downstream chunk-level comparisons could be trusted.
 

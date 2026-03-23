@@ -6,24 +6,24 @@
       "startTime": 0,
       "endTime": 5,
       "status": "success",
-      "summary": "The video opens with fast-paced, intense visual cuts and dramatic dialogue about fear and control.",
+      "summary": "Chaotic glitchy intro with 'RISING TENSIONS' text triggers immediate skepticism, but fast cuts and intense music maintain sensory engagement.",
       "emotions": {
         "patience": {
-          "score": 4,
-          "reasoning": "The fast cuts provide immediate visual punch, but the generic 'rising tensions' dialogue tests my 3-second rule."
+          "score": 3,
+          "reasoning": "Direct hit on pet peeve ('Rising tensions' text) drastically reduces willingness to wait; thumb hovering over scroll."
         },
         "boredom": {
-          "score": 4,
-          "reasoning": "The rapid visual changes prevent me from scrolling immediately, even if the voiceover is a bit cliché."
+          "score": 5,
+          "reasoning": "Visually busy but feels generic/cliché; 'seen this before' fatigue sets in despite the chaos."
         },
         "excitement": {
-          "score": 7,
-          "reasoning": "The high-energy music and rapid-fire visuals create enough intrigue to keep me watching to see what happens next."
+          "score": 6,
+          "reasoning": "High-intensity music and rapid visual transitions provide sensory punch, preventing immediate scroll despite skepticism."
         }
       },
       "dominant_emotion": "excitement",
       "confidence": 0.85,
-      "tokens": 4787,
+      "tokens": 8504,
       "persona": {
         "soulPath": "../cast/impatient-teenager/SOUL.md",
         "goalPath": "../goals/video-ad-evaluation.md",
@@ -40,24 +40,24 @@
       "startTime": 5,
       "endTime": 10,
       "status": "success",
-      "summary": "Glitchy skull face transitions to soldier running, then massive highway collapse with falling cars, ending on a wide shot of the devastated city skyline. Military comms add urgency to the visual chaos.",
+      "summary": "Fast-paced destruction and glitch effects keep the energy high, but the 'wake up' voiceover feels like a generic trailer cliché that risks breaking immersion.",
       "emotions": {
         "patience": {
-          "score": 8,
-          "reasoning": "Glitch skull at 00:05 acts as a strong pattern interrupt; military dialogue creates narrative urgency without slowing the pace."
+          "score": 7,
+          "reasoning": "Fast cuts and high stakes keep me from scrolling, but the generic military vibe is testing my tolerance for clichés."
         },
         "boredom": {
           "score": 2,
-          "reasoning": "Relentless visual changes (face -> run -> collapse -> tunnel -> skyline) prevent disengagement."
+          "reasoning": "Too much visual chaos and movement to zone out; the car crash shot specifically grabs attention."
         },
         "excitement": {
           "score": 8,
-          "reasoning": "Falling cars and crumbling highway deliver visceral impact; glitch aesthetic feels fresh and high-energy."
+          "reasoning": "The cinematic scale and glitch effects hit the dopamine need, even if the 'wake up' line is cringe."
         }
       },
       "dominant_emotion": "excitement",
-      "confidence": 0.9,
-      "tokens": 14192,
+      "confidence": 0.85,
+      "tokens": 11112,
       "persona": {
         "soulPath": "../cast/impatient-teenager/SOUL.md",
         "goalPath": "../goals/video-ad-evaluation.md",
@@ -74,24 +74,24 @@
       "startTime": 10,
       "endTime": 15,
       "status": "success",
-      "summary": "Chaotic city destruction visuals transition into a bold title card reveal for Black Ops 7, followed by quick action cuts.",
+      "summary": "The title card slams in immediately which hooks me, but the edgy villain dialogue is kinda cringe.",
       "emotions": {
         "patience": {
-          "score": 2,
-          "reasoning": "Logo animation at 3s triggers immediate scroll risk for this persona; corporate intros are a stated dealbreaker."
+          "score": 7,
+          "reasoning": "Title card hits within the first second of the chunk, buying me a few more seconds despite the cliché dialogue."
         },
         "boredom": {
-          "score": 8,
-          "reasoning": "Title card interrupts the flow; Alex hates generic intros and buzzwords, leading to high disengagement."
+          "score": 3,
+          "reasoning": "Too much visual chaos with fire and glitches to zone out, even if the script is generic."
         },
         "excitement": {
-          "score": 4,
-          "reasoning": "Visual intensity (smoke, city) offers some energy, but the branding overlay dampens authentic engagement."
+          "score": 8,
+          "reasoning": "Black Ops 7 logo reveal plus high-intensity music and explosions spikes the hype significantly."
         }
       },
-      "dominant_emotion": "boredom",
-      "confidence": 0.85,
-      "tokens": 24211,
+      "dominant_emotion": "excitement",
+      "confidence": 0.9,
+      "tokens": 9307,
       "persona": {
         "soulPath": "../cast/impatient-teenager/SOUL.md",
         "goalPath": "../goals/video-ad-evaluation.md",
@@ -103,7 +103,7 @@
       }
     }
   ],
-  "totalTokens": 43190,
+  "totalTokens": 28923,
   "statusSummary": {
     "total": 3,
     "successful": 3,

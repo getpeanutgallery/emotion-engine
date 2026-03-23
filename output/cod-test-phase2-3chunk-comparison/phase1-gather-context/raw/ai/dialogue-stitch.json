@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 2,
+  "kind": "pointer",
+  "updatedAt": "2026-03-23T01:27:37.093Z",
+  "latestAttempt": 1,
+  "target": {
+    "dir": "dialogue-stitch/attempt-01",
+    "file": "dialogue-stitch/attempt-01/capture.json"
+  }
+}
