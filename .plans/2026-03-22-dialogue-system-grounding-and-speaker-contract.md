@@ -1185,7 +1185,7 @@ Observed improvement versus the archived pre-fix packet (`output/_archives/cod-t
   - `spk_002` cleanly owns the Menendez-style threat lines and carries persisted speculative identity hints like `identity=Raul Menendez`
   - the raw chunk captures under `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw/ai/dialogue-chunks/` now show the richer speaker registry being passed forward chunk-to-chunk in the prompt contract
 - the rerun itself completed truthfully: Phase 1 and Phase 2 both succeeded, `phase1-gather-context/raw/_meta/errors.summary.json` reports `outcome: success` and `totalErrors: 0`, and the downstream 3-chunk comparison packet remains reproducible after the dialogue fix
-- commit: `5c0d3ae` - `Fix dialogue speaker registry stitching`
+- commit: `8713428` - `Fix dialogue speaker registry stitching`
 
 ---
 
@@ -1205,7 +1205,7 @@ Observed improvement versus the archived pre-fix packet (`output/_archives/cod-t
 - `0109e52` - Stabilize dialogue timing and slim inferred traits
 - `8f5c2d7` - Document ee-ecok dialogue validation rerun
 - `a993af9` - Fix persona asset staging into output packages
-- `5c0d3ae` - Fix dialogue speaker registry stitching
+- `8713428` - Fix dialogue speaker registry stitching
 
 **Lessons Learned:** A green Phase 1 rerun is necessary but not sufficient. For this lane, readiness depended on at least five truths lining up at once: segment ranges had to stay inside the real source duration, speaker-profile linkage had to match the final segment array, music prompts had to be grounded to the attached local chunk instead of the global trailer duration, clipped tail dialogue could not survive as fake micro-precision at the trailer boundary, and the final live rerun had to empirically confirm all of those fixes together before downstream chunk-level comparisons could be trusted.
 
