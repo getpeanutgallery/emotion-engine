@@ -2,7 +2,7 @@
   "segmentIndex": 2,
   "startTime": 60,
   "endTime": 90,
-  "rollingSummaryIn": "The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue.",
+  "rollingSummaryIn": "The audio is a high-intensity movie trailer featuring dramatic dialogue and action-oriented sound effects set against a driving musical score.",
   "attempt": 1,
   "attemptInTarget": 1,
   "targetIndex": 0,
@@ -19,15 +19,15 @@
   },
   "failover": null,
   "promptRef": {
-    "sha256": "27583ff1081599ac0b192ae3f8e3f36a3cba1260897ebd0721698523df25f2b3",
-    "file": "_meta/ai/_prompts/27583ff1081599ac0b192ae3f8e3f36a3cba1260897ebd0721698523df25f2b3.json"
+    "sha256": "dfa291d136b3ad920738e1af03b6e53b457feb4faaca40ae9103130a51756d89",
+    "file": "_meta/ai/_prompts/dfa291d136b3ad920738e1af03b6e53b457feb4faaca40ae9103130a51756d89.json"
   },
   "rawResponse": {
-    "content": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio features high-intensity action music, dramatic sound effects, and urgent dialogue, maintaining the suspenseful and explosive tone of a movie trailer.\",\n  \"rollingSummary\": \"The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue, consistently maintaining a high level of excitement and tension.\"\n}",
+    "content": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio continues with high-energy, aggressive electronic rock music and intense vocal delivery, maintaining the high-intensity trailer atmosphere.\",\n  \"rollingSummary\": \"The audio remains a high-intensity movie trailer featuring dramatic dialogue, action-oriented sound effects, and a driving, aggressive musical score.\"\n}",
     "usage": {
-      "input": 2526,
-      "output": 137,
-      "total": 2663
+      "input": 2503,
+      "output": 402,
+      "total": 2905
     },
     "providerRequest": {
       "method": "POST",
@@ -44,7 +44,7 @@
             "content": [
               {
                 "type": "text",
-                "text": "Analyze the audio in this chunk (60.0s to 90.0s).\n\nImportant grounding:\n- The attached audio file is already the extracted audio for this exact global window.\n- The attached chunk duration is approximately 30.0 seconds.\n- Treat 60.0s to 90.0s as the chunk's location in the original timeline, not as a claim about the attached file's full duration.\n- Do NOT claim the requested range exceeds the file duration just because the attached chunk is shorter than the full trailer.\n- Analyze only the audio that is actually present in the attached chunk.\n\nRolling summary so far (from previous chunks):\nThe audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue.\n\nIdentify:\n1. Type of audio: music, speech, silence, ambient noise, sound effects\n2. If music: describe the mood (upbeat, calm, tense, sad, energetic, etc.)\n3. Intensity level from 1-10\n4. Brief description\n\nReturn JSON only in this format:\n{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"Brief description of the audio\",\n    \"mood\": \"energetic\",\n    \"intensity\": 5\n  },\n  \"chunkSummary\": \"1-2 sentences\",\n  \"rollingSummary\": \"Updated rolling summary for the entire audio so far (keep concise)\"\n}\n\nAllowed values for analysis.type: music | speech | silence | ambient | sfx.\nAllowed values for analysis.mood: upbeat | calm | tense | sad | energetic | neutral.\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_music_analysis_json\",\n  \"musicAnalysis\": {\n    \"analysis\": {\n      \"type\": \"music\",\n      \"description\": \"Upbeat instrumental pop bed.\",\n      \"mood\": \"energetic\",\n      \"intensity\": 7\n    },\n    \"rollingSummary\": \"The audio stays upbeat and music-led so far.\"\n  }\n}\n2) Final music analysis JSON matching the schema above.\n\nAcceptance rules:\n- The final music analysis JSON is accepted only after validate_music_analysis_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_music_analysis_json\",\"musicAnalysis\":{\"analysis\":{\"type\":\"music\",\"description\":\"Upbeat instrumental pop bed.\",\"mood\":\"energetic\",\"intensity\":7},\"rollingSummary\":\"The audio stays upbeat and music-led so far.\"}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised music analysis JSON candidate.\n- After the validator returns valid=true, return ONLY the final music analysis JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must be the music analysis JSON object for this chunk.\n\nFinal artifact reminders:\n- Report analysis.type, analysis.description, optional analysis.mood, and analysis.intensity.\n- Include rollingSummary when you have continuity context from prior chunks.\n\nTool contract:\n{\n  \"name\": \"validate_music_analysis_json\",\n  \"argumentKey\": \"musicAnalysis\",\n  \"description\": \"Validate a Phase 1 music analysis JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_music_analysis_json\",\n    \"musicAnalysis\": {\n      \"analysis\": {\n        \"type\": \"music\",\n        \"description\": \"Upbeat instrumental pop bed.\",\n        \"mood\": \"energetic\",\n        \"intensity\": 7\n      },\n      \"rollingSummary\": \"The audio stays upbeat and music-led so far.\"\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"musicAnalysis\"\n    ],\n    \"properties\": {\n      \"musicAnalysis\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate music analysis JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, and optional rollingSummary.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 3,\n  \"remainingValidatorCalls\": 2\n}\n\nConversation state:\n[\n  {\n    \"role\": \"assistant\",\n    \"turn\": 1,\n    \"kind\": \"model_output\",\n    \"raw\": \"{\\n  \\\"tool\\\": \\\"validate_music_analysis_json\\\",\\n  \\\"musicAnalysis\\\": {\\n    \\\"analysis\\\": {\\n      \\\"type\\\": \\\"music\\\",\\n      \\\"description\\\": \\\"High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.\\\",\\n      \\\"mood\\\": \\\"energetic\\\",\\n      \\\"intensity\\\": 9\\n    },\\n    \\\"chunkSummary\\\": \\\"The audio features high-intensity action music, dramatic sound effects, and urgent dialogue, maintaining the suspenseful and explosive tone of a movie trailer.\\\",\\n    \\\"rollingSummary\\\": \\\"The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue, consistently maintaining a high level of excitement and tension.\\\"\\n  }\\n}\"\n  },\n  {\n    \"role\": \"tool\",\n    \"turn\": 1,\n    \"kind\": \"validator_acceptance\",\n    \"toolName\": \"validate_music_analysis_json\",\n    \"toolCall\": {\n      \"tool\": \"validate_music_analysis_json\",\n      \"musicAnalysis\": {\n        \"analysis\": {\n          \"type\": \"music\",\n          \"description\": \"High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.\",\n          \"mood\": \"energetic\",\n          \"intensity\": 9\n        },\n        \"chunkSummary\": \"The audio features high-intensity action music, dramatic sound effects, and urgent dialogue, maintaining the suspenseful and explosive tone of a movie trailer.\",\n        \"rollingSummary\": \"The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue, consistently maintaining a high level of excitement and tension.\"\n      },\n      \"arguments\": {\n        \"musicAnalysis\": {\n          \"analysis\": {\n            \"type\": \"music\",\n            \"description\": \"High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.\",\n            \"mood\": \"energetic\",\n            \"intensity\": 9\n          },\n          \"chunkSummary\": \"The audio features high-intensity action music, dramatic sound effects, and urgent dialogue, maintaining the suspenseful and explosive tone of a movie trailer.\",\n          \"rollingSummary\": \"The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue, consistently maintaining a high level of excitement and tension.\"\n        }\n      }\n    },\n    \"result\": {\n      \"ok\": true,\n      \"valid\": true,\n      \"toolName\": \"validate_music_analysis_json\",\n      \"summary\": \"JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.\",\n      \"errors\": [],\n      \"normalizedValue\": {\n        \"analysis\": {\n          \"type\": \"music\",\n          \"description\": \"High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.\",\n          \"mood\": \"energetic\",\n          \"intensity\": 9\n        },\n        \"rollingSummary\": \"The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue, consistently maintaining a high level of excitement and tension.\"\n      }\n    }\n  }\n]"
+                "text": "Analyze the audio in this chunk (60.0s to 90.0s).\n\nImportant grounding:\n- The attached audio file is already the extracted audio for this exact global window.\n- The attached chunk duration is approximately 30.0 seconds.\n- Treat 60.0s to 90.0s as the chunk's location in the original timeline, not as a claim about the attached file's full duration.\n- Do NOT claim the requested range exceeds the file duration just because the attached chunk is shorter than the full trailer.\n- Analyze only the audio that is actually present in the attached chunk.\n\nRolling summary so far (from previous chunks):\nThe audio is a high-intensity movie trailer featuring dramatic dialogue and action-oriented sound effects set against a driving musical score.\n\nIdentify:\n1. Type of audio: music, speech, silence, ambient noise, sound effects\n2. If music: describe the mood (upbeat, calm, tense, sad, energetic, etc.)\n3. Intensity level from 1-10\n4. Brief description\n\nReturn JSON only in this format:\n{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"Brief description of the audio\",\n    \"mood\": \"energetic\",\n    \"intensity\": 5\n  },\n  \"chunkSummary\": \"1-2 sentences\",\n  \"rollingSummary\": \"Updated rolling summary for the entire audio so far (keep concise)\"\n}\n\nAllowed values for analysis.type: music | speech | silence | ambient | sfx.\nAllowed values for analysis.mood: upbeat | calm | tense | sad | energetic | neutral.\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_music_analysis_json\",\n  \"musicAnalysis\": {\n    \"analysis\": {\n      \"type\": \"music\",\n      \"description\": \"Upbeat instrumental pop bed.\",\n      \"mood\": \"energetic\",\n      \"intensity\": 7\n    },\n    \"rollingSummary\": \"The audio stays upbeat and music-led so far.\"\n  }\n}\n2) Final music analysis JSON matching the schema above.\n\nAcceptance rules:\n- The final music analysis JSON is accepted only after validate_music_analysis_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_music_analysis_json\",\"musicAnalysis\":{\"analysis\":{\"type\":\"music\",\"description\":\"Upbeat instrumental pop bed.\",\"mood\":\"energetic\",\"intensity\":7},\"rollingSummary\":\"The audio stays upbeat and music-led so far.\"}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised music analysis JSON candidate.\n- After the validator returns valid=true, return ONLY the final music analysis JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must be the music analysis JSON object for this chunk.\n\nFinal artifact reminders:\n- Report analysis.type, analysis.description, optional analysis.mood, and analysis.intensity.\n- Include rollingSummary when you have continuity context from prior chunks.\n\nTool contract:\n{\n  \"name\": \"validate_music_analysis_json\",\n  \"argumentKey\": \"musicAnalysis\",\n  \"description\": \"Validate a Phase 1 music analysis JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_music_analysis_json\",\n    \"musicAnalysis\": {\n      \"analysis\": {\n        \"type\": \"music\",\n        \"description\": \"Upbeat instrumental pop bed.\",\n        \"mood\": \"energetic\",\n        \"intensity\": 7\n      },\n      \"rollingSummary\": \"The audio stays upbeat and music-led so far.\"\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"musicAnalysis\"\n    ],\n    \"properties\": {\n      \"musicAnalysis\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate music analysis JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, and optional rollingSummary.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 3,\n  \"remainingValidatorCalls\": 2\n}\n\nConversation state:\n[\n  {\n    \"role\": \"assistant\",\n    \"turn\": 1,\n    \"kind\": \"model_output\",\n    \"raw\": \"{\\n  \\\"tool\\\": \\\"validate_music_analysis_json\\\",\\n  \\\"musicAnalysis\\\": {\\n    \\\"analysis\\\": {\\n      \\\"type\\\": \\\"music\\\",\\n      \\\"description\\\": \\\"Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.\\\",\\n      \\\"mood\\\": \\\"energetic\\\",\\n      \\\"intensity\\\": 9\\n    },\\n    \\\"chunkSummary\\\": \\\"The audio continues with high-energy, aggressive electronic rock music and intense vocal delivery, maintaining the high-intensity trailer atmosphere.\\\",\\n    \\\"rollingSummary\\\": \\\"The audio remains a high-intensity movie trailer featuring dramatic dialogue, action-oriented sound effects, and a driving, aggressive musical score.\\\"\\n  }\\n}\"\n  },\n  {\n    \"role\": \"tool\",\n    \"turn\": 1,\n    \"kind\": \"validator_acceptance\",\n    \"toolName\": \"validate_music_analysis_json\",\n    \"toolCall\": {\n      \"tool\": \"validate_music_analysis_json\",\n      \"musicAnalysis\": {\n        \"analysis\": {\n          \"type\": \"music\",\n          \"description\": \"Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.\",\n          \"mood\": \"energetic\",\n          \"intensity\": 9\n        },\n        \"chunkSummary\": \"The audio continues with high-energy, aggressive electronic rock music and intense vocal delivery, maintaining the high-intensity trailer atmosphere.\",\n        \"rollingSummary\": \"The audio remains a high-intensity movie trailer featuring dramatic dialogue, action-oriented sound effects, and a driving, aggressive musical score.\"\n      },\n      \"arguments\": {\n        \"musicAnalysis\": {\n          \"analysis\": {\n            \"type\": \"music\",\n            \"description\": \"Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.\",\n            \"mood\": \"energetic\",\n            \"intensity\": 9\n          },\n          \"chunkSummary\": \"The audio continues with high-energy, aggressive electronic rock music and intense vocal delivery, maintaining the high-intensity trailer atmosphere.\",\n          \"rollingSummary\": \"The audio remains a high-intensity movie trailer featuring dramatic dialogue, action-oriented sound effects, and a driving, aggressive musical score.\"\n        }\n      }\n    },\n    \"result\": {\n      \"ok\": true,\n      \"valid\": true,\n      \"toolName\": \"validate_music_analysis_json\",\n      \"summary\": \"JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.\",\n      \"errors\": [],\n      \"normalizedValue\": {\n        \"analysis\": {\n          \"type\": \"music\",\n          \"description\": \"Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.\",\n          \"mood\": \"energetic\",\n          \"intensity\": 9\n        },\n        \"rollingSummary\": \"The audio remains a high-intensity movie trailer featuring dramatic dialogue, action-oriented sound effects, and a driving, aggressive musical score.\"\n      }\n    }\n  }\n]"
               },
               {
                 "type": "input_audio",
@@ -67,7 +67,7 @@
     "providerResponse": {
       "status": 200,
       "headers": {
-        "date": "Mon, 23 Mar 2026 01:28:01 GMT",
+        "date": "Mon, 23 Mar 2026 12:20:32 GMT",
         "content-type": "application/json",
         "transfer-encoding": "chunked",
         "connection": "keep-alive",
@@ -76,12 +76,12 @@
         "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
         "x-content-type-options": "nosniff",
         "server": "cloudflare",
-        "cf-ray": "9e09a827cd91b3da-MIA"
+        "cf-ray": "9e0d63f8bbb7323d-MIA"
       },
       "body": {
-        "id": "gen-1774229280-n2M806qE0W6XrAaBR8rb",
+        "id": "gen-1774268430-q7oDxawwUEUnOL5iwx3u",
         "object": "chat.completion",
-        "created": 1774229280,
+        "created": 1774268430,
         "model": "google/gemini-3.1-flash-lite-preview-20260303",
         "provider": "Google AI Studio",
         "system_fingerprint": null,
@@ -93,10 +93,16 @@
             "native_finish_reason": "STOP",
             "message": {
               "role": "assistant",
-              "content": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio features high-intensity action music, dramatic sound effects, and urgent dialogue, maintaining the suspenseful and explosive tone of a movie trailer.\",\n  \"rollingSummary\": \"The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue, consistently maintaining a high level of excitement and tension.\"\n}",
+              "content": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio continues with high-energy, aggressive electronic rock music and intense vocal delivery, maintaining the high-intensity trailer atmosphere.\",\n  \"rollingSummary\": \"The audio remains a high-intensity movie trailer featuring dramatic dialogue, action-oriented sound effects, and a driving, aggressive musical score.\"\n}",
               "refusal": null,
-              "reasoning": null,
+              "reasoning": "**Finalizing the Artifact**\n\nI am now focused on delivering the final JSON artifact. I've reviewed the dialogue history and confirmed the previous analysis was successful. My sole task is to ensure the artifact is ready.\n\n\n",
               "reasoning_details": [
+                {
+                  "type": "[Truncated]",
+                  "text": "[Truncated]",
+                  "format": "[Truncated]",
+                  "index": "[Truncated]"
+                },
                 {
                   "type": "[Truncated]",
                   "data": "[Truncated]",
@@ -111,13 +117,13 @@
           "prompt_tokens": "[REDACTED]",
           "completion_tokens": "[REDACTED]",
           "total_tokens": "[REDACTED]",
-          "cost": 0.0010245,
+          "cost": 0.00141625,
           "is_byok": false,
           "prompt_tokens_details": "[REDACTED]",
           "cost_details": {
-            "upstream_inference_cost": 0.0010245,
-            "upstream_inference_prompt_cost": 0.000819,
-            "upstream_inference_completions_cost": 0.0002055
+            "upstream_inference_cost": 0.00141625,
+            "upstream_inference_prompt_cost": 0.00081325,
+            "upstream_inference_completions_cost": 0.000603
           },
           "completion_tokens_details": "[REDACTED]"
         }
@@ -129,11 +135,11 @@
       "start": 60,
       "end": 90,
       "type": "music",
-      "description": "High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.",
+      "description": "Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.",
       "mood": "energetic",
       "intensity": 9
     },
-    "rollingSummary": "The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue, consistently maintaining a high level of excitement and tension."
+    "rollingSummary": "The audio remains a high-intensity movie trailer featuring dramatic dialogue, action-oriented sound effects, and a driving, aggressive musical score."
   },
   "toolLoop": {
     "toolName": "validate_music_analysis_json",
@@ -146,7 +152,7 @@
         "role": "assistant",
         "turn": 1,
         "kind": "model_output",
-        "raw": "{\n  \"tool\": \"validate_music_analysis_json\",\n  \"musicAnalysis\": {\n    \"analysis\": {\n      \"type\": \"music\",\n      \"description\": \"High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.\",\n      \"mood\": \"energetic\",\n      \"intensity\": 9\n    },\n    \"chunkSummary\": \"The audio features high-intensity action music, dramatic sound effects, and urgent dialogue, maintaining the suspenseful and explosive tone of a movie trailer.\",\n    \"rollingSummary\": \"The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue, consistently maintaining a high level of excitement and tension.\"\n  }\n}"
+        "raw": "{\n  \"tool\": \"validate_music_analysis_json\",\n  \"musicAnalysis\": {\n    \"analysis\": {\n      \"type\": \"music\",\n      \"description\": \"Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.\",\n      \"mood\": \"energetic\",\n      \"intensity\": 9\n    },\n    \"chunkSummary\": \"The audio continues with high-energy, aggressive electronic rock music and intense vocal delivery, maintaining the high-intensity trailer atmosphere.\",\n    \"rollingSummary\": \"The audio remains a high-intensity movie trailer featuring dramatic dialogue, action-oriented sound effects, and a driving, aggressive musical score.\"\n  }\n}"
       },
       {
         "role": "tool",
@@ -158,12 +164,12 @@
           "musicAnalysis": {
             "analysis": {
               "type": "music",
-              "description": "High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.",
+              "description": "Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.",
               "mood": "energetic",
               "intensity": 9
             },
-            "chunkSummary": "The audio features high-intensity action music, dramatic sound effects, and urgent dialogue, maintaining the suspenseful and explosive tone of a movie trailer.",
-            "rollingSummary": "The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue, consistently maintaining a high level of excitement and tension."
+            "chunkSummary": "The audio continues with high-energy, aggressive electronic rock music and intense vocal delivery, maintaining the high-intensity trailer atmosphere.",
+            "rollingSummary": "The audio remains a high-intensity movie trailer featuring dramatic dialogue, action-oriented sound effects, and a driving, aggressive musical score."
           },
           "arguments": {
             "musicAnalysis": "[Circular]"
@@ -178,11 +184,11 @@
           "normalizedValue": {
             "analysis": {
               "type": "music",
-              "description": "High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.",
+              "description": "Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.",
               "mood": "energetic",
               "intensity": 9
             },
-            "rollingSummary": "The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue, consistently maintaining a high level of excitement and tension."
+            "rollingSummary": "The audio remains a high-intensity movie trailer featuring dramatic dialogue, action-oriented sound effects, and a driving, aggressive musical score."
           }
         }
       },
@@ -190,7 +196,7 @@
         "role": "assistant",
         "turn": 2,
         "kind": "model_output",
-        "raw": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio features high-intensity action music, dramatic sound effects, and urgent dialogue, maintaining the suspenseful and explosive tone of a movie trailer.\",\n  \"rollingSummary\": \"The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue, consistently maintaining a high level of excitement and tension.\"\n}"
+        "raw": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio continues with high-energy, aggressive electronic rock music and intense vocal delivery, maintaining the high-intensity trailer atmosphere.\",\n  \"rollingSummary\": \"The audio remains a high-intensity movie trailer featuring dramatic dialogue, action-oriented sound effects, and a driving, aggressive musical score.\"\n}"
       },
       {
         "role": "tool",
@@ -203,12 +209,12 @@
           "musicAnalysis": {
             "analysis": {
               "type": "music",
-              "description": "High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.",
+              "description": "Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.",
               "mood": "energetic",
               "intensity": 9
             },
-            "chunkSummary": "The audio features high-intensity action music, dramatic sound effects, and urgent dialogue, maintaining the suspenseful and explosive tone of a movie trailer.",
-            "rollingSummary": "The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue, consistently maintaining a high level of excitement and tension."
+            "chunkSummary": "The audio continues with high-energy, aggressive electronic rock music and intense vocal delivery, maintaining the high-intensity trailer atmosphere.",
+            "rollingSummary": "The audio remains a high-intensity movie trailer featuring dramatic dialogue, action-oriented sound effects, and a driving, aggressive musical score."
           },
           "arguments": {
             "musicAnalysis": "[Circular]"
@@ -223,11 +229,11 @@
           "normalizedValue": {
             "analysis": {
               "type": "music",
-              "description": "High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.",
+              "description": "Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.",
               "mood": "energetic",
               "intensity": 9
             },
-            "rollingSummary": "The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and dialogue, consistently maintaining a high level of excitement and tension."
+            "rollingSummary": "The audio remains a high-intensity movie trailer featuring dramatic dialogue, action-oriented sound effects, and a driving, aggressive musical score."
           }
         }
       }

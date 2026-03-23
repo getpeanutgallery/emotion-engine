@@ -6,9 +6,9 @@
   "run": {
     "configName": "COD Test Pipeline (Phase 2 3-chunk comparison)",
     "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison",
-    "startedAt": "2026-03-23T01:26:00.154Z",
-    "completedAt": "2026-03-23T01:27:37.093Z",
-    "durationMs": 96939,
+    "startedAt": "2026-03-23T12:17:21.582Z",
+    "completedAt": "2026-03-23T12:19:45.068Z",
+    "durationMs": 143486,
     "attempt": 1
   },
   "payload": {
@@ -17,27 +17,35 @@
       "dialogue_segments": [
         {
           "start": 0,
-          "end": 5,
+          "end": 2.5,
           "speaker": "Speaker 1",
           "speaker_id": "spk_001",
-          "text": "They want you afraid. Fear makes you easier to control.",
+          "text": "They want you afraid.",
+          "confidence": 0.95
+        },
+        {
+          "start": 3.2,
+          "end": 5.5,
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
+          "text": "Fear makes you easier to control.",
           "confidence": 0.98
         },
         {
-          "start": 8.5,
+          "start": 9,
           "end": 10.5,
           "speaker": "Speaker 1",
           "speaker_id": "spk_001",
           "text": "It's time to wake up.",
-          "confidence": 0.99
+          "confidence": 0.96
         },
         {
-          "start": 12,
-          "end": 17.5,
-          "speaker": "Speaker 1",
-          "speaker_id": "spk_001",
+          "start": 13,
+          "end": 17,
+          "speaker": "Speaker 2",
+          "speaker_id": "spk_002",
           "text": "Your streets shall once again run red with your blood.",
-          "confidence": 0.97
+          "confidence": 0.94
         },
         {
           "start": 17.5,
@@ -45,157 +53,157 @@
           "speaker": "Speaker 2",
           "speaker_id": "spk_002",
           "text": "Raul Menendez, United Global Unrest.",
-          "confidence": 0.95
+          "confidence": 0.92
         },
         {
           "start": 20,
-          "end": 22.2,
-          "speaker": "Raul Menendez",
+          "end": 21.5,
+          "speaker": "Speaker 1",
           "speaker_id": "spk_001",
           "text": "on an unprecedented scale.",
           "confidence": 0.92
         },
         {
-          "start": 23.2,
-          "end": 24.5,
-          "speaker": "Speaker 2",
-          "speaker_id": "spk_002",
+          "start": 22.1,
+          "end": 23.5,
+          "speaker": "Speaker 3",
+          "speaker_id": "spk_003",
           "text": "Menendez is a terrorist.",
           "confidence": 0.95
         },
         {
-          "start": 24.5,
-          "end": 27.2,
-          "speaker": "Raul Menendez",
-          "speaker_id": "spk_001",
+          "start": 23.9,
+          "end": 26.2,
+          "speaker": "Speaker 3",
+          "speaker_id": "spk_003",
           "text": "We're bringing peace and security to the world.",
-          "confidence": 0.96
+          "confidence": 0.94
         },
         {
-          "start": 28,
-          "end": 30,
+          "start": 26.8,
+          "end": 28.9,
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
+          "text": "He refuses to let me go.",
+          "confidence": 0.91
+        },
+        {
+          "start": 29.5,
+          "end": 32.5,
           "speaker": "Speaker 2",
           "speaker_id": "spk_002",
-          "text": "He refuses to let me go.",
+          "text": "Stop looking backwards, David, but what matters is what we do next.",
           "confidence": 0.93
         },
         {
-          "start": 30.2,
-          "end": 33,
-          "speaker": "Raul Menendez",
+          "start": 36.2,
+          "end": 38.5,
+          "speaker": "Speaker 1",
           "speaker_id": "spk_001",
-          "text": "Stop looking backwards, David. What matters is what we do next.",
-          "confidence": 0.97
-        },
-        {
-          "start": 35.2,
-          "end": 37,
-          "speaker": "Speaker 2",
-          "speaker_id": "spk_002",
           "text": "A lot of people counting on us for answers.",
-          "confidence": 0.94
+          "confidence": 0.9
         },
         {
           "start": 40,
           "end": 42.5,
-          "speaker": "Raul Menendez",
-          "speaker_id": "spk_001",
-          "text": "You have no idea what you've done.",
-          "confidence": 0.98
+          "speaker": "Speaker 2",
+          "speaker_id": "spk_002",
+          "text": "The world is on the brink of collapse.",
+          "confidence": 0.92
         },
         {
           "start": 43,
           "end": 46,
-          "speaker": "David",
-          "speaker_id": "spk_002",
-          "text": "I know exactly what I've done, Menendez.",
-          "confidence": 0.95
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
+          "text": "We cannot let him win, David. We have to stop him.",
+          "confidence": 0.88
         },
         {
           "start": 46.5,
           "end": 50,
-          "speaker": "Raul Menendez",
+          "speaker": "Speaker 2",
+          "speaker_id": "spk_002",
+          "text": "It's too late for that. The damage is already done.",
+          "confidence": 0.91
+        },
+        {
+          "start": 51,
+          "end": 53.5,
+          "speaker": "Speaker 3",
+          "speaker_id": "spk_003",
+          "text": "Specter One, report.",
+          "confidence": 0.95
+        },
+        {
+          "start": 54,
+          "end": 56,
+          "speaker": "Speaker 1",
           "speaker_id": "spk_001",
-          "text": "This is just the beginning of your suffering.",
-          "confidence": 0.92
-        },
-        {
-          "start": 50.5,
-          "end": 53,
-          "speaker": "David",
-          "speaker_id": "spk_002",
-          "text": "Specter One, report!",
-          "confidence": 0.96
-        },
-        {
-          "start": 53.5,
-          "end": 55,
-          "speaker": "David",
-          "speaker_id": "spk_002",
-          "text": "Need a sitrep!",
-          "confidence": 0.94
+          "text": "We need a sitrep.",
+          "confidence": 0.89
         },
         {
           "start": 62,
-          "end": 63,
-          "speaker": "David",
+          "end": 62.6,
+          "speaker": "Speaker 1",
           "speaker_id": "spk_001",
           "text": "This isn't real.",
           "confidence": 0.98
         },
         {
-          "start": 63.3,
-          "end": 64.2,
-          "speaker": "Raul Menendez",
+          "start": 63.1,
+          "end": 64.1,
+          "speaker": "Speaker 2",
           "speaker_id": "spk_002",
-          "text": "The hell it ain't!",
+          "text": "The hell it ain't.",
           "confidence": 0.95
         },
         {
           "start": 98,
           "end": 99.5,
-          "speaker": "David",
+          "speaker": "Speaker 1",
           "speaker_id": "spk_001",
           "text": "Pull it together, man!",
           "confidence": 0.98
         },
         {
           "start": 100,
-          "end": 102.5,
-          "speaker": "Menendez",
-          "speaker_id": "spk_001",
-          "text": "So eager to leave, David.",
-          "confidence": 0.95
-        },
-        {
-          "start": 103,
-          "end": 106,
-          "speaker": "Menendez",
-          "speaker_id": "spk_001",
-          "text": "Killing the man is a hell of a lot easier than killing the idea.",
-          "confidence": 0.98
-        },
-        {
-          "start": 108.5,
-          "end": 110.5,
-          "speaker": "David",
+          "end": 102.1,
+          "speaker": "Speaker 2",
           "speaker_id": "spk_002",
-          "text": "You were never cut out to be a Mason.",
+          "text": "So eager to leave, David.",
           "confidence": 0.92
         },
         {
-          "start": 113,
-          "end": 115,
-          "speaker": "David",
+          "start": 102.1,
+          "end": 106.5,
+          "speaker": "Speaker 2",
           "speaker_id": "spk_002",
+          "text": "Killing a man is a hell of a lot easier than killing the idea.",
+          "confidence": 0.95
+        },
+        {
+          "start": 108.1,
+          "end": 110.5,
+          "speaker": "Speaker 3",
+          "speaker_id": "spk_003",
+          "text": "You were never cut out to be a Mason.",
+          "confidence": 0.94
+        },
+        {
+          "start": 113.1,
+          "end": 115.2,
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
           "text": "No more games. This ends now.",
           "confidence": 0.96
         },
         {
-          "start": 122,
-          "end": 125,
-          "speaker": "Announcer",
-          "speaker_id": "spk_001",
+          "start": 120,
+          "end": 124.5,
+          "speaker": "Speaker 4",
+          "speaker_id": "spk_004",
           "text": "Get the Reznov challenge pack when you pre-order now.",
           "confidence": 0.98
         }
@@ -205,60 +213,172 @@
           "speaker_id": "spk_001",
           "label": "Speaker 1",
           "grounded": {
-            "confidence": null,
-            "confidence_abstained": true,
+            "confidence": 0.85,
+            "confidence_abstained": false,
             "linked_segment_indexes": [
               0,
               1,
               2,
-              4,
-              6,
+              5,
               8,
               10,
               12,
               15,
-              17,
+              16,
               18,
-              19,
               22
             ],
-            "acoustic_descriptors": [],
-            "acoustic_descriptors_abstained": true
+            "acoustic_descriptors": [
+              {
+                "label": "calm, authoritative, slightly ominous tone",
+                "confidence": 0.75
+              },
+              {
+                "label": "authoritative, calm",
+                "confidence": 0.75
+              },
+              {
+                "label": "authoritative, urgent tone",
+                "confidence": 0.85
+              },
+              {
+                "label": "urgent, commanding tone",
+                "confidence": 0.9
+              }
+            ]
           },
           "inferred_traits": {
-            "traits": []
+            "traits": [
+              {
+                "trait": "age_range",
+                "value": "adult",
+                "confidence": 0.4,
+                "note": "speculative"
+              },
+              {
+                "trait": "role",
+                "value": "likely military or official",
+                "confidence": 0.4,
+                "note": "contextual inference"
+              },
+              {
+                "trait": "role",
+                "value": "military operative",
+                "confidence": 0.85,
+                "note": "consistent with previous context"
+              }
+            ]
           }
         },
         {
           "speaker_id": "spk_002",
           "label": "Speaker 2",
           "grounded": {
-            "confidence": null,
-            "confidence_abstained": true,
+            "confidence": 0.85,
+            "confidence_abstained": false,
             "linked_segment_indexes": [
               3,
-              5,
-              7,
+              4,
               9,
               11,
               13,
+              17,
+              19,
+              20
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "menacing, dramatic, deep voice",
+                "confidence": 0.8
+              },
+              {
+                "label": "menacing, deep voice",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "accent",
+                "value": "possibly Hispanic",
+                "confidence": 0.3,
+                "note": "speculative"
+              },
+              {
+                "trait": "identity",
+                "value": "Raul Menendez",
+                "confidence": 0.9,
+                "note": "named in dialogue"
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_003",
+          "label": "Speaker 3",
+          "grounded": {
+            "confidence": 0.88,
+            "confidence_abstained": false,
+            "linked_segment_indexes": [
+              6,
+              7,
               14,
-              16,
-              20,
               21
             ],
-            "acoustic_descriptors": [],
-            "acoustic_descriptors_abstained": true
+            "acoustic_descriptors": [
+              {
+                "label": "female, authoritative",
+                "confidence": 0.8
+              },
+              {
+                "label": "authoritative, female",
+                "confidence": 0.85
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "role",
+                "value": "official/leader",
+                "confidence": 0.7,
+                "note": null
+              },
+              {
+                "trait": "role",
+                "value": "commander/official",
+                "confidence": 0.6,
+                "note": "inferred from command tone"
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_004",
+          "label": "Speaker 4",
+          "grounded": {
+            "confidence": 0.9,
+            "confidence_abstained": false,
+            "linked_segment_indexes": [
+              23
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "promotional, energetic, announcer-style voice",
+                "confidence": 0.85
+              }
+            ]
           },
           "inferred_traits": {
             "traits": []
           }
         }
       ],
-      "summary": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 1: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez, United Global Unrest.\nRaul Menendez: On an unprecedented scale.\nSpeaker 2: Menendez is a terrorist.\nRaul Menendez: We're bringing peace and security to the world.\nSpeaker 2: He refuses to let me go.\nRaul Menendez: Stop looking backwards, David. What matters is what we do next.\nSpeaker 2: A lot of people counting on us for answers.\nRaul Menendez: You have no idea what you've done.\nDavid: I know exactly what I've done, Menendez.\nRaul Menendez: This is just the beginning of your suffering.\nDavid: Specter One, report!\nDavid: Need a sitrep!\nDavid: This isn't real.\nRaul Menendez: The hell it ain't!\nDavid: Pull it together, man!\nMenendez: So eager to leave, David.\nMenendez: Killing the man is a hell of a lot easier than killing the idea.\nDavid: You were never cut out to be a Mason.\nDavid: No more games. This ends now.\nAnnouncer: Get the Reznov challenge pack when you pre-order now.",
+      "summary": "Speaker 1: They want you afraid.\nSpeaker 1: Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez, United Global Unrest.\nSpeaker 1: On an unprecedented scale.\nSpeaker 3: Menendez is a terrorist.\nSpeaker 3: We're bringing peace and security to the world.\nSpeaker 1: He refuses to let me go.\nSpeaker 2: Stop looking backwards, David, but what matters is what we do next.\nSpeaker 1: A lot of people counting on us for answers.\nSpeaker 2: The world is on the brink of collapse.\nSpeaker 1: We cannot let him win, David. We have to stop him.\nSpeaker 2: It's too late for that. The damage is already done.\nSpeaker 3: Specter One, report.\nSpeaker 1: We need a sitrep.\nSpeaker 1: This isn't real.\nSpeaker 2: The hell it ain't.\nSpeaker 1: Pull it together, man!\nSpeaker 2: So eager to leave, David.\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 3: You were never cut out to be a Mason.\nSpeaker 1: No more games. This ends now.\nSpeaker 4: Get the Reznov challenge pack when you pre-order now.",
       "totalDuration": 140.042449,
-      "handoffContext": "The promotional advertisement is ongoing. No dialogue detected in this micro-chunk.",
-      "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 1: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez, United Global Unrest.\nRaul Menendez: On an unprecedented scale.\nSpeaker 2: Menendez is a terrorist.\nRaul Menendez: We're bringing peace and security to the world.\nSpeaker 2: He refuses to let me go.\nRaul Menendez: Stop looking backwards, David. What matters is what we do next.\nSpeaker 2: A lot of people counting on us for answers.\nRaul Menendez: You have no idea what you've done.\nDavid: I know exactly what I've done, Menendez.\nRaul Menendez: This is just the beginning of your suffering.\nDavid: Specter One, report!\nDavid: Need a sitrep!\nDavid: This isn't real.\nRaul Menendez: The hell it ain't!\nDavid: Pull it together, man!\nMenendez: So eager to leave, David.\nMenendez: Killing the man is a hell of a lot easier than killing the idea.\nDavid: You were never cut out to be a Mason.\nDavid: No more games. This ends now.\nAnnouncer: Get the Reznov challenge pack when you pre-order now."
+      "handoffContext": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | acoustic cues: calm, authoritative, slightly ominous tone | inferred traits: age_range: adult | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_002 => Speaker 2 | acoustic cues: menacing, dramatic, deep voice | inferred traits: accent: possibly Hispanic | recent lines: So eager to leave, David. / Killing a man is a hell of a lot easier than killing the idea.\n- spk_001 => Speaker 1 | acoustic cues: authoritative, calm | inferred traits: role: likely military or official | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_002 => Speaker 2 | acoustic cues: menacing, deep voice | inferred traits: identity: Raul Menendez | recent lines: So eager to leave, David. / Killing a man is a hell of a lot easier than killing the idea.\n- spk_003 => Speaker 3 | acoustic cues: female, authoritative | inferred traits: role: official/leader | recent lines: Specter One, report. / You were never cut out to be a Mason.\n- spk_001 => Speaker 1 | acoustic cues: authoritative, urgent tone | inferred traits: role: military operative | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_002 => Speaker 2 | acoustic cues: menacing, deep voice | inferred traits: identity: Raul Menendez | recent lines: So eager to leave, David. / Killing a man is a hell of a lot easier than killing the idea.\n- spk_003 => Speaker 3 | acoustic cues: authoritative, female | inferred traits: role: commander/official | recent lines: Specter One, report. / You were never cut out to be a Mason.\n- spk_001 => Speaker 1 | acoustic cues: authoritative, urgent tone | inferred traits: role: military operative | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_002 => Speaker 2 | acoustic cues: menacing, deep voice | inferred traits: identity: Raul Menendez | recent lines: So eager to leave, David. / Killing a man is a hell of a lot easier than killing the idea.\n- spk_001 => Speaker 1 | acoustic cues: urgent, commanding tone | inferred traits: role: military operative | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_001 => Speaker 1 | acoustic cues: urgent, commanding tone | inferred traits: role: military operative | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_002 => Speaker 2 | acoustic cues: menacing, deep voice | inferred traits: identity: Raul Menendez | recent lines: So eager to leave, David. / Killing a man is a hell of a lot easier than killing the idea.\n- spk_003 => Speaker 3 | acoustic cues: authoritative, female | inferred traits: role: official/leader | recent lines: Specter One, report. / You were never cut out to be a Mason.\n- spk_004 => Speaker 4 | acoustic cues: promotional, energetic, announcer-style voice | recent lines: Get the Reznov challenge pack when you pre-order now.\n\nRecent dialogue tail:\n- Speaker 2 (spk_002): Killing a man is a hell of a lot easier than killing the idea.\n- Speaker 3 (spk_003): You were never cut out to be a Mason.\n- Speaker 1 (spk_001): No more games. This ends now.\n- Speaker 4 (spk_004): Get the Reznov challenge pack when you pre-order now.",
+      "cleanedTranscript": "Speaker 1: They want you afraid.\nSpeaker 1: Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez, United Global Unrest.\nSpeaker 1: On an unprecedented scale.\nSpeaker 3: Menendez is a terrorist.\nSpeaker 3: We're bringing peace and security to the world.\nSpeaker 1: He refuses to let me go.\nSpeaker 2: Stop looking backwards, David, but what matters is what we do next.\nSpeaker 1: A lot of people counting on us for answers.\nSpeaker 2: The world is on the brink of collapse.\nSpeaker 1: We cannot let him win, David. We have to stop him.\nSpeaker 2: It's too late for that. The damage is already done.\nSpeaker 3: Specter One, report.\nSpeaker 1: We need a sitrep.\nSpeaker 1: This isn't real.\nSpeaker 2: The hell it ain't.\nSpeaker 1: Pull it together, man!\nSpeaker 2: So eager to leave, David.\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 3: You were never cut out to be a Mason.\nSpeaker 1: No more games. This ends now.\nSpeaker 4: Get the Reznov challenge pack when you pre-order now."
     }
   },
   "artifacts": {

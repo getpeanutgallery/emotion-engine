@@ -629,6 +629,7 @@ test('Get Dialogue Script', async (t) => {
                 start: 3.5,
                 end: 7.5,
                 speaker: 'Speaker 1',
+                speaker_id: 'spk_001',
                 text: 'Chunk tail',
                 confidence: 0.95
               },
@@ -636,8 +637,44 @@ test('Get Dialogue Script', async (t) => {
                 start: 8,
                 end: 9,
                 speaker: 'Speaker 2',
+                speaker_id: 'spk_002',
                 text: 'Chunk impossible overrun',
                 confidence: 0.8
+              }
+            ],
+            speaker_profiles: [
+              {
+                speaker_id: 'spk_001',
+                label: 'Speaker 1',
+                grounded: {
+                  confidence: 0.81,
+                  linked_segment_indexes: [0],
+                  acoustic_descriptors: [
+                    { label: 'steady, resolute delivery', confidence: 0.58 }
+                  ]
+                },
+                inferred_traits: {
+                  traits: [
+                    {
+                      trait: 'accent',
+                      value: 'possibly American English',
+                      confidence: 0.24,
+                      note: 'speculative'
+                    }
+                  ]
+                }
+              },
+              {
+                speaker_id: 'spk_002',
+                label: 'Speaker 2',
+                grounded: {
+                  confidence: 0.72,
+                  linked_segment_indexes: [1],
+                  acoustic_descriptors: []
+                },
+                inferred_traits: {
+                  traits: []
+                }
               }
             ],
             summary: 'Chunk overrun test',
@@ -678,6 +715,9 @@ test('Get Dialogue Script', async (t) => {
       ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => segment.start >= 0 && segment.end <= 10 && segment.end > segment.start));
       ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => segment.text !== 'Chunk impossible overrun'));
       ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.text === 'Chunk tail'));
+      is(result.artifacts.dialogueData.speaker_profiles[0].grounded.acoustic_descriptors[0].label, 'steady, resolute delivery');
+      is(result.artifacts.dialogueData.speaker_profiles[0].inferred_traits.traits[0].trait, 'accent');
+      is(Object.hasOwn(result.artifacts.dialogueData.speaker_profiles[0].grounded, 'acoustic_descriptors_abstained'), false);
     });
 
     tNested.test('forces chunking for long within-budget dialogue to stabilize timing', async () => {
@@ -764,6 +804,8 @@ test('Get Dialogue Script', async (t) => {
       ok(chunkCallCount >= 2);
       ok(completionPrompts.some((prompt) => prompt.includes('You are transcribing CHUNK 0')));
       ok(completionPrompts.some((prompt) => prompt.includes('Do not compress the whole chunk\'s dialogue into the opening seconds')));
+      ok(completionPrompts.some((prompt) => prompt.includes('Speaker registry (reuse speaker_id only for the same acoustic voice):')));
+      ok(completionPrompts.some((prompt) => prompt.includes('create a new speaker_id instead of forcing continuity')));
       is(result.artifacts.dialogueData.totalDuration, 10);
       ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.start >= 4));
     });
@@ -842,7 +884,7 @@ test('Get Dialogue Script', async (t) => {
       property(profile, 'grounded');
       property(profile.grounded, 'linked_segment_indexes');
       property(profile.grounded, 'acoustic_descriptors');
-      property(profile.grounded, 'acoustic_descriptors_abstained');
+      ok(!Object.hasOwn(profile.grounded, 'acoustic_descriptors_abstained'));
       property(profile, 'inferred_traits');
       property(profile.inferred_traits, 'traits');
       is(profile.grounded.linked_segment_indexes[0], 0);
@@ -857,7 +899,8 @@ test('Get Dialogue Script', async (t) => {
       await getDialogueScript.run(input);
       ok(completionPrompts[0].includes('speaker_profiles'));
       ok(completionPrompts[0].includes('grounded speaker identity separate from inferred_traits'));
-      ok(completionPrompts[0].includes('Attempt reviewable traits for each speaker'));
+      ok(completionPrompts[0].includes('inferred_traits must always be present as an object with a traits array'));
+      ok(completionPrompts[0].includes('Do not persist acoustic_descriptors_abstained'));
       ok(!completionPrompts[0].includes('set abstained=true'));
     });
   });

@@ -1,0 +1,507 @@
+{
+  "assetsDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/assets/input",
+  "dialogueData": {
+    "dialogue_segments": [
+      {
+        "start": 0,
+        "end": 5,
+        "speaker": "Speaker 1",
+        "speaker_id": "spk_001",
+        "text": "They want you afraid. Fear makes you easier to control.",
+        "confidence": 0.98
+      },
+      {
+        "start": 8.5,
+        "end": 10.5,
+        "speaker": "Speaker 1",
+        "speaker_id": "spk_001",
+        "text": "It's time to wake up.",
+        "confidence": 0.99
+      },
+      {
+        "start": 12,
+        "end": 17.5,
+        "speaker": "Speaker 1",
+        "speaker_id": "spk_001",
+        "text": "Your streets shall once again run red with your blood.",
+        "confidence": 0.97
+      },
+      {
+        "start": 17.5,
+        "end": 20,
+        "speaker": "Speaker 2",
+        "speaker_id": "spk_002",
+        "text": "Raul Menendez, United Global Unrest.",
+        "confidence": 0.95
+      },
+      {
+        "start": 20,
+        "end": 22.2,
+        "speaker": "Raul Menendez",
+        "speaker_id": "spk_001",
+        "text": "on an unprecedented scale.",
+        "confidence": 0.92
+      },
+      {
+        "start": 23.2,
+        "end": 24.5,
+        "speaker": "Speaker 2",
+        "speaker_id": "spk_002",
+        "text": "Menendez is a terrorist.",
+        "confidence": 0.95
+      },
+      {
+        "start": 24.5,
+        "end": 27.2,
+        "speaker": "Raul Menendez",
+        "speaker_id": "spk_001",
+        "text": "We're bringing peace and security to the world.",
+        "confidence": 0.96
+      },
+      {
+        "start": 28,
+        "end": 30,
+        "speaker": "Speaker 2",
+        "speaker_id": "spk_002",
+        "text": "He refuses to let me go.",
+        "confidence": 0.93
+      },
+      {
+        "start": 30.2,
+        "end": 33,
+        "speaker": "Raul Menendez",
+        "speaker_id": "spk_001",
+        "text": "Stop looking backwards, David. What matters is what we do next.",
+        "confidence": 0.97
+      },
+      {
+        "start": 35.2,
+        "end": 37,
+        "speaker": "Speaker 2",
+        "speaker_id": "spk_002",
+        "text": "A lot of people counting on us for answers.",
+        "confidence": 0.94
+      },
+      {
+        "start": 40,
+        "end": 42.5,
+        "speaker": "Raul Menendez",
+        "speaker_id": "spk_001",
+        "text": "You have no idea what you've done.",
+        "confidence": 0.98
+      },
+      {
+        "start": 43,
+        "end": 46,
+        "speaker": "David",
+        "speaker_id": "spk_002",
+        "text": "I know exactly what I've done, Menendez.",
+        "confidence": 0.95
+      },
+      {
+        "start": 46.5,
+        "end": 50,
+        "speaker": "Raul Menendez",
+        "speaker_id": "spk_001",
+        "text": "This is just the beginning of your suffering.",
+        "confidence": 0.92
+      },
+      {
+        "start": 50.5,
+        "end": 53,
+        "speaker": "David",
+        "speaker_id": "spk_002",
+        "text": "Specter One, report!",
+        "confidence": 0.96
+      },
+      {
+        "start": 53.5,
+        "end": 55,
+        "speaker": "David",
+        "speaker_id": "spk_002",
+        "text": "Need a sitrep!",
+        "confidence": 0.94
+      },
+      {
+        "start": 62,
+        "end": 63,
+        "speaker": "David",
+        "speaker_id": "spk_001",
+        "text": "This isn't real.",
+        "confidence": 0.98
+      },
+      {
+        "start": 63.3,
+        "end": 64.2,
+        "speaker": "Raul Menendez",
+        "speaker_id": "spk_002",
+        "text": "The hell it ain't!",
+        "confidence": 0.95
+      },
+      {
+        "start": 98,
+        "end": 99.5,
+        "speaker": "David",
+        "speaker_id": "spk_001",
+        "text": "Pull it together, man!",
+        "confidence": 0.98
+      },
+      {
+        "start": 100,
+        "end": 102.5,
+        "speaker": "Menendez",
+        "speaker_id": "spk_001",
+        "text": "So eager to leave, David.",
+        "confidence": 0.95
+      },
+      {
+        "start": 103,
+        "end": 106,
+        "speaker": "Menendez",
+        "speaker_id": "spk_001",
+        "text": "Killing the man is a hell of a lot easier than killing the idea.",
+        "confidence": 0.98
+      },
+      {
+        "start": 108.5,
+        "end": 110.5,
+        "speaker": "David",
+        "speaker_id": "spk_002",
+        "text": "You were never cut out to be a Mason.",
+        "confidence": 0.92
+      },
+      {
+        "start": 113,
+        "end": 115,
+        "speaker": "David",
+        "speaker_id": "spk_002",
+        "text": "No more games. This ends now.",
+        "confidence": 0.96
+      },
+      {
+        "start": 122,
+        "end": 125,
+        "speaker": "Announcer",
+        "speaker_id": "spk_001",
+        "text": "Get the Reznov challenge pack when you pre-order now.",
+        "confidence": 0.98
+      }
+    ],
+    "speaker_profiles": [
+      {
+        "speaker_id": "spk_001",
+        "label": "Speaker 1",
+        "grounded": {
+          "confidence": null,
+          "confidence_abstained": true,
+          "linked_segment_indexes": [
+            0,
+            1,
+            2,
+            4,
+            6,
+            8,
+            10,
+            12,
+            15,
+            17,
+            18,
+            19,
+            22
+          ],
+          "acoustic_descriptors": [],
+          "acoustic_descriptors_abstained": true
+        },
+        "inferred_traits": {
+          "traits": []
+        }
+      },
+      {
+        "speaker_id": "spk_002",
+        "label": "Speaker 2",
+        "grounded": {
+          "confidence": null,
+          "confidence_abstained": true,
+          "linked_segment_indexes": [
+            3,
+            5,
+            7,
+            9,
+            11,
+            13,
+            14,
+            16,
+            20,
+            21
+          ],
+          "acoustic_descriptors": [],
+          "acoustic_descriptors_abstained": true
+        },
+        "inferred_traits": {
+          "traits": []
+        }
+      }
+    ],
+    "summary": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 1: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez, United Global Unrest.\nRaul Menendez: On an unprecedented scale.\nSpeaker 2: Menendez is a terrorist.\nRaul Menendez: We're bringing peace and security to the world.\nSpeaker 2: He refuses to let me go.\nRaul Menendez: Stop looking backwards, David. What matters is what we do next.\nSpeaker 2: A lot of people counting on us for answers.\nRaul Menendez: You have no idea what you've done.\nDavid: I know exactly what I've done, Menendez.\nRaul Menendez: This is just the beginning of your suffering.\nDavid: Specter One, report!\nDavid: Need a sitrep!\nDavid: This isn't real.\nRaul Menendez: The hell it ain't!\nDavid: Pull it together, man!\nMenendez: So eager to leave, David.\nMenendez: Killing the man is a hell of a lot easier than killing the idea.\nDavid: You were never cut out to be a Mason.\nDavid: No more games. This ends now.\nAnnouncer: Get the Reznov challenge pack when you pre-order now.",
+    "totalDuration": 140.042449,
+    "handoffContext": "The promotional advertisement is ongoing. No dialogue detected in this micro-chunk.",
+    "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 1: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez, United Global Unrest.\nRaul Menendez: On an unprecedented scale.\nSpeaker 2: Menendez is a terrorist.\nRaul Menendez: We're bringing peace and security to the world.\nSpeaker 2: He refuses to let me go.\nRaul Menendez: Stop looking backwards, David. What matters is what we do next.\nSpeaker 2: A lot of people counting on us for answers.\nRaul Menendez: You have no idea what you've done.\nDavid: I know exactly what I've done, Menendez.\nRaul Menendez: This is just the beginning of your suffering.\nDavid: Specter One, report!\nDavid: Need a sitrep!\nDavid: This isn't real.\nRaul Menendez: The hell it ain't!\nDavid: Pull it together, man!\nMenendez: So eager to leave, David.\nMenendez: Killing the man is a hell of a lot easier than killing the idea.\nDavid: You were never cut out to be a Mason.\nDavid: No more games. This ends now.\nAnnouncer: Get the Reznov challenge pack when you pre-order now."
+  },
+  "__scriptExecution": {
+    "get-dialogue": {
+      "status": "success",
+      "run": {
+        "configName": "COD Test Pipeline (Phase 2 3-chunk comparison)",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison",
+        "startedAt": "2026-03-23T01:26:00.154Z",
+        "completedAt": "2026-03-23T01:27:37.093Z",
+        "durationMs": 96939,
+        "attempt": 1
+      },
+      "lineage": {
+        "failureId": "get-dialogue:phase1-gather-context:attempt-1",
+        "parentFailureId": null,
+        "phase": "phase1-gather-context",
+        "script": "get-dialogue",
+        "scriptRunAttempt": 1,
+        "deterministicAttemptsUsed": 0,
+        "aiRecoveryAttemptsUsed": 0,
+        "maxAiRecoveryAttempts": 1,
+        "reentryAttemptNumber": 0
+      },
+      "failureCountsByCategory": {},
+      "recoveryPolicy": null,
+      "refs": {
+        "result": "phase1-gather-context/script-results/get-dialogue.success.json",
+        "lineage": "phase1-gather-context/recovery/get-dialogue/lineage.json",
+        "nextAction": null
+      }
+    },
+    "get-music": {
+      "status": "success",
+      "run": {
+        "configName": "COD Test Pipeline (Phase 2 3-chunk comparison)",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison",
+        "startedAt": "2026-03-23T01:27:37.094Z",
+        "completedAt": "2026-03-23T01:28:20.532Z",
+        "durationMs": 43438,
+        "attempt": 1
+      },
+      "lineage": {
+        "failureId": "get-music:phase1-gather-context:attempt-1",
+        "parentFailureId": null,
+        "phase": "phase1-gather-context",
+        "script": "get-music",
+        "scriptRunAttempt": 1,
+        "deterministicAttemptsUsed": 0,
+        "aiRecoveryAttemptsUsed": 0,
+        "maxAiRecoveryAttempts": 1,
+        "reentryAttemptNumber": 0
+      },
+      "failureCountsByCategory": {},
+      "recoveryPolicy": null,
+      "refs": {
+        "result": "phase1-gather-context/script-results/get-music.success.json",
+        "lineage": "phase1-gather-context/recovery/get-music/lineage.json",
+        "nextAction": null
+      }
+    },
+    "video-chunks": {
+      "status": "success",
+      "run": {
+        "configName": "COD Test Pipeline (Phase 2 3-chunk comparison)",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison",
+        "startedAt": "2026-03-23T01:28:20.533Z",
+        "completedAt": "2026-03-23T01:33:46.022Z",
+        "durationMs": 325489,
+        "attempt": 1
+      },
+      "lineage": {
+        "failureId": "video-chunks:phase2-process:attempt-1",
+        "parentFailureId": null,
+        "phase": "phase2-process",
+        "script": "video-chunks",
+        "scriptRunAttempt": 1,
+        "deterministicAttemptsUsed": 0,
+        "aiRecoveryAttemptsUsed": 0,
+        "maxAiRecoveryAttempts": 1,
+        "reentryAttemptNumber": 0
+      },
+      "failureCountsByCategory": {},
+      "recoveryPolicy": null,
+      "refs": {
+        "result": "phase2-process/script-results/video-chunks.success.json",
+        "lineage": "phase2-process/recovery/video-chunks/lineage.json",
+        "nextAction": null
+      }
+    }
+  },
+  "musicData": {
+    "segments": [
+      {
+        "start": 0,
+        "end": 30,
+        "type": "music",
+        "description": "Dramatic, cinematic trailer music featuring intense percussion and synth swells, underscored by movie dialogue.",
+        "mood": "energetic",
+        "intensity": 8
+      },
+      {
+        "start": 30,
+        "end": 60,
+        "type": "speech",
+        "description": "High-intensity movie trailer featuring dramatic cinematic music, sound effects, and dialogue.",
+        "mood": "energetic",
+        "intensity": 9
+      },
+      {
+        "start": 60,
+        "end": 90,
+        "type": "music",
+        "description": "High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.",
+        "mood": "energetic",
+        "intensity": 9
+      },
+      {
+        "start": 90,
+        "end": 120,
+        "type": "music",
+        "description": "High-intensity action movie trailer music with dramatic orchestral swells, heavy percussion, and sound effects like explosions and gunshots, interspersed with intense dialogue.",
+        "mood": "energetic",
+        "intensity": 9
+      },
+      {
+        "start": 120,
+        "end": 140.042449,
+        "type": "music",
+        "description": "High-intensity, dramatic action music featuring a voiceover promoting a pre-order offer, accompanied by cinematic sound effects like whooshes.",
+        "mood": "energetic",
+        "intensity": 8
+      }
+    ],
+    "summary": "The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and voiceover, maintaining a high level of excitement.",
+    "hasMusic": true
+  },
+  "chunkAnalysis": {
+    "chunks": [
+      {
+        "chunkIndex": 0,
+        "splitIndex": 0,
+        "startTime": 0,
+        "endTime": 5,
+        "status": "success",
+        "summary": "Chaotic glitchy intro with 'RISING TENSIONS' text triggers immediate skepticism, but fast cuts and intense music maintain sensory engagement.",
+        "emotions": {
+          "patience": {
+            "score": 3,
+            "reasoning": "Direct hit on pet peeve ('Rising tensions' text) drastically reduces willingness to wait; thumb hovering over scroll."
+          },
+          "boredom": {
+            "score": 5,
+            "reasoning": "Visually busy but feels generic/cliché; 'seen this before' fatigue sets in despite the chaos."
+          },
+          "excitement": {
+            "score": 6,
+            "reasoning": "High-intensity music and rapid visual transitions provide sensory punch, preventing immediate scroll despite skepticism."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.85,
+        "tokens": 8504,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 1,
+        "splitIndex": 0,
+        "startTime": 5,
+        "endTime": 10,
+        "status": "success",
+        "summary": "Fast-paced destruction and glitch effects keep the energy high, but the 'wake up' voiceover feels like a generic trailer cliché that risks breaking immersion.",
+        "emotions": {
+          "patience": {
+            "score": 7,
+            "reasoning": "Fast cuts and high stakes keep me from scrolling, but the generic military vibe is testing my tolerance for clichés."
+          },
+          "boredom": {
+            "score": 2,
+            "reasoning": "Too much visual chaos and movement to zone out; the car crash shot specifically grabs attention."
+          },
+          "excitement": {
+            "score": 8,
+            "reasoning": "The cinematic scale and glitch effects hit the dopamine need, even if the 'wake up' line is cringe."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.85,
+        "tokens": 11112,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      },
+      {
+        "chunkIndex": 2,
+        "splitIndex": 0,
+        "startTime": 10,
+        "endTime": 15,
+        "status": "success",
+        "summary": "The title card slams in immediately which hooks me, but the edgy villain dialogue is kinda cringe.",
+        "emotions": {
+          "patience": {
+            "score": 7,
+            "reasoning": "Title card hits within the first second of the chunk, buying me a few more seconds despite the cliché dialogue."
+          },
+          "boredom": {
+            "score": 3,
+            "reasoning": "Too much visual chaos with fire and glitches to zone out, even if the script is generic."
+          },
+          "excitement": {
+            "score": 8,
+            "reasoning": "Black Ops 7 logo reveal plus high-intensity music and explosions spikes the hype significantly."
+          }
+        },
+        "dominant_emotion": "excitement",
+        "confidence": 0.9,
+        "tokens": 9307,
+        "persona": {
+          "soulPath": "../cast/impatient-teenager/SOUL.md",
+          "goalPath": "../goals/video-ad-evaluation.md",
+          "lenses": [
+            "patience",
+            "boredom",
+            "excitement"
+          ]
+        }
+      }
+    ],
+    "totalTokens": 28923,
+    "statusSummary": {
+      "total": 3,
+      "successful": 3,
+      "failed": 0,
+      "failedChunkIndexes": []
+    },
+    "persona": {
+      "soulPath": "../cast/impatient-teenager/SOUL.md",
+      "goalPath": "../goals/video-ad-evaluation.md",
+      "config": {
+        "chunkDuration": 8,
+        "numChunks": 3
+      }
+    },
+    "videoDuration": 140.017
+  }
+}

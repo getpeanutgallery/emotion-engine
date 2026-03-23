@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 2,
+  "kind": "pointer",
+  "updatedAt": "2026-03-23T01:28:20.532Z",
+  "segmentIndex": 4,
+  "latestAttempt": 1,
+  "target": {
+    "dir": "music-segment-0004/attempt-01",
+    "file": "music-segment-0004/attempt-01/capture.json"
+  }
+}

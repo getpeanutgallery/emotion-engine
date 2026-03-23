@@ -1,0 +1,122 @@
+{
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "splitIndex": 0,
+      "startTime": 0,
+      "endTime": 5,
+      "status": "success",
+      "summary": "Chaotic glitchy intro with 'RISING TENSIONS' text triggers immediate skepticism, but fast cuts and intense music maintain sensory engagement.",
+      "emotions": {
+        "patience": {
+          "score": 3,
+          "reasoning": "Direct hit on pet peeve ('Rising tensions' text) drastically reduces willingness to wait; thumb hovering over scroll."
+        },
+        "boredom": {
+          "score": 5,
+          "reasoning": "Visually busy but feels generic/cliché; 'seen this before' fatigue sets in despite the chaos."
+        },
+        "excitement": {
+          "score": 6,
+          "reasoning": "High-intensity music and rapid visual transitions provide sensory punch, preventing immediate scroll despite skepticism."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.85,
+      "tokens": 8504,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 1,
+      "splitIndex": 0,
+      "startTime": 5,
+      "endTime": 10,
+      "status": "success",
+      "summary": "Fast-paced destruction and glitch effects keep the energy high, but the 'wake up' voiceover feels like a generic trailer cliché that risks breaking immersion.",
+      "emotions": {
+        "patience": {
+          "score": 7,
+          "reasoning": "Fast cuts and high stakes keep me from scrolling, but the generic military vibe is testing my tolerance for clichés."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "Too much visual chaos and movement to zone out; the car crash shot specifically grabs attention."
+        },
+        "excitement": {
+          "score": 8,
+          "reasoning": "The cinematic scale and glitch effects hit the dopamine need, even if the 'wake up' line is cringe."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.85,
+      "tokens": 11112,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 2,
+      "splitIndex": 0,
+      "startTime": 10,
+      "endTime": 15,
+      "status": "success",
+      "summary": "The title card slams in immediately which hooks me, but the edgy villain dialogue is kinda cringe.",
+      "emotions": {
+        "patience": {
+          "score": 7,
+          "reasoning": "Title card hits within the first second of the chunk, buying me a few more seconds despite the cliché dialogue."
+        },
+        "boredom": {
+          "score": 3,
+          "reasoning": "Too much visual chaos with fire and glitches to zone out, even if the script is generic."
+        },
+        "excitement": {
+          "score": 8,
+          "reasoning": "Black Ops 7 logo reveal plus high-intensity music and explosions spikes the hype significantly."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.9,
+      "tokens": 9307,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    }
+  ],
+  "totalTokens": 28923,
+  "statusSummary": {
+    "total": 3,
+    "successful": 3,
+    "failed": 0,
+    "failedChunkIndexes": []
+  },
+  "persona": {
+    "soulPath": "../cast/impatient-teenager/SOUL.md",
+    "goalPath": "../goals/video-ad-evaluation.md",
+    "config": {
+      "chunkDuration": 8,
+      "numChunks": 3
+    }
+  },
+  "videoDuration": 140.017
+}

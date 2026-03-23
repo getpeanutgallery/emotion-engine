@@ -1,0 +1,160 @@
+{
+  "contractVersion": "ee.script-result/v1",
+  "status": "success",
+  "phase": "phase2-process",
+  "script": "video-chunks",
+  "run": {
+    "configName": "COD Test Pipeline (Phase 2 3-chunk comparison)",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison",
+    "startedAt": "2026-03-23T01:28:20.533Z",
+    "completedAt": "2026-03-23T01:33:46.022Z",
+    "durationMs": 325489,
+    "attempt": 1
+  },
+  "payload": {
+    "artifactKey": "chunkAnalysis",
+    "data": {
+      "chunks": [
+        {
+          "chunkIndex": 0,
+          "splitIndex": 0,
+          "startTime": 0,
+          "endTime": 5,
+          "status": "success",
+          "summary": "Chaotic glitchy intro with 'RISING TENSIONS' text triggers immediate skepticism, but fast cuts and intense music maintain sensory engagement.",
+          "emotions": {
+            "patience": {
+              "score": 3,
+              "reasoning": "Direct hit on pet peeve ('Rising tensions' text) drastically reduces willingness to wait; thumb hovering over scroll."
+            },
+            "boredom": {
+              "score": 5,
+              "reasoning": "Visually busy but feels generic/cliché; 'seen this before' fatigue sets in despite the chaos."
+            },
+            "excitement": {
+              "score": 6,
+              "reasoning": "High-intensity music and rapid visual transitions provide sensory punch, preventing immediate scroll despite skepticism."
+            }
+          },
+          "dominant_emotion": "excitement",
+          "confidence": 0.85,
+          "tokens": 8504,
+          "persona": {
+            "soulPath": "../cast/impatient-teenager/SOUL.md",
+            "goalPath": "../goals/video-ad-evaluation.md",
+            "lenses": [
+              "patience",
+              "boredom",
+              "excitement"
+            ]
+          }
+        },
+        {
+          "chunkIndex": 1,
+          "splitIndex": 0,
+          "startTime": 5,
+          "endTime": 10,
+          "status": "success",
+          "summary": "Fast-paced destruction and glitch effects keep the energy high, but the 'wake up' voiceover feels like a generic trailer cliché that risks breaking immersion.",
+          "emotions": {
+            "patience": {
+              "score": 7,
+              "reasoning": "Fast cuts and high stakes keep me from scrolling, but the generic military vibe is testing my tolerance for clichés."
+            },
+            "boredom": {
+              "score": 2,
+              "reasoning": "Too much visual chaos and movement to zone out; the car crash shot specifically grabs attention."
+            },
+            "excitement": {
+              "score": 8,
+              "reasoning": "The cinematic scale and glitch effects hit the dopamine need, even if the 'wake up' line is cringe."
+            }
+          },
+          "dominant_emotion": "excitement",
+          "confidence": 0.85,
+          "tokens": 11112,
+          "persona": {
+            "soulPath": "../cast/impatient-teenager/SOUL.md",
+            "goalPath": "../goals/video-ad-evaluation.md",
+            "lenses": [
+              "patience",
+              "boredom",
+              "excitement"
+            ]
+          }
+        },
+        {
+          "chunkIndex": 2,
+          "splitIndex": 0,
+          "startTime": 10,
+          "endTime": 15,
+          "status": "success",
+          "summary": "The title card slams in immediately which hooks me, but the edgy villain dialogue is kinda cringe.",
+          "emotions": {
+            "patience": {
+              "score": 7,
+              "reasoning": "Title card hits within the first second of the chunk, buying me a few more seconds despite the cliché dialogue."
+            },
+            "boredom": {
+              "score": 3,
+              "reasoning": "Too much visual chaos with fire and glitches to zone out, even if the script is generic."
+            },
+            "excitement": {
+              "score": 8,
+              "reasoning": "Black Ops 7 logo reveal plus high-intensity music and explosions spikes the hype significantly."
+            }
+          },
+          "dominant_emotion": "excitement",
+          "confidence": 0.9,
+          "tokens": 9307,
+          "persona": {
+            "soulPath": "../cast/impatient-teenager/SOUL.md",
+            "goalPath": "../goals/video-ad-evaluation.md",
+            "lenses": [
+              "patience",
+              "boredom",
+              "excitement"
+            ]
+          }
+        }
+      ],
+      "totalTokens": 28923,
+      "statusSummary": {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "failedChunkIndexes": []
+      },
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "config": {
+          "chunkDuration": 8,
+          "numChunks": 3
+        }
+      },
+      "videoDuration": 140.017
+    }
+  },
+  "artifacts": {
+    "primary": {
+      "key": "chunkAnalysis",
+      "path": "phase2-process/chunk-analysis.json",
+      "mediaType": "application/json"
+    },
+    "additional": []
+  },
+  "metrics": {
+    "tokensTotal": 28923,
+    "warningsCount": 0
+  },
+  "diagnostics": {
+    "warnings": [],
+    "degraded": false,
+    "debugCaptureEnabled": true,
+    "captureRefs": [
+      "phase2-process/raw/_meta/errors.jsonl",
+      "phase2-process/raw/_meta/errors.summary.json"
+    ]
+  }
+}

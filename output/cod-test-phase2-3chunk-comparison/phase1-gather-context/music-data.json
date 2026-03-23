@@ -4,15 +4,15 @@
       "start": 0,
       "end": 30,
       "type": "music",
-      "description": "Dramatic, cinematic trailer music featuring intense percussion and synth swells, underscored by movie dialogue.",
+      "description": "Cinematic trailer audio featuring dramatic voiceover, intense sound effects like explosions, and a driving, suspenseful musical score.",
       "mood": "energetic",
       "intensity": 8
     },
     {
       "start": 30,
       "end": 60,
-      "type": "speech",
-      "description": "High-intensity movie trailer featuring dramatic cinematic music, sound effects, and dialogue.",
+      "type": "music",
+      "description": "Dramatic, high-tempo cinematic score with heavy percussion and sound effects.",
       "mood": "energetic",
       "intensity": 9
     },
@@ -20,7 +20,7 @@
       "start": 60,
       "end": 90,
       "type": "music",
-      "description": "High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.",
+      "description": "Fast-paced, aggressive electronic rock music with intense, distorted vocals, typical of an action movie trailer.",
       "mood": "energetic",
       "intensity": 9
     },
@@ -28,19 +28,19 @@
       "start": 90,
       "end": 120,
       "type": "music",
-      "description": "High-intensity action movie trailer music with dramatic orchestral swells, heavy percussion, and sound effects like explosions and gunshots, interspersed with intense dialogue.",
+      "description": "High-intensity action movie trailer featuring dramatic dialogue, aggressive sound effects, and a driving, percussive musical score.",
       "mood": "energetic",
       "intensity": 9
     },
     {
       "start": 120,
       "end": 140.042449,
-      "type": "music",
-      "description": "High-intensity, dramatic action music featuring a voiceover promoting a pre-order offer, accompanied by cinematic sound effects like whooshes.",
+      "type": "speech",
+      "description": "A promotional voiceover announces the Reznov challenge pack, accompanied by high-intensity action music and sound effects.",
       "mood": "energetic",
       "intensity": 8
     }
   ],
-  "summary": "The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and voiceover, maintaining a high level of excitement.",
+  "summary": "The audio continues its high-intensity, action-packed atmosphere, now incorporating promotional dialogue alongside the driving musical score and aggressive sound effects.",
   "hasMusic": true
 }

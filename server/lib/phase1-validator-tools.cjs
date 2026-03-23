@@ -108,8 +108,7 @@ function buildDialogueTranscriptionValidatorToolContract({ requireHandoff = fals
                 label: 'steady, conversational delivery',
                 confidence: 0.61
               }
-            ],
-            acoustic_descriptors_abstained: false
+            ]
           },
           inferred_traits: {
             traits: [

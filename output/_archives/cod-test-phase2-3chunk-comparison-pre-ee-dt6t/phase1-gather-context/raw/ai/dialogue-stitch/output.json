@@ -1,0 +1,72 @@
+{
+  "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 1: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez, United Global Unrest.\nRaul Menendez: On an unprecedented scale.\nSpeaker 2: Menendez is a terrorist.\nRaul Menendez: We're bringing peace and security to the world.\nSpeaker 2: He refuses to let me go.\nRaul Menendez: Stop looking backwards, David. What matters is what we do next.\nSpeaker 2: A lot of people counting on us for answers.\nRaul Menendez: You have no idea what you've done.\nDavid: I know exactly what I've done, Menendez.\nRaul Menendez: This is just the beginning of your suffering.\nDavid: Specter One, report!\nDavid: Need a sitrep!\nDavid: This isn't real.\nRaul Menendez: The hell it ain't!\nDavid: Pull it together, man!\nMenendez: So eager to leave, David.\nMenendez: Killing the man is a hell of a lot easier than killing the idea.\nDavid: You were never cut out to be a Mason.\nDavid: No more games. This ends now.\nAnnouncer: Get the Reznov challenge pack when you pre-order now.",
+  "auditTrail": [
+    {
+      "op": "normalize_speaker",
+      "chunkIndex": 0,
+      "detail": "Kept generic 'Speaker 1' and 'Speaker 2' labels where identity was not explicit in the transcript; preserved named speakers where provided."
+    },
+    {
+      "op": "punctuation_cleanup",
+      "chunkIndex": 1,
+      "detail": "Capitalized Menendez's boundary-continuation line to read 'On an unprecedented scale.'"
+    },
+    {
+      "op": "stitch_sequence",
+      "chunkIndex": 0,
+      "detail": "Combined chunk transcripts in chronological order with no duplicated boundary dialogue detected."
+    },
+    {
+      "op": "retain_interruption",
+      "chunkIndex": 6,
+      "detail": "Kept the in-audio promotional advertisement as part of the transcript because it is present in the source audio."
+    }
+  ],
+  "debug": {
+    "inputKind": "dialogue.stitch.input",
+    "inputChunks": 8,
+    "notes": "Mechanical transcript stitched directly; no overlapping duplicate lines were present at chunk boundaries. Chunk 7 contained no speech. Speaker labels were normalized only for consistency of capitalization and naming as already present in source lines.",
+    "refs": [
+      {
+        "chunkIndex": 0,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3",
+        "promptRef": "_meta/ai/_prompts/d803d3f70d7903a089c4051fc405018746ea7fcae08d6fa554d849373202f88b.json"
+      },
+      {
+        "chunkIndex": 1,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3",
+        "promptRef": "_meta/ai/_prompts/91b3bb42f7b14cec7abaea64dc4a0bd7bffefd8db31e8219d94c4dd1b171103c.json"
+      },
+      {
+        "chunkIndex": 2,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3",
+        "promptRef": "_meta/ai/_prompts/be898d7f230289d9227756ba9ea3d7b44bbe40474c481f22b2117d881c61edcb.json"
+      },
+      {
+        "chunkIndex": 3,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3",
+        "promptRef": "_meta/ai/_prompts/c10bb42ca86330e098f73a3e2acb63a9d9cc4c954a75ca9b97db6b5fad893435.json"
+      },
+      {
+        "chunkIndex": 4,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3",
+        "promptRef": "_meta/ai/_prompts/9cdd7479ca4e7b715fdd5e22e47ecb24ad3937f2c0d09ac87df86f4c46b2e156.json"
+      },
+      {
+        "chunkIndex": 5,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3",
+        "promptRef": "_meta/ai/_prompts/aedec91b975d21c962da3cfe1dfc35e04da8dd06cba9c576d3e5b29d18ac521f.json"
+      },
+      {
+        "chunkIndex": 6,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3",
+        "promptRef": "_meta/ai/_prompts/1c89d3286d3c6e4bc4f1c8cfd574e7fc9bb2e3e07e4995645e55103959b01233.json"
+      },
+      {
+        "chunkIndex": 7,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3",
+        "promptRef": "_meta/ai/_prompts/f92a004e17d67124975adf63f02f630d7bf51051ca3943f1cacfcaf34d6502bb.json"
+      }
+    ]
+  }
+}

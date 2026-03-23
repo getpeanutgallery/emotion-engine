@@ -146,8 +146,7 @@ function validateGroundedSpeakerProfile(input, errors, path = '$.grounded') {
       confidence: null,
       confidence_abstained: true,
       linked_segment_indexes: [],
-      acoustic_descriptors: [],
-      acoustic_descriptors_abstained: true
+      acoustic_descriptors: []
     };
   }
 
@@ -157,8 +156,7 @@ function validateGroundedSpeakerProfile(input, errors, path = '$.grounded') {
       confidence: null,
       confidence_abstained: true,
       linked_segment_indexes: [],
-      acoustic_descriptors: [],
-      acoustic_descriptors_abstained: true
+      acoustic_descriptors: []
     };
   }
 
@@ -181,15 +179,15 @@ function validateGroundedSpeakerProfile(input, errors, path = '$.grounded') {
 
   const confidence = validateOptionalFiniteNumber(input.confidence, `${path}.confidence`, 'grounded confidence', errors, { min: 0, max: 1 });
   const acousticAbstainedInput = input.acoustic_descriptors_abstained ?? input.acousticDescriptorsAbstained;
+  if (acousticAbstainedInput !== undefined && acousticAbstainedInput !== null) {
+    validateOptionalBoolean(acousticAbstainedInput, `${path}.acoustic_descriptors_abstained`, 'acoustic descriptors abstained', errors);
+  }
 
   return {
     confidence,
     confidence_abstained: confidence === null,
     linked_segment_indexes,
-    acoustic_descriptors,
-    acoustic_descriptors_abstained: acoustic_descriptors.length > 0
-      ? false
-      : (validateOptionalBoolean(acousticAbstainedInput, `${path}.acoustic_descriptors_abstained`, 'acoustic descriptors abstained', errors) ?? true)
+    acoustic_descriptors
   };
 }
 
@@ -263,6 +261,115 @@ function validateDialogueSegments(segments, errors, path = '$.dialogue_segments'
   }).filter(Boolean);
 }
 
+const GENERIC_SPEAKER_LABEL_RE = /^speaker\s+\d+$/i;
+
+function isGenericSpeakerLabel(label) {
+  return GENERIC_SPEAKER_LABEL_RE.test(compactString(label));
+}
+
+function choosePreferredSpeakerLabel(currentLabel, candidateLabel) {
+  const current = compactString(currentLabel);
+  const candidate = compactString(candidateLabel);
+
+  if (!candidate) return current || null;
+  if (!current) return candidate;
+
+  const currentIsGeneric = isGenericSpeakerLabel(current);
+  const candidateIsGeneric = isGenericSpeakerLabel(candidate);
+
+  if (currentIsGeneric && !candidateIsGeneric) return candidate;
+  return current;
+}
+
+function dedupeAcousticDescriptors(descriptors = []) {
+  const byKey = new Map();
+
+  for (const descriptor of Array.isArray(descriptors) ? descriptors : []) {
+    if (!descriptor || typeof descriptor !== 'object' || Array.isArray(descriptor)) continue;
+    const label = compactString(descriptor.label);
+    if (!label) continue;
+    const key = label.toLowerCase();
+    const existing = byKey.get(key);
+
+    if (!existing || ((descriptor.confidence ?? -1) > (existing.confidence ?? -1))) {
+      byKey.set(key, {
+        label,
+        confidence: typeof descriptor.confidence === 'number' && Number.isFinite(descriptor.confidence)
+          ? descriptor.confidence
+          : null
+      });
+    }
+  }
+
+  return Array.from(byKey.values());
+}
+
+function dedupeInferredTraits(traits = []) {
+  const byKey = new Map();
+
+  for (const trait of Array.isArray(traits) ? traits : []) {
+    if (!trait || typeof trait !== 'object' || Array.isArray(trait)) continue;
+    const traitName = compactString(trait.trait);
+    const traitValue = compactString(trait.value);
+    if (!traitName || !traitValue) continue;
+    const key = `${traitName.toLowerCase()}::${traitValue.toLowerCase()}`;
+    const existing = byKey.get(key);
+
+    if (!existing || ((trait.confidence ?? -1) > (existing.confidence ?? -1))) {
+      byKey.set(key, {
+        trait: traitName,
+        value: traitValue,
+        confidence: typeof trait.confidence === 'number' && Number.isFinite(trait.confidence)
+          ? trait.confidence
+          : null,
+        note: compactString(trait.note) || null
+      });
+    }
+  }
+
+  return Array.from(byKey.values());
+}
+
+function createNormalizedSpeakerProfileState({ speaker_id, label = null, grounded = null, inferred_traits = null } = {}) {
+  return {
+    speaker_id,
+    label: compactString(label) || null,
+    grounded: {
+      confidence: grounded?.confidence ?? null,
+      confidence_abstained: grounded?.confidence === null || grounded?.confidence === undefined,
+      linked_segment_indexes: [],
+      acoustic_descriptors: dedupeAcousticDescriptors(grounded?.acoustic_descriptors)
+    },
+    inferred_traits: {
+      traits: dedupeInferredTraits(inferred_traits?.traits)
+    }
+  };
+}
+
+function mergeSpeakerProfileState(target, incoming) {
+  if (!target) return createNormalizedSpeakerProfileState(incoming);
+  if (!incoming) return target;
+
+  target.label = choosePreferredSpeakerLabel(target.label, incoming.label);
+
+  const incomingConfidence = incoming.grounded?.confidence;
+  if ((target.grounded.confidence === null || target.grounded.confidence === undefined) && incomingConfidence !== null && incomingConfidence !== undefined) {
+    target.grounded.confidence = incomingConfidence;
+  }
+  target.grounded.confidence_abstained = target.grounded.confidence === null || target.grounded.confidence === undefined;
+
+  target.grounded.acoustic_descriptors = dedupeAcousticDescriptors([
+    ...target.grounded.acoustic_descriptors,
+    ...(incoming.grounded?.acoustic_descriptors || [])
+  ]);
+  target.inferred_traits.traits = dedupeInferredTraits([
+    ...target.inferred_traits.traits,
+    ...(incoming.inferred_traits?.traits || [])
+  ]);
+
+  return target;
+}
+
 function normalizeDialogueSpeakerContract(dialogue_segments, speaker_profiles = []) {
   const profilesById = new Map();
   const speakerIdByLabel = new Map();
@@ -274,33 +381,23 @@ function normalizeDialogueSpeakerContract(dialogue_segments, speaker_profiles = 
     if (!normalizedId && !profile.label) continue;
 
     const speaker_id = normalizedId || buildAnonymousSpeakerId(nextGeneratedIndex++);
-    const label = profile.label || `Speaker ${nextGeneratedIndex}`;
+    const label = compactString(profile.label) || `Speaker ${nextGeneratedIndex}`;
 
     if (!generatedIdsByLabel.has(label)) generatedIdsByLabel.set(label, speaker_id);
     speakerIdByLabel.set(label, speaker_id);
-    profilesById.set(speaker_id, {
+
+    const existing = profilesById.get(speaker_id) || null;
+    profilesById.set(speaker_id, mergeSpeakerProfileState(existing, createNormalizedSpeakerProfileState({
       speaker_id,
       label,
-      grounded: {
-        confidence: profile.grounded?.confidence ?? null,
-        confidence_abstained: profile.grounded?.confidence === null || profile.grounded?.confidence === undefined,
-        linked_segment_indexes: [],
-        acoustic_descriptors: Array.isArray(profile.grounded?.acoustic_descriptors)
-          ? [...profile.grounded.acoustic_descriptors]
-          : [],
-        acoustic_descriptors_abstained: profile.grounded?.acoustic_descriptors?.length > 0
-          ? false
-          : (profile.grounded?.acoustic_descriptors_abstained ?? true)
-      },
-      inferred_traits: {
-        traits: Array.isArray(profile.inferred_traits?.traits) ? [...profile.inferred_traits.traits] : []
-      }
-    });
+      grounded: profile.grounded,
+      inferred_traits: profile.inferred_traits
+    })));
   }
 
   const normalizedSegments = dialogue_segments.map((segment, index) => {
     const explicitId = normalizeSpeakerId(segment.speaker_id);
-    const label = segment.speaker;
+    const label = compactString(segment.speaker) || 'Speaker 1';
     let speaker_id = explicitId || speakerIdByLabel.get(label) || generatedIdsByLabel.get(label);
 
     if (!speaker_id) {
@@ -311,46 +408,34 @@ function normalizeDialogueSpeakerContract(dialogue_segments, speaker_profiles = 
 
     let profile = profilesById.get(speaker_id);
     if (!profile) {
-      profile = {
-        speaker_id,
-        label,
-        grounded: {
-          confidence: null,
-          confidence_abstained: true,
-          linked_segment_indexes: [],
-          acoustic_descriptors: [],
-          acoustic_descriptors_abstained: true
-        },
-        inferred_traits: {
-          traits: []
-        }
-      };
+      profile = createNormalizedSpeakerProfileState({ speaker_id, label });
       profilesById.set(speaker_id, profile);
     }
 
-    if (!profile.label) profile.label = label;
+    profile.label = choosePreferredSpeakerLabel(profile.label, label);
     profile.grounded.linked_segment_indexes.push(index);
+
+    const normalizedLabel = compactString(profile.label) || label;
+    if (!speakerIdByLabel.has(normalizedLabel)) speakerIdByLabel.set(normalizedLabel, speaker_id);
 
     return {
       ...segment,
+      speaker: normalizedLabel,
       speaker_id
     };
   });
 
   const normalizedProfiles = Array.from(profilesById.values()).map((profile) => ({
     speaker_id: profile.speaker_id,
-    label: profile.label,
+    label: profile.label || `Speaker ${profile.speaker_id}`,
     grounded: {
       confidence: profile.grounded.confidence ?? null,
       confidence_abstained: profile.grounded.confidence === null || profile.grounded.confidence === undefined,
       linked_segment_indexes: Array.from(new Set(profile.grounded.linked_segment_indexes)).sort((a, b) => a - b),
-      acoustic_descriptors: Array.isArray(profile.grounded.acoustic_descriptors) ? profile.grounded.acoustic_descriptors : [],
-      acoustic_descriptors_abstained: Array.isArray(profile.grounded.acoustic_descriptors) && profile.grounded.acoustic_descriptors.length > 0
-        ? false
-        : (profile.grounded.acoustic_descriptors_abstained ?? true)
+      acoustic_descriptors: dedupeAcousticDescriptors(profile.grounded.acoustic_descriptors)
     },
     inferred_traits: {
-      traits: Array.isArray(profile.inferred_traits.traits) ? profile.inferred_traits.traits : []
+      traits: dedupeInferredTraits(profile.inferred_traits.traits)
     }
   })).sort((a, b) => a.speaker_id.localeCompare(b.speaker_id));
 

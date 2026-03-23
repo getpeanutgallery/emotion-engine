@@ -461,6 +461,70 @@ async function run(input) {
       }).join('\n');
     };
 
+    const buildStructuredSpeakerHandoff = ({ speakerProfiles = [], segments = [] } = {}) => {
+      const lines = [];
+      const normalizedProfiles = Array.isArray(speakerProfiles) ? speakerProfiles : [];
+      const normalizedSegments = Array.isArray(segments) ? segments : [];
+
+      if (normalizedProfiles.length > 0) {
+        lines.push('Speaker registry (reuse speaker_id only for the same acoustic voice):');
+        for (const profile of normalizedProfiles) {
+          const speakerId = typeof profile?.speaker_id === 'string' && profile.speaker_id.trim().length > 0
+            ? profile.speaker_id.trim()
+            : null;
+          if (!speakerId) continue;
+
+          const label = typeof profile?.label === 'string' && profile.label.trim().length > 0
+            ? profile.label.trim()
+            : 'Speaker';
+          const descriptors = Array.isArray(profile?.grounded?.acoustic_descriptors)
+            ? profile.grounded.acoustic_descriptors
+                .map((entry) => typeof entry?.label === 'string' ? entry.label.trim() : '')
+                .filter(Boolean)
+                .slice(0, 3)
+            : [];
+          const traits = Array.isArray(profile?.inferred_traits?.traits)
+            ? profile.inferred_traits.traits
+                .map((entry) => {
+                  const trait = typeof entry?.trait === 'string' ? entry.trait.trim() : '';
+                  const value = typeof entry?.value === 'string' ? entry.value.trim() : '';
+                  return trait && value ? `${trait}: ${value}` : '';
+                })
+                .filter(Boolean)
+                .slice(0, 2)
+            : [];
+          const recentSample = normalizedSegments
+            .filter((segment) => segment?.speaker_id === speakerId)
+            .slice(-2)
+            .map((segment) => typeof segment?.text === 'string' ? segment.text.trim() : '')
+            .filter(Boolean)
+            .join(' / ');
+
+          const parts = [`- ${speakerId} => ${label}`];
+          if (descriptors.length > 0) parts.push(`acoustic cues: ${descriptors.join('; ')}`);
+          if (traits.length > 0) parts.push(`inferred traits: ${traits.join('; ')}`);
+          if (recentSample) parts.push(`recent lines: ${recentSample}`);
+          lines.push(parts.join(' | '));
+        }
+      }
+
+      const tail = normalizedSegments.slice(Math.max(0, normalizedSegments.length - 4));
+      if (tail.length > 0) {
+        if (lines.length > 0) lines.push('');
+        lines.push('Recent dialogue tail:');
+        for (const segment of tail) {
+          const speakerId = typeof segment?.speaker_id === 'string' && segment.speaker_id.trim().length > 0
+            ? ` (${segment.speaker_id.trim()})`
+            : '';
+          const speaker = segment?.speaker ? String(segment.speaker).trim() : 'Speaker';
+          const text = segment?.text ? String(segment.text).trim() : '';
+          lines.push(`- ${speaker}${speakerId}: ${text}`.trim());
+        }
+      }
+
+      return lines.join('\n').trim();
+    };
+
     if (!preflight.needsChunking) {
       // --------------------
       // Within-budget path
@@ -694,6 +758,7 @@ async function run(input) {
     fs.mkdirSync(chunksDir, { recursive: true });
 
     const chunkSegments = [];
+    const chunkSpeakerProfiles = [];
     const chunkSummaries = [];
     const debugChunkRefs = [];
 
@@ -944,6 +1009,7 @@ async function run(input) {
 
       const parsed = chunkResult.dialogueData;
       const segments = Array.isArray(parsed.dialogue_segments) ? parsed.dialogue_segments : [];
+      const segmentIndexOffset = chunkSegments.length;
 
       const offsetSegments = segments.map((seg) => ({
         ...seg,
@@ -952,6 +1018,21 @@ async function run(input) {
       }));
 
       chunkSegments.push(...offsetSegments);
+
+      const profiles = Array.isArray(parsed.speaker_profiles) ? parsed.speaker_profiles : [];
+      const offsetProfiles = profiles.map((profile) => ({
+        ...profile,
+        grounded: {
+          ...(profile?.grounded || {}),
+          linked_segment_indexes: Array.isArray(profile?.grounded?.linked_segment_indexes)
+            ? profile.grounded.linked_segment_indexes
+                .map((value) => Number.isFinite(value) ? Math.trunc(value) + segmentIndexOffset : null)
+                .filter((value) => value !== null)
+            : []
+        }
+      }));
+      chunkSpeakerProfiles.push(...offsetProfiles);
+
       chunkSummaries.push({
         chunkIndex,
         startTime,
@@ -959,7 +1040,10 @@ async function run(input) {
         summary: parsed.summary || null
       });
 
-      const handoff = parsed.handoffContext || makeChunkHandoffFallback(segments);
+      const handoff = buildStructuredSpeakerHandoff({
+        speakerProfiles: chunkSpeakerProfiles,
+        segments: chunkSegments
+      }) || parsed.handoffContext || makeChunkHandoffFallback(segments);
       rollingHandoff = String(handoff || '').trim();
 
       debugChunkRefs.push({
@@ -1230,6 +1314,7 @@ async function run(input) {
 
     const normalizedDialogueValidation = validateDialogueTranscriptionObject({
       dialogue_segments: chunkSegments,
+      speaker_profiles: chunkSpeakerProfiles,
       summary: cleanedTranscript || 'Chunked transcription completed',
       totalDuration: preflight.durationSeconds,
       ...(rollingHandoff ? { handoffContext: rollingHandoff } : {})
@@ -1411,8 +1496,7 @@ Respond with a JSON object in the following format:
         "linked_segment_indexes": [0],
         "acoustic_descriptors": [
           { "label": "steady, conversational delivery", "confidence": 0.61 }
-        ],
-        "acoustic_descriptors_abstained": false
+        ]
       },
       "inferred_traits": {
         "traits": [
@@ -1433,12 +1517,14 @@ Respond with a JSON object in the following format:
 
 IMPORTANT:
 - Return JSON only. No markdown or explanation.
-- Identify speakers as "Speaker 1", "Speaker 2", etc. for display labels, but also reuse anonymous speaker_id values like "spk_001" when segments belong to the same speaker.
+- Identify speakers as "Speaker 1", "Speaker 2", etc. for display labels, but also reuse anonymous speaker_id values like "spk_001" when segments belong to the same acoustic voice.
 - Provide accurate timestamps in seconds.
 - Include confidence scores from 0.0 to 1.0.
 - Keep grounded speaker identity separate from inferred_traits.
 - Grounded data should only include anonymous speaker IDs, same-speaker linkage, and cautious acoustic descriptors that are actually supported by the audio.
-- inferred_traits is optional and must stay clearly speculative / non-authoritative. Attempt reviewable traits for each speaker when the audio supports any guess at all; otherwise leave traits as an empty array.
+- Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
+- inferred_traits must always be present as an object with a traits array. Keep it clearly speculative / non-authoritative and attempt reviewable traits for each speaker when the audio supports them; otherwise return an empty traits array.
+- If a later line sounds like a different voice, do not reuse the old speaker_id just because the scene context mentions the same character.
 - Do not compress the whole file's dialogue into the opening seconds; place each line where it actually occurs in the full timeline.
 - If no speech is detected, return an empty dialogue_segments array.`;
 
@@ -1606,8 +1692,9 @@ Return JSON only with this structure:
       "grounded": {
         "confidence": 0.82,
         "linked_segment_indexes": [0],
-        "acoustic_descriptors": [],
-        "acoustic_descriptors_abstained": true
+        "acoustic_descriptors": [
+          { "label": "steady, conversational delivery", "confidence": 0.61 }
+        ]
       },
       "inferred_traits": {
         "traits": [
@@ -1629,9 +1716,11 @@ Return JSON only with this structure:
 Rules:
 - Return JSON only. No markdown.
 - Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.
-- Keep speaker labels and anonymous speaker_id values consistent with the handoff when possible.
+- Treat the handoff speaker registry as the continuity memory. Reuse a prior speaker_id only when the current voice still matches that prior acoustic profile.
+- If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.
 - Keep grounded speaker identity separate from inferred_traits.
-- Use inferred_traits only for speculative guesswork. Attempt reviewable traits for each speaker when the chunk supports any guess at all; otherwise leave traits as an empty array.
+- Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
+- inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.
 - Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.
 - If no speech is detected, return an empty dialogue_segments array.
 - Keep handoffContext brief (<= ~10 lines).`;

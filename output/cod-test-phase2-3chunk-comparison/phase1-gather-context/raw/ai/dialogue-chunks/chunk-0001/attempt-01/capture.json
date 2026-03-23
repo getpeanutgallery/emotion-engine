@@ -2,7 +2,7 @@
   "chunkIndex": 1,
   "startTime": 20,
   "endTime": 40,
-  "rollingHandoffIn": "Speaker 1 (Raul Menendez) is delivering a speech. Speaker 2 identified him. The next chunk will likely continue the speech or the identification.",
+  "rollingHandoffIn": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | acoustic cues: calm, authoritative, slightly ominous tone | inferred traits: age_range: adult | recent lines: Fear makes you easier to control. / It's time to wake up.\n- spk_002 => Speaker 2 | acoustic cues: menacing, dramatic, deep voice | inferred traits: accent: possibly Hispanic | recent lines: Your streets shall once again run red with your blood. / Raul Menendez, United Global Unrest.\n\nRecent dialogue tail:\n- Speaker 1 (spk_001): Fear makes you easier to control.\n- Speaker 1 (spk_001): It's time to wake up.\n- Speaker 2 (spk_002): Your streets shall once again run red with your blood.\n- Speaker 2 (spk_002): Raul Menendez, United Global Unrest.",
   "attempt": 1,
   "attemptInTarget": 1,
   "targetIndex": 0,
@@ -19,15 +19,15 @@
   },
   "failover": null,
   "promptRef": {
-    "sha256": "91b3bb42f7b14cec7abaea64dc4a0bd7bffefd8db31e8219d94c4dd1b171103c",
-    "file": "_meta/ai/_prompts/91b3bb42f7b14cec7abaea64dc4a0bd7bffefd8db31e8219d94c4dd1b171103c.json"
+    "sha256": "938247932fd9a7a7e918914dc43dbc35f3423fb93411d590307a3f8620c622f3",
+    "file": "_meta/ai/_prompts/938247932fd9a7a7e918914dc43dbc35f3423fb93411d590307a3f8620c622f3.json"
   },
   "rawResponse": {
-    "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 2.2,\n      \"speaker\": \"Raul Menendez\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"on an unprecedented scale.\",\n      \"confidence\": 0.92\n    },\n    {\n      \"start\": 3.2,\n      \"end\": 4.5,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"Menendez is a terrorist.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 4.5,\n      \"end\": 7.2,\n      \"speaker\": \"Raul Menendez\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"We're bringing peace and security to the world.\",\n      \"confidence\": 0.96\n    },\n    {\n      \"start\": 8.0,\n      \"end\": 10.0,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"He refuses to let me go.\",\n      \"confidence\": 0.93\n    },\n    {\n      \"start\": 10.2,\n      \"end\": 13.0,\n      \"speaker\": \"Raul Menendez\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Stop looking backwards, David. What matters is what we do next.\",\n      \"confidence\": 0.97\n    },\n    {\n      \"start\": 15.2,\n      \"end\": 17.0,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"A lot of people counting on us for answers.\",\n      \"confidence\": 0.94\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Raul Menendez\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [0, 2, 4],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"authoritative, charismatic tone\",\n            \"confidence\": 0.85\n          }\n        ],\n        \"acoustic_descriptors_abstained\": false\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"accent\",\n            \"value\": \"likely Latin American\",\n            \"confidence\": 0.7,\n            \"note\": \"based on speech patterns\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_002\",\n      \"label\": \"Speaker 2\",\n      \"grounded\": {\n        \"confidence\": 0.8,\n        \"linked_segment_indexes\": [1, 3, 5],\n        \"acoustic_descriptors\": [],\n        \"acoustic_descriptors_abstained\": true\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    }\n  ],\n  \"summary\": \"Raul Menendez continues his speech about bringing peace, while Speaker 2 (David) expresses frustration and concern about the situation, emphasizing the need for answers.\",\n  \"handoffContext\": \"Raul Menendez and David are in a tense standoff. The dialogue suggests a personal conflict between them. The next chunk will likely continue their confrontation.\",\n  \"totalDuration\": 20.0\n}",
+    "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 1.5,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"on an unprecedented scale.\",\n      \"confidence\": 0.92\n    },\n    {\n      \"start\": 2.1,\n      \"end\": 3.5,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"Menendez is a terrorist.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 3.9,\n      \"end\": 6.2,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"We're bringing peace and security to the world.\",\n      \"confidence\": 0.94\n    },\n    {\n      \"start\": 6.8,\n      \"end\": 8.9,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"He refuses to let me go.\",\n      \"confidence\": 0.91\n    },\n    {\n      \"start\": 9.5,\n      \"end\": 12.5,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"Stop looking backwards, David, but what matters is what we do next.\",\n      \"confidence\": 0.93\n    },\n    {\n      \"start\": 16.2,\n      \"end\": 18.5,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"A lot of people counting on us for answers.\",\n      \"confidence\": 0.9\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [0, 3, 5],\n        \"acoustic_descriptors\": [\n          { \"label\": \"authoritative, calm\", \"confidence\": 0.75 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          { \"trait\": \"role\", \"value\": \"likely military or official\", \"confidence\": 0.4, \"note\": \"contextual inference\" }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_002\",\n      \"label\": \"Speaker 2\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [4],\n        \"acoustic_descriptors\": [\n          { \"label\": \"menacing, deep voice\", \"confidence\": 0.85 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          { \"trait\": \"identity\", \"value\": \"Raul Menendez\", \"confidence\": 0.9, \"note\": \"named in dialogue\" }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_003\",\n      \"label\": \"Speaker 3\",\n      \"grounded\": {\n        \"confidence\": 0.88,\n        \"linked_segment_indexes\": [1, 2],\n        \"acoustic_descriptors\": [\n          { \"label\": \"female, authoritative\", \"confidence\": 0.8 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          { \"trait\": \"role\", \"value\": \"official/leader\", \"confidence\": 0.35, \"note\": \"speculative\" }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future.\",\n  \"handoffContext\": \"Speaker 1 (David), Speaker 2 (Raul Menendez), and Speaker 3 (Official) are the active participants. The conversation is tense, focusing on the threat posed by Menendez.\",\n  \"totalDuration\": 20.0\n}",
     "usage": {
-      "input": 2427,
-      "output": 868,
-      "total": 3295
+      "input": 7355,
+      "output": 1407,
+      "total": 8762
     },
     "providerRequest": {
       "method": "POST",
@@ -44,7 +44,7 @@
             "content": [
               {
                 "type": "text",
-                "text": "You are transcribing CHUNK 1 of a longer audio file.\n\nChunk time window: 20.00s to 40.00s (global timeline).\n\nContext from previous chunk (handoff):\nSpeaker 1 (Raul Menendez) is delivering a speech. Speaker 2 identified him. The next chunk will likely continue the speech or the identification.\n\nTranscribe the audio in this chunk. Identify different speakers and provide timestamps.\n\nReturn JSON only with this structure:\n\n{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 5.2,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Transcribed text here\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.82,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [],\n        \"acoustic_descriptors_abstained\": true\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"age_range\",\n            \"value\": \"likely adult\",\n            \"confidence\": 0.28,\n            \"note\": \"speculative inference from voice only\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Brief summary for THIS chunk\",\n  \"handoffContext\": \"Short handoff to help the next chunk keep continuity (entities, speaker mapping, last lines)\",\n  \"totalDuration\": 30.5\n}\n\nRules:\n- Return JSON only. No markdown.\n- Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.\n- Keep speaker labels and anonymous speaker_id values consistent with the handoff when possible.\n- Keep grounded speaker identity separate from inferred_traits.\n- Use inferred_traits only for speculative guesswork. Attempt reviewable traits for each speaker when the chunk supports any guess at all; otherwise leave traits as an empty array.\n- Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.\n- If no speech is detected, return an empty dialogue_segments array.\n- Keep handoffContext brief (<= ~10 lines).\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_dialogue_transcription_json\",\n  \"transcription\": {\n    \"dialogue_segments\": [\n      {\n        \"start\": 0,\n        \"end\": 1.2,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"Hello there\",\n        \"confidence\": 0.95\n      }\n    ],\n    \"speaker_profiles\": [\n      {\n        \"speaker_id\": \"spk_001\",\n        \"label\": \"Speaker 1\",\n        \"grounded\": {\n          \"confidence\": 0.82,\n          \"linked_segment_indexes\": [\n            0\n          ],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"steady, conversational delivery\",\n              \"confidence\": 0.61\n            }\n          ],\n          \"acoustic_descriptors_abstained\": false\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"accent\",\n              \"value\": \"possibly mid-Atlantic American English\",\n              \"confidence\": 0.31,\n              \"note\": \"speculative inference from delivery only\"\n            }\n          ]\n        }\n      }\n    ],\n    \"summary\": \"Short summary of the dialogue.\",\n    \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n    \"totalDuration\": 10.5\n  }\n}\n2) Final dialogue transcription chunk JSON matching the schema above.\n\nAcceptance rules:\n- The final dialogue transcription chunk JSON is accepted only after validate_dialogue_transcription_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_dialogue_transcription_json\",\"transcription\":{\"dialogue_segments\":[{\"start\":0,\"end\":1.2,\"speaker\":\"Speaker 1\",\"speaker_id\":\"spk_001\",\"text\":\"Hello there\",\"confidence\":0.95}],\"speaker_profiles\":[{\"speaker_id\":\"spk_001\",\"label\":\"Speaker 1\",\"grounded\":{\"confidence\":0.82,\"linked_segment_indexes\":[0],\"acoustic_descriptors\":[{\"label\":\"steady, conversational delivery\",\"confidence\":0.61}],\"acoustic_descriptors_abstained\":false},\"inferred_traits\":{\"traits\":[{\"trait\":\"accent\",\"value\":\"possibly mid-Atlantic American English\",\"confidence\":0.31,\"note\":\"speculative inference from delivery only\"}]}}],\"summary\":\"Short summary of the dialogue.\",\"handoffContext\":\"Short continuity handoff for the next chunk.\",\"totalDuration\":10.5}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised dialogue transcription chunk JSON candidate.\n- After the validator returns valid=true, return ONLY the final dialogue transcription chunk JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must include handoffContext so the next chunk can preserve continuity.\n\nFinal artifact reminders:\n- Timestamps must be relative to this chunk and start at 0.\n- Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.\n- Keep grounded speaker identity separate from any inferred_traits guesswork.\n- handoffContext must stay brief and continuity-focused.\n\nTool contract:\n{\n  \"name\": \"validate_dialogue_transcription_json\",\n  \"argumentKey\": \"transcription\",\n  \"description\": \"Validate a Phase 1 dialogue transcription JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_dialogue_transcription_json\",\n    \"transcription\": {\n      \"dialogue_segments\": [\n        {\n          \"start\": 0,\n          \"end\": 1.2,\n          \"speaker\": \"Speaker 1\",\n          \"speaker_id\": \"spk_001\",\n          \"text\": \"Hello there\",\n          \"confidence\": 0.95\n        }\n      ],\n      \"speaker_profiles\": [\n        {\n          \"speaker_id\": \"spk_001\",\n          \"label\": \"Speaker 1\",\n          \"grounded\": {\n            \"confidence\": 0.82,\n            \"linked_segment_indexes\": [\n              0\n            ],\n            \"acoustic_descriptors\": [\n              {\n                \"label\": \"steady, conversational delivery\",\n                \"confidence\": 0.61\n              }\n            ],\n            \"acoustic_descriptors_abstained\": false\n          },\n          \"inferred_traits\": {\n            \"traits\": [\n              {\n                \"trait\": \"accent\",\n                \"value\": \"possibly mid-Atlantic American English\",\n                \"confidence\": 0.31,\n                \"note\": \"speculative inference from delivery only\"\n              }\n            ]\n          }\n        }\n      ],\n      \"summary\": \"Short summary of the dialogue.\",\n      \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n      \"totalDuration\": 10.5\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"transcription\"\n    ],\n    \"properties\": {\n      \"transcription\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, and totalDuration.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 4,\n  \"remainingValidatorCalls\": 3\n}\n\nConversation state:\n[]"
+                "text": "You are transcribing CHUNK 1 of a longer audio file.\n\nChunk time window: 20.00s to 40.00s (global timeline).\n\nContext from previous chunk (handoff):\nSpeaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | acoustic cues: calm, authoritative, slightly ominous tone | inferred traits: age_range: adult | recent lines: Fear makes you easier to control. / It's time to wake up.\n- spk_002 => Speaker 2 | acoustic cues: menacing, dramatic, deep voice | inferred traits: accent: possibly Hispanic | recent lines: Your streets shall once again run red with your blood. / Raul Menendez, United Global Unrest.\n\nRecent dialogue tail:\n- Speaker 1 (spk_001): Fear makes you easier to control.\n- Speaker 1 (spk_001): It's time to wake up.\n- Speaker 2 (spk_002): Your streets shall once again run red with your blood.\n- Speaker 2 (spk_002): Raul Menendez, United Global Unrest.\n\nTranscribe the audio in this chunk. Identify different speakers and provide timestamps.\n\nReturn JSON only with this structure:\n\n{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 5.2,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Transcribed text here\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.82,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"steady, conversational delivery\", \"confidence\": 0.61 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"age_range\",\n            \"value\": \"likely adult\",\n            \"confidence\": 0.28,\n            \"note\": \"speculative inference from voice only\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Brief summary for THIS chunk\",\n  \"handoffContext\": \"Short handoff to help the next chunk keep continuity (entities, speaker mapping, last lines)\",\n  \"totalDuration\": 30.5\n}\n\nRules:\n- Return JSON only. No markdown.\n- Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.\n- Treat the handoff speaker registry as the continuity memory. Reuse a prior speaker_id only when the current voice still matches that prior acoustic profile.\n- If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.\n- Keep grounded speaker identity separate from inferred_traits.\n- Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.\n- inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.\n- Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.\n- If no speech is detected, return an empty dialogue_segments array.\n- Keep handoffContext brief (<= ~10 lines).\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_dialogue_transcription_json\",\n  \"transcription\": {\n    \"dialogue_segments\": [\n      {\n        \"start\": 0,\n        \"end\": 1.2,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"Hello there\",\n        \"confidence\": 0.95\n      }\n    ],\n    \"speaker_profiles\": [\n      {\n        \"speaker_id\": \"spk_001\",\n        \"label\": \"Speaker 1\",\n        \"grounded\": {\n          \"confidence\": 0.82,\n          \"linked_segment_indexes\": [\n            0\n          ],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"steady, conversational delivery\",\n              \"confidence\": 0.61\n            }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"accent\",\n              \"value\": \"possibly mid-Atlantic American English\",\n              \"confidence\": 0.31,\n              \"note\": \"speculative inference from delivery only\"\n            }\n          ]\n        }\n      }\n    ],\n    \"summary\": \"Short summary of the dialogue.\",\n    \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n    \"totalDuration\": 10.5\n  }\n}\n2) Final dialogue transcription chunk JSON matching the schema above.\n\nAcceptance rules:\n- The final dialogue transcription chunk JSON is accepted only after validate_dialogue_transcription_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_dialogue_transcription_json\",\"transcription\":{\"dialogue_segments\":[{\"start\":0,\"end\":1.2,\"speaker\":\"Speaker 1\",\"speaker_id\":\"spk_001\",\"text\":\"Hello there\",\"confidence\":0.95}],\"speaker_profiles\":[{\"speaker_id\":\"spk_001\",\"label\":\"Speaker 1\",\"grounded\":{\"confidence\":0.82,\"linked_segment_indexes\":[0],\"acoustic_descriptors\":[{\"label\":\"steady, conversational delivery\",\"confidence\":0.61}]},\"inferred_traits\":{\"traits\":[{\"trait\":\"accent\",\"value\":\"possibly mid-Atlantic American English\",\"confidence\":0.31,\"note\":\"speculative inference from delivery only\"}]}}],\"summary\":\"Short summary of the dialogue.\",\"handoffContext\":\"Short continuity handoff for the next chunk.\",\"totalDuration\":10.5}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised dialogue transcription chunk JSON candidate.\n- After the validator returns valid=true, return ONLY the final dialogue transcription chunk JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must include handoffContext so the next chunk can preserve continuity.\n\nFinal artifact reminders:\n- Timestamps must be relative to this chunk and start at 0.\n- Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.\n- Keep grounded speaker identity separate from any inferred_traits guesswork.\n- handoffContext must stay brief and continuity-focused.\n\nTool contract:\n{\n  \"name\": \"validate_dialogue_transcription_json\",\n  \"argumentKey\": \"transcription\",\n  \"description\": \"Validate a Phase 1 dialogue transcription JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_dialogue_transcription_json\",\n    \"transcription\": {\n      \"dialogue_segments\": [\n        {\n          \"start\": 0,\n          \"end\": 1.2,\n          \"speaker\": \"Speaker 1\",\n          \"speaker_id\": \"spk_001\",\n          \"text\": \"Hello there\",\n          \"confidence\": 0.95\n        }\n      ],\n      \"speaker_profiles\": [\n        {\n          \"speaker_id\": \"spk_001\",\n          \"label\": \"Speaker 1\",\n          \"grounded\": {\n            \"confidence\": 0.82,\n            \"linked_segment_indexes\": [\n              0\n            ],\n            \"acoustic_descriptors\": [\n              {\n                \"label\": \"steady, conversational delivery\",\n                \"confidence\": 0.61\n              }\n            ]\n          },\n          \"inferred_traits\": {\n            \"traits\": [\n              {\n                \"trait\": \"accent\",\n                \"value\": \"possibly mid-Atlantic American English\",\n                \"confidence\": 0.31,\n                \"note\": \"speculative inference from delivery only\"\n              }\n            ]\n          }\n        }\n      ],\n      \"summary\": \"Short summary of the dialogue.\",\n      \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n      \"totalDuration\": 10.5\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"transcription\"\n    ],\n    \"properties\": {\n      \"transcription\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, and totalDuration.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 3,\n  \"remainingValidatorCalls\": 2\n}\n\nConversation state:\n[\n  {\n    \"role\": \"assistant\",\n    \"turn\": 1,\n    \"kind\": \"model_output\",\n    \"raw\": \"{\\n  \\\"tool\\\": \\\"validate_dialogue_transcription_json\\\",\\n  \\\"transcription\\\": {\\n    \\\"dialogue_segments\\\": [\\n      {\\n        \\\"start\\\": 0.0,\\n        \\\"end\\\": 1.5,\\n        \\\"speaker\\\": \\\"Speaker 1\\\",\\n        \\\"speaker_id\\\": \\\"spk_001\\\",\\n        \\\"text\\\": \\\"on an unprecedented scale.\\\",\\n        \\\"confidence\\\": 0.92\\n      },\\n      {\\n        \\\"start\\\": 2.1,\\n        \\\"end\\\": 3.5,\\n        \\\"speaker\\\": \\\"Speaker 3\\\",\\n        \\\"speaker_id\\\": \\\"spk_003\\\",\\n        \\\"text\\\": \\\"Menendez is a terrorist.\\\",\\n        \\\"confidence\\\": 0.95\\n      },\\n      {\\n        \\\"start\\\": 3.9,\\n        \\\"end\\\": 6.2,\\n        \\\"speaker\\\": \\\"Speaker 3\\\",\\n        \\\"speaker_id\\\": \\\"spk_003\\\",\\n        \\\"text\\\": \\\"We're bringing peace and security to the world.\\\",\\n        \\\"confidence\\\": 0.94\\n      },\\n      {\\n        \\\"start\\\": 6.8,\\n        \\\"end\\\": 8.9,\\n        \\\"speaker\\\": \\\"Speaker 1\\\",\\n        \\\"speaker_id\\\": \\\"spk_001\\\",\\n        \\\"text\\\": \\\"He refuses to let me go.\\\",\\n        \\\"confidence\\\": 0.91\\n      },\\n      {\\n        \\\"start\\\": 9.5,\\n        \\\"end\\\": 12.5,\\n        \\\"speaker\\\": \\\"Speaker 2\\\",\\n        \\\"speaker_id\\\": \\\"spk_002\\\",\\n        \\\"text\\\": \\\"Stop looking backwards, David, but what matters is what we do next.\\\",\\n        \\\"confidence\\\": 0.93\\n      },\\n      {\\n        \\\"start\\\": 16.2,\\n        \\\"end\\\": 18.5,\\n        \\\"speaker\\\": \\\"Speaker 1\\\",\\n        \\\"speaker_id\\\": \\\"spk_001\\\",\\n        \\\"text\\\": \\\"A lot of people counting on us for answers.\\\",\\n        \\\"confidence\\\": 0.90\\n      }\\n    ],\\n    \\\"speaker_profiles\\\": [\\n      {\\n        \\\"speaker_id\\\": \\\"spk_001\\\",\\n        \\\"label\\\": \\\"Speaker 1\\\",\\n        \\\"grounded\\\": {\\n          \\\"confidence\\\": 0.85,\\n          \\\"linked_segment_indexes\\\": [0, 3, 5],\\n          \\\"acoustic_descriptors\\\": [\\n            { \\\"label\\\": \\\"authoritative, calm\\\", \\\"confidence\\\": 0.75 }\\n          ]\\n        },\\n        \\\"inferred_traits\\\": {\\n          \\\"traits\\\": [\\n            { \\\"trait\\\": \\\"role\\\", \\\"value\\\": \\\"likely military or official\\\", \\\"confidence\\\": 0.4, \\\"note\\\": \\\"contextual inference\\\" }\\n          ]\\n        }\\n      },\\n      {\\n        \\\"speaker_id\\\": \\\"spk_002\\\",\\n        \\\"label\\\": \\\"Speaker 2\\\",\\n        \\\"grounded\\\": {\\n          \\\"confidence\\\": 0.9,\\n          \\\"linked_segment_indexes\\\": [4],\\n          \\\"acoustic_descriptors\\\": [\\n            { \\\"label\\\": \\\"menacing, deep voice\\\", \\\"confidence\\\": 0.85 }\\n          ]\\n        },\\n        \\\"inferred_traits\\\": {\\n          \\\"traits\\\": [\\n            { \\\"trait\\\": \\\"identity\\\", \\\"value\\\": \\\"Raul Menendez\\\", \\\"confidence\\\": 0.9, \\\"note\\\": \\\"named in dialogue\\\" }\\n          ]\\n        }\\n      },\\n      {\\n        \\\"speaker_id\\\": \\\"spk_003\\\",\\n        \\\"label\\\": \\\"Speaker 3\\\",\\n        \\\"grounded\\\": {\\n          \\\"confidence\\\": 0.88,\\n          \\\"linked_segment_indexes\\\": [1, 2],\\n          \\\"acoustic_descriptors\\\": [\\n            { \\\"label\\\": \\\"female, authoritative\\\", \\\"confidence\\\": 0.8 }\\n          ]\\n        },\\n        \\\"inferred_traits\\\": {\\n          \\\"traits\\\": [\\n            { \\\"trait\\\": \\\"role\\\", \\\"value\\\": \\\"official/leader\\\", \\\"confidence\\\": 0.35, \\\"note\\\": \\\"speculative\\\" }\\n          ]\\n        }\\n      }\\n    ],\\n    \\\"summary\\\": \\\"The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future.\\\",\\n    \\\"handoffContext\\\": \\\"Speaker 1 (David), Speaker 2 (Raul Menendez), and Speaker 3 (Official) are the active participants. The conversation is tense, focusing on the threat posed by Menendez.\\\",\\n    \\\"totalDuration\\\": 20.0\\n  }\\n}\"\n  },\n  {\n    \"role\": \"tool\",\n    \"turn\": 1,\n    \"kind\": \"validator_acceptance\",\n    \"toolName\": \"validate_dialogue_transcription_json\",\n    \"toolCall\": {\n      \"tool\": \"validate_dialogue_transcription_json\",\n      \"transcription\": {\n        \"dialogue_segments\": [\n          {\n            \"start\": 0,\n            \"end\": 1.5,\n            \"speaker\": \"Speaker 1\",\n            \"speaker_id\": \"spk_001\",\n            \"text\": \"on an unprecedented scale.\",\n            \"confidence\": 0.92\n          },\n          {\n            \"start\": 2.1,\n            \"end\": 3.5,\n            \"speaker\": \"Speaker 3\",\n            \"speaker_id\": \"spk_003\",\n            \"text\": \"Menendez is a terrorist.\",\n            \"confidence\": 0.95\n          },\n          {\n            \"start\": 3.9,\n            \"end\": 6.2,\n            \"speaker\": \"Speaker 3\",\n            \"speaker_id\": \"spk_003\",\n            \"text\": \"We're bringing peace and security to the world.\",\n            \"confidence\": 0.94\n          },\n          {\n            \"start\": 6.8,\n            \"end\": 8.9,\n            \"speaker\": \"Speaker 1\",\n            \"speaker_id\": \"spk_001\",\n            \"text\": \"He refuses to let me go.\",\n            \"confidence\": 0.91\n          },\n          {\n            \"start\": 9.5,\n            \"end\": 12.5,\n            \"speaker\": \"Speaker 2\",\n            \"speaker_id\": \"spk_002\",\n            \"text\": \"Stop looking backwards, David, but what matters is what we do next.\",\n            \"confidence\": 0.93\n          },\n          {\n            \"start\": 16.2,\n            \"end\": 18.5,\n            \"speaker\": \"Speaker 1\",\n            \"speaker_id\": \"spk_001\",\n            \"text\": \"A lot of people counting on us for answers.\",\n            \"confidence\": 0.9\n          }\n        ],\n        \"speaker_profiles\": [\n          {\n            \"speaker_id\": \"spk_001\",\n            \"label\": \"Speaker 1\",\n            \"grounded\": {\n              \"confidence\": 0.85,\n              \"linked_segment_indexes\": [\n                0,\n                3,\n                5\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"authoritative, calm\",\n                  \"confidence\": 0.75\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"role\",\n                  \"value\": \"likely military or official\",\n                  \"confidence\": 0.4,\n                  \"note\": \"contextual inference\"\n                }\n              ]\n            }\n          },\n          {\n            \"speaker_id\": \"spk_002\",\n            \"label\": \"Speaker 2\",\n            \"grounded\": {\n              \"confidence\": 0.9,\n              \"linked_segment_indexes\": [\n                4\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"menacing, deep voice\",\n                  \"confidence\": 0.85\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"identity\",\n                  \"value\": \"Raul Menendez\",\n                  \"confidence\": 0.9,\n                  \"note\": \"named in dialogue\"\n                }\n              ]\n            }\n          },\n          {\n            \"speaker_id\": \"spk_003\",\n            \"label\": \"Speaker 3\",\n            \"grounded\": {\n              \"confidence\": 0.88,\n              \"linked_segment_indexes\": [\n                1,\n                2\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"female, authoritative\",\n                  \"confidence\": 0.8\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"role\",\n                  \"value\": \"official/leader\",\n                  \"confidence\": 0.35,\n                  \"note\": \"speculative\"\n                }\n              ]\n            }\n          }\n        ],\n        \"summary\": \"The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future.\",\n        \"handoffContext\": \"Speaker 1 (David), Speaker 2 (Raul Menendez), and Speaker 3 (Official) are the active participants. The conversation is tense, focusing on the threat posed by Menendez.\",\n        \"totalDuration\": 20\n      },\n      \"arguments\": {\n        \"transcription\": {\n          \"dialogue_segments\": [\n            {\n              \"start\": 0,\n              \"end\": 1.5,\n              \"speaker\": \"Speaker 1\",\n              \"speaker_id\": \"spk_001\",\n              \"text\": \"on an unprecedented scale.\",\n              \"confidence\": 0.92\n            },\n            {\n              \"start\": 2.1,\n              \"end\": 3.5,\n              \"speaker\": \"Speaker 3\",\n              \"speaker_id\": \"spk_003\",\n              \"text\": \"Menendez is a terrorist.\",\n              \"confidence\": 0.95\n            },\n            {\n              \"start\": 3.9,\n              \"end\": 6.2,\n              \"speaker\": \"Speaker 3\",\n              \"speaker_id\": \"spk_003\",\n              \"text\": \"We're bringing peace and security to the world.\",\n              \"confidence\": 0.94\n            },\n            {\n              \"start\": 6.8,\n              \"end\": 8.9,\n              \"speaker\": \"Speaker 1\",\n              \"speaker_id\": \"spk_001\",\n              \"text\": \"He refuses to let me go.\",\n              \"confidence\": 0.91\n            },\n            {\n              \"start\": 9.5,\n              \"end\": 12.5,\n              \"speaker\": \"Speaker 2\",\n              \"speaker_id\": \"spk_002\",\n              \"text\": \"Stop looking backwards, David, but what matters is what we do next.\",\n              \"confidence\": 0.93\n            },\n            {\n              \"start\": 16.2,\n              \"end\": 18.5,\n              \"speaker\": \"Speaker 1\",\n              \"speaker_id\": \"spk_001\",\n              \"text\": \"A lot of people counting on us for answers.\",\n              \"confidence\": 0.9\n            }\n          ],\n          \"speaker_profiles\": [\n            {\n              \"speaker_id\": \"spk_001\",\n              \"label\": \"Speaker 1\",\n              \"grounded\": {\n                \"confidence\": 0.85,\n                \"linked_segment_indexes\": [\n                  0,\n                  3,\n                  5\n                ],\n                \"acoustic_descriptors\": [\n                  {\n                    \"label\": \"authoritative, calm\",\n                    \"confidence\": 0.75\n                  }\n                ]\n              },\n              \"inferred_traits\": {\n                \"traits\": [\n                  {\n                    \"trait\": \"role\",\n                    \"value\": \"likely military or official\",\n                    \"confidence\": 0.4,\n                    \"note\": \"contextual inference\"\n                  }\n                ]\n              }\n            },\n            {\n              \"speaker_id\": \"spk_002\",\n              \"label\": \"Speaker 2\",\n              \"grounded\": {\n                \"confidence\": 0.9,\n                \"linked_segment_indexes\": [\n                  4\n                ],\n                \"acoustic_descriptors\": [\n                  {\n                    \"label\": \"menacing, deep voice\",\n                    \"confidence\": 0.85\n                  }\n                ]\n              },\n              \"inferred_traits\": {\n                \"traits\": [\n                  {\n                    \"trait\": \"identity\",\n                    \"value\": \"Raul Menendez\",\n                    \"confidence\": 0.9,\n                    \"note\": \"named in dialogue\"\n                  }\n                ]\n              }\n            },\n            {\n              \"speaker_id\": \"spk_003\",\n              \"label\": \"Speaker 3\",\n              \"grounded\": {\n                \"confidence\": 0.88,\n                \"linked_segment_indexes\": [\n                  1,\n                  2\n                ],\n                \"acoustic_descriptors\": [\n                  {\n                    \"label\": \"female, authoritative\",\n                    \"confidence\": 0.8\n                  }\n                ]\n              },\n              \"inferred_traits\": {\n                \"traits\": [\n                  {\n                    \"trait\": \"role\",\n                    \"value\": \"official/leader\",\n                    \"confidence\": 0.35,\n                    \"note\": \"speculative\"\n                  }\n                ]\n              }\n            }\n          ],\n          \"summary\": \"The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future.\",\n          \"handoffContext\": \"Speaker 1 (David), Speaker 2 (Raul Menendez), and Speaker 3 (Official) are the active participants. The conversation is tense, focusing on the threat posed by Menendez.\",\n          \"totalDuration\": 20\n        }\n      }\n    },\n    \"result\": {\n      \"ok\": true,\n      \"valid\": true,\n      \"toolName\": \"validate_dialogue_transcription_json\",\n      \"summary\": \"JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.\",\n      \"errors\": [],\n      \"normalizedValue\": {\n        \"dialogue_segments\": [\n          {\n            \"start\": 0,\n            \"end\": 1.5,\n            \"speaker\": \"Speaker 1\",\n            \"speaker_id\": \"spk_001\",\n            \"text\": \"on an unprecedented scale.\",\n            \"confidence\": 0.92\n          },\n          {\n            \"start\": 2.1,\n            \"end\": 3.5,\n            \"speaker\": \"Speaker 3\",\n            \"speaker_id\": \"spk_003\",\n            \"text\": \"Menendez is a terrorist.\",\n            \"confidence\": 0.95\n          },\n          {\n            \"start\": 3.9,\n            \"end\": 6.2,\n            \"speaker\": \"Speaker 3\",\n            \"speaker_id\": \"spk_003\",\n            \"text\": \"We're bringing peace and security to the world.\",\n            \"confidence\": 0.94\n          },\n          {\n            \"start\": 6.8,\n            \"end\": 8.9,\n            \"speaker\": \"Speaker 1\",\n            \"speaker_id\": \"spk_001\",\n            \"text\": \"He refuses to let me go.\",\n            \"confidence\": 0.91\n          },\n          {\n            \"start\": 9.5,\n            \"end\": 12.5,\n            \"speaker\": \"Speaker 2\",\n            \"speaker_id\": \"spk_002\",\n            \"text\": \"Stop looking backwards, David, but what matters is what we do next.\",\n            \"confidence\": 0.93\n          },\n          {\n            \"start\": 16.2,\n            \"end\": 18.5,\n            \"speaker\": \"Speaker 1\",\n            \"speaker_id\": \"spk_001\",\n            \"text\": \"A lot of people counting on us for answers.\",\n            \"confidence\": 0.9\n          }\n        ],\n        \"speaker_profiles\": [\n          {\n            \"speaker_id\": \"spk_001\",\n            \"label\": \"Speaker 1\",\n            \"grounded\": {\n              \"confidence\": 0.85,\n              \"confidence_abstained\": false,\n              \"linked_segment_indexes\": [\n                0,\n                3,\n                5\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"authoritative, calm\",\n                  \"confidence\": 0.75\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"role\",\n                  \"value\": \"likely military or official\",\n                  \"confidence\": 0.4,\n                  \"note\": \"contextual inference\"\n                }\n              ]\n            }\n          },\n          {\n            \"speaker_id\": \"spk_002\",\n            \"label\": \"Speaker 2\",\n            \"grounded\": {\n              \"confidence\": 0.9,\n              \"confidence_abstained\": false,\n              \"linked_segment_indexes\": [\n                4\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"menacing, deep voice\",\n                  \"confidence\": 0.85\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"identity\",\n                  \"value\": \"Raul Menendez\",\n                  \"confidence\": 0.9,\n                  \"note\": \"named in dialogue\"\n                }\n              ]\n            }\n          },\n          {\n            \"speaker_id\": \"spk_003\",\n            \"label\": \"Speaker 3\",\n            \"grounded\": {\n              \"confidence\": 0.88,\n              \"confidence_abstained\": false,\n              \"linked_segment_indexes\": [\n                1,\n                2\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"female, authoritative\",\n                  \"confidence\": 0.8\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"role\",\n                  \"value\": \"official/leader\",\n                  \"confidence\": 0.35,\n                  \"note\": \"speculative\"\n                }\n              ]\n            }\n          }\n        ],\n        \"summary\": \"The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future.\",\n        \"totalDuration\": 20,\n        \"handoffContext\": \"Speaker 1 (David), Speaker 2 (Raul Menendez), and Speaker 3 (Official) are the active participants. The conversation is tense, focusing on the threat posed by Menendez.\"\n      }\n    }\n  }\n]"
               },
               {
                 "type": "input_audio",
@@ -67,7 +67,7 @@
     "providerResponse": {
       "status": 200,
       "headers": {
-        "date": "Mon, 23 Mar 2026 01:26:12 GMT",
+        "date": "Mon, 23 Mar 2026 12:17:44 GMT",
         "content-type": "application/json",
         "transfer-encoding": "chunked",
         "connection": "keep-alive",
@@ -76,14 +76,14 @@
         "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
         "x-content-type-options": "nosniff",
         "server": "cloudflare",
-        "cf-ray": "9e09a57fa821b3da-MIA"
+        "cf-ray": "9e0d5fda1a9c323d-MIA"
       },
       "body": {
-        "id": "gen-1774229171-d3rRVMwvWU4z2yTkvkHB",
+        "id": "gen-1774268261-X8PHuGwacK03VSL8AHQ0",
         "object": "chat.completion",
-        "created": 1774229171,
+        "created": 1774268261,
         "model": "google/gemini-3.1-flash-lite-preview-20260303",
-        "provider": "Google AI Studio",
+        "provider": "Google",
         "system_fingerprint": null,
         "choices": [
           {
@@ -93,7 +93,7 @@
             "native_finish_reason": "STOP",
             "message": {
               "role": "assistant",
-              "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 2.2,\n      \"speaker\": \"Raul Menendez\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"on an unprecedented scale.\",\n      \"confidence\": 0.92\n    },\n    {\n      \"start\": 3.2,\n      \"end\": 4.5,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"Menendez is a terrorist.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 4.5,\n      \"end\": 7.2,\n      \"speaker\": \"Raul Menendez\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"We're bringing peace and security to the world.\",\n      \"confidence\": 0.96\n    },\n    {\n      \"start\": 8.0,\n      \"end\": 10.0,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"He refuses to let me go.\",\n      \"confidence\": 0.93\n    },\n    {\n      \"start\": 10.2,\n      \"end\": 13.0,\n      \"speaker\": \"Raul Menendez\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Stop looking backwards, David. What matters is what we do next.\",\n      \"confidence\": 0.97\n    },\n    {\n      \"start\": 15.2,\n      \"end\": 17.0,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"A lot of people counting on us for answers.\",\n      \"confidence\": 0.94\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Raul Menendez\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [0, 2, 4],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"authoritative, charismatic tone\",\n            \"confidence\": 0.85\n          }\n        ],\n        \"acoustic_descriptors_abstained\": false\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"accent\",\n            \"value\": \"likely Latin American\",\n            \"confidence\": 0.7,\n            \"note\": \"based on speech patterns\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_002\",\n      \"label\": \"Speaker 2\",\n      \"grounded\": {\n        \"confidence\": 0.8,\n        \"linked_segment_indexes\": [1, 3, 5],\n        \"acoustic_descriptors\": [],\n        \"acoustic_descriptors_abstained\": true\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    }\n  ],\n  \"summary\": \"Raul Menendez continues his speech about bringing peace, while Speaker 2 (David) expresses frustration and concern about the situation, emphasizing the need for answers.\",\n  \"handoffContext\": \"Raul Menendez and David are in a tense standoff. The dialogue suggests a personal conflict between them. The next chunk will likely continue their confrontation.\",\n  \"totalDuration\": 20.0\n}",
+              "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 1.5,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"on an unprecedented scale.\",\n      \"confidence\": 0.92\n    },\n    {\n      \"start\": 2.1,\n      \"end\": 3.5,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"Menendez is a terrorist.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 3.9,\n      \"end\": 6.2,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"We're bringing peace and security to the world.\",\n      \"confidence\": 0.94\n    },\n    {\n      \"start\": 6.8,\n      \"end\": 8.9,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"He refuses to let me go.\",\n      \"confidence\": 0.91\n    },\n    {\n      \"start\": 9.5,\n      \"end\": 12.5,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"Stop looking backwards, David, but what matters is what we do next.\",\n      \"confidence\": 0.93\n    },\n    {\n      \"start\": 16.2,\n      \"end\": 18.5,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"A lot of people counting on us for answers.\",\n      \"confidence\": 0.9\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [0, 3, 5],\n        \"acoustic_descriptors\": [\n          { \"label\": \"authoritative, calm\", \"confidence\": 0.75 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          { \"trait\": \"role\", \"value\": \"likely military or official\", \"confidence\": 0.4, \"note\": \"contextual inference\" }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_002\",\n      \"label\": \"Speaker 2\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [4],\n        \"acoustic_descriptors\": [\n          { \"label\": \"menacing, deep voice\", \"confidence\": 0.85 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          { \"trait\": \"identity\", \"value\": \"Raul Menendez\", \"confidence\": 0.9, \"note\": \"named in dialogue\" }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_003\",\n      \"label\": \"Speaker 3\",\n      \"grounded\": {\n        \"confidence\": 0.88,\n        \"linked_segment_indexes\": [1, 2],\n        \"acoustic_descriptors\": [\n          { \"label\": \"female, authoritative\", \"confidence\": 0.8 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          { \"trait\": \"role\", \"value\": \"official/leader\", \"confidence\": 0.35, \"note\": \"speculative\" }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future.\",\n  \"handoffContext\": \"Speaker 1 (David), Speaker 2 (Raul Menendez), and Speaker 3 (Official) are the active participants. The conversation is tense, focusing on the threat posed by Menendez.\",\n  \"totalDuration\": 20.0\n}",
               "refusal": null,
               "reasoning": null,
               "reasoning_details": [
@@ -111,13 +111,13 @@
           "prompt_tokens": "[REDACTED]",
           "completion_tokens": "[REDACTED]",
           "total_tokens": "[REDACTED]",
-          "cost": 0.00203375,
+          "cost": 0.00407425,
           "is_byok": false,
           "prompt_tokens_details": "[REDACTED]",
           "cost_details": {
-            "upstream_inference_cost": 0.00203375,
-            "upstream_inference_prompt_cost": 0.00073175,
-            "upstream_inference_completions_cost": 0.001302
+            "upstream_inference_cost": 0.00407425,
+            "upstream_inference_prompt_cost": 0.00196375,
+            "upstream_inference_completions_cost": 0.0021105
           },
           "completion_tokens_details": "[REDACTED]"
         }
@@ -128,80 +128,79 @@
     "dialogue_segments": [
       {
         "start": 0,
-        "end": 2.2,
-        "speaker": "Raul Menendez",
+        "end": 1.5,
+        "speaker": "Speaker 1",
         "speaker_id": "spk_001",
         "text": "on an unprecedented scale.",
         "confidence": 0.92
       },
       {
-        "start": 3.2,
-        "end": 4.5,
-        "speaker": "Speaker 2",
-        "speaker_id": "spk_002",
+        "start": 2.1,
+        "end": 3.5,
+        "speaker": "Speaker 3",
+        "speaker_id": "spk_003",
         "text": "Menendez is a terrorist.",
         "confidence": 0.95
       },
       {
-        "start": 4.5,
-        "end": 7.2,
-        "speaker": "Raul Menendez",
-        "speaker_id": "spk_001",
+        "start": 3.9,
+        "end": 6.2,
+        "speaker": "Speaker 3",
+        "speaker_id": "spk_003",
         "text": "We're bringing peace and security to the world.",
-        "confidence": 0.96
+        "confidence": 0.94
       },
       {
-        "start": 8,
-        "end": 10,
+        "start": 6.8,
+        "end": 8.9,
+        "speaker": "Speaker 1",
+        "speaker_id": "spk_001",
+        "text": "He refuses to let me go.",
+        "confidence": 0.91
+      },
+      {
+        "start": 9.5,
+        "end": 12.5,
         "speaker": "Speaker 2",
         "speaker_id": "spk_002",
-        "text": "He refuses to let me go.",
+        "text": "Stop looking backwards, David, but what matters is what we do next.",
         "confidence": 0.93
       },
       {
-        "start": 10.2,
-        "end": 13,
-        "speaker": "Raul Menendez",
+        "start": 16.2,
+        "end": 18.5,
+        "speaker": "Speaker 1",
         "speaker_id": "spk_001",
-        "text": "Stop looking backwards, David. What matters is what we do next.",
-        "confidence": 0.97
-      },
-      {
-        "start": 15.2,
-        "end": 17,
-        "speaker": "Speaker 2",
-        "speaker_id": "spk_002",
         "text": "A lot of people counting on us for answers.",
-        "confidence": 0.94
+        "confidence": 0.9
       }
     ],
     "speaker_profiles": [
       {
         "speaker_id": "spk_001",
-        "label": "Raul Menendez",
+        "label": "Speaker 1",
         "grounded": {
-          "confidence": 0.9,
+          "confidence": 0.85,
           "confidence_abstained": false,
           "linked_segment_indexes": [
             0,
-            2,
-            4
+            3,
+            5
           ],
           "acoustic_descriptors": [
             {
-              "label": "authoritative, charismatic tone",
-              "confidence": 0.85
+              "label": "authoritative, calm",
+              "confidence": 0.75
             }
-          ],
-          "acoustic_descriptors_abstained": false
+          ]
         },
         "inferred_traits": {
           "traits": [
             {
-              "trait": "accent",
-              "value": "likely Latin American",
-              "confidence": 0.7,
-              "note": "based on speech patterns"
+              "trait": "role",
+              "value": "likely military or official",
+              "confidence": 0.4,
+              "note": "contextual inference"
             }
           ]
         }
@@ -210,106 +209,141 @@
         "speaker_id": "spk_002",
         "label": "Speaker 2",
         "grounded": {
-          "confidence": 0.8,
+          "confidence": 0.9,
+          "confidence_abstained": false,
+          "linked_segment_indexes": [
+            4
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "menacing, deep voice",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "identity",
+              "value": "Raul Menendez",
+              "confidence": 0.9,
+              "note": "named in dialogue"
+            }
+          ]
+        }
+      },
+      {
+        "speaker_id": "spk_003",
+        "label": "Speaker 3",
+        "grounded": {
+          "confidence": 0.88,
           "confidence_abstained": false,
           "linked_segment_indexes": [
             1,
-            3,
-            5
+            2
           ],
-          "acoustic_descriptors": [],
-          "acoustic_descriptors_abstained": true
+          "acoustic_descriptors": [
+            {
+              "label": "female, authoritative",
+              "confidence": 0.8
+            }
+          ]
         },
         "inferred_traits": {
-          "traits": []
+          "traits": [
+            {
+              "trait": "role",
+              "value": "official/leader",
+              "confidence": 0.35,
+              "note": "speculative"
+            }
+          ]
         }
       }
     ],
-    "summary": "Raul Menendez continues his speech about bringing peace, while Speaker 2 (David) expresses frustration and concern about the situation, emphasizing the need for answers.",
+    "summary": "The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future.",
     "totalDuration": 20,
-    "handoffContext": "Raul Menendez and David are in a tense standoff. The dialogue suggests a personal conflict between them. The next chunk will likely continue their confrontation."
+    "handoffContext": "Speaker 1 (David), Speaker 2 (Raul Menendez), and Speaker 3 (Official) are the active participants. The conversation is tense, focusing on the threat posed by Menendez."
   },
   "toolLoop": {
     "toolName": "validate_dialogue_transcription_json",
     "maxTurns": 4,
     "maxValidatorCalls": 3,
-    "turns": 1,
-    "validatorCalls": 1,
+    "turns": 2,
+    "validatorCalls": 2,
     "history": [
       {
         "role": "assistant",
         "turn": 1,
         "kind": "model_output",
-        "raw": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 2.2,\n      \"speaker\": \"Raul Menendez\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"on an unprecedented scale.\",\n      \"confidence\": 0.92\n    },\n    {\n      \"start\": 3.2,\n      \"end\": 4.5,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"Menendez is a terrorist.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 4.5,\n      \"end\": 7.2,\n      \"speaker\": \"Raul Menendez\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"We're bringing peace and security to the world.\",\n      \"confidence\": 0.96\n    },\n    {\n      \"start\": 8.0,\n      \"end\": 10.0,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"He refuses to let me go.\",\n      \"confidence\": 0.93\n    },\n    {\n      \"start\": 10.2,\n      \"end\": 13.0,\n      \"speaker\": \"Raul Menendez\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Stop looking backwards, David. What matters is what we do next.\",\n      \"confidence\": 0.97\n    },\n    {\n      \"start\": 15.2,\n      \"end\": 17.0,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"A lot of people counting on us for answers.\",\n      \"confidence\": 0.94\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Raul Menendez\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [0, 2, 4],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"authoritative, charismatic tone\",\n            \"confidence\": 0.85\n          }\n        ],\n        \"acoustic_descriptors_abstained\": false\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"accent\",\n            \"value\": \"likely Latin American\",\n            \"confidence\": 0.7,\n            \"note\": \"based on speech patterns\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_002\",\n      \"label\": \"Speaker 2\",\n      \"grounded\": {\n        \"confidence\": 0.8,\n        \"linked_segment_indexes\": [1, 3, 5],\n        \"acoustic_descriptors\": [],\n        \"acoustic_descriptors_abstained\": true\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    }\n  ],\n  \"summary\": \"Raul Menendez continues his speech about bringing peace, while Speaker 2 (David) expresses frustration and concern about the situation, emphasizing the need for answers.\",\n  \"handoffContext\": \"Raul Menendez and David are in a tense standoff. The dialogue suggests a personal conflict between them. The next chunk will likely continue their confrontation.\",\n  \"totalDuration\": 20.0\n}"
+        "raw": "{\n  \"tool\": \"validate_dialogue_transcription_json\",\n  \"transcription\": {\n    \"dialogue_segments\": [\n      {\n        \"start\": 0.0,\n        \"end\": 1.5,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"on an unprecedented scale.\",\n        \"confidence\": 0.92\n      },\n      {\n        \"start\": 2.1,\n        \"end\": 3.5,\n        \"speaker\": \"Speaker 3\",\n        \"speaker_id\": \"spk_003\",\n        \"text\": \"Menendez is a terrorist.\",\n        \"confidence\": 0.95\n      },\n      {\n        \"start\": 3.9,\n        \"end\": 6.2,\n        \"speaker\": \"Speaker 3\",\n        \"speaker_id\": \"spk_003\",\n        \"text\": \"We're bringing peace and security to the world.\",\n        \"confidence\": 0.94\n      },\n      {\n        \"start\": 6.8,\n        \"end\": 8.9,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"He refuses to let me go.\",\n        \"confidence\": 0.91\n      },\n      {\n        \"start\": 9.5,\n        \"end\": 12.5,\n        \"speaker\": \"Speaker 2\",\n        \"speaker_id\": \"spk_002\",\n        \"text\": \"Stop looking backwards, David, but what matters is what we do next.\",\n        \"confidence\": 0.93\n      },\n      {\n        \"start\": 16.2,\n        \"end\": 18.5,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"A lot of people counting on us for answers.\",\n        \"confidence\": 0.90\n      }\n    ],\n    \"speaker_profiles\": [\n      {\n        \"speaker_id\": \"spk_001\",\n        \"label\": \"Speaker 1\",\n        \"grounded\": {\n          \"confidence\": 0.85,\n          \"linked_segment_indexes\": [0, 3, 5],\n          \"acoustic_descriptors\": [\n            { \"label\": \"authoritative, calm\", \"confidence\": 0.75 }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            { \"trait\": \"role\", \"value\": \"likely military or official\", \"confidence\": 0.4, \"note\": \"contextual inference\" }\n          ]\n        }\n      },\n      {\n        \"speaker_id\": \"spk_002\",\n        \"label\": \"Speaker 2\",\n        \"grounded\": {\n          \"confidence\": 0.9,\n          \"linked_segment_indexes\": [4],\n          \"acoustic_descriptors\": [\n            { \"label\": \"menacing, deep voice\", \"confidence\": 0.85 }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            { \"trait\": \"identity\", \"value\": \"Raul Menendez\", \"confidence\": 0.9, \"note\": \"named in dialogue\" }\n          ]\n        }\n      },\n      {\n        \"speaker_id\": \"spk_003\",\n        \"label\": \"Speaker 3\",\n        \"grounded\": {\n          \"confidence\": 0.88,\n          \"linked_segment_indexes\": [1, 2],\n          \"acoustic_descriptors\": [\n            { \"label\": \"female, authoritative\", \"confidence\": 0.8 }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            { \"trait\": \"role\", \"value\": \"official/leader\", \"confidence\": 0.35, \"note\": \"speculative\" }\n          ]\n        }\n      }\n    ],\n    \"summary\": \"The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future.\",\n    \"handoffContext\": \"Speaker 1 (David), Speaker 2 (Raul Menendez), and Speaker 3 (Official) are the active participants. The conversation is tense, focusing on the threat posed by Menendez.\",\n    \"totalDuration\": 20.0\n  }\n}"
       },
       {
         "role": "tool",
         "turn": 1,
-        "kind": "tool_result_auto_validation",
+        "kind": "validator_acceptance",
         "toolName": "validate_dialogue_transcription_json",
-        "source": "auto_validate_candidate_json",
         "toolCall": {
           "tool": "validate_dialogue_transcription_json",
           "transcription": {
             "dialogue_segments": [
               {
                 "start": 0,
-                "end": 2.2,
-                "speaker": "Raul Menendez",
+                "end": 1.5,
+                "speaker": "Speaker 1",
                 "speaker_id": "spk_001",
                 "text": "on an unprecedented scale.",
                 "confidence": 0.92
               },
               {
-                "start": 3.2,
-                "end": 4.5,
-                "speaker": "Speaker 2",
-                "speaker_id": "spk_002",
+                "start": 2.1,
+                "end": 3.5,
+                "speaker": "Speaker 3",
+                "speaker_id": "spk_003",
                 "text": "Menendez is a terrorist.",
                 "confidence": 0.95
               },
               {
-                "start": 4.5,
-                "end": 7.2,
-                "speaker": "Raul Menendez",
-                "speaker_id": "spk_001",
+                "start": 3.9,
+                "end": 6.2,
+                "speaker": "Speaker 3",
+                "speaker_id": "spk_003",
                 "text": "We're bringing peace and security to the world.",
-                "confidence": 0.96
+                "confidence": 0.94
               },
               {
-                "start": 8,
-                "end": 10,
+                "start": 6.8,
+                "end": 8.9,
+                "speaker": "Speaker 1",
+                "speaker_id": "spk_001",
+                "text": "He refuses to let me go.",
+                "confidence": 0.91
+              },
+              {
+                "start": 9.5,
+                "end": 12.5,
                 "speaker": "Speaker 2",
                 "speaker_id": "spk_002",
-                "text": "He refuses to let me go.",
+                "text": "Stop looking backwards, David, but what matters is what we do next.",
                 "confidence": 0.93
               },
               {
-                "start": 10.2,
-                "end": 13,
-                "speaker": "Raul Menendez",
+                "start": 16.2,
+                "end": 18.5,
+                "speaker": "Speaker 1",
                 "speaker_id": "spk_001",
-                "text": "Stop looking backwards, David. What matters is what we do next.",
-                "confidence": 0.97
-              },
-              {
-                "start": 15.2,
-                "end": 17,
-                "speaker": "Speaker 2",
-                "speaker_id": "spk_002",
                 "text": "A lot of people counting on us for answers.",
-                "confidence": 0.94
+                "confidence": 0.9
               }
             ],
             "speaker_profiles": [
               {
                 "speaker_id": "spk_001",
-                "label": "Raul Menendez",
+                "label": "Speaker 1",
                 "grounded": {
                   "confidence": "[Truncated]",
                   "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]",
-                  "acoustic_descriptors_abstained": "[Truncated]"
+                  "acoustic_descriptors": "[Truncated]"
                 },
                 "inferred_traits": {
                   "traits": "[Truncated]"
@@ -321,16 +355,27 @@
                 "grounded": {
                   "confidence": "[Truncated]",
                   "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]",
-                  "acoustic_descriptors_abstained": "[Truncated]"
+                  "acoustic_descriptors": "[Truncated]"
+                },
+                "inferred_traits": {
+                  "traits": "[Truncated]"
+                }
+              },
+              {
+                "speaker_id": "spk_003",
+                "label": "Speaker 3",
+                "grounded": {
+                  "confidence": "[Truncated]",
+                  "linked_segment_indexes": "[Truncated]",
+                  "acoustic_descriptors": "[Truncated]"
                 },
                 "inferred_traits": {
                   "traits": "[Truncated]"
                 }
               }
             ],
-            "summary": "Raul Menendez continues his speech about bringing peace, while Speaker 2 (David) expresses frustration and concern about the situation, emphasizing the need for answers.",
-            "handoffContext": "Raul Menendez and David are in a tense standoff. The dialogue suggests a personal conflict between them. The next chunk will likely continue their confrontation.",
+            "summary": "The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future.",
+            "handoffContext": "Speaker 1 (David), Speaker 2 (Raul Menendez), and Speaker 3 (Official) are the active participants. The conversation is tense, focusing on the threat posed by Menendez.",
             "totalDuration": 20
           },
           "arguments": {
@@ -347,63 +392,62 @@
             "dialogue_segments": [
               {
                 "start": 0,
-                "end": 2.2,
-                "speaker": "Raul Menendez",
+                "end": 1.5,
+                "speaker": "Speaker 1",
                 "speaker_id": "spk_001",
                 "text": "on an unprecedented scale.",
                 "confidence": 0.92
               },
               {
-                "start": 3.2,
-                "end": 4.5,
-                "speaker": "Speaker 2",
-                "speaker_id": "spk_002",
+                "start": 2.1,
+                "end": 3.5,
+                "speaker": "Speaker 3",
+                "speaker_id": "spk_003",
                 "text": "Menendez is a terrorist.",
                 "confidence": 0.95
               },
               {
-                "start": 4.5,
-                "end": 7.2,
-                "speaker": "Raul Menendez",
-                "speaker_id": "spk_001",
+                "start": 3.9,
+                "end": 6.2,
+                "speaker": "Speaker 3",
+                "speaker_id": "spk_003",
                 "text": "We're bringing peace and security to the world.",
-                "confidence": 0.96
+                "confidence": 0.94
               },
               {
-                "start": 8,
-                "end": 10,
+                "start": 6.8,
+                "end": 8.9,
+                "speaker": "Speaker 1",
+                "speaker_id": "spk_001",
+                "text": "He refuses to let me go.",
+                "confidence": 0.91
+              },
+              {
+                "start": 9.5,
+                "end": 12.5,
                 "speaker": "Speaker 2",
                 "speaker_id": "spk_002",
-                "text": "He refuses to let me go.",
+                "text": "Stop looking backwards, David, but what matters is what we do next.",
                 "confidence": 0.93
               },
               {
-                "start": 10.2,
-                "end": 13,
-                "speaker": "Raul Menendez",
+                "start": 16.2,
+                "end": 18.5,
+                "speaker": "Speaker 1",
                 "speaker_id": "spk_001",
-                "text": "Stop looking backwards, David. What matters is what we do next.",
-                "confidence": 0.97
-              },
-              {
-                "start": 15.2,
-                "end": 17,
-                "speaker": "Speaker 2",
-                "speaker_id": "spk_002",
                 "text": "A lot of people counting on us for answers.",
-                "confidence": 0.94
+                "confidence": 0.9
               }
             ],
             "speaker_profiles": [
               {
                 "speaker_id": "spk_001",
-                "label": "Raul Menendez",
+                "label": "Speaker 1",
                 "grounded": {
                   "confidence": "[Truncated]",
                   "confidence_abstained": "[Truncated]",
                   "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]",
-                  "acoustic_descriptors_abstained": "[Truncated]"
+                  "acoustic_descriptors": "[Truncated]"
                 },
                 "inferred_traits": {
                   "traits": "[Truncated]"
@@ -416,17 +460,244 @@
                   "confidence": "[Truncated]",
                   "confidence_abstained": "[Truncated]",
                   "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]",
-                  "acoustic_descriptors_abstained": "[Truncated]"
+                  "acoustic_descriptors": "[Truncated]"
+                },
+                "inferred_traits": {
+                  "traits": "[Truncated]"
+                }
+              },
+              {
+                "speaker_id": "spk_003",
+                "label": "Speaker 3",
+                "grounded": {
+                  "confidence": "[Truncated]",
+                  "confidence_abstained": "[Truncated]",
+                  "linked_segment_indexes": "[Truncated]",
+                  "acoustic_descriptors": "[Truncated]"
                 },
                 "inferred_traits": {
                   "traits": "[Truncated]"
                 }
               }
             ],
-            "summary": "Raul Menendez continues his speech about bringing peace, while Speaker 2 (David) expresses frustration and concern about the situation, emphasizing the need for answers.",
+            "summary": "The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future.",
             "totalDuration": 20,
-            "handoffContext": "Raul Menendez and David are in a tense standoff. The dialogue suggests a personal conflict between them. The next chunk will likely continue their confrontation."
+            "handoffContext": "Speaker 1 (David), Speaker 2 (Raul Menendez), and Speaker 3 (Official) are the active participants. The conversation is tense, focusing on the threat posed by Menendez."
+          }
+        }
+      },
+      {
+        "role": "assistant",
+        "turn": 2,
+        "kind": "model_output",
+        "raw": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 1.5,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"on an unprecedented scale.\",\n      \"confidence\": 0.92\n    },\n    {\n      \"start\": 2.1,\n      \"end\": 3.5,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"Menendez is a terrorist.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 3.9,\n      \"end\": 6.2,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"We're bringing peace and security to the world.\",\n      \"confidence\": 0.94\n    },\n    {\n      \"start\": 6.8,\n      \"end\": 8.9,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"He refuses to let me go.\",\n      \"confidence\": 0.91\n    },\n    {\n      \"start\": 9.5,\n      \"end\": 12.5,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"Stop looking backwards, David, but what matters is what we do next.\",\n      \"confidence\": 0.93\n    },\n    {\n      \"start\": 16.2,\n      \"end\": 18.5,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"A lot of people counting on us for answers.\",\n      \"confidence\": 0.9\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [0, 3, 5],\n        \"acoustic_descriptors\": [\n          { \"label\": \"authoritative, calm\", \"confidence\": 0.75 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          { \"trait\": \"role\", \"value\": \"likely military or official\", \"confidence\": 0.4, \"note\": \"contextual inference\" }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_002\",\n      \"label\": \"Speaker 2\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [4],\n        \"acoustic_descriptors\": [\n          { \"label\": \"menacing, deep voice\", \"confidence\": 0.85 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          { \"trait\": \"identity\", \"value\": \"Raul Menendez\", \"confidence\": 0.9, \"note\": \"named in dialogue\" }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_003\",\n      \"label\": \"Speaker 3\",\n      \"grounded\": {\n        \"confidence\": 0.88,\n        \"linked_segment_indexes\": [1, 2],\n        \"acoustic_descriptors\": [\n          { \"label\": \"female, authoritative\", \"confidence\": 0.8 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          { \"trait\": \"role\", \"value\": \"official/leader\", \"confidence\": 0.35, \"note\": \"speculative\" }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future.\",\n  \"handoffContext\": \"Speaker 1 (David), Speaker 2 (Raul Menendez), and Speaker 3 (Official) are the active participants. The conversation is tense, focusing on the threat posed by Menendez.\",\n  \"totalDuration\": 20.0\n}"
+      },
+      {
+        "role": "tool",
+        "turn": 2,
+        "kind": "final_artifact_revalidation",
+        "toolName": "validate_dialogue_transcription_json",
+        "source": "final_artifact_auto_validation",
+        "toolCall": {
+          "tool": "validate_dialogue_transcription_json",
+          "transcription": {
+            "dialogue_segments": [
+              {
+                "start": 0,
+                "end": 1.5,
+                "speaker": "Speaker 1",
+                "speaker_id": "spk_001",
+                "text": "on an unprecedented scale.",
+                "confidence": 0.92
+              },
+              {
+                "start": 2.1,
+                "end": 3.5,
+                "speaker": "Speaker 3",
+                "speaker_id": "spk_003",
+                "text": "Menendez is a terrorist.",
+                "confidence": 0.95
+              },
+              {
+                "start": 3.9,
+                "end": 6.2,
+                "speaker": "Speaker 3",
+                "speaker_id": "spk_003",
+                "text": "We're bringing peace and security to the world.",
+                "confidence": 0.94
+              },
+              {
+                "start": 6.8,
+                "end": 8.9,
+                "speaker": "Speaker 1",
+                "speaker_id": "spk_001",
+                "text": "He refuses to let me go.",
+                "confidence": 0.91
+              },
+              {
+                "start": 9.5,
+                "end": 12.5,
+                "speaker": "Speaker 2",
+                "speaker_id": "spk_002",
+                "text": "Stop looking backwards, David, but what matters is what we do next.",
+                "confidence": 0.93
+              },
+              {
+                "start": 16.2,
+                "end": 18.5,
+                "speaker": "Speaker 1",
+                "speaker_id": "spk_001",
+                "text": "A lot of people counting on us for answers.",
+                "confidence": 0.9
+              }
+            ],
+            "speaker_profiles": [
+              {
+                "speaker_id": "spk_001",
+                "label": "Speaker 1",
+                "grounded": {
+                  "confidence": "[Truncated]",
+                  "linked_segment_indexes": "[Truncated]",
+                  "acoustic_descriptors": "[Truncated]"
+                },
+                "inferred_traits": {
+                  "traits": "[Truncated]"
+                }
+              },
+              {
+                "speaker_id": "spk_002",
+                "label": "Speaker 2",
+                "grounded": {
+                  "confidence": "[Truncated]",
+                  "linked_segment_indexes": "[Truncated]",
+                  "acoustic_descriptors": "[Truncated]"
+                },
+                "inferred_traits": {
+                  "traits": "[Truncated]"
+                }
+              },
+              {
+                "speaker_id": "spk_003",
+                "label": "Speaker 3",
+                "grounded": {
+                  "confidence": "[Truncated]",
+                  "linked_segment_indexes": "[Truncated]",
+                  "acoustic_descriptors": "[Truncated]"
+                },
+                "inferred_traits": {
+                  "traits": "[Truncated]"
+                }
+              }
+            ],
+            "summary": "The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future.",
+            "handoffContext": "Speaker 1 (David), Speaker 2 (Raul Menendez), and Speaker 3 (Official) are the active participants. The conversation is tense, focusing on the threat posed by Menendez.",
+            "totalDuration": 20
+          },
+          "arguments": {
+            "transcription": "[Circular]"
+          }
+        },
+        "result": {
+          "ok": true,
+          "valid": true,
+          "toolName": "validate_dialogue_transcription_json",
+          "summary": "JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.",
+          "errors": [],
+          "normalizedValue": {
+            "dialogue_segments": [
+              {
+                "start": 0,
+                "end": 1.5,
+                "speaker": "Speaker 1",
+                "speaker_id": "spk_001",
+                "text": "on an unprecedented scale.",
+                "confidence": 0.92
+              },
+              {
+                "start": 2.1,
+                "end": 3.5,
+                "speaker": "Speaker 3",
+                "speaker_id": "spk_003",
+                "text": "Menendez is a terrorist.",
+                "confidence": 0.95
+              },
+              {
+                "start": 3.9,
+                "end": 6.2,
+                "speaker": "Speaker 3",
+                "speaker_id": "spk_003",
+                "text": "We're bringing peace and security to the world.",
+                "confidence": 0.94
+              },
+              {
+                "start": 6.8,
+                "end": 8.9,
+                "speaker": "Speaker 1",
+                "speaker_id": "spk_001",
+                "text": "He refuses to let me go.",
+                "confidence": 0.91
+              },
+              {
+                "start": 9.5,
+                "end": 12.5,
+                "speaker": "Speaker 2",
+                "speaker_id": "spk_002",
+                "text": "Stop looking backwards, David, but what matters is what we do next.",
+                "confidence": 0.93
+              },
+              {
+                "start": 16.2,
+                "end": 18.5,
+                "speaker": "Speaker 1",
+                "speaker_id": "spk_001",
+                "text": "A lot of people counting on us for answers.",
+                "confidence": 0.9
+              }
+            ],
+            "speaker_profiles": [
+              {
+                "speaker_id": "spk_001",
+                "label": "Speaker 1",
+                "grounded": {
+                  "confidence": "[Truncated]",
+                  "confidence_abstained": "[Truncated]",
+                  "linked_segment_indexes": "[Truncated]",
+                  "acoustic_descriptors": "[Truncated]"
+                },
+                "inferred_traits": {
+                  "traits": "[Truncated]"
+                }
+              },
+              {
+                "speaker_id": "spk_002",
+                "label": "Speaker 2",
+                "grounded": {
+                  "confidence": "[Truncated]",
+                  "confidence_abstained": "[Truncated]",
+                  "linked_segment_indexes": "[Truncated]",
+                  "acoustic_descriptors": "[Truncated]"
+                },
+                "inferred_traits": {
+                  "traits": "[Truncated]"
+                }
+              },
+              {
+                "speaker_id": "spk_003",
+                "label": "Speaker 3",
+                "grounded": {
+                  "confidence": "[Truncated]",
+                  "confidence_abstained": "[Truncated]",
+                  "linked_segment_indexes": "[Truncated]",
+                  "acoustic_descriptors": "[Truncated]"
+                },
+                "inferred_traits": {
+                  "traits": "[Truncated]"
+                }
+              }
+            ],
+            "summary": "The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future.",
+            "totalDuration": 20,
+            "handoffContext": "Speaker 1 (David), Speaker 2 (Raul Menendez), and Speaker 3 (Official) are the active participants. The conversation is tense, focusing on the threat posed by Menendez."
           }
         }
       }

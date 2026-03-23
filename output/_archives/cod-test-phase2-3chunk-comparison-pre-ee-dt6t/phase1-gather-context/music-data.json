@@ -1,0 +1,46 @@
+{
+  "segments": [
+    {
+      "start": 0,
+      "end": 30,
+      "type": "music",
+      "description": "Dramatic, cinematic trailer music featuring intense percussion and synth swells, underscored by movie dialogue.",
+      "mood": "energetic",
+      "intensity": 8
+    },
+    {
+      "start": 30,
+      "end": 60,
+      "type": "speech",
+      "description": "High-intensity movie trailer featuring dramatic cinematic music, sound effects, and dialogue.",
+      "mood": "energetic",
+      "intensity": 9
+    },
+    {
+      "start": 60,
+      "end": 90,
+      "type": "music",
+      "description": "High-intensity, dramatic action movie trailer music with heavy percussion, orchestral swells, and sound effects like explosions.",
+      "mood": "energetic",
+      "intensity": 9
+    },
+    {
+      "start": 90,
+      "end": 120,
+      "type": "music",
+      "description": "High-intensity action movie trailer music with dramatic orchestral swells, heavy percussion, and sound effects like explosions and gunshots, interspersed with intense dialogue.",
+      "mood": "energetic",
+      "intensity": 9
+    },
+    {
+      "start": 120,
+      "end": 140.042449,
+      "type": "music",
+      "description": "High-intensity, dramatic action music featuring a voiceover promoting a pre-order offer, accompanied by cinematic sound effects like whooshes.",
+      "mood": "energetic",
+      "intensity": 8
+    }
+  ],
+  "summary": "The audio continues as a high-intensity movie trailer with dramatic music, sound effects, and voiceover, maintaining a high level of excitement.",
+  "hasMusic": true
+}

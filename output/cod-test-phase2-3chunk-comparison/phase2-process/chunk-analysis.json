@@ -6,24 +6,24 @@
       "startTime": 0,
       "endTime": 5,
       "status": "success",
-      "summary": "Chaotic glitchy intro with 'RISING TENSIONS' text triggers immediate skepticism, but fast cuts and intense music maintain sensory engagement.",
+      "summary": "The video opens with a chaotic glitch montage featuring the hated phrase 'RISING TENSIONS,' immediately triggering skepticism, before transitioning to high-fidelity game footage of a destroyed city.",
       "emotions": {
         "patience": {
-          "score": 3,
-          "reasoning": "Direct hit on pet peeve ('Rising tensions' text) drastically reduces willingness to wait; thumb hovering over scroll."
+          "score": 2,
+          "reasoning": "The 'RISING TENSIONS' text at 0.0s is a specific dealbreaker listed in the persona profile, draining patience instantly; only the fast cut pace keeps the thumb from scrolling immediately."
         },
         "boredom": {
-          "score": 5,
-          "reasoning": "Visually busy but feels generic/cliché; 'seen this before' fatigue sets in despite the chaos."
+          "score": 8,
+          "reasoning": "Generic villain monologue ('They want you afraid') and cliché trailer text make this feel like every other ad I've skipped; predictable tropes induce high disengagement."
         },
         "excitement": {
-          "score": 6,
-          "reasoning": "High-intensity music and rapid visual transitions provide sensory punch, preventing immediate scroll despite skepticism."
+          "score": 4,
+          "reasoning": "High-fidelity graphics at 4s are visually punchy, but the predictable audio and generic setup dampen the hype significantly."
         }
       },
-      "dominant_emotion": "excitement",
-      "confidence": 0.85,
-      "tokens": 8504,
+      "dominant_emotion": "boredom",
+      "confidence": 0.9,
+      "tokens": 9385,
       "persona": {
         "soulPath": "../cast/impatient-teenager/SOUL.md",
         "goalPath": "../goals/video-ad-evaluation.md",
@@ -40,24 +40,24 @@
       "startTime": 5,
       "endTime": 10,
       "status": "success",
-      "summary": "Fast-paced destruction and glitch effects keep the energy high, but the 'wake up' voiceover feels like a generic trailer cliché that risks breaking immersion.",
+      "summary": "The video features rapid, mind-bending cuts of a city folding in on itself with high-fidelity graphics and dramatic voiceover.",
       "emotions": {
         "patience": {
-          "score": 7,
-          "reasoning": "Fast cuts and high stakes keep me from scrolling, but the generic military vibe is testing my tolerance for clichés."
+          "score": 4,
+          "reasoning": "The fast cuts and crazy visuals keep me from scrolling, even if the voiceover is a bit cliché."
         },
         "boredom": {
           "score": 2,
-          "reasoning": "Too much visual chaos and movement to zone out; the car crash shot specifically grabs attention."
+          "reasoning": "The visuals are insane and changing constantly. There's literally no time to be bored."
         },
         "excitement": {
           "score": 8,
-          "reasoning": "The cinematic scale and glitch effects hit the dopamine need, even if the 'wake up' line is cringe."
+          "reasoning": "The Inception-style city folding is visually stunning and definitely something I haven't seen a million times today. It slaps."
         }
       },
       "dominant_emotion": "excitement",
-      "confidence": 0.85,
-      "tokens": 11112,
+      "confidence": 0.9,
+      "tokens": 5398,
       "persona": {
         "soulPath": "../cast/impatient-teenager/SOUL.md",
         "goalPath": "../goals/video-ad-evaluation.md",
@@ -74,24 +74,24 @@
       "startTime": 10,
       "endTime": 15,
       "status": "success",
-      "summary": "The title card slams in immediately which hooks me, but the edgy villain dialogue is kinda cringe.",
+      "summary": "The chunk opens with a cinematic cityscape before cutting to a static game logo, which triggers impatience, then recovers with a glitchy transition to a villain's face and threatening dialogue.",
       "emotions": {
         "patience": {
-          "score": 7,
-          "reasoning": "Title card hits within the first second of the chunk, buying me a few more seconds despite the cliché dialogue."
+          "score": 3,
+          "reasoning": "The prominent logo animation interrupts the flow, acting as a known scroll trigger for this persona who hates generic intros."
         },
         "boredom": {
-          "score": 3,
-          "reasoning": "Too much visual chaos with fire and glitches to zone out, even if the script is generic."
+          "score": 7,
+          "reasoning": "The static logo hold for approximately 2 seconds creates a significant engagement dip despite the surrounding high-intensity visuals."
         },
         "excitement": {
-          "score": 8,
-          "reasoning": "Black Ops 7 logo reveal plus high-intensity music and explosions spikes the hype significantly."
+          "score": 6,
+          "reasoning": "The threatening dialogue and glitchy face reveal at the end provide a spike in intensity that partially offsets the logo boredom."
         }
       },
-      "dominant_emotion": "excitement",
-      "confidence": 0.9,
-      "tokens": 9307,
+      "dominant_emotion": "boredom",
+      "confidence": 0.85,
+      "tokens": 6291,
       "persona": {
         "soulPath": "../cast/impatient-teenager/SOUL.md",
         "goalPath": "../goals/video-ad-evaluation.md",
@@ -103,7 +103,7 @@
       }
     }
   ],
-  "totalTokens": 28923,
+  "totalTokens": 21074,
   "statusSummary": {
     "total": 3,
     "successful": 3,

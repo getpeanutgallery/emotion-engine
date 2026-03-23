@@ -1120,13 +1120,72 @@ Scope / ownership note:
 - `output/`
 
 **Files Created/Deleted/Modified:**
-- speaker-contract implementation/test files to be determined
-- output verification artifacts to be determined
+- `server/lib/structured-output.cjs`
+- `server/lib/phase1-validator-tools.cjs`
+- `server/scripts/get-context/get-dialogue.cjs`
+- `test/lib/phase1-validator-tools.test.js`
+- `test/scripts/get-dialogue.test.js`
+- `.logs/cod-test-phase2-3chunk-comparison-20260323-ee-dt6t.log`
+- `output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-dt6t/`
+- `output/cod-test-phase2-3chunk-comparison/`
 - `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Created after Derrick’s review of the current `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/dialogue-data.json` surfaced a new regression cluster: speaker identity drift across incompatible voices, missing required `acoustic_descriptors`, invalid persisted abstention for acoustic descriptors, and still-empty `inferred_traits` despite that field now being expected to populate.
+**Results:** Investigation confirmed the regression lived at the owning in-repo speaker-contract surfaces, not in a sibling package and not under `node_modules/`:
+- `server/scripts/get-context/get-dialogue.cjs` was dropping chunk-local `speaker_profiles` entirely when stitching chunked dialogue results, so the final persisted `dialogue-data.json` lost previously-generated `acoustic_descriptors` / `inferred_traits` and had no stable registry to feed into later chunks.
+- the chunk prompt / handoff contract still allowed weak cross-chunk speaker continuity, so the next chunk only received a loose textual handoff instead of an explicit speaker registry with anonymous IDs, acoustic cues, and recent lines.
+- `server/lib/structured-output.cjs` still normalized around an obsolete persisted `acoustic_descriptors_abstained` possibility and did not merge duplicate `speaker_profiles` for the same `speaker_id` into a single canonical profile.
+- this reconciles directly with `ee-avf`: inferred traits are no longer an isolated optional experiment for this lane; they are now required persisted output whenever dialogue transcription succeeds, while still remaining clearly speculative and separate from grounded identity.
+
+Smallest truthful fix set landed:
+- `server/scripts/get-context/get-dialogue.cjs`
+  - preserves chunk-returned `speaker_profiles` into the final `validateDialogueTranscriptionObject()` call instead of discarding them
+  - offsets chunk-local linked indexes before stitch-time validation
+  - builds a structured rolling speaker handoff from prior `speaker_profiles` + recent segments so later chunks see an explicit continuity registry (`speaker_id`, label, acoustic cues, inferred traits, recent lines), not just a loose prose tail
+  - tightens the whole-file and chunk prompt contracts so `inferred_traits` is always present as `{ traits: [...] }`, `acoustic_descriptors_abstained` is not persisted, and speaker IDs must only be reused for the same acoustic voice
+- `server/lib/structured-output.cjs`
+  - removes persisted `acoustic_descriptors_abstained` from normalized grounded output while still tolerating legacy input
+  - merges duplicate `speaker_profiles` by `speaker_id`, dedupes acoustic descriptors / inferred traits, prefers a stable stronger label over a generic one, and canonicalizes segment speaker labels to that merged profile
+  - keeps `linked_segment_indexes` truthfully rebuilt from the final normalized segment array
+- `server/lib/phase1-validator-tools.cjs`
+  - updates the local validator contract example to the new persisted grounded schema without `acoustic_descriptors_abstained`
+- regression tests added/updated in:
+  - `test/lib/phase1-validator-tools.test.js`
+  - `test/scripts/get-dialogue.test.js`
+
+Commands run:
+- `bd update ee-dt6t --status in_progress --json`
+- `node --test test/lib/phase1-validator-tools.test.js test/scripts/get-dialogue.test.js`
+- `node --test test/lib/phase1-validator-tools.test.js test/scripts/get-dialogue.test.js test/scripts/video-chunks.test.js`
+- `npm test`
+- `mkdir -p output/_archives .logs/archive && rm -rf output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-dt6t && cp -a output/cod-test-phase2-3chunk-comparison output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-dt6t && cp -a .logs/cod-test-phase2-3chunk-comparison-20260322-ee-ecok-rerun.log .logs/archive/cod-test-phase2-3chunk-comparison-20260322-ee-ecok-rerun.log && node validate-configs.cjs && node server/run-pipeline.cjs --config configs/cod-test-phase2-3chunk-comparison.yaml --dry-run`
+- `rm -rf output/cod-test-phase2-3chunk-comparison && unset DIGITAL_TWIN_MODE DIGITAL_TWIN_PACK DIGITAL_TWIN_CASSETTE OPENROUTER_TIMEOUT_MS || true && set -a && [ -f .env ] && . ./.env && set +a && node server/run-pipeline.cjs --config configs/cod-test-phase2-3chunk-comparison.yaml --verbose 2>&1 | tee .logs/cod-test-phase2-3chunk-comparison-20260323-ee-dt6t.log`
+
+Verification evidence from the fresh rerun packet:
+- rerun log: `.logs/cod-test-phase2-3chunk-comparison-20260323-ee-dt6t.log`
+- archived pre-fix comparison packet: `output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-dt6t/`
+- fresh output root: `output/cod-test-phase2-3chunk-comparison/`
+- fresh Phase 1 dialogue artifact: `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/dialogue-data.json`
+- fresh Phase 2 artifact: `output/cod-test-phase2-3chunk-comparison/phase2-process/chunk-analysis.json`
+- fresh Phase 2 success envelope: `output/cod-test-phase2-3chunk-comparison/phase2-process/script-results/video-chunks.success.json`
+- fresh Phase 1 raw error summary: `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw/_meta/errors.summary.json`
+
+Observed improvement versus the archived pre-fix packet (`output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-dt6t/phase1-gather-context/dialogue-data.json`):
+- profile count increased from `2` collapsed profiles to `4` acoustically distinct profiles in the regenerated artifact
+- persisted `grounded.acoustic_descriptors` are back on every regenerated speaker profile, and persisted `inferred_traits.traits` is now populated where the lane had evidence to support a guess
+- persisted `grounded.acoustic_descriptors_abstained` no longer exists on the regenerated profiles, while legacy validator compatibility remains intact
+- the old artifact had obvious identity/name drift like `spk_001 Raul Menendez` and later `spk_001 David`; the regenerated packet instead keeps a stable anonymous registry across the run (`spk_001`, `spk_002`, `spk_003`, `spk_004`) with separate descriptors such as:
+  - `spk_001`: calm / authoritative / ominous narrator-like delivery
+  - `spk_002`: menacing / deep antagonist delivery
+  - `spk_003`: authoritative female comms voice
+  - `spk_004`: late promotional announcer voice
+- concrete regenerated evidence from `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/dialogue-data.json`:
+  - `spk_003` now cleanly owns the female command lines (`"Menendez is a terrorist."`, `"We're bringing peace and security to the world."`, `"Specter One, report."`) instead of those lines being swallowed into the same profile as later male dialogue
+  - `spk_002` cleanly owns the Menendez-style threat lines and carries persisted speculative identity hints like `identity=Raul Menendez`
+  - the raw chunk captures under `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw/ai/dialogue-chunks/` now show the richer speaker registry being passed forward chunk-to-chunk in the prompt contract
+- the rerun itself completed truthfully: Phase 1 and Phase 2 both succeeded, `phase1-gather-context/raw/_meta/errors.summary.json` reports `outcome: success` and `totalErrors: 0`, and the downstream 3-chunk comparison packet remains reproducible after the dialogue fix
+- commit: `5c0d3ae` - `Fix dialogue speaker registry stitching`
 
 ---
 
@@ -1134,7 +1193,7 @@ Scope / ownership note:
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`, Task 2g fixed the remaining dialogue-tail normalization defect by preventing a long overrun line from surviving as a fake micro-tail at trailer end, and Task 2i then landed the dialogue timing-stability guard plus the slimmed inferred-traits contract revision in `server/scripts/get-context/get-dialogue.cjs` / `server/lib/structured-output.cjs`. Task 2h reran the real Phase 1-only review packet after the dialogue-tail fix, Task 3 executed the downstream 3-chunk Phase 2 comparison via `configs/cod-test-phase2-3chunk-comparison.yaml`, and Task 2j has now rerun that dialogue-focused comparison lane after `ee-mgv0`, preserving both a transient failed attempt and the successful verification rerun artifacts. That latest rerun confirms the specific human-reviewed misalignment bug is resolved in the comparison artifact (`"It's time to wake up."` moved from `0.9-1.1s` to `8.5-10.5s`) and confirms the persisted inferred-traits structure no longer includes the old disclaimer/abstained fields while remaining separate from grounded speaker identity/linkage fields. Task 6 (`ee-8hwt`) then fixed the output-package persona staging bug in `server/lib/output-manager.cjs`, added regression coverage in `test/output-manager.test.js`, and restaged the canonical `output/cod-test-phase2-3chunk-comparison/` packet so `assets/input/personas/SOUL.md` and `assets/input/personas/GOAL.md` are now present with hashes matching the exact source persona files used by the run. The overall plan remains partial only because Task 4 (music-window cadence decision) and Task 5 (optional inferred-traits experiment) are still pending.
+**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`, Task 2g fixed the remaining dialogue-tail normalization defect by preventing a long overrun line from surviving as a fake micro-tail at trailer end, and Task 2i then landed the dialogue timing-stability guard plus the slimmed inferred-traits contract revision in `server/scripts/get-context/get-dialogue.cjs` / `server/lib/structured-output.cjs`. Task 2h reran the real Phase 1-only review packet after the dialogue-tail fix, Task 3 executed the downstream 3-chunk Phase 2 comparison via `configs/cod-test-phase2-3chunk-comparison.yaml`, and Task 2j reran that dialogue-focused comparison lane after `ee-mgv0`, preserving both a transient failed attempt and the successful verification rerun artifacts. Task 6 (`ee-8hwt`) then fixed the output-package persona staging bug in `server/lib/output-manager.cjs`, added regression coverage in `test/output-manager.test.js`, and restaged the canonical `output/cod-test-phase2-3chunk-comparison/` packet so `assets/input/personas/SOUL.md` and `assets/input/personas/GOAL.md` are now present with hashes matching the exact source persona files used by the run. Task 7 (`ee-dt6t`) then fixed the current speaker-registry regression by preserving chunk-level `speaker_profiles` into the final stitch, building an explicit rolling speaker registry handoff, removing persisted `acoustic_descriptors_abstained`, requiring persisted `inferred_traits` objects on successful dialogue runs, merging duplicate profiles canonically in `server/lib/structured-output.cjs`, and regenerating the comparison packet for human review. That fresh rerun restores persisted acoustic descriptors / inferred traits, expands the collapsed two-profile artifact back to four acoustically distinct speaker profiles, and cleanly separates the female command voice into `spk_003` instead of letting those lines drift into later male speaker buckets. The overall plan remains partial only because Task 4 (music-window cadence decision) and Task 5 (optional inferred-traits experiment) are still pending.
 
 **Commits:**
 - `71e0c2b` - Add grounded dialogue speaker contract
@@ -1146,6 +1205,7 @@ Scope / ownership note:
 - `0109e52` - Stabilize dialogue timing and slim inferred traits
 - `8f5c2d7` - Document ee-ecok dialogue validation rerun
 - `a993af9` - Fix persona asset staging into output packages
+- `5c0d3ae` - Fix dialogue speaker registry stitching
 
 **Lessons Learned:** A green Phase 1 rerun is necessary but not sufficient. For this lane, readiness depended on at least five truths lining up at once: segment ranges had to stay inside the real source duration, speaker-profile linkage had to match the final segment array, music prompts had to be grounded to the attached local chunk instead of the global trailer duration, clipped tail dialogue could not survive as fake micro-precision at the trailer boundary, and the final live rerun had to empirically confirm all of those fixes together before downstream chunk-level comparisons could be trusted.
 

@@ -1,0 +1,89 @@
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+🚀 Emotion Engine Pipeline Orchestrator
+========================================
+
+📄 Loading configuration...
+   Config loaded: configs/cod-test-phase2-3chunk-comparison.yaml
+   Name: COD Test Pipeline (Phase 2 3-chunk comparison)
+   Description: Run trustworthy Phase 1 dialogue/music gathering plus only the first 3 Phase 2 video chunks for comparison against the original stored cod-test baseline
+✅ Validating configuration...
+   ✅ Valid (3 script(s) across all phases)
+📁 Setting up assets directory...
+   ✅ Assets directory created at /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/assets/input
+   ✅ Raw directories ready:
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/phase2-process/raw
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/phase3-report/raw
+
+🎯 Executing pipeline...
+
+📥 Phase 1: Gather Context (sequential, 2 script(s))
+   Running: server/scripts/get-context/get-dialogue.cjs
+   🎤 Extracting and transcribing dialogue from: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/examples/videos/emotion-tests/cod.mp4
+   🧩 Dialogue chunking enabled via timing-stability guard over 60s, chunking into 8 chunks (~20.0s each)
+   ✅ Dialogue extraction complete (chunked)
+      Output: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/phase1-gather-context/dialogue-data.json
+      Found 24 dialogue segments
+      Total duration: 140.0s
+   💾 Keeping dialogue temp files in /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/assets/processed/dialogue
+   Running: server/scripts/get-context/get-music.cjs
+   🎵 Extracting and analyzing music/audio from: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/examples/videos/emotion-tests/cod.mp4
+   📊 Audio duration: 140.0s (5 analysis chunk(s) from 1 transport chunk(s))
+   🔁 Music retry config: attempts=1, backoffMs=0
+   Analyzing chunk 1/5 (0.0s - 30.0s)...
+   Analyzing chunk 2/5 (30.0s - 60.0s)...
+   Analyzing chunk 3/5 (60.0s - 90.0s)...
+   Analyzing chunk 4/5 (90.0s - 120.0s)...
+   Analyzing chunk 5/5 (120.0s - 140.0s)...
+   ✅ Music/audio analysis complete
+      Output: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/phase1-gather-context/music-data.json
+      Found 5 segment(s)
+      Music detected: Yes
+   💾 Keeping music temp files in /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/assets/processed/music
+   ✅ Phase 1 complete
+
+⚙️  Phase 2: Process (sequential, 1 script(s))
+   Running: server/scripts/process/video-chunks.cjs
+   🎬 Processing video in chunks...
+   📊 Video duration: 140.0s
+   📦 Processing 3 chunks (max_chunks: 3)
+   📋 Config values:
+      - chunkDuration: 5
+      - max_chunks: 3
+      - video duration: 140.017s
+      - calculated chunks: 29
+      - processing: 3 chunks
+   📁 Phase directory: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/phase2-process
+   📁 Chunks directory: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/assets/processed/chunks
+   🔁 Retry config: attempts=2, backoffMs=500, retryOnParseError=true, retryOnProviderError=true
+   🧰 Tool loop config: turns=4, validatorCalls=3
+   🎞️  Video attachment transport: strategy=base64, mimeType=video/mp4
+   Processing chunk 1/3 (0.0s - 5.0s)...
+   🎬 Extracting chunk 0: 0s → 5s
+   ✅ Chunk extracted: 2.01MB (5s)
+      ✅ Chunk 1 analyzed (9385 tokens)
+   Processing chunk 2/3 (5.0s - 10.0s)...
+   🎬 Extracting chunk 1: 5s → 10s
+   ✅ Chunk extracted: 2.92MB (5s)
+      ✅ Chunk 2 analyzed (5398 tokens) after 3 attempts
+   Processing chunk 3/3 (10.0s - 15.0s)...
+   🎬 Extracting chunk 2: 10s → 15s
+   ✅ Chunk extracted: 2.02MB (5s)
+      ✅ Chunk 3 analyzed (6291 tokens)
+   ✅ Video chunk analysis complete
+      Artifact path: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/phase2-process/chunk-analysis.json
+      Total tokens used: 21074
+      Average per successful chunk: 7025 tokens
+   💾 Keeping extracted chunk files in /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/assets/processed/chunks
+   ✅ Phase 2 complete
+
+   ✅ Phase 3 complete
+
+💾 Saving final artifacts...
+   ✅ Saved 1 file(s) to /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison
+
+✅ Pipeline complete!
+========================================
+Total scripts executed: 3
+Output directory: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison
+Artifacts saved: 1 files

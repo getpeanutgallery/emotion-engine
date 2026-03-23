@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "kind": "audio.chunk.plan",
+  "domain": "dialogue",
+  "createdAt": "2026-03-23T01:26:01.443Z",
+  "trace": {
+    "reason": "dialogue_timing_force_chunking",
+    "base64Expansion": "4*ceil(bytes/3)",
+    "sizeBytes": 3361791,
+    "estimatedBase64Bytes": 4482388,
+    "base64LimitBytes": 10485760,
+    "budgetBytes": 9437184,
+    "headroomRatio": 0.9,
+    "durationSeconds": 140.042449,
+    "bytesPerSecond": 24005.514213765284,
+    "recommendedChunkDurationSeconds": 20,
+    "chunks": 8,
+    "originalReason": "within_budget",
+    "maxWholeFileDurationSeconds": 60
+  },
+  "chunks": [
+    {
+      "index": 0,
+      "startTime": 0,
+      "endTime": 20,
+      "duration": 20
+    },
+    {
+      "index": 1,
+      "startTime": 20,
+      "endTime": 40,
+      "duration": 20
+    },
+    {
+      "index": 2,
+      "startTime": 40,
+      "endTime": 60,
+      "duration": 20
+    },
+    {
+      "index": 3,
+      "startTime": 60,
+      "endTime": 80,
+      "duration": 20
+    },
+    {
+      "index": 4,
+      "startTime": 80,
+      "endTime": 100,
+      "duration": 20
+    },
+    {
+      "index": 5,
+      "startTime": 100,
+      "endTime": 120,
+      "duration": 20
+    },
+    {
+      "index": 6,
+      "startTime": 120,
+      "endTime": 140,
+      "duration": 20
+    },
+    {
+      "index": 7,
+      "startTime": 140,
+      "endTime": 140.042449,
+      "duration": 0.042449000000004844
+    }
+  ]
+}

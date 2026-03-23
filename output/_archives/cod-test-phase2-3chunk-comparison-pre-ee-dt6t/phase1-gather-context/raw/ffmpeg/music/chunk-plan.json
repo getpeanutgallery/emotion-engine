@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 2,
+  "kind": "audio.chunk.plan",
+  "domain": "music",
+  "createdAt": "2026-03-23T01:27:38.387Z",
+  "transportTrace": {
+    "reason": "within_budget",
+    "base64Expansion": "4*ceil(bytes/3)",
+    "sizeBytes": 3361791,
+    "estimatedBase64Bytes": 4482388,
+    "base64LimitBytes": 10485760,
+    "budgetBytes": 9437184,
+    "headroomRatio": 0.9,
+    "durationSeconds": 140.042449,
+    "bytesPerSecond": 24005.514213765284,
+    "recommendedChunkDurationSeconds": 140.042449,
+    "chunks": 1
+  },
+  "analysisPolicy": {
+    "kind": "fixed-window-within-transport-budget",
+    "maxWindowSeconds": 30
+  },
+  "transportChunks": [
+    {
+      "index": 0,
+      "startTime": 0,
+      "endTime": 140.042449,
+      "duration": 140.042449
+    }
+  ],
+  "chunks": [
+    {
+      "index": 0,
+      "startTime": 0,
+      "endTime": 30,
+      "duration": 30,
+      "transportChunkIndex": 0
+    },
+    {
+      "index": 1,
+      "startTime": 30,
+      "endTime": 60,
+      "duration": 30,
+      "transportChunkIndex": 0
+    },
+    {
+      "index": 2,
+      "startTime": 60,
+      "endTime": 90,
+      "duration": 30,
+      "transportChunkIndex": 0
+    },
+    {
+      "index": 3,
+      "startTime": 90,
+      "endTime": 120,
+      "duration": 30,
+      "transportChunkIndex": 0
+    },
+    {
+      "index": 4,
+      "startTime": 120,
+      "endTime": 140.042449,
+      "duration": 20.042449000000005,
+      "transportChunkIndex": 0
+    }
+  ],
+  "analysisTrace": {
+    "chunks": 5,
+    "maxWindowSeconds": 30
+  }
+}

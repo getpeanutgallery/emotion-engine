@@ -90,6 +90,59 @@ test('dialogue transcription validator preserves inferred traits separately from
   assert.equal(result.normalizedValue.speaker_profiles[0].grounded.acoustic_descriptors[0].label, 'calm, measured delivery');
   assert.equal(result.normalizedValue.speaker_profiles[0].inferred_traits.traits[0].trait, 'accent');
   assert.equal(result.normalizedValue.speaker_profiles[0].inferred_traits.traits[0].value, 'possibly Midwestern US');
+  assert.equal(Object.hasOwn(result.normalizedValue.speaker_profiles[0].grounded, 'acoustic_descriptors_abstained'), false);
+});
+
+test('dialogue transcription validator merges duplicate speaker profiles by speaker_id and preserves the strongest stable label', () => {
+  const result = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Opening line', confidence: 0.95 },
+        { start: 1.2, end: 2.2, speaker: 'Raul Menendez', speaker_id: 'spk_001', text: 'Follow-up line', confidence: 0.94 }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'spk_001',
+          label: 'Speaker 1',
+          grounded: {
+            confidence: 0.81,
+            linked_segment_indexes: [0],
+            acoustic_descriptors: [
+              { label: 'measured, controlled delivery', confidence: 0.6 }
+            ]
+          },
+          inferred_traits: {
+            traits: []
+          }
+        },
+        {
+          speaker_id: 'spk_001',
+          label: 'Raul Menendez',
+          grounded: {
+            confidence: 0.88,
+            linked_segment_indexes: [1],
+            acoustic_descriptors: [
+              { label: 'low, menacing tone', confidence: 0.74 }
+            ]
+          },
+          inferred_traits: {
+            traits: [
+              { trait: 'accent', value: 'possibly Latin American', confidence: 0.33, note: 'speculative' }
+            ]
+          }
+        }
+      ],
+      summary: 'Chunk summary',
+      totalDuration: 3
+    }
+  });
+
+  assert.equal(result.valid, true);
+  assert.equal(result.normalizedValue.dialogue_segments[0].speaker, 'Raul Menendez');
+  assert.equal(result.normalizedValue.dialogue_segments[1].speaker, 'Raul Menendez');
+  assert.deepEqual(result.normalizedValue.speaker_profiles[0].grounded.linked_segment_indexes, [0, 1]);
+  assert.equal(result.normalizedValue.speaker_profiles[0].grounded.acoustic_descriptors.length, 2);
+  assert.equal(result.normalizedValue.speaker_profiles[0].inferred_traits.traits[0].trait, 'accent');
 });
 
 test('dialogue transcription validator rebuilds linked segment indexes from the final segment array', () => {
