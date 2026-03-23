@@ -1274,6 +1274,7 @@ This bead therefore completed the requested iteration: contract cleanup landed, 
 - `0109e52` - Stabilize dialogue timing and slim inferred traits
 - `8f5c2d7` - Document ee-ecok dialogue validation rerun
 - `a993af9` - Fix persona asset staging into output packages
+- `7ac9a2c` - Tighten dialogue speaker attribution contract
 - `8713428` - Fix dialogue speaker registry stitching
 
 **Lessons Learned:** A green Phase 1 rerun is necessary but not sufficient. For this lane, readiness depended on at least five truths lining up at once: segment ranges had to stay inside the real source duration, speaker-profile linkage had to match the final segment array, music prompts had to be grounded to the attached local chunk instead of the global trailer duration, clipped tail dialogue could not survive as fake micro-precision at the trailer boundary, and the final live rerun had to empirically confirm all of those fixes together before downstream chunk-level comparisons could be trusted.
