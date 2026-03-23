@@ -467,12 +467,88 @@ Trustworthiness verdict after this fix:
 - `.logs/`
 
 **Files Created/Deleted/Modified:**
-- rerun artifacts to be determined
+- `output/_archives/cod-test-phase1-review-pre-ee-l0a1/`
+- `.logs/archive/cod-test-phase1-review-20260322-ee-1of.log`
+- `.logs/cod-test-phase1-review-20260322-ee-l0a1.log`
+- `output/cod-test-phase1-review/`
 - `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Preserved the previous rerun packet, then reran the exact same Phase 1-only config cleanly after both the speaker-index and music-grounding fixes landed.
+
+Exact commands run:
+- `mkdir -p output/_archives .logs/archive`
+- `rm -rf output/_archives/cod-test-phase1-review-pre-ee-l0a1`
+- `cp -a output/cod-test-phase1-review output/_archives/cod-test-phase1-review-pre-ee-l0a1`
+- `cp -a .logs/cod-test-phase1-review-20260322-ee-1of.log .logs/archive/cod-test-phase1-review-20260322-ee-1of.log`
+- `node validate-configs.cjs`
+- `node server/run-pipeline.cjs --config configs/cod-test-phase1-review.yaml --dry-run`
+- `rm -rf output/cod-test-phase1-review`
+- `unset DIGITAL_TWIN_MODE DIGITAL_TWIN_PACK DIGITAL_TWIN_CASSETTE OPENROUTER_TIMEOUT_MS || true`
+- `set -a`
+- `[ -f .env ] && . ./.env`
+- `set +a`
+- `node server/run-pipeline.cjs --config configs/cod-test-phase1-review.yaml --verbose 2>&1 | tee .logs/cod-test-phase1-review-20260322-ee-l0a1.log`
+
+Terminal outcome:
+- config validation passed
+- dry run passed
+- live rerun completed successfully with exit code `0`
+- exactly `2` scripts executed (`get-dialogue`, `get-music`)
+- no Phase 2 / Phase 3 work was run
+
+Preserved output / log / artifact paths:
+- archived prior rerun packet: `output/_archives/cod-test-phase1-review-pre-ee-l0a1/`
+- archived prior rerun log: `.logs/archive/cod-test-phase1-review-20260322-ee-1of.log`
+- fresh rerun log: `.logs/cod-test-phase1-review-20260322-ee-l0a1.log`
+- fresh output root: `output/cod-test-phase1-review/`
+- fresh artifacts manifest: `output/cod-test-phase1-review/artifacts-complete.json`
+- fresh run events: `output/cod-test-phase1-review/_meta/events.jsonl`
+- fresh dialogue artifact: `output/cod-test-phase1-review/phase1-gather-context/dialogue-data.json`
+- fresh music artifact: `output/cod-test-phase1-review/phase1-gather-context/music-data.json`
+- fresh dialogue success envelope: `output/cod-test-phase1-review/phase1-gather-context/script-results/get-dialogue.success.json`
+- fresh music success envelope: `output/cod-test-phase1-review/phase1-gather-context/script-results/get-music.success.json`
+- fresh raw error summary: `output/cod-test-phase1-review/phase1-gather-context/raw/_meta/errors.summary.json`
+- fresh dialogue FFmpeg plan: `output/cod-test-phase1-review/phase1-gather-context/raw/ffmpeg/dialogue/chunk-plan.json`
+- fresh music FFmpeg plan: `output/cod-test-phase1-review/phase1-gather-context/raw/ffmpeg/music/chunk-plan.json`
+
+Fresh rerun evidence:
+- `output/cod-test-phase1-review/phase1-gather-context/raw/_meta/errors.summary.json` reports `outcome: success` and `totalErrors: 0`
+- rerun log shows dialogue completed with `13` segments and `Total duration: 140.0s`
+- rerun log shows music completed with `5` segments and `Audio duration: 140.0s (5 analysis chunk(s) from 1 transport chunk(s))`
+
+Comparison against the immediately previous Phase 1-only rerun packet (`output/_archives/cod-test-phase1-review-pre-ee-l0a1/`):
+- Dialogue speaker-profile linkage is now internally valid:
+  - prior rerun had `12` dialogue segments, `10` speaker profiles, and an invalid reference in `speaker_profiles[spk_004].grounded.linked_segment_indexes` (`[4, 12]` while only indexes `0..11` existed)
+  - fresh rerun has `13` dialogue segments, `4` speaker profiles, and **no invalid linked_segment_indexes**
+- Music window grounding fix held in live output:
+  - prior rerun falsely labeled `60-90` as `silence` (`"The audio file provided is only 30 seconds long..."`)
+  - prior rerun falsely labeled `90-120` as `silence` (`"No audio content available for this time range."`)
+  - fresh rerun labels **all five windows as `music`**, including active middle windows:
+    - `60-90`: `"High-intensity, aggressive rock/metal music with heavy percussion and shouting vocals."`
+    - `90-120`: `"High-energy, aggressive rock music with shouting vocals and dramatic sound effects, typical of an action movie trailer."`
+- Dialogue timing is improved relative to the previous rerun on shape consistency, but not fully trustworthy:
+  - fresh rerun still uses the real measured source duration `140.042449`
+  - all `linked_segment_indexes` are valid and no segment exceeds source bounds
+  - however, the final dialogue segment is still clipped to `140 -> 140.042449` while containing a long line (`"So eager to leave, David. Killing a man is a hell of a lot easier than killing the idea."`), which is not a truthful duration for that amount of speech
+
+Comparison against the original clean cod-test baseline in `output/cod-test/`:
+- Dialogue is materially better than baseline on contract shape and source-duration grounding:
+  - baseline still reports `totalDuration: 220`
+  - baseline has `18` dialogue segments, `0` persisted `speaker_profiles`, and multiple post-runtime trailing segments
+  - fresh rerun reports `totalDuration: 140.042449`, includes `speaker_id` + `speaker_profiles`, and keeps all segments inside the real source duration
+- Music is materially better than baseline on review granularity and no longer regresses to false silence:
+  - baseline still collapses everything into one whole-trailer music segment (`0 -> 140.042449`)
+  - fresh rerun preserves five 30-second review windows and all five windows now describe actual active trailer audio instead of hallucinated missing audio in the middle
+
+Truthful quality summary:
+- Dialogue artifact quality: **improved, but still not fully trustworthy.** The timing-overrun bug is fixed, and the speaker-profile linkage bug is fixed, but the final clipped line is still temporally implausible (`~0.042s` for a long spoken sentence). That means the dialogue packet still overstates timing precision at the trailer tail.
+- Music artifact quality: **good enough for review now.** The rerun preserved the intended five-window shape and no longer falsely claims silence in the middle sections. The live artifact now matches the expected post-`ee-wt0` behavior.
+
+Readiness judgment for `ee-0ky`:
+- **Still blocked.** The music side is now trustworthy enough, and the speaker-profile linkage fix held, but the regenerated Phase 1 packet is still not fully trustworthy overall because dialogue timing remains implausible at the trailer tail.
+- Recommended next move before `ee-0ky`: tighten the dialogue tail/segment normalization so long trailing lines are either timed truthfully within the source audio or explicitly represented with an abstaining/approximate timing contract instead of a near-zero clipped segment.
 
 ---
 
@@ -543,15 +619,17 @@ Trustworthiness verdict after this fix:
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, and Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`. The investigated regression was not caused by chunk planning or persistence: FFmpeg correctly extracted the `60-90` and `90-120` chunk audio, but the model prompt under-explained that each attachment was already the local extracted window, allowing it to misread the 30-second chunk as the full file and hallucinate out-of-range silence.
+**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, and Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`. Task 2f then reran the real Phase 1-only review packet after both cleanup fixes landed. That empirical rerun confirmed the speaker-linkage fix and music grounding fix held in live artifacts: all `speaker_profiles[*].grounded.linked_segment_indexes` now point to valid segments, and the middle music windows (`60-90`, `90-120`) no longer hallucinate silence. However, the rerun also exposed a remaining dialogue-tail truthfulness defect: the last line is still squeezed into `140 -> 140.042449`, which is not a believable duration for that amount of speech. So the packet improved materially but is still not clean enough to unblock `ee-0ky`.
 
 **Commits:**
 - `71e0c2b` - Add grounded dialogue speaker contract
 - `84c4b93` - Update plan with final commit hash
 - `5f9dc5b` - Fix dialogue timing truthfulness
-- pending local commit for speaker-linkage/music-grounding follow-up
+- `937d52d` - Fix speaker profile linked segment indexes
+- `30888f5` - Ground Phase 1 music chunk prompts
+- pending commit for the latest plan update / rerun verdict
 
-**Lessons Learned:** The timing fix solved one real truth problem, but the follow-up rerun showed that a clean exit code still does not guarantee trustworthy Phase 1 context. For this lane, Phase 1 readiness depends on three separate truths lining up at once: time ranges must stay inside the real source duration, speaker-profile linkage must stay internally consistent, and music window prompts must stay grounded in the actual extracted chunk so the model does not hallucinate missing audio from global timestamps.
+**Lessons Learned:** A green Phase 1 rerun is necessary but not sufficient. For this lane, readiness depends on at least four truths lining up at once: segment ranges must stay inside the real source duration, speaker-profile linkage must match the final segment array, music prompts must be grounded to the attached local chunk instead of the global trailer duration, and any clipped tail dialogue must still remain temporally plausible enough to trust in downstream chunk-level comparisons.
 
 ---
 
