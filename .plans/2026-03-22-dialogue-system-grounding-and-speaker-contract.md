@@ -727,13 +727,114 @@ Readiness judgment for `ee-0ky`:
 - `.logs/`
 
 **Files Created/Deleted/Modified:**
-- modified or new 3-chunk cod-test config
-- comparison artifacts to be determined
+- `configs/cod-test-phase2-3chunk-comparison.yaml`
+- `output/_archives/cod-test-phase2-3chunk-comparison-pre-rerun-ee-0ky/`
+- `output/cod-test-phase2-3chunk-comparison/`
+- `.logs/archive/cod-test-phase2-3chunk-comparison-20260322-ee-0ky-first-attempt.log`
+- `.logs/cod-test-phase2-3chunk-comparison-20260322-ee-0ky.log`
+- `.logs/cod-test-phase2-3chunk-comparison-20260322-ee-0ky-rerun.log`
 - `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Created the smallest isolated comparison config and ran the 3-chunk lane to completion after preserving one transient failed attempt.
+
+Exact config path:
+- `configs/cod-test-phase2-3chunk-comparison.yaml`
+
+What the config does:
+- keeps the now-trustworthy Phase 1 gather-context behavior from `configs/cod-test-phase1-review.yaml`
+- preserves `ai.music.analysisWindowSeconds: 30`
+- runs only:
+  - `server/scripts/get-context/get-dialogue.cjs`
+  - `server/scripts/get-context/get-music.cjs`
+  - `server/scripts/process/video-chunks.cjs`
+- sets `report: []`
+- writes to isolated output root `output/cod-test-phase2-3chunk-comparison`
+- limits Phase 2 to `settings.max_chunks: 3`
+
+Validation / execution commands run:
+- `mkdir -p output/_archives .logs/archive && node validate-configs.cjs && node server/run-pipeline.cjs --config configs/cod-test-phase2-3chunk-comparison.yaml --dry-run`
+- first live attempt:
+  - `rm -rf output/cod-test-phase2-3chunk-comparison && unset DIGITAL_TWIN_MODE DIGITAL_TWIN_PACK DIGITAL_TWIN_CASSETTE OPENROUTER_TIMEOUT_MS || true && set -a && [ -f .env ] && . ./.env && set +a && node server/run-pipeline.cjs --config configs/cod-test-phase2-3chunk-comparison.yaml --verbose 2>&1 | tee .logs/cod-test-phase2-3chunk-comparison-20260322-ee-0ky.log`
+- preserve failed attempt + rerun:
+  - `mkdir -p output/_archives .logs/archive && rm -rf output/_archives/cod-test-phase2-3chunk-comparison-pre-rerun-ee-0ky && mv output/cod-test-phase2-3chunk-comparison output/_archives/cod-test-phase2-3chunk-comparison-pre-rerun-ee-0ky && cp -a .logs/cod-test-phase2-3chunk-comparison-20260322-ee-0ky.log .logs/archive/cod-test-phase2-3chunk-comparison-20260322-ee-0ky-first-attempt.log && unset DIGITAL_TWIN_MODE DIGITAL_TWIN_PACK DIGITAL_TWIN_CASSETTE OPENROUTER_TIMEOUT_MS || true && set -a && [ -f .env ] && . ./.env && set +a && node server/run-pipeline.cjs --config configs/cod-test-phase2-3chunk-comparison.yaml --verbose 2>&1 | tee .logs/cod-test-phase2-3chunk-comparison-20260322-ee-0ky-rerun.log`
+
+First-attempt preservation note:
+- the first live run failed during Phase 1 dialogue transcription and was preserved rather than discarded
+- preserved failed output root: `output/_archives/cod-test-phase2-3chunk-comparison-pre-rerun-ee-0ky/`
+- preserved first-attempt log copy: `.logs/archive/cod-test-phase2-3chunk-comparison-20260322-ee-0ky-first-attempt.log`
+- exact provider failure preserved in `output/_archives/cod-test-phase2-3chunk-comparison-pre-rerun-ee-0ky/phase1-gather-context/raw/ai/dialogue-transcription/attempt-02/capture.json`
+- truthful cause: first dialogue target exceeded the local validator tool-call limit, then failover target `openai/gpt-audio` was rejected by OpenRouter/OpenAI because `messages[0].content[1].input_audio.format` was sent as `mpeg` instead of supported `wav|mp3`
+- no code change was made in this bead because the rerun succeeded cleanly and the task goal here was comparison/evaluation rather than broad new implementation
+
+Successful rerun terminal outcome:
+- config validation passed
+- dry run passed
+- live rerun completed successfully with exit code `0`
+- exactly `3` scripts executed (`get-dialogue`, `get-music`, `video-chunks`)
+- Phase 2 processed exactly `3` chunks (`0-5`, `5-10`, `10-15`)
+- no Phase 3 report scripts were run
+
+Successful rerun output / log / artifact paths:
+- rerun log: `.logs/cod-test-phase2-3chunk-comparison-20260322-ee-0ky-rerun.log`
+- output root: `output/cod-test-phase2-3chunk-comparison/`
+- artifacts manifest: `output/cod-test-phase2-3chunk-comparison/artifacts-complete.json`
+- run events: `output/cod-test-phase2-3chunk-comparison/_meta/events.jsonl`
+- Phase 1 dialogue artifact: `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/dialogue-data.json`
+- Phase 1 music artifact: `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/music-data.json`
+- Phase 2 chunk analysis artifact: `output/cod-test-phase2-3chunk-comparison/phase2-process/chunk-analysis.json`
+- Phase 2 success envelope: `output/cod-test-phase2-3chunk-comparison/phase2-process/script-results/video-chunks.success.json`
+- Phase 2 raw AI pointers:
+  - `output/cod-test-phase2-3chunk-comparison/phase2-process/raw/ai/chunk-0.json`
+  - `output/cod-test-phase2-3chunk-comparison/phase2-process/raw/ai/chunk-1.json`
+  - `output/cod-test-phase2-3chunk-comparison/phase2-process/raw/ai/chunk-2.json`
+- exact rerun prompt files for comparison:
+  - chunk 0: `output/cod-test-phase2-3chunk-comparison/_meta/ai/_prompts/63bcade955facc5c9a3535d26f9d0d1bbef86412343d57fbc347094f61805da7.json`
+  - chunk 1: `output/cod-test-phase2-3chunk-comparison/_meta/ai/_prompts/0a9089f8e7b5035f3d7cfe392663ed113f55ec8e905e8ad08e9a26a1686a0f5f.json`
+  - chunk 2: `output/cod-test-phase2-3chunk-comparison/_meta/ai/_prompts/bea83a02ffef65110ae68f1e9fc191e2b65b2bc2918408929ca077b8c3f85484.json`
+- exact baseline prompt files used for comparison:
+  - chunk 0: `output/cod-test/_meta/ai/_prompts/fdbe43b2e2a6ad665960fed0e0d1db60e447b093c6d55e78e73b52bbf5d65d98.json`
+  - chunk 1: `output/cod-test/_meta/ai/_prompts/1a54358469af3f39b31cc9ddc0c5f11867db6da808c25b5ce886ec59321ac72d.json`
+  - chunk 2: `output/cod-test/_meta/ai/_prompts/3abc64b208aace4a91908cf6afb239b44fb0f3bf3f05fbfea486df881618f55d.json`
+
+Prompt-comparison verdict against the original stored run in `output/cod-test/`:
+- **The new dialogue/music context is definitely being consumed.**
+- Baseline prompts only carried a tiny overlapping dialogue excerpt plus one coarse whole-trailer music line:
+  - chunk 0 baseline dialogue: `0.0-6.0 Speaker 1: They want you afraid. Fear makes you easier to control.`
+  - chunk 1 baseline dialogue: that same `0.0-6.0` line plus `8.5-10.0 It's time to wake up.`
+  - chunk 2 baseline dialogue: only `12.0-16.5 Your streets, so once again run red with your blood.`
+  - all three baseline prompts used the same coarse music context: `0.0-140.0 music, mood: tense, intensity: 8`
+- Rerun prompts provide materially richer and more time-local grounding:
+  - chunk 0 rerun prompt includes 10 dialogue lines from `0.0-3.7s` across multiple speakers plus active `0.0-5.0s` music cues and a trailer-wide music summary
+  - chunk 1 rerun prompt narrows dialogue to only the overlapping comms lines (`Specter one, report.` / `Need a sitrep.`) plus local `5.0-10.0s` music cues
+  - chunk 2 rerun prompt injects a dense `10.2-15.0s` dialogue block plus local `10.0-15.0s` music cues
+
+Output-comparison verdict for the first three chunks:
+- chunk `0` (`0-5s`): **changed materially and usefully**
+  - baseline: dominant emotion `boredom`, scores `patience 3 / boredom 7 / excitement 4`
+  - rerun: dominant emotion `excitement`, scores `patience 4 / boredom 4 / excitement 7`
+  - useful difference: rerun still acknowledges cliché fear/control dialogue, but it no longer overweights that line enough to drown out the actual fast-cut visual energy and active music. This is a more grounded first-chunk judgment.
+- chunk `1` (`5-10s`): **changed modestly and usefully**
+  - baseline: dominant emotion `patience`, scores `8 / 2 / 6`
+  - rerun: dominant emotion `excitement`, scores `8 / 2 / 8`
+  - useful difference: rerun explicitly incorporates the chunk-local military comms and ongoing high-energy score while staying anchored to visible events (glitch skull, highway collapse, skyline). This looks like healthy context consumption, not blind prompt parroting.
+- chunk `2` (`10-15s`): **changed materially, but with mixed value**
+  - baseline: dominant emotion `excitement`, scores `7 / 3 / 8`
+  - rerun: dominant emotion `boredom`, scores `2 / 8 / 4`
+  - useful side: rerun becomes much harsher about the visible title-card / corporate-branding interruption, which is plausibly more grounded for the impatient-teenager persona than the baseline's aggressive-dialogue-heavy excitement read
+  - caution: the rerun prompt also contained a very dense dialogue block for this 5s window, including several lines that read lyric-like / suspicious, while the final judgment mainly focused on the visible title card anyway. That means the model did **not** let dialogue override the image, which is good — but it also means this specific chunk is not strong evidence that richer dialogue context is always cleanly improving the result
+
+Overall 3-chunk comparison verdict:
+- **Yes, the new dialogue/music context is being consumed.** The prompt payloads are materially different, the outputs cite chunk-local dialogue/music details that were absent from baseline, and the score/emotion shifts are too large to be explained as trivial rerun variance alone.
+- **Mostly yes, it changes persona judgments in a useful, more grounded way.** Chunks `0` and `1` improve: the rerun better balances fast visual energy against cliché dialogue instead of flattening early chunks into generic trailer skepticism. Chunk `2` is directionally promising because it penalizes the visible title-card interruption more aggressively, but it is also the weakest comparison point because the new dialogue context for that window looks noisy/over-dense.
+- **Truthful strength:** the richer Phase 1 context is no longer obviously ignored; it is affecting both prompt content and chunk reasoning while the model still mostly obeys the instruction to ground in the attached video first.
+- **Truthful issue discovered:** the successful rerun Phase 1 dialogue artifact for this config ballooned to `30` persisted dialogue segments (`output/cod-test-phase2-3chunk-comparison/phase1-gather-context/dialogue-data.json`) versus the `13`-segment trustworthy review packet in `output/cod-test-phase1-review/phase1-gather-context/dialogue-data.json`. The chunk-2 overlap especially looks noisy/possibly lyric-like. So the context lane is useful enough to compare, but not yet stable enough to call canon without caution.
+
+Bottom-line judgment for this bead:
+- The 3-chunk comparison goal succeeded.
+- The new Phase 1 dialogue/music context is being consumed downstream.
+- The downstream effect is **net positive but not uniformly clean**: the comparison supports the thesis that richer Phase 1 grounding can improve Phase 2 persona judgments, while also surfacing one new stability concern around over-dense/noisy dialogue overlap in at least one chunk window.
 
 ---
 
@@ -781,7 +882,7 @@ Readiness judgment for `ee-0ky`:
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`, and Task 2g fixed the remaining dialogue-tail normalization defect by preventing a long overrun line from surviving as a fake micro-tail at trailer end. Task 2h then reran the real Phase 1-only review packet after that final dialogue-tail fix. The live rerun completed cleanly and confirmed the canonical packet is now good enough to unblock the next lane: dialogue timing stays inside the real `140.042449s` source duration, the implausible clipped tail is gone, `speaker_profiles[*].grounded.linked_segment_indexes` are valid, and the five 30-second music windows remain active non-false-silence review artifacts. The overall plan is still partial only because the downstream `ee-0ky` 3-chunk Phase 2 comparison and later follow-ups have not yet been executed.
+**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`, and Task 2g fixed the remaining dialogue-tail normalization defect by preventing a long overrun line from surviving as a fake micro-tail at trailer end. Task 2h then reran the real Phase 1-only review packet after that final dialogue-tail fix. Task 3 has now executed the downstream 3-chunk Phase 2 comparison via `configs/cod-test-phase2-3chunk-comparison.yaml`, preserving both the first failed attempt and the successful rerun artifacts. The comparison shows that richer Phase 1 dialogue/music context is definitely being consumed in Phase 2 and is net improving chunk judgments, especially for chunks `0` and `1`, while also surfacing one caution: the successful rerun dialogue packet expanded to a noisier `30`-segment artifact and chunk `2` demonstrates that the context lane is helpful but not yet stable enough to call fully canonical. The overall plan remains partial only because Task 4 (music-window cadence decision) and Task 5 (optional inferred-traits experiment) are still pending.
 
 **Commits:**
 - `71e0c2b` - Add grounded dialogue speaker contract
