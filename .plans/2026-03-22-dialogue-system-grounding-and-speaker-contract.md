@@ -13,6 +13,8 @@ bead_ids:
   - ee-0ky
   - ee-9hk
   - ee-avf
+  - ee-8hwt
+  - ee-dt6t
 ---
 # emotion-engine: dialogue system grounding and speaker contract
 
@@ -1036,7 +1038,92 @@ Bottom-line judgment for this bead:
 
 **Status:** ⏳ Pending
 
-**Results:** Pending.
+**Results:** Pending. Note: Derrick has now escalated inferred traits from optional experiment toward required persisted output for the current comparison lane, so `ee-avf` likely needs to be reconciled with the newer regression bead `ee-dt6t` rather than executed as an isolated optional beta experiment.
+
+---
+
+### Task 6: Fix persona asset staging in output artifacts
+
+**Bead ID:** `ee-8hwt`  
+**SubAgent:** `coder`  
+**Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine, claim bead ee-8hwt with bd update ee-8hwt --status in_progress --json, then fix the output-artifact staging bug where assets/input/personas/ is created but left empty even though the run config references persona inputs. Investigate path resolution and staging in server/lib/output-manager.cjs (or the owning surface), land the smallest truthful fix so the canonical output package preserves the exact persona files used for the run, add regression coverage, rerun/restage verification, update this plan with exact files changed and artifact paths, then close ee-8hwt with an exact reason.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `server/lib/`
+- `test/`
+- `output/`
+
+**Files Created/Deleted/Modified:**
+- `server/lib/output-manager.cjs`
+- `test/output-manager.test.js`
+- `output/cod-test-phase2-3chunk-comparison/assets/input/personas/SOUL.md`
+- `output/cod-test-phase2-3chunk-comparison/assets/input/personas/GOAL.md`
+- `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
+
+**Status:** ✅ Complete
+
+**Results:** Investigation confirmed the owning bug is in `server/lib/output-manager.cjs`, not a sibling polyrepo package. The staging logic already intended to copy persona inputs from `tool_variables.soulPath` / `goalPath`, but it resolved those paths from the wrong base. For repo-local configs like `configs/cod-test-phase2-3chunk-comparison.yaml`, the code walked up two directories from `configs/` and then applied `../cast/...` / `../goals/...`, which overshot the repo root and produced nonexistent paths under the parent of `peanut-gallery`. That is why `assets/input/personas/` was created but left empty.
+
+Smallest truthful fix landed in-repo:
+- `server/lib/output-manager.cjs`
+  - changed persona staging path resolution to match the live persona-loader contract: resolve `tool_variables` relative to the `emotion-engine` project root (one level above `configs/`), not the broader peanut-gallery workspace root
+  - this correctly maps `../cast/impatient-teenager/SOUL.md` to the sibling `cast/` repo and `../goals/video-ad-evaluation.md` to the sibling `goals/` repo used by the run
+- `test/output-manager.test.js`
+  - tightened the existing copy-input-assets test so it now explicitly asserts `assets/input/personas/SOUL.md` and `assets/input/personas/GOAL.md` are copied
+  - added a regression that reproduces the real repo layout shape: a repo-local `configs/cod-test.yaml` file referencing `../cast/...` and `../goals/...` while those inputs live as siblings of the repo root
+
+Commands run:
+- `bd update ee-8hwt --status in_progress --json`
+- `node test/output-manager.test.js`
+- `node - <<'NODE' ... copyInputAssets(outputDir, config, assetPath, configPath) ... NODE`
+- `npm test`
+
+Verification / restage evidence:
+- before restage, the canonical comparison packet contained only:
+  - `output/cod-test-phase2-3chunk-comparison/assets/input/cod.mp4`
+  - `output/cod-test-phase2-3chunk-comparison/assets/input/config.yaml`
+- after restaging with the fixed `copyInputAssets()` logic, the canonical packet now also contains:
+  - `output/cod-test-phase2-3chunk-comparison/assets/input/personas/SOUL.md`
+  - `output/cod-test-phase2-3chunk-comparison/assets/input/personas/GOAL.md`
+- exact content identity was verified by matching hashes between staged files and source inputs:
+  - staged `SOUL.md`: `ec23fcbdd509d262a2d9da8904ddbe512cc523589e4f8105f1527328facedfba`
+  - source `../cast/impatient-teenager/SOUL.md`: `ec23fcbdd509d262a2d9da8904ddbe512cc523589e4f8105f1527328facedfba`
+  - staged `GOAL.md`: `8c9b3cdc7767f5e840d8a23994165829bfc80183c51786f212386b40d1148171`
+  - source `../goals/video-ad-evaluation.md`: `8c9b3cdc7767f5e840d8a23994165829bfc80183c51786f212386b40d1148171`
+
+Test results:
+- targeted output-manager suite passed (`20` tests green)
+- full repo suite passed: `315` tests green via `npm test`
+
+Scope / ownership note:
+- no `node_modules` changes were made
+- no sibling polyrepo/package refresh was required
+- verification for this bead used a narrow restage of the existing canonical packet rather than an expensive full pipeline rerun, because the bug lives entirely in initial asset staging and the fixed staging function now reproduces the expected output truthfully
+
+---
+
+### Task 7: Fix dialogue speaker attribution/profile regression in current comparison output
+
+**Bead ID:** `ee-dt6t`  
+**SubAgent:** `coder`  
+**Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine, claim bead ee-dt6t with bd update ee-dt6t --status in_progress --json, then investigate the current Phase 1 dialogue-data.json regression where speaker grouping/profile assignment is not acoustically coherent across the run. Concrete failures from human review: spk_001 should remain a female voice, but later male lines are attributed to that same speaker; speaker naming/identity drift is present; acoustic_descriptors are missing even though they were present before; acoustic_descriptors_abstained should not exist as a persisted possibility; inferred_traits are empty and now need to be treated as required persisted output rather than optional when the lane succeeds. Trace the owning speaker-linkage / normalization / prompt-contract surface, reconcile this with existing bead ee-avf, land the smallest truthful fix set, add/update tests, rerun validation artifacts for human review, update this plan with exact files changed and evidence, then close ee-dt6t with an exact reason.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `server/lib/`
+- `server/scripts/get-context/`
+- `test/`
+- `output/`
+
+**Files Created/Deleted/Modified:**
+- speaker-contract implementation/test files to be determined
+- output verification artifacts to be determined
+- `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
+
+**Status:** ⏳ Pending
+
+**Results:** Created after Derrick’s review of the current `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/dialogue-data.json` surfaced a new regression cluster: speaker identity drift across incompatible voices, missing required `acoustic_descriptors`, invalid persisted abstention for acoustic descriptors, and still-empty `inferred_traits` despite that field now being expected to populate.
 
 ---
 

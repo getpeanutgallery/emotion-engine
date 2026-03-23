@@ -305,14 +305,15 @@ function copyInputAssets(outputDir, config, assetPath, configPath) {
     const toolVariables = parsedConfig.tool_variables;
     
     if (toolVariables) {
-      // Resolve paths relative to peanut-gallery workspace root
-      // Config is in emotion-engine/configs/, so we need to go up 2 levels to reach peanut-gallery
-      // The config paths (e.g., "cast/impatient-teenager/SOUL.md") are relative to peanut-gallery root
-      const workspaceRoot = path.resolve(path.dirname(configPath), '..', '..');
+      // Resolve paths the same way the live persona loader does: relative to the
+      // emotion-engine project root, not the broader peanut-gallery workspace root.
+      // Example: configs/cod-test.yaml + ../cast/impatient-teenager/SOUL.md should
+      // land at <peanut-gallery>/cast/impatient-teenager/SOUL.md.
+      const projectRoot = path.resolve(path.dirname(configPath), '..');
       
       // Copy SOUL.md from soulPath
       if (toolVariables.soulPath) {
-        const soulPath = path.resolve(workspaceRoot, toolVariables.soulPath);
+        const soulPath = path.resolve(projectRoot, toolVariables.soulPath);
         const soulDest = path.join(personasDir, 'SOUL.md');
         
         if (fs.existsSync(soulPath)) {
@@ -322,7 +323,7 @@ function copyInputAssets(outputDir, config, assetPath, configPath) {
       
       // Copy GOAL.md from goalPath
       if (toolVariables.goalPath) {
-        const goalPath = path.resolve(workspaceRoot, toolVariables.goalPath);
+        const goalPath = path.resolve(projectRoot, toolVariables.goalPath);
         const goalDest = path.join(personasDir, 'GOAL.md');
         
         if (fs.existsSync(goalPath)) {

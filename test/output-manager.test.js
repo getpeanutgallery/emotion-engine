@@ -282,7 +282,58 @@ test('copies input assets', () => {
   if (!fs.existsSync(path.join(inputDir, 'config.yaml'))) {
     throw new Error('Config not copied');
   }
-  
+  if (!fs.existsSync(path.join(inputDir, 'personas', 'SOUL.md'))) {
+    throw new Error('SOUL.md not copied');
+  }
+  if (!fs.existsSync(path.join(inputDir, 'personas', 'GOAL.md'))) {
+    throw new Error('GOAL.md not copied');
+  }
+});
+
+test('copies persona files referenced via ../cast and ../goals from repo-local configs', () => {
+  const projectRoot = path.join(testOutputDir, 'fake-emotion-engine');
+  const configDir = path.join(projectRoot, 'configs');
+  const assetDir = path.join(projectRoot, 'fixtures');
+  const siblingCastDir = path.join(testOutputDir, 'cast', 'impatient-teenager');
+  const siblingGoalsDir = path.join(testOutputDir, 'goals');
+
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.mkdirSync(assetDir, { recursive: true });
+  fs.mkdirSync(siblingCastDir, { recursive: true });
+  fs.mkdirSync(siblingGoalsDir, { recursive: true });
+
+  const testVideo = path.join(assetDir, 'comparison.mp4');
+  fs.writeFileSync(testVideo, 'fake video content');
+
+  const configPath = path.join(configDir, 'cod-test.yaml');
+  fs.writeFileSync(configPath, [
+    'tool_variables:',
+    '  soulPath: "../cast/impatient-teenager/SOUL.md"',
+    '  goalPath: "../goals/video-ad-evaluation.md"'
+  ].join('\n'));
+
+  fs.writeFileSync(path.join(siblingCastDir, 'SOUL.md'), '# Persona Soul\n', 'utf8');
+  fs.writeFileSync(path.join(siblingGoalsDir, 'video-ad-evaluation.md'), '# Persona Goal\n', 'utf8');
+
+  const runOutputDir = path.join(testOutputDir, 'staged-output');
+  copyInputAssets(runOutputDir, { asset: { inputPath: testVideo } }, assetDir, configPath);
+
+  const personasDir = path.join(runOutputDir, 'assets', 'input', 'personas');
+  const stagedSoulPath = path.join(personasDir, 'SOUL.md');
+  const stagedGoalPath = path.join(personasDir, 'GOAL.md');
+
+  if (!fs.existsSync(stagedSoulPath)) {
+    throw new Error('SOUL.md was not staged from ../cast');
+  }
+  if (!fs.existsSync(stagedGoalPath)) {
+    throw new Error('GOAL.md was not staged from ../goals');
+  }
+  if (fs.readFileSync(stagedSoulPath, 'utf8') !== '# Persona Soul\n') {
+    throw new Error('SOUL.md staged wrong content');
+  }
+  if (fs.readFileSync(stagedGoalPath, 'utf8') !== '# Persona Goal\n') {
+    throw new Error('GOAL.md staged wrong content');
+  }
 });
 
 // Test cleanupTempFiles
