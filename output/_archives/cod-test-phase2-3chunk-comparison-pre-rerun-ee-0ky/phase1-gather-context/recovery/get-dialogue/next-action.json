@@ -1,0 +1,6 @@
+{
+  "policy": "fail",
+  "target": null,
+  "humanRequired": false,
+  "stopPipelineOnFailure": true
+}

@@ -1,0 +1,122 @@
+{
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "splitIndex": 0,
+      "startTime": 0,
+      "endTime": 5,
+      "status": "success",
+      "summary": "The video opens with fast-paced, intense visual cuts and dramatic dialogue about fear and control.",
+      "emotions": {
+        "patience": {
+          "score": 4,
+          "reasoning": "The fast cuts provide immediate visual punch, but the generic 'rising tensions' dialogue tests my 3-second rule."
+        },
+        "boredom": {
+          "score": 4,
+          "reasoning": "The rapid visual changes prevent me from scrolling immediately, even if the voiceover is a bit cliché."
+        },
+        "excitement": {
+          "score": 7,
+          "reasoning": "The high-energy music and rapid-fire visuals create enough intrigue to keep me watching to see what happens next."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.85,
+      "tokens": 4787,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 1,
+      "splitIndex": 0,
+      "startTime": 5,
+      "endTime": 10,
+      "status": "success",
+      "summary": "Glitchy skull face transitions to soldier running, then massive highway collapse with falling cars, ending on a wide shot of the devastated city skyline. Military comms add urgency to the visual chaos.",
+      "emotions": {
+        "patience": {
+          "score": 8,
+          "reasoning": "Glitch skull at 00:05 acts as a strong pattern interrupt; military dialogue creates narrative urgency without slowing the pace."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "Relentless visual changes (face -> run -> collapse -> tunnel -> skyline) prevent disengagement."
+        },
+        "excitement": {
+          "score": 8,
+          "reasoning": "Falling cars and crumbling highway deliver visceral impact; glitch aesthetic feels fresh and high-energy."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.9,
+      "tokens": 14192,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 2,
+      "splitIndex": 0,
+      "startTime": 10,
+      "endTime": 15,
+      "status": "success",
+      "summary": "Chaotic city destruction visuals transition into a bold title card reveal for Black Ops 7, followed by quick action cuts.",
+      "emotions": {
+        "patience": {
+          "score": 2,
+          "reasoning": "Logo animation at 3s triggers immediate scroll risk for this persona; corporate intros are a stated dealbreaker."
+        },
+        "boredom": {
+          "score": 8,
+          "reasoning": "Title card interrupts the flow; Alex hates generic intros and buzzwords, leading to high disengagement."
+        },
+        "excitement": {
+          "score": 4,
+          "reasoning": "Visual intensity (smoke, city) offers some energy, but the branding overlay dampens authentic engagement."
+        }
+      },
+      "dominant_emotion": "boredom",
+      "confidence": 0.85,
+      "tokens": 24211,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    }
+  ],
+  "totalTokens": 43190,
+  "statusSummary": {
+    "total": 3,
+    "successful": 3,
+    "failed": 0,
+    "failedChunkIndexes": []
+  },
+  "persona": {
+    "soulPath": "../cast/impatient-teenager/SOUL.md",
+    "goalPath": "../goals/video-ad-evaluation.md",
+    "config": {
+      "chunkDuration": 8,
+      "numChunks": 3
+    }
+  },
+  "videoDuration": 140.017
+}

@@ -1,0 +1,49 @@
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+🚀 Emotion Engine Pipeline Orchestrator
+========================================
+
+📄 Loading configuration...
+   Config loaded: configs/cod-test-phase2-3chunk-comparison.yaml
+   Name: COD Test Pipeline (Phase 2 3-chunk comparison)
+   Description: Run trustworthy Phase 1 dialogue/music gathering plus only the first 3 Phase 2 video chunks for comparison against the original stored cod-test baseline
+✅ Validating configuration...
+   ✅ Valid (3 script(s) across all phases)
+📁 Setting up assets directory...
+   ✅ Assets directory created at /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/assets/input
+   ✅ Raw directories ready:
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/phase2-process/raw
+      - /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/phase3-report/raw
+
+🎯 Executing pipeline...
+
+📥 Phase 1: Gather Context (sequential, 2 script(s))
+   Running: server/scripts/get-context/get-dialogue.cjs
+   🎤 Extracting and transcribing dialogue from: /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/examples/videos/emotion-tests/cod.mp4
+   🔁 Dialogue retry config: attempts=1, backoffMs=0
+   🤖 Calling AI provider for transcription...
+   ❌ Error extracting dialogue: OpenRouter: Request failed with status code 400
+   💾 Keeping dialogue temp files in /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/assets/processed/dialogue
+   ❌ Script failed: server/scripts/get-context/get-dialogue.cjs
+      Error: OpenRouter: Request failed with status code 400
+   ❌ Phase 1 failed: OpenRouter: Request failed with status code 400
+
+❌ Pipeline failed: OpenRouter: Request failed with status code 400
+
+Stack trace:
+AxiosError: Request failed with status code 400
+    at settle (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/axios/dist/node/axios.cjs:2304:7)
+    at IncomingMessage.handleStreamEnd (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/axios/dist/node/axios.cjs:3772:13)
+    at IncomingMessage.emit (node:events:520:22)
+    at endReadableNT (node:internal/streams/readable:1729:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/axios/dist/node/axios.cjs:5110:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async runRequest (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:268:22)
+    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/digital-twin-router/index.js:394:28)
+    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:336:14)
+    at async executeLocalValidatorToolLoop (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/local-validator-tool-loop.cjs:227:24)
+    at async operation (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/get-context/get-dialogue.cjs:498:36)
+    at async executeWithTargets (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/ai-targets.cjs:418:24)
+    at async Object.run (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/get-context/get-dialogue.cjs:455:48)
+    at async executeScript (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/script-runner.cjs:33:20)

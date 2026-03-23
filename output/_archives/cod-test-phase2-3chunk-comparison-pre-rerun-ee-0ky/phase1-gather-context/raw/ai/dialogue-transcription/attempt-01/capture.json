@@ -1,0 +1,44 @@
+{
+  "attempt": 1,
+  "attemptInTarget": 1,
+  "targetIndex": 0,
+  "targetCount": 4,
+  "adapter": {
+    "name": "openrouter",
+    "model": "google/gemini-3.1-flash-lite-preview",
+    "params": {
+      "max_tokens": "[REDACTED]",
+      "thinking": {
+        "level": "low"
+      }
+    }
+  },
+  "failover": null,
+  "promptRef": {
+    "sha256": "06033c2cc88ba51e33954b5db8031c182f987582a47f52a1c80d324220751f8d",
+    "file": "_meta/ai/_prompts/06033c2cc88ba51e33954b5db8031c182f987582a47f52a1c80d324220751f8d.json"
+  },
+  "rawResponse": null,
+  "parsed": null,
+  "toolLoop": null,
+  "error": "invalid_output: exceeded validate_dialogue_transcription_json tool-call limit",
+  "errorName": "Error",
+  "errorCode": null,
+  "errorStatus": null,
+  "errorRequestId": null,
+  "errorClassification": "retryable",
+  "errorStack": "Error: invalid_output: exceeded validate_dialogue_transcription_json tool-call limit\n    at createRetryableError (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/ai-targets.cjs:356:15)\n    at executeLocalValidatorToolLoop (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/local-validator-tool-loop.cjs:365:13)\n    at async operation (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/get-context/get-dialogue.cjs:498:36)\n    at async executeWithTargets (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/ai-targets.cjs:418:24)\n    at async Object.run (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/get-context/get-dialogue.cjs:455:48)\n    at async executeScript (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/script-runner.cjs:33:20)\n    at async runGatherContext (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/phases/gather-context-runner.cjs:77:22)\n    at async runPipeline (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/run-pipeline.cjs:205:22)\n    at async main (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/run-pipeline.cjs:347:5)",
+  "errorDebug": null,
+  "errorResponse": null,
+  "provider": "openrouter",
+  "model": "google/gemini-3.1-flash-lite-preview",
+  "requestMeta": {
+    "adapter": "[Circular]",
+    "provider": "openrouter",
+    "model": "google/gemini-3.1-flash-lite-preview",
+    "attempt": 1,
+    "attemptInTarget": 1,
+    "targetIndex": 0,
+    "targetCount": 4
+  }
+}

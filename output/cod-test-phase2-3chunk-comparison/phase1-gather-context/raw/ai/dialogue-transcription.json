@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 2,
+  "kind": "pointer",
+  "updatedAt": "2026-03-23T00:30:26.466Z",
+  "latestAttempt": 1,
+  "target": {
+    "dir": "dialogue-transcription/attempt-01",
+    "file": "dialogue-transcription/attempt-01/capture.json"
+  }
+}

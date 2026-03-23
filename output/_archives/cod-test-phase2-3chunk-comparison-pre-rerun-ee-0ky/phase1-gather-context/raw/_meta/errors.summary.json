@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "phase": "phase1-gather-context",
+  "outcome": "failed",
+  "generatedAt": "2026-03-23T00:29:33.097Z",
+  "totalErrors": 1,
+  "fatalError": {
+    "name": "OpenRouterError",
+    "message": "OpenRouter: Request failed with status code 400",
+    "stack": "AxiosError: Request failed with status code 400\n    at settle (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/axios/dist/node/axios.cjs:2304:7)\n    at IncomingMessage.handleStreamEnd (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/axios/dist/node/axios.cjs:3772:13)\n    at IncomingMessage.emit (node:events:520:22)\n    at endReadableNT (node:internal/streams/readable:1729:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)\n    at Axios.request (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/axios/dist/node/axios.cjs:5110:41)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async runRequest (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:268:22)\n    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/digital-twin-router/index.js:394:28)\n    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:336:14)\n    at async executeLocalValidatorToolLoop (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/local-validator-tool-loop.cjs:227:24)\n    at async operation (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/get-context/get-dialogue.cjs:498:36)\n    at async executeWithTargets (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/ai-targets.cjs:418:24)\n    at async Object.run (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/get-context/get-dialogue.cjs:455:48)\n    at async executeScript (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/script-runner.cjs:33:20)"
+  }
+}

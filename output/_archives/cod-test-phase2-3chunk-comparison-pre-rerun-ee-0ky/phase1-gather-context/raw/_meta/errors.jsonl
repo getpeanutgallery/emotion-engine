@@ -1,0 +1,1 @@
+{"ts":"2026-03-23T00:29:33.097Z","phase":"phase1-gather-context","script":"get-dialogue","level":"error","kind":"fatal","message":"OpenRouter: Request failed with status code 400","errorName":"OpenRouterError","errorCode":"ERR_BAD_REQUEST","errorStatus":400,"errorRequestId":"9e09527e088cb1a3-MIA","errorClassification":"fatal"}
