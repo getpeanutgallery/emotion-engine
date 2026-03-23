@@ -921,8 +921,16 @@ function buildRollingAnalysisPrompt(startTime, endTime, rollingSummary, recovery
   const roll = typeof rollingSummary === 'string' && rollingSummary.trim().length > 0
     ? rollingSummary.trim()
     : null;
+  const chunkDurationSeconds = Math.max(0, endTime - startTime);
 
   const prompt = `Analyze the audio in this chunk (${startTime.toFixed(1)}s to ${endTime.toFixed(1)}s).
+
+Important grounding:
+- The attached audio file is already the extracted audio for this exact global window.
+- The attached chunk duration is approximately ${chunkDurationSeconds.toFixed(1)} seconds.
+- Treat ${startTime.toFixed(1)}s to ${endTime.toFixed(1)}s as the chunk's location in the original timeline, not as a claim about the attached file's full duration.
+- Do NOT claim the requested range exceeds the file duration just because the attached chunk is shorter than the full trailer.
+- Analyze only the audio that is actually present in the attached chunk.
 
 ${roll ? `Rolling summary so far (from previous chunks):\n${roll}\n\n` : ''}Identify:
 1. Type of audio: music, speech, silence, ambient noise, sound effects

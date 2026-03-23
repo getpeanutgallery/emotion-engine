@@ -402,12 +402,56 @@ Readiness for `ee-l0a1` / downstream rerun:
 - sibling owning repos only if truly required
 
 **Files Created/Deleted/Modified:**
-- source/test files to be determined
+- `server/scripts/get-context/get-music.cjs`
+- `test/scripts/get-music.test.js`
 - `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Investigation traced the full Phase 1 music path and found the regression in `prompt/input assembly`, not in chunk planning, output normalization, or persistence.
+
+Exact trace and findings:
+- Chunk planning was correct:
+  - `server/scripts/get-context/get-music.cjs` uses `preflightAudio()` + `buildMusicAnalysisChunkPlan()`.
+  - The rerun's `output/cod-test-phase1-review/phase1-gather-context/raw/ffmpeg/music/chunk-plan.json` correctly planned five analysis windows over one transport chunk.
+- Prompt/input assembly was the faulty layer:
+  - For each analysis window, `extractAudioChunk()` correctly produced a local extracted audio file for that window.
+  - Example evidence from the bad rerun: `output/cod-test-phase1-review/phase1-gather-context/raw/ffmpeg/music/extract-chunk-2.json` shows FFmpeg successfully extracted `-ss 60 -t 30` into `chunk_002.mp3`.
+  - But `buildRollingAnalysisPrompt()` only told the model to analyze `60.0s to 90.0s` / `90.0s to 120.0s` without explicitly grounding that the attached file was already the extracted local chunk.
+  - That let the model misread the 30-second attachment as the whole file and hallucinate out-of-range silence (`"only 30 seconds long"`, `"No audio content available for this time range."`).
+- Model output normalization/persistence were not the source of the bug:
+  - The bad silence text appears already in the raw AI captures (`raw/ai/music-segment-0002/...`, `music-segment-0003/...`).
+  - `music-data.json` simply persisted those model outputs, so persistence was behaving consistently with the bad prompt grounding rather than introducing the regression.
+
+Smallest truthful fix landed in-repo:
+- `server/scripts/get-context/get-music.cjs`
+  - tightened `buildRollingAnalysisPrompt()` so every chunk prompt now explicitly says:
+    - the attached audio file is already the extracted audio for that exact global window
+    - the attached chunk duration is expected to be local (~30s)
+    - the global timestamps identify timeline location, not the attached file's full duration
+    - the model must not claim the range exceeds file duration just because the chunk is shorter than the trailer
+- `test/scripts/get-music.test.js`
+  - kept the existing long-window coverage
+  - added a regression that simulates the exact late-window failure mode and proves the new prompt grounding prevents the false-silence behavior for `60-90` and `90-120`
+
+Commands run:
+- `bd update ee-wt0 --status in_progress --json`
+- `node --test test/scripts/get-music.test.js`
+- `npm test`
+
+Test results:
+- targeted music suite passed (`21` tests green)
+- full repo suite passed: `313` tests green via `npm test`
+
+Scope / ownership note:
+- no `node_modules` changes were made
+- no sibling polyrepo/package refresh was required
+- owning fix surface was entirely inside `emotion-engine`
+
+Trustworthiness verdict after this fix:
+- The specific false-silence regression is now addressed at the owning prompt/input assembly surface, and the regression is covered by test.
+- I did **not** run the live post-fix Phase 1 rerun in this bead because that is already the next planned rerun lane (`ee-l0a1`).
+- So the code path is now grounded and test-covered, but the canonical regenerated `music-data.json` artifact is **not yet empirically re-verified** until `ee-l0a1` reruns `configs/cod-test-phase1-review.yaml`.
 
 ---
 
@@ -499,15 +543,15 @@ Readiness for `ee-l0a1` / downstream rerun:
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, and Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`. Task 2c then reran the same Phase 1-only review config cleanly and preserved a before/after packet. The rerun confirms the timing fix worked: dialogue now persists the real runtime (`140.042449`) and no longer emits the old impossible post-runtime dialogue segments. However, the regenerated Phase 1 packet still is not trustworthy enough to unblock `ee-0ky`: one speaker profile references a nonexistent segment index, and the music artifact regressed by hallucinating silence in the `60-90` and `90-120` windows.
+**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, and Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`. The investigated regression was not caused by chunk planning or persistence: FFmpeg correctly extracted the `60-90` and `90-120` chunk audio, but the model prompt under-explained that each attachment was already the local extracted window, allowing it to misread the 30-second chunk as the full file and hallucinate out-of-range silence.
 
 **Commits:**
 - `71e0c2b` - Add grounded dialogue speaker contract
 - `84c4b93` - Update plan with final commit hash
 - `5f9dc5b` - Fix dialogue timing truthfulness
-- pending local commit for the rerun verdict / plan update
+- pending local commit for speaker-linkage/music-grounding follow-up
 
-**Lessons Learned:** The timing fix solved the exact duration-overrun bug, but a clean exit code is not the same thing as a trustworthy review packet. For this lane, Phase 1 readiness depends on three separate truths lining up at once: time ranges must stay inside the real source duration, speaker-profile linkage must stay internally consistent, and music window analysis must describe the actual audio rather than hallucinating missing content.
+**Lessons Learned:** The timing fix solved one real truth problem, but the follow-up rerun showed that a clean exit code still does not guarantee trustworthy Phase 1 context. For this lane, Phase 1 readiness depends on three separate truths lining up at once: time ranges must stay inside the real source duration, speaker-profile linkage must stay internally consistent, and music window prompts must stay grounded in the actual extracted chunk so the model does not hallucinate missing audio from global timestamps.
 
 ---
 

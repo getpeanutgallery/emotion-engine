@@ -252,6 +252,61 @@ test('Get Music Script', async (t) => {
       ok(completionPrompts[4].includes('120.0s to 140.0s'));
     });
 
+    tNested.test('grounds later music-window prompts as extracted local chunks instead of out-of-range absolute files', async () => {
+      mockDurationSeconds = 140.042449;
+      completeImplementation = async (options) => {
+        const prompt = String(options?.prompt || '');
+        completionPrompts.push(prompt);
+        completionOptions.push(options || {});
+
+        const isLateWindow = prompt.includes('60.0s to 90.0s') || prompt.includes('90.0s to 120.0s');
+        const hasGroundingNote = prompt.includes('The attached audio file is already the extracted audio for this exact global window.')
+          && prompt.includes('Do NOT claim the requested range exceeds the file duration just because the attached chunk is shorter than the full trailer.');
+
+        if (isLateWindow && !hasGroundingNote) {
+          return {
+            content: JSON.stringify({
+              analysis: {
+                type: 'silence',
+                description: 'The audio file provided is only 30 seconds long, so there is no audio content in the requested time range.',
+                mood: 'neutral',
+                intensity: 0
+              },
+              rollingSummary: 'The requested time range exceeds the file duration.'
+            }),
+            usage: { input: 80, output: 60 }
+          };
+        }
+
+        return {
+          content: JSON.stringify({
+            analysis: {
+              type: 'music',
+              description: 'Grounded trailer audio for the provided extracted chunk.',
+              mood: 'energetic',
+              intensity: 8
+            },
+            rollingSummary: 'The trailer remains intense and music-led.'
+          }),
+          usage: { input: 80, output: 60 }
+        };
+      };
+
+      const result = await getMusicScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeMusicConfig()
+      });
+
+      is(result.artifacts.musicData.segments.length, 5);
+      ok(completionPrompts[2].includes('The attached audio file is already the extracted audio for this exact global window.'));
+      ok(completionPrompts[2].includes('Do NOT claim the requested range exceeds the file duration just because the attached chunk is shorter than the full trailer.'));
+      assert.deepEqual(
+        result.artifacts.musicData.segments.map((segment) => segment.type),
+        ['music', 'music', 'music', 'music', 'music']
+      );
+    });
+
     tNested.test('selects provider from YAML config.ai.provider', async () => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
