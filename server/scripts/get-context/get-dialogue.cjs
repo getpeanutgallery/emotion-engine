@@ -500,7 +500,12 @@ async function run(input) {
             .filter(Boolean)
             .join(' / ');
 
+          const groundedConfidence = typeof profile?.grounded?.confidence === 'number' && Number.isFinite(profile.grounded.confidence)
+            ? `grounded confidence: ${profile.grounded.confidence.toFixed(2)}`
+            : null;
+
           const parts = [`- ${speakerId} => ${label}`];
+          if (groundedConfidence) parts.push(groundedConfidence);
           if (descriptors.length > 0) parts.push(`acoustic cues: ${descriptors.join('; ')}`);
           if (traits.length > 0) parts.push(`inferred traits: ${traits.join('; ')}`);
           if (recentSample) parts.push(`recent lines: ${recentSample}`);
@@ -508,10 +513,19 @@ async function run(input) {
         }
       }
 
-      const tail = normalizedSegments.slice(Math.max(0, normalizedSegments.length - 4));
+      const tail = normalizedSegments.slice(Math.max(0, normalizedSegments.length - 2));
+      if (lines.length > 0) {
+        lines.push('');
+        lines.push('Voice separation reminders:');
+        lines.push('- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.');
+        lines.push('- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.');
+        lines.push('- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.');
+        lines.push('- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.');
+      }
+
       if (tail.length > 0) {
         if (lines.length > 0) lines.push('');
-        lines.push('Recent dialogue tail:');
+        lines.push('Recent dialogue tail (reference only, not transcript continuation):');
         for (const segment of tail) {
           const speakerId = typeof segment?.speaker_id === 'string' && segment.speaker_id.trim().length > 0
             ? ` (${segment.speaker_id.trim()})`
@@ -1520,10 +1534,13 @@ IMPORTANT:
 - Identify speakers as "Speaker 1", "Speaker 2", etc. for display labels, but also reuse anonymous speaker_id values like "spk_001" when segments belong to the same acoustic voice.
 - Provide accurate timestamps in seconds.
 - Include confidence scores from 0.0 to 1.0.
+- Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0. Do not use grounded.confidence_abstained.
 - Keep grounded speaker identity separate from inferred_traits.
 - Grounded data should only include anonymous speaker IDs, same-speaker linkage, and cautious acoustic descriptors that are actually supported by the audio.
 - Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
 - inferred_traits must always be present as an object with a traits array. Keep it clearly speculative / non-authoritative and attempt reviewable traits for each speaker when the audio supports them; otherwise return an empty traits array.
+- speaker_id continuity is acoustic, not semantic. A speaker naming Raul Menendez or David is not evidence that the speaker is Raul Menendez or David.
+- Do not merge clearly different voices just because the scene is continuous. Keep narration/figurehead VO, deep antagonist threats, authoritative female radio/comms, gruff soldier responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.
 - If a later line sounds like a different voice, do not reuse the old speaker_id just because the scene context mentions the same character.
 - Do not compress the whole file's dialogue into the opening seconds; place each line where it actually occurs in the full timeline.
 - If no speech is detected, return an empty dialogue_segments array.`;
@@ -1718,9 +1735,12 @@ Rules:
 - Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.
 - Treat the handoff speaker registry as the continuity memory. Reuse a prior speaker_id only when the current voice still matches that prior acoustic profile.
 - If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.
+- Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0. Do not use grounded.confidence_abstained.
 - Keep grounded speaker identity separate from inferred_traits.
 - Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
 - inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.
+- speaker_id continuity is acoustic, not semantic. A line that names Raul Menendez or David may still be spoken by someone else.
+- Do not merge clearly different voices just because the chunk continues the same scene. Keep narration/figurehead VO, deep antagonist threats, authoritative female radio/comms, gruff soldier responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.
 - Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.
 - If no speech is detected, return an empty dialogue_segments array.
 - Keep handoffContext brief (<= ~10 lines).`;

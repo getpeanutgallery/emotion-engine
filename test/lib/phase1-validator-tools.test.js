@@ -51,7 +51,11 @@ test('dialogue transcription validator normalizes grounded speaker linkage and i
   assert.equal(result.normalizedValue.dialogue_segments[0].speaker_id, 'spk_001');
   assert.equal(result.normalizedValue.dialogue_segments[1].speaker_id, 'spk_001');
   assert.equal(result.normalizedValue.dialogue_segments[2].speaker_id, 'spk_002');
+  assert.equal(result.normalizedValue.dialogue_segments[0].index, 0);
+  assert.equal(result.normalizedValue.dialogue_segments[1].index, 1);
+  assert.equal(result.normalizedValue.dialogue_segments[2].index, 2);
   assert.deepEqual(result.normalizedValue.speaker_profiles[0].grounded.linked_segment_indexes, [0, 1]);
+  assert.equal(typeof result.normalizedValue.speaker_profiles[0].grounded.confidence, 'number');
   assert.deepEqual(result.normalizedValue.speaker_profiles[0].inferred_traits, { traits: [] });
 });
 
@@ -91,6 +95,7 @@ test('dialogue transcription validator preserves inferred traits separately from
   assert.equal(result.normalizedValue.speaker_profiles[0].inferred_traits.traits[0].trait, 'accent');
   assert.equal(result.normalizedValue.speaker_profiles[0].inferred_traits.traits[0].value, 'possibly Midwestern US');
   assert.equal(Object.hasOwn(result.normalizedValue.speaker_profiles[0].grounded, 'acoustic_descriptors_abstained'), false);
+  assert.equal(Object.hasOwn(result.normalizedValue.speaker_profiles[0].grounded, 'confidence_abstained'), false);
 });
 
 test('dialogue transcription validator merges duplicate speaker profiles by speaker_id and preserves the strongest stable label', () => {
@@ -177,6 +182,47 @@ test('dialogue transcription validator rebuilds linked segment indexes from the 
 
   assert.equal(result.valid, true);
   assert.deepEqual(result.normalizedValue.speaker_profiles.find((profile) => profile.speaker_id === 'spk_004').grounded.linked_segment_indexes, [0, 2]);
+});
+
+test('dialogue transcription validator drops orphaned profiles and derives grounded confidence from linked segments when needed', () => {
+  const result = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hello', confidence: 0.9 },
+        { start: 1.2, end: 2.2, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Again', confidence: 0.7 }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'spk_001',
+          label: 'Speaker 1',
+          grounded: {
+            linked_segment_indexes: [0, 1],
+            acoustic_descriptors: [
+              { label: 'steady, measured delivery', confidence: 0.62 }
+            ]
+          },
+          inferred_traits: { traits: [] }
+        },
+        {
+          speaker_id: 'spk_999',
+          label: 'Ghost Speaker',
+          grounded: {
+            confidence: 0.5,
+            linked_segment_indexes: [4],
+            acoustic_descriptors: []
+          },
+          inferred_traits: { traits: [] }
+        }
+      ],
+      summary: 'Chunk summary',
+      totalDuration: 3
+    }
+  });
+
+  assert.equal(result.valid, true);
+  assert.deepEqual(result.normalizedValue.speaker_profiles.map((profile) => profile.speaker_id), ['spk_001']);
+  assert.equal(result.normalizedValue.speaker_profiles[0].grounded.confidence, 0.8);
+  assert.equal(Object.hasOwn(result.normalizedValue.speaker_profiles[0].grounded, 'confidence_abstained'), false);
 });
 
 test('dialogue stitch validator tool validates stitched transcript payloads', () => {

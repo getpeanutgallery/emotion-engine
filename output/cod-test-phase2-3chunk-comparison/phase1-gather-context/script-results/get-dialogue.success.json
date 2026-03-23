@@ -6,9 +6,9 @@
   "run": {
     "configName": "COD Test Pipeline (Phase 2 3-chunk comparison)",
     "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison",
-    "startedAt": "2026-03-23T12:17:21.582Z",
-    "completedAt": "2026-03-23T12:19:45.068Z",
-    "durationMs": 143486,
+    "startedAt": "2026-03-23T13:30:54.061Z",
+    "completedAt": "2026-03-23T13:33:06.013Z",
+    "durationMs": 131952,
     "attempt": 1
   },
   "payload": {
@@ -17,19 +17,12 @@
       "dialogue_segments": [
         {
           "start": 0,
-          "end": 2.5,
-          "speaker": "Speaker 1",
-          "speaker_id": "spk_001",
-          "text": "They want you afraid.",
-          "confidence": 0.95
-        },
-        {
-          "start": 3.2,
           "end": 5.5,
           "speaker": "Speaker 1",
           "speaker_id": "spk_001",
-          "text": "Fear makes you easier to control.",
-          "confidence": 0.98
+          "text": "They want you afraid. Fear makes you easier to control.",
+          "confidence": 0.98,
+          "index": 0
         },
         {
           "start": 9,
@@ -37,7 +30,8 @@
           "speaker": "Speaker 1",
           "speaker_id": "spk_001",
           "text": "It's time to wake up.",
-          "confidence": 0.96
+          "confidence": 0.95,
+          "index": 1
         },
         {
           "start": 13,
@@ -45,167 +39,170 @@
           "speaker": "Speaker 2",
           "speaker_id": "spk_002",
           "text": "Your streets shall once again run red with your blood.",
-          "confidence": 0.94
+          "confidence": 0.92,
+          "index": 2
         },
         {
           "start": 17.5,
           "end": 20,
           "speaker": "Speaker 2",
           "speaker_id": "spk_002",
-          "text": "Raul Menendez, United Global Unrest.",
-          "confidence": 0.92
+          "text": "Raul Menendez ignited global unrest...",
+          "confidence": 0.94,
+          "index": 3
         },
         {
           "start": 20,
-          "end": 21.5,
-          "speaker": "Speaker 1",
-          "speaker_id": "spk_001",
+          "end": 21.8,
+          "speaker": "Speaker 2",
+          "speaker_id": "spk_002",
           "text": "on an unprecedented scale.",
-          "confidence": 0.92
+          "confidence": 0.95,
+          "index": 4
         },
         {
-          "start": 22.1,
-          "end": 23.5,
-          "speaker": "Speaker 3",
-          "speaker_id": "spk_003",
-          "text": "Menendez is a terrorist.",
-          "confidence": 0.95
-        },
-        {
-          "start": 23.9,
-          "end": 26.2,
-          "speaker": "Speaker 3",
-          "speaker_id": "spk_003",
-          "text": "We're bringing peace and security to the world.",
-          "confidence": 0.94
-        },
-        {
-          "start": 26.8,
-          "end": 28.9,
+          "start": 23.2,
+          "end": 27,
           "speaker": "Speaker 1",
           "speaker_id": "spk_001",
+          "text": "Menendez is a terrorist. We're bringing peace and security to the world.",
+          "confidence": 0.92,
+          "index": 5
+        },
+        {
+          "start": 28,
+          "end": 29.5,
+          "speaker": "Speaker 3",
+          "speaker_id": "spk_003",
           "text": "He refuses to let me go.",
-          "confidence": 0.91
+          "confidence": 0.88,
+          "index": 6
         },
         {
-          "start": 29.5,
-          "end": 32.5,
-          "speaker": "Speaker 2",
-          "speaker_id": "spk_002",
-          "text": "Stop looking backwards, David, but what matters is what we do next.",
-          "confidence": 0.93
+          "start": 30.2,
+          "end": 33,
+          "speaker": "Speaker 4",
+          "speaker_id": "spk_004",
+          "text": "Stop looking backwards, David. What matters is what we do next.",
+          "confidence": 0.94,
+          "index": 7
         },
         {
-          "start": 36.2,
-          "end": 38.5,
-          "speaker": "Speaker 1",
-          "speaker_id": "spk_001",
+          "start": 35,
+          "end": 36.5,
+          "speaker": "Speaker 4",
+          "speaker_id": "spk_004",
           "text": "A lot of people counting on us for answers.",
-          "confidence": 0.9
+          "confidence": 0.91,
+          "index": 8
         },
         {
-          "start": 40,
-          "end": 42.5,
-          "speaker": "Speaker 2",
-          "speaker_id": "spk_002",
-          "text": "The world is on the brink of collapse.",
-          "confidence": 0.92
+          "start": 51.5,
+          "end": 52.5,
+          "speaker": "Speaker 5",
+          "speaker_id": "spk_005",
+          "text": "Specter One, report.",
+          "confidence": 0.95,
+          "index": 9
         },
         {
-          "start": 43,
-          "end": 46,
-          "speaker": "Speaker 1",
-          "speaker_id": "spk_001",
-          "text": "We cannot let him win, David. We have to stop him.",
-          "confidence": 0.88
+          "start": 54.5,
+          "end": 55.5,
+          "speaker": "Speaker 6",
+          "speaker_id": "spk_006",
+          "text": "Need a sitrep.",
+          "confidence": 0.9,
+          "index": 10
         },
         {
-          "start": 46.5,
-          "end": 50,
-          "speaker": "Speaker 2",
-          "speaker_id": "spk_002",
-          "text": "It's too late for that. The damage is already done.",
-          "confidence": 0.91
-        },
-        {
-          "start": 51,
-          "end": 53.5,
+          "start": 61.6,
+          "end": 62.6,
           "speaker": "Speaker 3",
           "speaker_id": "spk_003",
-          "text": "Specter One, report.",
-          "confidence": 0.95
-        },
-        {
-          "start": 54,
-          "end": 56,
-          "speaker": "Speaker 1",
-          "speaker_id": "spk_001",
-          "text": "We need a sitrep.",
-          "confidence": 0.89
-        },
-        {
-          "start": 62,
-          "end": 62.6,
-          "speaker": "Speaker 1",
-          "speaker_id": "spk_001",
           "text": "This isn't real.",
-          "confidence": 0.98
+          "confidence": 0.95,
+          "index": 11
         },
         {
-          "start": 63.1,
+          "start": 63.2,
           "end": 64.1,
-          "speaker": "Speaker 2",
-          "speaker_id": "spk_002",
-          "text": "The hell it ain't.",
-          "confidence": 0.95
+          "speaker": "Speaker 4",
+          "speaker_id": "spk_004",
+          "text": "The hell it ain't!",
+          "confidence": 0.95,
+          "index": 12
         },
         {
-          "start": 98,
-          "end": 99.5,
-          "speaker": "Speaker 1",
-          "speaker_id": "spk_001",
+          "start": 80,
+          "end": 96.5,
+          "speaker": "Speaker 8",
+          "speaker_id": "spk_008",
+          "text": "Master! Master! Where's the dreams that I've been after? Master! Master! You promised only lies!",
+          "confidence": 0.95,
+          "index": 13
+        },
+        {
+          "start": 96.5,
+          "end": 98.5,
+          "speaker": "Speaker 4",
+          "speaker_id": "spk_004",
           "text": "Pull it together, man!",
-          "confidence": 0.98
+          "confidence": 0.98,
+          "index": 14
         },
         {
           "start": 100,
-          "end": 102.1,
+          "end": 102.5,
           "speaker": "Speaker 2",
           "speaker_id": "spk_002",
-          "text": "So eager to leave, David.",
-          "confidence": 0.92
+          "text": "So eager to lead, are we?",
+          "confidence": 0.95,
+          "index": 15
         },
         {
-          "start": 102.1,
-          "end": 106.5,
+          "start": 102.5,
+          "end": 106.8,
           "speaker": "Speaker 2",
           "speaker_id": "spk_002",
           "text": "Killing a man is a hell of a lot easier than killing the idea.",
-          "confidence": 0.95
+          "confidence": 0.95,
+          "index": 16
         },
         {
-          "start": 108.1,
+          "start": 108,
           "end": 110.5,
-          "speaker": "Speaker 3",
-          "speaker_id": "spk_003",
-          "text": "You were never cut out to be a Mason.",
-          "confidence": 0.94
-        },
-        {
-          "start": 113.1,
-          "end": 115.2,
           "speaker": "Speaker 1",
           "speaker_id": "spk_001",
+          "text": "You were never cut out to be a Mason.",
+          "confidence": 0.95,
+          "index": 17
+        },
+        {
+          "start": 112,
+          "end": 115,
+          "speaker": "Speaker 4",
+          "speaker_id": "spk_004",
           "text": "No more games. This ends now.",
-          "confidence": 0.96
+          "confidence": 0.95,
+          "index": 18
+        },
+        {
+          "start": 116,
+          "end": 119.5,
+          "speaker": "Speaker 8",
+          "speaker_id": "spk_008",
+          "text": "Obey your master!",
+          "confidence": 0.9,
+          "index": 19
         },
         {
           "start": 120,
-          "end": 124.5,
-          "speaker": "Speaker 4",
-          "speaker_id": "spk_004",
+          "end": 123.5,
+          "speaker": "Speaker 9",
+          "speaker_id": "spk_009",
           "text": "Get the Reznov challenge pack when you pre-order now.",
-          "confidence": 0.98
+          "confidence": 0.95,
+          "index": 20
         }
       ],
       "speaker_profiles": [
@@ -213,59 +210,33 @@
           "speaker_id": "spk_001",
           "label": "Speaker 1",
           "grounded": {
-            "confidence": 0.85,
-            "confidence_abstained": false,
+            "confidence": 0.9,
             "linked_segment_indexes": [
               0,
               1,
-              2,
               5,
-              8,
-              10,
-              12,
-              15,
-              16,
-              18,
-              22
+              17
             ],
             "acoustic_descriptors": [
               {
-                "label": "calm, authoritative, slightly ominous tone",
-                "confidence": 0.75
-              },
-              {
-                "label": "authoritative, calm",
-                "confidence": 0.75
-              },
-              {
-                "label": "authoritative, urgent tone",
-                "confidence": 0.85
-              },
-              {
-                "label": "urgent, commanding tone",
-                "confidence": 0.9
+                "label": "calm, authoritative female voice",
+                "confidence": 0.95
               }
             ]
           },
           "inferred_traits": {
             "traits": [
               {
-                "trait": "age_range",
-                "value": "adult",
-                "confidence": 0.4,
-                "note": "speculative"
-              },
-              {
-                "trait": "role",
-                "value": "likely military or official",
-                "confidence": 0.4,
-                "note": "contextual inference"
-              },
-              {
-                "trait": "role",
-                "value": "military operative",
+                "trait": "persona",
+                "value": "likely a revolutionary or resistance leader",
                 "confidence": 0.85,
-                "note": "consistent with previous context"
+                "note": null
+              },
+              {
+                "trait": "persona",
+                "value": "revolutionary/leader",
+                "confidence": 0.85,
+                "note": null
               }
             ]
           }
@@ -274,42 +245,34 @@
           "speaker_id": "spk_002",
           "label": "Speaker 2",
           "grounded": {
-            "confidence": 0.85,
-            "confidence_abstained": false,
+            "confidence": 0.9,
             "linked_segment_indexes": [
+              2,
               3,
               4,
-              9,
-              11,
-              13,
-              17,
-              19,
-              20
+              15,
+              16
             ],
             "acoustic_descriptors": [
               {
-                "label": "menacing, dramatic, deep voice",
-                "confidence": 0.8
-              },
-              {
-                "label": "menacing, deep voice",
-                "confidence": 0.9
+                "label": "deep, menacing male voice",
+                "confidence": 0.95
               }
             ]
           },
           "inferred_traits": {
             "traits": [
               {
-                "trait": "accent",
-                "value": "possibly Hispanic",
-                "confidence": 0.3,
-                "note": "speculative"
+                "trait": "persona",
+                "value": "likely an antagonist or villain",
+                "confidence": 0.85,
+                "note": null
               },
               {
-                "trait": "identity",
-                "value": "Raul Menendez",
+                "trait": "persona",
+                "value": "antagonist/villain",
                 "confidence": 0.9,
-                "note": "named in dialogue"
+                "note": null
               }
             ]
           }
@@ -318,38 +281,35 @@
           "speaker_id": "spk_003",
           "label": "Speaker 3",
           "grounded": {
-            "confidence": 0.88,
-            "confidence_abstained": false,
+            "confidence": 0.85,
             "linked_segment_indexes": [
               6,
-              7,
-              14,
-              21
+              11
             ],
             "acoustic_descriptors": [
               {
-                "label": "female, authoritative",
-                "confidence": 0.8
+                "label": "younger male voice, distressed",
+                "confidence": 0.75
               },
               {
-                "label": "authoritative, female",
-                "confidence": 0.85
+                "label": "distressed, younger male voice",
+                "confidence": 0.9
               }
             ]
           },
           "inferred_traits": {
             "traits": [
               {
-                "trait": "role",
-                "value": "official/leader",
-                "confidence": 0.7,
+                "trait": "identity",
+                "value": "likely David",
+                "confidence": 0.8,
                 "note": null
               },
               {
-                "trait": "role",
-                "value": "commander/official",
-                "confidence": 0.6,
-                "note": "inferred from command tone"
+                "trait": "emotional_state",
+                "value": "distressed/denial",
+                "confidence": 0.85,
+                "note": "matches context of David character"
               }
             ]
           }
@@ -358,27 +318,145 @@
           "speaker_id": "spk_004",
           "label": "Speaker 4",
           "grounded": {
-            "confidence": 0.9,
-            "confidence_abstained": false,
+            "confidence": 0.85,
             "linked_segment_indexes": [
-              23
+              7,
+              8,
+              12,
+              14,
+              18
             ],
             "acoustic_descriptors": [
               {
-                "label": "promotional, energetic, announcer-style voice",
-                "confidence": 0.85
+                "label": "older, gravelly male voice, mentor-like",
+                "confidence": 0.95
+              },
+              {
+                "label": "older, gravelly male voice",
+                "confidence": 0.95
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "persona",
+                "value": "likely a commander or mentor figure",
+                "confidence": 0.75,
+                "note": null
+              },
+              {
+                "trait": "role",
+                "value": "mentor/commander",
+                "confidence": 0.9,
+                "note": null
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_005",
+          "label": "Speaker 5",
+          "grounded": {
+            "confidence": 0.9,
+            "linked_segment_indexes": [
+              9
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "authoritative, radio-filtered voice",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "role",
+                "value": "command/radio operator",
+                "confidence": 0.85,
+                "note": "contextual inference"
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_006",
+          "label": "Speaker 6",
+          "grounded": {
+            "confidence": 0.85,
+            "linked_segment_indexes": [
+              10
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "urgent, tactical tone",
+                "confidence": 0.8
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "role",
+                "value": "field operative",
+                "confidence": 0.8,
+                "note": "contextual inference"
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_008",
+          "label": "Speaker 8",
+          "grounded": {
+            "confidence": 0.95,
+            "linked_segment_indexes": [
+              13,
+              19
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "aggressive, shouting, heavy metal vocal style",
+                "confidence": 0.95
               }
             ]
           },
           "inferred_traits": {
             "traits": []
           }
+        },
+        {
+          "speaker_id": "spk_009",
+          "label": "Speaker 9",
+          "grounded": {
+            "confidence": 0.95,
+            "linked_segment_indexes": [
+              20
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "authoritative, clear, marketing tone",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "role",
+                "value": "promotional announcer",
+                "confidence": 0.95,
+                "note": "standard marketing voiceover"
+              }
+            ]
+          }
         }
       ],
-      "summary": "Speaker 1: They want you afraid.\nSpeaker 1: Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez, United Global Unrest.\nSpeaker 1: On an unprecedented scale.\nSpeaker 3: Menendez is a terrorist.\nSpeaker 3: We're bringing peace and security to the world.\nSpeaker 1: He refuses to let me go.\nSpeaker 2: Stop looking backwards, David, but what matters is what we do next.\nSpeaker 1: A lot of people counting on us for answers.\nSpeaker 2: The world is on the brink of collapse.\nSpeaker 1: We cannot let him win, David. We have to stop him.\nSpeaker 2: It's too late for that. The damage is already done.\nSpeaker 3: Specter One, report.\nSpeaker 1: We need a sitrep.\nSpeaker 1: This isn't real.\nSpeaker 2: The hell it ain't.\nSpeaker 1: Pull it together, man!\nSpeaker 2: So eager to leave, David.\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 3: You were never cut out to be a Mason.\nSpeaker 1: No more games. This ends now.\nSpeaker 4: Get the Reznov challenge pack when you pre-order now.",
+      "summary": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist. We're bringing peace and security to the world.\nSpeaker 3: He refuses to let me go.\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\nSpeaker 4: A lot of people counting on us for answers.\nSpeaker 5: Specter One, report.\nSpeaker 6: Need a sitrep.\nSpeaker 3: This isn't real.\nSpeaker 4: The hell it ain't!\nSpeaker 8: Master! Master! Where's the dreams that I've been after? Master! Master! You promised only lies!\nSpeaker 4: Pull it together, man!\nSpeaker 2: So eager to lead, are we?\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 4: No more games. This ends now.\nSpeaker 8: Obey your master!\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.",
       "totalDuration": 140.042449,
-      "handoffContext": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | acoustic cues: calm, authoritative, slightly ominous tone | inferred traits: age_range: adult | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_002 => Speaker 2 | acoustic cues: menacing, dramatic, deep voice | inferred traits: accent: possibly Hispanic | recent lines: So eager to leave, David. / Killing a man is a hell of a lot easier than killing the idea.\n- spk_001 => Speaker 1 | acoustic cues: authoritative, calm | inferred traits: role: likely military or official | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_002 => Speaker 2 | acoustic cues: menacing, deep voice | inferred traits: identity: Raul Menendez | recent lines: So eager to leave, David. / Killing a man is a hell of a lot easier than killing the idea.\n- spk_003 => Speaker 3 | acoustic cues: female, authoritative | inferred traits: role: official/leader | recent lines: Specter One, report. / You were never cut out to be a Mason.\n- spk_001 => Speaker 1 | acoustic cues: authoritative, urgent tone | inferred traits: role: military operative | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_002 => Speaker 2 | acoustic cues: menacing, deep voice | inferred traits: identity: Raul Menendez | recent lines: So eager to leave, David. / Killing a man is a hell of a lot easier than killing the idea.\n- spk_003 => Speaker 3 | acoustic cues: authoritative, female | inferred traits: role: commander/official | recent lines: Specter One, report. / You were never cut out to be a Mason.\n- spk_001 => Speaker 1 | acoustic cues: authoritative, urgent tone | inferred traits: role: military operative | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_002 => Speaker 2 | acoustic cues: menacing, deep voice | inferred traits: identity: Raul Menendez | recent lines: So eager to leave, David. / Killing a man is a hell of a lot easier than killing the idea.\n- spk_001 => Speaker 1 | acoustic cues: urgent, commanding tone | inferred traits: role: military operative | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_001 => Speaker 1 | acoustic cues: urgent, commanding tone | inferred traits: role: military operative | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_002 => Speaker 2 | acoustic cues: menacing, deep voice | inferred traits: identity: Raul Menendez | recent lines: So eager to leave, David. / Killing a man is a hell of a lot easier than killing the idea.\n- spk_003 => Speaker 3 | acoustic cues: authoritative, female | inferred traits: role: official/leader | recent lines: Specter One, report. / You were never cut out to be a Mason.\n- spk_004 => Speaker 4 | acoustic cues: promotional, energetic, announcer-style voice | recent lines: Get the Reznov challenge pack when you pre-order now.\n\nRecent dialogue tail:\n- Speaker 2 (spk_002): Killing a man is a hell of a lot easier than killing the idea.\n- Speaker 3 (spk_003): You were never cut out to be a Mason.\n- Speaker 1 (spk_001): No more games. This ends now.\n- Speaker 4 (spk_004): Get the Reznov challenge pack when you pre-order now.",
-      "cleanedTranscript": "Speaker 1: They want you afraid.\nSpeaker 1: Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez, United Global Unrest.\nSpeaker 1: On an unprecedented scale.\nSpeaker 3: Menendez is a terrorist.\nSpeaker 3: We're bringing peace and security to the world.\nSpeaker 1: He refuses to let me go.\nSpeaker 2: Stop looking backwards, David, but what matters is what we do next.\nSpeaker 1: A lot of people counting on us for answers.\nSpeaker 2: The world is on the brink of collapse.\nSpeaker 1: We cannot let him win, David. We have to stop him.\nSpeaker 2: It's too late for that. The damage is already done.\nSpeaker 3: Specter One, report.\nSpeaker 1: We need a sitrep.\nSpeaker 1: This isn't real.\nSpeaker 2: The hell it ain't.\nSpeaker 1: Pull it together, man!\nSpeaker 2: So eager to leave, David.\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 3: You were never cut out to be a Mason.\nSpeaker 1: No more games. This ends now.\nSpeaker 4: Get the Reznov challenge pack when you pre-order now."
+      "handoffContext": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: calm, authoritative female voice | inferred traits: persona: likely a revolutionary or resistance leader | recent lines: Menendez is a terrorist. We're bringing peace and security to the world. / You were never cut out to be a Mason.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: deep, menacing male voice | inferred traits: persona: likely an antagonist or villain | recent lines: So eager to lead, are we? / Killing a man is a hell of a lot easier than killing the idea.\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: calm, authoritative female voice | inferred traits: persona: likely a revolutionary or resistance leader | recent lines: Menendez is a terrorist. We're bringing peace and security to the world. / You were never cut out to be a Mason.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: deep, menacing male voice | inferred traits: persona: likely an antagonist or villain | recent lines: So eager to lead, are we? / Killing a man is a hell of a lot easier than killing the idea.\n- spk_003 => Speaker 3 | grounded confidence: 0.85 | acoustic cues: younger male voice, distressed | inferred traits: identity: likely David | recent lines: He refuses to let me go. / This isn't real.\n- spk_004 => Speaker 4 | grounded confidence: 0.85 | acoustic cues: older, gravelly male voice, mentor-like | inferred traits: persona: likely a commander or mentor figure | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_005 => Speaker 5 | grounded confidence: 0.90 | acoustic cues: authoritative, radio-filtered voice | inferred traits: role: command/radio operator | recent lines: Specter One, report.\n- spk_006 => Speaker 6 | grounded confidence: 0.85 | acoustic cues: urgent, tactical tone | inferred traits: role: field operative | recent lines: Need a sitrep.\n- spk_003 => Speaker 3 | grounded confidence: 0.90 | acoustic cues: distressed, younger male voice | inferred traits: emotional_state: distressed/denial | recent lines: He refuses to let me go. / This isn't real.\n- spk_004 => Speaker 4 | grounded confidence: 0.90 | acoustic cues: older, gravelly male voice | inferred traits: role: mentor/commander | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_004 => Speaker 4 | grounded confidence: 0.95 | acoustic cues: older, gravelly male voice, mentor-like | inferred traits: role: mentor/commander | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_008 => Speaker 8 | grounded confidence: 0.95 | acoustic cues: aggressive, shouting, heavy metal vocal style | recent lines: Master! Master! Where's the dreams that I've been after? Master! Master! You promised only lies! / Obey your master!\n- spk_001 => Speaker 1 | grounded confidence: 0.95 | acoustic cues: calm, authoritative female voice | inferred traits: persona: revolutionary/leader | recent lines: Menendez is a terrorist. We're bringing peace and security to the world. / You were never cut out to be a Mason.\n- spk_002 => Speaker 2 | grounded confidence: 0.95 | acoustic cues: deep, menacing male voice | inferred traits: persona: antagonist/villain | recent lines: So eager to lead, are we? / Killing a man is a hell of a lot easier than killing the idea.\n- spk_004 => Speaker 4 | grounded confidence: 0.95 | acoustic cues: older, gravelly male voice | inferred traits: role: mentor/commander | recent lines: Pull it together, man! / No more games. This ends now.\n- spk_008 => Speaker 8 | grounded confidence: 0.90 | acoustic cues: aggressive, shouting, heavy metal vocal style | recent lines: Master! Master! Where's the dreams that I've been after? Master! Master! You promised only lies! / Obey your master!\n- spk_009 => Speaker 9 | grounded confidence: 0.95 | acoustic cues: authoritative, clear, marketing tone | inferred traits: role: promotional announcer | recent lines: Get the Reznov challenge pack when you pre-order now.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 8 (spk_008): Obey your master!\n- Speaker 9 (spk_009): Get the Reznov challenge pack when you pre-order now.",
+      "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist. We're bringing peace and security to the world.\nSpeaker 3: He refuses to let me go.\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\nSpeaker 4: A lot of people counting on us for answers.\nSpeaker 5: Specter One, report.\nSpeaker 6: Need a sitrep.\nSpeaker 3: This isn't real.\nSpeaker 4: The hell it ain't!\nSpeaker 8: Master! Master! Where's the dreams that I've been after? Master! Master! You promised only lies!\nSpeaker 4: Pull it together, man!\nSpeaker 2: So eager to lead, are we?\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 4: No more games. This ends now.\nSpeaker 8: Obey your master!\nSpeaker 9: Get the Reznov challenge pack when you pre-order now."
     }
   },
   "artifacts": {

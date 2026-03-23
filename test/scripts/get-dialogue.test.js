@@ -598,10 +598,6 @@ test('Get Dialogue Script', async (t) => {
         {
           speaker_id: 'spk_001',
           linked_segment_indexes: [0]
-        },
-        {
-          speaker_id: 'spk_002',
-          linked_segment_indexes: []
         }
       ]);
     });
@@ -806,6 +802,8 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts.some((prompt) => prompt.includes('Do not compress the whole chunk\'s dialogue into the opening seconds')));
       ok(completionPrompts.some((prompt) => prompt.includes('Speaker registry (reuse speaker_id only for the same acoustic voice):')));
       ok(completionPrompts.some((prompt) => prompt.includes('create a new speaker_id instead of forcing continuity')));
+      ok(completionPrompts.some((prompt) => prompt.includes('speaker_id continuity is acoustic, not semantic')));
+      ok(completionPrompts.some((prompt) => prompt.includes('Do not merge clearly different voices just because the chunk continues the same scene')));
       is(result.artifacts.dialogueData.totalDuration, 10);
       ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.start >= 4));
     });
@@ -844,6 +842,7 @@ test('Get Dialogue Script', async (t) => {
       property(segment, 'end');
       property(segment, 'speaker');
       property(segment, 'speaker_id');
+      property(segment, 'index');
       property(segment, 'text');
       property(segment, 'confidence');
     });
@@ -858,6 +857,8 @@ test('Get Dialogue Script', async (t) => {
       const segment = result.artifacts.dialogueData.dialogue_segments[0];
       is(typeof segment.start, 'number');
       is(typeof segment.end, 'number');
+      is(typeof segment.index, 'number');
+      is(segment.index, 0);
     });
 
     tNested.test('confidence is between 0 and 1', async () => {
@@ -884,7 +885,9 @@ test('Get Dialogue Script', async (t) => {
       property(profile, 'grounded');
       property(profile.grounded, 'linked_segment_indexes');
       property(profile.grounded, 'acoustic_descriptors');
+      property(profile.grounded, 'confidence');
       ok(!Object.hasOwn(profile.grounded, 'acoustic_descriptors_abstained'));
+      ok(!Object.hasOwn(profile.grounded, 'confidence_abstained'));
       property(profile, 'inferred_traits');
       property(profile.inferred_traits, 'traits');
       is(profile.grounded.linked_segment_indexes[0], 0);
@@ -901,6 +904,9 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts[0].includes('grounded speaker identity separate from inferred_traits'));
       ok(completionPrompts[0].includes('inferred_traits must always be present as an object with a traits array'));
       ok(completionPrompts[0].includes('Do not persist acoustic_descriptors_abstained'));
+      ok(completionPrompts[0].includes('Do not use grounded.confidence_abstained'));
+      ok(completionPrompts[0].includes('speaker_id continuity is acoustic, not semantic'));
+      ok(completionPrompts[0].includes('Do not merge clearly different voices just because the scene is continuous'));
       ok(!completionPrompts[0].includes('set abstained=true'));
     });
   });

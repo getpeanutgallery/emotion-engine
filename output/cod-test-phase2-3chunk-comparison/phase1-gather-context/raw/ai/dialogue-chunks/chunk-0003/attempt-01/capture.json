@@ -2,7 +2,7 @@
   "chunkIndex": 3,
   "startTime": 60,
   "endTime": 80,
-  "rollingHandoffIn": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | acoustic cues: calm, authoritative, slightly ominous tone | inferred traits: age_range: adult | recent lines: We cannot let him win, David. We have to stop him. / We need a sitrep.\n- spk_002 => Speaker 2 | acoustic cues: menacing, dramatic, deep voice | inferred traits: accent: possibly Hispanic | recent lines: The world is on the brink of collapse. / It's too late for that. The damage is already done.\n- spk_001 => Speaker 1 | acoustic cues: authoritative, calm | inferred traits: role: likely military or official | recent lines: We cannot let him win, David. We have to stop him. / We need a sitrep.\n- spk_002 => Speaker 2 | acoustic cues: menacing, deep voice | inferred traits: identity: Raul Menendez | recent lines: The world is on the brink of collapse. / It's too late for that. The damage is already done.\n- spk_003 => Speaker 3 | acoustic cues: female, authoritative | inferred traits: role: official/leader | recent lines: We're bringing peace and security to the world. / Specter One, report.\n- spk_001 => Speaker 1 | acoustic cues: authoritative, urgent tone | inferred traits: role: military operative | recent lines: We cannot let him win, David. We have to stop him. / We need a sitrep.\n- spk_002 => Speaker 2 | acoustic cues: menacing, deep voice | inferred traits: identity: Raul Menendez | recent lines: The world is on the brink of collapse. / It's too late for that. The damage is already done.\n- spk_003 => Speaker 3 | acoustic cues: authoritative, female | inferred traits: role: commander/official | recent lines: We're bringing peace and security to the world. / Specter One, report.\n\nRecent dialogue tail:\n- Speaker 1 (spk_001): We cannot let him win, David. We have to stop him.\n- Speaker 2 (spk_002): It's too late for that. The damage is already done.\n- Speaker 3 (spk_003): Specter One, report.\n- Speaker 1 (spk_001): We need a sitrep.",
+  "rollingHandoffIn": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: calm, authoritative female voice | inferred traits: persona: likely a revolutionary or resistance leader | recent lines: It's time to wake up. / Menendez is a terrorist. We're bringing peace and security to the world.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: deep, menacing male voice | inferred traits: persona: likely an antagonist or villain | recent lines: Raul Menendez ignited global unrest... / on an unprecedented scale.\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: calm, authoritative female voice | inferred traits: persona: likely a revolutionary or resistance leader | recent lines: It's time to wake up. / Menendez is a terrorist. We're bringing peace and security to the world.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: deep, menacing male voice | inferred traits: persona: likely an antagonist or villain | recent lines: Raul Menendez ignited global unrest... / on an unprecedented scale.\n- spk_003 => Speaker 3 | grounded confidence: 0.85 | acoustic cues: younger male voice, distressed | inferred traits: identity: likely David | recent lines: He refuses to let me go.\n- spk_004 => Speaker 4 | grounded confidence: 0.85 | acoustic cues: older, gravelly male voice, mentor-like | inferred traits: persona: likely a commander or mentor figure | recent lines: Stop looking backwards, David. What matters is what we do next. / A lot of people counting on us for answers.\n- spk_005 => Speaker 5 | grounded confidence: 0.90 | acoustic cues: authoritative, radio-filtered voice | inferred traits: role: command/radio operator | recent lines: Specter One, report.\n- spk_006 => Speaker 6 | grounded confidence: 0.85 | acoustic cues: urgent, tactical tone | inferred traits: role: field operative | recent lines: Need a sitrep.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 5 (spk_005): Specter One, report.\n- Speaker 6 (spk_006): Need a sitrep.",
   "attempt": 1,
   "attemptInTarget": 1,
   "targetIndex": 0,
@@ -19,15 +19,15 @@
   },
   "failover": null,
   "promptRef": {
-    "sha256": "b6ac5e97e4d289e5ca826a0c40f82099f8edc48b5218eff49a2c359bee70fb75",
-    "file": "_meta/ai/_prompts/b6ac5e97e4d289e5ca826a0c40f82099f8edc48b5218eff49a2c359bee70fb75.json"
+    "sha256": "c9337a232c672afe30d96ea3334a9252476f36e045a201985614149b9e4e5117",
+    "file": "_meta/ai/_prompts/c9337a232c672afe30d96ea3334a9252476f36e045a201985614149b9e4e5117.json"
   },
   "rawResponse": {
-    "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 2.0,\n      \"end\": 2.6,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"This isn't real.\",\n      \"confidence\": 0.98\n    },\n    {\n      \"start\": 3.1,\n      \"end\": 4.1,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"The hell it ain't.\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"authoritative, urgent tone\",\n            \"confidence\": 0.85\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"military operative\",\n            \"confidence\": 0.7,\n            \"note\": \"consistent with previous context\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_002\",\n      \"label\": \"Speaker 2\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [1],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"menacing, deep voice\",\n            \"confidence\": 0.9\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"identity\",\n            \"value\": \"Raul Menendez\",\n            \"confidence\": 0.8,\n            \"note\": \"consistent with previous context\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting.\",\n  \"handoffContext\": \"Speaker 1 (spk_001) and Speaker 2 (spk_002) are in a confrontation. The scene is transitioning into a musical/chanting sequence. Previous context: Speaker 1 (spk_001) and Speaker 2 (spk_002) are the primary actors.\",\n  \"totalDuration\": 20.0\n}",
+    "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 1.6,\n      \"end\": 2.6,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"This isn't real.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 3.2,\n      \"end\": 4.1,\n      \"speaker\": \"Speaker 4\",\n      \"speaker_id\": \"spk_004\",\n      \"text\": \"The hell it ain't!\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_003\",\n      \"label\": \"Speaker 3\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [\n          0\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"distressed, younger male voice\",\n            \"confidence\": 0.9\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"emotional_state\",\n            \"value\": \"distressed/denial\",\n            \"confidence\": 0.85,\n            \"note\": \"matches context of David character\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_004\",\n      \"label\": \"Speaker 4\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [\n          1\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"older, gravelly male voice\",\n            \"confidence\": 0.9\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"mentor/commander\",\n            \"confidence\": 0.8,\n            \"note\": \"matches context of mentor figure\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Speaker 3 (David) expresses disbelief that the situation is real, and Speaker 4 (the mentor figure) sharply corrects him.\",\n  \"handoffContext\": \"Speaker 3 (David) and Speaker 4 (Mentor) are in a tense exchange. The audio transitions into music/action sequence.\",\n  \"totalDuration\": 20.0\n}",
     "usage": {
-      "input": 5807,
-      "output": 1140,
-      "total": 6947
+      "input": 3247,
+      "output": 604,
+      "total": 3851
     },
     "providerRequest": {
       "method": "POST",
@@ -44,7 +44,7 @@
             "content": [
               {
                 "type": "text",
-                "text": "You are transcribing CHUNK 3 of a longer audio file.\n\nChunk time window: 60.00s to 80.00s (global timeline).\n\nContext from previous chunk (handoff):\nSpeaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | acoustic cues: calm, authoritative, slightly ominous tone | inferred traits: age_range: adult | recent lines: We cannot let him win, David. We have to stop him. / We need a sitrep.\n- spk_002 => Speaker 2 | acoustic cues: menacing, dramatic, deep voice | inferred traits: accent: possibly Hispanic | recent lines: The world is on the brink of collapse. / It's too late for that. The damage is already done.\n- spk_001 => Speaker 1 | acoustic cues: authoritative, calm | inferred traits: role: likely military or official | recent lines: We cannot let him win, David. We have to stop him. / We need a sitrep.\n- spk_002 => Speaker 2 | acoustic cues: menacing, deep voice | inferred traits: identity: Raul Menendez | recent lines: The world is on the brink of collapse. / It's too late for that. The damage is already done.\n- spk_003 => Speaker 3 | acoustic cues: female, authoritative | inferred traits: role: official/leader | recent lines: We're bringing peace and security to the world. / Specter One, report.\n- spk_001 => Speaker 1 | acoustic cues: authoritative, urgent tone | inferred traits: role: military operative | recent lines: We cannot let him win, David. We have to stop him. / We need a sitrep.\n- spk_002 => Speaker 2 | acoustic cues: menacing, deep voice | inferred traits: identity: Raul Menendez | recent lines: The world is on the brink of collapse. / It's too late for that. The damage is already done.\n- spk_003 => Speaker 3 | acoustic cues: authoritative, female | inferred traits: role: commander/official | recent lines: We're bringing peace and security to the world. / Specter One, report.\n\nRecent dialogue tail:\n- Speaker 1 (spk_001): We cannot let him win, David. We have to stop him.\n- Speaker 2 (spk_002): It's too late for that. The damage is already done.\n- Speaker 3 (spk_003): Specter One, report.\n- Speaker 1 (spk_001): We need a sitrep.\n\nTranscribe the audio in this chunk. Identify different speakers and provide timestamps.\n\nReturn JSON only with this structure:\n\n{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 5.2,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Transcribed text here\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.82,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"steady, conversational delivery\", \"confidence\": 0.61 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"age_range\",\n            \"value\": \"likely adult\",\n            \"confidence\": 0.28,\n            \"note\": \"speculative inference from voice only\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Brief summary for THIS chunk\",\n  \"handoffContext\": \"Short handoff to help the next chunk keep continuity (entities, speaker mapping, last lines)\",\n  \"totalDuration\": 30.5\n}\n\nRules:\n- Return JSON only. No markdown.\n- Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.\n- Treat the handoff speaker registry as the continuity memory. Reuse a prior speaker_id only when the current voice still matches that prior acoustic profile.\n- If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.\n- Keep grounded speaker identity separate from inferred_traits.\n- Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.\n- inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.\n- Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.\n- If no speech is detected, return an empty dialogue_segments array.\n- Keep handoffContext brief (<= ~10 lines).\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_dialogue_transcription_json\",\n  \"transcription\": {\n    \"dialogue_segments\": [\n      {\n        \"start\": 0,\n        \"end\": 1.2,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"Hello there\",\n        \"confidence\": 0.95\n      }\n    ],\n    \"speaker_profiles\": [\n      {\n        \"speaker_id\": \"spk_001\",\n        \"label\": \"Speaker 1\",\n        \"grounded\": {\n          \"confidence\": 0.82,\n          \"linked_segment_indexes\": [\n            0\n          ],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"steady, conversational delivery\",\n              \"confidence\": 0.61\n            }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"accent\",\n              \"value\": \"possibly mid-Atlantic American English\",\n              \"confidence\": 0.31,\n              \"note\": \"speculative inference from delivery only\"\n            }\n          ]\n        }\n      }\n    ],\n    \"summary\": \"Short summary of the dialogue.\",\n    \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n    \"totalDuration\": 10.5\n  }\n}\n2) Final dialogue transcription chunk JSON matching the schema above.\n\nAcceptance rules:\n- The final dialogue transcription chunk JSON is accepted only after validate_dialogue_transcription_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_dialogue_transcription_json\",\"transcription\":{\"dialogue_segments\":[{\"start\":0,\"end\":1.2,\"speaker\":\"Speaker 1\",\"speaker_id\":\"spk_001\",\"text\":\"Hello there\",\"confidence\":0.95}],\"speaker_profiles\":[{\"speaker_id\":\"spk_001\",\"label\":\"Speaker 1\",\"grounded\":{\"confidence\":0.82,\"linked_segment_indexes\":[0],\"acoustic_descriptors\":[{\"label\":\"steady, conversational delivery\",\"confidence\":0.61}]},\"inferred_traits\":{\"traits\":[{\"trait\":\"accent\",\"value\":\"possibly mid-Atlantic American English\",\"confidence\":0.31,\"note\":\"speculative inference from delivery only\"}]}}],\"summary\":\"Short summary of the dialogue.\",\"handoffContext\":\"Short continuity handoff for the next chunk.\",\"totalDuration\":10.5}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised dialogue transcription chunk JSON candidate.\n- After the validator returns valid=true, return ONLY the final dialogue transcription chunk JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must include handoffContext so the next chunk can preserve continuity.\n\nFinal artifact reminders:\n- Timestamps must be relative to this chunk and start at 0.\n- Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.\n- Keep grounded speaker identity separate from any inferred_traits guesswork.\n- handoffContext must stay brief and continuity-focused.\n\nTool contract:\n{\n  \"name\": \"validate_dialogue_transcription_json\",\n  \"argumentKey\": \"transcription\",\n  \"description\": \"Validate a Phase 1 dialogue transcription JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_dialogue_transcription_json\",\n    \"transcription\": {\n      \"dialogue_segments\": [\n        {\n          \"start\": 0,\n          \"end\": 1.2,\n          \"speaker\": \"Speaker 1\",\n          \"speaker_id\": \"spk_001\",\n          \"text\": \"Hello there\",\n          \"confidence\": 0.95\n        }\n      ],\n      \"speaker_profiles\": [\n        {\n          \"speaker_id\": \"spk_001\",\n          \"label\": \"Speaker 1\",\n          \"grounded\": {\n            \"confidence\": 0.82,\n            \"linked_segment_indexes\": [\n              0\n            ],\n            \"acoustic_descriptors\": [\n              {\n                \"label\": \"steady, conversational delivery\",\n                \"confidence\": 0.61\n              }\n            ]\n          },\n          \"inferred_traits\": {\n            \"traits\": [\n              {\n                \"trait\": \"accent\",\n                \"value\": \"possibly mid-Atlantic American English\",\n                \"confidence\": 0.31,\n                \"note\": \"speculative inference from delivery only\"\n              }\n            ]\n          }\n        }\n      ],\n      \"summary\": \"Short summary of the dialogue.\",\n      \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n      \"totalDuration\": 10.5\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"transcription\"\n    ],\n    \"properties\": {\n      \"transcription\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, and totalDuration.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 3,\n  \"remainingValidatorCalls\": 2\n}\n\nConversation state:\n[\n  {\n    \"role\": \"assistant\",\n    \"turn\": 1,\n    \"kind\": \"model_output\",\n    \"raw\": \"{\\n  \\\"tool\\\": \\\"validate_dialogue_transcription_json\\\",\\n  \\\"transcription\\\": {\\n    \\\"dialogue_segments\\\": [\\n      {\\n        \\\"start\\\": 2.0,\\n        \\\"end\\\": 2.6,\\n        \\\"speaker\\\": \\\"Speaker 1\\\",\\n        \\\"speaker_id\\\": \\\"spk_001\\\",\\n        \\\"text\\\": \\\"This isn't real.\\\",\\n        \\\"confidence\\\": 0.98\\n      },\\n      {\\n        \\\"start\\\": 3.1,\\n        \\\"end\\\": 4.1,\\n        \\\"speaker\\\": \\\"Speaker 2\\\",\\n        \\\"speaker_id\\\": \\\"spk_002\\\",\\n        \\\"text\\\": \\\"The hell it ain't.\\\",\\n        \\\"confidence\\\": 0.95\\n      }\\n    ],\\n    \\\"speaker_profiles\\\": [\\n      {\\n        \\\"speaker_id\\\": \\\"spk_001\\\",\\n        \\\"label\\\": \\\"Speaker 1\\\",\\n        \\\"grounded\\\": {\\n          \\\"confidence\\\": 0.9,\\n          \\\"linked_segment_indexes\\\": [0],\\n          \\\"acoustic_descriptors\\\": [\\n            {\\n              \\\"label\\\": \\\"authoritative, urgent tone\\\",\\n              \\\"confidence\\\": 0.85\\n            }\\n          ]\\n        },\\n        \\\"inferred_traits\\\": {\\n          \\\"traits\\\": [\\n            {\\n              \\\"trait\\\": \\\"role\\\",\\n              \\\"value\\\": \\\"military operative\\\",\\n              \\\"confidence\\\": 0.7,\\n              \\\"note\\\": \\\"consistent with previous context\\\"\\n            }\\n          ]\\n        }\\n      },\\n      {\\n        \\\"speaker_id\\\": \\\"spk_002\\\",\\n        \\\"label\\\": \\\"Speaker 2\\\",\\n        \\\"grounded\\\": {\\n          \\\"confidence\\\": 0.9,\\n          \\\"linked_segment_indexes\\\": [1],\\n          \\\"acoustic_descriptors\\\": [\\n            {\\n              \\\"label\\\": \\\"menacing, deep voice\\\",\\n              \\\"confidence\\\": 0.9\\n            }\\n          ]\\n        },\\n        \\\"inferred_traits\\\": {\\n          \\\"traits\\\": [\\n            {\\n              \\\"trait\\\": \\\"identity\\\",\\n              \\\"value\\\": \\\"Raul Menendez\\\",\\n              \\\"confidence\\\": 0.8,\\n              \\\"note\\\": \\\"consistent with previous context\\\"\\n            }\\n          ]\\n        }\\n      }\\n    ],\\n    \\\"summary\\\": \\\"Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting.\\\",\\n    \\\"handoffContext\\\": \\\"Speaker 1 (spk_001) and Speaker 2 (spk_002) are in a confrontation. The scene is transitioning into a musical/chanting sequence. Previous context: Speaker 1 (spk_001) and Speaker 2 (spk_002) are the primary actors.\\\",\\n    \\\"totalDuration\\\": 20.0\\n  }\\n}\"\n  },\n  {\n    \"role\": \"tool\",\n    \"turn\": 1,\n    \"kind\": \"validator_acceptance\",\n    \"toolName\": \"validate_dialogue_transcription_json\",\n    \"toolCall\": {\n      \"tool\": \"validate_dialogue_transcription_json\",\n      \"transcription\": {\n        \"dialogue_segments\": [\n          {\n            \"start\": 2,\n            \"end\": 2.6,\n            \"speaker\": \"Speaker 1\",\n            \"speaker_id\": \"spk_001\",\n            \"text\": \"This isn't real.\",\n            \"confidence\": 0.98\n          },\n          {\n            \"start\": 3.1,\n            \"end\": 4.1,\n            \"speaker\": \"Speaker 2\",\n            \"speaker_id\": \"spk_002\",\n            \"text\": \"The hell it ain't.\",\n            \"confidence\": 0.95\n          }\n        ],\n        \"speaker_profiles\": [\n          {\n            \"speaker_id\": \"spk_001\",\n            \"label\": \"Speaker 1\",\n            \"grounded\": {\n              \"confidence\": 0.9,\n              \"linked_segment_indexes\": [\n                0\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"authoritative, urgent tone\",\n                  \"confidence\": 0.85\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"role\",\n                  \"value\": \"military operative\",\n                  \"confidence\": 0.7,\n                  \"note\": \"consistent with previous context\"\n                }\n              ]\n            }\n          },\n          {\n            \"speaker_id\": \"spk_002\",\n            \"label\": \"Speaker 2\",\n            \"grounded\": {\n              \"confidence\": 0.9,\n              \"linked_segment_indexes\": [\n                1\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"menacing, deep voice\",\n                  \"confidence\": 0.9\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"identity\",\n                  \"value\": \"Raul Menendez\",\n                  \"confidence\": 0.8,\n                  \"note\": \"consistent with previous context\"\n                }\n              ]\n            }\n          }\n        ],\n        \"summary\": \"Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting.\",\n        \"handoffContext\": \"Speaker 1 (spk_001) and Speaker 2 (spk_002) are in a confrontation. The scene is transitioning into a musical/chanting sequence. Previous context: Speaker 1 (spk_001) and Speaker 2 (spk_002) are the primary actors.\",\n        \"totalDuration\": 20\n      },\n      \"arguments\": {\n        \"transcription\": {\n          \"dialogue_segments\": [\n            {\n              \"start\": 2,\n              \"end\": 2.6,\n              \"speaker\": \"Speaker 1\",\n              \"speaker_id\": \"spk_001\",\n              \"text\": \"This isn't real.\",\n              \"confidence\": 0.98\n            },\n            {\n              \"start\": 3.1,\n              \"end\": 4.1,\n              \"speaker\": \"Speaker 2\",\n              \"speaker_id\": \"spk_002\",\n              \"text\": \"The hell it ain't.\",\n              \"confidence\": 0.95\n            }\n          ],\n          \"speaker_profiles\": [\n            {\n              \"speaker_id\": \"spk_001\",\n              \"label\": \"Speaker 1\",\n              \"grounded\": {\n                \"confidence\": 0.9,\n                \"linked_segment_indexes\": [\n                  0\n                ],\n                \"acoustic_descriptors\": [\n                  {\n                    \"label\": \"authoritative, urgent tone\",\n                    \"confidence\": 0.85\n                  }\n                ]\n              },\n              \"inferred_traits\": {\n                \"traits\": [\n                  {\n                    \"trait\": \"role\",\n                    \"value\": \"military operative\",\n                    \"confidence\": 0.7,\n                    \"note\": \"consistent with previous context\"\n                  }\n                ]\n              }\n            },\n            {\n              \"speaker_id\": \"spk_002\",\n              \"label\": \"Speaker 2\",\n              \"grounded\": {\n                \"confidence\": 0.9,\n                \"linked_segment_indexes\": [\n                  1\n                ],\n                \"acoustic_descriptors\": [\n                  {\n                    \"label\": \"menacing, deep voice\",\n                    \"confidence\": 0.9\n                  }\n                ]\n              },\n              \"inferred_traits\": {\n                \"traits\": [\n                  {\n                    \"trait\": \"identity\",\n                    \"value\": \"Raul Menendez\",\n                    \"confidence\": 0.8,\n                    \"note\": \"consistent with previous context\"\n                  }\n                ]\n              }\n            }\n          ],\n          \"summary\": \"Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting.\",\n          \"handoffContext\": \"Speaker 1 (spk_001) and Speaker 2 (spk_002) are in a confrontation. The scene is transitioning into a musical/chanting sequence. Previous context: Speaker 1 (spk_001) and Speaker 2 (spk_002) are the primary actors.\",\n          \"totalDuration\": 20\n        }\n      }\n    },\n    \"result\": {\n      \"ok\": true,\n      \"valid\": true,\n      \"toolName\": \"validate_dialogue_transcription_json\",\n      \"summary\": \"JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.\",\n      \"errors\": [],\n      \"normalizedValue\": {\n        \"dialogue_segments\": [\n          {\n            \"start\": 2,\n            \"end\": 2.6,\n            \"speaker\": \"Speaker 1\",\n            \"speaker_id\": \"spk_001\",\n            \"text\": \"This isn't real.\",\n            \"confidence\": 0.98\n          },\n          {\n            \"start\": 3.1,\n            \"end\": 4.1,\n            \"speaker\": \"Speaker 2\",\n            \"speaker_id\": \"spk_002\",\n            \"text\": \"The hell it ain't.\",\n            \"confidence\": 0.95\n          }\n        ],\n        \"speaker_profiles\": [\n          {\n            \"speaker_id\": \"spk_001\",\n            \"label\": \"Speaker 1\",\n            \"grounded\": {\n              \"confidence\": 0.9,\n              \"confidence_abstained\": false,\n              \"linked_segment_indexes\": [\n                0\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"authoritative, urgent tone\",\n                  \"confidence\": 0.85\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"role\",\n                  \"value\": \"military operative\",\n                  \"confidence\": 0.7,\n                  \"note\": \"consistent with previous context\"\n                }\n              ]\n            }\n          },\n          {\n            \"speaker_id\": \"spk_002\",\n            \"label\": \"Speaker 2\",\n            \"grounded\": {\n              \"confidence\": 0.9,\n              \"confidence_abstained\": false,\n              \"linked_segment_indexes\": [\n                1\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"menacing, deep voice\",\n                  \"confidence\": 0.9\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"identity\",\n                  \"value\": \"Raul Menendez\",\n                  \"confidence\": 0.8,\n                  \"note\": \"consistent with previous context\"\n                }\n              ]\n            }\n          }\n        ],\n        \"summary\": \"Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting.\",\n        \"totalDuration\": 20,\n        \"handoffContext\": \"Speaker 1 (spk_001) and Speaker 2 (spk_002) are in a confrontation. The scene is transitioning into a musical/chanting sequence. Previous context: Speaker 1 (spk_001) and Speaker 2 (spk_002) are the primary actors.\"\n      }\n    }\n  }\n]"
+                "text": "You are transcribing CHUNK 3 of a longer audio file.\n\nChunk time window: 60.00s to 80.00s (global timeline).\n\nContext from previous chunk (handoff):\nSpeaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: calm, authoritative female voice | inferred traits: persona: likely a revolutionary or resistance leader | recent lines: It's time to wake up. / Menendez is a terrorist. We're bringing peace and security to the world.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: deep, menacing male voice | inferred traits: persona: likely an antagonist or villain | recent lines: Raul Menendez ignited global unrest... / on an unprecedented scale.\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: calm, authoritative female voice | inferred traits: persona: likely a revolutionary or resistance leader | recent lines: It's time to wake up. / Menendez is a terrorist. We're bringing peace and security to the world.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: deep, menacing male voice | inferred traits: persona: likely an antagonist or villain | recent lines: Raul Menendez ignited global unrest... / on an unprecedented scale.\n- spk_003 => Speaker 3 | grounded confidence: 0.85 | acoustic cues: younger male voice, distressed | inferred traits: identity: likely David | recent lines: He refuses to let me go.\n- spk_004 => Speaker 4 | grounded confidence: 0.85 | acoustic cues: older, gravelly male voice, mentor-like | inferred traits: persona: likely a commander or mentor figure | recent lines: Stop looking backwards, David. What matters is what we do next. / A lot of people counting on us for answers.\n- spk_005 => Speaker 5 | grounded confidence: 0.90 | acoustic cues: authoritative, radio-filtered voice | inferred traits: role: command/radio operator | recent lines: Specter One, report.\n- spk_006 => Speaker 6 | grounded confidence: 0.85 | acoustic cues: urgent, tactical tone | inferred traits: role: field operative | recent lines: Need a sitrep.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 5 (spk_005): Specter One, report.\n- Speaker 6 (spk_006): Need a sitrep.\n\nTranscribe the audio in this chunk. Identify different speakers and provide timestamps.\n\nReturn JSON only with this structure:\n\n{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 5.2,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Transcribed text here\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.82,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"steady, conversational delivery\", \"confidence\": 0.61 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"age_range\",\n            \"value\": \"likely adult\",\n            \"confidence\": 0.28,\n            \"note\": \"speculative inference from voice only\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Brief summary for THIS chunk\",\n  \"handoffContext\": \"Short handoff to help the next chunk keep continuity (entities, speaker mapping, last lines)\",\n  \"totalDuration\": 30.5\n}\n\nRules:\n- Return JSON only. No markdown.\n- Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.\n- Treat the handoff speaker registry as the continuity memory. Reuse a prior speaker_id only when the current voice still matches that prior acoustic profile.\n- If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.\n- Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0. Do not use grounded.confidence_abstained.\n- Keep grounded speaker identity separate from inferred_traits.\n- Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.\n- inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.\n- speaker_id continuity is acoustic, not semantic. A line that names Raul Menendez or David may still be spoken by someone else.\n- Do not merge clearly different voices just because the chunk continues the same scene. Keep narration/figurehead VO, deep antagonist threats, authoritative female radio/comms, gruff soldier responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.\n- Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.\n- If no speech is detected, return an empty dialogue_segments array.\n- Keep handoffContext brief (<= ~10 lines).\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_dialogue_transcription_json\",\n  \"transcription\": {\n    \"dialogue_segments\": [\n      {\n        \"start\": 0,\n        \"end\": 1.2,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"Hello there\",\n        \"confidence\": 0.95\n      }\n    ],\n    \"speaker_profiles\": [\n      {\n        \"speaker_id\": \"spk_001\",\n        \"label\": \"Speaker 1\",\n        \"grounded\": {\n          \"confidence\": 0.82,\n          \"linked_segment_indexes\": [\n            0\n          ],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"steady, conversational delivery\",\n              \"confidence\": 0.61\n            }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"accent\",\n              \"value\": \"possibly mid-Atlantic American English\",\n              \"confidence\": 0.31,\n              \"note\": \"speculative inference from delivery only\"\n            }\n          ]\n        }\n      }\n    ],\n    \"summary\": \"Short summary of the dialogue.\",\n    \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n    \"totalDuration\": 10.5\n  }\n}\n2) Final dialogue transcription chunk JSON matching the schema above.\n\nAcceptance rules:\n- The final dialogue transcription chunk JSON is accepted only after validate_dialogue_transcription_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_dialogue_transcription_json\",\"transcription\":{\"dialogue_segments\":[{\"start\":0,\"end\":1.2,\"speaker\":\"Speaker 1\",\"speaker_id\":\"spk_001\",\"text\":\"Hello there\",\"confidence\":0.95}],\"speaker_profiles\":[{\"speaker_id\":\"spk_001\",\"label\":\"Speaker 1\",\"grounded\":{\"confidence\":0.82,\"linked_segment_indexes\":[0],\"acoustic_descriptors\":[{\"label\":\"steady, conversational delivery\",\"confidence\":0.61}]},\"inferred_traits\":{\"traits\":[{\"trait\":\"accent\",\"value\":\"possibly mid-Atlantic American English\",\"confidence\":0.31,\"note\":\"speculative inference from delivery only\"}]}}],\"summary\":\"Short summary of the dialogue.\",\"handoffContext\":\"Short continuity handoff for the next chunk.\",\"totalDuration\":10.5}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised dialogue transcription chunk JSON candidate.\n- After the validator returns valid=true, return ONLY the final dialogue transcription chunk JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must include handoffContext so the next chunk can preserve continuity.\n\nFinal artifact reminders:\n- Timestamps must be relative to this chunk and start at 0.\n- Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.\n- Keep grounded speaker identity separate from any inferred_traits guesswork.\n- handoffContext must stay brief and continuity-focused.\n\nTool contract:\n{\n  \"name\": \"validate_dialogue_transcription_json\",\n  \"argumentKey\": \"transcription\",\n  \"description\": \"Validate a Phase 1 dialogue transcription JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_dialogue_transcription_json\",\n    \"transcription\": {\n      \"dialogue_segments\": [\n        {\n          \"start\": 0,\n          \"end\": 1.2,\n          \"speaker\": \"Speaker 1\",\n          \"speaker_id\": \"spk_001\",\n          \"text\": \"Hello there\",\n          \"confidence\": 0.95\n        }\n      ],\n      \"speaker_profiles\": [\n        {\n          \"speaker_id\": \"spk_001\",\n          \"label\": \"Speaker 1\",\n          \"grounded\": {\n            \"confidence\": 0.82,\n            \"linked_segment_indexes\": [\n              0\n            ],\n            \"acoustic_descriptors\": [\n              {\n                \"label\": \"steady, conversational delivery\",\n                \"confidence\": 0.61\n              }\n            ]\n          },\n          \"inferred_traits\": {\n            \"traits\": [\n              {\n                \"trait\": \"accent\",\n                \"value\": \"possibly mid-Atlantic American English\",\n                \"confidence\": 0.31,\n                \"note\": \"speculative inference from delivery only\"\n              }\n            ]\n          }\n        }\n      ],\n      \"summary\": \"Short summary of the dialogue.\",\n      \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n      \"totalDuration\": 10.5\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"transcription\"\n    ],\n    \"properties\": {\n      \"transcription\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, and totalDuration.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 4,\n  \"remainingValidatorCalls\": 3\n}\n\nConversation state:\n[]"
               },
               {
                 "type": "input_audio",
@@ -67,7 +67,7 @@
     "providerResponse": {
       "status": 200,
       "headers": {
-        "date": "Mon, 23 Mar 2026 12:18:11 GMT",
+        "date": "Mon, 23 Mar 2026 13:31:28 GMT",
         "content-type": "application/json",
         "transfer-encoding": "chunked",
         "connection": "keep-alive",
@@ -76,14 +76,14 @@
         "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
         "x-content-type-options": "nosniff",
         "server": "cloudflare",
-        "cf-ray": "9e0d607c5eae323d-MIA"
+        "cf-ray": "9e0dcbe41ee2db01-MIA"
       },
       "body": {
-        "id": "gen-1774268287-tBG1PNNwO3POn2HXXNyx",
+        "id": "gen-1774272686-ErM9CWWtqnXDd9KGkWTE",
         "object": "chat.completion",
-        "created": 1774268287,
+        "created": 1774272686,
         "model": "google/gemini-3.1-flash-lite-preview-20260303",
-        "provider": "Google",
+        "provider": "Google AI Studio",
         "system_fingerprint": null,
         "choices": [
           {
@@ -93,7 +93,7 @@
             "native_finish_reason": "STOP",
             "message": {
               "role": "assistant",
-              "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 2.0,\n      \"end\": 2.6,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"This isn't real.\",\n      \"confidence\": 0.98\n    },\n    {\n      \"start\": 3.1,\n      \"end\": 4.1,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"The hell it ain't.\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"authoritative, urgent tone\",\n            \"confidence\": 0.85\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"military operative\",\n            \"confidence\": 0.7,\n            \"note\": \"consistent with previous context\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_002\",\n      \"label\": \"Speaker 2\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [1],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"menacing, deep voice\",\n            \"confidence\": 0.9\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"identity\",\n            \"value\": \"Raul Menendez\",\n            \"confidence\": 0.8,\n            \"note\": \"consistent with previous context\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting.\",\n  \"handoffContext\": \"Speaker 1 (spk_001) and Speaker 2 (spk_002) are in a confrontation. The scene is transitioning into a musical/chanting sequence. Previous context: Speaker 1 (spk_001) and Speaker 2 (spk_002) are the primary actors.\",\n  \"totalDuration\": 20.0\n}",
+              "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 1.6,\n      \"end\": 2.6,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"This isn't real.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 3.2,\n      \"end\": 4.1,\n      \"speaker\": \"Speaker 4\",\n      \"speaker_id\": \"spk_004\",\n      \"text\": \"The hell it ain't!\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_003\",\n      \"label\": \"Speaker 3\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [\n          0\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"distressed, younger male voice\",\n            \"confidence\": 0.9\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"emotional_state\",\n            \"value\": \"distressed/denial\",\n            \"confidence\": 0.85,\n            \"note\": \"matches context of David character\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_004\",\n      \"label\": \"Speaker 4\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [\n          1\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"older, gravelly male voice\",\n            \"confidence\": 0.9\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"mentor/commander\",\n            \"confidence\": 0.8,\n            \"note\": \"matches context of mentor figure\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Speaker 3 (David) expresses disbelief that the situation is real, and Speaker 4 (the mentor figure) sharply corrects him.\",\n  \"handoffContext\": \"Speaker 3 (David) and Speaker 4 (Mentor) are in a tense exchange. The audio transitions into music/action sequence.\",\n  \"totalDuration\": 20.0\n}",
               "refusal": null,
               "reasoning": null,
               "reasoning_details": [
@@ -111,13 +111,13 @@
           "prompt_tokens": "[REDACTED]",
           "completion_tokens": "[REDACTED]",
           "total_tokens": "[REDACTED]",
-          "cost": 0.00328675,
+          "cost": 0.00184275,
           "is_byok": false,
           "prompt_tokens_details": "[REDACTED]",
           "cost_details": {
-            "upstream_inference_cost": 0.00328675,
-            "upstream_inference_prompt_cost": 0.00157675,
-            "upstream_inference_completions_cost": 0.00171
+            "upstream_inference_cost": 0.00184275,
+            "upstream_inference_prompt_cost": 0.00093675,
+            "upstream_inference_completions_cost": 0.000906
           },
           "completion_tokens_details": "[REDACTED]"
         }
@@ -127,62 +127,36 @@
   "parsed": {
     "dialogue_segments": [
       {
-        "start": 2,
+        "start": 1.6,
         "end": 2.6,
-        "speaker": "Speaker 1",
-        "speaker_id": "spk_001",
+        "speaker": "Speaker 3",
+        "speaker_id": "spk_003",
         "text": "This isn't real.",
-        "confidence": 0.98
+        "confidence": 0.95,
+        "index": 0
       },
       {
-        "start": 3.1,
+        "start": 3.2,
         "end": 4.1,
-        "speaker": "Speaker 2",
-        "speaker_id": "spk_002",
-        "text": "The hell it ain't.",
-        "confidence": 0.95
+        "speaker": "Speaker 4",
+        "speaker_id": "spk_004",
+        "text": "The hell it ain't!",
+        "confidence": 0.95,
+        "index": 1
       }
     ],
     "speaker_profiles": [
       {
-        "speaker_id": "spk_001",
-        "label": "Speaker 1",
+        "speaker_id": "spk_003",
+        "label": "Speaker 3",
         "grounded": {
           "confidence": 0.9,
-          "confidence_abstained": false,
           "linked_segment_indexes": [
             0
           ],
           "acoustic_descriptors": [
             {
-              "label": "authoritative, urgent tone",
-              "confidence": 0.85
-            }
-          ]
-        },
-        "inferred_traits": {
-          "traits": [
-            {
-              "trait": "role",
-              "value": "military operative",
-              "confidence": 0.7,
-              "note": "consistent with previous context"
-            }
-          ]
-        }
-      },
-      {
-        "speaker_id": "spk_002",
-        "label": "Speaker 2",
-        "grounded": {
-          "confidence": 0.9,
-          "confidence_abstained": false,
-          "linked_segment_indexes": [
-            1
-          ],
-          "acoustic_descriptors": [
-            {
-              "label": "menacing, deep voice",
+              "label": "distressed, younger male voice",
               "confidence": 0.9
             }
           ]
@@ -190,62 +164,89 @@
         "inferred_traits": {
           "traits": [
             {
-              "trait": "identity",
-              "value": "Raul Menendez",
+              "trait": "emotional_state",
+              "value": "distressed/denial",
+              "confidence": 0.85,
+              "note": "matches context of David character"
+            }
+          ]
+        }
+      },
+      {
+        "speaker_id": "spk_004",
+        "label": "Speaker 4",
+        "grounded": {
+          "confidence": 0.9,
+          "linked_segment_indexes": [
+            1
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "older, gravelly male voice",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "role",
+              "value": "mentor/commander",
               "confidence": 0.8,
-              "note": "consistent with previous context"
+              "note": "matches context of mentor figure"
             }
           ]
         }
       }
     ],
-    "summary": "Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting.",
+    "summary": "Speaker 3 (David) expresses disbelief that the situation is real, and Speaker 4 (the mentor figure) sharply corrects him.",
     "totalDuration": 20,
-    "handoffContext": "Speaker 1 (spk_001) and Speaker 2 (spk_002) are in a confrontation. The scene is transitioning into a musical/chanting sequence. Previous context: Speaker 1 (spk_001) and Speaker 2 (spk_002) are the primary actors."
+    "handoffContext": "Speaker 3 (David) and Speaker 4 (Mentor) are in a tense exchange. The audio transitions into music/action sequence."
   },
   "toolLoop": {
     "toolName": "validate_dialogue_transcription_json",
     "maxTurns": 4,
     "maxValidatorCalls": 3,
-    "turns": 2,
-    "validatorCalls": 2,
+    "turns": 1,
+    "validatorCalls": 1,
     "history": [
       {
         "role": "assistant",
         "turn": 1,
         "kind": "model_output",
-        "raw": "{\n  \"tool\": \"validate_dialogue_transcription_json\",\n  \"transcription\": {\n    \"dialogue_segments\": [\n      {\n        \"start\": 2.0,\n        \"end\": 2.6,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"This isn't real.\",\n        \"confidence\": 0.98\n      },\n      {\n        \"start\": 3.1,\n        \"end\": 4.1,\n        \"speaker\": \"Speaker 2\",\n        \"speaker_id\": \"spk_002\",\n        \"text\": \"The hell it ain't.\",\n        \"confidence\": 0.95\n      }\n    ],\n    \"speaker_profiles\": [\n      {\n        \"speaker_id\": \"spk_001\",\n        \"label\": \"Speaker 1\",\n        \"grounded\": {\n          \"confidence\": 0.9,\n          \"linked_segment_indexes\": [0],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"authoritative, urgent tone\",\n              \"confidence\": 0.85\n            }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"role\",\n              \"value\": \"military operative\",\n              \"confidence\": 0.7,\n              \"note\": \"consistent with previous context\"\n            }\n          ]\n        }\n      },\n      {\n        \"speaker_id\": \"spk_002\",\n        \"label\": \"Speaker 2\",\n        \"grounded\": {\n          \"confidence\": 0.9,\n          \"linked_segment_indexes\": [1],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"menacing, deep voice\",\n              \"confidence\": 0.9\n            }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"identity\",\n              \"value\": \"Raul Menendez\",\n              \"confidence\": 0.8,\n              \"note\": \"consistent with previous context\"\n            }\n          ]\n        }\n      }\n    ],\n    \"summary\": \"Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting.\",\n    \"handoffContext\": \"Speaker 1 (spk_001) and Speaker 2 (spk_002) are in a confrontation. The scene is transitioning into a musical/chanting sequence. Previous context: Speaker 1 (spk_001) and Speaker 2 (spk_002) are the primary actors.\",\n    \"totalDuration\": 20.0\n  }\n}"
+        "raw": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 1.6,\n      \"end\": 2.6,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"This isn't real.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 3.2,\n      \"end\": 4.1,\n      \"speaker\": \"Speaker 4\",\n      \"speaker_id\": \"spk_004\",\n      \"text\": \"The hell it ain't!\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_003\",\n      \"label\": \"Speaker 3\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [\n          0\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"distressed, younger male voice\",\n            \"confidence\": 0.9\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"emotional_state\",\n            \"value\": \"distressed/denial\",\n            \"confidence\": 0.85,\n            \"note\": \"matches context of David character\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_004\",\n      \"label\": \"Speaker 4\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [\n          1\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"older, gravelly male voice\",\n            \"confidence\": 0.9\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"mentor/commander\",\n            \"confidence\": 0.8,\n            \"note\": \"matches context of mentor figure\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Speaker 3 (David) expresses disbelief that the situation is real, and Speaker 4 (the mentor figure) sharply corrects him.\",\n  \"handoffContext\": \"Speaker 3 (David) and Speaker 4 (Mentor) are in a tense exchange. The audio transitions into music/action sequence.\",\n  \"totalDuration\": 20.0\n}"
       },
       {
         "role": "tool",
         "turn": 1,
-        "kind": "validator_acceptance",
+        "kind": "tool_result_auto_validation",
         "toolName": "validate_dialogue_transcription_json",
+        "source": "auto_validate_candidate_json",
         "toolCall": {
           "tool": "validate_dialogue_transcription_json",
           "transcription": {
             "dialogue_segments": [
               {
-                "start": 2,
+                "start": 1.6,
                 "end": 2.6,
-                "speaker": "Speaker 1",
-                "speaker_id": "spk_001",
+                "speaker": "Speaker 3",
+                "speaker_id": "spk_003",
                 "text": "This isn't real.",
-                "confidence": 0.98
+                "confidence": 0.95
               },
               {
-                "start": 3.1,
+                "start": 3.2,
                 "end": 4.1,
-                "speaker": "Speaker 2",
-                "speaker_id": "spk_002",
-                "text": "The hell it ain't.",
+                "speaker": "Speaker 4",
+                "speaker_id": "spk_004",
+                "text": "The hell it ain't!",
                 "confidence": 0.95
               }
             ],
             "speaker_profiles": [
               {
-                "speaker_id": "spk_001",
-                "label": "Speaker 1",
+                "speaker_id": "spk_003",
+                "label": "Speaker 3",
                 "grounded": {
                   "confidence": "[Truncated]",
                   "linked_segment_indexes": "[Truncated]",
@@ -256,8 +257,8 @@
                 }
               },
               {
-                "speaker_id": "spk_002",
-                "label": "Speaker 2",
+                "speaker_id": "spk_004",
+                "label": "Speaker 4",
                 "grounded": {
                   "confidence": "[Truncated]",
                   "linked_segment_indexes": "[Truncated]",
@@ -268,8 +269,8 @@
                 }
               }
             ],
-            "summary": "Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting.",
-            "handoffContext": "Speaker 1 (spk_001) and Speaker 2 (spk_002) are in a confrontation. The scene is transitioning into a musical/chanting sequence. Previous context: Speaker 1 (spk_001) and Speaker 2 (spk_002) are the primary actors.",
+            "summary": "Speaker 3 (David) expresses disbelief that the situation is real, and Speaker 4 (the mentor figure) sharply corrects him.",
+            "handoffContext": "Speaker 3 (David) and Speaker 4 (Mentor) are in a tense exchange. The audio transitions into music/action sequence.",
             "totalDuration": 20
           },
           "arguments": {
@@ -285,29 +286,30 @@
           "normalizedValue": {
             "dialogue_segments": [
               {
-                "start": 2,
+                "start": 1.6,
                 "end": 2.6,
-                "speaker": "Speaker 1",
-                "speaker_id": "spk_001",
+                "speaker": "Speaker 3",
+                "speaker_id": "spk_003",
                 "text": "This isn't real.",
-                "confidence": 0.98
+                "confidence": 0.95,
+                "index": 0
               },
               {
-                "start": 3.1,
+                "start": 3.2,
                 "end": 4.1,
-                "speaker": "Speaker 2",
-                "speaker_id": "spk_002",
-                "text": "The hell it ain't.",
-                "confidence": 0.95
+                "speaker": "Speaker 4",
+                "speaker_id": "spk_004",
+                "text": "The hell it ain't!",
+                "confidence": 0.95,
+                "index": 1
               }
             ],
             "speaker_profiles": [
               {
-                "speaker_id": "spk_001",
-                "label": "Speaker 1",
+                "speaker_id": "spk_003",
+                "label": "Speaker 3",
                 "grounded": {
                   "confidence": "[Truncated]",
-                  "confidence_abstained": "[Truncated]",
                   "linked_segment_indexes": "[Truncated]",
                   "acoustic_descriptors": "[Truncated]"
                 },
@@ -316,11 +318,10 @@
                 }
               },
               {
-                "speaker_id": "spk_002",
-                "label": "Speaker 2",
+                "speaker_id": "spk_004",
+                "label": "Speaker 4",
                 "grounded": {
                   "confidence": "[Truncated]",
-                  "confidence_abstained": "[Truncated]",
                   "linked_segment_indexes": "[Truncated]",
                   "acoustic_descriptors": "[Truncated]"
                 },
@@ -329,135 +330,9 @@
                 }
               }
             ],
-            "summary": "Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting.",
+            "summary": "Speaker 3 (David) expresses disbelief that the situation is real, and Speaker 4 (the mentor figure) sharply corrects him.",
             "totalDuration": 20,
-            "handoffContext": "Speaker 1 (spk_001) and Speaker 2 (spk_002) are in a confrontation. The scene is transitioning into a musical/chanting sequence. Previous context: Speaker 1 (spk_001) and Speaker 2 (spk_002) are the primary actors."
-          }
-        }
-      },
-      {
-        "role": "assistant",
-        "turn": 2,
-        "kind": "model_output",
-        "raw": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 2.0,\n      \"end\": 2.6,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"This isn't real.\",\n      \"confidence\": 0.98\n    },\n    {\n      \"start\": 3.1,\n      \"end\": 4.1,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"The hell it ain't.\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"authoritative, urgent tone\",\n            \"confidence\": 0.85\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"military operative\",\n            \"confidence\": 0.7,\n            \"note\": \"consistent with previous context\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_002\",\n      \"label\": \"Speaker 2\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [1],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"menacing, deep voice\",\n            \"confidence\": 0.9\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"identity\",\n            \"value\": \"Raul Menendez\",\n            \"confidence\": 0.8,\n            \"note\": \"consistent with previous context\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting.\",\n  \"handoffContext\": \"Speaker 1 (spk_001) and Speaker 2 (spk_002) are in a confrontation. The scene is transitioning into a musical/chanting sequence. Previous context: Speaker 1 (spk_001) and Speaker 2 (spk_002) are the primary actors.\",\n  \"totalDuration\": 20.0\n}"
-      },
-      {
-        "role": "tool",
-        "turn": 2,
-        "kind": "final_artifact_revalidation",
-        "toolName": "validate_dialogue_transcription_json",
-        "source": "final_artifact_auto_validation",
-        "toolCall": {
-          "tool": "validate_dialogue_transcription_json",
-          "transcription": {
-            "dialogue_segments": [
-              {
-                "start": 2,
-                "end": 2.6,
-                "speaker": "Speaker 1",
-                "speaker_id": "spk_001",
-                "text": "This isn't real.",
-                "confidence": 0.98
-              },
-              {
-                "start": 3.1,
-                "end": 4.1,
-                "speaker": "Speaker 2",
-                "speaker_id": "spk_002",
-                "text": "The hell it ain't.",
-                "confidence": 0.95
-              }
-            ],
-            "speaker_profiles": [
-              {
-                "speaker_id": "spk_001",
-                "label": "Speaker 1",
-                "grounded": {
-                  "confidence": "[Truncated]",
-                  "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]"
-                },
-                "inferred_traits": {
-                  "traits": "[Truncated]"
-                }
-              },
-              {
-                "speaker_id": "spk_002",
-                "label": "Speaker 2",
-                "grounded": {
-                  "confidence": "[Truncated]",
-                  "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]"
-                },
-                "inferred_traits": {
-                  "traits": "[Truncated]"
-                }
-              }
-            ],
-            "summary": "Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting.",
-            "handoffContext": "Speaker 1 (spk_001) and Speaker 2 (spk_002) are in a confrontation. The scene is transitioning into a musical/chanting sequence. Previous context: Speaker 1 (spk_001) and Speaker 2 (spk_002) are the primary actors.",
-            "totalDuration": 20
-          },
-          "arguments": {
-            "transcription": "[Circular]"
-          }
-        },
-        "result": {
-          "ok": true,
-          "valid": true,
-          "toolName": "validate_dialogue_transcription_json",
-          "summary": "JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.",
-          "errors": [],
-          "normalizedValue": {
-            "dialogue_segments": [
-              {
-                "start": 2,
-                "end": 2.6,
-                "speaker": "Speaker 1",
-                "speaker_id": "spk_001",
-                "text": "This isn't real.",
-                "confidence": 0.98
-              },
-              {
-                "start": 3.1,
-                "end": 4.1,
-                "speaker": "Speaker 2",
-                "speaker_id": "spk_002",
-                "text": "The hell it ain't.",
-                "confidence": 0.95
-              }
-            ],
-            "speaker_profiles": [
-              {
-                "speaker_id": "spk_001",
-                "label": "Speaker 1",
-                "grounded": {
-                  "confidence": "[Truncated]",
-                  "confidence_abstained": "[Truncated]",
-                  "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]"
-                },
-                "inferred_traits": {
-                  "traits": "[Truncated]"
-                }
-              },
-              {
-                "speaker_id": "spk_002",
-                "label": "Speaker 2",
-                "grounded": {
-                  "confidence": "[Truncated]",
-                  "confidence_abstained": "[Truncated]",
-                  "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]"
-                },
-                "inferred_traits": {
-                  "traits": "[Truncated]"
-                }
-              }
-            ],
-            "summary": "Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting.",
-            "totalDuration": 20,
-            "handoffContext": "Speaker 1 (spk_001) and Speaker 2 (spk_002) are in a confrontation. The scene is transitioning into a musical/chanting sequence. Previous context: Speaker 1 (spk_001) and Speaker 2 (spk_002) are the primary actors."
+            "handoffContext": "Speaker 3 (David) and Speaker 4 (Mentor) are in a tense exchange. The audio transitions into music/action sequence."
           }
         }
       }

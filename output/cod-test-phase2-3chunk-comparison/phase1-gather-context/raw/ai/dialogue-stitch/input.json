@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "dialogue.stitch.input",
-  "createdAt": "2026-03-23T12:18:48.575Z",
+  "createdAt": "2026-03-23T13:32:22.223Z",
   "preflight": {
     "reason": "dialogue_timing_force_chunking",
     "base64Expansion": "4*ceil(bytes/3)",
@@ -22,49 +22,49 @@
       "chunkIndex": 0,
       "startTime": 0,
       "endTime": 20,
-      "summary": "A monologue about fear and control is interrupted by a menacing threat from Raul Menendez."
+      "summary": "A female voice speaks about fear and control, followed by a menacing male voice threatening violence and referencing Raul Menendez."
     },
     {
       "chunkIndex": 1,
       "startTime": 20,
       "endTime": 40,
-      "summary": "The dialogue continues with discussion about Menendez's threat, with Speaker 3 condemning him as a terrorist, while Menendez (Speaker 2) urges David to focus on the future."
+      "summary": "The audio begins with a menacing narrator (spk_002) speaking of scale, followed by an authoritative female voice (spk_001) discussing Menendez. The scene shifts to a conversation between a younger male (spk_003, likely David) and an older mentor figure (spk_004) regarding the future and their responsibilities."
     },
     {
       "chunkIndex": 2,
       "startTime": 40,
       "endTime": 60,
-      "summary": "The dialogue continues with Menendez (Speaker 2) expressing fatalism about the world's state, while Speaker 1 insists on resistance. Speaker 3 interrupts to demand a status report."
+      "summary": "The chunk contains brief radio communication between command and a field operative requesting a situation report."
     },
     {
       "chunkIndex": 3,
       "startTime": 60,
       "endTime": 80,
-      "summary": "Speaker 1 and Speaker 2 exchange a brief, tense dialogue about reality, followed by intense music and chanting."
+      "summary": "Speaker 3 (David) expresses disbelief that the situation is real, and Speaker 4 (the mentor figure) sharply corrects him."
     },
     {
       "chunkIndex": 4,
       "startTime": 80,
       "endTime": 100,
-      "summary": "Speaker 1 shouts at someone to pull themselves together amidst the ongoing chaos."
+      "summary": "The audio chunk features a segment of Metallica's 'Master of Puppets' playing, followed by the mentor figure (Speaker 4) telling someone to pull it together."
     },
     {
       "chunkIndex": 5,
       "startTime": 100,
       "endTime": 120,
-      "summary": "Raul Menendez taunts David about the difficulty of killing an idea, while another voice tells him he wasn't cut out to be a Mason. Speaker 1 declares an end to the games."
+      "summary": "The antagonist taunts the protagonist about the difficulty of killing an idea, followed by a confrontation involving a female leader and a mentor figure, ending with an aggressive outburst."
     },
     {
       "chunkIndex": 6,
       "startTime": 120,
       "endTime": 140,
-      "summary": "An announcer promotes the Reznov challenge pack for pre-orders."
+      "summary": "A promotional announcer provides information about a pre-order bonus, specifically the Reznov challenge pack."
     },
     {
       "chunkIndex": 7,
       "startTime": 140,
       "endTime": 140.042449,
-      "summary": "No speech detected in this 0.04s chunk."
+      "summary": "No speech detected in this 0.04s window."
     }
   ],
   "debugRefs": [
@@ -73,57 +73,57 @@
       "startTime": 0,
       "endTime": 20,
       "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3",
-      "promptRef": "_meta/ai/_prompts/f62592e8b4526bb66481ec2fc03f34ebaea59d7a889b66dd72882c18bf426c2e.json"
+      "promptRef": "_meta/ai/_prompts/1791cd5dc1fde319c39a1748265ea1c805931be4b0dcc9e64268b923b9d07708.json"
     },
     {
       "chunkIndex": 1,
       "startTime": 20,
       "endTime": 40,
       "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3",
-      "promptRef": "_meta/ai/_prompts/938247932fd9a7a7e918914dc43dbc35f3423fb93411d590307a3f8620c622f3.json"
+      "promptRef": "_meta/ai/_prompts/348429defeb9a1563bc424950ec5ddc9ce01c7e755e41dd56b5655d193d69127.json"
     },
     {
       "chunkIndex": 2,
       "startTime": 40,
       "endTime": 60,
       "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3",
-      "promptRef": "_meta/ai/_prompts/20af0f75aba2a44a71747f9d0a218f7ba4e896d14bd07ea9d72ee8f8d0d51fa8.json"
+      "promptRef": "_meta/ai/_prompts/cf7eab6d272f001da39add8682f68a01a80c48d7098c5c1babd445301ba0c497.json"
     },
     {
       "chunkIndex": 3,
       "startTime": 60,
       "endTime": 80,
       "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3",
-      "promptRef": "_meta/ai/_prompts/b6ac5e97e4d289e5ca826a0c40f82099f8edc48b5218eff49a2c359bee70fb75.json"
+      "promptRef": "_meta/ai/_prompts/c9337a232c672afe30d96ea3334a9252476f36e045a201985614149b9e4e5117.json"
     },
     {
       "chunkIndex": 4,
       "startTime": 80,
       "endTime": 100,
       "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3",
-      "promptRef": "_meta/ai/_prompts/1509438afcbd7751ad3bc88a1546ee3940a85e6d0f16c92314559c292196578d.json"
+      "promptRef": "_meta/ai/_prompts/08c1b17864585ea7d9c0ec48db415abca409b5750190b87987fd855f43126c83.json"
     },
     {
       "chunkIndex": 5,
       "startTime": 100,
       "endTime": 120,
       "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3",
-      "promptRef": "_meta/ai/_prompts/7f697e2c78180bb4a2f8160a3898385f7a9d10057e53c01b4ef59a5651f0cb38.json"
+      "promptRef": "_meta/ai/_prompts/3a48ca0b6ff6c6a44446ba6a411b7853b712bb24afc6bbb2acd92a0f743bc09f.json"
     },
     {
       "chunkIndex": 6,
       "startTime": 120,
       "endTime": 140,
       "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3",
-      "promptRef": "_meta/ai/_prompts/3ac83fa2d08bf0c3f562c47ea2b23739867039323c6787076435fd7cd021d9ef.json"
+      "promptRef": "_meta/ai/_prompts/f478fb521130746c013c669f6d266514e9b06e421ca81d36975b6bf68db7f6c0.json"
     },
     {
       "chunkIndex": 7,
       "startTime": 140,
       "endTime": 140.042449,
       "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3",
-      "promptRef": "_meta/ai/_prompts/e41576fea2f5bbb5848d489d5ce700022d1c6bb8aabc5520e2060b522349bd0b.json"
+      "promptRef": "_meta/ai/_prompts/0069c900feab75403fde8adfd36c21fd6d9fbe3d69af92645d72f64bd832c633.json"
     }
   ],
-  "mechanicalTranscript": "--- CHUNK 0 [0.00s - 20.00s] ---\n[0.00-2.50] Speaker 1: They want you afraid.\n[3.20-5.50] Speaker 1: Fear makes you easier to control.\n[9.00-10.50] Speaker 1: It's time to wake up.\n[13.00-17.00] Speaker 2: Your streets shall once again run red with your blood.\n[17.50-20.00] Speaker 2: Raul Menendez, United Global Unrest.\n\n--- CHUNK 1 [20.00s - 40.00s] ---\n[20.00-21.50] Speaker 1: on an unprecedented scale.\n[22.10-23.50] Speaker 3: Menendez is a terrorist.\n[23.90-26.20] Speaker 3: We're bringing peace and security to the world.\n[26.80-28.90] Speaker 1: He refuses to let me go.\n[29.50-32.50] Speaker 2: Stop looking backwards, David, but what matters is what we do next.\n[36.20-38.50] Speaker 1: A lot of people counting on us for answers.\n\n--- CHUNK 2 [40.00s - 60.00s] ---\n[40.00-42.50] Speaker 2: The world is on the brink of collapse.\n[43.00-46.00] Speaker 1: We cannot let him win, David. We have to stop him.\n[46.50-50.00] Speaker 2: It's too late for that. The damage is already done.\n[51.00-53.50] Speaker 3: Specter One, report.\n[54.00-56.00] Speaker 1: We need a sitrep.\n\n--- CHUNK 3 [60.00s - 80.00s] ---\n[62.00-62.60] Speaker 1: This isn't real.\n[63.10-64.10] Speaker 2: The hell it ain't.\n\n--- CHUNK 4 [80.00s - 100.00s] ---\n[98.00-99.50] Speaker 1: Pull it together, man!\n\n--- CHUNK 5 [100.00s - 120.00s] ---\n[100.00-102.10] Speaker 2: So eager to leave, David.\n[102.10-106.50] Speaker 2: Killing a man is a hell of a lot easier than killing the idea.\n[108.10-110.50] Speaker 3: You were never cut out to be a Mason.\n[113.10-115.20] Speaker 1: No more games. This ends now.\n\n--- CHUNK 6 [120.00s - 140.00s] ---\n[120.00-124.50] Speaker 4: Get the Reznov challenge pack when you pre-order now.\n\n--- CHUNK 7 [140.00s - 140.04s] ---\n"
+  "mechanicalTranscript": "--- CHUNK 0 [0.00s - 20.00s] ---\n[0.00-5.50] Speaker 1: They want you afraid. Fear makes you easier to control.\n[9.00-10.50] Speaker 1: It's time to wake up.\n[13.00-17.00] Speaker 2: Your streets shall once again run red with your blood.\n[17.50-20.00] Speaker 2: Raul Menendez ignited global unrest...\n\n--- CHUNK 1 [20.00s - 40.00s] ---\n[20.00-21.80] Speaker 2: on an unprecedented scale.\n[23.20-27.00] Speaker 1: Menendez is a terrorist. We're bringing peace and security to the world.\n[28.00-29.50] Speaker 3: He refuses to let me go.\n[30.20-33.00] Speaker 4: Stop looking backwards, David. What matters is what we do next.\n[35.00-36.50] Speaker 4: A lot of people counting on us for answers.\n\n--- CHUNK 2 [40.00s - 60.00s] ---\n[51.50-52.50] Speaker 5: Specter One, report.\n[54.50-55.50] Speaker 6: Need a sitrep.\n\n--- CHUNK 3 [60.00s - 80.00s] ---\n[61.60-62.60] Speaker 3: This isn't real.\n[63.20-64.10] Speaker 4: The hell it ain't!\n\n--- CHUNK 4 [80.00s - 100.00s] ---\n[80.00-96.50] Speaker 8: Master! Master! Where's the dreams that I've been after? Master! Master! You promised only lies!\n[96.50-98.50] Speaker 4: Pull it together, man!\n\n--- CHUNK 5 [100.00s - 120.00s] ---\n[100.00-102.50] Speaker 2: So eager to lead, are we?\n[102.50-106.80] Speaker 2: Killing a man is a hell of a lot easier than killing the idea.\n[108.00-110.50] Speaker 1: You were never cut out to be a Mason.\n[112.00-115.00] Speaker 4: No more games. This ends now.\n[116.00-119.50] Speaker 8: Obey your master!\n\n--- CHUNK 6 [120.00s - 140.00s] ---\n[120.00-123.50] Speaker 9: Get the Reznov challenge pack when you pre-order now.\n\n--- CHUNK 7 [140.00s - 140.04s] ---\n"
 }
