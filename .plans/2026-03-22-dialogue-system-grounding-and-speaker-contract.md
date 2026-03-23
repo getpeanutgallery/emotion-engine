@@ -1054,6 +1054,7 @@ Bottom-line judgment for this bead:
 - `30888f5` - Ground Phase 1 music chunk prompts
 - `ab816d3` - Fix dialogue tail timing normalization
 - `0109e52` - Stabilize dialogue timing and slim inferred traits
+- `8f5c2d7` - Document ee-ecok dialogue validation rerun
 
 **Lessons Learned:** A green Phase 1 rerun is necessary but not sufficient. For this lane, readiness depended on at least five truths lining up at once: segment ranges had to stay inside the real source duration, speaker-profile linkage had to match the final segment array, music prompts had to be grounded to the attached local chunk instead of the global trailer duration, clipped tail dialogue could not survive as fake micro-precision at the trailer boundary, and the final live rerun had to empirically confirm all of those fixes together before downstream chunk-level comparisons could be trusted.
 
