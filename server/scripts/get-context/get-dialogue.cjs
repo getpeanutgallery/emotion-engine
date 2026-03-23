@@ -43,6 +43,7 @@ const {
 } = require('../../lib/ffmpeg-config.cjs');
 const {
   parseAndValidateJsonObject,
+  normalizeDialogueSpeakerContract,
   validateDialogueTranscriptionObject,
   validateDialogueStitchObject
 } = require('../../lib/structured-output.cjs');
@@ -233,6 +234,65 @@ function normalizeDialogueDataToDuration(dialogueData, actualDuration, { require
   };
 }
 
+function buildOpeningWeightedChunkPlan({ durationSeconds, baseChunkDurationSeconds, config = {} }) {
+  const totalDuration = Number.isFinite(durationSeconds) ? durationSeconds : 0;
+  const baseChunkDuration = Number.isFinite(baseChunkDurationSeconds) && baseChunkDurationSeconds > 0
+    ? baseChunkDurationSeconds
+    : Math.min(20, Math.max(5, totalDuration));
+
+  const openingCoverageSeconds = Number.isFinite(config?.settings?.dialogue_opening_provenance_seconds)
+    ? Math.max(0, Math.min(config.settings.dialogue_opening_provenance_seconds, totalDuration))
+    : Math.min(24, totalDuration);
+  const openingChunkDurationSeconds = Number.isFinite(config?.settings?.dialogue_opening_chunk_duration_seconds)
+    ? Math.max(4, Math.min(config.settings.dialogue_opening_chunk_duration_seconds, openingCoverageSeconds || baseChunkDuration))
+    : Math.min(8, openingCoverageSeconds || baseChunkDuration);
+
+  if (openingCoverageSeconds <= 0 || openingChunkDurationSeconds >= baseChunkDuration || openingCoverageSeconds <= openingChunkDurationSeconds) {
+    const chunkPlan = planTimeChunks({
+      durationSeconds: totalDuration,
+      chunkDurationSeconds: baseChunkDuration
+    });
+    return {
+      chunkPlan,
+      openingApplied: false,
+      openingCoverageSeconds: 0,
+      openingChunkDurationSeconds: null
+    };
+  }
+
+  const openingPlan = planTimeChunks({
+    durationSeconds: openingCoverageSeconds,
+    chunkDurationSeconds: openingChunkDurationSeconds
+  }).map((chunk) => ({
+    startTime: chunk.startTime,
+    endTime: chunk.endTime
+  }));
+
+  const remainingDuration = Math.max(0, totalDuration - openingCoverageSeconds);
+  const remainingPlan = remainingDuration > 0
+    ? planTimeChunks({
+        durationSeconds: remainingDuration,
+        chunkDurationSeconds: baseChunkDuration
+      }).map((chunk) => ({
+        startTime: chunk.startTime + openingCoverageSeconds,
+        endTime: chunk.endTime + openingCoverageSeconds
+      }))
+    : [];
+
+  const chunkPlan = [...openingPlan, ...remainingPlan].map((chunk, index) => ({
+    index,
+    startTime: chunk.startTime,
+    endTime: chunk.endTime
+  }));
+
+  return {
+    chunkPlan,
+    openingApplied: true,
+    openingCoverageSeconds,
+    openingChunkDurationSeconds
+  };
+}
+
 function resolveDialogueChunkingPreflight(preflight, config = {}) {
   const durationSeconds = Number.isFinite(preflight?.durationSeconds) ? preflight.durationSeconds : 0;
   const maxWholeFileDurationSeconds = Number.isFinite(config?.settings?.dialogue_max_whole_file_duration_seconds)
@@ -240,30 +300,55 @@ function resolveDialogueChunkingPreflight(preflight, config = {}) {
     : 60;
 
   if (preflight?.needsChunking || durationSeconds <= maxWholeFileDurationSeconds) {
-    return preflight;
+    const baseChunkDurationSeconds = Number.isFinite(preflight?.recommendedChunkDurationSeconds) && preflight.recommendedChunkDurationSeconds > 0
+      ? preflight.recommendedChunkDurationSeconds
+      : Math.min(20, Math.max(5, durationSeconds));
+    const openingWeightedPlan = buildOpeningWeightedChunkPlan({
+      durationSeconds,
+      baseChunkDurationSeconds,
+      config
+    });
+
+    return {
+      ...preflight,
+      chunkPlan: openingWeightedPlan.chunkPlan,
+      trace: {
+        ...preflight?.trace,
+        chunks: openingWeightedPlan.chunkPlan.length,
+        openingArbitration: openingWeightedPlan.openingApplied ? {
+          coverageSeconds: openingWeightedPlan.openingCoverageSeconds,
+          chunkDurationSeconds: openingWeightedPlan.openingChunkDurationSeconds
+        } : null
+      }
+    };
   }
 
   const forcedChunkDurationSeconds = Number.isFinite(config?.settings?.dialogue_forced_chunk_duration_seconds)
     ? Math.max(5, Math.min(config.settings.dialogue_forced_chunk_duration_seconds, durationSeconds))
     : Math.min(20, durationSeconds);
 
-  const chunkPlan = planTimeChunks({
+  const openingWeightedPlan = buildOpeningWeightedChunkPlan({
     durationSeconds,
-    chunkDurationSeconds: forcedChunkDurationSeconds
+    baseChunkDurationSeconds: forcedChunkDurationSeconds,
+    config
   });
 
   return {
     ...preflight,
     needsChunking: true,
     recommendedChunkDurationSeconds: forcedChunkDurationSeconds,
-    chunkPlan,
+    chunkPlan: openingWeightedPlan.chunkPlan,
     trace: {
       ...preflight.trace,
       reason: 'dialogue_timing_force_chunking',
       originalReason: preflight.trace?.reason || null,
       maxWholeFileDurationSeconds,
       recommendedChunkDurationSeconds: forcedChunkDurationSeconds,
-      chunks: chunkPlan.length
+      chunks: openingWeightedPlan.chunkPlan.length,
+      openingArbitration: openingWeightedPlan.openingApplied ? {
+        coverageSeconds: openingWeightedPlan.openingCoverageSeconds,
+        chunkDurationSeconds: openingWeightedPlan.openingChunkDurationSeconds
+      } : null
     }
   };
 }
@@ -569,8 +654,15 @@ async function run(input) {
 
     const buildStructuredSpeakerHandoff = ({ speakerProfiles = [], segments = [] } = {}) => {
       const lines = [];
-      const normalizedProfiles = Array.isArray(speakerProfiles) ? speakerProfiles : [];
-      const normalizedSegments = Array.isArray(segments) ? segments : [];
+      const sourceProfiles = Array.isArray(speakerProfiles) ? speakerProfiles : [];
+      const sourceSegments = Array.isArray(segments) ? segments : [];
+      const normalizedSpeakerContract = normalizeDialogueSpeakerContract(sourceSegments, sourceProfiles);
+      const normalizedProfiles = Array.isArray(normalizedSpeakerContract?.speaker_profiles)
+        ? normalizedSpeakerContract.speaker_profiles
+        : [];
+      const normalizedSegments = Array.isArray(normalizedSpeakerContract?.dialogue_segments)
+        ? normalizedSpeakerContract.dialogue_segments
+        : sourceSegments;
 
       if (normalizedProfiles.length > 0) {
         lines.push('Speaker registry (reuse speaker_id only for the same acoustic voice):');
@@ -625,7 +717,7 @@ async function run(input) {
         lines.push('Voice separation reminders:');
         lines.push('- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.');
         lines.push('- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.');
-        lines.push('- If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.');
+        lines.push('- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.');
         lines.push('- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.');
         lines.push('- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.');
         lines.push('- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.');
@@ -889,7 +981,11 @@ async function run(input) {
     const chunkingReason = preflight.trace?.reason === 'dialogue_timing_force_chunking'
       ? `timing-stability guard over ${preflight.trace?.maxWholeFileDurationSeconds ?? 'unknown'}s`
       : 'Base64 budget';
-    console.log(`   🧩 Dialogue chunking enabled via ${chunkingReason}, chunking into ${preflight.chunkPlan.length} chunks (~${preflight.recommendedChunkDurationSeconds.toFixed(1)}s each)`);
+    const openingArbitration = preflight.trace?.openingArbitration;
+    const openingArbitrationNote = openingArbitration
+      ? ` with opening provenance arbitration (${Number(openingArbitration.coverageSeconds).toFixed(1)}s @ ~${Number(openingArbitration.chunkDurationSeconds).toFixed(1)}s chunks)`
+      : '';
+    console.log(`   🧩 Dialogue chunking enabled via ${chunkingReason}${openingArbitrationNote}, chunking into ${preflight.chunkPlan.length} chunks (~${preflight.recommendedChunkDurationSeconds.toFixed(1)}s base chunks)`);
 
     for (const chunk of preflight.chunkPlan) {
       const { index: chunkIndex, startTime, endTime } = chunk;
@@ -933,7 +1029,10 @@ async function run(input) {
         startTime,
         endTime,
         priorHandoff: rollingHandoff,
-        recoveryRuntime
+        recoveryRuntime,
+        openingArbitration: preflight.trace?.openingArbitration && startTime < preflight.trace.openingArbitration.coverageSeconds
+          ? preflight.trace.openingArbitration
+          : null
       });
 
       const chunkPromptRef = captureRaw
@@ -1650,9 +1749,9 @@ IMPORTANT:
 - Grounded data should only include anonymous speaker IDs, same-speaker linkage, and cautious acoustic descriptors that are actually supported by the audio.
 - Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
 - inferred_traits must always be present as an object with a traits array. Keep it clearly speculative / non-authoritative and attempt reviewable traits for each speaker when the audio supports them; otherwise return an empty traits array.
-- speaker_id continuity is acoustic, not semantic. A speaker naming Raul Menendez or David is not evidence that the speaker is Raul Menendez or David.
-- Do not merge clearly different voices just because the scene is continuous. Keep narration/figurehead VO, deep antagonist threats, authoritative female radio/comms, gruff soldier responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.
-- If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.
+- speaker_id continuity is acoustic, not semantic. A speaker naming a person, character, organization, or title is not evidence that the speaker is that entity.
+- Do not merge clearly different voices just because the scene is continuous. Keep public-address / figurehead narration, antagonist threats, radio/comms chatter, gruff tactical responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.
+- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.
 - If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.
 - If a later line sounds like a different voice, do not reuse the old speaker_id just because the scene context mentions the same character.
 - Do not compress the whole file's dialogue into the opening seconds; place each line where it actually occurs in the full timeline.
@@ -1791,15 +1890,17 @@ async function executeDialogueStitchToolLoop({
   });
 }
 
-function buildChunkTranscriptionPrompt({ chunkIndex, startTime, endTime, priorHandoff, recoveryRuntime = null } = {}) {
+function buildChunkTranscriptionPrompt({ chunkIndex, startTime, endTime, priorHandoff, recoveryRuntime = null, openingArbitration = null } = {}) {
   const handoff = typeof priorHandoff === 'string' && priorHandoff.trim().length > 0
     ? priorHandoff.trim()
     : null;
+  const openingArbitrationNote = openingArbitration && Number.isFinite(openingArbitration.coverageSeconds)
+    ? `\nOpening provenance mode: this chunk is inside the first ${Number(openingArbitration.coverageSeconds).toFixed(2)}s of the full audio, where rapid montage edits can place different voices very close together. Prioritize this chunk's local acoustic evidence over any semantic continuity assumptions.\n`
+    : '\n';
 
   const prompt = `You are transcribing CHUNK ${chunkIndex} of a longer audio file.
 
-Chunk time window: ${Number(startTime).toFixed(2)}s to ${Number(endTime).toFixed(2)}s (global timeline).
-
+Chunk time window: ${Number(startTime).toFixed(2)}s to ${Number(endTime).toFixed(2)}s (global timeline).${openingArbitrationNote}
 ${handoff ? `Context from previous chunk (handoff):\n${handoff}\n\n` : ''}Transcribe the audio in this chunk. Identify different speakers and provide timestamps.
 
 Return JSON only with this structure:
@@ -1852,9 +1953,11 @@ Rules:
 - Keep grounded speaker identity separate from inferred_traits.
 - Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
 - inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.
-- speaker_id continuity is acoustic, not semantic. A line that names Raul Menendez or David may still be spoken by someone else.
-- Do not merge clearly different voices just because the chunk continues the same scene. Keep narration/figurehead VO, deep antagonist threats, authoritative female radio/comms, gruff soldier responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.
-- If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.
+- speaker_id continuity is acoustic, not semantic. A line that names a person, character, organization, or title may still be spoken by someone else.
+- Do not merge clearly different voices just because the chunk continues the same scene. Keep public-address / figurehead narration, antagonist threats, radio/comms chatter, gruff tactical responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.
+- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.
+- In the opening montage, prefer local chunk provenance over storyline continuity. A named subject, recurring topic, or back-to-back cut is not enough to inherit the previous speaker_id.
+- If a threat line is followed by an official/public-address sounding line, treat that as a speaker change unless the exact same voice clearly continues.
 - If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.
 - Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.
 - If no speech is detected, return an empty dialogue_segments array.

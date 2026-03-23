@@ -1051,7 +1051,7 @@ test('Get Dialogue Script', async (t) => {
           settings: {
             ...makeDialogueConfig({ adapterName: 'openrouter' }).settings,
             dialogue_max_whole_file_duration_seconds: 5,
-            dialogue_forced_chunk_duration_seconds: 4
+            dialogue_forced_chunk_duration_seconds: 9
           },
           ai: {
             ...makeDialogueConfig({ adapterName: 'openrouter' }).ai,
@@ -1066,12 +1066,14 @@ test('Get Dialogue Script', async (t) => {
 
       ok(chunkCallCount >= 2);
       ok(completionPrompts.some((prompt) => prompt.includes('You are transcribing CHUNK 0')));
+      ok(completionPrompts.some((prompt) => prompt.includes('Opening provenance mode: this chunk is inside the first')));
       ok(completionPrompts.some((prompt) => prompt.includes('Do not compress the whole chunk\'s dialogue into the opening seconds')));
       ok(completionPrompts.some((prompt) => prompt.includes('Speaker registry (reuse speaker_id only for the same acoustic voice):')));
       ok(completionPrompts.some((prompt) => prompt.includes('create a new speaker_id instead of forcing continuity')));
       ok(completionPrompts.some((prompt) => prompt.includes('speaker_id continuity is acoustic, not semantic')));
       ok(completionPrompts.some((prompt) => prompt.includes('Do not merge clearly different voices just because the chunk continues the same scene')));
-      ok(completionPrompts.some((prompt) => prompt.includes('If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration')));
+      ok(completionPrompts.some((prompt) => prompt.includes('If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration')));
+      ok(completionPrompts.some((prompt) => prompt.includes('In the opening montage, prefer local chunk provenance over storyline continuity')));
       ok(completionPrompts.some((prompt) => prompt.includes('If adjacent words are one uninterrupted utterance from the same voice')));
       is(result.artifacts.dialogueData.totalDuration, 10);
       ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.start >= 4));
@@ -1176,8 +1178,10 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts[0].includes('Do not use grounded.confidence_abstained'));
       ok(completionPrompts[0].includes('speaker_id continuity is acoustic, not semantic'));
       ok(completionPrompts[0].includes('Do not merge clearly different voices just because the scene is continuous'));
-      ok(completionPrompts[0].includes('If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration'));
+      ok(completionPrompts[0].includes('If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration'));
       ok(completionPrompts[0].includes('If adjacent words are one uninterrupted utterance from the same voice'));
+      ok(completionPrompts[0].includes('A speaker naming a person, character, organization, or title is not evidence that the speaker is that entity'));
+      ok(!completionPrompts[0].includes('Raul Menendez or David'));
       ok(!completionPrompts[0].includes('set abstained=true'));
     });
   });

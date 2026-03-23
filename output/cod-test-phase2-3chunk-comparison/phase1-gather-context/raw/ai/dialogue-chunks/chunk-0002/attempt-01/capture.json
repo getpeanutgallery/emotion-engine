@@ -1,8 +1,8 @@
 {
   "chunkIndex": 2,
-  "startTime": 40,
-  "endTime": 60,
-  "rollingHandoffIn": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: calm, authoritative female voice | inferred traits: role: narrator or resistance leader | recent lines: Then the world burns. / Raul Menendez is the most dangerous man in the world.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: menacing, deep male voice | inferred traits: role: antagonist | recent lines: Your streets shall once again run red with your blood. / Raul Menendez, United Global Unrest.\n- spk_001 => Speaker 1 | grounded confidence: 0.95 | acoustic cues: authoritative, calm female voice | inferred traits: role: narrator/leader | recent lines: Then the world burns. / Raul Menendez is the most dangerous man in the world.\n- spk_003 => Speaker 3 | grounded confidence: 0.90 | acoustic cues: younger male, slightly strained | inferred traits: role: protagonist/soldier | recent lines: A lot of people counting on us for answers. / And if we fail?\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 1 (spk_001): Then the world burns.\n- Speaker 1 (spk_001): Raul Menendez is the most dangerous man in the world.",
+  "startTime": 16,
+  "endTime": 24,
+  "rollingHandoffIn": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: dramatic, cinematic narration style | inferred traits: gender: female | recent lines: They want you afraid. Fear makes you easier to control. / But we are not afraid.\n- spk_002 => Speaker 2 | grounded confidence: 0.85 | acoustic cues: menacing, gravelly, deep tone | inferred traits: gender: male | recent lines: The streets shall once again run red.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 1 (spk_001): But we are not afraid.\n- Speaker 2 (spk_002): The streets shall once again run red.",
   "attempt": 1,
   "attemptInTarget": 1,
   "targetIndex": 0,
@@ -19,15 +19,15 @@
   },
   "failover": null,
   "promptRef": {
-    "sha256": "322a70df4fca4a7f8cabcee86e3ec21cf4e5f9fc24b70b3c6c16c5af8f066100",
-    "file": "_meta/ai/_prompts/322a70df4fca4a7f8cabcee86e3ec21cf4e5f9fc24b70b3c6c16c5af8f066100.json"
+    "sha256": "a2c39e84c7cbc8f524a69a1a074542dda57b0261bc708621e7cace461cdaddde",
+    "file": "_meta/ai/_prompts/a2c39e84c7cbc8f524a69a1a074542dda57b0261bc708621e7cace461cdaddde.json"
   },
   "rawResponse": {
-    "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 11.5,\n      \"end\": 12.5,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"Specter one, report.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 14.5,\n      \"end\": 15.5,\n      \"speaker\": \"Speaker 4\",\n      \"speaker_id\": \"spk_004\",\n      \"text\": \"Need a sitrep.\",\n      \"confidence\": 0.9\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_003\",\n      \"label\": \"Speaker 3\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [\n          0\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"strained, tactical male voice\",\n            \"confidence\": 0.85\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"soldier/commander\",\n            \"confidence\": 0.8\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_004\",\n      \"label\": \"Speaker 4\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [\n          1\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"urgent, radio-filtered male voice\",\n            \"confidence\": 0.8\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"soldier\",\n            \"confidence\": 0.7\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The chunk contains brief tactical radio chatter from soldiers requesting a situation report.\",\n  \"handoffContext\": \"The scene is a military or tactical operation. Speaker 3 (spk_003) and Speaker 4 (spk_004) are communicating via radio.\",\n  \"totalDuration\": 20.0\n}",
+    "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 4.2,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"Raul Menendez ignited global unrest on an unprecedented scale.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 4.2,\n      \"end\": 8.0,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Menendez is a...\",\n      \"confidence\": 0.85\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_003\",\n      \"label\": \"Speaker 3\",\n      \"grounded\": {\n        \"confidence\": 0.90,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"authoritative, news-anchor tone\", \"confidence\": 0.85 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"male\",\n            \"confidence\": 0.90,\n            \"note\": \"deep, resonant voice\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [1],\n        \"acoustic_descriptors\": [\n          { \"label\": \"dramatic, cinematic narration style\", \"confidence\": 0.80 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"female\",\n            \"confidence\": 0.90,\n            \"note\": \"consistent with previous chunk\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"A news anchor reports on Raul Menendez's global unrest, followed by a snippet of a female voice discussing Menendez.\",\n  \"handoffContext\": \"Speaker 1 (female) is speaking about Menendez. Speaker 3 (male news anchor) provided the context.\",\n  \"totalDuration\": 8.0\n}",
     "usage": {
-      "input": 5739,
-      "output": 573,
-      "total": 6312
+      "input": 2840,
+      "output": 1365,
+      "total": 4205
     },
     "providerRequest": {
       "method": "POST",
@@ -44,7 +44,7 @@
             "content": [
               {
                 "type": "text",
-                "text": "You are transcribing CHUNK 2 of a longer audio file.\n\nChunk time window: 40.00s to 60.00s (global timeline).\n\nContext from previous chunk (handoff):\nSpeaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: calm, authoritative female voice | inferred traits: role: narrator or resistance leader | recent lines: Then the world burns. / Raul Menendez is the most dangerous man in the world.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: menacing, deep male voice | inferred traits: role: antagonist | recent lines: Your streets shall once again run red with your blood. / Raul Menendez, United Global Unrest.\n- spk_001 => Speaker 1 | grounded confidence: 0.95 | acoustic cues: authoritative, calm female voice | inferred traits: role: narrator/leader | recent lines: Then the world burns. / Raul Menendez is the most dangerous man in the world.\n- spk_003 => Speaker 3 | grounded confidence: 0.90 | acoustic cues: younger male, slightly strained | inferred traits: role: protagonist/soldier | recent lines: A lot of people counting on us for answers. / And if we fail?\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 1 (spk_001): Then the world burns.\n- Speaker 1 (spk_001): Raul Menendez is the most dangerous man in the world.\n\nTranscribe the audio in this chunk. Identify different speakers and provide timestamps.\n\nReturn JSON only with this structure:\n\n{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 5.2,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Transcribed text here\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.82,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"steady, conversational delivery\", \"confidence\": 0.61 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"age_range\",\n            \"value\": \"likely adult\",\n            \"confidence\": 0.28,\n            \"note\": \"speculative inference from voice only\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Brief summary for THIS chunk\",\n  \"handoffContext\": \"Short handoff to help the next chunk keep continuity (entities, speaker mapping, last lines)\",\n  \"totalDuration\": 30.5\n}\n\nRules:\n- Return JSON only. No markdown.\n- Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.\n- Treat the handoff speaker registry as the continuity memory. Reuse a prior speaker_id only when the current voice still matches that prior acoustic profile.\n- If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.\n- Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0. Do not use grounded.confidence_abstained.\n- Keep grounded speaker identity separate from inferred_traits.\n- Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.\n- inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.\n- speaker_id continuity is acoustic, not semantic. A line that names Raul Menendez or David may still be spoken by someone else.\n- Do not merge clearly different voices just because the chunk continues the same scene. Keep narration/figurehead VO, deep antagonist threats, authoritative female radio/comms, gruff soldier responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.\n- Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.\n- If no speech is detected, return an empty dialogue_segments array.\n- Keep handoffContext brief (<= ~10 lines).\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_dialogue_transcription_json\",\n  \"transcription\": {\n    \"dialogue_segments\": [\n      {\n        \"start\": 0,\n        \"end\": 1.2,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"Hello there\",\n        \"confidence\": 0.95\n      }\n    ],\n    \"speaker_profiles\": [\n      {\n        \"speaker_id\": \"spk_001\",\n        \"label\": \"Speaker 1\",\n        \"grounded\": {\n          \"confidence\": 0.82,\n          \"linked_segment_indexes\": [\n            0\n          ],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"steady, conversational delivery\",\n              \"confidence\": 0.61\n            }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"accent\",\n              \"value\": \"possibly mid-Atlantic American English\",\n              \"confidence\": 0.31,\n              \"note\": \"speculative inference from delivery only\"\n            }\n          ]\n        }\n      }\n    ],\n    \"summary\": \"Short summary of the dialogue.\",\n    \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n    \"totalDuration\": 10.5\n  }\n}\n2) Final dialogue transcription chunk JSON matching the schema above.\n\nAcceptance rules:\n- The final dialogue transcription chunk JSON is accepted only after validate_dialogue_transcription_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_dialogue_transcription_json\",\"transcription\":{\"dialogue_segments\":[{\"start\":0,\"end\":1.2,\"speaker\":\"Speaker 1\",\"speaker_id\":\"spk_001\",\"text\":\"Hello there\",\"confidence\":0.95}],\"speaker_profiles\":[{\"speaker_id\":\"spk_001\",\"label\":\"Speaker 1\",\"grounded\":{\"confidence\":0.82,\"linked_segment_indexes\":[0],\"acoustic_descriptors\":[{\"label\":\"steady, conversational delivery\",\"confidence\":0.61}]},\"inferred_traits\":{\"traits\":[{\"trait\":\"accent\",\"value\":\"possibly mid-Atlantic American English\",\"confidence\":0.31,\"note\":\"speculative inference from delivery only\"}]}}],\"summary\":\"Short summary of the dialogue.\",\"handoffContext\":\"Short continuity handoff for the next chunk.\",\"totalDuration\":10.5}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised dialogue transcription chunk JSON candidate.\n- After the validator returns valid=true, return ONLY the final dialogue transcription chunk JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must include handoffContext so the next chunk can preserve continuity.\n\nFinal artifact reminders:\n- Timestamps must be relative to this chunk and start at 0.\n- Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.\n- Keep grounded speaker identity separate from any inferred_traits guesswork.\n- handoffContext must stay brief and continuity-focused.\n\nTool contract:\n{\n  \"name\": \"validate_dialogue_transcription_json\",\n  \"argumentKey\": \"transcription\",\n  \"description\": \"Validate a Phase 1 dialogue transcription JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_dialogue_transcription_json\",\n    \"transcription\": {\n      \"dialogue_segments\": [\n        {\n          \"start\": 0,\n          \"end\": 1.2,\n          \"speaker\": \"Speaker 1\",\n          \"speaker_id\": \"spk_001\",\n          \"text\": \"Hello there\",\n          \"confidence\": 0.95\n        }\n      ],\n      \"speaker_profiles\": [\n        {\n          \"speaker_id\": \"spk_001\",\n          \"label\": \"Speaker 1\",\n          \"grounded\": {\n            \"confidence\": 0.82,\n            \"linked_segment_indexes\": [\n              0\n            ],\n            \"acoustic_descriptors\": [\n              {\n                \"label\": \"steady, conversational delivery\",\n                \"confidence\": 0.61\n              }\n            ]\n          },\n          \"inferred_traits\": {\n            \"traits\": [\n              {\n                \"trait\": \"accent\",\n                \"value\": \"possibly mid-Atlantic American English\",\n                \"confidence\": 0.31,\n                \"note\": \"speculative inference from delivery only\"\n              }\n            ]\n          }\n        }\n      ],\n      \"summary\": \"Short summary of the dialogue.\",\n      \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n      \"totalDuration\": 10.5\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"transcription\"\n    ],\n    \"properties\": {\n      \"transcription\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, and totalDuration.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 3,\n  \"remainingValidatorCalls\": 2\n}\n\nConversation state:\n[\n  {\n    \"role\": \"assistant\",\n    \"turn\": 1,\n    \"kind\": \"model_output\",\n    \"raw\": \"{\\n  \\\"tool\\\": \\\"validate_dialogue_transcription_json\\\",\\n  \\\"transcription\\\": {\\n    \\\"dialogue_segments\\\": [\\n      {\\n        \\\"start\\\": 11.5,\\n        \\\"end\\\": 12.5,\\n        \\\"speaker\\\": \\\"Speaker 3\\\",\\n        \\\"speaker_id\\\": \\\"spk_003\\\",\\n        \\\"text\\\": \\\"Specter one, report.\\\",\\n        \\\"confidence\\\": 0.95\\n      },\\n      {\\n        \\\"start\\\": 14.5,\\n        \\\"end\\\": 15.5,\\n        \\\"speaker\\\": \\\"Speaker 4\\\",\\n        \\\"speaker_id\\\": \\\"spk_004\\\",\\n        \\\"text\\\": \\\"Need a sitrep.\\\",\\n        \\\"confidence\\\": 0.9\\n      }\\n    ],\\n    \\\"speaker_profiles\\\": [\\n      {\\n        \\\"speaker_id\\\": \\\"spk_003\\\",\\n        \\\"label\\\": \\\"Speaker 3\\\",\\n        \\\"grounded\\\": {\\n          \\\"confidence\\\": 0.9,\\n          \\\"linked_segment_indexes\\\": [\\n            0\\n          ],\\n          \\\"acoustic_descriptors\\\": [\\n            {\\n              \\\"label\\\": \\\"strained, tactical male voice\\\",\\n              \\\"confidence\\\": 0.85\\n            }\\n          ]\\n        },\\n        \\\"inferred_traits\\\": {\\n          \\\"traits\\\": [\\n            {\\n              \\\"trait\\\": \\\"role\\\",\\n              \\\"value\\\": \\\"soldier/commander\\\",\\n              \\\"confidence\\\": 0.8\\n            }\\n          ]\\n        }\\n      },\\n      {\\n        \\\"speaker_id\\\": \\\"spk_004\\\",\\n        \\\"label\\\": \\\"Speaker 4\\\",\\n        \\\"grounded\\\": {\\n          \\\"confidence\\\": 0.85,\\n          \\\"linked_segment_indexes\\\": [\\n            1\\n          ],\\n          \\\"acoustic_descriptors\\\": [\\n            {\\n              \\\"label\\\": \\\"urgent, radio-filtered male voice\\\",\\n              \\\"confidence\\\": 0.8\\n            }\\n          ]\\n        },\\n        \\\"inferred_traits\\\": {\\n          \\\"traits\\\": [\\n            {\\n              \\\"trait\\\": \\\"role\\\",\\n              \\\"value\\\": \\\"soldier\\\",\\n              \\\"confidence\\\": 0.7\\n            }\\n          ]\\n        }\\n      }\\n    ],\\n    \\\"summary\\\": \\\"The chunk contains brief tactical radio chatter from soldiers requesting a situation report.\\\",\\n    \\\"handoffContext\\\": \\\"The scene is a military or tactical operation. Speaker 3 (spk_003) and Speaker 4 (spk_004) are communicating via radio.\\\",\\n    \\\"totalDuration\\\": 20.0\\n  }\\n}\"\n  },\n  {\n    \"role\": \"tool\",\n    \"turn\": 1,\n    \"kind\": \"validator_acceptance\",\n    \"toolName\": \"validate_dialogue_transcription_json\",\n    \"toolCall\": {\n      \"tool\": \"validate_dialogue_transcription_json\",\n      \"transcription\": {\n        \"dialogue_segments\": [\n          {\n            \"start\": 11.5,\n            \"end\": 12.5,\n            \"speaker\": \"Speaker 3\",\n            \"speaker_id\": \"spk_003\",\n            \"text\": \"Specter one, report.\",\n            \"confidence\": 0.95\n          },\n          {\n            \"start\": 14.5,\n            \"end\": 15.5,\n            \"speaker\": \"Speaker 4\",\n            \"speaker_id\": \"spk_004\",\n            \"text\": \"Need a sitrep.\",\n            \"confidence\": 0.9\n          }\n        ],\n        \"speaker_profiles\": [\n          {\n            \"speaker_id\": \"spk_003\",\n            \"label\": \"Speaker 3\",\n            \"grounded\": {\n              \"confidence\": 0.9,\n              \"linked_segment_indexes\": [\n                0\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"strained, tactical male voice\",\n                  \"confidence\": 0.85\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"role\",\n                  \"value\": \"soldier/commander\",\n                  \"confidence\": 0.8\n                }\n              ]\n            }\n          },\n          {\n            \"speaker_id\": \"spk_004\",\n            \"label\": \"Speaker 4\",\n            \"grounded\": {\n              \"confidence\": 0.85,\n              \"linked_segment_indexes\": [\n                1\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"urgent, radio-filtered male voice\",\n                  \"confidence\": 0.8\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"role\",\n                  \"value\": \"soldier\",\n                  \"confidence\": 0.7\n                }\n              ]\n            }\n          }\n        ],\n        \"summary\": \"The chunk contains brief tactical radio chatter from soldiers requesting a situation report.\",\n        \"handoffContext\": \"The scene is a military or tactical operation. Speaker 3 (spk_003) and Speaker 4 (spk_004) are communicating via radio.\",\n        \"totalDuration\": 20\n      },\n      \"arguments\": {\n        \"transcription\": {\n          \"dialogue_segments\": [\n            {\n              \"start\": 11.5,\n              \"end\": 12.5,\n              \"speaker\": \"Speaker 3\",\n              \"speaker_id\": \"spk_003\",\n              \"text\": \"Specter one, report.\",\n              \"confidence\": 0.95\n            },\n            {\n              \"start\": 14.5,\n              \"end\": 15.5,\n              \"speaker\": \"Speaker 4\",\n              \"speaker_id\": \"spk_004\",\n              \"text\": \"Need a sitrep.\",\n              \"confidence\": 0.9\n            }\n          ],\n          \"speaker_profiles\": [\n            {\n              \"speaker_id\": \"spk_003\",\n              \"label\": \"Speaker 3\",\n              \"grounded\": {\n                \"confidence\": 0.9,\n                \"linked_segment_indexes\": [\n                  0\n                ],\n                \"acoustic_descriptors\": [\n                  {\n                    \"label\": \"strained, tactical male voice\",\n                    \"confidence\": 0.85\n                  }\n                ]\n              },\n              \"inferred_traits\": {\n                \"traits\": [\n                  {\n                    \"trait\": \"role\",\n                    \"value\": \"soldier/commander\",\n                    \"confidence\": 0.8\n                  }\n                ]\n              }\n            },\n            {\n              \"speaker_id\": \"spk_004\",\n              \"label\": \"Speaker 4\",\n              \"grounded\": {\n                \"confidence\": 0.85,\n                \"linked_segment_indexes\": [\n                  1\n                ],\n                \"acoustic_descriptors\": [\n                  {\n                    \"label\": \"urgent, radio-filtered male voice\",\n                    \"confidence\": 0.8\n                  }\n                ]\n              },\n              \"inferred_traits\": {\n                \"traits\": [\n                  {\n                    \"trait\": \"role\",\n                    \"value\": \"soldier\",\n                    \"confidence\": 0.7\n                  }\n                ]\n              }\n            }\n          ],\n          \"summary\": \"The chunk contains brief tactical radio chatter from soldiers requesting a situation report.\",\n          \"handoffContext\": \"The scene is a military or tactical operation. Speaker 3 (spk_003) and Speaker 4 (spk_004) are communicating via radio.\",\n          \"totalDuration\": 20\n        }\n      }\n    },\n    \"result\": {\n      \"ok\": true,\n      \"valid\": true,\n      \"toolName\": \"validate_dialogue_transcription_json\",\n      \"summary\": \"JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.\",\n      \"errors\": [],\n      \"normalizedValue\": {\n        \"dialogue_segments\": [\n          {\n            \"start\": 11.5,\n            \"end\": 12.5,\n            \"speaker\": \"Speaker 3\",\n            \"speaker_id\": \"spk_003\",\n            \"text\": \"Specter one, report.\",\n            \"confidence\": 0.95,\n            \"index\": 0\n          },\n          {\n            \"start\": 14.5,\n            \"end\": 15.5,\n            \"speaker\": \"Speaker 4\",\n            \"speaker_id\": \"spk_004\",\n            \"text\": \"Need a sitrep.\",\n            \"confidence\": 0.9,\n            \"index\": 1\n          }\n        ],\n        \"speaker_profiles\": [\n          {\n            \"speaker_id\": \"spk_003\",\n            \"label\": \"Speaker 3\",\n            \"grounded\": {\n              \"confidence\": 0.9,\n              \"linked_segment_indexes\": [\n                0\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"strained, tactical male voice\",\n                  \"confidence\": 0.85\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"role\",\n                  \"value\": \"soldier/commander\",\n                  \"confidence\": 0.8,\n                  \"note\": null\n                }\n              ]\n            }\n          },\n          {\n            \"speaker_id\": \"spk_004\",\n            \"label\": \"Speaker 4\",\n            \"grounded\": {\n              \"confidence\": 0.85,\n              \"linked_segment_indexes\": [\n                1\n              ],\n              \"acoustic_descriptors\": [\n                {\n                  \"label\": \"urgent, radio-filtered male voice\",\n                  \"confidence\": 0.8\n                }\n              ]\n            },\n            \"inferred_traits\": {\n              \"traits\": [\n                {\n                  \"trait\": \"role\",\n                  \"value\": \"soldier\",\n                  \"confidence\": 0.7,\n                  \"note\": null\n                }\n              ]\n            }\n          }\n        ],\n        \"summary\": \"The chunk contains brief tactical radio chatter from soldiers requesting a situation report.\",\n        \"totalDuration\": 20,\n        \"handoffContext\": \"The scene is a military or tactical operation. Speaker 3 (spk_003) and Speaker 4 (spk_004) are communicating via radio.\"\n      }\n    }\n  }\n]"
+                "text": "You are transcribing CHUNK 2 of a longer audio file.\n\nChunk time window: 16.00s to 24.00s (global timeline).\nOpening provenance mode: this chunk is inside the first 24.00s of the full audio, where rapid montage edits can place different voices very close together. Prioritize this chunk's local acoustic evidence over any semantic continuity assumptions.\n\nContext from previous chunk (handoff):\nSpeaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: dramatic, cinematic narration style | inferred traits: gender: female | recent lines: They want you afraid. Fear makes you easier to control. / But we are not afraid.\n- spk_002 => Speaker 2 | grounded confidence: 0.85 | acoustic cues: menacing, gravelly, deep tone | inferred traits: gender: male | recent lines: The streets shall once again run red.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 1 (spk_001): But we are not afraid.\n- Speaker 2 (spk_002): The streets shall once again run red.\n\nTranscribe the audio in this chunk. Identify different speakers and provide timestamps.\n\nReturn JSON only with this structure:\n\n{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 5.2,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Transcribed text here\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.82,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"steady, conversational delivery\", \"confidence\": 0.61 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"age_range\",\n            \"value\": \"likely adult\",\n            \"confidence\": 0.28,\n            \"note\": \"speculative inference from voice only\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Brief summary for THIS chunk\",\n  \"handoffContext\": \"Short handoff to help the next chunk keep continuity (entities, speaker mapping, last lines)\",\n  \"totalDuration\": 30.5\n}\n\nRules:\n- Return JSON only. No markdown.\n- Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.\n- Treat the handoff speaker registry as the continuity memory. Reuse a prior speaker_id only when the current voice still matches that prior acoustic profile.\n- If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.\n- Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0. Do not use grounded.confidence_abstained.\n- Keep grounded speaker identity separate from inferred_traits.\n- Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.\n- inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.\n- speaker_id continuity is acoustic, not semantic. A line that names a person, character, organization, or title may still be spoken by someone else.\n- Do not merge clearly different voices just because the chunk continues the same scene. Keep public-address / figurehead narration, antagonist threats, radio/comms chatter, gruff tactical responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- In the opening montage, prefer local chunk provenance over storyline continuity. A named subject, recurring topic, or back-to-back cut is not enough to inherit the previous speaker_id.\n- If a threat line is followed by an official/public-address sounding line, treat that as a speaker change unless the exact same voice clearly continues.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.\n- Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.\n- If no speech is detected, return an empty dialogue_segments array.\n- Keep handoffContext brief (<= ~10 lines).\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_dialogue_transcription_json\",\n  \"transcription\": {\n    \"dialogue_segments\": [\n      {\n        \"start\": 0,\n        \"end\": 1.2,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"Hello there\",\n        \"confidence\": 0.95\n      }\n    ],\n    \"speaker_profiles\": [\n      {\n        \"speaker_id\": \"spk_001\",\n        \"label\": \"Speaker 1\",\n        \"grounded\": {\n          \"confidence\": 0.82,\n          \"linked_segment_indexes\": [\n            0\n          ],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"steady, conversational delivery\",\n              \"confidence\": 0.61\n            }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"accent\",\n              \"value\": \"possibly mid-Atlantic American English\",\n              \"confidence\": 0.31,\n              \"note\": \"speculative inference from delivery only\"\n            }\n          ]\n        }\n      }\n    ],\n    \"summary\": \"Short summary of the dialogue.\",\n    \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n    \"totalDuration\": 10.5\n  }\n}\n2) Final dialogue transcription chunk JSON matching the schema above.\n\nAcceptance rules:\n- The final dialogue transcription chunk JSON is accepted only after validate_dialogue_transcription_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_dialogue_transcription_json\",\"transcription\":{\"dialogue_segments\":[{\"start\":0,\"end\":1.2,\"speaker\":\"Speaker 1\",\"speaker_id\":\"spk_001\",\"text\":\"Hello there\",\"confidence\":0.95}],\"speaker_profiles\":[{\"speaker_id\":\"spk_001\",\"label\":\"Speaker 1\",\"grounded\":{\"confidence\":0.82,\"linked_segment_indexes\":[0],\"acoustic_descriptors\":[{\"label\":\"steady, conversational delivery\",\"confidence\":0.61}]},\"inferred_traits\":{\"traits\":[{\"trait\":\"accent\",\"value\":\"possibly mid-Atlantic American English\",\"confidence\":0.31,\"note\":\"speculative inference from delivery only\"}]}}],\"summary\":\"Short summary of the dialogue.\",\"handoffContext\":\"Short continuity handoff for the next chunk.\",\"totalDuration\":10.5}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised dialogue transcription chunk JSON candidate.\n- After the validator returns valid=true, return ONLY the final dialogue transcription chunk JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must include handoffContext so the next chunk can preserve continuity.\n\nFinal artifact reminders:\n- Timestamps must be relative to this chunk and start at 0.\n- Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.\n- Keep grounded speaker identity separate from any inferred_traits guesswork.\n- handoffContext must stay brief and continuity-focused.\n\nTool contract:\n{\n  \"name\": \"validate_dialogue_transcription_json\",\n  \"argumentKey\": \"transcription\",\n  \"description\": \"Validate a Phase 1 dialogue transcription JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_dialogue_transcription_json\",\n    \"transcription\": {\n      \"dialogue_segments\": [\n        {\n          \"start\": 0,\n          \"end\": 1.2,\n          \"speaker\": \"Speaker 1\",\n          \"speaker_id\": \"spk_001\",\n          \"text\": \"Hello there\",\n          \"confidence\": 0.95\n        }\n      ],\n      \"speaker_profiles\": [\n        {\n          \"speaker_id\": \"spk_001\",\n          \"label\": \"Speaker 1\",\n          \"grounded\": {\n            \"confidence\": 0.82,\n            \"linked_segment_indexes\": [\n              0\n            ],\n            \"acoustic_descriptors\": [\n              {\n                \"label\": \"steady, conversational delivery\",\n                \"confidence\": 0.61\n              }\n            ]\n          },\n          \"inferred_traits\": {\n            \"traits\": [\n              {\n                \"trait\": \"accent\",\n                \"value\": \"possibly mid-Atlantic American English\",\n                \"confidence\": 0.31,\n                \"note\": \"speculative inference from delivery only\"\n              }\n            ]\n          }\n        }\n      ],\n      \"summary\": \"Short summary of the dialogue.\",\n      \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n      \"totalDuration\": 10.5\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"transcription\"\n    ],\n    \"properties\": {\n      \"transcription\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, and totalDuration.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 4,\n  \"remainingValidatorCalls\": 3\n}\n\nConversation state:\n[]"
               },
               {
                 "type": "input_audio",
@@ -67,7 +67,7 @@
     "providerResponse": {
       "status": 200,
       "headers": {
-        "date": "Mon, 23 Mar 2026 14:36:18 GMT",
+        "date": "Mon, 23 Mar 2026 22:56:55 GMT",
         "content-type": "application/json",
         "transfer-encoding": "chunked",
         "connection": "keep-alive",
@@ -76,12 +76,12 @@
         "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
         "x-content-type-options": "nosniff",
         "server": "cloudflare",
-        "cf-ray": "9e0e2adf8e0d25a7-MIA"
+        "cf-ray": "9e1108259a8b47ad-MIA"
       },
       "body": {
-        "id": "gen-1774276577-ytS71xsd3jvouuiowBwE",
+        "id": "gen-1774306612-t5brGRyAcKfIn0v6J75P",
         "object": "chat.completion",
-        "created": 1774276577,
+        "created": 1774306612,
         "model": "google/gemini-3.1-flash-lite-preview-20260303",
         "provider": "Google AI Studio",
         "system_fingerprint": null,
@@ -93,10 +93,16 @@
             "native_finish_reason": "STOP",
             "message": {
               "role": "assistant",
-              "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 11.5,\n      \"end\": 12.5,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"Specter one, report.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 14.5,\n      \"end\": 15.5,\n      \"speaker\": \"Speaker 4\",\n      \"speaker_id\": \"spk_004\",\n      \"text\": \"Need a sitrep.\",\n      \"confidence\": 0.9\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_003\",\n      \"label\": \"Speaker 3\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [\n          0\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"strained, tactical male voice\",\n            \"confidence\": 0.85\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"soldier/commander\",\n            \"confidence\": 0.8\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_004\",\n      \"label\": \"Speaker 4\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [\n          1\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"urgent, radio-filtered male voice\",\n            \"confidence\": 0.8\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"soldier\",\n            \"confidence\": 0.7\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The chunk contains brief tactical radio chatter from soldiers requesting a situation report.\",\n  \"handoffContext\": \"The scene is a military or tactical operation. Speaker 3 (spk_003) and Speaker 4 (spk_004) are communicating via radio.\",\n  \"totalDuration\": 20.0\n}",
+              "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 4.2,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"Raul Menendez ignited global unrest on an unprecedented scale.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 4.2,\n      \"end\": 8.0,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Menendez is a...\",\n      \"confidence\": 0.85\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_003\",\n      \"label\": \"Speaker 3\",\n      \"grounded\": {\n        \"confidence\": 0.90,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"authoritative, news-anchor tone\", \"confidence\": 0.85 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"male\",\n            \"confidence\": 0.90,\n            \"note\": \"deep, resonant voice\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [1],\n        \"acoustic_descriptors\": [\n          { \"label\": \"dramatic, cinematic narration style\", \"confidence\": 0.80 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"female\",\n            \"confidence\": 0.90,\n            \"note\": \"consistent with previous chunk\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"A news anchor reports on Raul Menendez's global unrest, followed by a snippet of a female voice discussing Menendez.\",\n  \"handoffContext\": \"Speaker 1 (female) is speaking about Menendez. Speaker 3 (male news anchor) provided the context.\",\n  \"totalDuration\": 8.0\n}",
               "refusal": null,
-              "reasoning": null,
+              "reasoning": "**Assessing the Audio Clip**\n\nI've determined the user wants transcription from 16 to 24 seconds. The audio begins around 16 seconds and includes a voiceover. It appears to be a news report, with the key phrase \"Raul Menendez\" appearing as a key focus of the speaker.\n\n\n**Refining Speaker Identification**\n\nI've re-listened and refined the speaker identifications. The segment from 16 to 20 seconds features Speaker 3, likely a news anchor. The snippet from 20 to 24 seconds, which is truncated, seems to be Speaker 1, the female voice from the initial clip. I've confirmed their distinct characteristics through re-listening.\n\n\n",
               "reasoning_details": [
+                {
+                  "type": "[Truncated]",
+                  "text": "[Truncated]",
+                  "format": "[Truncated]",
+                  "index": "[Truncated]"
+                },
                 {
                   "type": "[Truncated]",
                   "data": "[Truncated]",
@@ -111,13 +117,13 @@
           "prompt_tokens": "[REDACTED]",
           "completion_tokens": "[REDACTED]",
           "total_tokens": "[REDACTED]",
-          "cost": 0.00241925,
+          "cost": 0.0028075,
           "is_byok": false,
           "prompt_tokens_details": "[REDACTED]",
           "cost_details": {
-            "upstream_inference_cost": 0.00241925,
-            "upstream_inference_prompt_cost": 0.00155975,
-            "upstream_inference_completions_cost": 0.0008595
+            "upstream_inference_cost": 0.0028075,
+            "upstream_inference_prompt_cost": 0.00076,
+            "upstream_inference_completions_cost": 0.0020475
           },
           "completion_tokens_details": "[REDACTED]"
         }
@@ -127,25 +133,51 @@
   "parsed": {
     "dialogue_segments": [
       {
-        "start": 11.5,
-        "end": 12.5,
+        "start": 0,
+        "end": 4.2,
         "speaker": "Speaker 3",
         "speaker_id": "spk_003",
-        "text": "Specter one, report.",
+        "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
         "confidence": 0.95,
         "index": 0
       },
       {
-        "start": 14.5,
-        "end": 15.5,
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "Need a sitrep.",
-        "confidence": 0.9,
+        "start": 4.2,
+        "end": 8,
+        "speaker": "Speaker 1",
+        "speaker_id": "spk_001",
+        "text": "Menendez is a...",
+        "confidence": 0.85,
         "index": 1
       }
     ],
     "speaker_profiles": [
+      {
+        "speaker_id": "spk_001",
+        "label": "Speaker 1",
+        "grounded": {
+          "confidence": 0.85,
+          "linked_segment_indexes": [
+            1
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "dramatic, cinematic narration style",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "female",
+              "confidence": 0.9,
+              "note": "consistent with previous chunk"
+            }
+          ]
+        }
+      },
       {
         "speaker_id": "spk_003",
         "label": "Speaker 3",
@@ -156,7 +188,7 @@
           ],
           "acoustic_descriptors": [
             {
-              "label": "strained, tactical male voice",
+              "label": "authoritative, news-anchor tone",
               "confidence": 0.85
             }
           ]
@@ -164,82 +196,57 @@
         "inferred_traits": {
           "traits": [
             {
-              "trait": "role",
-              "value": "soldier/commander",
-              "confidence": 0.8,
-              "note": null
-            }
-          ]
-        }
-      },
-      {
-        "speaker_id": "spk_004",
-        "label": "Speaker 4",
-        "grounded": {
-          "confidence": 0.85,
-          "linked_segment_indexes": [
-            1
-          ],
-          "acoustic_descriptors": [
-            {
-              "label": "urgent, radio-filtered male voice",
-              "confidence": 0.8
-            }
-          ]
-        },
-        "inferred_traits": {
-          "traits": [
-            {
-              "trait": "role",
-              "value": "soldier",
-              "confidence": 0.7,
-              "note": null
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.9,
+              "note": "deep, resonant voice"
             }
           ]
         }
       }
     ],
-    "summary": "The chunk contains brief tactical radio chatter from soldiers requesting a situation report.",
-    "totalDuration": 20,
-    "handoffContext": "The scene is a military or tactical operation. Speaker 3 (spk_003) and Speaker 4 (spk_004) are communicating via radio."
+    "summary": "A news anchor reports on Raul Menendez's global unrest, followed by a snippet of a female voice discussing Menendez.",
+    "totalDuration": 8,
+    "handoffContext": "Speaker 1 (female) is speaking about Menendez. Speaker 3 (male news anchor) provided the context."
   },
   "toolLoop": {
     "toolName": "validate_dialogue_transcription_json",
     "maxTurns": 4,
     "maxValidatorCalls": 3,
-    "turns": 2,
-    "validatorCalls": 2,
+    "turns": 1,
+    "validatorCalls": 1,
     "history": [
       {
         "role": "assistant",
         "turn": 1,
         "kind": "model_output",
-        "raw": "{\n  \"tool\": \"validate_dialogue_transcription_json\",\n  \"transcription\": {\n    \"dialogue_segments\": [\n      {\n        \"start\": 11.5,\n        \"end\": 12.5,\n        \"speaker\": \"Speaker 3\",\n        \"speaker_id\": \"spk_003\",\n        \"text\": \"Specter one, report.\",\n        \"confidence\": 0.95\n      },\n      {\n        \"start\": 14.5,\n        \"end\": 15.5,\n        \"speaker\": \"Speaker 4\",\n        \"speaker_id\": \"spk_004\",\n        \"text\": \"Need a sitrep.\",\n        \"confidence\": 0.9\n      }\n    ],\n    \"speaker_profiles\": [\n      {\n        \"speaker_id\": \"spk_003\",\n        \"label\": \"Speaker 3\",\n        \"grounded\": {\n          \"confidence\": 0.9,\n          \"linked_segment_indexes\": [\n            0\n          ],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"strained, tactical male voice\",\n              \"confidence\": 0.85\n            }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"role\",\n              \"value\": \"soldier/commander\",\n              \"confidence\": 0.8\n            }\n          ]\n        }\n      },\n      {\n        \"speaker_id\": \"spk_004\",\n        \"label\": \"Speaker 4\",\n        \"grounded\": {\n          \"confidence\": 0.85,\n          \"linked_segment_indexes\": [\n            1\n          ],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"urgent, radio-filtered male voice\",\n              \"confidence\": 0.8\n            }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"role\",\n              \"value\": \"soldier\",\n              \"confidence\": 0.7\n            }\n          ]\n        }\n      }\n    ],\n    \"summary\": \"The chunk contains brief tactical radio chatter from soldiers requesting a situation report.\",\n    \"handoffContext\": \"The scene is a military or tactical operation. Speaker 3 (spk_003) and Speaker 4 (spk_004) are communicating via radio.\",\n    \"totalDuration\": 20.0\n  }\n}"
+        "raw": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 4.2,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"Raul Menendez ignited global unrest on an unprecedented scale.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 4.2,\n      \"end\": 8.0,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Menendez is a...\",\n      \"confidence\": 0.85\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_003\",\n      \"label\": \"Speaker 3\",\n      \"grounded\": {\n        \"confidence\": 0.90,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"authoritative, news-anchor tone\", \"confidence\": 0.85 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"male\",\n            \"confidence\": 0.90,\n            \"note\": \"deep, resonant voice\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [1],\n        \"acoustic_descriptors\": [\n          { \"label\": \"dramatic, cinematic narration style\", \"confidence\": 0.80 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"female\",\n            \"confidence\": 0.90,\n            \"note\": \"consistent with previous chunk\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"A news anchor reports on Raul Menendez's global unrest, followed by a snippet of a female voice discussing Menendez.\",\n  \"handoffContext\": \"Speaker 1 (female) is speaking about Menendez. Speaker 3 (male news anchor) provided the context.\",\n  \"totalDuration\": 8.0\n}"
       },
       {
         "role": "tool",
         "turn": 1,
-        "kind": "validator_acceptance",
+        "kind": "tool_result_auto_validation",
         "toolName": "validate_dialogue_transcription_json",
+        "source": "auto_validate_candidate_json",
         "toolCall": {
           "tool": "validate_dialogue_transcription_json",
           "transcription": {
             "dialogue_segments": [
               {
-                "start": 11.5,
-                "end": 12.5,
+                "start": 0,
+                "end": 4.2,
                 "speaker": "Speaker 3",
                 "speaker_id": "spk_003",
-                "text": "Specter one, report.",
+                "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
                 "confidence": 0.95
               },
               {
-                "start": 14.5,
-                "end": 15.5,
-                "speaker": "Speaker 4",
-                "speaker_id": "spk_004",
-                "text": "Need a sitrep.",
-                "confidence": 0.9
+                "start": 4.2,
+                "end": 8,
+                "speaker": "Speaker 1",
+                "speaker_id": "spk_001",
+                "text": "Menendez is a...",
+                "confidence": 0.85
               }
             ],
             "speaker_profiles": [
@@ -256,8 +263,8 @@
                 }
               },
               {
-                "speaker_id": "spk_004",
-                "label": "Speaker 4",
+                "speaker_id": "spk_001",
+                "label": "Speaker 1",
                 "grounded": {
                   "confidence": "[Truncated]",
                   "linked_segment_indexes": "[Truncated]",
@@ -268,9 +275,9 @@
                 }
               }
             ],
-            "summary": "The chunk contains brief tactical radio chatter from soldiers requesting a situation report.",
-            "handoffContext": "The scene is a military or tactical operation. Speaker 3 (spk_003) and Speaker 4 (spk_004) are communicating via radio.",
-            "totalDuration": 20
+            "summary": "A news anchor reports on Raul Menendez's global unrest, followed by a snippet of a female voice discussing Menendez.",
+            "handoffContext": "Speaker 1 (female) is speaking about Menendez. Speaker 3 (male news anchor) provided the context.",
+            "totalDuration": 8
           },
           "arguments": {
             "transcription": "[Circular]"
@@ -285,28 +292,28 @@
           "normalizedValue": {
             "dialogue_segments": [
               {
-                "start": 11.5,
-                "end": 12.5,
+                "start": 0,
+                "end": 4.2,
                 "speaker": "Speaker 3",
                 "speaker_id": "spk_003",
-                "text": "Specter one, report.",
+                "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
                 "confidence": 0.95,
                 "index": 0
               },
               {
-                "start": 14.5,
-                "end": 15.5,
-                "speaker": "Speaker 4",
-                "speaker_id": "spk_004",
-                "text": "Need a sitrep.",
-                "confidence": 0.9,
+                "start": 4.2,
+                "end": 8,
+                "speaker": "Speaker 1",
+                "speaker_id": "spk_001",
+                "text": "Menendez is a...",
+                "confidence": 0.85,
                 "index": 1
               }
             ],
             "speaker_profiles": [
               {
-                "speaker_id": "spk_003",
-                "label": "Speaker 3",
+                "speaker_id": "spk_001",
+                "label": "Speaker 1",
                 "grounded": {
                   "confidence": "[Truncated]",
                   "linked_segment_indexes": "[Truncated]",
@@ -316,59 +323,6 @@
                   "traits": "[Truncated]"
                 }
               },
-              {
-                "speaker_id": "spk_004",
-                "label": "Speaker 4",
-                "grounded": {
-                  "confidence": "[Truncated]",
-                  "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]"
-                },
-                "inferred_traits": {
-                  "traits": "[Truncated]"
-                }
-              }
-            ],
-            "summary": "The chunk contains brief tactical radio chatter from soldiers requesting a situation report.",
-            "totalDuration": 20,
-            "handoffContext": "The scene is a military or tactical operation. Speaker 3 (spk_003) and Speaker 4 (spk_004) are communicating via radio."
-          }
-        }
-      },
-      {
-        "role": "assistant",
-        "turn": 2,
-        "kind": "model_output",
-        "raw": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 11.5,\n      \"end\": 12.5,\n      \"speaker\": \"Speaker 3\",\n      \"speaker_id\": \"spk_003\",\n      \"text\": \"Specter one, report.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 14.5,\n      \"end\": 15.5,\n      \"speaker\": \"Speaker 4\",\n      \"speaker_id\": \"spk_004\",\n      \"text\": \"Need a sitrep.\",\n      \"confidence\": 0.9\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_003\",\n      \"label\": \"Speaker 3\",\n      \"grounded\": {\n        \"confidence\": 0.9,\n        \"linked_segment_indexes\": [\n          0\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"strained, tactical male voice\",\n            \"confidence\": 0.85\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"soldier/commander\",\n            \"confidence\": 0.8\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_004\",\n      \"label\": \"Speaker 4\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [\n          1\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"urgent, radio-filtered male voice\",\n            \"confidence\": 0.8\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"soldier\",\n            \"confidence\": 0.7\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The chunk contains brief tactical radio chatter from soldiers requesting a situation report.\",\n  \"handoffContext\": \"The scene is a military or tactical operation. Speaker 3 (spk_003) and Speaker 4 (spk_004) are communicating via radio.\",\n  \"totalDuration\": 20.0\n}"
-      },
-      {
-        "role": "tool",
-        "turn": 2,
-        "kind": "final_artifact_revalidation",
-        "toolName": "validate_dialogue_transcription_json",
-        "source": "final_artifact_auto_validation",
-        "toolCall": {
-          "tool": "validate_dialogue_transcription_json",
-          "transcription": {
-            "dialogue_segments": [
-              {
-                "start": 11.5,
-                "end": 12.5,
-                "speaker": "Speaker 3",
-                "speaker_id": "spk_003",
-                "text": "Specter one, report.",
-                "confidence": 0.95
-              },
-              {
-                "start": 14.5,
-                "end": 15.5,
-                "speaker": "Speaker 4",
-                "speaker_id": "spk_004",
-                "text": "Need a sitrep.",
-                "confidence": 0.9
-              }
-            ],
-            "speaker_profiles": [
               {
                 "speaker_id": "spk_003",
                 "label": "Speaker 3",
@@ -380,84 +334,11 @@
                 "inferred_traits": {
                   "traits": "[Truncated]"
                 }
-              },
-              {
-                "speaker_id": "spk_004",
-                "label": "Speaker 4",
-                "grounded": {
-                  "confidence": "[Truncated]",
-                  "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]"
-                },
-                "inferred_traits": {
-                  "traits": "[Truncated]"
-                }
               }
             ],
-            "summary": "The chunk contains brief tactical radio chatter from soldiers requesting a situation report.",
-            "handoffContext": "The scene is a military or tactical operation. Speaker 3 (spk_003) and Speaker 4 (spk_004) are communicating via radio.",
-            "totalDuration": 20
-          },
-          "arguments": {
-            "transcription": "[Circular]"
-          }
-        },
-        "result": {
-          "ok": true,
-          "valid": true,
-          "toolName": "validate_dialogue_transcription_json",
-          "summary": "JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.",
-          "errors": [],
-          "normalizedValue": {
-            "dialogue_segments": [
-              {
-                "start": 11.5,
-                "end": 12.5,
-                "speaker": "Speaker 3",
-                "speaker_id": "spk_003",
-                "text": "Specter one, report.",
-                "confidence": 0.95,
-                "index": 0
-              },
-              {
-                "start": 14.5,
-                "end": 15.5,
-                "speaker": "Speaker 4",
-                "speaker_id": "spk_004",
-                "text": "Need a sitrep.",
-                "confidence": 0.9,
-                "index": 1
-              }
-            ],
-            "speaker_profiles": [
-              {
-                "speaker_id": "spk_003",
-                "label": "Speaker 3",
-                "grounded": {
-                  "confidence": "[Truncated]",
-                  "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]"
-                },
-                "inferred_traits": {
-                  "traits": "[Truncated]"
-                }
-              },
-              {
-                "speaker_id": "spk_004",
-                "label": "Speaker 4",
-                "grounded": {
-                  "confidence": "[Truncated]",
-                  "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]"
-                },
-                "inferred_traits": {
-                  "traits": "[Truncated]"
-                }
-              }
-            ],
-            "summary": "The chunk contains brief tactical radio chatter from soldiers requesting a situation report.",
-            "totalDuration": 20,
-            "handoffContext": "The scene is a military or tactical operation. Speaker 3 (spk_003) and Speaker 4 (spk_004) are communicating via radio."
+            "summary": "A news anchor reports on Raul Menendez's global unrest, followed by a snippet of a female voice discussing Menendez.",
+            "totalDuration": 8,
+            "handoffContext": "Speaker 1 (female) is speaking about Menendez. Speaker 3 (male news anchor) provided the context."
           }
         }
       }

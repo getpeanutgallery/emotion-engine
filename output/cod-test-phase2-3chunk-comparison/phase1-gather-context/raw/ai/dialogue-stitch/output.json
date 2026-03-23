@@ -1,87 +1,94 @@
 {
-  "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez, United Global Unrest.\nSpeaker 3: A lot of people counting on us for answers.\nSpeaker 1: We are the only ones who can give them.\nSpeaker 3: And if we fail?\nSpeaker 1: Then the world burns.\nSpeaker 1: Raul Menendez is the most dangerous man in the world.\nSpeaker 3: Specter One, report.\nSpeaker 4: Need a sitrep.\nSpeaker 3: This isn't real.\nSpeaker 2: The hell it ain't!\nSpeaker 2: I'm the monster. Control. Monster.\nSpeaker 3: Pull it together, man!\nSpeaker 2: So eager to lead, are we? Killing the man is a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 3: No more games. This ends now.\nSpeaker 1: Get the Reznov challenge pack when you pre-order now.",
+  "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: But we are not afraid.\nSpeaker 2: The streets shall once again run red.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist. We're bringing peace and security to the world.\nSpeaker 4: He refuses to let me go.\nSpeaker 5: Stop looking backwards, David, but what matters is what we do next.\nSpeaker 5: A lot of people counting on us for answers.\nSpeaker 5: Spectre 1, report.\nSpeaker 6: Need a sitrep.\nSpeaker 4: This isn't real. The hell it is.\nSpeaker 7: Obey our master, control our master.\nSpeaker 7: Master of the invisible, master of the space. Master of your mind, master of your fate.\nSpeaker 7: Master, master, wins and brings it all in after. Master, master, we will be the ones to cry.\nSpeaker 5: Pull it together, man!\nSpeaker 2: So eager to leave, are we?\nSpeaker 2: Kill them, men.\nSpeaker 8: It's a hell of a lot easier than killing the idea.\nSpeaker 2: You were never cut out to be a Mason.\nSpeaker 2: No more games. This ends now.\nSpeaker 7: Obey your master!\nSpeaker 3: Get the Reznov challenge pack. And you pre-order now.\nSpeaker 7: Master, master, wins and brings it all in after. Master, master, we will be the ones to cry. Obey your master!\nSpeaker 3: Get the Reznov challenge pack.",
   "auditTrail": [
     {
-      "op": "normalize_speaker_labels",
-      "chunkIndex": 0,
-      "detail": "Kept generic speaker labels and normalized punctuation/capitalization for readability across all chunks."
+      "op": "merge_boundary",
+      "chunkIndex": 3,
+      "detail": "Removed duplicated line repeated from chunk 2 at the chunk 2/3 boundary: 'Menendez is a terrorist. We're bringing peace and security to the world.'"
     },
     {
-      "op": "stitch_chunks",
-      "chunkIndex": 6,
-      "detail": "Concatenated chunk transcripts in chronological order with line breaks between utterances."
+      "op": "merge_boundary",
+      "chunkIndex": 8,
+      "detail": "Removed duplicated promotional line repeated from chunk 7 at the chunk 7/8 boundary: 'Get the Reznov challenge pack. And you pre-order now.'"
+    },
+    {
+      "op": "normalize_format",
+      "chunkIndex": 0,
+      "detail": "Removed chunk headers and timestamps; preserved speaker labels and dialogue order."
     },
     {
       "op": "normalize_text",
       "chunkIndex": 2,
-      "detail": "Standardized 'Specter one' to 'Specter One' and preserved 'sitrep' as spoken tactical jargon."
-    },
-    {
-      "op": "drop_empty_chunk",
-      "chunkIndex": 7,
-      "detail": "Omitted final 0.04s chunk because it contained no speech."
+      "detail": "Standardized sentence punctuation and normalized 'Terrorist' to lowercase 'terrorist' without changing meaning."
     }
   ],
   "debug": {
     "inputKind": "dialogue.stitch.input",
-    "inputChunks": 8,
-    "notes": "No duplicated boundary fragments were present in the mechanical transcript. Cleaned transcript preserves original ordering and generic speaker IDs; no speaker identity remapping was inferred beyond the transcript labels.",
+    "inputChunks": 9,
+    "notes": "Mechanical transcript contained two clear boundary duplicates caused by chunk overlap. Kept all non-duplicated lines in chronological order. One line in chunk 2 extends past its nominal chunk end and was treated as overlap, not a separate utterance.",
     "refs": [
       {
         "chunkIndex": 0,
         "startTime": 0,
-        "endTime": 20,
+        "endTime": 8,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3",
-        "promptRef": "_meta/ai/_prompts/f8656a27f25ea383ff5377bd3dfd010d8a7b3e961312e57f4f16dad46984998b.json"
+        "promptRef": "_meta/ai/_prompts/19514fa182be4231c27723e880e102007a2b0e7f90f7fb60bf031c90e42d3194.json"
       },
       {
         "chunkIndex": 1,
-        "startTime": 20,
-        "endTime": 40,
+        "startTime": 8,
+        "endTime": 16,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3",
-        "promptRef": "_meta/ai/_prompts/e2fc6523147c2068bca90d29e3af5ea8ac305de82e14309fc137542e61e94849.json"
+        "promptRef": "_meta/ai/_prompts/4fb18294ab914f4d002c215f8a10471dbb54d5188752ba6084bc071f2957f393.json"
       },
       {
         "chunkIndex": 2,
-        "startTime": 40,
-        "endTime": 60,
+        "startTime": 16,
+        "endTime": 24,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3",
-        "promptRef": "_meta/ai/_prompts/322a70df4fca4a7f8cabcee86e3ec21cf4e5f9fc24b70b3c6c16c5af8f066100.json"
+        "promptRef": "_meta/ai/_prompts/a2c39e84c7cbc8f524a69a1a074542dda57b0261bc708621e7cace461cdaddde.json"
       },
       {
         "chunkIndex": 3,
-        "startTime": 60,
-        "endTime": 80,
+        "startTime": 24,
+        "endTime": 44,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3",
-        "promptRef": "_meta/ai/_prompts/98cc8b90abed61c9f1053573c52cb91156641a15533b38fb9abca9e7076947a2.json"
+        "promptRef": "_meta/ai/_prompts/3ce78e835b7f87656c9040383576c8a3886e8a5ec2639414c5255e8e22bd8dcd.json"
       },
       {
         "chunkIndex": 4,
-        "startTime": 80,
-        "endTime": 100,
+        "startTime": 44,
+        "endTime": 64,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3",
-        "promptRef": "_meta/ai/_prompts/a78586c34c276f4b42fdbf64fd30c5e410f3e22eb6663ddbe1e806282bedf443.json"
+        "promptRef": "_meta/ai/_prompts/287afc17ee9213f1896e8340f1c127c9598be4ca1482226dbd5da0ab5b74bb66.json"
       },
       {
         "chunkIndex": 5,
-        "startTime": 100,
-        "endTime": 120,
+        "startTime": 64,
+        "endTime": 84,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3",
-        "promptRef": "_meta/ai/_prompts/10608526f9a1dd9d1736c9997b3f9eafb2f7e9330e4b92b1c3cd8dfe57d21a6e.json"
+        "promptRef": "_meta/ai/_prompts/1b597342c649575c47362009b4a2ff6a9f83e3c8c623e4cd9959c7874c9032f1.json"
       },
       {
         "chunkIndex": 6,
-        "startTime": 120,
-        "endTime": 140,
+        "startTime": 84,
+        "endTime": 104,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3",
-        "promptRef": "_meta/ai/_prompts/41d7f686afe4c0714fb77500c2ea6e453c055ed36c757c64fc840a3866b0018e.json"
+        "promptRef": "_meta/ai/_prompts/d9d03cbf2e985a3a2813a87c3bc897e5d458899e4c219ff07e5b217d6a5631e3.json"
       },
       {
         "chunkIndex": 7,
-        "startTime": 140,
-        "endTime": 140.042449,
+        "startTime": 104,
+        "endTime": 124,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3",
-        "promptRef": "_meta/ai/_prompts/ceb3643735382b6355e6554e876be65118c065d9aa57427bc4b5aad404e2edad.json"
+        "promptRef": "_meta/ai/_prompts/230a01a59ad5109f86758eecd7f18a0559a36505b5c50fc4d269d7bbb857bb10.json"
+      },
+      {
+        "chunkIndex": 8,
+        "startTime": 124,
+        "endTime": 140.042449,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_008.mp3",
+        "promptRef": "_meta/ai/_prompts/e923008a7ae96809f940840ed5eebc3525e6feb8f4ac5312fecdc28c05950465.json"
       }
     ]
   }

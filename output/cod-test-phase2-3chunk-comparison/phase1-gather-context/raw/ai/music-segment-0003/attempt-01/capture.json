@@ -2,7 +2,7 @@
   "segmentIndex": 3,
   "startTime": 90,
   "endTime": 120,
-  "rollingSummaryIn": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.",
+  "rollingSummaryIn": "The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over.",
   "attempt": 1,
   "attemptInTarget": 1,
   "targetIndex": 0,
@@ -19,15 +19,15 @@
   },
   "failover": null,
   "promptRef": {
-    "sha256": "48e4e520bcae4b774ac3bf58185887554dfbaaa2531d163d762df9e5ec58eb53",
-    "file": "_meta/ai/_prompts/48e4e520bcae4b774ac3bf58185887554dfbaaa2531d163d762df9e5ec58eb53.json"
+    "sha256": "09138787b7b2340fcc83c99dc6e154b1e34a38de2ec719d1d10270679ff7f36c",
+    "file": "_meta/ai/_prompts/09138787b7b2340fcc83c99dc6e154b1e34a38de2ec719d1d10270679ff7f36c.json"
   },
   "rawResponse": {
-    "content": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.\",\n  \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.\"\n}",
+    "content": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"High-intensity, cinematic action music with dramatic dialogue and sound effects.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio features intense cinematic music accompanying dramatic dialogue and sound effects, maintaining a high-stakes action tone.\",\n  \"rollingSummary\": \"The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over.\"\n}",
     "usage": {
-      "input": 2455,
-      "output": 147,
-      "total": 2602
+      "input": 2380,
+      "output": 629,
+      "total": 3009
     },
     "providerRequest": {
       "method": "POST",
@@ -44,7 +44,7 @@
             "content": [
               {
                 "type": "text",
-                "text": "Analyze the audio in this chunk (90.0s to 120.0s).\n\nImportant grounding:\n- The attached audio file is already the extracted audio for this exact global window.\n- The attached chunk duration is approximately 30.0 seconds.\n- Treat 90.0s to 120.0s as the chunk's location in the original timeline, not as a claim about the attached file's full duration.\n- Do NOT claim the requested range exceeds the file duration just because the attached chunk is shorter than the full trailer.\n- Analyze only the audio that is actually present in the attached chunk.\n\nRolling summary so far (from previous chunks):\nThe audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.\n\nIdentify:\n1. Type of audio: music, speech, silence, ambient noise, sound effects\n2. If music: describe the mood (upbeat, calm, tense, sad, energetic, etc.)\n3. Intensity level from 1-10\n4. Brief description\n\nReturn JSON only in this format:\n{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"Brief description of the audio\",\n    \"mood\": \"energetic\",\n    \"intensity\": 5\n  },\n  \"chunkSummary\": \"1-2 sentences\",\n  \"rollingSummary\": \"Updated rolling summary for the entire audio so far (keep concise)\"\n}\n\nAllowed values for analysis.type: music | speech | silence | ambient | sfx.\nAllowed values for analysis.mood: upbeat | calm | tense | sad | energetic | neutral.\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_music_analysis_json\",\n  \"musicAnalysis\": {\n    \"analysis\": {\n      \"type\": \"music\",\n      \"description\": \"Upbeat instrumental pop bed.\",\n      \"mood\": \"energetic\",\n      \"intensity\": 7\n    },\n    \"rollingSummary\": \"The audio stays upbeat and music-led so far.\"\n  }\n}\n2) Final music analysis JSON matching the schema above.\n\nAcceptance rules:\n- The final music analysis JSON is accepted only after validate_music_analysis_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_music_analysis_json\",\"musicAnalysis\":{\"analysis\":{\"type\":\"music\",\"description\":\"Upbeat instrumental pop bed.\",\"mood\":\"energetic\",\"intensity\":7},\"rollingSummary\":\"The audio stays upbeat and music-led so far.\"}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised music analysis JSON candidate.\n- After the validator returns valid=true, return ONLY the final music analysis JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must be the music analysis JSON object for this chunk.\n\nFinal artifact reminders:\n- Report analysis.type, analysis.description, optional analysis.mood, and analysis.intensity.\n- Include rollingSummary when you have continuity context from prior chunks.\n\nTool contract:\n{\n  \"name\": \"validate_music_analysis_json\",\n  \"argumentKey\": \"musicAnalysis\",\n  \"description\": \"Validate a Phase 1 music analysis JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_music_analysis_json\",\n    \"musicAnalysis\": {\n      \"analysis\": {\n        \"type\": \"music\",\n        \"description\": \"Upbeat instrumental pop bed.\",\n        \"mood\": \"energetic\",\n        \"intensity\": 7\n      },\n      \"rollingSummary\": \"The audio stays upbeat and music-led so far.\"\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"musicAnalysis\"\n    ],\n    \"properties\": {\n      \"musicAnalysis\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate music analysis JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, and optional rollingSummary.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 3,\n  \"remainingValidatorCalls\": 2\n}\n\nConversation state:\n[\n  {\n    \"role\": \"assistant\",\n    \"turn\": 1,\n    \"kind\": \"model_output\",\n    \"raw\": \"{\\n  \\\"tool\\\": \\\"validate_music_analysis_json\\\",\\n  \\\"musicAnalysis\\\": {\\n    \\\"analysis\\\": {\\n      \\\"type\\\": \\\"music\\\",\\n      \\\"description\\\": \\\"High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.\\\",\\n      \\\"mood\\\": \\\"energetic\\\",\\n      \\\"intensity\\\": 9\\n    },\\n    \\\"rollingSummary\\\": \\\"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.\\\"\\n  }\\n}\"\n  },\n  {\n    \"role\": \"tool\",\n    \"turn\": 1,\n    \"kind\": \"validator_acceptance\",\n    \"toolName\": \"validate_music_analysis_json\",\n    \"toolCall\": {\n      \"tool\": \"validate_music_analysis_json\",\n      \"musicAnalysis\": {\n        \"analysis\": {\n          \"type\": \"music\",\n          \"description\": \"High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.\",\n          \"mood\": \"energetic\",\n          \"intensity\": 9\n        },\n        \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.\"\n      },\n      \"arguments\": {\n        \"musicAnalysis\": {\n          \"analysis\": {\n            \"type\": \"music\",\n            \"description\": \"High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.\",\n            \"mood\": \"energetic\",\n            \"intensity\": 9\n          },\n          \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.\"\n        }\n      }\n    },\n    \"result\": {\n      \"ok\": true,\n      \"valid\": true,\n      \"toolName\": \"validate_music_analysis_json\",\n      \"summary\": \"JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.\",\n      \"errors\": [],\n      \"normalizedValue\": {\n        \"analysis\": {\n          \"type\": \"music\",\n          \"description\": \"High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.\",\n          \"mood\": \"energetic\",\n          \"intensity\": 9\n        },\n        \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.\"\n      }\n    }\n  }\n]"
+                "text": "Analyze the audio in this chunk (90.0s to 120.0s).\n\nImportant grounding:\n- The attached audio file is already the extracted audio for this exact global window.\n- The attached chunk duration is approximately 30.0 seconds.\n- Treat 90.0s to 120.0s as the chunk's location in the original timeline, not as a claim about the attached file's full duration.\n- Do NOT claim the requested range exceeds the file duration just because the attached chunk is shorter than the full trailer.\n- Analyze only the audio that is actually present in the attached chunk.\n\nRolling summary so far (from previous chunks):\nThe audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over.\n\nIdentify:\n1. Type of audio: music, speech, silence, ambient noise, sound effects\n2. If music: describe the mood (upbeat, calm, tense, sad, energetic, etc.)\n3. Intensity level from 1-10\n4. Brief description\n\nReturn JSON only in this format:\n{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"Brief description of the audio\",\n    \"mood\": \"energetic\",\n    \"intensity\": 5\n  },\n  \"chunkSummary\": \"1-2 sentences\",\n  \"rollingSummary\": \"Updated rolling summary for the entire audio so far (keep concise)\"\n}\n\nAllowed values for analysis.type: music | speech | silence | ambient | sfx.\nAllowed values for analysis.mood: upbeat | calm | tense | sad | energetic | neutral.\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_music_analysis_json\",\n  \"musicAnalysis\": {\n    \"analysis\": {\n      \"type\": \"music\",\n      \"description\": \"Upbeat instrumental pop bed.\",\n      \"mood\": \"energetic\",\n      \"intensity\": 7\n    },\n    \"rollingSummary\": \"The audio stays upbeat and music-led so far.\"\n  }\n}\n2) Final music analysis JSON matching the schema above.\n\nAcceptance rules:\n- The final music analysis JSON is accepted only after validate_music_analysis_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_music_analysis_json\",\"musicAnalysis\":{\"analysis\":{\"type\":\"music\",\"description\":\"Upbeat instrumental pop bed.\",\"mood\":\"energetic\",\"intensity\":7},\"rollingSummary\":\"The audio stays upbeat and music-led so far.\"}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised music analysis JSON candidate.\n- After the validator returns valid=true, return ONLY the final music analysis JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must be the music analysis JSON object for this chunk.\n\nFinal artifact reminders:\n- Report analysis.type, analysis.description, optional analysis.mood, and analysis.intensity.\n- Include rollingSummary when you have continuity context from prior chunks.\n\nTool contract:\n{\n  \"name\": \"validate_music_analysis_json\",\n  \"argumentKey\": \"musicAnalysis\",\n  \"description\": \"Validate a Phase 1 music analysis JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_music_analysis_json\",\n    \"musicAnalysis\": {\n      \"analysis\": {\n        \"type\": \"music\",\n        \"description\": \"Upbeat instrumental pop bed.\",\n        \"mood\": \"energetic\",\n        \"intensity\": 7\n      },\n      \"rollingSummary\": \"The audio stays upbeat and music-led so far.\"\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"musicAnalysis\"\n    ],\n    \"properties\": {\n      \"musicAnalysis\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate music analysis JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, and optional rollingSummary.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 3,\n  \"remainingValidatorCalls\": 2\n}\n\nConversation state:\n[\n  {\n    \"role\": \"assistant\",\n    \"turn\": 1,\n    \"kind\": \"model_output\",\n    \"raw\": \"{\\n  \\\"tool\\\": \\\"validate_music_analysis_json\\\",\\n  \\\"musicAnalysis\\\": {\\n    \\\"analysis\\\": {\\n      \\\"type\\\": \\\"music\\\",\\n      \\\"description\\\": \\\"High-intensity, cinematic action music with dramatic dialogue and sound effects.\\\",\\n      \\\"mood\\\": \\\"energetic\\\",\\n      \\\"intensity\\\": 9\\n    },\\n    \\\"rollingSummary\\\": \\\"The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over.\\\"\\n  }\\n}\"\n  },\n  {\n    \"role\": \"tool\",\n    \"turn\": 1,\n    \"kind\": \"validator_acceptance\",\n    \"toolName\": \"validate_music_analysis_json\",\n    \"toolCall\": {\n      \"tool\": \"validate_music_analysis_json\",\n      \"musicAnalysis\": {\n        \"analysis\": {\n          \"type\": \"music\",\n          \"description\": \"High-intensity, cinematic action music with dramatic dialogue and sound effects.\",\n          \"mood\": \"energetic\",\n          \"intensity\": 9\n        },\n        \"rollingSummary\": \"The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over.\"\n      },\n      \"arguments\": {\n        \"musicAnalysis\": {\n          \"analysis\": {\n            \"type\": \"music\",\n            \"description\": \"High-intensity, cinematic action music with dramatic dialogue and sound effects.\",\n            \"mood\": \"energetic\",\n            \"intensity\": 9\n          },\n          \"rollingSummary\": \"The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over.\"\n        }\n      }\n    },\n    \"result\": {\n      \"ok\": true,\n      \"valid\": true,\n      \"toolName\": \"validate_music_analysis_json\",\n      \"summary\": \"JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.\",\n      \"errors\": [],\n      \"normalizedValue\": {\n        \"analysis\": {\n          \"type\": \"music\",\n          \"description\": \"High-intensity, cinematic action music with dramatic dialogue and sound effects.\",\n          \"mood\": \"energetic\",\n          \"intensity\": 9\n        },\n        \"rollingSummary\": \"The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over.\"\n      }\n    }\n  }\n]"
               },
               {
                 "type": "input_audio",
@@ -67,7 +67,7 @@
     "providerResponse": {
       "status": 200,
       "headers": {
-        "date": "Mon, 23 Mar 2026 14:38:21 GMT",
+        "date": "Mon, 23 Mar 2026 23:00:25 GMT",
         "content-type": "application/json",
         "transfer-encoding": "chunked",
         "connection": "keep-alive",
@@ -76,14 +76,14 @@
         "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
         "x-content-type-options": "nosniff",
         "server": "cloudflare",
-        "cf-ray": "9e0e2dd8d83125a7-MIA"
+        "cf-ray": "9e110d4799d947ad-MIA"
       },
       "body": {
-        "id": "gen-1774276699-uWJf6CfMw2Nc4LTeRDvZ",
+        "id": "gen-1774306822-WlaLjYUEHVS4xGMrnFjt",
         "object": "chat.completion",
-        "created": 1774276699,
+        "created": 1774306822,
         "model": "google/gemini-3.1-flash-lite-preview-20260303",
-        "provider": "Google AI Studio",
+        "provider": "Google",
         "system_fingerprint": null,
         "choices": [
           {
@@ -93,10 +93,16 @@
             "native_finish_reason": "STOP",
             "message": {
               "role": "assistant",
-              "content": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.\",\n  \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.\"\n}",
+              "content": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"High-intensity, cinematic action music with dramatic dialogue and sound effects.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio features intense cinematic music accompanying dramatic dialogue and sound effects, maintaining a high-stakes action tone.\",\n  \"rollingSummary\": \"The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over.\"\n}",
               "refusal": null,
-              "reasoning": null,
+              "reasoning": "**Examining the Audio Segment**\n\nI've been focusing on the provided audio segment. Preliminary analysis reveals a mix of music, speech, and sound effects. The music immediately caught my attention; it's quite intense and cinematic, really driving the action. I'm keen to delve deeper into the interplay of these elements.\n\n\n",
               "reasoning_details": [
+                {
+                  "type": "[Truncated]",
+                  "text": "[Truncated]",
+                  "format": "[Truncated]",
+                  "index": "[Truncated]"
+                },
                 {
                   "type": "[Truncated]",
                   "data": "[Truncated]",
@@ -111,13 +117,13 @@
           "prompt_tokens": "[REDACTED]",
           "completion_tokens": "[REDACTED]",
           "total_tokens": "[REDACTED]",
-          "cost": 0.00102175,
+          "cost": 0.001726,
           "is_byok": false,
           "prompt_tokens_details": "[REDACTED]",
           "cost_details": {
-            "upstream_inference_cost": 0.00102175,
-            "upstream_inference_prompt_cost": 0.00080125,
-            "upstream_inference_completions_cost": 0.0002205
+            "upstream_inference_cost": 0.001726,
+            "upstream_inference_prompt_cost": 0.0007825,
+            "upstream_inference_completions_cost": 0.0009435
           },
           "completion_tokens_details": "[REDACTED]"
         }
@@ -129,11 +135,11 @@
       "start": 90,
       "end": 120,
       "type": "music",
-      "description": "High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.",
+      "description": "High-intensity, cinematic action music with dramatic dialogue and sound effects.",
       "mood": "energetic",
       "intensity": 9
     },
-    "rollingSummary": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion."
+    "rollingSummary": "The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over."
   },
   "toolLoop": {
     "toolName": "validate_music_analysis_json",
@@ -146,7 +152,7 @@
         "role": "assistant",
         "turn": 1,
         "kind": "model_output",
-        "raw": "{\n  \"tool\": \"validate_music_analysis_json\",\n  \"musicAnalysis\": {\n    \"analysis\": {\n      \"type\": \"music\",\n      \"description\": \"High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.\",\n      \"mood\": \"energetic\",\n      \"intensity\": 9\n    },\n    \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.\"\n  }\n}"
+        "raw": "{\n  \"tool\": \"validate_music_analysis_json\",\n  \"musicAnalysis\": {\n    \"analysis\": {\n      \"type\": \"music\",\n      \"description\": \"High-intensity, cinematic action music with dramatic dialogue and sound effects.\",\n      \"mood\": \"energetic\",\n      \"intensity\": 9\n    },\n    \"rollingSummary\": \"The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over.\"\n  }\n}"
       },
       {
         "role": "tool",
@@ -158,11 +164,11 @@
           "musicAnalysis": {
             "analysis": {
               "type": "music",
-              "description": "High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.",
+              "description": "High-intensity, cinematic action music with dramatic dialogue and sound effects.",
               "mood": "energetic",
               "intensity": 9
             },
-            "rollingSummary": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion."
+            "rollingSummary": "The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over."
           },
           "arguments": {
             "musicAnalysis": "[Circular]"
@@ -177,11 +183,11 @@
           "normalizedValue": {
             "analysis": {
               "type": "music",
-              "description": "High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.",
+              "description": "High-intensity, cinematic action music with dramatic dialogue and sound effects.",
               "mood": "energetic",
               "intensity": 9
             },
-            "rollingSummary": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion."
+            "rollingSummary": "The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over."
           }
         }
       },
@@ -189,7 +195,7 @@
         "role": "assistant",
         "turn": 2,
         "kind": "model_output",
-        "raw": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.\",\n  \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.\"\n}"
+        "raw": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"High-intensity, cinematic action music with dramatic dialogue and sound effects.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio features intense cinematic music accompanying dramatic dialogue and sound effects, maintaining a high-stakes action tone.\",\n  \"rollingSummary\": \"The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over.\"\n}"
       },
       {
         "role": "tool",
@@ -202,12 +208,12 @@
           "musicAnalysis": {
             "analysis": {
               "type": "music",
-              "description": "High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.",
+              "description": "High-intensity, cinematic action music with dramatic dialogue and sound effects.",
               "mood": "energetic",
               "intensity": 9
             },
-            "chunkSummary": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.",
-            "rollingSummary": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion."
+            "chunkSummary": "The audio features intense cinematic music accompanying dramatic dialogue and sound effects, maintaining a high-stakes action tone.",
+            "rollingSummary": "The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over."
           },
           "arguments": {
             "musicAnalysis": "[Circular]"
@@ -222,11 +228,11 @@
           "normalizedValue": {
             "analysis": {
               "type": "music",
-              "description": "High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.",
+              "description": "High-intensity, cinematic action music with dramatic dialogue and sound effects.",
               "mood": "energetic",
               "intensity": 9
             },
-            "rollingSummary": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion."
+            "rollingSummary": "The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over."
           }
         }
       }
