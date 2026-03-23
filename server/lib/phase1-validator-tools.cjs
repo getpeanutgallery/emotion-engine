@@ -112,9 +112,14 @@ function buildDialogueTranscriptionValidatorToolContract({ requireHandoff = fals
             acoustic_descriptors_abstained: false
           },
           inferred_traits: {
-            disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
-            traits: [],
-            abstained: true
+            traits: [
+              {
+                trait: 'accent',
+                value: 'possibly mid-Atlantic American English',
+                confidence: 0.31,
+                note: 'speculative inference from delivery only'
+              }
+            ]
           }
         }
       ],

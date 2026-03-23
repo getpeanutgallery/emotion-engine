@@ -34,7 +34,7 @@ test('dialogue transcription validator tool enforces required handoff fields', (
   assert.match(result.summary, /handoffContext/i);
 });
 
-test('dialogue transcription validator normalizes grounded speaker linkage and inferred abstention', () => {
+test('dialogue transcription validator normalizes grounded speaker linkage and inferred traits shape', () => {
   const result = executeDialogueTranscriptionValidatorTool({
     transcription: {
       dialogue_segments: [
@@ -52,8 +52,7 @@ test('dialogue transcription validator normalizes grounded speaker linkage and i
   assert.equal(result.normalizedValue.dialogue_segments[1].speaker_id, 'spk_001');
   assert.equal(result.normalizedValue.dialogue_segments[2].speaker_id, 'spk_002');
   assert.deepEqual(result.normalizedValue.speaker_profiles[0].grounded.linked_segment_indexes, [0, 1]);
-  assert.equal(result.normalizedValue.speaker_profiles[0].inferred_traits.abstained, true);
-  assert.equal(result.normalizedValue.speaker_profiles[0].inferred_traits.traits.length, 0);
+  assert.deepEqual(result.normalizedValue.speaker_profiles[0].inferred_traits, { traits: [] });
 });
 
 
@@ -76,11 +75,9 @@ test('dialogue transcription validator preserves inferred traits separately from
             acoustic_descriptors_abstained: false
           },
           inferred_traits: {
-            disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
             traits: [
               { trait: 'accent', value: 'possibly Midwestern US', confidence: 0.31, note: 'guess' }
-            ],
-            abstained: false
+            ]
           }
         }
       ],
@@ -116,9 +113,7 @@ test('dialogue transcription validator rebuilds linked segment indexes from the 
             acoustic_descriptors_abstained: false
           },
           inferred_traits: {
-            disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
-            traits: [],
-            abstained: true
+            traits: []
           }
         }
       ],

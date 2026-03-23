@@ -490,9 +490,7 @@ test('Get Dialogue Script', async (t) => {
                   acoustic_descriptors_abstained: false
                 },
                 inferred_traits: {
-                  disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
-                  traits: [],
-                  abstained: true
+                  traits: []
                 }
               }
             ],
@@ -554,9 +552,7 @@ test('Get Dialogue Script', async (t) => {
                   acoustic_descriptors_abstained: true
                 },
                 inferred_traits: {
-                  disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
-                  traits: [],
-                  abstained: true
+                  traits: []
                 }
               },
               {
@@ -569,9 +565,7 @@ test('Get Dialogue Script', async (t) => {
                   acoustic_descriptors_abstained: true
                 },
                 inferred_traits: {
-                  disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
-                  traits: [],
-                  abstained: true
+                  traits: []
                 }
               }
             ],
@@ -685,6 +679,94 @@ test('Get Dialogue Script', async (t) => {
       ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => segment.text !== 'Chunk impossible overrun'));
       ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.text === 'Chunk tail'));
     });
+
+    tNested.test('forces chunking for long within-budget dialogue to stabilize timing', async () => {
+      let chunkCallCount = 0;
+      completeImplementation = async (options) => {
+        const prompt = String(options?.prompt || '');
+        completionPrompts.push(prompt);
+        completionOptions.push(options || {});
+
+        if (prompt.includes('dialogue transcript stitcher')) {
+          return {
+            content: JSON.stringify({
+              cleanedTranscript: 'CLEANED TRANSCRIPT',
+              auditTrail: [{ op: 'merge_boundary', chunkIndex: 0, detail: 'test' }],
+              debug: { refs: [] }
+            }),
+            usage: { input: 100, output: 150 }
+          };
+        }
+
+        chunkCallCount += 1;
+        return {
+          content: JSON.stringify({
+            dialogue_segments: [
+              {
+                start: 0.5,
+                end: 1.5,
+                speaker: `Speaker ${chunkCallCount}`,
+                text: `Chunk ${chunkCallCount}`,
+                confidence: 0.95
+              }
+            ],
+            speaker_profiles: [
+              {
+                speaker_id: `spk_${String(chunkCallCount).padStart(3, '0')}`,
+                label: `Speaker ${chunkCallCount}`,
+                grounded: {
+                  confidence: 0.8,
+                  linked_segment_indexes: [0],
+                  acoustic_descriptors: [],
+                  acoustic_descriptors_abstained: true
+                },
+                inferred_traits: {
+                  traits: [
+                    {
+                      trait: 'accent',
+                      value: 'possibly regional US English',
+                      confidence: 0.22,
+                      note: 'speculative'
+                    }
+                  ]
+                }
+              }
+            ],
+            summary: `Chunk ${chunkCallCount}`,
+            handoffContext: `Continue from chunk ${chunkCallCount}`,
+            totalDuration: 10
+          }),
+          usage: { input: 100, output: 150 }
+        };
+      };
+
+      const result = await getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ...makeDialogueConfig({ adapterName: 'openrouter' }),
+          settings: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).settings,
+            dialogue_max_whole_file_duration_seconds: 5,
+            dialogue_forced_chunk_duration_seconds: 4
+          },
+          ai: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).ai,
+            dialogue_stitch: {
+              targets: [
+                { adapter: { name: 'openrouter', model: 'test-stitch-model' } }
+              ]
+            }
+          }
+        }
+      });
+
+      ok(chunkCallCount >= 2);
+      ok(completionPrompts.some((prompt) => prompt.includes('You are transcribing CHUNK 0')));
+      ok(completionPrompts.some((prompt) => prompt.includes('Do not compress the whole chunk\'s dialogue into the opening seconds')));
+      is(result.artifacts.dialogueData.totalDuration, 10);
+      ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.start >= 4));
+    });
   });
 
   t.test('input validation', (tNested) => {
@@ -763,7 +845,6 @@ test('Get Dialogue Script', async (t) => {
       property(profile.grounded, 'acoustic_descriptors_abstained');
       property(profile, 'inferred_traits');
       property(profile.inferred_traits, 'traits');
-      property(profile.inferred_traits, 'abstained');
       is(profile.grounded.linked_segment_indexes[0], 0);
     });
 
@@ -776,6 +857,8 @@ test('Get Dialogue Script', async (t) => {
       await getDialogueScript.run(input);
       ok(completionPrompts[0].includes('speaker_profiles'));
       ok(completionPrompts[0].includes('grounded speaker identity separate from inferred_traits'));
+      ok(completionPrompts[0].includes('Attempt reviewable traits for each speaker'));
+      ok(!completionPrompts[0].includes('set abstained=true'));
     });
   });
 });

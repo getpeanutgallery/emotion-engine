@@ -486,9 +486,7 @@ test('Video Chunks Script', async (t) => {
                   acoustic_descriptors_abstained: false
                 },
                 inferred_traits: {
-                  disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
-                  traits: [],
-                  abstained: true
+                  traits: []
                 }
               }
             ],

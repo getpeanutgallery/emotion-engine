@@ -32,7 +32,7 @@ Resume the emotion-engine dialogue-system lane by fixing Phase 1 speaker attribu
 
 We are picking up from the 2026-03-20 clean `cod-test` acceptance pass and the 2026-03-21 human review / follow-up execution lane. That review confirmed a real dialogue-system problem: some consecutive lines in the persisted Phase 1 dialogue context are misattributed to the same speaker even when different people are talking. The strongest validated product output so far is still the recommendation layer, but the dialogue/speaker layer needs a more grounded contract before we should trust it as canonical context.
 
-Derrick clarified the desired product behavior for this lane: Phase 1 dialogue output should expose richer speaker context that can be passed into Phase 2 chunk review, so the persona has better grounding about who is speaking each line and what can be cautiously inferred about that speaker. Some inferred traits — including age, ethnicity, gender, accent, personality-style cues, and similar descriptors — are considered potentially useful, but they must be explicitly framed as guesswork / inferred / non-authoritative rather than truth. That means this lane needs two things at once: a solid grounded mainline contract for speaker identity/linkage, and a clearly labeled speculative layer for inferred traits when present.
+Derrick clarified the desired product behavior for this lane: Phase 1 dialogue output should expose richer speaker context that can be passed into Phase 2 chunk review, so the persona has better grounding about who is speaking each line and what can be cautiously inferred about that speaker. Some inferred traits — including age, ethnicity, gender, accent, personality-style cues, and similar descriptors — are considered potentially useful. Earlier in this lane we kept them heavily hedged with explicit disclaimer/abstention structure, but Derrick has now directed a product change: keep inferred traits as a separate optional layer from the grounded speaker identity contract, but remove the explicit inferred-traits disclaimer text from `dialogue-data.json` and stop using the `abstained` concept for inferred traits so the system actually attempts to provide reviewable traits for each speaker. That means the next dialogue work needs to handle both timeline truth and this revised inferred-traits contract together.
 
 Validation should happen in two stages. First, run a modified `cod-test` config that performs only Phase 1 gather-context so Derrick can inspect the dialogue and music outputs together. If that looks good, run another modified `cod-test` config that completes only three Phase 2 video chunks, then compare those outputs against the original stored run to see whether the new dialogue/music context actually changes persona reasoning in useful ways. In parallel, we should explicitly evaluate whether the current `30s` music analysis window is the right semantic granularity, or whether it should move closer to the `5s` video chunk cadence while still preserving an overall trailer-wide music summary.
 
@@ -711,6 +711,70 @@ Truthful quality summary:
 Readiness judgment for `ee-0ky`:
 - **Ready to unblock.** The regenerated Phase 1 review packet is now trustworthy enough overall to proceed with the planned 3-chunk Phase 2 comparison in `ee-0ky`.
 - Remaining caution for downstream review: treat speaker identity/persona descriptions as grounded-but-still-model-generated context, not canonical transcript truth; however, the specific blockers that kept this lane closed (bad total duration, invalid linked indexes, false-silence music windows, and pathological clipped trailer tail timing) are now cleared in the live rerun.
+
+---
+
+### Task 2i: Fix early dialogue timing misalignment against the real video
+
+**Bead ID:** `ee-mgv0`  
+**SubAgent:** `coder`  
+**Prompt:** `Investigate the newly human-confirmed dialogue timing bug where Phase 1 dialogue-data.json places a line too early in the timeline relative to the real video. Current concrete example: \"It's time to wake up.\" is persisted around 0.9s-1.1s, but human review says it actually occurs around ~8s-10s in the original video. Trace whether this is caused by model timing output, whole-file normalization, segment repair/reindexing, stitch logic, or another narrow timing-mapping layer. While touching the dialogue contract, also implement Derrick's product change for inferred traits: remove the explicit inferred-traits disclaimer text from dialogue-data.json, remove the inferred-traits abstained concept, and make the system actually attempt to provide reviewable inferred traits for each speaker while keeping those inferred traits structurally separate from the grounded speaker identity/linkage fields. Land the smallest truthful fix set, add/update regression coverage, do not modify node_modules, and if the owning surface somehow lives in a sibling polyrepo, fix it there and refresh emotion-engine cleanly afterward. Update this plan with exact findings, files changed, tests, and readiness for a validation rerun.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `server/`
+- `test/`
+- sibling owning repos only if truly required
+
+**Files Created/Deleted/Modified:**
+- `server/lib/structured-output.cjs`
+- `server/lib/phase1-validator-tools.cjs`
+- `server/scripts/get-context/get-dialogue.cjs`
+- `test/lib/phase1-validator-tools.test.js`
+- `test/scripts/get-dialogue.test.js`
+- `test/scripts/video-chunks.test.js`
+- `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
+
+**Status:** ✅ Complete
+
+**Results:** Claimed bead `ee-mgv0`, traced the human-confirmed early-placement bug to the raw whole-file dialogue model output itself, landed the smallest dialogue-lane mitigation, revised the inferred-traits contract, added regression coverage, and left the lane ready for bead `ee-ecok` to rerun validation.
+
+Exact finding on the timing bug:
+- the concrete bad line (`\"It's time to wake up.\"`) was already emitted by the whole-file transcription model call at roughly `0.9s-1.1s`
+- this means the bug was **not** introduced by whole-file duration clamping, linked-segment reindexing, stitch logic, or downstream overlap filtering
+- comparison evidence preserved locally:
+  - bad raw whole-file attempt: `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw/ai/dialogue-transcription/attempt-01/capture.json`
+  - bad persisted artifact: `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/dialogue-data.json`
+  - better comparison artifact from prior review packet: `output/cod-test-phase1-review/phase1-gather-context/dialogue-data.json`
+- truthful root cause: long whole-file dialogue transcription can occasionally collapse too much spoken content into the opening seconds even when duration clamping and schema validation both succeed
+
+Smallest fix landed for timing fidelity:
+- added a narrow dialogue-only timing-stability guard in `server/scripts/get-context/get-dialogue.cjs`
+- when dialogue audio stays within Base64 budget **but** exceeds a configurable whole-file duration threshold (default `60s`), the script now forces the existing chunk-relative transcription + stitch path instead of trusting one long whole-file timestamp pass
+- added stronger prompt language telling chunk transcription not to compress the chunk timeline into the opening seconds
+- this keeps the fix inside the dialogue timing-mapping layer rather than broadening scope into unrelated phases
+
+Inferred-traits contract revision landed:
+- removed the explicit inferred-traits disclaimer text from the dialogue schema/examples/prompts
+- removed the inferred-traits `abstained` concept from normalized output
+- kept inferred traits structurally separate from grounded speaker identity/linkage fields
+- changed the transcription prompts/examples to actually attempt reviewable inferred traits per speaker when the audio supports any speculative guess, while still allowing `traits: []` when nothing useful is inferable
+
+Regression coverage added/updated:
+- validator tests now assert the slimmed inferred-traits shape without disclaimer/abstained
+- dialogue script tests now cover:
+  - the revised inferred-traits prompt contract
+  - forced chunking for long within-budget dialogue as the timing-stability mitigation
+  - preserved existing whole-file and chunk-local timing clamp behaviors
+- video chunk prompt-fixture coverage updated to consume the new speaker-profile shape
+
+Tests run:
+- `node --test test/lib/phase1-validator-tools.test.js test/scripts/get-dialogue.test.js test/scripts/video-chunks.test.js`
+- result: all passing (`67` tests)
+
+Git / readiness:
+- durable code + test + plan changes are ready to commit/push on `main`
+- this lane is now ready for dependent bead `ee-ecok` to rerun the dialogue-focused validation and confirm the persisted artifact is more timeline-faithful in practice
 
 ---
 

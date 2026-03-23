@@ -1,7 +1,5 @@
 const { parseJsonObjectInput } = require('./json-validator.cjs');
 
-const DEFAULT_INFERRED_TRAITS_DISCLAIMER = 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.';
-
 function compactString(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
@@ -105,18 +103,14 @@ function validateAcousticDescriptors(input, errors, path) {
 function validateInferredTraits(input, errors, path = '$.inferred_traits') {
   if (input === undefined || input === null) {
     return {
-      disclaimer: DEFAULT_INFERRED_TRAITS_DISCLAIMER,
-      traits: [],
-      abstained: true
+      traits: []
     };
   }
 
   if (!input || typeof input !== 'object' || Array.isArray(input)) {
     pushError(errors, path, 'invalid_type', 'inferred_traits must be an object.');
     return {
-      disclaimer: DEFAULT_INFERRED_TRAITS_DISCLAIMER,
-      traits: [],
-      abstained: true
+      traits: []
     };
   }
 
@@ -141,20 +135,8 @@ function validateInferredTraits(input, errors, path = '$.inferred_traits') {
     }).filter(Boolean);
   }
 
-  const abstainedInput = input.abstained ?? input.abstain;
-  const abstained = traits.length > 0
-    ? false
-    : (validateOptionalBoolean(abstainedInput, `${path}.abstained`, 'inferred traits abstained', errors) ?? true);
-
   return {
-    disclaimer: validateOptionalNonEmptyString(
-      input.disclaimer,
-      `${path}.disclaimer`,
-      'inferred traits disclaimer',
-      errors
-    ) || DEFAULT_INFERRED_TRAITS_DISCLAIMER,
-    traits,
-    abstained
+    traits
   };
 }
 
@@ -311,11 +293,7 @@ function normalizeDialogueSpeakerContract(dialogue_segments, speaker_profiles = 
           : (profile.grounded?.acoustic_descriptors_abstained ?? true)
       },
       inferred_traits: {
-        disclaimer: profile.inferred_traits?.disclaimer || DEFAULT_INFERRED_TRAITS_DISCLAIMER,
-        traits: Array.isArray(profile.inferred_traits?.traits) ? [...profile.inferred_traits.traits] : [],
-        abstained: profile.inferred_traits?.traits?.length > 0
-          ? false
-          : (profile.inferred_traits?.abstained ?? true)
+        traits: Array.isArray(profile.inferred_traits?.traits) ? [...profile.inferred_traits.traits] : []
       }
     });
   }
@@ -344,9 +322,7 @@ function normalizeDialogueSpeakerContract(dialogue_segments, speaker_profiles = 
           acoustic_descriptors_abstained: true
         },
         inferred_traits: {
-          disclaimer: DEFAULT_INFERRED_TRAITS_DISCLAIMER,
-          traits: [],
-          abstained: true
+          traits: []
         }
       };
       profilesById.set(speaker_id, profile);
@@ -374,11 +350,7 @@ function normalizeDialogueSpeakerContract(dialogue_segments, speaker_profiles = 
         : (profile.grounded.acoustic_descriptors_abstained ?? true)
     },
     inferred_traits: {
-      disclaimer: profile.inferred_traits.disclaimer || DEFAULT_INFERRED_TRAITS_DISCLAIMER,
-      traits: Array.isArray(profile.inferred_traits.traits) ? profile.inferred_traits.traits : [],
-      abstained: Array.isArray(profile.inferred_traits.traits) && profile.inferred_traits.traits.length > 0
-        ? false
-        : (profile.inferred_traits.abstained ?? true)
+      traits: Array.isArray(profile.inferred_traits.traits) ? profile.inferred_traits.traits : []
     }
   })).sort((a, b) => a.speaker_id.localeCompare(b.speaker_id));
 
@@ -625,7 +597,6 @@ function parseAndValidateJsonObject(input, validate) {
 }
 
 module.exports = {
-  DEFAULT_INFERRED_TRAITS_DISCLAIMER,
   compactString,
   summarizeValidationErrors,
   parseAndValidateJsonObject,

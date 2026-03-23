@@ -31,7 +31,7 @@ const { ensureToolVersionsCaptured } = require('../../lib/tool-versions.cjs');
 const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
-const { preflightAudio } = require('../../lib/audio-preflight.cjs');
+const { preflightAudio, planTimeChunks } = require('../../lib/audio-preflight.cjs');
 const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
 const { extractAudioChunk } = require('../../lib/audio-chunk-extractor.cjs');
 const {
@@ -124,6 +124,41 @@ function normalizeDialogueDataToDuration(dialogueData, actualDuration, { require
   return {
     ...normalized.value,
     ...(dialogueData?.cleanedTranscript ? { cleanedTranscript: dialogueData.cleanedTranscript } : {})
+  };
+}
+
+function resolveDialogueChunkingPreflight(preflight, config = {}) {
+  const durationSeconds = Number.isFinite(preflight?.durationSeconds) ? preflight.durationSeconds : 0;
+  const maxWholeFileDurationSeconds = Number.isFinite(config?.settings?.dialogue_max_whole_file_duration_seconds)
+    ? Math.max(5, config.settings.dialogue_max_whole_file_duration_seconds)
+    : 60;
+
+  if (preflight?.needsChunking || durationSeconds <= maxWholeFileDurationSeconds) {
+    return preflight;
+  }
+
+  const forcedChunkDurationSeconds = Number.isFinite(config?.settings?.dialogue_forced_chunk_duration_seconds)
+    ? Math.max(5, Math.min(config.settings.dialogue_forced_chunk_duration_seconds, durationSeconds))
+    : Math.min(20, durationSeconds);
+
+  const chunkPlan = planTimeChunks({
+    durationSeconds,
+    chunkDurationSeconds: forcedChunkDurationSeconds
+  });
+
+  return {
+    ...preflight,
+    needsChunking: true,
+    recommendedChunkDurationSeconds: forcedChunkDurationSeconds,
+    chunkPlan,
+    trace: {
+      ...preflight.trace,
+      reason: 'dialogue_timing_force_chunking',
+      originalReason: preflight.trace?.reason || null,
+      maxWholeFileDurationSeconds,
+      recommendedChunkDurationSeconds: forcedChunkDurationSeconds,
+      chunks: chunkPlan.length
+    }
   };
 }
 
@@ -353,14 +388,14 @@ async function run(input) {
       config
     });
 
-    const preflight = preflightAudio({
+    const preflight = resolveDialogueChunkingPreflight(preflightAudio({
       audioPath,
       config,
       rawCapture: {
         captureRaw,
         rawLogger: (payload) => writeRawJson(ffmpegRawDir, 'ffprobe-audio-duration.json', payload)
       }
-    });
+    }), config);
 
     events.emit({
       kind: 'audio.preflight',
@@ -664,7 +699,10 @@ async function run(input) {
 
     let rollingHandoff = '';
 
-    console.log(`   🧩 Audio exceeds Base64 budget, chunking into ${preflight.chunkPlan.length} chunks (~${preflight.recommendedChunkDurationSeconds.toFixed(1)}s each)`);
+    const chunkingReason = preflight.trace?.reason === 'dialogue_timing_force_chunking'
+      ? `timing-stability guard over ${preflight.trace?.maxWholeFileDurationSeconds ?? 'unknown'}s`
+      : 'Base64 budget';
+    console.log(`   🧩 Dialogue chunking enabled via ${chunkingReason}, chunking into ${preflight.chunkPlan.length} chunks (~${preflight.recommendedChunkDurationSeconds.toFixed(1)}s each)`);
 
     for (const chunk of preflight.chunkPlan) {
       const { index: chunkIndex, startTime, endTime } = chunk;
@@ -1377,9 +1415,14 @@ Respond with a JSON object in the following format:
         "acoustic_descriptors_abstained": false
       },
       "inferred_traits": {
-        "disclaimer": "Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.",
-        "traits": [],
-        "abstained": true
+        "traits": [
+          {
+            "trait": "accent",
+            "value": "possibly mid-Atlantic American English",
+            "confidence": 0.31,
+            "note": "speculative inference from delivery only"
+          }
+        ]
       }
     }
   ],
@@ -1395,7 +1438,8 @@ IMPORTANT:
 - Include confidence scores from 0.0 to 1.0.
 - Keep grounded speaker identity separate from inferred_traits.
 - Grounded data should only include anonymous speaker IDs, same-speaker linkage, and cautious acoustic descriptors that are actually supported by the audio.
-- inferred_traits is optional and must stay clearly speculative / non-authoritative. If unsure, leave traits empty and set abstained=true.
+- inferred_traits is optional and must stay clearly speculative / non-authoritative. Attempt reviewable traits for each speaker when the audio supports any guess at all; otherwise leave traits as an empty array.
+- Do not compress the whole file's dialogue into the opening seconds; place each line where it actually occurs in the full timeline.
 - If no speech is detected, return an empty dialogue_segments array.`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
@@ -1566,9 +1610,14 @@ Return JSON only with this structure:
         "acoustic_descriptors_abstained": true
       },
       "inferred_traits": {
-        "disclaimer": "Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.",
-        "traits": [],
-        "abstained": true
+        "traits": [
+          {
+            "trait": "age_range",
+            "value": "likely adult",
+            "confidence": 0.28,
+            "note": "speculative inference from voice only"
+          }
+        ]
       }
     }
   ],
@@ -1582,7 +1631,8 @@ Rules:
 - Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.
 - Keep speaker labels and anonymous speaker_id values consistent with the handoff when possible.
 - Keep grounded speaker identity separate from inferred_traits.
-- Use inferred_traits only for speculative guesswork and leave it abstained when unsure.
+- Use inferred_traits only for speculative guesswork. Attempt reviewable traits for each speaker when the chunk supports any guess at all; otherwise leave traits as an empty array.
+- Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.
 - If no speech is detected, return an empty dialogue_segments array.
 - Keep handoffContext brief (<= ~10 lines).`;
 
