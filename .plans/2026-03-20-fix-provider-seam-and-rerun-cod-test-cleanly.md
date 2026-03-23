@@ -1,3 +1,15 @@
+---
+plan_id: plan-2026-03-20-fix-provider-seam-and-rerun-cod-test-cleanly
+bead_ids:
+  - ee-9e1
+  - ee-wo3
+  - ee-af2
+  - ee-dbc
+  - ee-29y
+  - ee-a1p
+  - ee-acq
+  - ee-wpe
+---
 # emotion-engine: fix provider seam and rerun cod-test cleanly
 
 **Date:** 2026-03-20  
