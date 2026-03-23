@@ -606,6 +606,9 @@ Readiness for `ee-yokt`:
 - **Ready.** The pathological near-zero tail persistence behavior is now blocked at the owning normalization layer and covered by regression tests.
 - The next step is the planned live rerun (`ee-yokt`) to regenerate the canonical Phase 1 review packet and verify the final dialogue artifact no longer persists an implausibly clipped trailer-end segment.
 
+Commit:
+- `ab816d3` - Fix dialogue tail timing normalization
+
 ---
 
 ### Task 2h: Rerun the Phase 1-only review after the dialogue tail timing fix
@@ -696,7 +699,7 @@ Readiness for `ee-yokt`:
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, and Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`. Task 2f then reran the real Phase 1-only review packet after both cleanup fixes landed. That empirical rerun confirmed the speaker-linkage fix and music grounding fix held in live artifacts: all `speaker_profiles[*].grounded.linked_segment_indexes` now point to valid segments, and the middle music windows (`60-90`, `90-120`) no longer hallucinate silence. However, the rerun also exposed a remaining dialogue-tail truthfulness defect: the last line is still squeezed into `140 -> 140.042449`, which is not a believable duration for that amount of speech. So the packet improved materially but is still not clean enough to unblock `ee-0ky`.
+**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, and Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`. Task 2f then reran the real Phase 1-only review packet after both cleanup fixes landed. That empirical rerun confirmed the speaker-linkage fix and music grounding fix held in live artifacts: all `speaker_profiles[*].grounded.linked_segment_indexes` now point to valid segments, and the middle music windows (`60-90`, `90-120`) no longer hallucinate silence. Task 2g now fixed the remaining dialogue-tail normalization defect by preventing a long overrun line from being persisted as an absurd near-zero clipped tail at the exact trailer end. The lane is still partially complete overall because `ee-yokt` has not yet rerun the canonical Phase 1 packet after this last fix, but the code path and regression coverage for the tail pathology are now in place.
 
 **Commits:**
 - `71e0c2b` - Add grounded dialogue speaker contract
@@ -704,9 +707,9 @@ Readiness for `ee-yokt`:
 - `5f9dc5b` - Fix dialogue timing truthfulness
 - `937d52d` - Fix speaker profile linked segment indexes
 - `30888f5` - Ground Phase 1 music chunk prompts
-- pending commit for the latest plan update / rerun verdict
+- `ab816d3` - Fix dialogue tail timing normalization
 
-**Lessons Learned:** A green Phase 1 rerun is necessary but not sufficient. For this lane, readiness depends on at least four truths lining up at once: segment ranges must stay inside the real source duration, speaker-profile linkage must match the final segment array, music prompts must be grounded to the attached local chunk instead of the global trailer duration, and any clipped tail dialogue must still remain temporally plausible enough to trust in downstream chunk-level comparisons.
+**Lessons Learned:** A green Phase 1 rerun is necessary but not sufficient. For this lane, readiness depends on at least five truths lining up at once: segment ranges must stay inside the real source duration, speaker-profile linkage must match the final segment array, music prompts must be grounded to the attached local chunk instead of the global trailer duration, clipped tail dialogue must not survive as fake micro-precision at the trailer boundary, and any remaining terminal dialogue must still be empirically revalidated in the regenerated review packet before trusting it in downstream chunk-level comparisons.
 
 ---
 
