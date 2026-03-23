@@ -2,7 +2,7 @@
   "segmentIndex": 4,
   "startTime": 120,
   "endTime": 140.042449,
-  "rollingSummaryIn": "The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension.",
+  "rollingSummaryIn": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.",
   "attempt": 1,
   "attemptInTarget": 1,
   "targetIndex": 0,
@@ -19,15 +19,15 @@
   },
   "failover": null,
   "promptRef": {
-    "sha256": "5c265a396ec3c4718ac0e1ac4cff18e84d85678e759f06d4c48f5cfe5d928867",
-    "file": "_meta/ai/_prompts/5c265a396ec3c4718ac0e1ac4cff18e84d85678e759f06d4c48f5cfe5d928867.json"
+    "sha256": "80b464b6266e0e1f5e9c666bb6b6264329794fec6a01fb31d7d173883e863ad9",
+    "file": "_meta/ai/_prompts/80b464b6266e0e1f5e9c666bb6b6264329794fec6a01fb31d7d173883e863ad9.json"
   },
   "rawResponse": {
-    "content": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio features a promotional voiceover announcing a pre-order bonus, set against a backdrop of intense, high-energy cinematic music and sound effects.\",\n  \"rollingSummary\": \"The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action.\"\n}",
+    "content": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 8\n  },\n  \"chunkSummary\": \"The segment features a promotional voiceover announcing a 'Resnov Challenge Pack' set against a backdrop of intense, high-stakes cinematic music and sound effects.\",\n  \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover.\"\n}",
     "usage": {
-      "input": 2303,
-      "output": 141,
-      "total": 2444
+      "input": 2323,
+      "output": 145,
+      "total": 2468
     },
     "providerRequest": {
       "method": "POST",
@@ -44,7 +44,7 @@
             "content": [
               {
                 "type": "text",
-                "text": "Analyze the audio in this chunk (120.0s to 140.0s).\n\nImportant grounding:\n- The attached audio file is already the extracted audio for this exact global window.\n- The attached chunk duration is approximately 20.0 seconds.\n- Treat 120.0s to 140.0s as the chunk's location in the original timeline, not as a claim about the attached file's full duration.\n- Do NOT claim the requested range exceeds the file duration just because the attached chunk is shorter than the full trailer.\n- Analyze only the audio that is actually present in the attached chunk.\n\nRolling summary so far (from previous chunks):\nThe audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension.\n\nIdentify:\n1. Type of audio: music, speech, silence, ambient noise, sound effects\n2. If music: describe the mood (upbeat, calm, tense, sad, energetic, etc.)\n3. Intensity level from 1-10\n4. Brief description\n\nReturn JSON only in this format:\n{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"Brief description of the audio\",\n    \"mood\": \"energetic\",\n    \"intensity\": 5\n  },\n  \"chunkSummary\": \"1-2 sentences\",\n  \"rollingSummary\": \"Updated rolling summary for the entire audio so far (keep concise)\"\n}\n\nAllowed values for analysis.type: music | speech | silence | ambient | sfx.\nAllowed values for analysis.mood: upbeat | calm | tense | sad | energetic | neutral.\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_music_analysis_json\",\n  \"musicAnalysis\": {\n    \"analysis\": {\n      \"type\": \"music\",\n      \"description\": \"Upbeat instrumental pop bed.\",\n      \"mood\": \"energetic\",\n      \"intensity\": 7\n    },\n    \"rollingSummary\": \"The audio stays upbeat and music-led so far.\"\n  }\n}\n2) Final music analysis JSON matching the schema above.\n\nAcceptance rules:\n- The final music analysis JSON is accepted only after validate_music_analysis_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_music_analysis_json\",\"musicAnalysis\":{\"analysis\":{\"type\":\"music\",\"description\":\"Upbeat instrumental pop bed.\",\"mood\":\"energetic\",\"intensity\":7},\"rollingSummary\":\"The audio stays upbeat and music-led so far.\"}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised music analysis JSON candidate.\n- After the validator returns valid=true, return ONLY the final music analysis JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must be the music analysis JSON object for this chunk.\n\nFinal artifact reminders:\n- Report analysis.type, analysis.description, optional analysis.mood, and analysis.intensity.\n- Include rollingSummary when you have continuity context from prior chunks.\n\nTool contract:\n{\n  \"name\": \"validate_music_analysis_json\",\n  \"argumentKey\": \"musicAnalysis\",\n  \"description\": \"Validate a Phase 1 music analysis JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_music_analysis_json\",\n    \"musicAnalysis\": {\n      \"analysis\": {\n        \"type\": \"music\",\n        \"description\": \"Upbeat instrumental pop bed.\",\n        \"mood\": \"energetic\",\n        \"intensity\": 7\n      },\n      \"rollingSummary\": \"The audio stays upbeat and music-led so far.\"\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"musicAnalysis\"\n    ],\n    \"properties\": {\n      \"musicAnalysis\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate music analysis JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, and optional rollingSummary.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 3,\n  \"remainingValidatorCalls\": 2\n}\n\nConversation state:\n[\n  {\n    \"role\": \"assistant\",\n    \"turn\": 1,\n    \"kind\": \"model_output\",\n    \"raw\": \"{\\n  \\\"tool\\\": \\\"validate_music_analysis_json\\\",\\n  \\\"musicAnalysis\\\": {\\n    \\\"analysis\\\": {\\n      \\\"type\\\": \\\"music\\\",\\n      \\\"description\\\": \\\"High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.\\\",\\n      \\\"mood\\\": \\\"energetic\\\",\\n      \\\"intensity\\\": 9\\n    },\\n    \\\"chunkSummary\\\": \\\"The audio features a promotional voiceover announcing a pre-order bonus, set against a backdrop of intense, high-energy cinematic music and sound effects.\\\",\\n    \\\"rollingSummary\\\": \\\"The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action.\\\"\\n  }\\n}\"\n  },\n  {\n    \"role\": \"tool\",\n    \"turn\": 1,\n    \"kind\": \"validator_acceptance\",\n    \"toolName\": \"validate_music_analysis_json\",\n    \"toolCall\": {\n      \"tool\": \"validate_music_analysis_json\",\n      \"musicAnalysis\": {\n        \"analysis\": {\n          \"type\": \"music\",\n          \"description\": \"High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.\",\n          \"mood\": \"energetic\",\n          \"intensity\": 9\n        },\n        \"chunkSummary\": \"The audio features a promotional voiceover announcing a pre-order bonus, set against a backdrop of intense, high-energy cinematic music and sound effects.\",\n        \"rollingSummary\": \"The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action.\"\n      },\n      \"arguments\": {\n        \"musicAnalysis\": {\n          \"analysis\": {\n            \"type\": \"music\",\n            \"description\": \"High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.\",\n            \"mood\": \"energetic\",\n            \"intensity\": 9\n          },\n          \"chunkSummary\": \"The audio features a promotional voiceover announcing a pre-order bonus, set against a backdrop of intense, high-energy cinematic music and sound effects.\",\n          \"rollingSummary\": \"The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action.\"\n        }\n      }\n    },\n    \"result\": {\n      \"ok\": true,\n      \"valid\": true,\n      \"toolName\": \"validate_music_analysis_json\",\n      \"summary\": \"JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.\",\n      \"errors\": [],\n      \"normalizedValue\": {\n        \"analysis\": {\n          \"type\": \"music\",\n          \"description\": \"High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.\",\n          \"mood\": \"energetic\",\n          \"intensity\": 9\n        },\n        \"rollingSummary\": \"The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action.\"\n      }\n    }\n  }\n]"
+                "text": "Analyze the audio in this chunk (120.0s to 140.0s).\n\nImportant grounding:\n- The attached audio file is already the extracted audio for this exact global window.\n- The attached chunk duration is approximately 20.0 seconds.\n- Treat 120.0s to 140.0s as the chunk's location in the original timeline, not as a claim about the attached file's full duration.\n- Do NOT claim the requested range exceeds the file duration just because the attached chunk is shorter than the full trailer.\n- Analyze only the audio that is actually present in the attached chunk.\n\nRolling summary so far (from previous chunks):\nThe audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion.\n\nIdentify:\n1. Type of audio: music, speech, silence, ambient noise, sound effects\n2. If music: describe the mood (upbeat, calm, tense, sad, energetic, etc.)\n3. Intensity level from 1-10\n4. Brief description\n\nReturn JSON only in this format:\n{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"Brief description of the audio\",\n    \"mood\": \"energetic\",\n    \"intensity\": 5\n  },\n  \"chunkSummary\": \"1-2 sentences\",\n  \"rollingSummary\": \"Updated rolling summary for the entire audio so far (keep concise)\"\n}\n\nAllowed values for analysis.type: music | speech | silence | ambient | sfx.\nAllowed values for analysis.mood: upbeat | calm | tense | sad | energetic | neutral.\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_music_analysis_json\",\n  \"musicAnalysis\": {\n    \"analysis\": {\n      \"type\": \"music\",\n      \"description\": \"Upbeat instrumental pop bed.\",\n      \"mood\": \"energetic\",\n      \"intensity\": 7\n    },\n    \"rollingSummary\": \"The audio stays upbeat and music-led so far.\"\n  }\n}\n2) Final music analysis JSON matching the schema above.\n\nAcceptance rules:\n- The final music analysis JSON is accepted only after validate_music_analysis_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_music_analysis_json\",\"musicAnalysis\":{\"analysis\":{\"type\":\"music\",\"description\":\"Upbeat instrumental pop bed.\",\"mood\":\"energetic\",\"intensity\":7},\"rollingSummary\":\"The audio stays upbeat and music-led so far.\"}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised music analysis JSON candidate.\n- After the validator returns valid=true, return ONLY the final music analysis JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must be the music analysis JSON object for this chunk.\n\nFinal artifact reminders:\n- Report analysis.type, analysis.description, optional analysis.mood, and analysis.intensity.\n- Include rollingSummary when you have continuity context from prior chunks.\n\nTool contract:\n{\n  \"name\": \"validate_music_analysis_json\",\n  \"argumentKey\": \"musicAnalysis\",\n  \"description\": \"Validate a Phase 1 music analysis JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_music_analysis_json\",\n    \"musicAnalysis\": {\n      \"analysis\": {\n        \"type\": \"music\",\n        \"description\": \"Upbeat instrumental pop bed.\",\n        \"mood\": \"energetic\",\n        \"intensity\": 7\n      },\n      \"rollingSummary\": \"The audio stays upbeat and music-led so far.\"\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"musicAnalysis\"\n    ],\n    \"properties\": {\n      \"musicAnalysis\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate music analysis JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, and optional rollingSummary.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 3,\n  \"remainingValidatorCalls\": 2\n}\n\nConversation state:\n[\n  {\n    \"role\": \"assistant\",\n    \"turn\": 1,\n    \"kind\": \"model_output\",\n    \"raw\": \"{\\n  \\\"tool\\\": \\\"validate_music_analysis_json\\\",\\n  \\\"musicAnalysis\\\": {\\n    \\\"analysis\\\": {\\n      \\\"type\\\": \\\"music\\\",\\n      \\\"description\\\": \\\"Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.\\\",\\n      \\\"mood\\\": \\\"energetic\\\",\\n      \\\"intensity\\\": 8\\n    },\\n    \\\"chunkSummary\\\": \\\"The segment features a promotional voiceover announcing a 'Resnov Challenge Pack' set against a backdrop of intense, high-stakes cinematic music and sound effects.\\\",\\n    \\\"rollingSummary\\\": \\\"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover.\\\"\\n  }\\n}\"\n  },\n  {\n    \"role\": \"tool\",\n    \"turn\": 1,\n    \"kind\": \"validator_acceptance\",\n    \"toolName\": \"validate_music_analysis_json\",\n    \"toolCall\": {\n      \"tool\": \"validate_music_analysis_json\",\n      \"musicAnalysis\": {\n        \"analysis\": {\n          \"type\": \"music\",\n          \"description\": \"Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.\",\n          \"mood\": \"energetic\",\n          \"intensity\": 8\n        },\n        \"chunkSummary\": \"The segment features a promotional voiceover announcing a 'Resnov Challenge Pack' set against a backdrop of intense, high-stakes cinematic music and sound effects.\",\n        \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover.\"\n      },\n      \"arguments\": {\n        \"musicAnalysis\": {\n          \"analysis\": {\n            \"type\": \"music\",\n            \"description\": \"Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.\",\n            \"mood\": \"energetic\",\n            \"intensity\": 8\n          },\n          \"chunkSummary\": \"The segment features a promotional voiceover announcing a 'Resnov Challenge Pack' set against a backdrop of intense, high-stakes cinematic music and sound effects.\",\n          \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover.\"\n        }\n      }\n    },\n    \"result\": {\n      \"ok\": true,\n      \"valid\": true,\n      \"toolName\": \"validate_music_analysis_json\",\n      \"summary\": \"JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.\",\n      \"errors\": [],\n      \"normalizedValue\": {\n        \"analysis\": {\n          \"type\": \"music\",\n          \"description\": \"Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.\",\n          \"mood\": \"energetic\",\n          \"intensity\": 8\n        },\n        \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover.\"\n      }\n    }\n  }\n]"
               },
               {
                 "type": "input_audio",
@@ -67,7 +67,7 @@
     "providerResponse": {
       "status": 200,
       "headers": {
-        "date": "Mon, 23 Mar 2026 13:33:56 GMT",
+        "date": "Mon, 23 Mar 2026 14:38:30 GMT",
         "content-type": "application/json",
         "transfer-encoding": "chunked",
         "connection": "keep-alive",
@@ -76,12 +76,12 @@
         "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
         "x-content-type-options": "nosniff",
         "server": "cloudflare",
-        "cf-ray": "9e0dcf824e6cdb01-MIA"
+        "cf-ray": "9e0e2e18689a25a7-MIA"
       },
       "body": {
-        "id": "gen-1774272835-EObQXUBP5e3ZYW0Xfn5l",
+        "id": "gen-1774276709-MojRO00fPG0yqiGUkbds",
         "object": "chat.completion",
-        "created": 1774272835,
+        "created": 1774276709,
         "model": "google/gemini-3.1-flash-lite-preview-20260303",
         "provider": "Google",
         "system_fingerprint": null,
@@ -93,7 +93,7 @@
             "native_finish_reason": "STOP",
             "message": {
               "role": "assistant",
-              "content": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio features a promotional voiceover announcing a pre-order bonus, set against a backdrop of intense, high-energy cinematic music and sound effects.\",\n  \"rollingSummary\": \"The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action.\"\n}",
+              "content": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 8\n  },\n  \"chunkSummary\": \"The segment features a promotional voiceover announcing a 'Resnov Challenge Pack' set against a backdrop of intense, high-stakes cinematic music and sound effects.\",\n  \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover.\"\n}",
               "refusal": null,
               "reasoning": null,
               "reasoning_details": [
@@ -111,13 +111,13 @@
           "prompt_tokens": "[REDACTED]",
           "completion_tokens": "[REDACTED]",
           "total_tokens": "[REDACTED]",
-          "cost": 0.0009125,
+          "cost": 0.0009235,
           "is_byok": false,
           "prompt_tokens_details": "[REDACTED]",
           "cost_details": {
-            "upstream_inference_cost": 0.0009125,
-            "upstream_inference_prompt_cost": 0.000701,
-            "upstream_inference_completions_cost": 0.0002115
+            "upstream_inference_cost": 0.0009235,
+            "upstream_inference_prompt_cost": 0.000706,
+            "upstream_inference_completions_cost": 0.0002175
           },
           "completion_tokens_details": "[REDACTED]"
         }
@@ -129,11 +129,11 @@
       "start": 120,
       "end": 140.042449,
       "type": "music",
-      "description": "High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.",
+      "description": "Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.",
       "mood": "energetic",
-      "intensity": 9
+      "intensity": 8
     },
-    "rollingSummary": "The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action."
+    "rollingSummary": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover."
   },
   "toolLoop": {
     "toolName": "validate_music_analysis_json",
@@ -146,7 +146,7 @@
         "role": "assistant",
         "turn": 1,
         "kind": "model_output",
-        "raw": "{\n  \"tool\": \"validate_music_analysis_json\",\n  \"musicAnalysis\": {\n    \"analysis\": {\n      \"type\": \"music\",\n      \"description\": \"High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.\",\n      \"mood\": \"energetic\",\n      \"intensity\": 9\n    },\n    \"chunkSummary\": \"The audio features a promotional voiceover announcing a pre-order bonus, set against a backdrop of intense, high-energy cinematic music and sound effects.\",\n    \"rollingSummary\": \"The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action.\"\n  }\n}"
+        "raw": "{\n  \"tool\": \"validate_music_analysis_json\",\n  \"musicAnalysis\": {\n    \"analysis\": {\n      \"type\": \"music\",\n      \"description\": \"Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.\",\n      \"mood\": \"energetic\",\n      \"intensity\": 8\n    },\n    \"chunkSummary\": \"The segment features a promotional voiceover announcing a 'Resnov Challenge Pack' set against a backdrop of intense, high-stakes cinematic music and sound effects.\",\n    \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover.\"\n  }\n}"
       },
       {
         "role": "tool",
@@ -158,12 +158,12 @@
           "musicAnalysis": {
             "analysis": {
               "type": "music",
-              "description": "High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.",
+              "description": "Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.",
               "mood": "energetic",
-              "intensity": 9
+              "intensity": 8
             },
-            "chunkSummary": "The audio features a promotional voiceover announcing a pre-order bonus, set against a backdrop of intense, high-energy cinematic music and sound effects.",
-            "rollingSummary": "The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action."
+            "chunkSummary": "The segment features a promotional voiceover announcing a 'Resnov Challenge Pack' set against a backdrop of intense, high-stakes cinematic music and sound effects.",
+            "rollingSummary": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover."
           },
           "arguments": {
             "musicAnalysis": "[Circular]"
@@ -178,11 +178,11 @@
           "normalizedValue": {
             "analysis": {
               "type": "music",
-              "description": "High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.",
+              "description": "Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.",
               "mood": "energetic",
-              "intensity": 9
+              "intensity": 8
             },
-            "rollingSummary": "The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action."
+            "rollingSummary": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover."
           }
         }
       },
@@ -190,7 +190,7 @@
         "role": "assistant",
         "turn": 2,
         "kind": "model_output",
-        "raw": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 9\n  },\n  \"chunkSummary\": \"The audio features a promotional voiceover announcing a pre-order bonus, set against a backdrop of intense, high-energy cinematic music and sound effects.\",\n  \"rollingSummary\": \"The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action.\"\n}"
+        "raw": "{\n  \"analysis\": {\n    \"type\": \"music\",\n    \"description\": \"Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.\",\n    \"mood\": \"energetic\",\n    \"intensity\": 8\n  },\n  \"chunkSummary\": \"The segment features a promotional voiceover announcing a 'Resnov Challenge Pack' set against a backdrop of intense, high-stakes cinematic music and sound effects.\",\n  \"rollingSummary\": \"The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover.\"\n}"
       },
       {
         "role": "tool",
@@ -203,12 +203,12 @@
           "musicAnalysis": {
             "analysis": {
               "type": "music",
-              "description": "High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.",
+              "description": "Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.",
               "mood": "energetic",
-              "intensity": 9
+              "intensity": 8
             },
-            "chunkSummary": "The audio features a promotional voiceover announcing a pre-order bonus, set against a backdrop of intense, high-energy cinematic music and sound effects.",
-            "rollingSummary": "The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action."
+            "chunkSummary": "The segment features a promotional voiceover announcing a 'Resnov Challenge Pack' set against a backdrop of intense, high-stakes cinematic music and sound effects.",
+            "rollingSummary": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover."
           },
           "arguments": {
             "musicAnalysis": "[Circular]"
@@ -223,11 +223,11 @@
           "normalizedValue": {
             "analysis": {
               "type": "music",
-              "description": "High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.",
+              "description": "Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.",
               "mood": "energetic",
-              "intensity": 9
+              "intensity": 8
             },
-            "rollingSummary": "The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action."
+            "rollingSummary": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover."
           }
         }
       }

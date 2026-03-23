@@ -1,0 +1,84 @@
+{
+  "contractVersion": "ee.script-result/v1",
+  "status": "success",
+  "phase": "phase1-gather-context",
+  "script": "get-music",
+  "run": {
+    "configName": "COD Test Pipeline (Phase 2 3-chunk comparison)",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison",
+    "startedAt": "2026-03-23T14:28:38.906Z",
+    "completedAt": "2026-03-23T14:29:36.820Z",
+    "durationMs": 57914,
+    "attempt": 1
+  },
+  "payload": {
+    "artifactKey": "musicData",
+    "data": {
+      "segments": [
+        {
+          "start": 0,
+          "end": 30,
+          "type": "music",
+          "description": "Dramatic, intense cinematic trailer music with heavy percussion and suspenseful synths.",
+          "mood": "tense",
+          "intensity": 8
+        },
+        {
+          "start": 30,
+          "end": 60,
+          "type": "music",
+          "description": "The audio features intense, driving cinematic music with dramatic voiceover narration and sound effects, maintaining a high-stakes action atmosphere.",
+          "mood": "energetic",
+          "intensity": 9
+        },
+        {
+          "start": 60,
+          "end": 90,
+          "type": "music",
+          "description": "Intense, dramatic cinematic music with aggressive percussion and male voiceover narration.",
+          "mood": "energetic",
+          "intensity": 9
+        },
+        {
+          "start": 90,
+          "end": 120,
+          "type": "music",
+          "description": "Intense cinematic music accompanied by dramatic voiceover and high-impact sound effects.",
+          "mood": "energetic",
+          "intensity": 9
+        },
+        {
+          "start": 120,
+          "end": 140.042449,
+          "type": "music",
+          "description": "Dramatic, cinematic orchestral music with driving percussion and intense sound effects.",
+          "mood": "energetic",
+          "intensity": 9
+        }
+      ],
+      "summary": "The audio maintains a high-intensity, dramatic tone with a blend of cinematic music, impactful sound effects, and urgent voiceover narration throughout the trailer.",
+      "hasMusic": true
+    }
+  },
+  "artifacts": {
+    "primary": {
+      "key": "musicData",
+      "path": "phase1-gather-context/music-data.json",
+      "mediaType": "application/json"
+    },
+    "additional": []
+  },
+  "metrics": {
+    "tokensTotal": null,
+    "warningsCount": 0
+  },
+  "diagnostics": {
+    "warnings": [],
+    "degraded": false,
+    "debugCaptureEnabled": true,
+    "captureRefs": [
+      "phase1-gather-context/raw/_meta/errors.jsonl",
+      "phase1-gather-context/raw/_meta/errors.summary.json"
+    ]
+  }
+}

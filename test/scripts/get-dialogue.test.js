@@ -716,6 +716,273 @@ test('Get Dialogue Script', async (t) => {
       is(Object.hasOwn(result.artifacts.dialogueData.speaker_profiles[0].grounded, 'acoustic_descriptors_abstained'), false);
     });
 
+    tNested.test('merges same-speaker continuation fragments across chunk boundaries into one continuous passage', async () => {
+      let chunkCallCount = 0;
+      completeImplementation = async (options) => {
+        const prompt = String(options?.prompt || '');
+        completionPrompts.push(prompt);
+        completionOptions.push(options || {});
+
+        if (prompt.includes('dialogue transcript stitcher')) {
+          return {
+            content: JSON.stringify({
+              cleanedTranscript: 'CLEANED TRANSCRIPT',
+              auditTrail: [{ op: 'merge_boundary', chunkIndex: 0, detail: 'merged continuation fragments' }],
+              debug: { refs: [] }
+            }),
+            usage: { input: 100, output: 150 }
+          };
+        }
+
+        chunkCallCount += 1;
+        if (chunkCallCount === 1) {
+          return {
+            content: JSON.stringify({
+              dialogue_segments: [
+                {
+                  start: 1.2,
+                  end: 4.95,
+                  speaker: 'Speaker 3',
+                  speaker_id: 'spk_003',
+                  text: 'Raul Menendez ignited global unrest...',
+                  confidence: 0.94
+                }
+              ],
+              speaker_profiles: [
+                {
+                  speaker_id: 'spk_003',
+                  label: 'Speaker 3',
+                  grounded: {
+                    confidence: 0.88,
+                    linked_segment_indexes: [0],
+                    acoustic_descriptors: [
+                      { label: 'older, authoritative public-address male voice', confidence: 0.9 }
+                    ]
+                  },
+                  inferred_traits: {
+                    traits: [
+                      { trait: 'role', value: 'authority figure', confidence: 0.82, note: null }
+                    ]
+                  }
+                }
+              ],
+              summary: 'Chunk 1',
+              handoffContext: 'Continue chunk 1',
+              totalDuration: 4
+            }),
+            usage: { input: 100, output: 150 }
+          };
+        }
+
+        return {
+          content: JSON.stringify({
+            dialogue_segments: [
+              {
+                start: 0,
+                end: 1.3,
+                speaker: 'Speaker 3',
+                speaker_id: 'spk_003',
+                text: 'on an unprecedented scale.',
+                confidence: 0.96
+              }
+            ],
+            speaker_profiles: [
+              {
+                speaker_id: 'spk_003',
+                label: 'Speaker 3',
+                grounded: {
+                  confidence: 0.9,
+                  linked_segment_indexes: [0],
+                  acoustic_descriptors: [
+                    { label: 'older, authoritative public-address male voice', confidence: 0.92 }
+                  ]
+                },
+                inferred_traits: {
+                  traits: [
+                    { trait: 'role', value: 'authority figure', confidence: 0.84, note: null }
+                  ]
+                }
+              }
+            ],
+            summary: 'Chunk 2',
+            handoffContext: 'Continue chunk 2',
+            totalDuration: 4
+          }),
+          usage: { input: 100, output: 150 }
+        };
+      };
+
+      mockExtractedAudioData = Buffer.alloc(2000, 1);
+      mockExtractedChunkData = Buffer.alloc(1000, 1);
+
+      const result = await getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ...makeDialogueConfig({ adapterName: 'openrouter' }),
+          settings: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).settings,
+            dialogue_max_whole_file_duration_seconds: 3,
+            dialogue_forced_chunk_duration_seconds: 4
+          },
+          ai: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).ai,
+            dialogue_stitch: {
+              targets: [
+                { adapter: { name: 'openrouter', model: 'test-stitch-model' } }
+              ]
+            }
+          }
+        }
+      });
+
+      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ speaker_id, start, end, text }) => ({ speaker_id, start, end, text })), [
+        {
+          speaker_id: 'spk_003',
+          start: 1.2,
+          end: 6.3,
+          text: 'Raul Menendez ignited global unrest on an unprecedented scale.'
+        }
+      ]);
+      assert.deepEqual(result.artifacts.dialogueData.speaker_profiles.map((profile) => ({
+        speaker_id: profile.speaker_id,
+        linked_segment_indexes: profile.grounded.linked_segment_indexes
+      })), [
+        {
+          speaker_id: 'spk_003',
+          linked_segment_indexes: [0]
+        }
+      ]);
+    });
+
+    tNested.test('reassigns an incomplete leading fragment to the continuation speaker before merging', async () => {
+      let chunkCallCount = 0;
+      completeImplementation = async (options) => {
+        const prompt = String(options?.prompt || '');
+        completionPrompts.push(prompt);
+        completionOptions.push(options || {});
+
+        if (prompt.includes('dialogue transcript stitcher')) {
+          return {
+            content: JSON.stringify({
+              cleanedTranscript: 'CLEANED TRANSCRIPT',
+              auditTrail: [{ op: 'merge_boundary', chunkIndex: 0, detail: 'repaired continuation speaker drift' }],
+              debug: { refs: [] }
+            }),
+            usage: { input: 100, output: 150 }
+          };
+        }
+
+        chunkCallCount += 1;
+        if (chunkCallCount === 1) {
+          return {
+            content: JSON.stringify({
+              dialogue_segments: [
+                {
+                  start: 1.2,
+                  end: 4.95,
+                  speaker: 'Speaker 2',
+                  speaker_id: 'spk_002',
+                  text: 'Raul Menendez ignited global unrest and',
+                  confidence: 0.9
+                }
+              ],
+              speaker_profiles: [
+                {
+                  speaker_id: 'spk_002',
+                  label: 'Speaker 2',
+                  grounded: {
+                    confidence: 0.86,
+                    linked_segment_indexes: [0],
+                    acoustic_descriptors: [
+                      { label: 'deep, gravelly male voice', confidence: 0.88 }
+                    ]
+                  },
+                  inferred_traits: {
+                    traits: [
+                      { trait: 'tone', value: 'menacing', confidence: 0.8, note: null }
+                    ]
+                  }
+                }
+              ],
+              summary: 'Chunk 1',
+              handoffContext: 'Continue chunk 1',
+              totalDuration: 4
+            }),
+            usage: { input: 100, output: 150 }
+          };
+        }
+
+        return {
+          content: JSON.stringify({
+            dialogue_segments: [
+              {
+                start: 0,
+                end: 1.3,
+                speaker: 'Speaker 3',
+                speaker_id: 'spk_003',
+                text: 'on an unprecedented scale.',
+                confidence: 0.96
+              }
+            ],
+            speaker_profiles: [
+              {
+                speaker_id: 'spk_003',
+                label: 'Speaker 3',
+                grounded: {
+                  confidence: 0.9,
+                  linked_segment_indexes: [0],
+                  acoustic_descriptors: [
+                    { label: 'news-anchor style narration', confidence: 0.92 }
+                  ]
+                },
+                inferred_traits: {
+                  traits: []
+                }
+              }
+            ],
+            summary: 'Chunk 2',
+            handoffContext: 'Continue chunk 2',
+            totalDuration: 4
+          }),
+          usage: { input: 100, output: 150 }
+        };
+      };
+
+      mockExtractedAudioData = Buffer.alloc(2000, 1);
+      mockExtractedChunkData = Buffer.alloc(1000, 1);
+
+      const result = await getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ...makeDialogueConfig({ adapterName: 'openrouter' }),
+          settings: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).settings,
+            dialogue_max_whole_file_duration_seconds: 3,
+            dialogue_forced_chunk_duration_seconds: 4
+          },
+          ai: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).ai,
+            dialogue_stitch: {
+              targets: [
+                { adapter: { name: 'openrouter', model: 'test-stitch-model' } }
+              ]
+            }
+          }
+        }
+      });
+
+      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ speaker_id, start, end, text }) => ({ speaker_id, start, end, text })), [
+        {
+          speaker_id: 'spk_003',
+          start: 1.2,
+          end: 6.3,
+          text: 'Raul Menendez ignited global unrest and on an unprecedented scale.'
+        }
+      ]);
+    });
+
     tNested.test('forces chunking for long within-budget dialogue to stabilize timing', async () => {
       let chunkCallCount = 0;
       completeImplementation = async (options) => {
@@ -804,6 +1071,8 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts.some((prompt) => prompt.includes('create a new speaker_id instead of forcing continuity')));
       ok(completionPrompts.some((prompt) => prompt.includes('speaker_id continuity is acoustic, not semantic')));
       ok(completionPrompts.some((prompt) => prompt.includes('Do not merge clearly different voices just because the chunk continues the same scene')));
+      ok(completionPrompts.some((prompt) => prompt.includes('If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration')));
+      ok(completionPrompts.some((prompt) => prompt.includes('If adjacent words are one uninterrupted utterance from the same voice')));
       is(result.artifacts.dialogueData.totalDuration, 10);
       ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.start >= 4));
     });
@@ -907,6 +1176,8 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts[0].includes('Do not use grounded.confidence_abstained'));
       ok(completionPrompts[0].includes('speaker_id continuity is acoustic, not semantic'));
       ok(completionPrompts[0].includes('Do not merge clearly different voices just because the scene is continuous'));
+      ok(completionPrompts[0].includes('If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration'));
+      ok(completionPrompts[0].includes('If adjacent words are one uninterrupted utterance from the same voice'));
       ok(!completionPrompts[0].includes('set abstained=true'));
     });
   });

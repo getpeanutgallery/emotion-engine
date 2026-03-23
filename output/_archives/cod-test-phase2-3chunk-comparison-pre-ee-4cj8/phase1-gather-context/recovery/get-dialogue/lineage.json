@@ -1,0 +1,11 @@
+{
+  "failureId": "get-dialogue:phase1-gather-context:attempt-1",
+  "parentFailureId": null,
+  "phase": "phase1-gather-context",
+  "script": "get-dialogue",
+  "scriptRunAttempt": 1,
+  "deterministicAttemptsUsed": 0,
+  "aiRecoveryAttemptsUsed": 0,
+  "maxAiRecoveryAttempts": 1,
+  "reentryAttemptNumber": 0
+}

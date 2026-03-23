@@ -1,0 +1,83 @@
+{
+  "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist. We're bringing peace and security to the world.\nSpeaker 3: He refuses to let me go.\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\nSpeaker 4: A lot of people counting on us for answers.\nSpeaker 5: Specter One, report.\nSpeaker 6: Need a sitrep.\nSpeaker 3: This isn't real.\nSpeaker 4: The hell it ain't!\nSpeaker 8: Master! Master! Where's the dreams that I've been after? Master! Master! You promised only lies!\nSpeaker 4: Pull it together, man!\nSpeaker 2: So eager to lead, are we?\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 4: No more games. This ends now.\nSpeaker 8: Obey your master!\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.",
+  "auditTrail": [
+    {
+      "op": "merge_boundary",
+      "chunkIndex": 1,
+      "detail": "Merged the boundary fragment 'Raul Menendez ignited global unrest...' with the continuation 'on an unprecedented scale.' into one sentence."
+    },
+    {
+      "op": "normalize_speakers",
+      "chunkIndex": 0,
+      "detail": "Kept consistent speaker labels in the form 'Speaker N' across all chunks."
+    },
+    {
+      "op": "omit_empty_chunk",
+      "chunkIndex": 7,
+      "detail": "Excluded final chunk because it contained no speech."
+    }
+  ],
+  "debug": {
+    "inputKind": "dialogue.stitch.input",
+    "inputChunks": 8,
+    "notes": "Cleaned punctuation and stitched one cross-chunk sentence boundary between chunks 0 and 1. No invented dialogue; song lyric and promotional line retained as transcribed.",
+    "refs": [
+      {
+        "chunkIndex": 0,
+        "startTime": 0,
+        "endTime": 20,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3",
+        "promptRef": "_meta/ai/_prompts/1791cd5dc1fde319c39a1748265ea1c805931be4b0dcc9e64268b923b9d07708.json"
+      },
+      {
+        "chunkIndex": 1,
+        "startTime": 20,
+        "endTime": 40,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3",
+        "promptRef": "_meta/ai/_prompts/348429defeb9a1563bc424950ec5ddc9ce01c7e755e41dd56b5655d193d69127.json"
+      },
+      {
+        "chunkIndex": 2,
+        "startTime": 40,
+        "endTime": 60,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3",
+        "promptRef": "_meta/ai/_prompts/cf7eab6d272f001da39add8682f68a01a80c48d7098c5c1babd445301ba0c497.json"
+      },
+      {
+        "chunkIndex": 3,
+        "startTime": 60,
+        "endTime": 80,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3",
+        "promptRef": "_meta/ai/_prompts/c9337a232c672afe30d96ea3334a9252476f36e045a201985614149b9e4e5117.json"
+      },
+      {
+        "chunkIndex": 4,
+        "startTime": 80,
+        "endTime": 100,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3",
+        "promptRef": "_meta/ai/_prompts/08c1b17864585ea7d9c0ec48db415abca409b5750190b87987fd855f43126c83.json"
+      },
+      {
+        "chunkIndex": 5,
+        "startTime": 100,
+        "endTime": 120,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3",
+        "promptRef": "_meta/ai/_prompts/3a48ca0b6ff6c6a44446ba6a411b7853b712bb24afc6bbb2acd92a0f743bc09f.json"
+      },
+      {
+        "chunkIndex": 6,
+        "startTime": 120,
+        "endTime": 140,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3",
+        "promptRef": "_meta/ai/_prompts/f478fb521130746c013c669f6d266514e9b06e421ca81d36975b6bf68db7f6c0.json"
+      },
+      {
+        "chunkIndex": 7,
+        "startTime": 140,
+        "endTime": 140.042449,
+        "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3",
+        "promptRef": "_meta/ai/_prompts/0069c900feab75403fde8adfd36c21fd6d9fbe3d69af92645d72f64bd832c633.json"
+      }
+    ]
+  }
+}

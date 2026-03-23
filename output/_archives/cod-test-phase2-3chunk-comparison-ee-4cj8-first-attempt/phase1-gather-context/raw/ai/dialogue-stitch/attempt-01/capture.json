@@ -1,0 +1,500 @@
+{
+  "attempt": 1,
+  "attemptInTarget": 1,
+  "targetIndex": 0,
+  "targetCount": 5,
+  "adapter": {
+    "name": "openrouter",
+    "model": "openai/gpt-5.4",
+    "params": {
+      "max_tokens": "[REDACTED]",
+      "thinking": {
+        "level": "low"
+      }
+    }
+  },
+  "failover": null,
+  "promptRef": {
+    "sha256": "7f5bd2e6b9a3144de5afd2a278fd354c055644d4cb557721a9910fd6323ea94b",
+    "file": "_meta/ai/_prompts/7f5bd2e6b9a3144de5afd2a278fd354c055644d4cb557721a9910fd6323ea94b.json"
+  },
+  "stitchInputRef": "phase1-gather-context/raw/ai/dialogue-stitch/input.json",
+  "rawResponse": {
+    "content": "{\n  \"cleanedTranscript\": \"Speaker 1: They want you afraid. Fear makes you easier to control.\\nSpeaker 1: It's time to wake up.\\nSpeaker 2: Your streets shall once again run red with your blood.\\nSpeaker 2: Raul Menendez ignited global unrest and\\nSpeaker 3: on an unprecedented scale.\\nSpeaker 1: Menendez is a terrorist.\\nSpeaker 1: We're bringing peace and security to the world.\\nSpeaker 2: He refuses to let me go.\\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\\nSpeaker 4: A lot of people counting on us for answers.\\nSpeaker 4: Specter One, report.\\nSpeaker 5: Need a sitrep.\\nSpeaker 6: This isn't real.\\nSpeaker 7: The hell it ain't!\\nSpeaker 8: Pull it together, man!\\nSpeaker 2: So eager to leave, David.\\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\\nSpeaker 1: You were never cut out to be a Mason.\\nSpeaker 4: No more games. This ends now.\\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.\",\n  \"auditTrail\": [\n    {\n      \"op\": \"merge_boundary\",\n      \"chunkIndex\": 1,\n      \"detail\": \"Joined the cross-chunk sentence fragment 'Raul Menendez ignited global unrest and' with 'on an unprecedented scale' while preserving speaker attribution across the boundary.\"\n    },\n    {\n      \"op\": \"punctuation_normalize\",\n      \"chunkIndex\": 1,\n      \"detail\": \"Normalized punctuation in Speaker 4 line to read 'Stop looking backwards, David. What matters is what we do next.' for readability.\"\n    },\n    {\n      \"op\": \"drop_empty_chunk\",\n      \"chunkIndex\": 7,\n      \"detail\": \"Omitted empty final chunk with no detected speech from the cleaned transcript.\"\n    }\n  ],\n  \"debug\": {\n    \"inputKind\": \"dialogue.stitch.input\",\n    \"inputChunks\": 8,\n    \"notes\": \"Mechanical transcript contained one sentence split across chunks 0 and 1; retained all spoken content and normalized only punctuation/sentence joining. Speaker labels kept in generic normalized form as provided.\",\n    \"refs\": [\n      {\n        \"chunkIndex\": 0,\n        \"startTime\": 0,\n        \"endTime\": 20,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/f8656a27f25ea383ff5377bd3dfd010d8a7b3e961312e57f4f16dad46984998b.json\"\n      },\n      {\n        \"chunkIndex\": 1,\n        \"startTime\": 20,\n        \"endTime\": 40,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/7f96139d116a3137b4bf5ee7553cf6486d4b4377f4ea45d40d07b68ea503af82.json\"\n      },\n      {\n        \"chunkIndex\": 2,\n        \"startTime\": 40,\n        \"endTime\": 60,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/b33845dbff95ec71d352b7ef406248c3ff37117b54eb4641c90f75c52103bd1.json\"\n      },\n      {\n        \"chunkIndex\": 3,\n        \"startTime\": 60,\n        \"endTime\": 80,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/1b25073a893312d4f19720fc9e9bf61f9294302a2525f804dfd7f51a354977af.json\"\n      },\n      {\n        \"chunkIndex\": 4,\n        \"startTime\": 80,\n        \"endTime\": 100,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90.json\"\n      },\n      {\n        \"chunkIndex\": 5,\n        \"startTime\": 100,\n        \"endTime\": 120,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/5ffd3520130c8ef1e594e4353c02281e409e6fd405ac96e98eacaec112dde850.json\"\n      },\n      {\n        \"chunkIndex\": 6,\n        \"startTime\": 120,\n        \"endTime\": 140,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/71337bc0331feac5f720eb88df26871064803a9e4cd212b95e82c6ab29171f0c.json\"\n      },\n      {\n        \"chunkIndex\": 7,\n        \"startTime\": 140,\n        \"endTime\": 140.042449,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/fcbbcadd0bf82f7a0c29d46678406b94d749b4bfb4861fce4eb4edb3db724605.json\"\n      }\n    ]\n  }\n}",
+    "usage": {
+      "input": 9949,
+      "output": 1382,
+      "total": 11331
+    },
+    "providerRequest": {
+      "method": "POST",
+      "url": "https://openrouter.ai/api/v1/chat/completions",
+      "headers": {
+        "Authorization": "[REDACTED]",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "model": "openai/gpt-5.4",
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "You are a dialogue transcript stitcher.\n\nYou are given a mechanically-stitched transcript with chunk boundaries. Your job is to:\n- produce a cleaned, readable transcript (fix punctuation, remove duplicated boundary fragments, normalize speaker labels)\n- keep meaning intact; do NOT invent content\n- provide an audit trail of the main merge operations and assumptions\n- include debugging references/payloads so downstream tooling can trace back\n\nReturn JSON only with this structure:\n\n{\n  \"cleanedTranscript\": \"...\",\n  \"auditTrail\": [\n    { \"op\": \"merge_boundary\", \"chunkIndex\": 3, \"detail\": \"Removed duplicated phrase at boundary\" }\n  ],\n  \"debug\": {\n    \"inputKind\": \"dialogue.stitch.input\",\n    \"inputChunks\": 0,\n    \"notes\": \"any notes\",\n    \"refs\": []\n  }\n}\n\nAllowed values for debug.inputKind: dialogue.stitch.input.\n\nHere is the stitch input (including mechanical transcript):\n{\n  \"schemaVersion\": 1,\n  \"kind\": \"dialogue.stitch.input\",\n  \"createdAt\": \"2026-03-23T14:27:53.682Z\",\n  \"preflight\": {\n    \"reason\": \"dialogue_timing_force_chunking\",\n    \"base64Expansion\": \"4*ceil(bytes/3)\",\n    \"sizeBytes\": 3361791,\n    \"estimatedBase64Bytes\": 4482388,\n    \"base64LimitBytes\": 10485760,\n    \"budgetBytes\": 9437184,\n    \"headroomRatio\": 0.9,\n    \"durationSeconds\": 140.042449,\n    \"bytesPerSecond\": 24005.514213765284,\n    \"recommendedChunkDurationSeconds\": 20,\n    \"chunks\": 8,\n    \"originalReason\": \"within_budget\",\n    \"maxWholeFileDurationSeconds\": 60\n  },\n  \"chunks\": [\n    {\n      \"chunkIndex\": 0,\n      \"startTime\": 0,\n      \"endTime\": 20,\n      \"summary\": \"A female narrator speaks about control and fear, followed by a menacing male voice threatening violence and mentioning Raul Menendez.\"\n    },\n    {\n      \"chunkIndex\": 1,\n      \"startTime\": 20,\n      \"endTime\": 40,\n      \"summary\": \"The chunk begins with a news-style narration about an unprecedented scale of events, followed by a female official (Speaker 1) denouncing Menendez. Speaker 2 (Menendez) expresses frustration, and Speaker 4 (a military figure) urges David to focus on the future.\"\n    },\n    {\n      \"chunkIndex\": 2,\n      \"startTime\": 40,\n      \"endTime\": 60,\n      \"summary\": \"The scene continues with tactical military communication. Speaker 4 requests a status report, followed by Speaker 5 asking for a situation report (sitrep).\"\n    },\n    {\n      \"chunkIndex\": 3,\n      \"startTime\": 60,\n      \"endTime\": 80,\n      \"summary\": \"Two characters react to an unfolding, seemingly impossible event.\"\n    },\n    {\n      \"chunkIndex\": 4,\n      \"startTime\": 80,\n      \"endTime\": 100,\n      \"summary\": \"The chunk consists mostly of heavy rock music, ending with a brief line from a soldier urging someone to pull it together.\"\n    },\n    {\n      \"chunkIndex\": 5,\n      \"startTime\": 100,\n      \"endTime\": 120,\n      \"summary\": \"Speaker 2 taunts David about the difficulty of killing an idea, Speaker 1 dismisses someone's potential as a Mason, and Speaker 4 declares an end to the conflict.\"\n    },\n    {\n      \"chunkIndex\": 6,\n      \"startTime\": 120,\n      \"endTime\": 140,\n      \"summary\": \"A promotional announcer informs the listener about the Reznov challenge pack available with pre-order.\"\n    },\n    {\n      \"chunkIndex\": 7,\n      \"startTime\": 140,\n      \"endTime\": 140.042449,\n      \"summary\": \"No speech detected in this 0.04s chunk.\"\n    }\n  ],\n  \"debugRefs\": [\n    {\n      \"chunkIndex\": 0,\n      \"startTime\": 0,\n      \"endTime\": 20,\n      \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3\",\n      \"promptRef\": \"_meta/ai/_prompts/f8656a27f25ea383ff5377bd3dfd010d8a7b3e961312e57f4f16dad46984998b.json\"\n    },\n    {\n      \"chunkIndex\": 1,\n      \"startTime\": 20,\n      \"endTime\": 40,\n      \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3\",\n      \"promptRef\": \"_meta/ai/_prompts/7f96139d116a3137b4bf5ee7553cf6486d4b4377f4ea45d40d07b68ea503af82.json\"\n    },\n    {\n      \"chunkIndex\": 2,\n      \"startTime\": 40,\n      \"endTime\": 60,\n      \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3\",\n      \"promptRef\": \"_meta/ai/_prompts/b33845dbff95ec71d352b7ef406248c3ff37117b54eb4641c90f75c52103bd1b.json\"\n    },\n    {\n      \"chunkIndex\": 3,\n      \"startTime\": 60,\n      \"endTime\": 80,\n      \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3\",\n      \"promptRef\": \"_meta/ai/_prompts/1b25073a893312d4f19720fc9e9bf61f9294302a2525f804dfd7f51a354977af.json\"\n    },\n    {\n      \"chunkIndex\": 4,\n      \"startTime\": 80,\n      \"endTime\": 100,\n      \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3\",\n      \"promptRef\": \"_meta/ai/_prompts/241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90.json\"\n    },\n    {\n      \"chunkIndex\": 5,\n      \"startTime\": 100,\n      \"endTime\": 120,\n      \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3\",\n      \"promptRef\": \"_meta/ai/_prompts/5ffd3520130c8ef1e594e4353c02281e409e6fd405ac96e98eacaec112dde850.json\"\n    },\n    {\n      \"chunkIndex\": 6,\n      \"startTime\": 120,\n      \"endTime\": 140,\n      \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3\",\n      \"promptRef\": \"_meta/ai/_prompts/71337bc0331feac5f720eb88df26871064803a9e4cd212b95e82c6ab29171f0c.json\"\n    },\n    {\n      \"chunkIndex\": 7,\n      \"startTime\": 140,\n      \"endTime\": 140.042449,\n      \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3\",\n      \"promptRef\": \"_meta/ai/_prompts/fcbbcadd0bf82f7a0c29d46678406b94d749b4bfb4861fce4eb4edb3db724605.json\"\n    }\n  ],\n  \"mechanicalTranscript\": \"--- CHUNK 0 [0.00s - 20.00s] ---\\n[0.00-5.40] Speaker 1: They want you afraid. Fear makes you easier to control.\\n[9.30-10.70] Speaker 1: It's time to wake up.\\n[13.10-17.00] Speaker 2: Your streets shall once again run red with your blood.\\n[17.30-20.00] Speaker 2: Raul Menendez ignited global unrest and\\n\\n--- CHUNK 1 [20.00s - 40.00s] ---\\n[20.00-22.10] Speaker 3: on an unprecedented scale.\\n[23.20-24.50] Speaker 1: Menendez is a terrorist.\\n[24.50-27.20] Speaker 1: We're bringing peace and security to the world.\\n[28.10-29.90] Speaker 2: He refuses to let me go.\\n[30.40-33.10] Speaker 4: Stop looking backwards, David, what matters is what we do next.\\n[35.30-36.90] Speaker 4: A lot of people counting on us for answers.\\n\\n--- CHUNK 2 [40.00s - 60.00s] ---\\n[51.50-52.50] Speaker 4: Specter One, report.\\n[54.50-55.50] Speaker 5: Need a sitrep.\\n\\n--- CHUNK 3 [60.00s - 80.00s] ---\\n[61.50-63.00] Speaker 6: This isn't real.\\n[63.20-64.50] Speaker 7: The hell it ain't!\\n\\n--- CHUNK 4 [80.00s - 100.00s] ---\\n[96.50-98.50] Speaker 8: Pull it together, man!\\n\\n--- CHUNK 5 [100.00s - 120.00s] ---\\n[100.00-102.50] Speaker 2: So eager to leave, David.\\n[103.20-106.00] Speaker 2: Killing a man is a hell of a lot easier than killing the idea.\\n[108.50-110.50] Speaker 1: You were never cut out to be a Mason.\\n[113.00-115.00] Speaker 4: No more games. This ends now.\\n\\n--- CHUNK 6 [120.00s - 140.00s] ---\\n[120.00-124.50] Speaker 9: Get the Reznov challenge pack when you pre-order now.\\n\\n--- CHUNK 7 [140.00s - 140.04s] ---\\n\"\n}\n\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_dialogue_stitch_json\",\n  \"stitch\": {\n    \"cleanedTranscript\": \"Speaker 1: Hello\\nSpeaker 2: Hi\",\n    \"auditTrail\": [\n      {\n        \"op\": \"merge_boundary\",\n        \"chunkIndex\": 0,\n        \"detail\": \"Removed duplicated phrase at a boundary.\"\n      }\n    ],\n    \"debug\": {\n      \"inputKind\": \"dialogue.stitch.input\",\n      \"inputChunks\": 2,\n      \"notes\": \"No major issues.\",\n      \"refs\": []\n    }\n  }\n}\n2) Final dialogue stitch JSON matching the schema above.\n\nAcceptance rules:\n- The final dialogue stitch JSON is accepted only after validate_dialogue_stitch_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_dialogue_stitch_json\",\"stitch\":{\"cleanedTranscript\":\"Speaker 1: Hello\\nSpeaker 2: Hi\",\"auditTrail\":[{\"op\":\"merge_boundary\",\"chunkIndex\":0,\"detail\":\"Removed duplicated phrase at a boundary.\"}],\"debug\":{\"inputKind\":\"dialogue.stitch.input\",\"inputChunks\":2,\"notes\":\"No major issues.\",\"refs\":[]}}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised dialogue stitch JSON candidate.\n- After the validator returns valid=true, return ONLY the final dialogue stitch JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must be the cleaned stitched transcript JSON object.\n\nFinal artifact reminders:\n- Keep meaning intact and do not invent dialogue.\n- auditTrail must describe the major stitch operations that were actually applied.\n\nTool contract:\n{\n  \"name\": \"validate_dialogue_stitch_json\",\n  \"argumentKey\": \"stitch\",\n  \"description\": \"Validate a Phase 1 dialogue stitch JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_dialogue_stitch_json\",\n    \"stitch\": {\n      \"cleanedTranscript\": \"Speaker 1: Hello\\nSpeaker 2: Hi\",\n      \"auditTrail\": [\n        {\n          \"op\": \"merge_boundary\",\n          \"chunkIndex\": 0,\n          \"detail\": \"Removed duplicated phrase at a boundary.\"\n        }\n      ],\n      \"debug\": {\n        \"inputKind\": \"dialogue.stitch.input\",\n        \"inputChunks\": 2,\n        \"notes\": \"No major issues.\",\n        \"refs\": []\n      }\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"stitch\"\n    ],\n    \"properties\": {\n      \"stitch\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate dialogue stitch JSON with cleanedTranscript, auditTrail, and optional debug payload.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 3,\n  \"remainingValidatorCalls\": 2\n}\n\nConversation state:\n[\n  {\n    \"role\": \"assistant\",\n    \"turn\": 1,\n    \"kind\": \"model_output\",\n    \"raw\": \"{\\\"tool\\\":\\\"validate_dialogue_stitch_json\\\",\\\"stitch\\\":{\\\"cleanedTranscript\\\":\\\"Speaker 1: They want you afraid. Fear makes you easier to control.\\\\nSpeaker 1: It's time to wake up.\\\\nSpeaker 2: Your streets shall once again run red with your blood.\\\\nSpeaker 2: Raul Menendez ignited global unrest and\\\\nSpeaker 3: on an unprecedented scale.\\\\nSpeaker 1: Menendez is a terrorist.\\\\nSpeaker 1: We're bringing peace and security to the world.\\\\nSpeaker 2: He refuses to let me go.\\\\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\\\\nSpeaker 4: A lot of people counting on us for answers.\\\\nSpeaker 4: Specter One, report.\\\\nSpeaker 5: Need a sitrep.\\\\nSpeaker 6: This isn't real.\\\\nSpeaker 7: The hell it ain't!\\\\nSpeaker 8: Pull it together, man!\\\\nSpeaker 2: So eager to leave, David.\\\\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\\\\nSpeaker 1: You were never cut out to be a Mason.\\\\nSpeaker 4: No more games. This ends now.\\\\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.\\\",\\\"auditTrail\\\":[{\\\"op\\\":\\\"merge_boundary\\\",\\\"chunkIndex\\\":1,\\\"detail\\\":\\\"Joined the cross-chunk sentence fragment 'Raul Menendez ignited global unrest and' with 'on an unprecedented scale' while preserving speaker attribution across the boundary.\\\"},{\\\"op\\\":\\\"punctuation_normalize\\\",\\\"chunkIndex\\\":1,\\\"detail\\\":\\\"Normalized punctuation in Speaker 4 line to read 'Stop looking backwards, David. What matters is what we do next.' for readability.\\\"},{\\\"op\\\":\\\"drop_empty_chunk\\\",\\\"chunkIndex\\\":7,\\\"detail\\\":\\\"Omitted empty final chunk with no detected speech from the cleaned transcript.\\\"}],\\\"debug\\\":{\\\"inputKind\\\":\\\"dialogue.stitch.input\\\",\\\"inputChunks\\\":8,\\\"notes\\\":\\\"Mechanical transcript contained one sentence split across chunks 0 and 1; retained all spoken content and normalized only punctuation/sentence joining. Speaker labels kept in generic normalized form as provided.\\\",\\\"refs\\\":[{\\\"chunkIndex\\\":0,\\\"startTime\\\":0,\\\"endTime\\\":20,\\\"audioPath\\\":\\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3\\\",\\\"promptRef\\\":\\\"_meta/ai/_prompts/f8656a27f25ea383ff5377bd3dfd010d8a7b3e961312e57f4f16dad46984998b.json\\\"},{\\\"chunkIndex\\\":1,\\\"startTime\\\":20,\\\"endTime\\\":40,\\\"audioPath\\\":\\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3\\\",\\\"promptRef\\\":\\\"_meta/ai/_prompts/7f96139d116a3137b4bf5ee7553cf6486d4b4377f4ea45d40d07b68ea503af82.json\\\"},{\\\"chunkIndex\\\":2,\\\"startTime\\\":40,\\\"endTime\\\":60,\\\"audioPath\\\":\\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3\\\",\\\"promptRef\\\":\\\"_meta/ai/_prompts/b33845dbff95ec71d352b7ef406248c3ff37117b54eb4641c90f75c52103bd1.json\\\"},{\\\"chunkIndex\\\":3,\\\"startTime\\\":60,\\\"endTime\\\":80,\\\"audioPath\\\":\\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3\\\",\\\"promptRef\\\":\\\"_meta/ai/_prompts/1b25073a893312d4f19720fc9e9bf61f9294302a2525f804dfd7f51a354977af.json\\\"},{\\\"chunkIndex\\\":4,\\\"startTime\\\":80,\\\"endTime\\\":100,\\\"audioPath\\\":\\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3\\\",\\\"promptRef\\\":\\\"_meta/ai/_prompts/241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90.json\\\"},{\\\"chunkIndex\\\":5,\\\"startTime\\\":100,\\\"endTime\\\":120,\\\"audioPath\\\":\\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3\\\",\\\"promptRef\\\":\\\"_meta/ai/_prompts/5ffd3520130c8ef1e594e4353c02281e409e6fd405ac96e98eacaec112dde850.json\\\"},{\\\"chunkIndex\\\":6,\\\"startTime\\\":120,\\\"endTime\\\":140,\\\"audioPath\\\":\\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3\\\",\\\"promptRef\\\":\\\"_meta/ai/_prompts/71337bc0331feac5f720eb88df26871064803a9e4cd212b95e82c6ab29171f0c.json\\\"},{\\\"chunkIndex\\\":7,\\\"startTime\\\":140,\\\"endTime\\\":140.042449,\\\"audioPath\\\":\\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3\\\",\\\"promptRef\\\":\\\"_meta/ai/_prompts/fcbbcadd0bf82f7a0c29d46678406b94d749b4bfb4861fce4eb4edb3db724605.json\\\"}]}}}\\n\\n{\\n  \\\"cleanedTranscript\\\": \\\"Speaker 1: They want you afraid. Fear makes you easier to control.\\\\nSpeaker 1: It's time to wake up.\\\\nSpeaker 2: Your streets shall once again run red with your blood.\\\\nSpeaker 2: Raul Menendez ignited global unrest on an unprecedented scale.\\\\nSpeaker 1: Menendez is a terrorist.\\\\nSpeaker 1: We're bringing peace and security to the world.\\\\nSpeaker 2: He refuses to let me go.\\\\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\\\\nSpeaker 4: A lot of people counting on us for answers.\\\\nSpeaker 4: Specter One, report.\\\\nSpeaker 5: Need a sitrep.\\\\nSpeaker 6: This isn't real.\\\\nSpeaker 7: The hell it ain't!\\\\nSpeaker 8: Pull it together, man!\\\\nSpeaker 2: So eager to leave, David.\\\\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\\\\nSpeaker 1: You were never cut out to be a Mason.\\\\nSpeaker 4: No more games. This ends now.\\\\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.\\\",\\n  \\\"auditTrail\\\": [\\n    {\\n      \\\"op\\\": \\\"merge_boundary\\\",\\n      \\\"chunkIndex\\\": 1,\\n      \\\"detail\\\": \\\"Merged the chunk 0 trailing fragment 'Raul Menendez ignited global unrest and' with chunk 1 leading fragment 'on an unprecedented scale' into one continuous sentence.\\\"\\n    },\\n    {\\n      \\\"op\\\": \\\"punctuation_normalize\\\",\\n      \\\"chunkIndex\\\": 1,\\n      \\\"detail\\\": \\\"Normalized punctuation in 'Stop looking backwards, David, what matters is what we do next' to improve readability without changing meaning.\\\"\\n    },\\n    {\\n      \\\"op\\\": \\\"drop_empty_chunk\\\",\\n      \\\"chunkIndex\\\": 7,\\n      \\\"detail\\\": \\\"Excluded the final chunk because it contained no detected speech.\\\"\\n    }\\n  ],\\n  \\\"debug\\\": {\\n    \\\"inputKind\\\": \\\"dialogue.stitch.input\\\",\\n    \\\"inputChunks\\\": 8,\\n    \\\"notes\\\": \\\"Used the mechanical transcript as source of truth. One sentence was split across a chunk boundary and was merged. Speaker labels were preserved in normalized 'Speaker N' form. No content was invented.\\\",\\n    \\\"refs\\\": [\\n      {\\n        \\\"chunkIndex\\\": 0,\\n        \\\"startTime\\\": 0,\\n        \\\"endTime\\\": 20,\\n        \\\"audioPath\\\": \\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3\\\",\\n        \\\"promptRef\\\": \\\"_meta/ai/_prompts/f8656a27f25ea383ff5377bd3dfd010d8a7b3e961312e57f4f16dad46984998b.json\\\"\\n      },\\n      {\\n        \\\"chunkIndex\\\": 1,\\n        \\\"startTime\\\": 20,\\n        \\\"endTime\\\": 40,\\n        \\\"audioPath\\\": \\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3\\\",\\n        \\\"promptRef\\\": \\\"_meta/ai/_prompts/7f96139d116a3137b4bf5ee7553cf6486d4b4377f4ea45d40d07b68ea503af82.json\\\"\\n      },\\n      {\\n        \\\"chunkIndex\\\": 2,\\n        \\\"startTime\\\": 40,\\n        \\\"endTime\\\": 60,\\n        \\\"audioPath\\\": \\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3\\\",\\n        \\\"promptRef\\\": \\\"_meta/ai/_prompts/b33845dbff95ec71d352b7ef406248c3ff37117b54eb4641c90f75c52103bd1.json\\\"\\n      },\\n      {\\n        \\\"chunkIndex\\\": 3,\\n        \\\"startTime\\\": 60,\\n        \\\"endTime\\\": 80,\\n        \\\"audioPath\\\": \\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3\\\",\\n        \\\"promptRef\\\": \\\"_meta/ai/_prompts/1b25073a893312d4f19720fc9e9bf61f9294302a2525f804dfd7f51a354977af.json\\\"\\n      },\\n      {\\n        \\\"chunkIndex\\\": 4,\\n        \\\"startTime\\\": 80,\\n        \\\"endTime\\\": 100,\\n        \\\"audioPath\\\": \\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3\\\",\\n        \\\"promptRef\\\": \\\"_meta/ai/_prompts/241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90.json\\\"\\n      },\\n      {\\n        \\\"chunkIndex\\\": 5,\\n        \\\"startTime\\\": 100,\\n        \\\"endTime\\\": 120,\\n        \\\"audioPath\\\": \\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3\\\",\\n        \\\"promptRef\\\": \\\"_meta/ai/_prompts/5ffd3520130c8ef1e594e4353c02281e409e6fd405ac96e98eacaec112dde850.json\\\"\\n      },\\n      {\\n        \\\"chunkIndex\\\": 6,\\n        \\\"startTime\\\": 120,\\n        \\\"endTime\\\": 140,\\n        \\\"audioPath\\\": \\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3\\\",\\n        \\\"promptRef\\\": \\\"_meta/ai/_prompts/71337bc0331feac5f720eb88df26871064803a9e4cd212b95e82c6ab29171f0c.json\\\"\\n      },\\n      {\\n        \\\"chunkIndex\\\": 7,\\n        \\\"startTime\\\": 140,\\n        \\\"endTime\\\": 140.042449,\\n        \\\"audioPath\\\": \\\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3\\\",\\n        \\\"promptRef\\\": \\\"_meta/ai/_prompts/fcbbcadd0bf82f7a0c29d46678406b94d749b4bfb4861fce4eb4edb3db724605.json\\\"\\n      }\\n    ]\\n  }\\n}\"\n  },\n  {\n    \"role\": \"tool\",\n    \"turn\": 1,\n    \"kind\": \"validator_acceptance\",\n    \"toolName\": \"validate_dialogue_stitch_json\",\n    \"toolCall\": {\n      \"tool\": \"validate_dialogue_stitch_json\",\n      \"stitch\": {\n        \"cleanedTranscript\": \"Speaker 1: They want you afraid. Fear makes you easier to control.\\nSpeaker 1: It's time to wake up.\\nSpeaker 2: Your streets shall once again run red with your blood.\\nSpeaker 2: Raul Menendez ignited global unrest and\\nSpeaker 3: on an unprecedented scale.\\nSpeaker 1: Menendez is a terrorist.\\nSpeaker 1: We're bringing peace and security to the world.\\nSpeaker 2: He refuses to let me go.\\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\\nSpeaker 4: A lot of people counting on us for answers.\\nSpeaker 4: Specter One, report.\\nSpeaker 5: Need a sitrep.\\nSpeaker 6: This isn't real.\\nSpeaker 7: The hell it ain't!\\nSpeaker 8: Pull it together, man!\\nSpeaker 2: So eager to leave, David.\\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\\nSpeaker 1: You were never cut out to be a Mason.\\nSpeaker 4: No more games. This ends now.\\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.\",\n        \"auditTrail\": [\n          {\n            \"op\": \"merge_boundary\",\n            \"chunkIndex\": 1,\n            \"detail\": \"Joined the cross-chunk sentence fragment 'Raul Menendez ignited global unrest and' with 'on an unprecedented scale' while preserving speaker attribution across the boundary.\"\n          },\n          {\n            \"op\": \"punctuation_normalize\",\n            \"chunkIndex\": 1,\n            \"detail\": \"Normalized punctuation in Speaker 4 line to read 'Stop looking backwards, David. What matters is what we do next.' for readability.\"\n          },\n          {\n            \"op\": \"drop_empty_chunk\",\n            \"chunkIndex\": 7,\n            \"detail\": \"Omitted empty final chunk with no detected speech from the cleaned transcript.\"\n          }\n        ],\n        \"debug\": {\n          \"inputKind\": \"dialogue.stitch.input\",\n          \"inputChunks\": 8,\n          \"notes\": \"Mechanical transcript contained one sentence split across chunks 0 and 1; retained all spoken content and normalized only punctuation/sentence joining. Speaker labels kept in generic normalized form as provided.\",\n          \"refs\": [\n            {\n              \"chunkIndex\": 0,\n              \"startTime\": 0,\n              \"endTime\": 20,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/f8656a27f25ea383ff5377bd3dfd010d8a7b3e961312e57f4f16dad46984998b.json\"\n            },\n            {\n              \"chunkIndex\": 1,\n              \"startTime\": 20,\n              \"endTime\": 40,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/7f96139d116a3137b4bf5ee7553cf6486d4b4377f4ea45d40d07b68ea503af82.json\"\n            },\n            {\n              \"chunkIndex\": 2,\n              \"startTime\": 40,\n              \"endTime\": 60,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/b33845dbff95ec71d352b7ef406248c3ff37117b54eb4641c90f75c52103bd1.json\"\n            },\n            {\n              \"chunkIndex\": 3,\n              \"startTime\": 60,\n              \"endTime\": 80,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/1b25073a893312d4f19720fc9e9bf61f9294302a2525f804dfd7f51a354977af.json\"\n            },\n            {\n              \"chunkIndex\": 4,\n              \"startTime\": 80,\n              \"endTime\": 100,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90.json\"\n            },\n            {\n              \"chunkIndex\": 5,\n              \"startTime\": 100,\n              \"endTime\": 120,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/5ffd3520130c8ef1e594e4353c02281e409e6fd405ac96e98eacaec112dde850.json\"\n            },\n            {\n              \"chunkIndex\": 6,\n              \"startTime\": 120,\n              \"endTime\": 140,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/71337bc0331feac5f720eb88df26871064803a9e4cd212b95e82c6ab29171f0c.json\"\n            },\n            {\n              \"chunkIndex\": 7,\n              \"startTime\": 140,\n              \"endTime\": 140.042449,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/fcbbcadd0bf82f7a0c29d46678406b94d749b4bfb4861fce4eb4edb3db724605.json\"\n            }\n          ]\n        }\n      },\n      \"arguments\": {\n        \"stitch\": {\n          \"cleanedTranscript\": \"Speaker 1: They want you afraid. Fear makes you easier to control.\\nSpeaker 1: It's time to wake up.\\nSpeaker 2: Your streets shall once again run red with your blood.\\nSpeaker 2: Raul Menendez ignited global unrest and\\nSpeaker 3: on an unprecedented scale.\\nSpeaker 1: Menendez is a terrorist.\\nSpeaker 1: We're bringing peace and security to the world.\\nSpeaker 2: He refuses to let me go.\\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\\nSpeaker 4: A lot of people counting on us for answers.\\nSpeaker 4: Specter One, report.\\nSpeaker 5: Need a sitrep.\\nSpeaker 6: This isn't real.\\nSpeaker 7: The hell it ain't!\\nSpeaker 8: Pull it together, man!\\nSpeaker 2: So eager to leave, David.\\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\\nSpeaker 1: You were never cut out to be a Mason.\\nSpeaker 4: No more games. This ends now.\\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.\",\n          \"auditTrail\": [\n            {\n              \"op\": \"merge_boundary\",\n              \"chunkIndex\": 1,\n              \"detail\": \"Joined the cross-chunk sentence fragment 'Raul Menendez ignited global unrest and' with 'on an unprecedented scale' while preserving speaker attribution across the boundary.\"\n            },\n            {\n              \"op\": \"punctuation_normalize\",\n              \"chunkIndex\": 1,\n              \"detail\": \"Normalized punctuation in Speaker 4 line to read 'Stop looking backwards, David. What matters is what we do next.' for readability.\"\n            },\n            {\n              \"op\": \"drop_empty_chunk\",\n              \"chunkIndex\": 7,\n              \"detail\": \"Omitted empty final chunk with no detected speech from the cleaned transcript.\"\n            }\n          ],\n          \"debug\": {\n            \"inputKind\": \"dialogue.stitch.input\",\n            \"inputChunks\": 8,\n            \"notes\": \"Mechanical transcript contained one sentence split across chunks 0 and 1; retained all spoken content and normalized only punctuation/sentence joining. Speaker labels kept in generic normalized form as provided.\",\n            \"refs\": [\n              {\n                \"chunkIndex\": 0,\n                \"startTime\": 0,\n                \"endTime\": 20,\n                \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3\",\n                \"promptRef\": \"_meta/ai/_prompts/f8656a27f25ea383ff5377bd3dfd010d8a7b3e961312e57f4f16dad46984998b.json\"\n              },\n              {\n                \"chunkIndex\": 1,\n                \"startTime\": 20,\n                \"endTime\": 40,\n                \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3\",\n                \"promptRef\": \"_meta/ai/_prompts/7f96139d116a3137b4bf5ee7553cf6486d4b4377f4ea45d40d07b68ea503af82.json\"\n              },\n              {\n                \"chunkIndex\": 2,\n                \"startTime\": 40,\n                \"endTime\": 60,\n                \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3\",\n                \"promptRef\": \"_meta/ai/_prompts/b33845dbff95ec71d352b7ef406248c3ff37117b54eb4641c90f75c52103bd1.json\"\n              },\n              {\n                \"chunkIndex\": 3,\n                \"startTime\": 60,\n                \"endTime\": 80,\n                \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3\",\n                \"promptRef\": \"_meta/ai/_prompts/1b25073a893312d4f19720fc9e9bf61f9294302a2525f804dfd7f51a354977af.json\"\n              },\n              {\n                \"chunkIndex\": 4,\n                \"startTime\": 80,\n                \"endTime\": 100,\n                \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3\",\n                \"promptRef\": \"_meta/ai/_prompts/241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90.json\"\n              },\n              {\n                \"chunkIndex\": 5,\n                \"startTime\": 100,\n                \"endTime\": 120,\n                \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3\",\n                \"promptRef\": \"_meta/ai/_prompts/5ffd3520130c8ef1e594e4353c02281e409e6fd405ac96e98eacaec112dde850.json\"\n              },\n              {\n                \"chunkIndex\": 6,\n                \"startTime\": 120,\n                \"endTime\": 140,\n                \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3\",\n                \"promptRef\": \"_meta/ai/_prompts/71337bc0331feac5f720eb88df26871064803a9e4cd212b95e82c6ab29171f0c.json\"\n              },\n              {\n                \"chunkIndex\": 7,\n                \"startTime\": 140,\n                \"endTime\": 140.042449,\n                \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3\",\n                \"promptRef\": \"_meta/ai/_prompts/fcbbcadd0bf82f7a0c29d46678406b94d749b4bfb4861fce4eb4edb3db724605.json\"\n              }\n            ]\n          }\n        }\n      }\n    },\n    \"result\": {\n      \"ok\": true,\n      \"valid\": true,\n      \"toolName\": \"validate_dialogue_stitch_json\",\n      \"summary\": \"JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.\",\n      \"errors\": [],\n      \"normalizedValue\": {\n        \"cleanedTranscript\": \"Speaker 1: They want you afraid. Fear makes you easier to control.\\nSpeaker 1: It's time to wake up.\\nSpeaker 2: Your streets shall once again run red with your blood.\\nSpeaker 2: Raul Menendez ignited global unrest and\\nSpeaker 3: on an unprecedented scale.\\nSpeaker 1: Menendez is a terrorist.\\nSpeaker 1: We're bringing peace and security to the world.\\nSpeaker 2: He refuses to let me go.\\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\\nSpeaker 4: A lot of people counting on us for answers.\\nSpeaker 4: Specter One, report.\\nSpeaker 5: Need a sitrep.\\nSpeaker 6: This isn't real.\\nSpeaker 7: The hell it ain't!\\nSpeaker 8: Pull it together, man!\\nSpeaker 2: So eager to leave, David.\\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\\nSpeaker 1: You were never cut out to be a Mason.\\nSpeaker 4: No more games. This ends now.\\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.\",\n        \"auditTrail\": [\n          {\n            \"op\": \"merge_boundary\",\n            \"chunkIndex\": 1,\n            \"detail\": \"Joined the cross-chunk sentence fragment 'Raul Menendez ignited global unrest and' with 'on an unprecedented scale' while preserving speaker attribution across the boundary.\"\n          },\n          {\n            \"op\": \"punctuation_normalize\",\n            \"chunkIndex\": 1,\n            \"detail\": \"Normalized punctuation in Speaker 4 line to read 'Stop looking backwards, David. What matters is what we do next.' for readability.\"\n          },\n          {\n            \"op\": \"drop_empty_chunk\",\n            \"chunkIndex\": 7,\n            \"detail\": \"Omitted empty final chunk with no detected speech from the cleaned transcript.\"\n          }\n        ],\n        \"debug\": {\n          \"inputKind\": \"dialogue.stitch.input\",\n          \"inputChunks\": 8,\n          \"notes\": \"Mechanical transcript contained one sentence split across chunks 0 and 1; retained all spoken content and normalized only punctuation/sentence joining. Speaker labels kept in generic normalized form as provided.\",\n          \"refs\": [\n            {\n              \"chunkIndex\": 0,\n              \"startTime\": 0,\n              \"endTime\": 20,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/f8656a27f25ea383ff5377bd3dfd010d8a7b3e961312e57f4f16dad46984998b.json\"\n            },\n            {\n              \"chunkIndex\": 1,\n              \"startTime\": 20,\n              \"endTime\": 40,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/7f96139d116a3137b4bf5ee7553cf6486d4b4377f4ea45d40d07b68ea503af82.json\"\n            },\n            {\n              \"chunkIndex\": 2,\n              \"startTime\": 40,\n              \"endTime\": 60,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/b33845dbff95ec71d352b7ef406248c3ff37117b54eb4641c90f75c52103bd1.json\"\n            },\n            {\n              \"chunkIndex\": 3,\n              \"startTime\": 60,\n              \"endTime\": 80,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/1b25073a893312d4f19720fc9e9bf61f9294302a2525f804dfd7f51a354977af.json\"\n            },\n            {\n              \"chunkIndex\": 4,\n              \"startTime\": 80,\n              \"endTime\": 100,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90.json\"\n            },\n            {\n              \"chunkIndex\": 5,\n              \"startTime\": 100,\n              \"endTime\": 120,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/5ffd3520130c8ef1e594e4353c02281e409e6fd405ac96e98eacaec112dde850.json\"\n            },\n            {\n              \"chunkIndex\": 6,\n              \"startTime\": 120,\n              \"endTime\": 140,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/71337bc0331feac5f720eb88df26871064803a9e4cd212b95e82c6ab29171f0c.json\"\n            },\n            {\n              \"chunkIndex\": 7,\n              \"startTime\": 140,\n              \"endTime\": 140.042449,\n              \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3\",\n              \"promptRef\": \"_meta/ai/_prompts/fcbbcadd0bf82f7a0c29d46678406b94d749b4bfb4861fce4eb4edb3db724605.json\"\n            }\n          ]\n        }\n      }\n    }\n  }\n]"
+              }
+            ]
+          }
+        ],
+        "temperature": 0.2,
+        "max_tokens": "[REDACTED]",
+        "reasoning": {
+          "effort": "low",
+          "enabled": true
+        }
+      }
+    },
+    "providerResponse": {
+      "status": 200,
+      "headers": {
+        "date": "Mon, 23 Mar 2026 14:28:24 GMT",
+        "content-type": "application/json",
+        "transfer-encoding": "chunked",
+        "connection": "keep-alive",
+        "access-control-allow-origin": "*",
+        "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\")",
+        "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
+        "x-content-type-options": "nosniff",
+        "server": "cloudflare",
+        "cf-ray": "9e0e1f4f0eaad7b3-MIA"
+      },
+      "body": {
+        "id": "gen-1774276103-O4d4J7zrNTwb9kG0aR1h",
+        "object": "chat.completion",
+        "created": 1774276104,
+        "model": "openai/gpt-5.4-20260305",
+        "provider": "OpenAI",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "stop",
+            "native_finish_reason": "completed",
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"cleanedTranscript\": \"Speaker 1: They want you afraid. Fear makes you easier to control.\\nSpeaker 1: It's time to wake up.\\nSpeaker 2: Your streets shall once again run red with your blood.\\nSpeaker 2: Raul Menendez ignited global unrest and\\nSpeaker 3: on an unprecedented scale.\\nSpeaker 1: Menendez is a terrorist.\\nSpeaker 1: We're bringing peace and security to the world.\\nSpeaker 2: He refuses to let me go.\\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\\nSpeaker 4: A lot of people counting on us for answers.\\nSpeaker 4: Specter One, report.\\nSpeaker 5: Need a sitrep.\\nSpeaker 6: This isn't real.\\nSpeaker 7: The hell it ain't!\\nSpeaker 8: Pull it together, man!\\nSpeaker 2: So eager to leave, David.\\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\\nSpeaker 1: You were never cut out to be a Mason.\\nSpeaker 4: No more games. This ends now.\\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.\",\n  \"auditTrail\": [\n    {\n      \"op\": \"merge_boundary\",\n      \"chunkIndex\": 1,\n      \"detail\": \"Joined the cross-chunk sentence fragment 'Raul Menendez ignited global unrest and' with 'on an unprecedented scale' while preserving speaker attribution across the boundary.\"\n    },\n    {\n      \"op\": \"punctuation_normalize\",\n      \"chunkIndex\": 1,\n      \"detail\": \"Normalized punctuation in Speaker 4 line to read 'Stop looking backwards, David. What matters is what we do next.' for readability.\"\n    },\n    {\n      \"op\": \"drop_empty_chunk\",\n      \"chunkIndex\": 7,\n      \"detail\": \"Omitted empty final chunk with no detected speech from the cleaned transcript.\"\n    }\n  ],\n  \"debug\": {\n    \"inputKind\": \"dialogue.stitch.input\",\n    \"inputChunks\": 8,\n    \"notes\": \"Mechanical transcript contained one sentence split across chunks 0 and 1; retained all spoken content and normalized only punctuation/sentence joining. Speaker labels kept in generic normalized form as provided.\",\n    \"refs\": [\n      {\n        \"chunkIndex\": 0,\n        \"startTime\": 0,\n        \"endTime\": 20,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/f8656a27f25ea383ff5377bd3dfd010d8a7b3e961312e57f4f16dad46984998b.json\"\n      },\n      {\n        \"chunkIndex\": 1,\n        \"startTime\": 20,\n        \"endTime\": 40,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/7f96139d116a3137b4bf5ee7553cf6486d4b4377f4ea45d40d07b68ea503af82.json\"\n      },\n      {\n        \"chunkIndex\": 2,\n        \"startTime\": 40,\n        \"endTime\": 60,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/b33845dbff95ec71d352b7ef406248c3ff37117b54eb4641c90f75c52103bd1.json\"\n      },\n      {\n        \"chunkIndex\": 3,\n        \"startTime\": 60,\n        \"endTime\": 80,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/1b25073a893312d4f19720fc9e9bf61f9294302a2525f804dfd7f51a354977af.json\"\n      },\n      {\n        \"chunkIndex\": 4,\n        \"startTime\": 80,\n        \"endTime\": 100,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90.json\"\n      },\n      {\n        \"chunkIndex\": 5,\n        \"startTime\": 100,\n        \"endTime\": 120,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/5ffd3520130c8ef1e594e4353c02281e409e6fd405ac96e98eacaec112dde850.json\"\n      },\n      {\n        \"chunkIndex\": 6,\n        \"startTime\": 120,\n        \"endTime\": 140,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/71337bc0331feac5f720eb88df26871064803a9e4cd212b95e82c6ab29171f0c.json\"\n      },\n      {\n        \"chunkIndex\": 7,\n        \"startTime\": 140,\n        \"endTime\": 140.042449,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/fcbbcadd0bf82f7a0c29d46678406b94d749b4bfb4861fce4eb4edb3db724605.json\"\n      }\n    ]\n  }\n}",
+              "refusal": null,
+              "reasoning": null,
+              "reasoning_details": [
+                {
+                  "type": "[Truncated]",
+                  "data": "[Truncated]",
+                  "format": "[Truncated]",
+                  "id": "[Truncated]",
+                  "index": "[Truncated]"
+                }
+              ]
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": "[REDACTED]",
+          "completion_tokens": "[REDACTED]",
+          "total_tokens": "[REDACTED]",
+          "cost": 0.0392665,
+          "is_byok": false,
+          "prompt_tokens_details": "[REDACTED]",
+          "cost_details": {
+            "upstream_inference_cost": 0.0392665,
+            "upstream_inference_prompt_cost": 0.0185365,
+            "upstream_inference_completions_cost": 0.02073
+          },
+          "completion_tokens_details": "[REDACTED]"
+        }
+      }
+    }
+  },
+  "parsed": {
+    "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez ignited global unrest and\nSpeaker 3: on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 2: He refuses to let me go.\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\nSpeaker 4: A lot of people counting on us for answers.\nSpeaker 4: Specter One, report.\nSpeaker 5: Need a sitrep.\nSpeaker 6: This isn't real.\nSpeaker 7: The hell it ain't!\nSpeaker 8: Pull it together, man!\nSpeaker 2: So eager to leave, David.\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 4: No more games. This ends now.\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.",
+    "auditTrail": [
+      {
+        "op": "merge_boundary",
+        "chunkIndex": 1,
+        "detail": "Joined the cross-chunk sentence fragment 'Raul Menendez ignited global unrest and' with 'on an unprecedented scale' while preserving speaker attribution across the boundary."
+      },
+      {
+        "op": "punctuation_normalize",
+        "chunkIndex": 1,
+        "detail": "Normalized punctuation in Speaker 4 line to read 'Stop looking backwards, David. What matters is what we do next.' for readability."
+      },
+      {
+        "op": "drop_empty_chunk",
+        "chunkIndex": 7,
+        "detail": "Omitted empty final chunk with no detected speech from the cleaned transcript."
+      }
+    ],
+    "debug": {
+      "inputKind": "dialogue.stitch.input",
+      "inputChunks": 8,
+      "notes": "Mechanical transcript contained one sentence split across chunks 0 and 1; retained all spoken content and normalized only punctuation/sentence joining. Speaker labels kept in generic normalized form as provided.",
+      "refs": [
+        {
+          "chunkIndex": 0,
+          "startTime": 0,
+          "endTime": 20,
+          "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3",
+          "promptRef": "_meta/ai/_prompts/f8656a27f25ea383ff5377bd3dfd010d8a7b3e961312e57f4f16dad46984998b.json"
+        },
+        {
+          "chunkIndex": 1,
+          "startTime": 20,
+          "endTime": 40,
+          "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3",
+          "promptRef": "_meta/ai/_prompts/7f96139d116a3137b4bf5ee7553cf6486d4b4377f4ea45d40d07b68ea503af82.json"
+        },
+        {
+          "chunkIndex": 2,
+          "startTime": 40,
+          "endTime": 60,
+          "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3",
+          "promptRef": "_meta/ai/_prompts/b33845dbff95ec71d352b7ef406248c3ff37117b54eb4641c90f75c52103bd1.json"
+        },
+        {
+          "chunkIndex": 3,
+          "startTime": 60,
+          "endTime": 80,
+          "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3",
+          "promptRef": "_meta/ai/_prompts/1b25073a893312d4f19720fc9e9bf61f9294302a2525f804dfd7f51a354977af.json"
+        },
+        {
+          "chunkIndex": 4,
+          "startTime": 80,
+          "endTime": 100,
+          "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3",
+          "promptRef": "_meta/ai/_prompts/241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90.json"
+        },
+        {
+          "chunkIndex": 5,
+          "startTime": 100,
+          "endTime": 120,
+          "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3",
+          "promptRef": "_meta/ai/_prompts/5ffd3520130c8ef1e594e4353c02281e409e6fd405ac96e98eacaec112dde850.json"
+        },
+        {
+          "chunkIndex": 6,
+          "startTime": 120,
+          "endTime": 140,
+          "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3",
+          "promptRef": "_meta/ai/_prompts/71337bc0331feac5f720eb88df26871064803a9e4cd212b95e82c6ab29171f0c.json"
+        },
+        {
+          "chunkIndex": 7,
+          "startTime": 140,
+          "endTime": 140.042449,
+          "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3",
+          "promptRef": "_meta/ai/_prompts/fcbbcadd0bf82f7a0c29d46678406b94d749b4bfb4861fce4eb4edb3db724605.json"
+        }
+      ]
+    }
+  },
+  "toolLoop": {
+    "toolName": "validate_dialogue_stitch_json",
+    "maxTurns": 4,
+    "maxValidatorCalls": 3,
+    "turns": 2,
+    "validatorCalls": 2,
+    "history": [
+      {
+        "role": "assistant",
+        "turn": 1,
+        "kind": "model_output",
+        "raw": "{\"tool\":\"validate_dialogue_stitch_json\",\"stitch\":{\"cleanedTranscript\":\"Speaker 1: They want you afraid. Fear makes you easier to control.\\nSpeaker 1: It's time to wake up.\\nSpeaker 2: Your streets shall once again run red with your blood.\\nSpeaker 2: Raul Menendez ignited global unrest and\\nSpeaker 3: on an unprecedented scale.\\nSpeaker 1: Menendez is a terrorist.\\nSpeaker 1: We're bringing peace and security to the world.\\nSpeaker 2: He refuses to let me go.\\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\\nSpeaker 4: A lot of people counting on us for answers.\\nSpeaker 4: Specter One, report.\\nSpeaker 5: Need a sitrep.\\nSpeaker 6: This isn't real.\\nSpeaker 7: The hell it ain't!\\nSpeaker 8: Pull it together, man!\\nSpeaker 2: So eager to leave, David.\\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\\nSpeaker 1: You were never cut out to be a Mason.\\nSpeaker 4: No more games. This ends now.\\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.\",\"auditTrail\":[{\"op\":\"merge_boundary\",\"chunkIndex\":1,\"detail\":\"Joined the cross-chunk sentence fragment 'Raul Menendez ignited global unrest and' with 'on an unprecedented scale' while preserving speaker attribution across the boundary.\"},{\"op\":\"punctuation_normalize\",\"chunkIndex\":1,\"detail\":\"Normalized punctuation in Speaker 4 line to read 'Stop looking backwards, David. What matters is what we do next.' for readability.\"},{\"op\":\"drop_empty_chunk\",\"chunkIndex\":7,\"detail\":\"Omitted empty final chunk with no detected speech from the cleaned transcript.\"}],\"debug\":{\"inputKind\":\"dialogue.stitch.input\",\"inputChunks\":8,\"notes\":\"Mechanical transcript contained one sentence split across chunks 0 and 1; retained all spoken content and normalized only punctuation/sentence joining. Speaker labels kept in generic normalized form as provided.\",\"refs\":[{\"chunkIndex\":0,\"startTime\":0,\"endTime\":20,\"audioPath\":\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3\",\"promptRef\":\"_meta/ai/_prompts/f8656a27f25ea383ff5377bd3dfd010d8a7b3e961312e57f4f16dad46984998b.json\"},{\"chunkIndex\":1,\"startTime\":20,\"endTime\":40,\"audioPath\":\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3\",\"promptRef\":\"_meta/ai/_prompts/7f96139d116a3137b4bf5ee7553cf6486d4b4377f4ea45d40d07b68ea503af82.json\"},{\"chunkIndex\":2,\"startTime\":40,\"endTime\":60,\"audioPath\":\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3\",\"promptRef\":\"_meta/ai/_prompts/b33845dbff95ec71d352b7ef406248c3ff37117b54eb4641c90f75c52103bd1.json\"},{\"chunkIndex\":3,\"startTime\":60,\"endTime\":80,\"audioPath\":\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3\",\"promptRef\":\"_meta/ai/_prompts/1b25073a893312d4f19720fc9e9bf61f9294302a2525f804dfd7f51a354977af.json\"},{\"chunkIndex\":4,\"startTime\":80,\"endTime\":100,\"audioPath\":\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3\",\"promptRef\":\"_meta/ai/_prompts/241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90.json\"},{\"chunkIndex\":5,\"startTime\":100,\"endTime\":120,\"audioPath\":\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3\",\"promptRef\":\"_meta/ai/_prompts/5ffd3520130c8ef1e594e4353c02281e409e6fd405ac96e98eacaec112dde850.json\"},{\"chunkIndex\":6,\"startTime\":120,\"endTime\":140,\"audioPath\":\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3\",\"promptRef\":\"_meta/ai/_prompts/71337bc0331feac5f720eb88df26871064803a9e4cd212b95e82c6ab29171f0c.json\"},{\"chunkIndex\":7,\"startTime\":140,\"endTime\":140.042449,\"audioPath\":\"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3\",\"promptRef\":\"_meta/ai/_prompts/fcbbcadd0bf82f7a0c29d46678406b94d749b4bfb4861fce4eb4edb3db724605.json\"}]}}}\n\n{\n  \"cleanedTranscript\": \"Speaker 1: They want you afraid. Fear makes you easier to control.\\nSpeaker 1: It's time to wake up.\\nSpeaker 2: Your streets shall once again run red with your blood.\\nSpeaker 2: Raul Menendez ignited global unrest on an unprecedented scale.\\nSpeaker 1: Menendez is a terrorist.\\nSpeaker 1: We're bringing peace and security to the world.\\nSpeaker 2: He refuses to let me go.\\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\\nSpeaker 4: A lot of people counting on us for answers.\\nSpeaker 4: Specter One, report.\\nSpeaker 5: Need a sitrep.\\nSpeaker 6: This isn't real.\\nSpeaker 7: The hell it ain't!\\nSpeaker 8: Pull it together, man!\\nSpeaker 2: So eager to leave, David.\\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\\nSpeaker 1: You were never cut out to be a Mason.\\nSpeaker 4: No more games. This ends now.\\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.\",\n  \"auditTrail\": [\n    {\n      \"op\": \"merge_boundary\",\n      \"chunkIndex\": 1,\n      \"detail\": \"Merged the chunk 0 trailing fragment 'Raul Menendez ignited global unrest and' with chunk 1 leading fragment 'on an unprecedented scale' into one continuous sentence.\"\n    },\n    {\n      \"op\": \"punctuation_normalize\",\n      \"chunkIndex\": 1,\n      \"detail\": \"Normalized punctuation in 'Stop looking backwards, David, what matters is what we do next' to improve readability without changing meaning.\"\n    },\n    {\n      \"op\": \"drop_empty_chunk\",\n      \"chunkIndex\": 7,\n      \"detail\": \"Excluded the final chunk because it contained no detected speech.\"\n    }\n  ],\n  \"debug\": {\n    \"inputKind\": \"dialogue.stitch.input\",\n    \"inputChunks\": 8,\n    \"notes\": \"Used the mechanical transcript as source of truth. One sentence was split across a chunk boundary and was merged. Speaker labels were preserved in normalized 'Speaker N' form. No content was invented.\",\n    \"refs\": [\n      {\n        \"chunkIndex\": 0,\n        \"startTime\": 0,\n        \"endTime\": 20,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/f8656a27f25ea383ff5377bd3dfd010d8a7b3e961312e57f4f16dad46984998b.json\"\n      },\n      {\n        \"chunkIndex\": 1,\n        \"startTime\": 20,\n        \"endTime\": 40,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/7f96139d116a3137b4bf5ee7553cf6486d4b4377f4ea45d40d07b68ea503af82.json\"\n      },\n      {\n        \"chunkIndex\": 2,\n        \"startTime\": 40,\n        \"endTime\": 60,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/b33845dbff95ec71d352b7ef406248c3ff37117b54eb4641c90f75c52103bd1.json\"\n      },\n      {\n        \"chunkIndex\": 3,\n        \"startTime\": 60,\n        \"endTime\": 80,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/1b25073a893312d4f19720fc9e9bf61f9294302a2525f804dfd7f51a354977af.json\"\n      },\n      {\n        \"chunkIndex\": 4,\n        \"startTime\": 80,\n        \"endTime\": 100,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90.json\"\n      },\n      {\n        \"chunkIndex\": 5,\n        \"startTime\": 100,\n        \"endTime\": 120,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/5ffd3520130c8ef1e594e4353c02281e409e6fd405ac96e98eacaec112dde850.json\"\n      },\n      {\n        \"chunkIndex\": 6,\n        \"startTime\": 120,\n        \"endTime\": 140,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/71337bc0331feac5f720eb88df26871064803a9e4cd212b95e82c6ab29171f0c.json\"\n      },\n      {\n        \"chunkIndex\": 7,\n        \"startTime\": 140,\n        \"endTime\": 140.042449,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/fcbbcadd0bf82f7a0c29d46678406b94d749b4bfb4861fce4eb4edb3db724605.json\"\n      }\n    ]\n  }\n}"
+      },
+      {
+        "role": "tool",
+        "turn": 1,
+        "kind": "validator_acceptance",
+        "toolName": "validate_dialogue_stitch_json",
+        "toolCall": {
+          "tool": "validate_dialogue_stitch_json",
+          "stitch": {
+            "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez ignited global unrest and\nSpeaker 3: on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 2: He refuses to let me go.\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\nSpeaker 4: A lot of people counting on us for answers.\nSpeaker 4: Specter One, report.\nSpeaker 5: Need a sitrep.\nSpeaker 6: This isn't real.\nSpeaker 7: The hell it ain't!\nSpeaker 8: Pull it together, man!\nSpeaker 2: So eager to leave, David.\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 4: No more games. This ends now.\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.",
+            "auditTrail": [
+              {
+                "op": "merge_boundary",
+                "chunkIndex": 1,
+                "detail": "Joined the cross-chunk sentence fragment 'Raul Menendez ignited global unrest and' with 'on an unprecedented scale' while preserving speaker attribution across the boundary."
+              },
+              {
+                "op": "punctuation_normalize",
+                "chunkIndex": 1,
+                "detail": "Normalized punctuation in Speaker 4 line to read 'Stop looking backwards, David. What matters is what we do next.' for readability."
+              },
+              {
+                "op": "drop_empty_chunk",
+                "chunkIndex": 7,
+                "detail": "Omitted empty final chunk with no detected speech from the cleaned transcript."
+              }
+            ],
+            "debug": {
+              "inputKind": "dialogue.stitch.input",
+              "inputChunks": 8,
+              "notes": "Mechanical transcript contained one sentence split across chunks 0 and 1; retained all spoken content and normalized only punctuation/sentence joining. Speaker labels kept in generic normalized form as provided.",
+              "refs": [
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                }
+              ]
+            }
+          },
+          "arguments": {
+            "stitch": "[Circular]"
+          }
+        },
+        "result": {
+          "ok": true,
+          "valid": true,
+          "toolName": "validate_dialogue_stitch_json",
+          "summary": "JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.",
+          "errors": [],
+          "normalizedValue": {
+            "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez ignited global unrest and\nSpeaker 3: on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 2: He refuses to let me go.\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\nSpeaker 4: A lot of people counting on us for answers.\nSpeaker 4: Specter One, report.\nSpeaker 5: Need a sitrep.\nSpeaker 6: This isn't real.\nSpeaker 7: The hell it ain't!\nSpeaker 8: Pull it together, man!\nSpeaker 2: So eager to leave, David.\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 4: No more games. This ends now.\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.",
+            "auditTrail": [
+              {
+                "op": "merge_boundary",
+                "chunkIndex": 1,
+                "detail": "Joined the cross-chunk sentence fragment 'Raul Menendez ignited global unrest and' with 'on an unprecedented scale' while preserving speaker attribution across the boundary."
+              },
+              {
+                "op": "punctuation_normalize",
+                "chunkIndex": 1,
+                "detail": "Normalized punctuation in Speaker 4 line to read 'Stop looking backwards, David. What matters is what we do next.' for readability."
+              },
+              {
+                "op": "drop_empty_chunk",
+                "chunkIndex": 7,
+                "detail": "Omitted empty final chunk with no detected speech from the cleaned transcript."
+              }
+            ],
+            "debug": {
+              "inputKind": "dialogue.stitch.input",
+              "inputChunks": 8,
+              "notes": "Mechanical transcript contained one sentence split across chunks 0 and 1; retained all spoken content and normalized only punctuation/sentence joining. Speaker labels kept in generic normalized form as provided.",
+              "refs": "[Circular]"
+            }
+          }
+        }
+      },
+      {
+        "role": "assistant",
+        "turn": 2,
+        "kind": "model_output",
+        "raw": "{\n  \"cleanedTranscript\": \"Speaker 1: They want you afraid. Fear makes you easier to control.\\nSpeaker 1: It's time to wake up.\\nSpeaker 2: Your streets shall once again run red with your blood.\\nSpeaker 2: Raul Menendez ignited global unrest and\\nSpeaker 3: on an unprecedented scale.\\nSpeaker 1: Menendez is a terrorist.\\nSpeaker 1: We're bringing peace and security to the world.\\nSpeaker 2: He refuses to let me go.\\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\\nSpeaker 4: A lot of people counting on us for answers.\\nSpeaker 4: Specter One, report.\\nSpeaker 5: Need a sitrep.\\nSpeaker 6: This isn't real.\\nSpeaker 7: The hell it ain't!\\nSpeaker 8: Pull it together, man!\\nSpeaker 2: So eager to leave, David.\\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\\nSpeaker 1: You were never cut out to be a Mason.\\nSpeaker 4: No more games. This ends now.\\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.\",\n  \"auditTrail\": [\n    {\n      \"op\": \"merge_boundary\",\n      \"chunkIndex\": 1,\n      \"detail\": \"Joined the cross-chunk sentence fragment 'Raul Menendez ignited global unrest and' with 'on an unprecedented scale' while preserving speaker attribution across the boundary.\"\n    },\n    {\n      \"op\": \"punctuation_normalize\",\n      \"chunkIndex\": 1,\n      \"detail\": \"Normalized punctuation in Speaker 4 line to read 'Stop looking backwards, David. What matters is what we do next.' for readability.\"\n    },\n    {\n      \"op\": \"drop_empty_chunk\",\n      \"chunkIndex\": 7,\n      \"detail\": \"Omitted empty final chunk with no detected speech from the cleaned transcript.\"\n    }\n  ],\n  \"debug\": {\n    \"inputKind\": \"dialogue.stitch.input\",\n    \"inputChunks\": 8,\n    \"notes\": \"Mechanical transcript contained one sentence split across chunks 0 and 1; retained all spoken content and normalized only punctuation/sentence joining. Speaker labels kept in generic normalized form as provided.\",\n    \"refs\": [\n      {\n        \"chunkIndex\": 0,\n        \"startTime\": 0,\n        \"endTime\": 20,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/f8656a27f25ea383ff5377bd3dfd010d8a7b3e961312e57f4f16dad46984998b.json\"\n      },\n      {\n        \"chunkIndex\": 1,\n        \"startTime\": 20,\n        \"endTime\": 40,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/7f96139d116a3137b4bf5ee7553cf6486d4b4377f4ea45d40d07b68ea503af82.json\"\n      },\n      {\n        \"chunkIndex\": 2,\n        \"startTime\": 40,\n        \"endTime\": 60,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/b33845dbff95ec71d352b7ef406248c3ff37117b54eb4641c90f75c52103bd1.json\"\n      },\n      {\n        \"chunkIndex\": 3,\n        \"startTime\": 60,\n        \"endTime\": 80,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/1b25073a893312d4f19720fc9e9bf61f9294302a2525f804dfd7f51a354977af.json\"\n      },\n      {\n        \"chunkIndex\": 4,\n        \"startTime\": 80,\n        \"endTime\": 100,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90.json\"\n      },\n      {\n        \"chunkIndex\": 5,\n        \"startTime\": 100,\n        \"endTime\": 120,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/5ffd3520130c8ef1e594e4353c02281e409e6fd405ac96e98eacaec112dde850.json\"\n      },\n      {\n        \"chunkIndex\": 6,\n        \"startTime\": 120,\n        \"endTime\": 140,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/71337bc0331feac5f720eb88df26871064803a9e4cd212b95e82c6ab29171f0c.json\"\n      },\n      {\n        \"chunkIndex\": 7,\n        \"startTime\": 140,\n        \"endTime\": 140.042449,\n        \"audioPath\": \"phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3\",\n        \"promptRef\": \"_meta/ai/_prompts/fcbbcadd0bf82f7a0c29d46678406b94d749b4bfb4861fce4eb4edb3db724605.json\"\n      }\n    ]\n  }\n}"
+      },
+      {
+        "role": "tool",
+        "turn": 2,
+        "kind": "final_artifact_revalidation",
+        "toolName": "validate_dialogue_stitch_json",
+        "source": "final_artifact_auto_validation",
+        "toolCall": {
+          "tool": "validate_dialogue_stitch_json",
+          "stitch": {
+            "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez ignited global unrest and\nSpeaker 3: on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 2: He refuses to let me go.\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\nSpeaker 4: A lot of people counting on us for answers.\nSpeaker 4: Specter One, report.\nSpeaker 5: Need a sitrep.\nSpeaker 6: This isn't real.\nSpeaker 7: The hell it ain't!\nSpeaker 8: Pull it together, man!\nSpeaker 2: So eager to leave, David.\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 4: No more games. This ends now.\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.",
+            "auditTrail": [
+              {
+                "op": "merge_boundary",
+                "chunkIndex": 1,
+                "detail": "Joined the cross-chunk sentence fragment 'Raul Menendez ignited global unrest and' with 'on an unprecedented scale' while preserving speaker attribution across the boundary."
+              },
+              {
+                "op": "punctuation_normalize",
+                "chunkIndex": 1,
+                "detail": "Normalized punctuation in Speaker 4 line to read 'Stop looking backwards, David. What matters is what we do next.' for readability."
+              },
+              {
+                "op": "drop_empty_chunk",
+                "chunkIndex": 7,
+                "detail": "Omitted empty final chunk with no detected speech from the cleaned transcript."
+              }
+            ],
+            "debug": {
+              "inputKind": "dialogue.stitch.input",
+              "inputChunks": 8,
+              "notes": "Mechanical transcript contained one sentence split across chunks 0 and 1; retained all spoken content and normalized only punctuation/sentence joining. Speaker labels kept in generic normalized form as provided.",
+              "refs": [
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                },
+                {
+                  "chunkIndex": "[Truncated]",
+                  "startTime": "[Truncated]",
+                  "endTime": "[Truncated]",
+                  "audioPath": "[Truncated]",
+                  "promptRef": "[Truncated]"
+                }
+              ]
+            }
+          },
+          "arguments": {
+            "stitch": "[Circular]"
+          }
+        },
+        "result": {
+          "ok": true,
+          "valid": true,
+          "toolName": "validate_dialogue_stitch_json",
+          "summary": "JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.",
+          "errors": [],
+          "normalizedValue": {
+            "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez ignited global unrest and\nSpeaker 3: on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 2: He refuses to let me go.\nSpeaker 4: Stop looking backwards, David. What matters is what we do next.\nSpeaker 4: A lot of people counting on us for answers.\nSpeaker 4: Specter One, report.\nSpeaker 5: Need a sitrep.\nSpeaker 6: This isn't real.\nSpeaker 7: The hell it ain't!\nSpeaker 8: Pull it together, man!\nSpeaker 2: So eager to leave, David.\nSpeaker 2: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 4: No more games. This ends now.\nSpeaker 9: Get the Reznov challenge pack when you pre-order now.",
+            "auditTrail": [
+              {
+                "op": "merge_boundary",
+                "chunkIndex": 1,
+                "detail": "Joined the cross-chunk sentence fragment 'Raul Menendez ignited global unrest and' with 'on an unprecedented scale' while preserving speaker attribution across the boundary."
+              },
+              {
+                "op": "punctuation_normalize",
+                "chunkIndex": 1,
+                "detail": "Normalized punctuation in Speaker 4 line to read 'Stop looking backwards, David. What matters is what we do next.' for readability."
+              },
+              {
+                "op": "drop_empty_chunk",
+                "chunkIndex": 7,
+                "detail": "Omitted empty final chunk with no detected speech from the cleaned transcript."
+              }
+            ],
+            "debug": {
+              "inputKind": "dialogue.stitch.input",
+              "inputChunks": 8,
+              "notes": "Mechanical transcript contained one sentence split across chunks 0 and 1; retained all spoken content and normalized only punctuation/sentence joining. Speaker labels kept in generic normalized form as provided.",
+              "refs": "[Circular]"
+            }
+          }
+        }
+      }
+    ],
+    "finalArtifact": "[Circular]"
+  },
+  "error": null,
+  "errorName": null,
+  "errorCode": null,
+  "errorStatus": null,
+  "errorRequestId": null,
+  "errorClassification": null,
+  "errorStack": null,
+  "errorDebug": null,
+  "errorResponse": null,
+  "provider": "openrouter",
+  "model": "openai/gpt-5.4",
+  "requestMeta": {
+    "adapter": "[Circular]",
+    "provider": "openrouter",
+    "model": "openai/gpt-5.4",
+    "attempt": 1,
+    "attemptInTarget": 1,
+    "targetIndex": 0,
+    "targetCount": 5
+  }
+}

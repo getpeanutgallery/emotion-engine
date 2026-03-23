@@ -1,0 +1,287 @@
+{
+  "chunkIndex": 4,
+  "startTime": 80,
+  "endTime": 100,
+  "rollingHandoffIn": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: calm, authoritative female voice | inferred traits: tone: serious, revolutionary | recent lines: Menendez is a terrorist. / We're bringing peace and security to the world.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: deep, gravelly male voice | inferred traits: tone: menacing, villainous | recent lines: Raul Menendez ignited global unrest and / He refuses to let me go.\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: authoritative female voice | recent lines: Menendez is a terrorist. / We're bringing peace and security to the world.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: deep, gravelly male voice | recent lines: Raul Menendez ignited global unrest and / He refuses to let me go.\n- spk_003 => Speaker 3 | grounded confidence: 0.80 | acoustic cues: news-anchor style narration | recent lines: on an unprecedented scale.\n- spk_004 => Speaker 4 | grounded confidence: 0.85 | acoustic cues: gruff, military-style male voice | recent lines: A lot of people counting on us for answers. / Specter One, report.\n- spk_004 => Speaker 4 | grounded confidence: 0.90 | acoustic cues: gruff, military-style male voice | inferred traits: role: military commander | recent lines: A lot of people counting on us for answers. / Specter One, report.\n- spk_005 => Speaker 5 | grounded confidence: 0.85 | acoustic cues: urgent, tactical male voice | inferred traits: role: soldier | recent lines: Need a sitrep.\n- spk_006 => Speaker 6 | grounded confidence: 0.85 | acoustic cues: disbelieving, slightly panicked male voice | recent lines: This isn't real.\n- spk_007 => Speaker 7 | grounded confidence: 0.85 | acoustic cues: aggressive, defensive male voice | recent lines: The hell it ain't!\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 6 (spk_006): This isn't real.\n- Speaker 7 (spk_007): The hell it ain't!",
+  "attempt": 1,
+  "attemptInTarget": 1,
+  "targetIndex": 0,
+  "targetCount": 4,
+  "adapter": {
+    "name": "openrouter",
+    "model": "google/gemini-3.1-flash-lite-preview",
+    "params": {
+      "max_tokens": "[REDACTED]",
+      "thinking": {
+        "level": "low"
+      }
+    }
+  },
+  "failover": null,
+  "promptRef": {
+    "sha256": "241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90",
+    "file": "_meta/ai/_prompts/241e308b5ee63b8c4d61eb41dc7009b1432efa7eef66ad3d96902d0e567d6e90.json"
+  },
+  "rawResponse": {
+    "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 16.5,\n      \"end\": 18.5,\n      \"speaker\": \"Speaker 8\",\n      \"speaker_id\": \"spk_008\",\n      \"text\": \"Pull it together, man!\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_008\",\n      \"label\": \"Speaker 8\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [\n          0\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"urgent, stressed male voice\",\n            \"confidence\": 0.8\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"soldier\",\n            \"confidence\": 0.7,\n            \"note\": \"fits the tactical/military context\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The chunk consists mostly of heavy rock music, ending with a brief line from a soldier urging someone to pull it together.\",\n  \"handoffContext\": \"The scene continues with high tension. Speaker 8 (soldier) is present. Previous speakers 6 and 7 were arguing about reality. The music is intense.\",\n  \"totalDuration\": 20.0\n}",
+    "usage": {
+      "input": 3404,
+      "output": 357,
+      "total": 3761
+    },
+    "providerRequest": {
+      "method": "POST",
+      "url": "https://openrouter.ai/api/v1/chat/completions",
+      "headers": {
+        "Authorization": "[REDACTED]",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "model": "google/gemini-3.1-flash-lite-preview",
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "You are transcribing CHUNK 4 of a longer audio file.\n\nChunk time window: 80.00s to 100.00s (global timeline).\n\nContext from previous chunk (handoff):\nSpeaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: calm, authoritative female voice | inferred traits: tone: serious, revolutionary | recent lines: Menendez is a terrorist. / We're bringing peace and security to the world.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: deep, gravelly male voice | inferred traits: tone: menacing, villainous | recent lines: Raul Menendez ignited global unrest and / He refuses to let me go.\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: authoritative female voice | recent lines: Menendez is a terrorist. / We're bringing peace and security to the world.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: deep, gravelly male voice | recent lines: Raul Menendez ignited global unrest and / He refuses to let me go.\n- spk_003 => Speaker 3 | grounded confidence: 0.80 | acoustic cues: news-anchor style narration | recent lines: on an unprecedented scale.\n- spk_004 => Speaker 4 | grounded confidence: 0.85 | acoustic cues: gruff, military-style male voice | recent lines: A lot of people counting on us for answers. / Specter One, report.\n- spk_004 => Speaker 4 | grounded confidence: 0.90 | acoustic cues: gruff, military-style male voice | inferred traits: role: military commander | recent lines: A lot of people counting on us for answers. / Specter One, report.\n- spk_005 => Speaker 5 | grounded confidence: 0.85 | acoustic cues: urgent, tactical male voice | inferred traits: role: soldier | recent lines: Need a sitrep.\n- spk_006 => Speaker 6 | grounded confidence: 0.85 | acoustic cues: disbelieving, slightly panicked male voice | recent lines: This isn't real.\n- spk_007 => Speaker 7 | grounded confidence: 0.85 | acoustic cues: aggressive, defensive male voice | recent lines: The hell it ain't!\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 6 (spk_006): This isn't real.\n- Speaker 7 (spk_007): The hell it ain't!\n\nTranscribe the audio in this chunk. Identify different speakers and provide timestamps.\n\nReturn JSON only with this structure:\n\n{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 5.2,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Transcribed text here\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.82,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"steady, conversational delivery\", \"confidence\": 0.61 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"age_range\",\n            \"value\": \"likely adult\",\n            \"confidence\": 0.28,\n            \"note\": \"speculative inference from voice only\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Brief summary for THIS chunk\",\n  \"handoffContext\": \"Short handoff to help the next chunk keep continuity (entities, speaker mapping, last lines)\",\n  \"totalDuration\": 30.5\n}\n\nRules:\n- Return JSON only. No markdown.\n- Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.\n- Treat the handoff speaker registry as the continuity memory. Reuse a prior speaker_id only when the current voice still matches that prior acoustic profile.\n- If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.\n- Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0. Do not use grounded.confidence_abstained.\n- Keep grounded speaker identity separate from inferred_traits.\n- Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.\n- inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.\n- speaker_id continuity is acoustic, not semantic. A line that names Raul Menendez or David may still be spoken by someone else.\n- Do not merge clearly different voices just because the chunk continues the same scene. Keep narration/figurehead VO, deep antagonist threats, authoritative female radio/comms, gruff soldier responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.\n- Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.\n- If no speech is detected, return an empty dialogue_segments array.\n- Keep handoffContext brief (<= ~10 lines).\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_dialogue_transcription_json\",\n  \"transcription\": {\n    \"dialogue_segments\": [\n      {\n        \"start\": 0,\n        \"end\": 1.2,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"Hello there\",\n        \"confidence\": 0.95\n      }\n    ],\n    \"speaker_profiles\": [\n      {\n        \"speaker_id\": \"spk_001\",\n        \"label\": \"Speaker 1\",\n        \"grounded\": {\n          \"confidence\": 0.82,\n          \"linked_segment_indexes\": [\n            0\n          ],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"steady, conversational delivery\",\n              \"confidence\": 0.61\n            }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"accent\",\n              \"value\": \"possibly mid-Atlantic American English\",\n              \"confidence\": 0.31,\n              \"note\": \"speculative inference from delivery only\"\n            }\n          ]\n        }\n      }\n    ],\n    \"summary\": \"Short summary of the dialogue.\",\n    \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n    \"totalDuration\": 10.5\n  }\n}\n2) Final dialogue transcription chunk JSON matching the schema above.\n\nAcceptance rules:\n- The final dialogue transcription chunk JSON is accepted only after validate_dialogue_transcription_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_dialogue_transcription_json\",\"transcription\":{\"dialogue_segments\":[{\"start\":0,\"end\":1.2,\"speaker\":\"Speaker 1\",\"speaker_id\":\"spk_001\",\"text\":\"Hello there\",\"confidence\":0.95}],\"speaker_profiles\":[{\"speaker_id\":\"spk_001\",\"label\":\"Speaker 1\",\"grounded\":{\"confidence\":0.82,\"linked_segment_indexes\":[0],\"acoustic_descriptors\":[{\"label\":\"steady, conversational delivery\",\"confidence\":0.61}]},\"inferred_traits\":{\"traits\":[{\"trait\":\"accent\",\"value\":\"possibly mid-Atlantic American English\",\"confidence\":0.31,\"note\":\"speculative inference from delivery only\"}]}}],\"summary\":\"Short summary of the dialogue.\",\"handoffContext\":\"Short continuity handoff for the next chunk.\",\"totalDuration\":10.5}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised dialogue transcription chunk JSON candidate.\n- After the validator returns valid=true, return ONLY the final dialogue transcription chunk JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must include handoffContext so the next chunk can preserve continuity.\n\nFinal artifact reminders:\n- Timestamps must be relative to this chunk and start at 0.\n- Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.\n- Keep grounded speaker identity separate from any inferred_traits guesswork.\n- handoffContext must stay brief and continuity-focused.\n\nTool contract:\n{\n  \"name\": \"validate_dialogue_transcription_json\",\n  \"argumentKey\": \"transcription\",\n  \"description\": \"Validate a Phase 1 dialogue transcription JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_dialogue_transcription_json\",\n    \"transcription\": {\n      \"dialogue_segments\": [\n        {\n          \"start\": 0,\n          \"end\": 1.2,\n          \"speaker\": \"Speaker 1\",\n          \"speaker_id\": \"spk_001\",\n          \"text\": \"Hello there\",\n          \"confidence\": 0.95\n        }\n      ],\n      \"speaker_profiles\": [\n        {\n          \"speaker_id\": \"spk_001\",\n          \"label\": \"Speaker 1\",\n          \"grounded\": {\n            \"confidence\": 0.82,\n            \"linked_segment_indexes\": [\n              0\n            ],\n            \"acoustic_descriptors\": [\n              {\n                \"label\": \"steady, conversational delivery\",\n                \"confidence\": 0.61\n              }\n            ]\n          },\n          \"inferred_traits\": {\n            \"traits\": [\n              {\n                \"trait\": \"accent\",\n                \"value\": \"possibly mid-Atlantic American English\",\n                \"confidence\": 0.31,\n                \"note\": \"speculative inference from delivery only\"\n              }\n            ]\n          }\n        }\n      ],\n      \"summary\": \"Short summary of the dialogue.\",\n      \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n      \"totalDuration\": 10.5\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"transcription\"\n    ],\n    \"properties\": {\n      \"transcription\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, and totalDuration.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 4,\n  \"remainingValidatorCalls\": 3\n}\n\nConversation state:\n[]"
+              },
+              {
+                "type": "input_audio",
+                "input_audio": {
+                  "data": "[Truncated]",
+                  "format": "[Truncated]"
+                }
+              }
+            ]
+          }
+        ],
+        "temperature": 0.3,
+        "max_tokens": "[REDACTED]",
+        "reasoning": {
+          "effort": "low",
+          "enabled": true
+        }
+      }
+    },
+    "providerResponse": {
+      "status": 200,
+      "headers": {
+        "date": "Mon, 23 Mar 2026 14:27:24 GMT",
+        "content-type": "application/json",
+        "transfer-encoding": "chunked",
+        "connection": "keep-alive",
+        "access-control-allow-origin": "*",
+        "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\")",
+        "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
+        "x-content-type-options": "nosniff",
+        "server": "cloudflare",
+        "cf-ray": "9e0e1dd5ec64d7b3-MIA"
+      },
+      "body": {
+        "id": "gen-1774276043-nXJ8YmLLpYo4kgOs6UG0",
+        "object": "chat.completion",
+        "created": 1774276043,
+        "model": "google/gemini-3.1-flash-lite-preview-20260303",
+        "provider": "Google",
+        "system_fingerprint": null,
+        "choices": [
+          {
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "stop",
+            "native_finish_reason": "STOP",
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 16.5,\n      \"end\": 18.5,\n      \"speaker\": \"Speaker 8\",\n      \"speaker_id\": \"spk_008\",\n      \"text\": \"Pull it together, man!\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_008\",\n      \"label\": \"Speaker 8\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [\n          0\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"urgent, stressed male voice\",\n            \"confidence\": 0.8\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"soldier\",\n            \"confidence\": 0.7,\n            \"note\": \"fits the tactical/military context\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The chunk consists mostly of heavy rock music, ending with a brief line from a soldier urging someone to pull it together.\",\n  \"handoffContext\": \"The scene continues with high tension. Speaker 8 (soldier) is present. Previous speakers 6 and 7 were arguing about reality. The music is intense.\",\n  \"totalDuration\": 20.0\n}",
+              "refusal": null,
+              "reasoning": null,
+              "reasoning_details": [
+                {
+                  "type": "[Truncated]",
+                  "data": "[Truncated]",
+                  "format": "[Truncated]",
+                  "index": "[Truncated]"
+                }
+              ]
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": "[REDACTED]",
+          "completion_tokens": "[REDACTED]",
+          "total_tokens": "[REDACTED]",
+          "cost": 0.0015115,
+          "is_byok": false,
+          "prompt_tokens_details": "[REDACTED]",
+          "cost_details": {
+            "upstream_inference_cost": 0.0015115,
+            "upstream_inference_prompt_cost": 0.000976,
+            "upstream_inference_completions_cost": 0.0005355
+          },
+          "completion_tokens_details": "[REDACTED]"
+        }
+      }
+    }
+  },
+  "parsed": {
+    "dialogue_segments": [
+      {
+        "start": 16.5,
+        "end": 18.5,
+        "speaker": "Speaker 8",
+        "speaker_id": "spk_008",
+        "text": "Pull it together, man!",
+        "confidence": 0.95,
+        "index": 0
+      }
+    ],
+    "speaker_profiles": [
+      {
+        "speaker_id": "spk_008",
+        "label": "Speaker 8",
+        "grounded": {
+          "confidence": 0.85,
+          "linked_segment_indexes": [
+            0
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "urgent, stressed male voice",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "role",
+              "value": "soldier",
+              "confidence": 0.7,
+              "note": "fits the tactical/military context"
+            }
+          ]
+        }
+      }
+    ],
+    "summary": "The chunk consists mostly of heavy rock music, ending with a brief line from a soldier urging someone to pull it together.",
+    "totalDuration": 20,
+    "handoffContext": "The scene continues with high tension. Speaker 8 (soldier) is present. Previous speakers 6 and 7 were arguing about reality. The music is intense."
+  },
+  "toolLoop": {
+    "toolName": "validate_dialogue_transcription_json",
+    "maxTurns": 4,
+    "maxValidatorCalls": 3,
+    "turns": 1,
+    "validatorCalls": 1,
+    "history": [
+      {
+        "role": "assistant",
+        "turn": 1,
+        "kind": "model_output",
+        "raw": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 16.5,\n      \"end\": 18.5,\n      \"speaker\": \"Speaker 8\",\n      \"speaker_id\": \"spk_008\",\n      \"text\": \"Pull it together, man!\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_008\",\n      \"label\": \"Speaker 8\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [\n          0\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"urgent, stressed male voice\",\n            \"confidence\": 0.8\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"role\",\n            \"value\": \"soldier\",\n            \"confidence\": 0.7,\n            \"note\": \"fits the tactical/military context\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The chunk consists mostly of heavy rock music, ending with a brief line from a soldier urging someone to pull it together.\",\n  \"handoffContext\": \"The scene continues with high tension. Speaker 8 (soldier) is present. Previous speakers 6 and 7 were arguing about reality. The music is intense.\",\n  \"totalDuration\": 20.0\n}"
+      },
+      {
+        "role": "tool",
+        "turn": 1,
+        "kind": "tool_result_auto_validation",
+        "toolName": "validate_dialogue_transcription_json",
+        "source": "auto_validate_candidate_json",
+        "toolCall": {
+          "tool": "validate_dialogue_transcription_json",
+          "transcription": {
+            "dialogue_segments": [
+              {
+                "start": 16.5,
+                "end": 18.5,
+                "speaker": "Speaker 8",
+                "speaker_id": "spk_008",
+                "text": "Pull it together, man!",
+                "confidence": 0.95
+              }
+            ],
+            "speaker_profiles": [
+              {
+                "speaker_id": "spk_008",
+                "label": "Speaker 8",
+                "grounded": {
+                  "confidence": "[Truncated]",
+                  "linked_segment_indexes": "[Truncated]",
+                  "acoustic_descriptors": "[Truncated]"
+                },
+                "inferred_traits": {
+                  "traits": "[Truncated]"
+                }
+              }
+            ],
+            "summary": "The chunk consists mostly of heavy rock music, ending with a brief line from a soldier urging someone to pull it together.",
+            "handoffContext": "The scene continues with high tension. Speaker 8 (soldier) is present. Previous speakers 6 and 7 were arguing about reality. The music is intense.",
+            "totalDuration": 20
+          },
+          "arguments": {
+            "transcription": "[Circular]"
+          }
+        },
+        "result": {
+          "ok": true,
+          "valid": true,
+          "toolName": "validate_dialogue_transcription_json",
+          "summary": "JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.",
+          "errors": [],
+          "normalizedValue": {
+            "dialogue_segments": [
+              {
+                "start": 16.5,
+                "end": 18.5,
+                "speaker": "Speaker 8",
+                "speaker_id": "spk_008",
+                "text": "Pull it together, man!",
+                "confidence": 0.95,
+                "index": 0
+              }
+            ],
+            "speaker_profiles": [
+              {
+                "speaker_id": "spk_008",
+                "label": "Speaker 8",
+                "grounded": {
+                  "confidence": "[Truncated]",
+                  "linked_segment_indexes": "[Truncated]",
+                  "acoustic_descriptors": "[Truncated]"
+                },
+                "inferred_traits": {
+                  "traits": "[Truncated]"
+                }
+              }
+            ],
+            "summary": "The chunk consists mostly of heavy rock music, ending with a brief line from a soldier urging someone to pull it together.",
+            "totalDuration": 20,
+            "handoffContext": "The scene continues with high tension. Speaker 8 (soldier) is present. Previous speakers 6 and 7 were arguing about reality. The music is intense."
+          }
+        }
+      }
+    ],
+    "finalArtifact": "[Circular]"
+  },
+  "error": null,
+  "errorName": null,
+  "errorCode": null,
+  "errorStatus": null,
+  "errorRequestId": null,
+  "errorClassification": null,
+  "errorStack": null,
+  "errorDebug": null,
+  "errorResponse": null,
+  "provider": "openrouter",
+  "model": "google/gemini-3.1-flash-lite-preview",
+  "requestMeta": {
+    "adapter": "[Circular]",
+    "provider": "openrouter",
+    "model": "google/gemini-3.1-flash-lite-preview",
+    "chunkIndex": 4,
+    "attempt": 1,
+    "attemptInTarget": 1,
+    "targetIndex": 0,
+    "targetCount": 4
+  }
+}

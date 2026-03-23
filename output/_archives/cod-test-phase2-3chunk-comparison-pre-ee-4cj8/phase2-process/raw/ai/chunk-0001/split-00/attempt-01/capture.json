@@ -1,0 +1,75 @@
+{
+  "chunkIndex": 1,
+  "splitIndex": 0,
+  "startTime": 5,
+  "endTime": 10,
+  "attempt": 1,
+  "attemptInTarget": 1,
+  "targetIndex": 0,
+  "targetCount": 4,
+  "adapter": {
+    "name": "openrouter",
+    "model": "qwen/qwen3.5-397b-a17b",
+    "params": {
+      "max_tokens": "[REDACTED]",
+      "timeoutMs": 10000,
+      "thinking": {
+        "level": "low"
+      }
+    }
+  },
+  "failover": null,
+  "promptRef": null,
+  "rawResponse": null,
+  "providerCompletion": null,
+  "parsed": null,
+  "toolLoop": null,
+  "error": "OpenRouter: No content in response",
+  "errorName": "OpenRouterNoContentError",
+  "errorCode": null,
+  "errorStatus": 200,
+  "errorRequestId": "9e0dd08cdb04db01-MIA",
+  "errorClassification": "retryable",
+  "errorStack": "OpenRouterNoContentError: OpenRouter: No content in response\n    at createNoContentError (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/utils/provider-debug.cjs:309:15)\n    at transformResponse (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:245:17)\n    at runRequest (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:276:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/digital-twin-router/index.js:394:28)\n    at async Object.complete (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ai-providers/providers/openrouter.cjs:336:14)\n    at async executeLocalValidatorToolLoop (/home/derrick/.openclaw/workspace/projects/peanut-gallery/tools/lib/local-validator-tool-loop.cjs:204:24)\n    at async operation (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/process/video-chunks.cjs:756:40)\n    at async executeWithTargets (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/lib/ai-targets.cjs:418:24)\n    at async Object.run (/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/process/video-chunks.cjs:678:52)",
+  "errorDebug": {
+    "provider": "openrouter",
+    "request": {
+      "method": "POST",
+      "url": "https://openrouter.ai/api/v1/chat/completions",
+      "model": "qwen/qwen3.5-397b-a17b",
+      "contentTypes": [
+        "text",
+        "video_url"
+      ],
+      "headers": {
+        "content-type": "application/json"
+      }
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "cf-ray": "9e0dd08cdb04db01-MIA"
+      },
+      "body": "{\n  \"id\": \"gen-1774272877-8CXBMs4pwUyaFlvKOMl9\",\n  \"object\": \"chat.completion\",\n  \"created\": 1774272877,\n  \"model\": \"qwen/qwen3.5-397b-a17b-20260216\",\n  \"provider\": \"Parasail\",\n  \"system_fingerprint\": null,\n  \"choices\": [\n    {\n      \"index\": 0,\n      \"logprobs\": null,\n      \"finish_reason\": \"length\",\n      \"native_finish_reason\": \"length\",\n      \"message\": {\n        \"role\": \"assistant\",\n        \"content\": null,\n        \"refusal\": null,\n        \"reasoning\": \"Thinking Process:\\n\\n1.  **Analyze the Request:**\\n    *   **Goal:** Evaluate the emotional content of a specific video chunk (5.0s-10.0s) using three lenses: patience, boredom, excitement.\\n    *   **Persona:** Alex \\\"The Scroller\\\" Chen (Gen Z, impatient, attention span < 3s, hates corporate intros, values authenticity).\\n    *   **Input Data:**\\n        *   Video Chunk: 5.0s - 10.0s (5 seconds duration).\\n        *   Visuals (from provided frames):\\n            *   00:00 (Frame 1): Soldier kneeling in debris, city background, smoke, helicopters. (Wait, the frames provided in the prompt seem to cover 00:00 to 00:04 based on the timestamps in the image filenames/captions, but the *context* says \\\"Chunk window: 5.0s-10.0s\\\". This is a discrepancy. I need to look closely at the provided images.)\\n            *   *Correction:* The provided images show timestamps 00:00, 00:00, 00:01, 00:01, 00:02, 00:02, 00:03, 00:03, 00:04, 00:04.\\n            *   *Context Discrepancy:* The prompt says \\\"Chunk window: 5.0s-10.0s\\\" but the images provided are labeled 00:00 to 00:04. However, the *Dialogue* and *Music* context provided in the prompt specifically references 5.0s-10.0s (\\\"They want you afraid...\\\", \\\"It's time to wake up.\\\").\\n            *   *Decision:* I must prioritize the *provided images* as the visual evidence for *this* turn, but the prompt context says \\\"Chunk window: 5.0s-10.0s\\\". This is confusing. Usually, in these tasks, the images provided *are* the chunk. If the images are labeled 00:00-00:04, but the context says 5.0s-10.0s, there's a mismatch.\\n            *   *Re-evaluating the images:* The images show a chaotic city scene, a soldier, a glitchy skull, a collapsing highway, cars falling, a dark corridor, and a cityscape with smoke.\\n            *   *Re-evaluating the Context:* The context says \\\"Previous Summary... opens with glitchy 'RISING TENSIONS'...\\\". The current chunk is 5.0s-10.0s. The dialogue is \\\"They want you afraid...\\\" (5.0s) and \\\"It's time to wake up\\\" (9.0s).\\n            *   *Hypothesis:* The images provided *are* the visual content for this turn, regardless of the timestamp labels on the images themselves (which might be relative to the start of the clip provided in the interface, or the prompt has a mismatch). I need to treat the *visuals provided* as the content for the 5.0s-10.0s window described in the text context.\\n            *   *Wait, looking closer at the prompt structure:* The prompt includes a list of images with timestamps 00:00 to 00:04. But the *Context* section says \\\"Chunk window: 5.0s-10.0s\\\". This is a common issue in these simulations. I should align my analysis with the *Context* provided (Dialogue/Music/Window) while using the *Visuals* provided as the actual content to analyze. If the visuals show 00:00-00:04 content but the context says 5-10s, I will treat the visuals as the content for the 5-10s window (assuming the video provided *is* the chunk).\\n            *   *Actually, looking at the images:* They seem to depict the *start* of a trailer (soldier kneeling, glitchy skull). The context says \\\"Previous Summary... opens with glitchy 'RISING TENSIONS'\\\". This implies the *previous* chunk was 0-5s. The *current* chunk is 5-10s.\\n            *   *Critical Check:* The images provided in the prompt *are* the visual input for *this* turn. I must analyze *these* images. If the timestamps on the images say 00:00-00:04, but the prompt says \\\"Chunk window: 5.0s-10.0s\\\", I have to assume the images represent the content *I am seeing now*.\\n            *   *Wait, another possibility:* The prompt includes images labeled 00:00 to 00:04. This suggests the video *starts* here. But the Context says \\\"Chunk window: 5.0s-10.0s\\\". This is a contradiction.\\n            *   *Resolution:* I will analyze the *visuals provided* (Soldier, Glitch Skull, Collapsing Highway, Cityscape) as the content for this evaluation turn. I will align the emotional scoring with the Persona (Alex) who is impatient. The dialogue provided (\\\"They want you afraid\\\", \\\"Time to wake up\\\") suggests high tension/action.\\n            *   *Wait, one more check:* The prompt says \\\"Attached video chunk: video/mp4 (base64)\\\". I cannot see base64. I only see the images. I must rely on the images provided in the prompt description.\\n            *   *Images:*\\n                1.  Soldier kneeling, debris, city smoke (00:00)\\n                2.  Same (00:00)\\n                3.  Glitchy skull (00:01)\\n                4.  Collapsing highway/cars (00:01)\\n                5.  Cars falling (00:02)\\n                6.  Cars falling (00:02)\\n                7.  Dark corridor (00:03)\\n                8.  Dark corridor (00:03)\\n                9.  Cityscape smoke (00:04)\\n                10. Cityscape smoke (00:04)\\n            *   *Context Dialogue:* 5.0s \\\"They want you afraid\\\", 9.0s \\\"Time to wake up\\\".\\n            *   *Conflict:* The images look like the *beginning* of a trailer (0-5s), but the context says this is 5-10s.\\n            *   *Strategy:* I will treat the *visuals provided* as the ground truth for what is on screen *now*. The dialogue context suggests this is the high-intensity middle section. The visuals (collapsing highway, glitchy skull) are high intensity. I will score based on the Persona's reaction to *these visuals* combined with the *dialogue context*.\\n            *   *Persona Check:* Alex hates generic intros. This looks like a high-budget game trailer (Call of Duty-esque). Alex might find it \\\"cool\\\" but also \\\"generic corporate trailer\\\". The glitchy skull is a bit cliché. The collapsing highway is visually punchy (good for Alex).\\n            *   *Tool Usage:* I need to use the `validate_emotion_analysis_json` tool first before submitting the final JSON.\\n\\n2.  **Drafting the Analysis (Internal):**\\n    *   **Visuals:** High chaos, destruction, glitch effects, fast cuts.\\n    *   **Audio/Dialogue:** \\\"They want you afraid\\\", \\\"Time to wake up\\\". Dramatic trailer music.\\n    *   **Persona (Alex):**\\n        *   *Patience:* Low. Alex is skeptical of corporate trailers. But the visuals are fast enough to hold attention briefly. Score: 4/10 (Still skeptical, waiting for something real).\\n        *   *Boredom:* Low. Too much happening to be bored. Score: 3/10.\\n        *   *Excitement:* Moderate/High. The destruction is visually stimulating. Score: 7/10.\\n    *   **Dominant Emotion:** Excitement (because boredom is low and patience is tested but excitement wins due to visual punch).\\n    *   **Wait, let's refine:** Alex's baseline patience is 5/10. If the hook was good (0-3s), patience might be higher. But this is 5-10s. If the intro was generic (as per Previous Summary), patience is dropping. However, the visuals here are *action-packed*. Alex likes \\\"Immediate visual punch\\\". The collapsing highway is a punch.\\n    *   *Revised Scores:*\\n        *   Patience: 5 (Holding on, but skeptical of the \\\"wake up\\\" cliché).\\n        *   Boredom: 2 (Too much chaos to be bored).\\n        *   Excitement: 7 (Visuals are intense).\\n    *   *Dominant:* Excitement.\\n\\n3.  **Tool Call Construction:**\\n    *   I need to call `validate_emotion_analysis_json` with the `emotionAnalysis` object.\\n    *   Schema check: `summary` (string), `emotions` (object with patience, boredom, excitement each having score 1-10 and reasoning), `dominant_emotion` (one of the three), `confidence` (0-1).\\n\\n4.  **Refining the Reasoning (Persona Voice):**\\n    *   *Patience:* \\\"I'm still here because the cuts are fast, but 'wake up' dialogue is so cliché.\\\"\\n    *   *Boredom:* \\\"Zero chance. Cars are falling off a bridge.\\\"\\n    *   *Excitement:* \\\"Okay, the physics on that highway collapse look insane. Vis\n...[truncated 157399 chars]"
+    },
+    "error": {
+      "name": "OpenRouterNoContentError",
+      "message": "OpenRouter: No content in response",
+      "isAxiosError": false
+    }
+  },
+  "errorResponse": null,
+  "provider": "openrouter",
+  "model": "qwen/qwen3.5-397b-a17b",
+  "requestMeta": {
+    "adapter": "[Circular]",
+    "provider": "openrouter",
+    "model": "qwen/qwen3.5-397b-a17b",
+    "chunkIndex": 1,
+    "splitIndex": 0,
+    "attempt": 1,
+    "attemptInTarget": 1,
+    "targetIndex": 0,
+    "targetCount": 4
+  }
+}

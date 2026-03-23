@@ -1,0 +1,46 @@
+{
+  "segments": [
+    {
+      "start": 0,
+      "end": 30,
+      "type": "music",
+      "description": "Dramatic, intense cinematic trailer music with heavy percussion and suspenseful synths.",
+      "mood": "tense",
+      "intensity": 8
+    },
+    {
+      "start": 30,
+      "end": 60,
+      "type": "music",
+      "description": "The audio features intense, driving cinematic music with dramatic voiceover narration and sound effects, maintaining a high-stakes action atmosphere.",
+      "mood": "energetic",
+      "intensity": 9
+    },
+    {
+      "start": 60,
+      "end": 90,
+      "type": "music",
+      "description": "Intense, dramatic cinematic music with aggressive percussion and male voiceover narration.",
+      "mood": "energetic",
+      "intensity": 9
+    },
+    {
+      "start": 90,
+      "end": 120,
+      "type": "music",
+      "description": "Intense cinematic music accompanied by dramatic voiceover and high-impact sound effects.",
+      "mood": "energetic",
+      "intensity": 9
+    },
+    {
+      "start": 120,
+      "end": 140.042449,
+      "type": "music",
+      "description": "Dramatic, cinematic orchestral music with driving percussion and intense sound effects.",
+      "mood": "energetic",
+      "intensity": 9
+    }
+  ],
+  "summary": "The audio maintains a high-intensity, dramatic tone with a blend of cinematic music, impactful sound effects, and urgent voiceover narration throughout the trailer.",
+  "hasMusic": true
+}

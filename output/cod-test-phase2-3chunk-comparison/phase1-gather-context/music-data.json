@@ -4,7 +4,7 @@
       "start": 0,
       "end": 30,
       "type": "music",
-      "description": "Dramatic trailer music featuring intense sound effects like explosions and gunshots, underscored by urgent voiceover dialogue.",
+      "description": "Dramatic and intense cinematic score featuring heavy percussion, sound effects, and dramatic dialogue.",
       "mood": "tense",
       "intensity": 8
     },
@@ -12,7 +12,7 @@
       "start": 30,
       "end": 60,
       "type": "music",
-      "description": "Intense, rhythmic action music with heavy percussion, punctuated by cinematic sound effects like explosions and whooshes, alongside dramatic dialogue.",
+      "description": "The audio features an intense, high-energy cinematic trailer score with driving percussion, synth bass, and dramatic orchestral swells, punctuated by sound effects like explosions and whooshes.",
       "mood": "energetic",
       "intensity": 9
     },
@@ -20,7 +20,7 @@
       "start": 60,
       "end": 90,
       "type": "music",
-      "description": "High-intensity, aggressive electronic rock music with dramatic dialogue, sound effects, and heavy percussion.",
+      "description": "An intense, high-energy cinematic action track featuring heavy percussion, aggressive synthesizers, and shouting vocals.",
       "mood": "energetic",
       "intensity": 9
     },
@@ -28,19 +28,19 @@
       "start": 90,
       "end": 120,
       "type": "music",
-      "description": "High-intensity orchestral trailer music punctuated by dramatic dialogue and explosive sound effects.",
-      "mood": "tense",
+      "description": "High-intensity, dramatic cinematic score featuring heavy percussion, orchestral swells, and punctuated by sound effects like explosions and gunshots.",
+      "mood": "energetic",
       "intensity": 9
     },
     {
       "start": 120,
       "end": 140.042449,
       "type": "music",
-      "description": "High-intensity orchestral music with dramatic percussion, accompanied by a promotional voiceover and sound effects.",
+      "description": "Dramatic cinematic trailer music featuring intense percussion and sound effects, overlaid with a promotional voiceover.",
       "mood": "energetic",
-      "intensity": 9
+      "intensity": 8
     }
   ],
-  "summary": "The audio remains a high-intensity, dramatic movie trailer, consistently blending orchestral music, explosive sound effects, and impactful dialogue to build tension, culminating in a promotional call to action.",
+  "summary": "The audio continues to feature an intense, dramatic cinematic trailer score, building upon previous segments with even more aggressive sound effects, high-stakes dialogue, and heavy percussion, now including a promotional voiceover.",
   "hasMusic": true
 }

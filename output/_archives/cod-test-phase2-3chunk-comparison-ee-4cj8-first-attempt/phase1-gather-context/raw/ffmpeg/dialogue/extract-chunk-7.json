@@ -1,0 +1,32 @@
+{
+  "tool": "ffmpeg",
+  "command": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/node_modules/ffmpeg-static/ffmpeg",
+  "args": [
+    "-v",
+    "error",
+    "-i",
+    "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/assets/processed/dialogue/audio.mp3",
+    "-ss",
+    "140",
+    "-t",
+    "0.042449000000004844",
+    "-acodec",
+    "libmp3lame",
+    "-b:a",
+    "192k",
+    "-ar",
+    "44100",
+    "-ac",
+    "2",
+    "-y",
+    "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3"
+  ],
+  "chunkIndex": 7,
+  "startTime": 140,
+  "endTime": 140.042449,
+  "status": "success",
+  "exitCode": 0,
+  "stderr": "",
+  "outputPath": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3",
+  "fileSize": 2026
+}

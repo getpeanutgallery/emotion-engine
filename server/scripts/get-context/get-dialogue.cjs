@@ -93,6 +93,112 @@ function shouldDropImplausiblyClippedDialogueSegment(segment, start, end, bounde
   return retainedRatio < 0.2 && retainedDuration < minimumPlausibleDuration;
 }
 
+function previousSegmentLooksOpenEnded(text) {
+  const normalizedText = String(text || '').trim();
+  if (!normalizedText) return false;
+  if (/(\.\.\.|[,;:\-–—])$/.test(normalizedText)) return true;
+  if (/(\b(?:and|or|but|so|because|that|which|who|when|while|to|of|for|in|on|with|at|from|by)\b)$/i.test(normalizedText)) return true;
+  return !/[.!?]["')\]]?$/.test(normalizedText);
+}
+
+function nextSegmentLooksContinuation(text) {
+  return /^[a-z(\[]/.test(String(text || '').trim());
+}
+
+function shouldAdoptNextSpeakerForBoundaryContinuation(previousSegment, nextSegment) {
+  if (!previousSegment || !nextSegment) return false;
+
+  const previousSpeakerId = typeof previousSegment?.speaker_id === 'string' ? previousSegment.speaker_id.trim() : '';
+  const nextSpeakerId = typeof nextSegment?.speaker_id === 'string' ? nextSegment.speaker_id.trim() : '';
+  if (!previousSpeakerId || !nextSpeakerId || previousSpeakerId === nextSpeakerId) return false;
+
+  const previousEnd = Number.isFinite(previousSegment?.end) ? previousSegment.end : null;
+  const nextStart = Number.isFinite(nextSegment?.start) ? nextSegment.start : null;
+  if (!Number.isFinite(previousEnd) || !Number.isFinite(nextStart)) return false;
+
+  const gapSeconds = nextStart - previousEnd;
+  if (gapSeconds < -0.1 || gapSeconds > 0.15) return false;
+
+  return previousSegmentLooksOpenEnded(previousSegment?.text) && nextSegmentLooksContinuation(nextSegment?.text);
+}
+
+function repairBoundaryContinuationSpeakerDrift(segments) {
+  const repaired = Array.isArray(segments) ? segments.map((segment) => ({ ...segment })) : [];
+
+  for (let index = 1; index < repaired.length; index += 1) {
+    const previous = repaired[index - 1];
+    const current = repaired[index];
+    if (!shouldAdoptNextSpeakerForBoundaryContinuation(previous, current)) continue;
+    previous.speaker_id = current.speaker_id;
+    previous.speaker = current.speaker;
+  }
+
+  return repaired;
+}
+
+function shouldMergeAdjacentDialogueSegments(previousSegment, nextSegment) {
+  if (!previousSegment || !nextSegment) return false;
+
+  const previousSpeakerId = typeof previousSegment?.speaker_id === 'string' ? previousSegment.speaker_id.trim() : '';
+  const nextSpeakerId = typeof nextSegment?.speaker_id === 'string' ? nextSegment.speaker_id.trim() : '';
+  const previousSpeaker = typeof previousSegment?.speaker === 'string' ? previousSegment.speaker.trim() : '';
+  const nextSpeaker = typeof nextSegment?.speaker === 'string' ? nextSegment.speaker.trim() : '';
+
+  const sameSpeaker = (previousSpeakerId && nextSpeakerId && previousSpeakerId === nextSpeakerId)
+    || (!previousSpeakerId && !nextSpeakerId && previousSpeaker && nextSpeaker && previousSpeaker === nextSpeaker);
+
+  if (!sameSpeaker) return false;
+
+  const previousEnd = Number.isFinite(previousSegment?.end) ? previousSegment.end : null;
+  const nextStart = Number.isFinite(nextSegment?.start) ? nextSegment.start : null;
+  if (!Number.isFinite(previousEnd) || !Number.isFinite(nextStart)) return false;
+
+  const gapSeconds = nextStart - previousEnd;
+  if (gapSeconds < -0.25 || gapSeconds > 0.75) return false;
+
+  const previousText = String(previousSegment?.text || '').trim();
+  const nextText = String(nextSegment?.text || '').trim();
+  if (!previousText || !nextText) return false;
+
+  if (gapSeconds <= 0.05) return true;
+
+  return previousSegmentLooksOpenEnded(previousText) || nextSegmentLooksContinuation(nextText);
+}
+
+function joinAdjacentDialogueTexts(previousText, nextText) {
+  const left = String(previousText || '').trim().replace(/\s*\.\.\.\s*$/, '').trim();
+  const right = String(nextText || '').trim();
+  if (!left) return right;
+  if (!right) return left;
+  if (/[\-–—]$/.test(left)) return `${left}${right}`.replace(/\s+/g, ' ').trim();
+  return `${left} ${right}`.replace(/\s+/g, ' ').trim();
+}
+
+function mergeAdjacentDialogueSegments(segments) {
+  const inputSegments = Array.isArray(segments) ? segments : [];
+  if (inputSegments.length <= 1) return inputSegments.slice();
+
+  const merged = [];
+  for (const segment of inputSegments) {
+    const previous = merged[merged.length - 1] || null;
+    if (shouldMergeAdjacentDialogueSegments(previous, segment)) {
+      previous.end = Number.isFinite(segment?.end) ? Math.max(previous.end, segment.end) : previous.end;
+      previous.text = joinAdjacentDialogueTexts(previous.text, segment?.text);
+      if (typeof segment?.confidence === 'number' && Number.isFinite(segment.confidence)) {
+        const previousConfidence = typeof previous?.confidence === 'number' && Number.isFinite(previous.confidence)
+          ? previous.confidence
+          : segment.confidence;
+        previous.confidence = Number(Math.max(previousConfidence, segment.confidence).toFixed(4));
+      }
+      continue;
+    }
+
+    merged.push({ ...segment });
+  }
+
+  return merged;
+}
+
 function normalizeDialogueDataToDuration(dialogueData, actualDuration, { requireHandoff = false } = {}) {
   const boundedDuration = Number.isFinite(actualDuration) && actualDuration >= 0 ? actualDuration : 0;
   const inputSegments = Array.isArray(dialogueData?.dialogue_segments) ? dialogueData.dialogue_segments : [];
@@ -519,6 +625,8 @@ async function run(input) {
         lines.push('Voice separation reminders:');
         lines.push('- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.');
         lines.push('- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.');
+        lines.push('- If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.');
+        lines.push('- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.');
         lines.push('- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.');
         lines.push('- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.');
       }
@@ -1032,6 +1140,9 @@ async function run(input) {
       }));
 
       chunkSegments.push(...offsetSegments);
+      const repairedChunkSegments = repairBoundaryContinuationSpeakerDrift(chunkSegments);
+      const mergedChunkSegments = mergeAdjacentDialogueSegments(repairedChunkSegments);
+      chunkSegments.splice(0, chunkSegments.length, ...mergedChunkSegments);
 
       const profiles = Array.isArray(parsed.speaker_profiles) ? parsed.speaker_profiles : [];
       const offsetProfiles = profiles.map((profile) => ({
@@ -1541,6 +1652,8 @@ IMPORTANT:
 - inferred_traits must always be present as an object with a traits array. Keep it clearly speculative / non-authoritative and attempt reviewable traits for each speaker when the audio supports them; otherwise return an empty traits array.
 - speaker_id continuity is acoustic, not semantic. A speaker naming Raul Menendez or David is not evidence that the speaker is Raul Menendez or David.
 - Do not merge clearly different voices just because the scene is continuous. Keep narration/figurehead VO, deep antagonist threats, authoritative female radio/comms, gruff soldier responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.
+- If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.
+- If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.
 - If a later line sounds like a different voice, do not reuse the old speaker_id just because the scene context mentions the same character.
 - Do not compress the whole file's dialogue into the opening seconds; place each line where it actually occurs in the full timeline.
 - If no speech is detected, return an empty dialogue_segments array.`;
@@ -1741,6 +1854,8 @@ Rules:
 - inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.
 - speaker_id continuity is acoustic, not semantic. A line that names Raul Menendez or David may still be spoken by someone else.
 - Do not merge clearly different voices just because the chunk continues the same scene. Keep narration/figurehead VO, deep antagonist threats, authoritative female radio/comms, gruff soldier responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.
+- If delivery shifts from direct character/threat speech into official public-address, newsreel, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.
+- If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.
 - Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.
 - If no speech is detected, return an empty dialogue_segments array.
 - Keep handoffContext brief (<= ~10 lines).`;

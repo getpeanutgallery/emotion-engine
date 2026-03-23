@@ -1,0 +1,122 @@
+{
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "splitIndex": 0,
+      "startTime": 0,
+      "endTime": 5,
+      "status": "success",
+      "summary": "Opens with 'RISING TENSIONS' text and glitch effects, transitioning rapidly to sci-fi destruction and a soldier surveying a war-torn city.",
+      "emotions": {
+        "patience": {
+          "score": 2,
+          "reasoning": "The 'RISING TENSIONS' text at 0.0s is a specific trigger for instant scrolling per persona profile; generic trailer tropes kill patience immediately."
+        },
+        "boredom": {
+          "score": 7,
+          "reasoning": "Despite fast cuts, the cliché dialogue ('fear makes you easier to control') and corporate intro style feel generic and cringe, leading to disengagement."
+        },
+        "excitement": {
+          "score": 4,
+          "reasoning": "High-quality visuals offer some stimulation, but the predictable narrative and overused dramatic tone prevent genuine excitement."
+        }
+      },
+      "dominant_emotion": "boredom",
+      "confidence": 0.95,
+      "tokens": 5907,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 1,
+      "splitIndex": 0,
+      "startTime": 5,
+      "endTime": 10,
+      "status": "success",
+      "summary": "The chunk features a soldier in a war-torn city with dialogue about fear and control, transitioning to a wake-up call amidst intense cinematic music.",
+      "emotions": {
+        "patience": {
+          "score": 7,
+          "reasoning": "High-stakes visuals and pacing maintain willingness to watch past the 3-second hook threshold."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "Dynamic destruction imagery and urgent voiceover prevent disengagement."
+        },
+        "excitement": {
+          "score": 8,
+          "reasoning": "Cinematic intensity and conspiracy-themed dialogue create strong curiosity and arousal."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.85,
+      "tokens": 9558,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 2,
+      "splitIndex": 0,
+      "startTime": 10,
+      "endTime": 15,
+      "status": "success",
+      "summary": "The clip opens with a cityscape but immediately cuts to a large title logo at 1 second, followed by shots of fire and a broken screen on the ground.",
+      "emotions": {
+        "patience": {
+          "score": 2,
+          "reasoning": "Logo animation appears within the first 2 seconds, which is explicitly listed as an instant scroll trigger for this persona."
+        },
+        "boredom": {
+          "score": 8,
+          "reasoning": "Generic trailer intro structure with title card feels corporate and slow, failing the 3-second hook rule."
+        },
+        "excitement": {
+          "score": 3,
+          "reasoning": "Visuals of fire and debris have some intensity, but the early logo placement kills momentum before the action starts."
+        }
+      },
+      "dominant_emotion": "boredom",
+      "confidence": 0.9,
+      "tokens": 17919,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    }
+  ],
+  "totalTokens": 33384,
+  "statusSummary": {
+    "total": 3,
+    "successful": 3,
+    "failed": 0,
+    "failedChunkIndexes": []
+  },
+  "persona": {
+    "soulPath": "../cast/impatient-teenager/SOUL.md",
+    "goalPath": "../goals/video-ad-evaluation.md",
+    "config": {
+      "chunkDuration": 8,
+      "numChunks": 3
+    }
+  },
+  "videoDuration": 140.017
+}

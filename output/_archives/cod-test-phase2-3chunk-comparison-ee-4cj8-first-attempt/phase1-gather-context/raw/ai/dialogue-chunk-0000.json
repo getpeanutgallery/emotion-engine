@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 2,
+  "kind": "pointer",
+  "updatedAt": "2026-03-23T14:26:51.539Z",
+  "chunkIndex": 0,
+  "latestAttempt": 1,
+  "target": {
+    "dir": "dialogue-chunks/chunk-0000/attempt-01",
+    "file": "dialogue-chunks/chunk-0000/attempt-01/capture.json"
+  }
+}
