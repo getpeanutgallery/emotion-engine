@@ -66,6 +66,33 @@ function clampNumber(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
+function countTranscriptWords(text) {
+  return String(text || '').trim().split(/\s+/).filter(Boolean).length;
+}
+
+function estimateMinimumPlausibleSpeechDurationSeconds(text) {
+  const wordCount = countTranscriptWords(text);
+  if (wordCount <= 0) return 0;
+  const FAST_SPEECH_WORDS_PER_SECOND = 6;
+  return Math.max(0.35, wordCount / FAST_SPEECH_WORDS_PER_SECOND);
+}
+
+function shouldDropImplausiblyClippedDialogueSegment(segment, start, end, boundedDuration) {
+  const originalStart = Number.isFinite(segment?.start) ? segment.start : null;
+  const originalEnd = Number.isFinite(segment?.end) ? segment.end : null;
+
+  if (!Number.isFinite(originalStart) || !Number.isFinite(originalEnd)) return false;
+  if (originalEnd <= originalStart) return true;
+  if (originalEnd <= boundedDuration) return false;
+
+  const originalDuration = originalEnd - originalStart;
+  const retainedDuration = end - start;
+  const retainedRatio = originalDuration > 0 ? retainedDuration / originalDuration : 0;
+  const minimumPlausibleDuration = estimateMinimumPlausibleSpeechDurationSeconds(segment?.text);
+
+  return retainedRatio < 0.2 && retainedDuration < minimumPlausibleDuration;
+}
+
 function normalizeDialogueDataToDuration(dialogueData, actualDuration, { requireHandoff = false } = {}) {
   const boundedDuration = Number.isFinite(actualDuration) && actualDuration >= 0 ? actualDuration : 0;
   const inputSegments = Array.isArray(dialogueData?.dialogue_segments) ? dialogueData.dialogue_segments : [];
@@ -75,6 +102,7 @@ function normalizeDialogueDataToDuration(dialogueData, actualDuration, { require
     const end = Number.isFinite(segment?.end) ? clampNumber(segment.end, 0, boundedDuration) : start;
 
     if (end <= start) return null;
+    if (shouldDropImplausiblyClippedDialogueSegment(segment, start, end, boundedDuration)) return null;
 
     return {
       ...segment,

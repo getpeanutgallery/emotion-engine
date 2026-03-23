@@ -8,6 +8,8 @@ bead_ids:
   - ee-7o0
   - ee-wt0
   - ee-l0a1
+  - ee-rr9q
+  - ee-yokt
   - ee-0ky
   - ee-9hk
   - ee-avf
@@ -549,6 +551,81 @@ Truthful quality summary:
 Readiness judgment for `ee-0ky`:
 - **Still blocked.** The music side is now trustworthy enough, and the speaker-profile linkage fix held, but the regenerated Phase 1 packet is still not fully trustworthy overall because dialogue timing remains implausible at the trailer tail.
 - Recommended next move before `ee-0ky`: tighten the dialogue tail/segment normalization so long trailing lines are either timed truthfully within the source audio or explicitly represented with an abstaining/approximate timing contract instead of a near-zero clipped segment.
+
+---
+
+### Task 2g: Fix Phase 1 dialogue tail segment timing pathology
+
+**Bead ID:** `ee-rr9q`  
+**SubAgent:** `coder`  
+**Prompt:** `Investigate why the final Phase 1 dialogue segment can still collapse a long spoken sentence into an implausibly tiny clipped tail window at the end of the source runtime even after the broader timing-truthfulness fix. Land the smallest truthful fix so final dialogue timing remains plausible instead of merely in-bounds. Add/update tests, do not modify node_modules, and if the owning surface somehow lives in a sibling polyrepo, fix it there and refresh emotion-engine cleanly afterward. Update this plan with exact files changed, commands, tests, findings, and readiness for ee-yokt.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `server/`
+- `test/`
+- sibling owning repos only if truly required
+
+**Files Created/Deleted/Modified:**
+- `server/scripts/get-context/get-dialogue.cjs`
+- `test/scripts/get-dialogue.test.js`
+- `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
+
+**Status:** ✅ Complete
+
+**Results:** Investigation traced the remaining pathology to the same in-repo owning surface as `ee-rr0`: whole-file Phase 1 model output is still free to overshoot the real trailer tail, and `server/scripts/get-context/get-dialogue.cjs` then truthfully clamps those ranges to the measured source runtime. That broader fix kept segments in-bounds, but it still allowed a semantically false final artifact when a long spoken line like `140 -> 146` survived as an absurdly tiny clipped tail `140 -> 140.042449`. So the exact source is **whole-file model output overrun plus the final normalization policy**, not speaker-contract repair logic, linked-index bookkeeping, or a sibling polyrepo package.
+
+Smallest truthful fix landed entirely inside `emotion-engine`:
+- `server/scripts/get-context/get-dialogue.cjs`
+  - added a narrow plausibility guard inside `normalizeDialogueDataToDuration()`
+  - the normalizer still clamps valid overruns to the real source runtime
+  - but if a tail-clipped segment would retain only a tiny fraction of its original duration *and* the remaining window is implausibly short for the amount of transcribed speech, the segment is now dropped instead of being persisted with fake precision
+  - implementation uses a conservative transcript-word-count speech-duration estimate so plausible partial clips still survive, while pathological near-zero tails are discarded
+- `test/scripts/get-dialogue.test.js`
+  - preserved the earlier regression proving plausible whole-file clamping still keeps a partially retained late segment (`8.5 -> 12.5` becoming `8.5 -> 10`)
+  - added a new regression proving a long overrun tail sentence is dropped rather than collapsed into a near-zero final window, and that the resulting speaker-profile linkage stays truthful
+
+Commands run:
+- `bd update ee-rr9q --status in_progress --json`
+- `grep -RIn "140.042449\|Killing a man\|So eager to leave" output/cod-test-phase1-review output/_archives/cod-test-phase1-review-pre-ee-l0a1 2>/dev/null | head -50`
+- `grep -RIn "normalizeDialogueDataToDuration\|buildChunkTranscriptionPrompt\|validateDialogueTranscriptionObject\|linked_segment_indexes" server test | head -200`
+- `node --test test/scripts/get-dialogue.test.js`
+- `node --test test/scripts/get-dialogue.test.js test/lib/phase1-validator-tools.test.js test/scripts/video-chunks.test.js && npm test`
+
+Test results:
+- targeted dialogue regression suite passed
+- targeted cross-lane regression bundle passed
+- full repo suite passed: `314` tests green via `npm test`
+
+Scope / ownership note:
+- no `node_modules` changes were made
+- no sibling polyrepo/package refresh was required
+- the fix stayed narrowly on dialogue tail timing truthfulness and did not broaden into music or Phase 2/3 work
+
+Readiness for `ee-yokt`:
+- **Ready.** The pathological near-zero tail persistence behavior is now blocked at the owning normalization layer and covered by regression tests.
+- The next step is the planned live rerun (`ee-yokt`) to regenerate the canonical Phase 1 review packet and verify the final dialogue artifact no longer persists an implausibly clipped trailer-end segment.
+
+---
+
+### Task 2h: Rerun the Phase 1-only review after the dialogue tail timing fix
+
+**Bead ID:** `ee-yokt`  
+**SubAgent:** `primary`  
+**Prompt:** `After ee-rr9q lands, rerun configs/cod-test-phase1-review.yaml and determine whether the regenerated Phase 1 review packet is finally trustworthy enough to unblock ee-0ky. Preserve exact commands, logs, output paths, and comparison notes against the previous Phase 1-only packets. Close ee-yokt only after the rerun verdict is documented truthfully in this plan.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `output/`
+- `.logs/`
+
+**Files Created/Deleted/Modified:**
+- rerun artifacts to be determined
+- `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
+
+**Status:** ⏳ Pending
+
+**Results:** Pending.
 
 ---
 

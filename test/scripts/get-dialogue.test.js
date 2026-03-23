@@ -518,6 +518,100 @@ test('Get Dialogue Script', async (t) => {
       ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => segment.start >= 0 && segment.end <= 10 && segment.end > segment.start));
     });
 
+    tNested.test('drops a tail segment when clamping would leave an implausibly tiny spoken window', async () => {
+      completeImplementation = async (options) => {
+        completionPrompts.push(String(options?.prompt || ''));
+        completionOptions.push(options || {});
+
+        return {
+          content: JSON.stringify({
+            dialogue_segments: [
+              {
+                start: 8,
+                end: 9.5,
+                speaker: 'Speaker 1',
+                speaker_id: 'spk_001',
+                text: 'Pull it together, man!',
+                confidence: 0.95
+              },
+              {
+                start: 10,
+                end: 16,
+                speaker: 'Speaker 2',
+                speaker_id: 'spk_002',
+                text: 'So eager to leave, David. Killing a man is a hell of a lot easier than killing the idea.',
+                confidence: 0.94
+              }
+            ],
+            speaker_profiles: [
+              {
+                speaker_id: 'spk_001',
+                label: 'Speaker 1',
+                grounded: {
+                  confidence: 0.83,
+                  linked_segment_indexes: [0],
+                  acoustic_descriptors: [],
+                  acoustic_descriptors_abstained: true
+                },
+                inferred_traits: {
+                  disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
+                  traits: [],
+                  abstained: true
+                }
+              },
+              {
+                speaker_id: 'spk_002',
+                label: 'Speaker 2',
+                grounded: {
+                  confidence: 0.79,
+                  linked_segment_indexes: [1],
+                  acoustic_descriptors: [],
+                  acoustic_descriptors_abstained: true
+                },
+                inferred_traits: {
+                  disclaimer: 'Speculative, non-authoritative guesses inferred from audio. Do not treat these traits as factual identity.',
+                  traits: [],
+                  abstained: true
+                }
+              }
+            ],
+            summary: 'Tail clip test',
+            totalDuration: 220
+          }),
+          usage: { input: 100, output: 150 }
+        };
+      };
+
+      const result = await getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeDialogueConfig()
+      });
+
+      is(result.artifacts.dialogueData.totalDuration, 10);
+      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ speaker_id, start, end, text }) => ({ speaker_id, start, end, text })), [
+        {
+          speaker_id: 'spk_001',
+          start: 8,
+          end: 9.5,
+          text: 'Pull it together, man!'
+        }
+      ]);
+      assert.deepEqual(result.artifacts.dialogueData.speaker_profiles.map((profile) => ({
+        speaker_id: profile.speaker_id,
+        linked_segment_indexes: profile.grounded.linked_segment_indexes
+      })), [
+        {
+          speaker_id: 'spk_001',
+          linked_segment_indexes: [0]
+        },
+        {
+          speaker_id: 'spk_002',
+          linked_segment_indexes: []
+        }
+      ]);
+    });
+
     tNested.test('clamps chunk-local overruns before stitching back to source time', async () => {
       completeImplementation = async (options) => {
         completionPrompts.push(String(options?.prompt || ''));
