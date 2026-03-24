@@ -1457,6 +1457,7 @@ Truthful remaining bug / non-victory note:
 - the experiment still does **not** fully satisfy the desired human-truth grouping for the entire official/public-address lane
 - the fresh raw capture for chunk `0003` (`.../chunk-0003/attempt-01/capture.json`) still splits the next official line onto a new `spk_003` instead of continuing `spk_002`, even though the chunk-`0002` handoff explicitly says `spk_002` is the news-report speaker and the new prompt now asks to keep adjacent follow-on official lines on the same `speaker_id` unless strong acoustic evidence says otherwise
 - so `ee-rmyh` succeeded as a narrow follow-up experiment and produced a better live comparison artifact for human review, but the seam remains only **partially stabilized** rather than fully solved
+- commit: `90dbcaf` (`Tighten opening seam speaker arbitration`)
 
 ---
 
@@ -1479,6 +1480,7 @@ Truthful remaining bug / non-victory note:
 - `7ac9a2c` - Tighten dialogue speaker attribution contract
 - `8713428` - Fix dialogue speaker registry stitching
 - `1126f9a` - Probe opening dialogue attribution boundary
+- `90dbcaf` - Tighten opening seam speaker arbitration
 
 **Lessons Learned:** A green Phase 1 rerun is necessary but not sufficient. For this lane, readiness depended on at least five truths lining up at once: segment ranges had to stay inside the real source duration, speaker-profile linkage had to match the final segment array, music prompts had to be grounded to the attached local chunk instead of the global trailer duration, clipped tail dialogue could not survive as fake micro-precision at the trailer boundary, and the final live rerun had to empirically confirm all of those fixes together before downstream chunk-level comparisons could be trusted.
 
