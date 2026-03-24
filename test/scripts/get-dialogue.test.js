@@ -1071,9 +1071,12 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts.some((prompt) => prompt.includes('Speaker registry (reuse speaker_id only for the same acoustic voice):')));
       ok(completionPrompts.some((prompt) => prompt.includes('create a new speaker_id instead of forcing continuity')));
       ok(completionPrompts.some((prompt) => prompt.includes('speaker_id continuity is acoustic, not semantic')));
+      ok(completionPrompts.some((prompt) => prompt.includes('Before reusing a prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture')));
       ok(completionPrompts.some((prompt) => prompt.includes('Do not merge clearly different voices just because the chunk continues the same scene')));
+      ok(completionPrompts.some((prompt) => prompt.includes('Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong')));
       ok(completionPrompts.some((prompt) => prompt.includes('If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration')));
       ok(completionPrompts.some((prompt) => prompt.includes('In the opening montage, prefer local chunk provenance over storyline continuity')));
+      ok(completionPrompts.some((prompt) => prompt.includes('If you create a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change')));
       ok(completionPrompts.some((prompt) => prompt.includes('If adjacent words are one uninterrupted utterance from the same voice')));
       is(result.artifacts.dialogueData.totalDuration, 10);
       ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.start >= 4));
@@ -1177,8 +1180,11 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts[0].includes('Do not persist acoustic_descriptors_abstained'));
       ok(completionPrompts[0].includes('Do not use grounded.confidence_abstained'));
       ok(completionPrompts[0].includes('speaker_id continuity is acoustic, not semantic'));
+      ok(completionPrompts[0].includes('Before reusing a speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture'));
       ok(completionPrompts[0].includes('Do not merge clearly different voices just because the scene is continuous'));
+      ok(completionPrompts[0].includes('Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong'));
       ok(completionPrompts[0].includes('If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration'));
+      ok(completionPrompts[0].includes('If you create a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change'));
       ok(completionPrompts[0].includes('If adjacent words are one uninterrupted utterance from the same voice'));
       ok(completionPrompts[0].includes('A speaker naming a person, character, organization, or title is not evidence that the speaker is that entity'));
       ok(!completionPrompts[0].includes('Raul Menendez or David'));

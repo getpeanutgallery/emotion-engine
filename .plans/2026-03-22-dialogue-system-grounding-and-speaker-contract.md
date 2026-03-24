@@ -18,6 +18,7 @@ bead_ids:
   - ee-9zg1
   - ee-4cj8
   - ee-mdqq
+  - ee-rmyh
 ---
 # emotion-engine: dialogue system grounding and speaker contract
 
@@ -1388,11 +1389,82 @@ Truthful remaining defect / verdict:
 
 ---
 
+### Task 11: Stabilize the 16s–28s authority seam attribution
+
+**Bead ID:** `ee-rmyh`  
+**SubAgent:** `coder`  
+**Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine, claim bead ee-rmyh with bd update ee-rmyh --status in_progress --json, then run a narrow follow-up experiment on the remaining 16s-28s opening seam. The current live bug is that the official/public-address/authority voice partly emerges as its own speaker but the adjacent follow-on official line falls back into the wrong speaker. Strengthen the prompt/arbitration behavior with more operational acoustic-first rules: compare vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture before reusing a speaker_id; default official/public-address/newsreel/expository narration to a distinct speaker from villain threats unless the acoustic match is very strong; and if a new official/public-address speaker_id is created, keep adjacent follow-on lines on that speaker_id unless strong acoustic evidence indicates another change. Regenerate a fresh comparison artifact for human review, update this plan with exact files changed and evidence, commit/push, and close ee-rmyh with an exact reason. Focus on this seam only, not a broad new harness.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `server/scripts/get-context/`
+- `test/`
+- `output/`
+- `.logs/`
+
+**Files Created/Deleted/Modified:**
+- `server/scripts/get-context/get-dialogue.cjs`
+- `test/scripts/get-dialogue.test.js`
+- `.logs/cod-test-phase2-3chunk-comparison-20260323-213803-ee-rmyh.log`
+- `output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-rmyh-20260323-213803/`
+- `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/dialogue-data.json`
+- `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw/ai/dialogue-chunks/chunk-0002/attempt-01/capture.json`
+- `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw/ai/dialogue-chunks/chunk-0003/attempt-01/capture.json`
+- `output/cod-test-phase2-3chunk-comparison/phase2-process/chunk-analysis.json`
+- `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
+
+**Status:** ✅ Complete
+
+**Results:** Claimed bead `ee-rmyh`, ran the requested narrow follow-up experiment on the `16s-28s` seam, regenerated the live 3-chunk comparison packet, and documented the truthful outcome: the stronger acoustic-first contract materially improved the exact seam, but it still does **not** fully hold the adjacent official/public-address lines on one durable speaker.
+
+Owning fix surface and code changes landed entirely inside `emotion-engine`:
+- `server/scripts/get-context/get-dialogue.cjs`
+  - strengthened the rolling handoff voice-separation reminders so chunk-to-chunk speaker reuse now explicitly compares `vocal timbre`, `age impression`, `gender presentation`, `accent/dialect impression`, `delivery mode`, and `recording texture` before reusing a `speaker_id`
+  - added an explicit default that official/public-address/newsreel/expository narration should stay distinct from villain-threat voices unless the acoustic match is very strong
+  - added an adjacent-line continuity instruction: if a new official/public-address/newsreel/expository `speaker_id` is created, keep the immediately adjacent follow-on official line on that same `speaker_id` unless strong acoustic evidence indicates another change
+  - mirrored those rules into both the whole-file transcription prompt and the chunked transcription prompt so the experiment changes the live model contract, not just the handoff notes
+- `test/scripts/get-dialogue.test.js`
+  - extended prompt-contract regression coverage so the suite now asserts those new acoustic-first comparison and adjacent-official-line continuity instructions are present in both whole-file and chunked prompt assembly
+
+Commands run:
+- `bd update ee-rmyh --status in_progress --json`
+- `node --test test/scripts/get-dialogue.test.js test/lib/phase1-validator-tools.test.js`
+- `set -euo pipefail && ts=$(date +%Y%m%d-%H%M%S) && mkdir -p output/_archives .logs/archive && if [ -d output/cod-test-phase2-3chunk-comparison ]; then rm -rf "output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-rmyh-$ts" && cp -a output/cod-test-phase2-3chunk-comparison "output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-rmyh-$ts"; fi && node validate-configs.cjs && node server/run-pipeline.cjs --config configs/cod-test-phase2-3chunk-comparison.yaml --dry-run && log=".logs/cod-test-phase2-3chunk-comparison-${ts}-ee-rmyh.log" && unset DIGITAL_TWIN_MODE DIGITAL_TWIN_PACK DIGITAL_TWIN_CASSETTE OPENROUTER_TIMEOUT_MS || true && set -a && [ -f .env ] && . ./.env && set +a && rm -rf output/cod-test-phase2-3chunk-comparison && node server/run-pipeline.cjs --config configs/cod-test-phase2-3chunk-comparison.yaml --verbose 2>&1 | tee "$log"`
+
+Verification / artifact evidence:
+- targeted regression tests passed: `38` tests green via `node --test test/scripts/get-dialogue.test.js test/lib/phase1-validator-tools.test.js`
+- rerun completed successfully with exit code `0`
+- fresh log: `.logs/cod-test-phase2-3chunk-comparison-20260323-213803-ee-rmyh.log`
+- archived pre-experiment packet: `output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-rmyh-20260323-213803/`
+- fresh comparison packet root: `output/cod-test-phase2-3chunk-comparison/`
+- fresh Phase 1 dialogue artifact: `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/dialogue-data.json`
+- fresh raw seam captures:
+  - `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw/ai/dialogue-chunks/chunk-0002/attempt-01/capture.json`
+  - `output/cod-test-phase2-3chunk-comparison/phase1-gather-context/raw/ai/dialogue-chunks/chunk-0003/attempt-01/capture.json`
+- fresh Phase 2 artifact: `output/cod-test-phase2-3chunk-comparison/phase2-process/chunk-analysis.json`
+
+Observed seam change versus the archived pre-experiment packet (`output/_archives/cod-test-phase2-3chunk-comparison-pre-ee-rmyh-20260323-213803/phase1-gather-context/dialogue-data.json`):
+- before this experiment, the exact seam persisted as:
+  - `16.0 -> 20.2` `spk_003` — `Raul Menendez ignited global unrest on an unprecedented scale.`
+  - `20.2 -> 27.8` `spk_001` — `Menendez is a Terrorist. We're bringing peace and security to the world.`
+- after this experiment, the fresh packet now persists the seam as:
+  - `17.8 -> 22.5` `spk_002` — `Raul Menendez ignited global unrest on an unprecedented scale.`
+  - `22.8 -> 24.5` `spk_002` — `Menendez is a terrorist.`
+  - `24.5 -> 27.5` `spk_003` — `We're bringing peace and security to the world.`
+- this is a **real improvement** on the requested seam behavior because the follow-on official accusation line no longer collapses back into the earlier female narration lane (`spk_001`); it now stays with the same newly-created official/newsreel lane (`spk_002`) through the immediate adjacent continuation inside chunk `0002`
+
+Truthful remaining bug / non-victory note:
+- the experiment still does **not** fully satisfy the desired human-truth grouping for the entire official/public-address lane
+- the fresh raw capture for chunk `0003` (`.../chunk-0003/attempt-01/capture.json`) still splits the next official line onto a new `spk_003` instead of continuing `spk_002`, even though the chunk-`0002` handoff explicitly says `spk_002` is the news-report speaker and the new prompt now asks to keep adjacent follow-on official lines on the same `speaker_id` unless strong acoustic evidence says otherwise
+- so `ee-rmyh` succeeded as a narrow follow-up experiment and produced a better live comparison artifact for human review, but the seam remains only **partially stabilized** rather than fully solved
+
+---
+
 ## Final Results
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`, Task 2g fixed the remaining dialogue-tail normalization defect by preventing a long overrun line from surviving as a fake micro-tail at trailer end, and Task 2i then landed the dialogue timing-stability guard plus the slimmed inferred-traits contract revision in `server/scripts/get-context/get-dialogue.cjs` / `server/lib/structured-output.cjs`. Task 2h reran the real Phase 1-only review packet after the dialogue-tail fix, Task 3 executed the downstream 3-chunk Phase 2 comparison via `configs/cod-test-phase2-3chunk-comparison.yaml`, and Task 2j reran that dialogue-focused comparison lane after `ee-mgv0`, preserving both a transient failed attempt and the successful verification rerun artifacts. Task 6 (`ee-8hwt`) then fixed the output-package persona staging bug in `server/lib/output-manager.cjs`, added regression coverage in `test/output-manager.test.js`, and restaged the canonical `output/cod-test-phase2-3chunk-comparison/` packet so `assets/input/personas/SOUL.md` and `assets/input/personas/GOAL.md` are now present with hashes matching the exact source persona files used by the run. Task 7 (`ee-dt6t`) then fixed the current speaker-registry regression by preserving chunk-level `speaker_profiles` into the final stitch, building an explicit rolling speaker registry handoff, removing persisted `acoustic_descriptors_abstained`, requiring persisted `inferred_traits` objects on successful dialogue runs, merging duplicate profiles canonically in `server/lib/structured-output.cjs`, and regenerating the comparison packet for human review. Task 8 (`ee-9zg1`) completed the next dialogue-attribution iteration by removing persisted `grounded.confidence_abstained`, requiring/persisting grounded confidence, adding stable persisted `dialogue_segments[*].index`, tightening the chunk/whole-file attribution prompts plus rolling handoff guidance, and regenerating the same comparison packet for human review. That rerun fixed the late promo-tail leakage and now leaves the remaining unsolved collapse point concentrated in the opening public-address / figurehead vs Menendez attribution, while David, the commander/mentor voice, the female radio/comms line, and the final promo announcer all emerge as distinct persisted speakers. Task 9 (`ee-4cj8`) then added prompt guidance plus chunk-boundary continuation repair/merge logic and regenerated the comparison packet twice, but the live opening attribution remained non-deterministic and did not durably separate the older authority/general speaker from Menendez. Task 10 (`ee-mdqq`) then generalized the generic attribution contract so it no longer names trailer-specific characters, added opening-weighted provenance chunking plus normalized handoff arbitration in `server/scripts/get-context/get-dialogue.cjs`, extended regression coverage in `test/scripts/get-dialogue.test.js`, and regenerated a fresh comparison packet. That pass materially improved the exact opening seam by splitting the menace line (`spk_002`) from a new authoritative/newsreel lane (`spk_003`) in the raw opening chunks, but the follow-on official line still drifts back into the female narration lane, so the overall plan remains partial. Task 4 (music-window cadence decision) and Task 5 (optional inferred-traits experiment) are still pending, and the opening-speaker attribution bug now remains narrowed but not fully solved.
+**What We Built:** Task 1 landed the grounded/speaker-contract implementation inside `emotion-engine`, Task 2 created a dedicated Phase 1-only validation config at `configs/cod-test-phase1-review.yaml`, Task 2b fixed the Phase 1 dialogue timing truthfulness bug in `server/scripts/get-context/get-dialogue.cjs`, Task 2d fixed stale speaker-profile linkage indexes in `server/lib/structured-output.cjs`, Task 2e fixed the Phase 1 music false-silence regression at the owning prompt/input assembly surface in `server/scripts/get-context/get-music.cjs`, Task 2g fixed the remaining dialogue-tail normalization defect by preventing a long overrun line from surviving as a fake micro-tail at trailer end, and Task 2i then landed the dialogue timing-stability guard plus the slimmed inferred-traits contract revision in `server/scripts/get-context/get-dialogue.cjs` / `server/lib/structured-output.cjs`. Task 2h reran the real Phase 1-only review packet after the dialogue-tail fix, Task 3 executed the downstream 3-chunk Phase 2 comparison via `configs/cod-test-phase2-3chunk-comparison.yaml`, and Task 2j reran that dialogue-focused comparison lane after `ee-mgv0`, preserving both a transient failed attempt and the successful verification rerun artifacts. Task 6 (`ee-8hwt`) then fixed the output-package persona staging bug in `server/lib/output-manager.cjs`, added regression coverage in `test/output-manager.test.js`, and restaged the canonical `output/cod-test-phase2-3chunk-comparison/` packet so `assets/input/personas/SOUL.md` and `assets/input/personas/GOAL.md` are now present with hashes matching the exact source persona files used by the run. Task 7 (`ee-dt6t`) then fixed the current speaker-registry regression by preserving chunk-level `speaker_profiles` into the final stitch, building an explicit rolling speaker registry handoff, removing persisted `acoustic_descriptors_abstained`, requiring persisted `inferred_traits` objects on successful dialogue runs, merging duplicate profiles canonically in `server/lib/structured-output.cjs`, and regenerating the comparison packet for human review. Task 8 (`ee-9zg1`) completed the next dialogue-attribution iteration by removing persisted `grounded.confidence_abstained`, requiring/persisting grounded confidence, adding stable persisted `dialogue_segments[*].index`, tightening the chunk/whole-file attribution prompts plus rolling handoff guidance, and regenerating the same comparison packet for human review. That rerun fixed the late promo-tail leakage and now leaves the remaining unsolved collapse point concentrated in the opening public-address / figurehead vs Menendez attribution, while David, the commander/mentor voice, the female radio/comms line, and the final promo announcer all emerge as distinct persisted speakers. Task 9 (`ee-4cj8`) then added prompt guidance plus chunk-boundary continuation repair/merge logic and regenerated the comparison packet twice, but the live opening attribution remained non-deterministic and did not durably separate the older authority/general speaker from Menendez. Task 10 (`ee-mdqq`) then generalized the generic attribution contract so it no longer names trailer-specific characters, added opening-weighted provenance chunking plus normalized handoff arbitration in `server/scripts/get-context/get-dialogue.cjs`, extended regression coverage in `test/scripts/get-dialogue.test.js`, and regenerated a fresh comparison packet. That pass materially improved the exact opening seam by splitting the menace line (`spk_002`) from a new authoritative/newsreel lane (`spk_003`) in the raw opening chunks, but the follow-on official line still drifts back into the female narration lane, so the overall plan remains partial. Task 11 (`ee-rmyh`) then ran the requested seam-only follow-up experiment by hardening the whole-file prompt, chunk prompt, and rolling handoff notes with explicit acoustic-comparison cues (`timbre`, `age impression`, `gender presentation`, `accent/dialect impression`, `delivery mode`, `recording texture`), a stronger default separating official/public-address/newsreel narration from villain threats, and a direct instruction to keep adjacent follow-on official lines on the same newly-created official speaker unless strong acoustic evidence says otherwise. The regenerated packet is meaningfully better at the exact `16s-28s` seam: the `Menendez is a terrorist.` follow-on line no longer falls back into the earlier female narration lane and now stays with the same official/newsreel speaker through chunk `0002`. But chunk `0003` still splits `We're bringing peace and security to the world.` onto a new speaker instead of continuing that official lane, so the opening-speaker attribution bug is improved yet still not fully solved. Task 4 (music-window cadence decision) and Task 5 (optional inferred-traits experiment) are still pending, and the opening-speaker attribution bug now remains narrowed but not fully solved.
 
 **Commits:**
 - `71e0c2b` - Add grounded dialogue speaker contract

@@ -1,94 +1,109 @@
 {
-  "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: But we are not afraid.\nSpeaker 2: The streets shall once again run red.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist. We're bringing peace and security to the world.\nSpeaker 4: He refuses to let me go.\nSpeaker 5: Stop looking backwards, David, but what matters is what we do next.\nSpeaker 5: A lot of people counting on us for answers.\nSpeaker 5: Spectre 1, report.\nSpeaker 6: Need a sitrep.\nSpeaker 4: This isn't real. The hell it is.\nSpeaker 7: Obey our master, control our master.\nSpeaker 7: Master of the invisible, master of the space. Master of your mind, master of your fate.\nSpeaker 7: Master, master, wins and brings it all in after. Master, master, we will be the ones to cry.\nSpeaker 5: Pull it together, man!\nSpeaker 2: So eager to leave, are we?\nSpeaker 2: Kill them, men.\nSpeaker 8: It's a hell of a lot easier than killing the idea.\nSpeaker 2: You were never cut out to be a Mason.\nSpeaker 2: No more games. This ends now.\nSpeaker 7: Obey your master!\nSpeaker 3: Get the Reznov challenge pack. And you pre-order now.\nSpeaker 7: Master, master, wins and brings it all in after. Master, master, we will be the ones to cry. Obey your master!\nSpeaker 3: Get the Reznov challenge pack.",
+  "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: Your streets shall once again run red with your blood.\nSpeaker 2: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 2: Menendez is a terrorist.\nSpeaker 3: We're bringing peace and security to the world.\nSpeaker 4: He refuses to let me go.\nSpeaker 5: Stop looking backwards, David. What matters is what we do next.\nSpeaker 5: A lot of people counting on us for answers.\nSpeaker 6: Specter One, report.\nSpeaker 7: Need a sitrep.\nSpeaker 4: This isn't real. The hell it is.\nSpeaker 8: Control! Faster! Control! Faster! Control! Faster! Control! Faster! Control! Faster! Control! Faster! Control! Faster! Control! Faster!\nSpeaker 9: Pull it together, man!\nSpeaker 10: So eager to leave, that is. Killing men is a hell of a lot easier than killing the idea.\nSpeaker 11: You were never cut out to be a Mason.\nSpeaker 12: No more games. This ends now.\nSpeaker 13: Get the Reznov challenge pack. And you pre-order now.\nSpeaker 8: Control! Faster! Control! Faster! Control! Faster!\nSpeaker 9: Pull it together, man!\nSpeaker 10: So eager to leave, that is. Killing men is a hell of a lot easier than killing the idea.\nSpeaker 11: You were never cut out to be a Mason.\nSpeaker 12: No more games. This ends now.\nSpeaker 13: Get the Reznov challenge pack.",
   "auditTrail": [
     {
       "op": "merge_boundary",
+      "chunkIndex": 2,
+      "detail": "Removed duplicated carryover line from chunk 1: 'Your streets shall once again run red...'"
+    },
+    {
+      "op": "merge_boundary",
       "chunkIndex": 3,
-      "detail": "Removed duplicated line repeated from chunk 2 at the chunk 2/3 boundary: 'Menendez is a terrorist. We're bringing peace and security to the world.'"
+      "detail": "Removed duplicated carryover line from chunk 2: 'Menendez is a terrorist.'"
+    },
+    {
+      "op": "merge_boundary",
+      "chunkIndex": 7,
+      "detail": "Removed duplicated carryover line from chunk 6: Speaker 10 line beginning 'So eager to leave...'"
     },
     {
       "op": "merge_boundary",
       "chunkIndex": 8,
-      "detail": "Removed duplicated promotional line repeated from chunk 7 at the chunk 7/8 boundary: 'Get the Reznov challenge pack. And you pre-order now.'"
+      "detail": "Removed duplicated carryover promotional line from chunk 7: 'Get the Reznov challenge pack. And you pre-order now.'"
     },
     {
-      "op": "normalize_format",
-      "chunkIndex": 0,
-      "detail": "Removed chunk headers and timestamps; preserved speaker labels and dialogue order."
+      "op": "normalize_punctuation",
+      "chunkIndex": 1,
+      "detail": "Joined split sentence fragment 'run red. with your blood' into 'run red with your blood.'"
     },
     {
-      "op": "normalize_text",
-      "chunkIndex": 2,
-      "detail": "Standardized sentence punctuation and normalized 'Terrorist' to lowercase 'terrorist' without changing meaning."
+      "op": "normalize_punctuation",
+      "chunkIndex": 6,
+      "detail": "Corrected obvious repetition artifact 'is is' to 'is' without changing meaning."
+    },
+    {
+      "op": "normalize_speaker_label",
+      "chunkIndex": 4,
+      "detail": "Standardized capitalization in call sign to 'Specter One'."
     }
   ],
   "debug": {
     "inputKind": "dialogue.stitch.input",
     "inputChunks": 9,
-    "notes": "Mechanical transcript contained two clear boundary duplicates caused by chunk overlap. Kept all non-duplicated lines in chronological order. One line in chunk 2 extends past its nominal chunk end and was treated as overlap, not a separate utterance.",
+    "notes": "Cleaned transcript stitched from mechanical chunk output. Boundary duplicates were removed where the same line appeared at the end of one chunk and the start of the next. Repeated lines that recur later in the trailer were preserved if they occurred at new timestamps rather than as chunk overlap.",
     "refs": [
       {
         "chunkIndex": 0,
         "startTime": 0,
         "endTime": 8,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_000.mp3",
-        "promptRef": "_meta/ai/_prompts/19514fa182be4231c27723e880e102007a2b0e7f90f7fb60bf031c90e42d3194.json"
+        "promptRef": "_meta/ai/_prompts/63025cb803339ba767eac6f5121f44072a36c554ccadd963609e7f8f0f5f1212.json"
       },
       {
         "chunkIndex": 1,
         "startTime": 8,
         "endTime": 16,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_001.mp3",
-        "promptRef": "_meta/ai/_prompts/4fb18294ab914f4d002c215f8a10471dbb54d5188752ba6084bc071f2957f393.json"
+        "promptRef": "_meta/ai/_prompts/5997f013902d7043498cd8ad736a17f67cc0ae4a49cbe70ef3bb37e0acd0cb6d.json"
       },
       {
         "chunkIndex": 2,
         "startTime": 16,
         "endTime": 24,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_002.mp3",
-        "promptRef": "_meta/ai/_prompts/a2c39e84c7cbc8f524a69a1a074542dda57b0261bc708621e7cace461cdaddde.json"
+        "promptRef": "_meta/ai/_prompts/e59c6a87ca60a60a13ff837d398922091f16c68862ce6b064889e97cc1905b90.json"
       },
       {
         "chunkIndex": 3,
         "startTime": 24,
         "endTime": 44,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_003.mp3",
-        "promptRef": "_meta/ai/_prompts/3ce78e835b7f87656c9040383576c8a3886e8a5ec2639414c5255e8e22bd8dcd.json"
+        "promptRef": "_meta/ai/_prompts/ec0e95a42dd9dec937a1c2e20743f7cc015f5ee0de673e8fa0e138ad0fa2bf83.json"
       },
       {
         "chunkIndex": 4,
         "startTime": 44,
         "endTime": 64,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_004.mp3",
-        "promptRef": "_meta/ai/_prompts/287afc17ee9213f1896e8340f1c127c9598be4ca1482226dbd5da0ab5b74bb66.json"
+        "promptRef": "_meta/ai/_prompts/5cab5ce0825ed5b627cd18d913d23564e93fb1708df3ebf2e017df12833ecace.json"
       },
       {
         "chunkIndex": 5,
         "startTime": 64,
         "endTime": 84,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_005.mp3",
-        "promptRef": "_meta/ai/_prompts/1b597342c649575c47362009b4a2ff6a9f83e3c8c623e4cd9959c7874c9032f1.json"
+        "promptRef": "_meta/ai/_prompts/43fde1c672694e2eeec5054540feb34ed9602f9925ead21e46a585ea4e8d6087.json"
       },
       {
         "chunkIndex": 6,
         "startTime": 84,
         "endTime": 104,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_006.mp3",
-        "promptRef": "_meta/ai/_prompts/d9d03cbf2e985a3a2813a87c3bc897e5d458899e4c219ff07e5b217d6a5631e3.json"
+        "promptRef": "_meta/ai/_prompts/70e6313e51ae5db6a5b557fc5b2f68a94085a9b8dfb1f0eb9999c6f3f91470f2.json"
       },
       {
         "chunkIndex": 7,
         "startTime": 104,
         "endTime": 124,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3",
-        "promptRef": "_meta/ai/_prompts/230a01a59ad5109f86758eecd7f18a0559a36505b5c50fc4d269d7bbb857bb10.json"
+        "promptRef": "_meta/ai/_prompts/907f4c448e6e63ae6bfe3e1412ef2bd80293fdcb23497fbaa86536531a8ca1a3.json"
       },
       {
         "chunkIndex": 8,
         "startTime": 124,
         "endTime": 140.042449,
         "audioPath": "phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_008.mp3",
-        "promptRef": "_meta/ai/_prompts/e923008a7ae96809f940840ed5eebc3525e6feb8f4ac5312fecdc28c05950465.json"
+        "promptRef": "_meta/ai/_prompts/b3540b57371df7663f538716eb5416be4f1eff70c0595e50d64ef820f3c1986e.json"
       }
     ]
   }

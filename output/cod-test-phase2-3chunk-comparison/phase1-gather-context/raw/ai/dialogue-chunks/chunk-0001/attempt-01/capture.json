@@ -2,7 +2,7 @@
   "chunkIndex": 1,
   "startTime": 8,
   "endTime": 16,
-  "rollingHandoffIn": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: dramatic, cinematic narration style | inferred traits: gender: female | recent lines: They want you afraid. Fear makes you easier to control.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 1 (spk_001): They want you afraid. Fear makes you easier to control.",
+  "rollingHandoffIn": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: authoritative, cinematic narration | inferred traits: gender: female | recent lines: They want you afraid. Fear makes you easier to control.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Before reusing any prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If this chunk creates a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 1 (spk_001): They want you afraid. Fear makes you easier to control.",
   "attempt": 1,
   "attemptInTarget": 1,
   "targetIndex": 0,
@@ -19,15 +19,15 @@
   },
   "failover": null,
   "promptRef": {
-    "sha256": "4fb18294ab914f4d002c215f8a10471dbb54d5188752ba6084bc071f2957f393",
-    "file": "_meta/ai/_prompts/4fb18294ab914f4d002c215f8a10471dbb54d5188752ba6084bc071f2957f393.json"
+    "sha256": "5997f013902d7043498cd8ad736a17f67cc0ae4a49cbe70ef3bb37e0acd0cb6d",
+    "file": "_meta/ai/_prompts/5997f013902d7043498cd8ad736a17f67cc0ae4a49cbe70ef3bb37e0acd0cb6d.json"
   },
   "rawResponse": {
-    "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 0.9,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"But we are not afraid.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 1.0,\n      \"end\": 4.5,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"The streets shall once again run red.\",\n      \"confidence\": 0.92\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.90,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"dramatic, cinematic narration style\", \"confidence\": 0.90 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"female\",\n            \"confidence\": 0.85,\n            \"note\": \"inferred from vocal pitch and resonance\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_002\",\n      \"label\": \"Speaker 2\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [1],\n        \"acoustic_descriptors\": [\n          { \"label\": \"menacing, gravelly, deep tone\", \"confidence\": 0.88 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"male\",\n            \"confidence\": 0.80,\n            \"note\": \"inferred from deep, gravelly vocal quality\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The narrator continues, stating they are not afraid, followed by a menacing voice declaring that the streets will run red.\",\n  \"handoffContext\": \"Speaker 1 (spk_001) is the female narrator. Speaker 2 (spk_002) is a new, menacing antagonist voice. Last line: 'The streets shall once again run red.'\",\n  \"totalDuration\": 8.0\n}",
+    "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 8.0,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Your streets shall once again run red.\",\n      \"confidence\": 0.98\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.95,\n        \"linked_segment_indexes\": [\n          0\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"authoritative, cinematic narration\",\n            \"confidence\": 0.90\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"female\",\n            \"confidence\": 0.95,\n            \"note\": \"consistent with previous chunk\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The speaker continues their monologue, threatening that streets will run red.\",\n  \"handoffContext\": \"Speaker 1 (spk_001) continues their dramatic monologue. Last line: 'Your streets shall once again run red.'\",\n  \"totalDuration\": 8.0\n}",
     "usage": {
-      "input": 2766,
-      "output": 1606,
-      "total": 4372
+      "input": 3023,
+      "output": 476,
+      "total": 3499
     },
     "providerRequest": {
       "method": "POST",
@@ -44,7 +44,7 @@
             "content": [
               {
                 "type": "text",
-                "text": "You are transcribing CHUNK 1 of a longer audio file.\n\nChunk time window: 8.00s to 16.00s (global timeline).\nOpening provenance mode: this chunk is inside the first 24.00s of the full audio, where rapid montage edits can place different voices very close together. Prioritize this chunk's local acoustic evidence over any semantic continuity assumptions.\n\nContext from previous chunk (handoff):\nSpeaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: dramatic, cinematic narration style | inferred traits: gender: female | recent lines: They want you afraid. Fear makes you easier to control.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 1 (spk_001): They want you afraid. Fear makes you easier to control.\n\nTranscribe the audio in this chunk. Identify different speakers and provide timestamps.\n\nReturn JSON only with this structure:\n\n{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 5.2,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Transcribed text here\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.82,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"steady, conversational delivery\", \"confidence\": 0.61 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"age_range\",\n            \"value\": \"likely adult\",\n            \"confidence\": 0.28,\n            \"note\": \"speculative inference from voice only\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Brief summary for THIS chunk\",\n  \"handoffContext\": \"Short handoff to help the next chunk keep continuity (entities, speaker mapping, last lines)\",\n  \"totalDuration\": 30.5\n}\n\nRules:\n- Return JSON only. No markdown.\n- Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.\n- Treat the handoff speaker registry as the continuity memory. Reuse a prior speaker_id only when the current voice still matches that prior acoustic profile.\n- If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.\n- Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0. Do not use grounded.confidence_abstained.\n- Keep grounded speaker identity separate from inferred_traits.\n- Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.\n- inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.\n- speaker_id continuity is acoustic, not semantic. A line that names a person, character, organization, or title may still be spoken by someone else.\n- Do not merge clearly different voices just because the chunk continues the same scene. Keep public-address / figurehead narration, antagonist threats, radio/comms chatter, gruff tactical responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- In the opening montage, prefer local chunk provenance over storyline continuity. A named subject, recurring topic, or back-to-back cut is not enough to inherit the previous speaker_id.\n- If a threat line is followed by an official/public-address sounding line, treat that as a speaker change unless the exact same voice clearly continues.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.\n- Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.\n- If no speech is detected, return an empty dialogue_segments array.\n- Keep handoffContext brief (<= ~10 lines).\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_dialogue_transcription_json\",\n  \"transcription\": {\n    \"dialogue_segments\": [\n      {\n        \"start\": 0,\n        \"end\": 1.2,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"Hello there\",\n        \"confidence\": 0.95\n      }\n    ],\n    \"speaker_profiles\": [\n      {\n        \"speaker_id\": \"spk_001\",\n        \"label\": \"Speaker 1\",\n        \"grounded\": {\n          \"confidence\": 0.82,\n          \"linked_segment_indexes\": [\n            0\n          ],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"steady, conversational delivery\",\n              \"confidence\": 0.61\n            }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"accent\",\n              \"value\": \"possibly mid-Atlantic American English\",\n              \"confidence\": 0.31,\n              \"note\": \"speculative inference from delivery only\"\n            }\n          ]\n        }\n      }\n    ],\n    \"summary\": \"Short summary of the dialogue.\",\n    \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n    \"totalDuration\": 10.5\n  }\n}\n2) Final dialogue transcription chunk JSON matching the schema above.\n\nAcceptance rules:\n- The final dialogue transcription chunk JSON is accepted only after validate_dialogue_transcription_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_dialogue_transcription_json\",\"transcription\":{\"dialogue_segments\":[{\"start\":0,\"end\":1.2,\"speaker\":\"Speaker 1\",\"speaker_id\":\"spk_001\",\"text\":\"Hello there\",\"confidence\":0.95}],\"speaker_profiles\":[{\"speaker_id\":\"spk_001\",\"label\":\"Speaker 1\",\"grounded\":{\"confidence\":0.82,\"linked_segment_indexes\":[0],\"acoustic_descriptors\":[{\"label\":\"steady, conversational delivery\",\"confidence\":0.61}]},\"inferred_traits\":{\"traits\":[{\"trait\":\"accent\",\"value\":\"possibly mid-Atlantic American English\",\"confidence\":0.31,\"note\":\"speculative inference from delivery only\"}]}}],\"summary\":\"Short summary of the dialogue.\",\"handoffContext\":\"Short continuity handoff for the next chunk.\",\"totalDuration\":10.5}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised dialogue transcription chunk JSON candidate.\n- After the validator returns valid=true, return ONLY the final dialogue transcription chunk JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must include handoffContext so the next chunk can preserve continuity.\n\nFinal artifact reminders:\n- Timestamps must be relative to this chunk and start at 0.\n- Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.\n- Keep grounded speaker identity separate from any inferred_traits guesswork.\n- handoffContext must stay brief and continuity-focused.\n\nTool contract:\n{\n  \"name\": \"validate_dialogue_transcription_json\",\n  \"argumentKey\": \"transcription\",\n  \"description\": \"Validate a Phase 1 dialogue transcription JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_dialogue_transcription_json\",\n    \"transcription\": {\n      \"dialogue_segments\": [\n        {\n          \"start\": 0,\n          \"end\": 1.2,\n          \"speaker\": \"Speaker 1\",\n          \"speaker_id\": \"spk_001\",\n          \"text\": \"Hello there\",\n          \"confidence\": 0.95\n        }\n      ],\n      \"speaker_profiles\": [\n        {\n          \"speaker_id\": \"spk_001\",\n          \"label\": \"Speaker 1\",\n          \"grounded\": {\n            \"confidence\": 0.82,\n            \"linked_segment_indexes\": [\n              0\n            ],\n            \"acoustic_descriptors\": [\n              {\n                \"label\": \"steady, conversational delivery\",\n                \"confidence\": 0.61\n              }\n            ]\n          },\n          \"inferred_traits\": {\n            \"traits\": [\n              {\n                \"trait\": \"accent\",\n                \"value\": \"possibly mid-Atlantic American English\",\n                \"confidence\": 0.31,\n                \"note\": \"speculative inference from delivery only\"\n              }\n            ]\n          }\n        }\n      ],\n      \"summary\": \"Short summary of the dialogue.\",\n      \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n      \"totalDuration\": 10.5\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"transcription\"\n    ],\n    \"properties\": {\n      \"transcription\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, and totalDuration.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 4,\n  \"remainingValidatorCalls\": 3\n}\n\nConversation state:\n[]"
+                "text": "You are transcribing CHUNK 1 of a longer audio file.\n\nChunk time window: 8.00s to 16.00s (global timeline).\nOpening provenance mode: this chunk is inside the first 24.00s of the full audio, where rapid montage edits can place different voices very close together. Prioritize this chunk's local acoustic evidence over any semantic continuity assumptions.\n\nContext from previous chunk (handoff):\nSpeaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: authoritative, cinematic narration | inferred traits: gender: female | recent lines: They want you afraid. Fear makes you easier to control.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Before reusing any prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If this chunk creates a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 1 (spk_001): They want you afraid. Fear makes you easier to control.\n\nTranscribe the audio in this chunk. Identify different speakers and provide timestamps.\n\nReturn JSON only with this structure:\n\n{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 5.2,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Transcribed text here\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.82,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"steady, conversational delivery\", \"confidence\": 0.61 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"age_range\",\n            \"value\": \"likely adult\",\n            \"confidence\": 0.28,\n            \"note\": \"speculative inference from voice only\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Brief summary for THIS chunk\",\n  \"handoffContext\": \"Short handoff to help the next chunk keep continuity (entities, speaker mapping, last lines)\",\n  \"totalDuration\": 30.5\n}\n\nRules:\n- Return JSON only. No markdown.\n- Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.\n- Treat the handoff speaker registry as the continuity memory. Reuse a prior speaker_id only when the current voice still matches that prior acoustic profile.\n- If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.\n- Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0. Do not use grounded.confidence_abstained.\n- Keep grounded speaker identity separate from inferred_traits.\n- Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.\n- inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.\n- speaker_id continuity is acoustic, not semantic. A line that names a person, character, organization, or title may still be spoken by someone else.\n- Before reusing a prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.\n- Do not merge clearly different voices just because the chunk continues the same scene. Keep public-address / figurehead narration, antagonist threats, radio/comms chatter, gruff tactical responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.\n- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- In the opening montage, prefer local chunk provenance over storyline continuity. A named subject, recurring topic, or back-to-back cut is not enough to inherit the previous speaker_id.\n- If a threat line is followed by an official/public-address sounding line, treat that as a speaker change unless the exact same voice clearly continues.\n- If you create a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.\n- Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.\n- If no speech is detected, return an empty dialogue_segments array.\n- Keep handoffContext brief (<= ~10 lines).\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_dialogue_transcription_json\",\n  \"transcription\": {\n    \"dialogue_segments\": [\n      {\n        \"start\": 0,\n        \"end\": 1.2,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"Hello there\",\n        \"confidence\": 0.95\n      }\n    ],\n    \"speaker_profiles\": [\n      {\n        \"speaker_id\": \"spk_001\",\n        \"label\": \"Speaker 1\",\n        \"grounded\": {\n          \"confidence\": 0.82,\n          \"linked_segment_indexes\": [\n            0\n          ],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"steady, conversational delivery\",\n              \"confidence\": 0.61\n            }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"accent\",\n              \"value\": \"possibly mid-Atlantic American English\",\n              \"confidence\": 0.31,\n              \"note\": \"speculative inference from delivery only\"\n            }\n          ]\n        }\n      }\n    ],\n    \"summary\": \"Short summary of the dialogue.\",\n    \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n    \"totalDuration\": 10.5\n  }\n}\n2) Final dialogue transcription chunk JSON matching the schema above.\n\nAcceptance rules:\n- The final dialogue transcription chunk JSON is accepted only after validate_dialogue_transcription_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_dialogue_transcription_json\",\"transcription\":{\"dialogue_segments\":[{\"start\":0,\"end\":1.2,\"speaker\":\"Speaker 1\",\"speaker_id\":\"spk_001\",\"text\":\"Hello there\",\"confidence\":0.95}],\"speaker_profiles\":[{\"speaker_id\":\"spk_001\",\"label\":\"Speaker 1\",\"grounded\":{\"confidence\":0.82,\"linked_segment_indexes\":[0],\"acoustic_descriptors\":[{\"label\":\"steady, conversational delivery\",\"confidence\":0.61}]},\"inferred_traits\":{\"traits\":[{\"trait\":\"accent\",\"value\":\"possibly mid-Atlantic American English\",\"confidence\":0.31,\"note\":\"speculative inference from delivery only\"}]}}],\"summary\":\"Short summary of the dialogue.\",\"handoffContext\":\"Short continuity handoff for the next chunk.\",\"totalDuration\":10.5}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised dialogue transcription chunk JSON candidate.\n- After the validator returns valid=true, return ONLY the final dialogue transcription chunk JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must include handoffContext so the next chunk can preserve continuity.\n\nFinal artifact reminders:\n- Timestamps must be relative to this chunk and start at 0.\n- Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.\n- Keep grounded speaker identity separate from any inferred_traits guesswork.\n- handoffContext must stay brief and continuity-focused.\n\nTool contract:\n{\n  \"name\": \"validate_dialogue_transcription_json\",\n  \"argumentKey\": \"transcription\",\n  \"description\": \"Validate a Phase 1 dialogue transcription JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_dialogue_transcription_json\",\n    \"transcription\": {\n      \"dialogue_segments\": [\n        {\n          \"start\": 0,\n          \"end\": 1.2,\n          \"speaker\": \"Speaker 1\",\n          \"speaker_id\": \"spk_001\",\n          \"text\": \"Hello there\",\n          \"confidence\": 0.95\n        }\n      ],\n      \"speaker_profiles\": [\n        {\n          \"speaker_id\": \"spk_001\",\n          \"label\": \"Speaker 1\",\n          \"grounded\": {\n            \"confidence\": 0.82,\n            \"linked_segment_indexes\": [\n              0\n            ],\n            \"acoustic_descriptors\": [\n              {\n                \"label\": \"steady, conversational delivery\",\n                \"confidence\": 0.61\n              }\n            ]\n          },\n          \"inferred_traits\": {\n            \"traits\": [\n              {\n                \"trait\": \"accent\",\n                \"value\": \"possibly mid-Atlantic American English\",\n                \"confidence\": 0.31,\n                \"note\": \"speculative inference from delivery only\"\n              }\n            ]\n          }\n        }\n      ],\n      \"summary\": \"Short summary of the dialogue.\",\n      \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n      \"totalDuration\": 10.5\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"transcription\"\n    ],\n    \"properties\": {\n      \"transcription\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, and totalDuration.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 4,\n  \"remainingValidatorCalls\": 3\n}\n\nConversation state:\n[]"
               },
               {
                 "type": "input_audio",
@@ -67,7 +67,7 @@
     "providerResponse": {
       "status": 200,
       "headers": {
-        "date": "Mon, 23 Mar 2026 22:56:44 GMT",
+        "date": "Tue, 24 Mar 2026 01:38:21 GMT",
         "content-type": "application/json",
         "transfer-encoding": "chunked",
         "connection": "keep-alive",
@@ -76,14 +76,14 @@
         "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
         "x-content-type-options": "nosniff",
         "server": "cloudflare",
-        "cf-ray": "9e1107e2fad947ad-MIA"
+        "cf-ray": "9e11f49abde2a4d4-MIA"
       },
       "body": {
-        "id": "gen-1774306601-RPIy7sbHEtcBOhgiIzWC",
+        "id": "gen-1774316297-1RYWIlMPDFYSvsleMlin",
         "object": "chat.completion",
-        "created": 1774306601,
+        "created": 1774316297,
         "model": "google/gemini-3.1-flash-lite-preview-20260303",
-        "provider": "Google AI Studio",
+        "provider": "Google",
         "system_fingerprint": null,
         "choices": [
           {
@@ -93,16 +93,10 @@
             "native_finish_reason": "STOP",
             "message": {
               "role": "assistant",
-              "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 0.9,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"But we are not afraid.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 1.0,\n      \"end\": 4.5,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"The streets shall once again run red.\",\n      \"confidence\": 0.92\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.90,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"dramatic, cinematic narration style\", \"confidence\": 0.90 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"female\",\n            \"confidence\": 0.85,\n            \"note\": \"inferred from vocal pitch and resonance\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_002\",\n      \"label\": \"Speaker 2\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [1],\n        \"acoustic_descriptors\": [\n          { \"label\": \"menacing, gravelly, deep tone\", \"confidence\": 0.88 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"male\",\n            \"confidence\": 0.80,\n            \"note\": \"inferred from deep, gravelly vocal quality\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The narrator continues, stating they are not afraid, followed by a menacing voice declaring that the streets will run red.\",\n  \"handoffContext\": \"Speaker 1 (spk_001) is the female narrator. Speaker 2 (spk_002) is a new, menacing antagonist voice. Last line: 'The streets shall once again run red.'\",\n  \"totalDuration\": 8.0\n}",
+              "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 8.0,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Your streets shall once again run red.\",\n      \"confidence\": 0.98\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.95,\n        \"linked_segment_indexes\": [\n          0\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"authoritative, cinematic narration\",\n            \"confidence\": 0.90\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"female\",\n            \"confidence\": 0.95,\n            \"note\": \"consistent with previous chunk\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The speaker continues their monologue, threatening that streets will run red.\",\n  \"handoffContext\": \"Speaker 1 (spk_001) continues their dramatic monologue. Last line: 'Your streets shall once again run red.'\",\n  \"totalDuration\": 8.0\n}",
               "refusal": null,
-              "reasoning": "**Processing Audio Section**\n\nOkay, I'm now focusing on the transcription request for the 8-16 second audio chunk. I've taken note that the prior segment finished with \"They want you afraid. Fear makes you easier to control.\"\n\n\n**Analyzing Audio Segments**\n\nI've precisely segmented the audio, focusing on the 8-16 second range. \"But we are not afraid\" marks the beginning, narrated by spk_001. A new voice, spk_002, then proclaims, \"The streets shall once again run red.\" My transcription meticulously reflects these two distinct speaker identities and their timestamps within the targeted chunk.\n\n\n**Verifying Speaker Identity**\n\nI'm now zeroing in on speaker identification within the targeted audio slice. I've re-evaluated the timestamps, pinpointing \"But we are not afraid\" at 8.00s-8.90s, and \"The streets shall once again run red\" from 9.00s-12.00s. I now suspect a speaker shift, potentially a male antagonist, based on the differing vocal delivery from the preceding segment. I am checking the provided instructions to verify the speaker change.\n\n\n",
+              "reasoning": null,
               "reasoning_details": [
-                {
-                  "type": "[Truncated]",
-                  "text": "[Truncated]",
-                  "format": "[Truncated]",
-                  "index": "[Truncated]"
-                },
                 {
                   "type": "[Truncated]",
                   "data": "[Truncated]",
@@ -117,13 +111,13 @@
           "prompt_tokens": "[REDACTED]",
           "completion_tokens": "[REDACTED]",
           "total_tokens": "[REDACTED]",
-          "cost": 0.0031505,
+          "cost": 0.00151975,
           "is_byok": false,
           "prompt_tokens_details": "[REDACTED]",
           "cost_details": {
-            "upstream_inference_cost": 0.0031505,
-            "upstream_inference_prompt_cost": 0.0007415,
-            "upstream_inference_completions_cost": 0.002409
+            "upstream_inference_cost": 0.00151975,
+            "upstream_inference_prompt_cost": 0.00080575,
+            "upstream_inference_completions_cost": 0.000714
           },
           "completion_tokens_details": "[REDACTED]"
         }
@@ -134,21 +128,12 @@
     "dialogue_segments": [
       {
         "start": 0,
-        "end": 0.9,
+        "end": 8,
         "speaker": "Speaker 1",
         "speaker_id": "spk_001",
-        "text": "But we are not afraid.",
-        "confidence": 0.95,
+        "text": "Your streets shall once again run red.",
+        "confidence": 0.98,
         "index": 0
-      },
-      {
-        "start": 1,
-        "end": 4.5,
-        "speaker": "Speaker 2",
-        "speaker_id": "spk_002",
-        "text": "The streets shall once again run red.",
-        "confidence": 0.92,
-        "index": 1
       }
     ],
     "speaker_profiles": [
@@ -156,13 +141,13 @@
         "speaker_id": "spk_001",
         "label": "Speaker 1",
         "grounded": {
-          "confidence": 0.9,
+          "confidence": 0.95,
           "linked_segment_indexes": [
             0
           ],
           "acoustic_descriptors": [
             {
-              "label": "dramatic, cinematic narration style",
+              "label": "authoritative, cinematic narration",
               "confidence": 0.9
             }
           ]
@@ -172,42 +157,16 @@
             {
               "trait": "gender",
               "value": "female",
-              "confidence": 0.85,
-              "note": "inferred from vocal pitch and resonance"
-            }
-          ]
-        }
-      },
-      {
-        "speaker_id": "spk_002",
-        "label": "Speaker 2",
-        "grounded": {
-          "confidence": 0.85,
-          "linked_segment_indexes": [
-            1
-          ],
-          "acoustic_descriptors": [
-            {
-              "label": "menacing, gravelly, deep tone",
-              "confidence": 0.88
-            }
-          ]
-        },
-        "inferred_traits": {
-          "traits": [
-            {
-              "trait": "gender",
-              "value": "male",
-              "confidence": 0.8,
-              "note": "inferred from deep, gravelly vocal quality"
+              "confidence": 0.95,
+              "note": "consistent with previous chunk"
             }
           ]
         }
       }
     ],
-    "summary": "The narrator continues, stating they are not afraid, followed by a menacing voice declaring that the streets will run red.",
+    "summary": "The speaker continues their monologue, threatening that streets will run red.",
     "totalDuration": 8,
-    "handoffContext": "Speaker 1 (spk_001) is the female narrator. Speaker 2 (spk_002) is a new, menacing antagonist voice. Last line: 'The streets shall once again run red.'"
+    "handoffContext": "Speaker 1 (spk_001) continues their dramatic monologue. Last line: 'Your streets shall once again run red.'"
   },
   "toolLoop": {
     "toolName": "validate_dialogue_transcription_json",
@@ -220,7 +179,7 @@
         "role": "assistant",
         "turn": 1,
         "kind": "model_output",
-        "raw": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 0.9,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"But we are not afraid.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 1.0,\n      \"end\": 4.5,\n      \"speaker\": \"Speaker 2\",\n      \"speaker_id\": \"spk_002\",\n      \"text\": \"The streets shall once again run red.\",\n      \"confidence\": 0.92\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.90,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"dramatic, cinematic narration style\", \"confidence\": 0.90 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"female\",\n            \"confidence\": 0.85,\n            \"note\": \"inferred from vocal pitch and resonance\"\n          }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_002\",\n      \"label\": \"Speaker 2\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [1],\n        \"acoustic_descriptors\": [\n          { \"label\": \"menacing, gravelly, deep tone\", \"confidence\": 0.88 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"male\",\n            \"confidence\": 0.80,\n            \"note\": \"inferred from deep, gravelly vocal quality\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The narrator continues, stating they are not afraid, followed by a menacing voice declaring that the streets will run red.\",\n  \"handoffContext\": \"Speaker 1 (spk_001) is the female narrator. Speaker 2 (spk_002) is a new, menacing antagonist voice. Last line: 'The streets shall once again run red.'\",\n  \"totalDuration\": 8.0\n}"
+        "raw": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 8.0,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Your streets shall once again run red.\",\n      \"confidence\": 0.98\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.95,\n        \"linked_segment_indexes\": [\n          0\n        ],\n        \"acoustic_descriptors\": [\n          {\n            \"label\": \"authoritative, cinematic narration\",\n            \"confidence\": 0.90\n          }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"gender\",\n            \"value\": \"female\",\n            \"confidence\": 0.95,\n            \"note\": \"consistent with previous chunk\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"The speaker continues their monologue, threatening that streets will run red.\",\n  \"handoffContext\": \"Speaker 1 (spk_001) continues their dramatic monologue. Last line: 'Your streets shall once again run red.'\",\n  \"totalDuration\": 8.0\n}"
       },
       {
         "role": "tool",
@@ -234,19 +193,11 @@
             "dialogue_segments": [
               {
                 "start": 0,
-                "end": 0.9,
+                "end": 8,
                 "speaker": "Speaker 1",
                 "speaker_id": "spk_001",
-                "text": "But we are not afraid.",
-                "confidence": 0.95
-              },
-              {
-                "start": 1,
-                "end": 4.5,
-                "speaker": "Speaker 2",
-                "speaker_id": "spk_002",
-                "text": "The streets shall once again run red.",
-                "confidence": 0.92
+                "text": "Your streets shall once again run red.",
+                "confidence": 0.98
               }
             ],
             "speaker_profiles": [
@@ -261,22 +212,10 @@
                 "inferred_traits": {
                   "traits": "[Truncated]"
                 }
-              },
-              {
-                "speaker_id": "spk_002",
-                "label": "Speaker 2",
-                "grounded": {
-                  "confidence": "[Truncated]",
-                  "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]"
-                },
-                "inferred_traits": {
-                  "traits": "[Truncated]"
-                }
               }
             ],
-            "summary": "The narrator continues, stating they are not afraid, followed by a menacing voice declaring that the streets will run red.",
-            "handoffContext": "Speaker 1 (spk_001) is the female narrator. Speaker 2 (spk_002) is a new, menacing antagonist voice. Last line: 'The streets shall once again run red.'",
+            "summary": "The speaker continues their monologue, threatening that streets will run red.",
+            "handoffContext": "Speaker 1 (spk_001) continues their dramatic monologue. Last line: 'Your streets shall once again run red.'",
             "totalDuration": 8
           },
           "arguments": {
@@ -293,21 +232,12 @@
             "dialogue_segments": [
               {
                 "start": 0,
-                "end": 0.9,
+                "end": 8,
                 "speaker": "Speaker 1",
                 "speaker_id": "spk_001",
-                "text": "But we are not afraid.",
-                "confidence": 0.95,
+                "text": "Your streets shall once again run red.",
+                "confidence": 0.98,
                 "index": 0
-              },
-              {
-                "start": 1,
-                "end": 4.5,
-                "speaker": "Speaker 2",
-                "speaker_id": "spk_002",
-                "text": "The streets shall once again run red.",
-                "confidence": 0.92,
-                "index": 1
               }
             ],
             "speaker_profiles": [
@@ -322,23 +252,11 @@
                 "inferred_traits": {
                   "traits": "[Truncated]"
                 }
-              },
-              {
-                "speaker_id": "spk_002",
-                "label": "Speaker 2",
-                "grounded": {
-                  "confidence": "[Truncated]",
-                  "linked_segment_indexes": "[Truncated]",
-                  "acoustic_descriptors": "[Truncated]"
-                },
-                "inferred_traits": {
-                  "traits": "[Truncated]"
-                }
               }
             ],
-            "summary": "The narrator continues, stating they are not afraid, followed by a menacing voice declaring that the streets will run red.",
+            "summary": "The speaker continues their monologue, threatening that streets will run red.",
             "totalDuration": 8,
-            "handoffContext": "Speaker 1 (spk_001) is the female narrator. Speaker 2 (spk_002) is a new, menacing antagonist voice. Last line: 'The streets shall once again run red.'"
+            "handoffContext": "Speaker 1 (spk_001) continues their dramatic monologue. Last line: 'Your streets shall once again run red.'"
           }
         }
       }

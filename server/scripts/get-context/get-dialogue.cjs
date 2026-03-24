@@ -716,8 +716,11 @@ async function run(input) {
         lines.push('');
         lines.push('Voice separation reminders:');
         lines.push('- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.');
+        lines.push('- Before reusing any prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.');
         lines.push('- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.');
+        lines.push('- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.');
         lines.push('- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.');
+        lines.push('- If this chunk creates a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.');
         lines.push('- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.');
         lines.push('- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.');
         lines.push('- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.');
@@ -1750,8 +1753,11 @@ IMPORTANT:
 - Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
 - inferred_traits must always be present as an object with a traits array. Keep it clearly speculative / non-authoritative and attempt reviewable traits for each speaker when the audio supports them; otherwise return an empty traits array.
 - speaker_id continuity is acoustic, not semantic. A speaker naming a person, character, organization, or title is not evidence that the speaker is that entity.
+- Before reusing a speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.
 - Do not merge clearly different voices just because the scene is continuous. Keep public-address / figurehead narration, antagonist threats, radio/comms chatter, gruff tactical responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.
+- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.
 - If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.
+- If you create a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.
 - If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.
 - If a later line sounds like a different voice, do not reuse the old speaker_id just because the scene context mentions the same character.
 - Do not compress the whole file's dialogue into the opening seconds; place each line where it actually occurs in the full timeline.
@@ -1954,10 +1960,13 @@ Rules:
 - Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
 - inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.
 - speaker_id continuity is acoustic, not semantic. A line that names a person, character, organization, or title may still be spoken by someone else.
+- Before reusing a prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.
 - Do not merge clearly different voices just because the chunk continues the same scene. Keep public-address / figurehead narration, antagonist threats, radio/comms chatter, gruff tactical responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.
+- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.
 - If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.
 - In the opening montage, prefer local chunk provenance over storyline continuity. A named subject, recurring topic, or back-to-back cut is not enough to inherit the previous speaker_id.
 - If a threat line is followed by an official/public-address sounding line, treat that as a speaker change unless the exact same voice clearly continues.
+- If you create a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.
 - If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.
 - Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.
 - If no speech is detected, return an empty dialogue_segments array.

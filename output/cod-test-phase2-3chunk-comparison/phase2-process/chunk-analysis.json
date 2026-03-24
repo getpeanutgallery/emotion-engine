@@ -6,24 +6,24 @@
       "startTime": 0,
       "endTime": 5,
       "status": "success",
-      "summary": "A high-octane game trailer opening with glitchy text, rapid cuts of robots and destruction, and a celebrity face reveal amidst chaos.",
+      "summary": "The video opens with glitchy effects and the text 'RISING TENSIONS,' which triggers immediate skepticism based on persona preferences. Fast cuts and intense music follow, showing a war-torn setting and armored characters, but the cliché intro undermines engagement.",
       "emotions": {
         "patience": {
-          "score": 5,
-          "reasoning": "The 'RISING TENSIONS' buzzword at 0.0s triggers my scroll reflex, but the fast pacing keeps me on the fence."
+          "score": 2,
+          "reasoning": "The 'RISING TENSIONS' text is explicitly listed in the persona's 'What I Can't Stand' list, causing immediate urge to scroll."
         },
         "boredom": {
-          "score": 3,
-          "reasoning": "Too much visual noise and scene changes every second to feel bored, even if the content feels generic."
+          "score": 8,
+          "reasoning": "Despite visual chaos, the corporate trailer tropes feel generic and inauthentic, leading to high disengagement."
         },
         "excitement": {
-          "score": 6,
-          "reasoning": "Aggressive music and destruction visuals create hype, especially when the human face appears at 4.0s."
+          "score": 3,
+          "reasoning": "High production value is noted, but the content feels predictable and lacks authentic hooks within the first 3 seconds."
         }
       },
-      "dominant_emotion": "excitement",
-      "confidence": 0.85,
-      "tokens": 10778,
+      "dominant_emotion": "boredom",
+      "confidence": 0.95,
+      "tokens": 9409,
       "persona": {
         "soulPath": "../cast/impatient-teenager/SOUL.md",
         "goalPath": "../goals/video-ad-evaluation.md",
@@ -40,24 +40,24 @@
       "startTime": 5,
       "endTime": 10,
       "status": "success",
-      "summary": "Fast-paced trailer chunk featuring a soldier in a warzone, glitchy face close-ups, and falling cars with bold text overlays.",
+      "summary": "Visuals are absent for this 5-10s chunk; evaluation relies on dialogue and audio cues. Dialogue escalates threats ('streets run red') over intense cinematic music.",
       "emotions": {
         "patience": {
-          "score": 7,
-          "reasoning": "Opening soldier shot is borderline generic military cliché, but the rapid glitch transitions and text before 3s keep my thumb still."
+          "score": 1,
+          "reasoning": "Persona abandons content after 3s; this chunk starts at 5s with no visual hook provided."
         },
         "boredom": {
-          "score": 2,
-          "reasoning": "Visuals change every second with high-stakes destruction; no static shots or dead air to zone out on."
+          "score": 9,
+          "reasoning": "Dramatic villain dialogue feels cringe/forced without visual novelty to sustain attention."
         },
         "excitement": {
-          "score": 8,
-          "reasoning": "The 'THEY WANT YOU AFRAID' text and falling cars spike the adrenaline; feels cinematic and authentic to the genre."
+          "score": 2,
+          "reasoning": "Aggressive music attempts energy but feels generic/corporate without visual payoff."
         }
       },
-      "dominant_emotion": "excitement",
+      "dominant_emotion": "boredom",
       "confidence": 0.85,
-      "tokens": 10300,
+      "tokens": 6264,
       "persona": {
         "soulPath": "../cast/impatient-teenager/SOUL.md",
         "goalPath": "../goals/video-ad-evaluation.md",
@@ -74,24 +74,24 @@
       "startTime": 10,
       "endTime": 15,
       "status": "success",
-      "summary": "Cinematic city skyline transitions to a static game logo, followed by a glitchy name reveal and a damaged screen displaying a character's face amidst fire and rubble.",
+      "summary": "Cinematic cityscape transitions to a bold game logo, then a broken screen with a face amidst fire, underscored by aggressive dialogue about bloodshed.",
       "emotions": {
         "patience": {
           "score": 3,
-          "reasoning": "The static logo and talking head on a screen test my limits; I want gameplay or action, not cinematics."
+          "reasoning": "Logo animation appears within the first 2 seconds, triggering Alex's instant scroll reflex despite the intense audio."
         },
         "boredom": {
           "score": 7,
-          "reasoning": "Holding on the logo and the broken screen feels slow; visual energy drops significantly."
+          "reasoning": "Static logo and generic cinematic tropes feel like corporate marketing fluff rather than authentic content."
         },
         "excitement": {
-          "score": 4,
-          "reasoning": "The glitch effects and background fire keep it from being totally dead, but it's not high-energy."
+          "score": 5,
+          "reasoning": "Aggressive dialogue and high-octane music provide some energy, but visuals don't match the intensity."
         }
       },
       "dominant_emotion": "boredom",
       "confidence": 0.85,
-      "tokens": 22755,
+      "tokens": 11949,
       "persona": {
         "soulPath": "../cast/impatient-teenager/SOUL.md",
         "goalPath": "../goals/video-ad-evaluation.md",
@@ -103,7 +103,7 @@
       }
     }
   ],
-  "totalTokens": 43833,
+  "totalTokens": 27622,
   "statusSummary": {
     "total": 3,
     "successful": 3,

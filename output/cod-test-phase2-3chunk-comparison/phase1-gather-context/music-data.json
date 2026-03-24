@@ -4,7 +4,7 @@
       "start": 0,
       "end": 30,
       "type": "music",
-      "description": "Intense, cinematic action trailer audio featuring a dramatic orchestral score, sound effects like impacts and whooshes, and prominent voice-over dialogue.",
+      "description": "Dramatic, intense cinematic score with building percussion and synth elements.",
       "mood": "tense",
       "intensity": 8
     },
@@ -12,23 +12,23 @@
       "start": 30,
       "end": 60,
       "type": "music",
-      "description": "Dramatic, cinematic orchestral music with driving percussion and intense sound effects, punctuated by a voice-over.",
+      "description": "Dramatic, high-intensity cinematic music underscored by urgent dialogue and sound effects.",
       "mood": "tense",
-      "intensity": 9
+      "intensity": 8
     },
     {
       "start": 60,
       "end": 90,
       "type": "music",
-      "description": "Intense, high-energy rock/cinematic music with aggressive male voice-over dialogue and sound effects.",
+      "description": "An intense, high-energy rock/metal track with aggressive vocals and heavy instrumentation.",
       "mood": "energetic",
-      "intensity": 9
+      "intensity": 8
     },
     {
       "start": 90,
       "end": 120,
       "type": "music",
-      "description": "High-intensity, cinematic action music with dramatic dialogue and sound effects.",
+      "description": "High-energy, aggressive rock/metal track with intense, driving percussion and electric guitar riffs, accompanied by dramatic cinematic sound effects.",
       "mood": "energetic",
       "intensity": 9
     },
@@ -36,11 +36,11 @@
       "start": 120,
       "end": 140.042449,
       "type": "music",
-      "description": "Intense, driving cinematic music with aggressive sound effects and a promotional voice-over.",
+      "description": "High-energy, aggressive rock/metal music with driving percussion and distorted guitars, accompanied by a brief promotional voiceover.",
       "mood": "energetic",
-      "intensity": 8
+      "intensity": 9
     }
   ],
-  "summary": "The audio maintains a high-stakes, intense cinematic tone throughout, driven by aggressive music, sound effects, and dramatic voice-over.",
+  "summary": "The audio maintains a consistent, high-octane, aggressive rock/metal energy throughout, underscoring intense cinematic action sequences.",
   "hasMusic": true
 }
