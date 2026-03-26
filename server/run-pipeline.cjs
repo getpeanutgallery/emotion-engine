@@ -21,6 +21,7 @@ require('dotenv').config();
 // Import pipeline components
 const { loadConfig, validateConfig, getScriptsFromPhase } = require('./lib/config-loader.cjs');
 const { createArtifactContext, serializeArtifacts } = require('./lib/artifact-manager.cjs');
+const { runBenchmarkStage } = require('./lib/benchmark-runner.cjs');
 const { loadPersistedArtifacts, getArtifactFileHints } = require('./lib/persisted-artifacts.cjs');
 const { parseArgs, printHelp, printVersion, validateArgs } = require('./lib/cli-parser.cjs');
 const { runGatherContext } = require('./lib/phases/gather-context-runner.cjs');
@@ -64,7 +65,7 @@ async function runPipeline(configPath, options = {}) {
   
   // Step 2: Validate configuration
   console.log('✅ Validating configuration...');
-  const validation = validateConfig(config);
+  const validation = validateConfig(config, { configPath });
   
   if (!validation.valid) {
     console.error('   ❌ Validation failed:');
@@ -129,7 +130,7 @@ async function runPipeline(configPath, options = {}) {
     keysToHydrate.push('dialogueData', 'musicData');
   }
   if (phase2Scripts.length === 0) {
-    keysToHydrate.push('chunkAnalysis', 'perSecondData');
+    keysToHydrate.push('chunkAnalysis');
   }
 
   if (keysToHydrate.length > 0) {
@@ -169,7 +170,7 @@ async function runPipeline(configPath, options = {}) {
       const hasChunks = Array.isArray(chunkAnalysis?.chunks) && chunkAnalysis.chunks.length > 0;
 
       if (!hasChunks) {
-        const hints = getArtifactFileHints(outputDir, ['chunkAnalysis', 'perSecondData']);
+        const hints = getArtifactFileHints(outputDir, ['chunkAnalysis']);
         const hintLines = Object.values(hints).map((p) => `- ${p}`).join('\n');
 
         throw new Error([
@@ -287,6 +288,21 @@ async function runPipeline(configPath, options = {}) {
     events.artifactWrite({ absolutePath: f, role: 'artifact', phase: null, script: null });
   }
   console.log(`   ✅ Saved ${savedFiles.length} file(s) to ${outputDir}`);
+
+  const benchmarkResult = runBenchmarkStage({ config, configPath, outputDir });
+  if (benchmarkResult.enabled) {
+    console.log('🧪 Running benchmark stage...');
+    console.log(`   📍 Manifest: ${benchmarkResult.manifestPath}`);
+    console.log(`   📊 Benchmark status: ${benchmarkResult.status}`);
+    console.log(`   📝 Summary report: ${benchmarkResult.summaryPath}`);
+    console.log(`   ${benchmarkResult.summary}`);
+
+    if (benchmarkResult.status !== 'pass') {
+      throw new Error(`Benchmark ${benchmarkResult.status}: ${benchmarkResult.summary}`);
+    }
+  } else if (verbose) {
+    console.log(`🧪 Benchmark stage skipped (${benchmarkResult.reason})`);
+  }
   
   // Step 7: Report results
   console.log('\n✅ Pipeline complete!');

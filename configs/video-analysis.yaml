@@ -43,16 +43,6 @@ process:
             - patience
             - boredom
             - excitement
-    - script: server/scripts/process/video-per-second.cjs
-      toolPath: ../tools/emotion-lenses-tool.cjs
-      tool_variables:
-        soulPath: ../cast/impatient-teenager/SOUL.md
-        goalPath: ../goals/video-ad-evaluation.md
-        variables:
-          lenses:
-            - patience
-            - boredom
-            - excitement
 report:
   - server/scripts/report/metrics.cjs
   - server/scripts/report/recommendation.cjs

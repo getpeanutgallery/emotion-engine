@@ -56,11 +56,6 @@ test('Evaluation Report Script', async (t) => {
             }],
             totalTokens: 250,
             videoDuration: 16
-          },
-          perSecondData: {
-            per_second_data: [{ second: 0, emotions: { patience: { score: 7 } }, dominant_emotion: 'patience' }],
-            totalSeconds: 16,
-            summary: 'Test summary'
           }
         },
         config: {}
@@ -79,8 +74,7 @@ test('Evaluation Report Script', async (t) => {
         artifacts: {
           dialogueData: { dialogue_segments: [], summary: '' },
           musicData: { segments: [], summary: '', hasMusic: false },
-          chunkAnalysis: { chunks: [], totalTokens: 0, videoDuration: 16 },
-          perSecondData: { per_second_data: [], totalSeconds: 16, summary: '' }
+          chunkAnalysis: { chunks: [], totalTokens: 0, videoDuration: 16 }
         },
         config: {}
       });
@@ -99,8 +93,7 @@ test('Evaluation Report Script', async (t) => {
         artifacts: {
           dialogueData: { dialogue_segments: [], summary: '' },
           musicData: { segments: [], summary: '', hasMusic: false },
-          chunkAnalysis: { chunks: [], totalTokens: 0, videoDuration: 16 },
-          perSecondData: { per_second_data: [], totalSeconds: 16, summary: '' }
+          chunkAnalysis: { chunks: [], totalTokens: 0, videoDuration: 16 }
         },
         config: {}
       });
@@ -111,6 +104,7 @@ test('Evaluation Report Script', async (t) => {
       property(data, 'metadata');
       property(data, 'summary');
       property(data, 'data');
+      property(data.data, 'computedTimeline');
     });
   });
 
@@ -121,8 +115,7 @@ test('Evaluation Report Script', async (t) => {
         artifacts: {
           dialogueData: { dialogue_segments: [], summary: '' },
           musicData: { segments: [], summary: '', hasMusic: false },
-          chunkAnalysis: { chunks: [], totalTokens: 500, videoDuration: 30 },
-          perSecondData: { per_second_data: [], totalSeconds: 30, summary: '' }
+          chunkAnalysis: { chunks: [], totalTokens: 500, videoDuration: 30 }
         },
         config: {}
       });
@@ -150,8 +143,7 @@ test('Evaluation Report Script', async (t) => {
             }],
             totalTokens: 250,
             videoDuration: 8
-          },
-          perSecondData: { per_second_data: [], totalSeconds: 8, summary: '' }
+          }
         },
         config: {}
       });
@@ -169,8 +161,7 @@ test('Evaluation Report Script', async (t) => {
         artifacts: {
           dialogueData: { dialogue_segments: [], summary: '' },
           musicData: { segments: [], summary: '', hasMusic: false },
-          chunkAnalysis: { chunks: [], totalTokens: 750, videoDuration: 16 },
-          perSecondData: { per_second_data: [], totalSeconds: 16, summary: '' }
+          chunkAnalysis: { chunks: [], totalTokens: 750, videoDuration: 16 }
         },
         config: {}
       });
@@ -184,13 +175,31 @@ test('Evaluation Report Script', async (t) => {
         artifacts: {
           dialogueData: { dialogue_segments: [], summary: '' },
           musicData: { segments: [], summary: '', hasMusic: false },
-          chunkAnalysis: { chunks: [], totalTokens: 0, videoDuration: 45.5 },
-          perSecondData: { per_second_data: [], totalSeconds: 45, summary: '' }
+          chunkAnalysis: { chunks: [], totalTokens: 0, videoDuration: 45.5 }
         },
         config: {}
       });
 
       is(result.artifacts.summary.duration, 45.5);
+    });
+
+    await tNested.test('computes legacy seconds from successful chunks', async () => {
+      const result = await evaluationScript.run({
+        outputDir: testOutputDir,
+        artifacts: {
+          chunkAnalysis: {
+            chunks: [
+              { chunkIndex: 0, startTime: 0, endTime: 5, emotions: { patience: { score: 7 } } },
+              { chunkIndex: 1, startTime: 5, endTime: 10, status: 'failed', emotions: { patience: { score: 5 } } }
+            ],
+            totalTokens: 0,
+            videoDuration: 10
+          }
+        },
+        config: {}
+      });
+
+      is(result.artifacts.summary.seconds, 5);
     });
   });
 });

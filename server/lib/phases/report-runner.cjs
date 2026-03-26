@@ -30,7 +30,7 @@ const { clearPhaseExecutionSurfaces } = require('../output-manager.cjs');
  * @example
  * const result = await runReport({
  *   outputDir: 'output',
- *   artifacts: { chunkAnalysis: {...}, perSecondData: {...} },
+ *   artifacts: { chunkAnalysis: {...} },
  *   config: { settings: {} },
  *   scripts: ['scripts/report/evaluation.cjs']
  * });

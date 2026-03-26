@@ -209,7 +209,6 @@ output/full-analysis/
 ├── dialogue-data.json       # Dialogue transcription
 ├── music-data.json          # Music analysis
 ├── chunk-analysis.json      # Chunk-by-chunk analysis
-└── per-second-data.json     # Per-second emotion data
 ```
 
 The `FINAL-REPORT.md` should contain:

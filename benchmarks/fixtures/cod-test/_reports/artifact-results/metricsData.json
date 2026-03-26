@@ -1,0 +1,422 @@
+{
+  "artifactKey": "metricsData",
+  "label": "Phase 3 metrics",
+  "phase": "phase3-report",
+  "script": "metrics",
+  "status": "pass",
+  "truth": {
+    "path": "benchmarks/fixtures/cod-test/truth/metrics.json"
+  },
+  "output": {
+    "path": "output/cod-test/phase3-report/metrics/metrics.json"
+  },
+  "comparator": {
+    "kind": "json-structured",
+    "profile": "metrics-default",
+    "resolvedOptions": {
+      "timingToleranceSeconds": 2,
+      "numericTolerance": 0.1,
+      "unknownSentinels": [
+        "unknown",
+        "ambiguous"
+      ],
+      "ignorePaths": [
+        "$.generatedAt"
+      ]
+    }
+  },
+  "counts": {
+    "totalTruthFields": 36,
+    "scoreableFields": 35,
+    "skippedFields": 1,
+    "passedFields": 35,
+    "failedFields": 0,
+    "erroredFields": 0
+  },
+  "accuracy": {
+    "passed": 35,
+    "failed": 0,
+    "rate": 1
+  },
+  "coverage": {
+    "scoreable": 35,
+    "skipped": 1,
+    "totalTruthFields": 36,
+    "rate": 0.9722222222222222
+  },
+  "failures": [],
+  "skips": [
+    {
+      "path": "generatedAt",
+      "truthValue": "2026-03-26T13:35:12.112Z",
+      "reason": "Comparator ignored volatile field"
+    }
+  ],
+  "errors": [],
+  "fieldResults": [
+    {
+      "path": "generatedAt",
+      "status": "skip",
+      "rule": "structural",
+      "truthValue": "2026-03-26T13:35:12.112Z",
+      "outputValue": "2026-03-26T13:35:12.112Z",
+      "reason": "Comparator ignored volatile field"
+    },
+    {
+      "path": "pipelineVersion",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "1.0",
+      "outputValue": "1.0"
+    },
+    {
+      "path": "summary.totalChunks",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 28,
+      "outputValue": 28
+    },
+    {
+      "path": "summary.failedChunks",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 0,
+      "outputValue": 0
+    },
+    {
+      "path": "summary.totalSeconds",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 140,
+      "outputValue": 140
+    },
+    {
+      "path": "summary.videoDuration",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 140.017,
+      "outputValue": 140.017,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "implementationStatus.state",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "computed",
+      "outputValue": "computed"
+    },
+    {
+      "path": "implementationStatus.dataSource",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "derived-from-phase2.chunkAnalysis",
+      "outputValue": "derived-from-phase2.chunkAnalysis"
+    },
+    {
+      "path": "averages.patience",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.6428571428571428,
+      "outputValue": 0.6428571428571428,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "averages.boredom",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.42857142857142855,
+      "outputValue": 0.42857142857142855,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "averages.excitement",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.7821428571428576,
+      "outputValue": 0.7821428571428576,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "peakMoments.patience.highest.timestamp",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 75,
+      "outputValue": 75,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "peakMoments.patience.highest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "peakMoments.patience.lowest.timestamp",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 0,
+      "outputValue": 0,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "peakMoments.patience.lowest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.2,
+      "outputValue": 0.2,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "peakMoments.boredom.highest.timestamp",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 75,
+      "outputValue": 75,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "peakMoments.boredom.highest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 1,
+      "outputValue": 1,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "peakMoments.boredom.lowest.timestamp",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 5,
+      "outputValue": 5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "peakMoments.boredom.lowest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.2,
+      "outputValue": 0.2,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "peakMoments.excitement.highest.timestamp",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 5,
+      "outputValue": 5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "peakMoments.excitement.highest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "peakMoments.excitement.lowest.timestamp",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 120,
+      "outputValue": 120,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "peakMoments.excitement.lowest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.3,
+      "outputValue": 0.3,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.patience.direction",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "increasing",
+      "outputValue": "increasing"
+    },
+    {
+      "path": "trends.patience.change",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.05714285714285705,
+      "outputValue": 0.05714285714285705,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.patience.firstHalfAverage",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.6142857142857141,
+      "outputValue": 0.6142857142857141,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.patience.secondHalfAverage",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.6714285714285712,
+      "outputValue": 0.6714285714285712,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.boredom.direction",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "increasing",
+      "outputValue": "increasing"
+    },
+    {
+      "path": "trends.boredom.change",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.24285714285714283,
+      "outputValue": 0.24285714285714283,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.boredom.firstHalfAverage",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.3071428571428571,
+      "outputValue": 0.3071428571428571,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.boredom.secondHalfAverage",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.5499999999999999,
+      "outputValue": 0.5499999999999999,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.excitement.direction",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "stable",
+      "outputValue": "stable"
+    },
+    {
+      "path": "trends.excitement.change",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": -0.007142857142856562,
+      "outputValue": -0.007142857142856562,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.excitement.firstHalfAverage",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.7857142857142851,
+      "outputValue": 0.7857142857142851,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.excitement.secondHalfAverage",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.7785714285714286,
+      "outputValue": 0.7785714285714286,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "frictionIndex",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 100,
+      "outputValue": 100,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    }
+  ],
+  "summary": "35/35 scoreable fields passed; 1/36 truth fields were skipped.",
+  "context": {
+    "fixtureId": "cod-test",
+    "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",
+    "truthPath": "benchmarks/fixtures/cod-test/truth/metrics.json",
+    "outputPath": "output/cod-test/phase3-report/metrics/metrics.json"
+  }
+}

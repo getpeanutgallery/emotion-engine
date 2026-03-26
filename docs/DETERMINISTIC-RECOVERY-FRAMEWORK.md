@@ -151,16 +151,16 @@ Current gaps:
 
 Representative scripts:
 
-- `server/scripts/process/video-per-second.cjs`
 - `server/scripts/report/summary.cjs`
 - `server/scripts/report/final-report.cjs`
 - `server/scripts/report/metrics.cjs`
 - `server/scripts/report/emotional-analysis.cjs`
+- `server/scripts/report/evaluation.cjs` *(legacy wrapper; still computed from chunkAnalysis)*
 
 Current deterministic behavior already present:
 
 - some scripts already encode graceful degradation inside success outputs
-  - example: `video-per-second.cjs` excludes failed chunks and fills uncovered seconds with placeholder values
+  - example: `metrics.cjs` and `emotional-analysis.cjs` derive their timeline directly from successful chunkAnalysis when chunk-level data exists
   - example: summary/report code supplies defaults like `No recommendation available`
 
 Current gaps:
@@ -619,7 +619,7 @@ The pipeline wrapper should summarize child script envelopes using the same poli
 
 ### Computed lane degraded success reminder
 
-If `video-per-second.cjs` can validly exclude failed chunks and still produce a downstream-safe artifact, that outcome remains a success envelope, not deterministic recovery.
+If a computed/report lane can validly derive its downstream-safe output directly from successful `chunkAnalysis`, that outcome remains a success envelope, not deterministic recovery.
 
 ---
 

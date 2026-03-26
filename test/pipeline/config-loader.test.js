@@ -383,6 +383,41 @@ test('Config Loader - validateConfig', async (t) => {
     assert.strictEqual(result.normalizedRecovery.ai.budgets.maxTotalTokens, 14000);
   });
 
+  await t.test('should validate enabled benchmark config when manifest path resolves', () => {
+    const repoRoot = path.resolve(__dirname, '..', '..');
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
+      gather_context: ['script1.cjs'],
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/cod-test/benchmark.json'
+      }
+    };
+
+    const result = validateConfig(config, { configPath: path.join(repoRoot, 'configs', 'cod-test.yaml') });
+    assert.strictEqual(result.valid, true);
+  });
+
+  await t.test('should fail validation when enabled benchmark manifest path is missing', () => {
+    const repoRoot = path.resolve(__dirname, '..', '..');
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai: makeAiConfig(),
+      settings: makeFfmpegSettings(),
+      gather_context: ['script1.cjs'],
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/missing-fixture/benchmark.json'
+      }
+    };
+
+    const result = validateConfig(config, { configPath: path.join(repoRoot, 'configs', 'cod-test.yaml') });
+    assert.strictEqual(result.valid, false);
+    assert(result.errors.some(e => e.includes('Benchmark manifest not found')));
+  });
+
   await t.test('should fail validation for malformed recovery policy settings', () => {
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },

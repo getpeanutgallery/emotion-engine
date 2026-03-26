@@ -264,7 +264,6 @@ report:
 process:
   sequential:
     - script: server/scripts/process/video-chunks.cjs
-    - script: server/scripts/process/video-per-second.cjs
 
 # gather_context and report support { parallel: [...] } as well
 ```

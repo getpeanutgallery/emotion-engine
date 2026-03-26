@@ -1,0 +1,78 @@
+{
+  "contractVersion": "ee.benchmark-report/v1",
+  "fixtureId": "cod-test",
+  "benchmark": {
+    "path": "benchmarks/fixtures/cod-test/benchmark.json"
+  },
+  "fixture": {
+    "path": "benchmarks/fixtures/cod-test/fixture.json"
+  },
+  "run": {
+    "configName": "COD Test Pipeline",
+    "outputDir": "output/cod-test"
+  },
+  "status": "pass",
+  "artifacts": [
+    {
+      "artifactKey": "dialogueData",
+      "status": "pass",
+      "accuracyRate": 1,
+      "coverageRate": 1
+    },
+    {
+      "artifactKey": "musicData",
+      "status": "pass",
+      "accuracyRate": 1,
+      "coverageRate": 1
+    },
+    {
+      "artifactKey": "recommendationData",
+      "status": "pass",
+      "accuracyRate": 1,
+      "coverageRate": 0.6470588235294118
+    },
+    {
+      "artifactKey": "chunkAnalysis",
+      "status": "pass",
+      "accuracyRate": 1,
+      "coverageRate": 0.9490333919156415
+    },
+    {
+      "artifactKey": "metricsData",
+      "status": "pass",
+      "accuracyRate": 1,
+      "coverageRate": 0.9722222222222222
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "status": "pass",
+      "accuracyRate": 1,
+      "coverageRate": 0.9933837429111532
+    }
+  ],
+  "totals": {
+    "artifactsTotal": 6,
+    "artifactsPassed": 6,
+    "artifactsFailed": 0,
+    "artifactsErrored": 0,
+    "totalTruthFields": 3210,
+    "scoreableFields": 3154,
+    "skippedFields": 56,
+    "passedFields": 3154,
+    "failedFields": 0,
+    "erroredFields": 0
+  },
+  "accuracy": {
+    "passed": 3154,
+    "failed": 0,
+    "rate": 1
+  },
+  "coverage": {
+    "scoreable": 3154,
+    "skipped": 56,
+    "totalTruthFields": 3210,
+    "rate": 0.9825545171339564
+  },
+  "errors": [],
+  "summary": "6/6 artifacts passed. 3154/3154 scoreable fields passed. Truth coverage was 3154/3210 fields."
+}

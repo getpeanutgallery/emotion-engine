@@ -192,7 +192,6 @@ Typical script outputs:
 - `phase1-gather-context/dialogue-data.json`
 - `phase1-gather-context/music-data.json`
 - `phase2-process/chunk-analysis.json`
-- `phase2-process/per-second-data.json`
 - `phase3-report/...` (metrics/recommendation/final report files)
 
 ---

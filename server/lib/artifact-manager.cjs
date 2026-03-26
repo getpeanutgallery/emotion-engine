@@ -269,7 +269,7 @@ function getPhaseForArtifact(key) {
   const phase1Artifacts = ['dialogueData', 'musicData'];
   
   // Phase 2: Process
-  const phase2Artifacts = ['chunkAnalysis', 'perSecondData'];
+  const phase2Artifacts = ['chunkAnalysis'];
   
   // Phase 3: Report
   const phase3Artifacts = ['metricsData', 'recommendationData', 'emotionalAnalysis', 'summaryData'];

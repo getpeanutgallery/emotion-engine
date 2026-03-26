@@ -32,7 +32,6 @@ Current scripts (non-exhaustive):
 
 - Phase 2 (`process`)
   - `server/scripts/process/video-chunks.cjs`
-  - `server/scripts/process/video-per-second.cjs` *(computed; universal script-result contract + degraded-success semantics rolled out)*
 
 - Phase 3 (`report`)
   - `server/scripts/report/metrics.cjs` *(computed; no live AI call; universal script-result contract rolled out)*

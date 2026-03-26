@@ -12,7 +12,6 @@
  * - output/<run>/phase1-gather-context/dialogue-data.json
  * - output/<run>/phase1-gather-context/music-data.json
  * - output/<run>/phase2-process/chunk-analysis.json
- * - output/<run>/phase2-process/per-second-data.json
  */
 
 const fs = require('fs');
@@ -27,7 +26,6 @@ const DEFAULT_LOCATIONS = {
   dialogueData: ['phase1-gather-context', 'dialogue-data.json'],
   musicData: ['phase1-gather-context', 'music-data.json'],
   chunkAnalysis: ['phase2-process', 'chunk-analysis.json'],
-  perSecondData: ['phase2-process', 'per-second-data.json'],
 };
 
 function safeReadJson(filePath) {

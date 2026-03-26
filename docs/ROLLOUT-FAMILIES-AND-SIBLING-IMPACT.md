@@ -122,12 +122,11 @@ These scripts are not AI lanes, but they are still meaningful pipeline scripts a
 
 ### Files / lanes
 
-- `server/scripts/process/video-per-second.cjs`
 - `server/scripts/report/metrics.cjs`
 - `server/scripts/report/emotional-analysis.cjs`
 - `server/scripts/report/summary.cjs`
 - `server/scripts/report/final-report.cjs`
-- `server/scripts/report/evaluation.cjs` *(legacy combined report path; treat carefully and decide whether it remains active or should be explicitly downgraded/retired during rollout)*
+- `server/scripts/report/evaluation.cjs` *(legacy combined report path; now fed from chunkAnalysis-derived timelines instead of a dedicated per-second Phase 2 artifact)*
 
 ### Already compliant
 
@@ -436,7 +435,6 @@ These lanes already have the strongest validation discipline, so they are the sa
 
 Move next to:
 
-- `video-per-second.cjs`
 - `metrics.cjs`
 - `emotional-analysis.cjs`
 - `summary.cjs`

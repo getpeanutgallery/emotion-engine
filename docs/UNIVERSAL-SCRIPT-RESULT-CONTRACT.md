@@ -126,16 +126,16 @@ Current failure behavior:
 
 Representative scripts:
 
-- `server/scripts/process/video-per-second.cjs`
 - `server/scripts/report/metrics.cjs`
 - `server/scripts/report/emotional-analysis.cjs`
 - `server/scripts/report/summary.cjs`
 - `server/scripts/report/final-report.cjs`
+- `server/scripts/report/evaluation.cjs` *(legacy wrapper)*
 
 Current success behavior:
 
 - same broad pattern: `return { artifacts: { ... } }`
-- artifact payloads vary by lane family (`perSecondData`, `summary`, `summaryData`, `finalReport`)
+- artifact payloads vary by lane family (`metricsData`, `emotionalAnalysis`, `summary`, `summaryData`, `finalReport`, legacy `reportFiles`)
 
 Current failure behavior:
 
@@ -174,7 +174,7 @@ What is missing:
 
 **Implementation status (2026-03-14):**
 
-- the shared runtime from `ee-d4x.1` is now live for the current AI lanes **and** the computed/report family (`video-per-second`, `metrics`, `emotional-analysis`, `summary`, `final-report`)
+- the shared runtime from `ee-d4x.1` is now live for the current AI lanes **and** the current computed/report family (`metrics`, `emotional-analysis`, `summary`, `final-report`, plus legacy-only `evaluation`)
 - computed/report lanes now emit the same persisted success/failure envelopes and lineage refs as AI lanes, but use lane-specific degraded-success warnings instead of AI recovery metadata when they can safely continue with partial data
 - `evaluation.cjs` remains available only as a legacy compatibility wrapper and is no longer considered the canonical Phase 3 reporting path
 

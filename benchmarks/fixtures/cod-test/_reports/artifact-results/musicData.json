@@ -1,0 +1,333 @@
+{
+  "artifactKey": "musicData",
+  "label": "Phase 1 music",
+  "phase": "phase1-gather-context",
+  "script": "get-music",
+  "status": "pass",
+  "truth": {
+    "path": "benchmarks/fixtures/cod-test/truth/music-data.json"
+  },
+  "output": {
+    "path": "output/cod-test/phase1-gather-context/music-data.json"
+  },
+  "comparator": {
+    "kind": "json-structured",
+    "profile": "music-default",
+    "resolvedOptions": {
+      "timingToleranceSeconds": 2,
+      "numericTolerance": 0.1,
+      "unknownSentinels": [
+        "unknown",
+        "ambiguous"
+      ],
+      "ignorePaths": []
+    }
+  },
+  "counts": {
+    "totalTruthFields": 32,
+    "scoreableFields": 32,
+    "skippedFields": 0,
+    "passedFields": 32,
+    "failedFields": 0,
+    "erroredFields": 0
+  },
+  "accuracy": {
+    "passed": 32,
+    "failed": 0,
+    "rate": 1
+  },
+  "coverage": {
+    "scoreable": 32,
+    "skipped": 0,
+    "totalTruthFields": 32,
+    "rate": 1
+  },
+  "failures": [],
+  "skips": [],
+  "errors": [],
+  "fieldResults": [
+    {
+      "path": "segments[0].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 0,
+      "outputValue": 0,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "segments[0].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 30,
+      "outputValue": 30,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "segments[0].type",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "music",
+      "outputValue": "music"
+    },
+    {
+      "path": "segments[0].description",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "High-intensity cinematic trailer music featuring dramatic orchestral swells, electronic pulses, and percussive hits, layered with intense dialogue and sound effects.",
+      "outputValue": "High-intensity cinematic trailer music featuring dramatic orchestral swells, electronic pulses, and percussive hits, layered with intense dialogue and sound effects.",
+      "normalizedTruthValue": "high intensity cinematic trailer music featuring dramatic orchestral swells electronic pulses and percussive hits layered with intense dialogue and sound effects",
+      "normalizedOutputValue": "high intensity cinematic trailer music featuring dramatic orchestral swells electronic pulses and percussive hits layered with intense dialogue and sound effects"
+    },
+    {
+      "path": "segments[0].mood",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "tense",
+      "outputValue": "tense"
+    },
+    {
+      "path": "segments[0].intensity",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 9,
+      "outputValue": 9
+    },
+    {
+      "path": "segments[1].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 30,
+      "outputValue": 30,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "segments[1].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 60,
+      "outputValue": 60,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "segments[1].type",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "music",
+      "outputValue": "music"
+    },
+    {
+      "path": "segments[1].description",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "High-intensity, action-oriented trailer music with driving percussion, electronic synth pulses, and dramatic orchestral swells.",
+      "outputValue": "High-intensity, action-oriented trailer music with driving percussion, electronic synth pulses, and dramatic orchestral swells.",
+      "normalizedTruthValue": "high intensity action oriented trailer music with driving percussion electronic synth pulses and dramatic orchestral swells",
+      "normalizedOutputValue": "high intensity action oriented trailer music with driving percussion electronic synth pulses and dramatic orchestral swells"
+    },
+    {
+      "path": "segments[1].mood",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "energetic",
+      "outputValue": "energetic"
+    },
+    {
+      "path": "segments[1].intensity",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 9,
+      "outputValue": 9
+    },
+    {
+      "path": "segments[2].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 60,
+      "outputValue": 60,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "segments[2].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 90,
+      "outputValue": 90,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "segments[2].type",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "music",
+      "outputValue": "music"
+    },
+    {
+      "path": "segments[2].description",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Intense, high-energy rock music with aggressive vocals and dramatic sound effects.",
+      "outputValue": "Intense, high-energy rock music with aggressive vocals and dramatic sound effects.",
+      "normalizedTruthValue": "intense high energy rock music with aggressive vocals and dramatic sound effects",
+      "normalizedOutputValue": "intense high energy rock music with aggressive vocals and dramatic sound effects"
+    },
+    {
+      "path": "segments[2].mood",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "energetic",
+      "outputValue": "energetic"
+    },
+    {
+      "path": "segments[2].intensity",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 9,
+      "outputValue": 9
+    },
+    {
+      "path": "segments[3].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 90,
+      "outputValue": 90,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "segments[3].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 120,
+      "outputValue": 120,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "segments[3].type",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "music",
+      "outputValue": "music"
+    },
+    {
+      "path": "segments[3].description",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "High-intensity cinematic trailer music with dramatic orchestral stabs, heavy percussion, and sound effects.",
+      "outputValue": "High-intensity cinematic trailer music with dramatic orchestral stabs, heavy percussion, and sound effects.",
+      "normalizedTruthValue": "high intensity cinematic trailer music with dramatic orchestral stabs heavy percussion and sound effects",
+      "normalizedOutputValue": "high intensity cinematic trailer music with dramatic orchestral stabs heavy percussion and sound effects"
+    },
+    {
+      "path": "segments[3].mood",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "energetic",
+      "outputValue": "energetic"
+    },
+    {
+      "path": "segments[3].intensity",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 9,
+      "outputValue": 9
+    },
+    {
+      "path": "segments[4].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 120,
+      "outputValue": 120,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "segments[4].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 140.042449,
+      "outputValue": 140.042449,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "segments[4].type",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "music",
+      "outputValue": "music"
+    },
+    {
+      "path": "segments[4].description",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "High-energy, cinematic action trailer music with intense sound effects and a promotional voiceover.",
+      "outputValue": "High-energy, cinematic action trailer music with intense sound effects and a promotional voiceover.",
+      "normalizedTruthValue": "high energy cinematic action trailer music with intense sound effects and a promotional voiceover",
+      "normalizedOutputValue": "high energy cinematic action trailer music with intense sound effects and a promotional voiceover"
+    },
+    {
+      "path": "segments[4].mood",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "energetic",
+      "outputValue": "energetic"
+    },
+    {
+      "path": "segments[4].intensity",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 9,
+      "outputValue": 9
+    },
+    {
+      "path": "summary",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "The trailer maintains high intensity, combining dramatic, action-oriented cinematic music with promotional voiceover and sound effects.",
+      "outputValue": "The trailer maintains high intensity, combining dramatic, action-oriented cinematic music with promotional voiceover and sound effects.",
+      "normalizedTruthValue": "the trailer maintains high intensity combining dramatic action oriented cinematic music with promotional voiceover and sound effects",
+      "normalizedOutputValue": "the trailer maintains high intensity combining dramatic action oriented cinematic music with promotional voiceover and sound effects"
+    },
+    {
+      "path": "hasMusic",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": true,
+      "outputValue": true
+    }
+  ],
+  "summary": "32/32 scoreable fields passed; 0/32 truth fields were skipped.",
+  "context": {
+    "fixtureId": "cod-test",
+    "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",
+    "truthPath": "benchmarks/fixtures/cod-test/truth/music-data.json",
+    "outputPath": "output/cod-test/phase1-gather-context/music-data.json"
+  }
+}

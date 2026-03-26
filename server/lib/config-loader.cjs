@@ -13,6 +13,7 @@ const path = require('path');
 const yaml = require('js-yaml');
 const { validateRecoveryConfig } = require('./script-contract.cjs');
 const { validateFfmpegSettings } = require('./ffmpeg-config.cjs');
+const { resolveBenchmarkConfig } = require('./benchmark-runner.cjs');
 
 /**
  * Load configuration from file (YAML or JSON)
@@ -106,7 +107,7 @@ function parseConfig(configString, format = 'yaml') {
  *   console.error('Validation errors:', result.errors);
  * }
  */
-function validateConfig(config) {
+function validateConfig(config, options = {}) {
   const errors = [];
   
   // Check asset configuration
@@ -236,6 +237,12 @@ function validateConfig(config) {
   const recoveryValidation = validateRecoveryConfig(config.recovery);
   if (!recoveryValidation.valid) {
     errors.push(...recoveryValidation.errors);
+  }
+
+  try {
+    resolveBenchmarkConfig(config, { configPath: options.configPath });
+  } catch (error) {
+    errors.push(error.message);
   }
 
   // Validate debug configuration when provided

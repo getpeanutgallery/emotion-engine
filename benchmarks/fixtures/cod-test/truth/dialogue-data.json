@@ -1,0 +1,708 @@
+{
+  "dialogue_segments": [
+    {
+      "start": 0,
+      "end": 7.8,
+      "speaker": "Speaker 1",
+      "speaker_id": "spk_001",
+      "text": "They want you afraid. Fear makes you easier to control.",
+      "confidence": 0.99,
+      "index": 0
+    },
+    {
+      "start": 8,
+      "end": 10.5,
+      "speaker": "Speaker 1",
+      "speaker_id": "spk_001",
+      "text": "It's time to wake up.",
+      "confidence": 0.98,
+      "index": 1
+    },
+    {
+      "start": 12.5,
+      "end": 16.8,
+      "speaker": "Speaker 2",
+      "speaker_id": "spk_002",
+      "text": "Your streets shall once again run red. with your blood.",
+      "confidence": 0.95,
+      "index": 2
+    },
+    {
+      "start": 16.8,
+      "end": 21.2,
+      "speaker": "Speaker 3",
+      "speaker_id": "spk_003",
+      "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+      "confidence": 0.98,
+      "index": 3
+    },
+    {
+      "start": 21.2,
+      "end": 24.3,
+      "speaker": "Speaker 4",
+      "speaker_id": "spk_004",
+      "text": "Menendez is a terrorist terrorist.",
+      "confidence": 0.92,
+      "index": 4
+    },
+    {
+      "start": 24.3,
+      "end": 27.4,
+      "speaker": "Speaker 5",
+      "speaker_id": "spk_005",
+      "text": "We're bringing peace and security to the world.",
+      "confidence": 0.95,
+      "index": 5
+    },
+    {
+      "start": 28.1,
+      "end": 30.7,
+      "speaker": "Speaker 6",
+      "speaker_id": "spk_006",
+      "text": "He refuses to let me go.",
+      "confidence": 0.92,
+      "index": 6
+    },
+    {
+      "start": 31.1,
+      "end": 34.9,
+      "speaker": "Speaker 7",
+      "speaker_id": "spk_007",
+      "text": "Stop looking backwards, David. What matters is what we do next.",
+      "confidence": 0.95,
+      "index": 7
+    },
+    {
+      "start": 35.5,
+      "end": 38.1,
+      "speaker": "Speaker 7",
+      "speaker_id": "spk_007",
+      "text": "A lot of people counting on us for answers.",
+      "confidence": 0.93,
+      "index": 8
+    },
+    {
+      "start": 49.7,
+      "end": 51.4,
+      "speaker": "Speaker 8",
+      "speaker_id": "spk_008",
+      "text": "Specter one, report.",
+      "confidence": 0.95,
+      "index": 9
+    },
+    {
+      "start": 59.6,
+      "end": 61,
+      "speaker": "Speaker 9",
+      "speaker_id": "spk_009",
+      "text": "This isn't real.",
+      "confidence": 0.95,
+      "index": 10
+    },
+    {
+      "start": 61.5,
+      "end": 62.8,
+      "speaker": "Speaker 9",
+      "speaker_id": "spk_009",
+      "text": "The hell it isn't!",
+      "confidence": 0.95,
+      "index": 11
+    },
+    {
+      "start": 64,
+      "end": 64.6,
+      "speaker": "Speaker 10",
+      "speaker_id": "spk_010",
+      "text": "Control, Menendez!",
+      "confidence": 0.95,
+      "index": 12
+    },
+    {
+      "start": 64.6,
+      "end": 66.1,
+      "speaker": "Speaker 11",
+      "speaker_id": "spk_011",
+      "text": "The world is on the brink of collapse.",
+      "confidence": 0.9,
+      "index": 13
+    },
+    {
+      "start": 66.1,
+      "end": 66.8,
+      "speaker": "Speaker 10",
+      "speaker_id": "spk_010",
+      "text": "Control, Menendez!",
+      "confidence": 0.95,
+      "index": 14
+    },
+    {
+      "start": 66.8,
+      "end": 68.2,
+      "speaker": "Speaker 11",
+      "speaker_id": "spk_011",
+      "text": "Chaos is the only truth.",
+      "confidence": 0.9,
+      "index": 15
+    },
+    {
+      "start": 68.2,
+      "end": 68.9,
+      "speaker": "Speaker 10",
+      "speaker_id": "spk_010",
+      "text": "Control, Menendez!",
+      "confidence": 0.95,
+      "index": 16
+    },
+    {
+      "start": 68.9,
+      "end": 70.3,
+      "speaker": "Speaker 11",
+      "speaker_id": "spk_011",
+      "text": "The system is broken.",
+      "confidence": 0.9,
+      "index": 17
+    },
+    {
+      "start": 70.3,
+      "end": 71,
+      "speaker": "Speaker 10",
+      "speaker_id": "spk_010",
+      "text": "Control, Menendez!",
+      "confidence": 0.95,
+      "index": 18
+    },
+    {
+      "start": 71,
+      "end": 72.5,
+      "speaker": "Speaker 11",
+      "speaker_id": "spk_011",
+      "text": "We are the architects of our own destruction.",
+      "confidence": 0.9,
+      "index": 19
+    },
+    {
+      "start": 72.5,
+      "end": 73.2,
+      "speaker": "Speaker 10",
+      "speaker_id": "spk_010",
+      "text": "Control, Menendez!",
+      "confidence": 0.95,
+      "index": 20
+    },
+    {
+      "start": 73.2,
+      "end": 74.6,
+      "speaker": "Speaker 11",
+      "speaker_id": "spk_011",
+      "text": "And he is the catalyst.",
+      "confidence": 0.9,
+      "index": 21
+    },
+    {
+      "start": 74.6,
+      "end": 75.3,
+      "speaker": "Speaker 10",
+      "speaker_id": "spk_010",
+      "text": "Control, Menendez!",
+      "confidence": 0.95,
+      "index": 22
+    },
+    {
+      "start": 75.3,
+      "end": 77,
+      "speaker": "Speaker 11",
+      "speaker_id": "spk_011",
+      "text": "The end is not coming. It is here.",
+      "confidence": 0.9,
+      "index": 23
+    },
+    {
+      "start": 77,
+      "end": 77.7,
+      "speaker": "Speaker 10",
+      "speaker_id": "spk_010",
+      "text": "Control, Menendez!",
+      "confidence": 0.95,
+      "index": 24
+    },
+    {
+      "start": 77.7,
+      "end": 79.2,
+      "speaker": "Speaker 11",
+      "speaker_id": "spk_011",
+      "text": "And there is no turning back.",
+      "confidence": 0.9,
+      "index": 25
+    },
+    {
+      "start": 79.2,
+      "end": 79.9,
+      "speaker": "Speaker 10",
+      "speaker_id": "spk_010",
+      "text": "Control, Menendez!",
+      "confidence": 0.95,
+      "index": 26
+    },
+    {
+      "start": 79.9,
+      "end": 81.5,
+      "speaker": "Speaker 11",
+      "speaker_id": "spk_011",
+      "text": "The future is written in blood.",
+      "confidence": 0.9,
+      "index": 27
+    },
+    {
+      "start": 81.5,
+      "end": 82.2,
+      "speaker": "Speaker 10",
+      "speaker_id": "spk_010",
+      "text": "Control, Menendez!",
+      "confidence": 0.95,
+      "index": 28
+    },
+    {
+      "start": 82.2,
+      "end": 84,
+      "speaker": "Speaker 11",
+      "speaker_id": "spk_011",
+      "text": "And he is the author.",
+      "confidence": 0.9,
+      "index": 29
+    },
+    {
+      "start": 97.5,
+      "end": 99.5,
+      "speaker": "Speaker 12",
+      "speaker_id": "spk_012",
+      "text": "Pull it together, man!",
+      "confidence": 0.95,
+      "index": 30
+    },
+    {
+      "start": 100.5,
+      "end": 103.5,
+      "speaker": "Speaker 2",
+      "speaker_id": "spk_002",
+      "text": "So eager to leave, that is killing men.",
+      "confidence": 0.9,
+      "index": 31
+    },
+    {
+      "start": 104,
+      "end": 107.2,
+      "speaker": "Speaker 2",
+      "speaker_id": "spk_002",
+      "text": "It's a hell of a lot easier than killing the idea.",
+      "confidence": 0.95,
+      "index": 32
+    },
+    {
+      "start": 107.2,
+      "end": 110.8,
+      "speaker": "Speaker 1",
+      "speaker_id": "spk_001",
+      "text": "You were never cut out to be a Mason.",
+      "confidence": 0.92,
+      "index": 33
+    },
+    {
+      "start": 110.8,
+      "end": 113.8,
+      "speaker": "Speaker 7",
+      "speaker_id": "spk_007",
+      "text": "No more games. This ends now.",
+      "confidence": 0.95,
+      "index": 34
+    },
+    {
+      "start": 113.8,
+      "end": 117.5,
+      "speaker": "Speaker 2",
+      "speaker_id": "spk_002",
+      "text": "Obey your master!",
+      "confidence": 0.95,
+      "index": 35
+    },
+    {
+      "start": 117.5,
+      "end": 121.5,
+      "speaker": "Speaker 11",
+      "speaker_id": "spk_011",
+      "text": "Get the Reznov challenge pack.",
+      "confidence": 0.9,
+      "index": 36
+    },
+    {
+      "start": 124,
+      "end": 125.5,
+      "speaker": "Speaker 11",
+      "speaker_id": "spk_011",
+      "text": "And you pre-order now.",
+      "confidence": 0.95,
+      "index": 37
+    },
+    {
+      "start": 127.5,
+      "end": 134.5,
+      "speaker": "Speaker 13",
+      "speaker_id": "spk_013",
+      "text": "The world is changing. The only way to survive is to be prepared. We are the future.",
+      "confidence": 0.9,
+      "index": 38
+    }
+  ],
+  "speaker_profiles": [
+    {
+      "speaker_id": "spk_001",
+      "label": "Speaker 1",
+      "grounded": {
+        "confidence": 0.9,
+        "linked_segment_indexes": [
+          0,
+          1,
+          33
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "dramatic, cinematic narration style",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "gender",
+            "value": "female",
+            "confidence": 0.9,
+            "note": "consistent with previous chunk"
+          }
+        ]
+      }
+    },
+    {
+      "speaker_id": "spk_002",
+      "label": "Speaker 2",
+      "grounded": {
+        "confidence": 0.85,
+        "linked_segment_indexes": [
+          2,
+          31,
+          32,
+          35
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "menacing, deep, gravelly tone",
+            "confidence": 0.95
+          },
+          {
+            "label": "menacing, gravelly tone",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "gender",
+            "value": "male",
+            "confidence": 0.9,
+            "note": "deep, gravelly vocal quality"
+          }
+        ]
+      }
+    },
+    {
+      "speaker_id": "spk_003",
+      "label": "Speaker 3",
+      "grounded": {
+        "confidence": 0.9,
+        "linked_segment_indexes": [
+          3
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "authoritative, news-anchor delivery",
+            "confidence": 0.85
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": []
+      }
+    },
+    {
+      "speaker_id": "spk_004",
+      "label": "Speaker 4",
+      "grounded": {
+        "confidence": 0.85,
+        "linked_segment_indexes": [
+          4
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "urgent, broadcast style",
+            "confidence": 0.85
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": []
+      }
+    },
+    {
+      "speaker_id": "spk_005",
+      "label": "Speaker 5",
+      "grounded": {
+        "confidence": 0.9,
+        "linked_segment_indexes": [
+          5
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "authoritative, news-anchor delivery",
+            "confidence": 0.88
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "gender",
+            "value": "female",
+            "confidence": 0.9,
+            "note": null
+          }
+        ]
+      }
+    },
+    {
+      "speaker_id": "spk_006",
+      "label": "Speaker 6",
+      "grounded": {
+        "confidence": 0.85,
+        "linked_segment_indexes": [
+          6
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "distressed, character voice",
+            "confidence": 0.8
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "gender",
+            "value": "male",
+            "confidence": 0.85,
+            "note": null
+          }
+        ]
+      }
+    },
+    {
+      "speaker_id": "spk_007",
+      "label": "Speaker 7",
+      "grounded": {
+        "confidence": 0.9,
+        "linked_segment_indexes": [
+          7,
+          8,
+          34
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "authoritative, gravelly, mature",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "gender",
+            "value": "male",
+            "confidence": 0.9,
+            "note": null
+          }
+        ]
+      }
+    },
+    {
+      "speaker_id": "spk_008",
+      "label": "Speaker 8",
+      "grounded": {
+        "confidence": 0.9,
+        "linked_segment_indexes": [
+          9
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "authoritative, military radio voice",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "gender",
+            "value": "male",
+            "confidence": 0.8,
+            "note": "typical military radio cadence"
+          }
+        ]
+      }
+    },
+    {
+      "speaker_id": "spk_009",
+      "label": "Speaker 9",
+      "grounded": {
+        "confidence": 0.9,
+        "linked_segment_indexes": [
+          10,
+          11
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "distressed, intense",
+            "confidence": 0.85
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "gender",
+            "value": "male",
+            "confidence": 0.85,
+            "note": "vocal pitch and intensity"
+          }
+        ]
+      }
+    },
+    {
+      "speaker_id": "spk_010",
+      "label": "Speaker 10",
+      "grounded": {
+        "confidence": 0.9,
+        "linked_segment_indexes": [
+          12,
+          14,
+          16,
+          18,
+          20,
+          22,
+          24,
+          26,
+          28
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "group chanting, rhythmic, intense",
+            "confidence": 0.85
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": []
+      }
+    },
+    {
+      "speaker_id": "spk_011",
+      "label": "Speaker 11",
+      "grounded": {
+        "confidence": 0.85,
+        "linked_segment_indexes": [
+          13,
+          15,
+          17,
+          19,
+          21,
+          23,
+          25,
+          27,
+          29,
+          36,
+          37
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "authoritative, dramatic, cinematic narration",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "gender",
+            "value": "male",
+            "confidence": 0.8,
+            "note": "matches prior registry"
+          }
+        ]
+      }
+    },
+    {
+      "speaker_id": "spk_012",
+      "label": "Speaker 12",
+      "grounded": {
+        "confidence": 0.85,
+        "linked_segment_indexes": [
+          30
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "urgent, commanding tone",
+            "confidence": 0.85
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "gender",
+            "value": "male",
+            "confidence": 0.7,
+            "note": "based on vocal pitch and intensity"
+          }
+        ]
+      }
+    },
+    {
+      "speaker_id": "spk_013",
+      "label": "Speaker 13",
+      "grounded": {
+        "confidence": 0.85,
+        "linked_segment_indexes": [
+          38
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "cinematic, trailer-style voiceover",
+            "confidence": 0.85
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "gender",
+            "value": "male",
+            "confidence": 0.85,
+            "note": "deep, resonant tone"
+          }
+        ]
+      }
+    }
+  ],
+  "summary": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 4: Menendez is a terrorist.\nSpeaker 5: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 7: A lot of people are counting on us for answers.\nSpeaker 8: Specter One, report.\nSpeaker 9: This isn't real.\nSpeaker 9: The hell it isn't!\nSpeaker 10: Control, Menendez!\nSpeaker 11: The world is on the brink of collapse.\nSpeaker 10: Control, Menendez!\nSpeaker 11: Chaos is the only truth.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The system is broken.\nSpeaker 10: Control, Menendez!\nSpeaker 11: We are the architects of our own destruction.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And he is the catalyst.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The end is not coming. It is here.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And there is no turning back.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The future is written in blood.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And he is the author.\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave, that is killing men.\nSpeaker 2: It's a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 7: No more games. This ends now.\nSpeaker 2: Obey your master!\nSpeaker 11: Get the Reznov challenge pack.\nSpeaker 11: And you pre-order now.\nSpeaker 13: The world is changing. The only way to survive is to be prepared. We are the future.",
+  "totalDuration": 140.042449,
+  "handoffContext": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: dramatic, cinematic narration style | inferred traits: gender: female | recent lines: It's time to wake up. / You were never cut out to be a Mason.\n- spk_002 => Speaker 2 | grounded confidence: 0.85 | acoustic cues: menacing, deep, gravelly tone; menacing, gravelly tone | inferred traits: gender: male | recent lines: It's a hell of a lot easier than killing the idea. / Obey your master!\n- spk_003 => Speaker 3 | grounded confidence: 0.90 | acoustic cues: authoritative, news-anchor delivery | recent lines: Raul Menendez ignited global unrest on an unprecedented scale.\n- spk_004 => Speaker 4 | grounded confidence: 0.85 | acoustic cues: urgent, broadcast style | recent lines: Menendez is a terrorist terrorist.\n- spk_005 => Speaker 5 | grounded confidence: 0.90 | acoustic cues: authoritative, news-anchor delivery | inferred traits: gender: female | recent lines: We're bringing peace and security to the world.\n- spk_006 => Speaker 6 | grounded confidence: 0.85 | acoustic cues: distressed, character voice | inferred traits: gender: male | recent lines: He refuses to let me go.\n- spk_007 => Speaker 7 | grounded confidence: 0.90 | acoustic cues: authoritative, gravelly, mature | inferred traits: gender: male | recent lines: A lot of people counting on us for answers. / No more games. This ends now.\n- spk_008 => Speaker 8 | grounded confidence: 0.90 | acoustic cues: authoritative, military radio voice | inferred traits: gender: male | recent lines: Specter one, report.\n- spk_009 => Speaker 9 | grounded confidence: 0.90 | acoustic cues: distressed, intense | inferred traits: gender: male | recent lines: This isn't real. / The hell it isn't!\n- spk_010 => Speaker 10 | grounded confidence: 0.90 | acoustic cues: group chanting, rhythmic, intense | recent lines: Control, Menendez! / Control, Menendez!\n- spk_011 => Speaker 11 | grounded confidence: 0.85 | acoustic cues: authoritative, dramatic, cinematic narration | inferred traits: gender: male | recent lines: Get the Reznov challenge pack. / And you pre-order now.\n- spk_012 => Speaker 12 | grounded confidence: 0.85 | acoustic cues: urgent, commanding tone | inferred traits: gender: male | recent lines: Pull it together, man!\n- spk_013 => Speaker 13 | grounded confidence: 0.85 | acoustic cues: cinematic, trailer-style voiceover | inferred traits: gender: male | recent lines: The world is changing. The only way to survive is to be prepared. We are the future.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Before reusing any prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If this chunk creates a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 11 (spk_011): And you pre-order now.\n- Speaker 13 (spk_013): The world is changing. The only way to survive is to be prepared. We are the future.",
+  "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 4: Menendez is a terrorist.\nSpeaker 5: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 7: A lot of people are counting on us for answers.\nSpeaker 8: Specter One, report.\nSpeaker 9: This isn't real.\nSpeaker 9: The hell it isn't!\nSpeaker 10: Control, Menendez!\nSpeaker 11: The world is on the brink of collapse.\nSpeaker 10: Control, Menendez!\nSpeaker 11: Chaos is the only truth.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The system is broken.\nSpeaker 10: Control, Menendez!\nSpeaker 11: We are the architects of our own destruction.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And he is the catalyst.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The end is not coming. It is here.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And there is no turning back.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The future is written in blood.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And he is the author.\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave, that is killing men.\nSpeaker 2: It's a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 7: No more games. This ends now.\nSpeaker 2: Obey your master!\nSpeaker 11: Get the Reznov challenge pack.\nSpeaker 11: And you pre-order now.\nSpeaker 13: The world is changing. The only way to survive is to be prepared. We are the future."
+}

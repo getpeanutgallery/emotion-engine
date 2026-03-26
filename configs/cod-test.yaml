@@ -1,9 +1,12 @@
 name: COD Test Pipeline
-description: Test pipeline for cod.mp4 video (2 chunks max)
+description: Canonical full-run benchmark target for cod.mp4 with benchmark seeding enabled
 version: '1.0'
 asset:
   inputPath: examples/videos/emotion-tests/cod.mp4
   outputDir: output/cod-test
+benchmark:
+  enabled: true
+  path: ../benchmarks/fixtures/cod-test/benchmark.json
 gather_context:
   - server/scripts/get-context/get-dialogue.cjs
   - server/scripts/get-context/get-music.cjs

@@ -40,42 +40,35 @@ async function run(input) {
   fs.mkdirSync(outputDir, { recursive: true });
 
   const {
-    chunkAnalysis = { chunks: [], totalTokens: 0, videoDuration: 0 },
-    perSecondData = { per_second_data: [], totalSeconds: 0 }
+    chunkAnalysis = { chunks: [], totalTokens: 0, videoDuration: 0 }
   } = artifacts;
 
   const chunks = chunkAnalysis.chunks || [];
   const { successfulChunks, failedChunks } = splitChunksByStatus(chunks);
-  const perSecondDataArray = perSecondData.per_second_data || [];
-
-  const normalizedPerSecond = normalizePerSecondRows(perSecondDataArray);
-  const hasNativePerSecondData = normalizedPerSecond.length > 0;
-  const computedPerSecond = hasNativePerSecondData
-    ? normalizedPerSecond
-    : buildPerSecondFromChunks(successfulChunks, chunkAnalysis.videoDuration || perSecondData.totalSeconds || 0);
+  const computedTimeline = buildTimelineFromChunks(successfulChunks, chunkAnalysis.videoDuration || 0);
 
   console.log('📊 Analyzing emotional breakdown per chunk...');
   const chunkAnalysisResults = successfulChunks.map((chunk, index) =>
-    processChunk(chunk, index, computedPerSecond)
+    processChunk(chunk, index, computedTimeline)
   );
 
   console.log('📈 Building emotional arc data...');
-  const emotionalArc = buildEmotionalArc(computedPerSecond);
+  const emotionalArc = buildEmotionalArc(computedTimeline);
 
   console.log('⚠️  Calculating scroll risk timeline...');
-  const scrollRiskTimeline = calculateScrollRiskTimeline(computedPerSecond);
+  const scrollRiskTimeline = calculateScrollRiskTimeline(computedTimeline);
 
   console.log('🎯 Identifying critical emotional moments...');
-  const criticalMoments = identifyCriticalMoments(computedPerSecond, successfulChunks);
+  const criticalMoments = identifyCriticalMoments(computedTimeline, successfulChunks);
 
-  const status = computedPerSecond.length > 0
+  const status = computedTimeline.length > 0
     ? {
         state: 'computed',
-        dataSource: hasNativePerSecondData ? 'phase2.perSecondData' : 'derived-from-phase2.chunkAnalysis',
+        dataSource: 'derived-from-phase2.chunkAnalysis',
       }
     : {
         state: 'not_implemented',
-        reason: 'No usable phase2 emotion timeseries (perSecondData or chunkAnalysis) found.'
+        reason: 'No usable phase2 chunkAnalysis emotion timeseries was found.'
       };
 
   const emotionalData = {
@@ -85,8 +78,8 @@ async function run(input) {
     summary: {
       totalChunks: successfulChunks.length,
       failedChunks: failedChunks.length,
-      totalSeconds: computedPerSecond.length,
-      videoDuration: chunkAnalysis.videoDuration || perSecondData.totalSeconds || 0,
+      totalSeconds: computedTimeline.length,
+      videoDuration: chunkAnalysis.videoDuration || 0,
       criticalMomentsCount: criticalMoments.length,
       averageScrollRisk: calculateAverageScrollRisk(scrollRiskTimeline)
     },
@@ -109,20 +102,20 @@ async function run(input) {
   console.log(`✅ Emotional analysis saved to: ${emotionalDataPath}`);
 
   const warnings = [];
-  if (!hasNativePerSecondData && computedPerSecond.length > 0) {
-    warnings.push('Derived emotional analysis timeline from chunkAnalysis because native perSecondData was unavailable.');
+  if (computedTimeline.length > 0) {
+    warnings.push('Computed emotional analysis timeline from chunkAnalysis without a dedicated per-second phase artifact.');
   }
   if (failedChunks.length > 0) {
     warnings.push(`Excluded ${failedChunks.length} failed chunk(s) from emotional arc aggregation.`);
   }
-  if (computedPerSecond.length === 0) {
+  if (computedTimeline.length === 0) {
     warnings.push('No usable phase2 emotion timeseries was available; emitted schema-valid placeholder emotional analysis for downstream continuity.');
   }
 
   return {
     primaryArtifactKey: 'emotionalAnalysis',
     metrics: {
-      totalSeconds: computedPerSecond.length,
+      totalSeconds: computedTimeline.length,
       successfulChunks: successfulChunks.length,
       failedChunks: failedChunks.length,
       criticalMoments: criticalMoments.length
@@ -166,8 +159,8 @@ function normalizeEmotionMap(source = {}) {
   return normalized;
 }
 
-function normalizePerSecondRows(perSecondData = []) {
-  return perSecondData.map((row, index) => {
+function normalizeTimelineRows(rows = []) {
+  return rows.map((row, index) => {
     const fromNested = row && typeof row === 'object' && row.emotions
       ? normalizeEmotionMap(row.emotions)
       : normalizeEmotionMap(row);
@@ -179,7 +172,7 @@ function normalizePerSecondRows(perSecondData = []) {
   }).filter((row) => Object.keys(row).some((key) => key !== 'timestamp'));
 }
 
-function buildPerSecondFromChunks(chunks = [], videoDuration = 0) {
+function buildTimelineFromChunks(chunks = [], videoDuration = 0) {
   if (!Array.isArray(chunks) || chunks.length === 0) return [];
 
   const rows = [];
@@ -212,16 +205,16 @@ function getEmotionKeysFromRows(rows = []) {
   return Array.from(keys);
 }
 
-function processChunk(chunk, chunkIndex, perSecondData) {
+function processChunk(chunk, chunkIndex, timelineRows) {
   const emotions = normalizeEmotionMap(chunk.emotions || {});
   const startTime = chunk.startTime || chunkIndex * 10;
   const endTime = chunk.endTime || startTime + 10;
 
-  const chunkPerSecondData = perSecondData.filter(
+  const chunkPerSecondData = timelineRows.filter(
     d => d.timestamp >= startTime && d.timestamp < endTime
   );
 
-  const emotionalVelocity = calculateEmotionalVelocity(emotions, startTime, chunkPerSecondData, perSecondData);
+  const emotionalVelocity = calculateEmotionalVelocity(emotions, startTime, chunkPerSecondData, timelineRows);
   const scrollRisk = calculateChunkScrollRisk(emotions);
   const dominantEmotion = findDominantEmotion(emotions);
 
@@ -261,8 +254,8 @@ function calculateEmotionalVelocity(currentEmotions, currentTime, chunkPerSecond
   return velocity;
 }
 
-function getAverageEmotionsForTimeRange(perSecondData, startTime, endTime) {
-  const filtered = perSecondData.filter(
+function getAverageEmotionsForTimeRange(timelineRows, startTime, endTime) {
+  const filtered = timelineRows.filter(
     d => d.timestamp >= startTime && d.timestamp < endTime
   );
 
@@ -321,17 +314,17 @@ function buildEmotionalSignature(emotions) {
   return parts.join('-');
 }
 
-function buildEmotionalArc(perSecondData) {
-  if (!perSecondData || perSecondData.length === 0) {
+function buildEmotionalArc(timelineRows) {
+  if (!timelineRows || timelineRows.length === 0) {
     return { timestamps: [], emotions: {} };
   }
 
-  const timestamps = perSecondData.map(d => d.timestamp || 0);
-  const emotionKeys = getEmotionKeysFromRows(perSecondData);
+  const timestamps = timelineRows.map(d => d.timestamp || 0);
+  const emotionKeys = getEmotionKeysFromRows(timelineRows);
   const emotions = {};
 
   for (const emotion of emotionKeys) {
-    emotions[emotion] = perSecondData.map(d => d[emotion] || 0);
+    emotions[emotion] = timelineRows.map(d => d[emotion] || 0);
   }
 
   const windowSize = 5;
@@ -363,8 +356,8 @@ function calculateMovingAverage(data, windowSize) {
   return smoothed;
 }
 
-function calculateScrollRiskTimeline(perSecondData) {
-  return perSecondData.map(d => {
+function calculateScrollRiskTimeline(timelineRows) {
+  return timelineRows.map(d => {
     const emotions = normalizeEmotionMap(d);
     const scrollRisk = calculateChunkScrollRisk(emotions);
     return {
@@ -383,15 +376,15 @@ function calculateAverageScrollRisk(timeline) {
   return total / timeline.length;
 }
 
-function identifyCriticalMoments(perSecondData, chunks) {
+function identifyCriticalMoments(timelineRows, chunks) {
   const criticalMoments = [];
-  const availableEmotionKeys = getEmotionKeysFromRows(perSecondData);
+  const availableEmotionKeys = getEmotionKeysFromRows(timelineRows);
   const thresholdEmotionKeys = availableEmotionKeys.filter((emotion) => THRESHOLDS[emotion]);
 
-  for (let i = 0; i < perSecondData.length; i++) {
-    const data = perSecondData[i];
+  for (let i = 0; i < timelineRows.length; i++) {
+    const data = timelineRows[i];
     const timestamp = data.timestamp || i;
-    const prevData = i > 0 ? perSecondData[i - 1] : null;
+    const prevData = i > 0 ? timelineRows[i - 1] : null;
 
     for (const emotion of thresholdEmotionKeys) {
       const score = data[emotion] || 0;
@@ -460,7 +453,7 @@ const deterministicRecovery = {
   degradedSuccess: {
     allowed: true,
     conditions: [
-      'emotional arc data may be derived from successful chunkAnalysis when perSecondData is unavailable',
+      'emotional arc data is computed from successful chunkAnalysis without requiring a dedicated per-second phase artifact',
       'placeholder emotional-analysis outputs are allowed only when downstream summary/final-report continuity is explicitly preserved'
     ]
   }
@@ -494,20 +487,6 @@ if (require.main === module) {
         ],
         videoDuration: 30
       },
-      perSecondData: {
-        per_second_data: [
-          { timestamp: 0, boredom: 0.4, excitement: 0.3, curiosity: 0.6, tension: 0.2, satisfaction: 0.4 },
-          { timestamp: 1, boredom: 0.45, excitement: 0.32, curiosity: 0.58, tension: 0.22, satisfaction: 0.42 },
-          { timestamp: 2, boredom: 0.5, excitement: 0.3, curiosity: 0.6, tension: 0.2, satisfaction: 0.4 },
-          { timestamp: 10, boredom: 0.65, excitement: 0.25, curiosity: 0.45, tension: 0.28, satisfaction: 0.35 },
-          { timestamp: 11, boredom: 0.7, excitement: 0.2, curiosity: 0.4, tension: 0.3, satisfaction: 0.3 },
-          { timestamp: 12, boredom: 0.75, excitement: 0.18, curiosity: 0.38, tension: 0.32, satisfaction: 0.28 },
-          { timestamp: 20, boredom: 0.35, excitement: 0.75, curiosity: 0.65, tension: 0.48, satisfaction: 0.58 },
-          { timestamp: 21, boredom: 0.3, excitement: 0.8, curiosity: 0.7, tension: 0.5, satisfaction: 0.6 },
-          { timestamp: 22, boredom: 0.28, excitement: 0.82, curiosity: 0.72, tension: 0.52, satisfaction: 0.62 }
-        ],
-        totalSeconds: 9
-      }
     },
     config: { version: '8.0.0', name: 'Test Pipeline' }
   })

@@ -119,11 +119,11 @@ This bead reuses, rather than supersedes, the older validator-contract work (`ee
 **Scope**
 
 - migrate:
-  - `video-per-second.cjs`
   - `metrics.cjs`
   - `emotional-analysis.cjs`
   - `summary.cjs`
   - `final-report.cjs`
+  - `evaluation.cjs` (legacy-compat review)
 - explicitly decide whether `evaluation.cjs` remains canonical, becomes legacy-only, or is retired from the primary pipeline path
 - define family-specific degraded-success vs recoverable-failure behavior for deterministic/reporting outputs
 
@@ -135,9 +135,9 @@ The AI lanes already have the strongest output discipline. Let them prove the ou
 
 **Implementation update — 2026-03-14**
 
-- migrated `video-per-second.cjs`, `metrics.cjs`, `emotional-analysis.cjs`, `summary.cjs`, and `final-report.cjs` onto the shared success/failure envelope seam from `ee-d4x.1`
+- migrated the computed/report family onto the shared success/failure envelope seam from `ee-d4x.1`; the obsolete standalone `video-per-second.cjs` lane has since been removed and Phase 3 now derives its timeline directly from `chunkAnalysis`
 - each migrated lane now emits persisted `script-results/` + `recovery/` refs through the shared runtime and declares bounded degraded-success conditions for computed/report outputs instead of relying on ad-hoc logs
-- `video-per-second.cjs` now hard-fails with `invalid_output` when no successful chunks remain, while partial chunk loss / uncovered seconds stay explicit degraded-success cases
+- Phase 3 report scripts now compute their timeseries directly from successful `chunkAnalysis`, while `evaluation.cjs` remains a legacy-only compatibility wrapper over the same chunk-derived surface
 - `summary.cjs` now prefers canonical `phase3-report/summary/*` report links, and `evaluation.cjs` is now explicitly documented as **legacy-only compatibility** rather than the canonical Phase 3 report path
 - validation added focused contract coverage for computed/report lanes, including degraded-success envelopes, deterministic next-action on unrecoverable interpolation input, and the legacy-only evaluation status
 

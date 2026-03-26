@@ -1,0 +1,3790 @@
+{
+  "artifactKey": "dialogueData",
+  "label": "Phase 1 dialogue",
+  "phase": "phase1-gather-context",
+  "script": "get-dialogue",
+  "status": "pass",
+  "truth": {
+    "path": "benchmarks/fixtures/cod-test/truth/dialogue-data.json"
+  },
+  "output": {
+    "path": "output/cod-test/phase1-gather-context/dialogue-data.json"
+  },
+  "comparator": {
+    "kind": "json-structured",
+    "profile": "dialogue-default",
+    "resolvedOptions": {
+      "timingToleranceSeconds": 2,
+      "numericTolerance": 0.1,
+      "unknownSentinels": [
+        "unknown",
+        "ambiguous"
+      ],
+      "ignorePaths": []
+    }
+  },
+  "counts": {
+    "totalTruthFields": 423,
+    "scoreableFields": 423,
+    "skippedFields": 0,
+    "passedFields": 423,
+    "failedFields": 0,
+    "erroredFields": 0
+  },
+  "accuracy": {
+    "passed": 423,
+    "failed": 0,
+    "rate": 1
+  },
+  "coverage": {
+    "scoreable": 423,
+    "skipped": 0,
+    "totalTruthFields": 423,
+    "rate": 1
+  },
+  "failures": [],
+  "skips": [],
+  "errors": [],
+  "fieldResults": [
+    {
+      "path": "dialogue_segments[0].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 0,
+      "outputValue": 0,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[0].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 7.8,
+      "outputValue": 7.8,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[0].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 1",
+      "outputValue": "Speaker 1"
+    },
+    {
+      "path": "dialogue_segments[0].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_001",
+      "outputValue": "spk_001"
+    },
+    {
+      "path": "dialogue_segments[0].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "They want you afraid. Fear makes you easier to control.",
+      "outputValue": "They want you afraid. Fear makes you easier to control.",
+      "normalizedTruthValue": "they want you afraid fear makes you easier to control",
+      "normalizedOutputValue": "they want you afraid fear makes you easier to control"
+    },
+    {
+      "path": "dialogue_segments[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.99,
+      "outputValue": 0.99,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[0].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 0,
+      "outputValue": 0
+    },
+    {
+      "path": "dialogue_segments[1].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 8,
+      "outputValue": 8,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[1].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 10.5,
+      "outputValue": 10.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[1].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 1",
+      "outputValue": "Speaker 1"
+    },
+    {
+      "path": "dialogue_segments[1].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_001",
+      "outputValue": "spk_001"
+    },
+    {
+      "path": "dialogue_segments[1].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "It's time to wake up.",
+      "outputValue": "It's time to wake up.",
+      "normalizedTruthValue": "it s time to wake up",
+      "normalizedOutputValue": "it s time to wake up"
+    },
+    {
+      "path": "dialogue_segments[1].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.98,
+      "outputValue": 0.98,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[1].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 1,
+      "outputValue": 1
+    },
+    {
+      "path": "dialogue_segments[2].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 12.5,
+      "outputValue": 12.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[2].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 16.8,
+      "outputValue": 16.8,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[2].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 2",
+      "outputValue": "Speaker 2"
+    },
+    {
+      "path": "dialogue_segments[2].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_002",
+      "outputValue": "spk_002"
+    },
+    {
+      "path": "dialogue_segments[2].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Your streets shall once again run red. with your blood.",
+      "outputValue": "Your streets shall once again run red. with your blood.",
+      "normalizedTruthValue": "your streets shall once again run red with your blood",
+      "normalizedOutputValue": "your streets shall once again run red with your blood"
+    },
+    {
+      "path": "dialogue_segments[2].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[2].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 2,
+      "outputValue": 2
+    },
+    {
+      "path": "dialogue_segments[3].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 16.8,
+      "outputValue": 16.8,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[3].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 21.2,
+      "outputValue": 21.2,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[3].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 3",
+      "outputValue": "Speaker 3"
+    },
+    {
+      "path": "dialogue_segments[3].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_003",
+      "outputValue": "spk_003"
+    },
+    {
+      "path": "dialogue_segments[3].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Raul Menendez ignited global unrest on an unprecedented scale.",
+      "outputValue": "Raul Menendez ignited global unrest on an unprecedented scale.",
+      "normalizedTruthValue": "raul menendez ignited global unrest on an unprecedented scale",
+      "normalizedOutputValue": "raul menendez ignited global unrest on an unprecedented scale"
+    },
+    {
+      "path": "dialogue_segments[3].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.98,
+      "outputValue": 0.98,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[3].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 3,
+      "outputValue": 3
+    },
+    {
+      "path": "dialogue_segments[4].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 21.2,
+      "outputValue": 21.2,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[4].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 24.3,
+      "outputValue": 24.3,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[4].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 4",
+      "outputValue": "Speaker 4"
+    },
+    {
+      "path": "dialogue_segments[4].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_004",
+      "outputValue": "spk_004"
+    },
+    {
+      "path": "dialogue_segments[4].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Menendez is a terrorist terrorist.",
+      "outputValue": "Menendez is a terrorist terrorist.",
+      "normalizedTruthValue": "menendez is a terrorist terrorist",
+      "normalizedOutputValue": "menendez is a terrorist terrorist"
+    },
+    {
+      "path": "dialogue_segments[4].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.92,
+      "outputValue": 0.92,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[4].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 4,
+      "outputValue": 4
+    },
+    {
+      "path": "dialogue_segments[5].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 24.3,
+      "outputValue": 24.3,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[5].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 27.4,
+      "outputValue": 27.4,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[5].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 5",
+      "outputValue": "Speaker 5"
+    },
+    {
+      "path": "dialogue_segments[5].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_005",
+      "outputValue": "spk_005"
+    },
+    {
+      "path": "dialogue_segments[5].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "We're bringing peace and security to the world.",
+      "outputValue": "We're bringing peace and security to the world.",
+      "normalizedTruthValue": "we re bringing peace and security to the world",
+      "normalizedOutputValue": "we re bringing peace and security to the world"
+    },
+    {
+      "path": "dialogue_segments[5].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[5].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 5,
+      "outputValue": 5
+    },
+    {
+      "path": "dialogue_segments[6].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 28.1,
+      "outputValue": 28.1,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[6].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 30.7,
+      "outputValue": 30.7,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[6].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 6",
+      "outputValue": "Speaker 6"
+    },
+    {
+      "path": "dialogue_segments[6].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_006",
+      "outputValue": "spk_006"
+    },
+    {
+      "path": "dialogue_segments[6].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "He refuses to let me go.",
+      "outputValue": "He refuses to let me go.",
+      "normalizedTruthValue": "he refuses to let me go",
+      "normalizedOutputValue": "he refuses to let me go"
+    },
+    {
+      "path": "dialogue_segments[6].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.92,
+      "outputValue": 0.92,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[6].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 6,
+      "outputValue": 6
+    },
+    {
+      "path": "dialogue_segments[7].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 31.1,
+      "outputValue": 31.1,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[7].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 34.9,
+      "outputValue": 34.9,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[7].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 7",
+      "outputValue": "Speaker 7"
+    },
+    {
+      "path": "dialogue_segments[7].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_007",
+      "outputValue": "spk_007"
+    },
+    {
+      "path": "dialogue_segments[7].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Stop looking backwards, David. What matters is what we do next.",
+      "outputValue": "Stop looking backwards, David. What matters is what we do next.",
+      "normalizedTruthValue": "stop looking backwards david what matters is what we do next",
+      "normalizedOutputValue": "stop looking backwards david what matters is what we do next"
+    },
+    {
+      "path": "dialogue_segments[7].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[7].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 7,
+      "outputValue": 7
+    },
+    {
+      "path": "dialogue_segments[8].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 35.5,
+      "outputValue": 35.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[8].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 38.1,
+      "outputValue": 38.1,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[8].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 7",
+      "outputValue": "Speaker 7"
+    },
+    {
+      "path": "dialogue_segments[8].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_007",
+      "outputValue": "spk_007"
+    },
+    {
+      "path": "dialogue_segments[8].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "A lot of people counting on us for answers.",
+      "outputValue": "A lot of people counting on us for answers.",
+      "normalizedTruthValue": "a lot of people counting on us for answers",
+      "normalizedOutputValue": "a lot of people counting on us for answers"
+    },
+    {
+      "path": "dialogue_segments[8].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.93,
+      "outputValue": 0.93,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[8].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 8,
+      "outputValue": 8
+    },
+    {
+      "path": "dialogue_segments[9].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 49.7,
+      "outputValue": 49.7,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[9].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 51.4,
+      "outputValue": 51.4,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[9].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 8",
+      "outputValue": "Speaker 8"
+    },
+    {
+      "path": "dialogue_segments[9].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_008",
+      "outputValue": "spk_008"
+    },
+    {
+      "path": "dialogue_segments[9].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Specter one, report.",
+      "outputValue": "Specter one, report.",
+      "normalizedTruthValue": "specter one report",
+      "normalizedOutputValue": "specter one report"
+    },
+    {
+      "path": "dialogue_segments[9].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[9].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 9,
+      "outputValue": 9
+    },
+    {
+      "path": "dialogue_segments[10].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 59.6,
+      "outputValue": 59.6,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[10].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 61,
+      "outputValue": 61,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[10].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 9",
+      "outputValue": "Speaker 9"
+    },
+    {
+      "path": "dialogue_segments[10].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_009",
+      "outputValue": "spk_009"
+    },
+    {
+      "path": "dialogue_segments[10].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "This isn't real.",
+      "outputValue": "This isn't real.",
+      "normalizedTruthValue": "this isn t real",
+      "normalizedOutputValue": "this isn t real"
+    },
+    {
+      "path": "dialogue_segments[10].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[10].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 10,
+      "outputValue": 10
+    },
+    {
+      "path": "dialogue_segments[11].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 61.5,
+      "outputValue": 61.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[11].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 62.8,
+      "outputValue": 62.8,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[11].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 9",
+      "outputValue": "Speaker 9"
+    },
+    {
+      "path": "dialogue_segments[11].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_009",
+      "outputValue": "spk_009"
+    },
+    {
+      "path": "dialogue_segments[11].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "The hell it isn't!",
+      "outputValue": "The hell it isn't!",
+      "normalizedTruthValue": "the hell it isn t",
+      "normalizedOutputValue": "the hell it isn t"
+    },
+    {
+      "path": "dialogue_segments[11].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[11].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 11,
+      "outputValue": 11
+    },
+    {
+      "path": "dialogue_segments[12].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 64,
+      "outputValue": 64,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[12].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 64.6,
+      "outputValue": 64.6,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[12].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 10",
+      "outputValue": "Speaker 10"
+    },
+    {
+      "path": "dialogue_segments[12].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_010",
+      "outputValue": "spk_010"
+    },
+    {
+      "path": "dialogue_segments[12].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Control, Menendez!",
+      "outputValue": "Control, Menendez!",
+      "normalizedTruthValue": "control menendez",
+      "normalizedOutputValue": "control menendez"
+    },
+    {
+      "path": "dialogue_segments[12].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[12].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 12,
+      "outputValue": 12
+    },
+    {
+      "path": "dialogue_segments[13].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 64.6,
+      "outputValue": 64.6,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[13].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 66.1,
+      "outputValue": 66.1,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[13].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 11",
+      "outputValue": "Speaker 11"
+    },
+    {
+      "path": "dialogue_segments[13].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_011",
+      "outputValue": "spk_011"
+    },
+    {
+      "path": "dialogue_segments[13].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "The world is on the brink of collapse.",
+      "outputValue": "The world is on the brink of collapse.",
+      "normalizedTruthValue": "the world is on the brink of collapse",
+      "normalizedOutputValue": "the world is on the brink of collapse"
+    },
+    {
+      "path": "dialogue_segments[13].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[13].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 13,
+      "outputValue": 13
+    },
+    {
+      "path": "dialogue_segments[14].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 66.1,
+      "outputValue": 66.1,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[14].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 66.8,
+      "outputValue": 66.8,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[14].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 10",
+      "outputValue": "Speaker 10"
+    },
+    {
+      "path": "dialogue_segments[14].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_010",
+      "outputValue": "spk_010"
+    },
+    {
+      "path": "dialogue_segments[14].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Control, Menendez!",
+      "outputValue": "Control, Menendez!",
+      "normalizedTruthValue": "control menendez",
+      "normalizedOutputValue": "control menendez"
+    },
+    {
+      "path": "dialogue_segments[14].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[14].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 14,
+      "outputValue": 14
+    },
+    {
+      "path": "dialogue_segments[15].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 66.8,
+      "outputValue": 66.8,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[15].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 68.2,
+      "outputValue": 68.2,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[15].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 11",
+      "outputValue": "Speaker 11"
+    },
+    {
+      "path": "dialogue_segments[15].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_011",
+      "outputValue": "spk_011"
+    },
+    {
+      "path": "dialogue_segments[15].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Chaos is the only truth.",
+      "outputValue": "Chaos is the only truth.",
+      "normalizedTruthValue": "chaos is the only truth",
+      "normalizedOutputValue": "chaos is the only truth"
+    },
+    {
+      "path": "dialogue_segments[15].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[15].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 15,
+      "outputValue": 15
+    },
+    {
+      "path": "dialogue_segments[16].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 68.2,
+      "outputValue": 68.2,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[16].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 68.9,
+      "outputValue": 68.9,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[16].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 10",
+      "outputValue": "Speaker 10"
+    },
+    {
+      "path": "dialogue_segments[16].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_010",
+      "outputValue": "spk_010"
+    },
+    {
+      "path": "dialogue_segments[16].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Control, Menendez!",
+      "outputValue": "Control, Menendez!",
+      "normalizedTruthValue": "control menendez",
+      "normalizedOutputValue": "control menendez"
+    },
+    {
+      "path": "dialogue_segments[16].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[16].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 16,
+      "outputValue": 16
+    },
+    {
+      "path": "dialogue_segments[17].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 68.9,
+      "outputValue": 68.9,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[17].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 70.3,
+      "outputValue": 70.3,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[17].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 11",
+      "outputValue": "Speaker 11"
+    },
+    {
+      "path": "dialogue_segments[17].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_011",
+      "outputValue": "spk_011"
+    },
+    {
+      "path": "dialogue_segments[17].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "The system is broken.",
+      "outputValue": "The system is broken.",
+      "normalizedTruthValue": "the system is broken",
+      "normalizedOutputValue": "the system is broken"
+    },
+    {
+      "path": "dialogue_segments[17].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[17].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 17,
+      "outputValue": 17
+    },
+    {
+      "path": "dialogue_segments[18].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 70.3,
+      "outputValue": 70.3,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[18].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 71,
+      "outputValue": 71,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[18].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 10",
+      "outputValue": "Speaker 10"
+    },
+    {
+      "path": "dialogue_segments[18].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_010",
+      "outputValue": "spk_010"
+    },
+    {
+      "path": "dialogue_segments[18].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Control, Menendez!",
+      "outputValue": "Control, Menendez!",
+      "normalizedTruthValue": "control menendez",
+      "normalizedOutputValue": "control menendez"
+    },
+    {
+      "path": "dialogue_segments[18].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[18].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 18,
+      "outputValue": 18
+    },
+    {
+      "path": "dialogue_segments[19].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 71,
+      "outputValue": 71,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[19].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 72.5,
+      "outputValue": 72.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[19].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 11",
+      "outputValue": "Speaker 11"
+    },
+    {
+      "path": "dialogue_segments[19].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_011",
+      "outputValue": "spk_011"
+    },
+    {
+      "path": "dialogue_segments[19].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "We are the architects of our own destruction.",
+      "outputValue": "We are the architects of our own destruction.",
+      "normalizedTruthValue": "we are the architects of our own destruction",
+      "normalizedOutputValue": "we are the architects of our own destruction"
+    },
+    {
+      "path": "dialogue_segments[19].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[19].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 19,
+      "outputValue": 19
+    },
+    {
+      "path": "dialogue_segments[20].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 72.5,
+      "outputValue": 72.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[20].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 73.2,
+      "outputValue": 73.2,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[20].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 10",
+      "outputValue": "Speaker 10"
+    },
+    {
+      "path": "dialogue_segments[20].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_010",
+      "outputValue": "spk_010"
+    },
+    {
+      "path": "dialogue_segments[20].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Control, Menendez!",
+      "outputValue": "Control, Menendez!",
+      "normalizedTruthValue": "control menendez",
+      "normalizedOutputValue": "control menendez"
+    },
+    {
+      "path": "dialogue_segments[20].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[20].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 20,
+      "outputValue": 20
+    },
+    {
+      "path": "dialogue_segments[21].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 73.2,
+      "outputValue": 73.2,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[21].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 74.6,
+      "outputValue": 74.6,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[21].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 11",
+      "outputValue": "Speaker 11"
+    },
+    {
+      "path": "dialogue_segments[21].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_011",
+      "outputValue": "spk_011"
+    },
+    {
+      "path": "dialogue_segments[21].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "And he is the catalyst.",
+      "outputValue": "And he is the catalyst.",
+      "normalizedTruthValue": "and he is the catalyst",
+      "normalizedOutputValue": "and he is the catalyst"
+    },
+    {
+      "path": "dialogue_segments[21].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[21].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 21,
+      "outputValue": 21
+    },
+    {
+      "path": "dialogue_segments[22].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 74.6,
+      "outputValue": 74.6,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[22].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 75.3,
+      "outputValue": 75.3,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[22].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 10",
+      "outputValue": "Speaker 10"
+    },
+    {
+      "path": "dialogue_segments[22].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_010",
+      "outputValue": "spk_010"
+    },
+    {
+      "path": "dialogue_segments[22].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Control, Menendez!",
+      "outputValue": "Control, Menendez!",
+      "normalizedTruthValue": "control menendez",
+      "normalizedOutputValue": "control menendez"
+    },
+    {
+      "path": "dialogue_segments[22].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[22].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 22,
+      "outputValue": 22
+    },
+    {
+      "path": "dialogue_segments[23].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 75.3,
+      "outputValue": 75.3,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[23].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 77,
+      "outputValue": 77,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[23].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 11",
+      "outputValue": "Speaker 11"
+    },
+    {
+      "path": "dialogue_segments[23].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_011",
+      "outputValue": "spk_011"
+    },
+    {
+      "path": "dialogue_segments[23].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "The end is not coming. It is here.",
+      "outputValue": "The end is not coming. It is here.",
+      "normalizedTruthValue": "the end is not coming it is here",
+      "normalizedOutputValue": "the end is not coming it is here"
+    },
+    {
+      "path": "dialogue_segments[23].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[23].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 23,
+      "outputValue": 23
+    },
+    {
+      "path": "dialogue_segments[24].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 77,
+      "outputValue": 77,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[24].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 77.7,
+      "outputValue": 77.7,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[24].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 10",
+      "outputValue": "Speaker 10"
+    },
+    {
+      "path": "dialogue_segments[24].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_010",
+      "outputValue": "spk_010"
+    },
+    {
+      "path": "dialogue_segments[24].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Control, Menendez!",
+      "outputValue": "Control, Menendez!",
+      "normalizedTruthValue": "control menendez",
+      "normalizedOutputValue": "control menendez"
+    },
+    {
+      "path": "dialogue_segments[24].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[24].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 24,
+      "outputValue": 24
+    },
+    {
+      "path": "dialogue_segments[25].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 77.7,
+      "outputValue": 77.7,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[25].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 79.2,
+      "outputValue": 79.2,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[25].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 11",
+      "outputValue": "Speaker 11"
+    },
+    {
+      "path": "dialogue_segments[25].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_011",
+      "outputValue": "spk_011"
+    },
+    {
+      "path": "dialogue_segments[25].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "And there is no turning back.",
+      "outputValue": "And there is no turning back.",
+      "normalizedTruthValue": "and there is no turning back",
+      "normalizedOutputValue": "and there is no turning back"
+    },
+    {
+      "path": "dialogue_segments[25].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[25].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 25,
+      "outputValue": 25
+    },
+    {
+      "path": "dialogue_segments[26].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 79.2,
+      "outputValue": 79.2,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[26].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 79.9,
+      "outputValue": 79.9,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[26].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 10",
+      "outputValue": "Speaker 10"
+    },
+    {
+      "path": "dialogue_segments[26].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_010",
+      "outputValue": "spk_010"
+    },
+    {
+      "path": "dialogue_segments[26].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Control, Menendez!",
+      "outputValue": "Control, Menendez!",
+      "normalizedTruthValue": "control menendez",
+      "normalizedOutputValue": "control menendez"
+    },
+    {
+      "path": "dialogue_segments[26].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[26].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 26,
+      "outputValue": 26
+    },
+    {
+      "path": "dialogue_segments[27].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 79.9,
+      "outputValue": 79.9,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[27].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 81.5,
+      "outputValue": 81.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[27].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 11",
+      "outputValue": "Speaker 11"
+    },
+    {
+      "path": "dialogue_segments[27].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_011",
+      "outputValue": "spk_011"
+    },
+    {
+      "path": "dialogue_segments[27].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "The future is written in blood.",
+      "outputValue": "The future is written in blood.",
+      "normalizedTruthValue": "the future is written in blood",
+      "normalizedOutputValue": "the future is written in blood"
+    },
+    {
+      "path": "dialogue_segments[27].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[27].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 27,
+      "outputValue": 27
+    },
+    {
+      "path": "dialogue_segments[28].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 81.5,
+      "outputValue": 81.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[28].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 82.2,
+      "outputValue": 82.2,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[28].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 10",
+      "outputValue": "Speaker 10"
+    },
+    {
+      "path": "dialogue_segments[28].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_010",
+      "outputValue": "spk_010"
+    },
+    {
+      "path": "dialogue_segments[28].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Control, Menendez!",
+      "outputValue": "Control, Menendez!",
+      "normalizedTruthValue": "control menendez",
+      "normalizedOutputValue": "control menendez"
+    },
+    {
+      "path": "dialogue_segments[28].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[28].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 28,
+      "outputValue": 28
+    },
+    {
+      "path": "dialogue_segments[29].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 82.2,
+      "outputValue": 82.2,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[29].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 84,
+      "outputValue": 84,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[29].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 11",
+      "outputValue": "Speaker 11"
+    },
+    {
+      "path": "dialogue_segments[29].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_011",
+      "outputValue": "spk_011"
+    },
+    {
+      "path": "dialogue_segments[29].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "And he is the author.",
+      "outputValue": "And he is the author.",
+      "normalizedTruthValue": "and he is the author",
+      "normalizedOutputValue": "and he is the author"
+    },
+    {
+      "path": "dialogue_segments[29].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[29].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 29,
+      "outputValue": 29
+    },
+    {
+      "path": "dialogue_segments[30].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 97.5,
+      "outputValue": 97.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[30].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 99.5,
+      "outputValue": 99.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[30].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 12",
+      "outputValue": "Speaker 12"
+    },
+    {
+      "path": "dialogue_segments[30].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_012",
+      "outputValue": "spk_012"
+    },
+    {
+      "path": "dialogue_segments[30].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Pull it together, man!",
+      "outputValue": "Pull it together, man!",
+      "normalizedTruthValue": "pull it together man",
+      "normalizedOutputValue": "pull it together man"
+    },
+    {
+      "path": "dialogue_segments[30].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[30].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 30,
+      "outputValue": 30
+    },
+    {
+      "path": "dialogue_segments[31].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 100.5,
+      "outputValue": 100.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[31].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 103.5,
+      "outputValue": 103.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[31].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 2",
+      "outputValue": "Speaker 2"
+    },
+    {
+      "path": "dialogue_segments[31].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_002",
+      "outputValue": "spk_002"
+    },
+    {
+      "path": "dialogue_segments[31].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "So eager to leave, that is killing men.",
+      "outputValue": "So eager to leave, that is killing men.",
+      "normalizedTruthValue": "so eager to leave that is killing men",
+      "normalizedOutputValue": "so eager to leave that is killing men"
+    },
+    {
+      "path": "dialogue_segments[31].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[31].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 31,
+      "outputValue": 31
+    },
+    {
+      "path": "dialogue_segments[32].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 104,
+      "outputValue": 104,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[32].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 107.2,
+      "outputValue": 107.2,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[32].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 2",
+      "outputValue": "Speaker 2"
+    },
+    {
+      "path": "dialogue_segments[32].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_002",
+      "outputValue": "spk_002"
+    },
+    {
+      "path": "dialogue_segments[32].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "It's a hell of a lot easier than killing the idea.",
+      "outputValue": "It's a hell of a lot easier than killing the idea.",
+      "normalizedTruthValue": "it s a hell of a lot easier than killing the idea",
+      "normalizedOutputValue": "it s a hell of a lot easier than killing the idea"
+    },
+    {
+      "path": "dialogue_segments[32].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[32].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 32,
+      "outputValue": 32
+    },
+    {
+      "path": "dialogue_segments[33].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 107.2,
+      "outputValue": 107.2,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[33].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 110.8,
+      "outputValue": 110.8,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[33].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 1",
+      "outputValue": "Speaker 1"
+    },
+    {
+      "path": "dialogue_segments[33].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_001",
+      "outputValue": "spk_001"
+    },
+    {
+      "path": "dialogue_segments[33].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "You were never cut out to be a Mason.",
+      "outputValue": "You were never cut out to be a Mason.",
+      "normalizedTruthValue": "you were never cut out to be a mason",
+      "normalizedOutputValue": "you were never cut out to be a mason"
+    },
+    {
+      "path": "dialogue_segments[33].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.92,
+      "outputValue": 0.92,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[33].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 33,
+      "outputValue": 33
+    },
+    {
+      "path": "dialogue_segments[34].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 110.8,
+      "outputValue": 110.8,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[34].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 113.8,
+      "outputValue": 113.8,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[34].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 7",
+      "outputValue": "Speaker 7"
+    },
+    {
+      "path": "dialogue_segments[34].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_007",
+      "outputValue": "spk_007"
+    },
+    {
+      "path": "dialogue_segments[34].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "No more games. This ends now.",
+      "outputValue": "No more games. This ends now.",
+      "normalizedTruthValue": "no more games this ends now",
+      "normalizedOutputValue": "no more games this ends now"
+    },
+    {
+      "path": "dialogue_segments[34].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[34].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 34,
+      "outputValue": 34
+    },
+    {
+      "path": "dialogue_segments[35].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 113.8,
+      "outputValue": 113.8,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[35].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 117.5,
+      "outputValue": 117.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[35].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 2",
+      "outputValue": "Speaker 2"
+    },
+    {
+      "path": "dialogue_segments[35].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_002",
+      "outputValue": "spk_002"
+    },
+    {
+      "path": "dialogue_segments[35].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Obey your master!",
+      "outputValue": "Obey your master!",
+      "normalizedTruthValue": "obey your master",
+      "normalizedOutputValue": "obey your master"
+    },
+    {
+      "path": "dialogue_segments[35].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[35].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 35,
+      "outputValue": 35
+    },
+    {
+      "path": "dialogue_segments[36].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 117.5,
+      "outputValue": 117.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[36].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 121.5,
+      "outputValue": 121.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[36].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 11",
+      "outputValue": "Speaker 11"
+    },
+    {
+      "path": "dialogue_segments[36].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_011",
+      "outputValue": "spk_011"
+    },
+    {
+      "path": "dialogue_segments[36].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Get the Reznov challenge pack.",
+      "outputValue": "Get the Reznov challenge pack.",
+      "normalizedTruthValue": "get the reznov challenge pack",
+      "normalizedOutputValue": "get the reznov challenge pack"
+    },
+    {
+      "path": "dialogue_segments[36].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[36].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 36,
+      "outputValue": 36
+    },
+    {
+      "path": "dialogue_segments[37].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 124,
+      "outputValue": 124,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[37].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 125.5,
+      "outputValue": 125.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[37].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 11",
+      "outputValue": "Speaker 11"
+    },
+    {
+      "path": "dialogue_segments[37].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_011",
+      "outputValue": "spk_011"
+    },
+    {
+      "path": "dialogue_segments[37].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "And you pre-order now.",
+      "outputValue": "And you pre-order now.",
+      "normalizedTruthValue": "and you pre order now",
+      "normalizedOutputValue": "and you pre order now"
+    },
+    {
+      "path": "dialogue_segments[37].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[37].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 37,
+      "outputValue": 37
+    },
+    {
+      "path": "dialogue_segments[38].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 127.5,
+      "outputValue": 127.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[38].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 134.5,
+      "outputValue": 134.5,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[38].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 13",
+      "outputValue": "Speaker 13"
+    },
+    {
+      "path": "dialogue_segments[38].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_013",
+      "outputValue": "spk_013"
+    },
+    {
+      "path": "dialogue_segments[38].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "The world is changing. The only way to survive is to be prepared. We are the future.",
+      "outputValue": "The world is changing. The only way to survive is to be prepared. We are the future.",
+      "normalizedTruthValue": "the world is changing the only way to survive is to be prepared we are the future",
+      "normalizedOutputValue": "the world is changing the only way to survive is to be prepared we are the future"
+    },
+    {
+      "path": "dialogue_segments[38].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[38].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 38,
+      "outputValue": 38
+    },
+    {
+      "path": "speaker_profiles[0].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_001",
+      "outputValue": "spk_001"
+    },
+    {
+      "path": "speaker_profiles[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 1",
+      "outputValue": "Speaker 1",
+      "normalizedTruthValue": "speaker 1",
+      "normalizedOutputValue": "speaker 1"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 0,
+      "outputValue": 0
+    },
+    {
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes[1]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 1,
+      "outputValue": 1
+    },
+    {
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes[2]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 33,
+      "outputValue": 33
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "dramatic, cinematic narration style",
+      "outputValue": "dramatic, cinematic narration style",
+      "normalizedTruthValue": "dramatic cinematic narration style",
+      "normalizedOutputValue": "dramatic cinematic narration style"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[0].inferred_traits.traits[0].trait",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "gender"
+    },
+    {
+      "path": "speaker_profiles[0].inferred_traits.traits[0].value",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "female",
+      "outputValue": "female"
+    },
+    {
+      "path": "speaker_profiles[0].inferred_traits.traits[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[0].inferred_traits.traits[0].note",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "consistent with previous chunk",
+      "outputValue": "consistent with previous chunk",
+      "normalizedTruthValue": "consistent with previous chunk",
+      "normalizedOutputValue": "consistent with previous chunk"
+    },
+    {
+      "path": "speaker_profiles[1].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_002",
+      "outputValue": "spk_002"
+    },
+    {
+      "path": "speaker_profiles[1].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 2",
+      "outputValue": "Speaker 2",
+      "normalizedTruthValue": "speaker 2",
+      "normalizedOutputValue": "speaker 2"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 2,
+      "outputValue": 2
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[1]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 31,
+      "outputValue": 31
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[2]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 32,
+      "outputValue": 32
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[3]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 35,
+      "outputValue": 35
+    },
+    {
+      "path": "speaker_profiles[1].grounded.acoustic_descriptors[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "menacing, deep, gravelly tone",
+      "outputValue": "menacing, deep, gravelly tone",
+      "normalizedTruthValue": "menacing deep gravelly tone",
+      "normalizedOutputValue": "menacing deep gravelly tone"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[1].grounded.acoustic_descriptors[1].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "menacing, gravelly tone",
+      "outputValue": "menacing, gravelly tone",
+      "normalizedTruthValue": "menacing gravelly tone",
+      "normalizedOutputValue": "menacing gravelly tone"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.acoustic_descriptors[1].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].trait",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "gender"
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].value",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "male"
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].note",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "deep, gravelly vocal quality",
+      "outputValue": "deep, gravelly vocal quality",
+      "normalizedTruthValue": "deep gravelly vocal quality",
+      "normalizedOutputValue": "deep gravelly vocal quality"
+    },
+    {
+      "path": "speaker_profiles[2].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_003",
+      "outputValue": "spk_003"
+    },
+    {
+      "path": "speaker_profiles[2].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 3",
+      "outputValue": "Speaker 3",
+      "normalizedTruthValue": "speaker 3",
+      "normalizedOutputValue": "speaker 3"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[2].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 3,
+      "outputValue": 3
+    },
+    {
+      "path": "speaker_profiles[2].grounded.acoustic_descriptors[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "authoritative, news-anchor delivery",
+      "outputValue": "authoritative, news-anchor delivery",
+      "normalizedTruthValue": "authoritative news anchor delivery",
+      "normalizedOutputValue": "authoritative news anchor delivery"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[3].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_004",
+      "outputValue": "spk_004"
+    },
+    {
+      "path": "speaker_profiles[3].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 4",
+      "outputValue": "Speaker 4",
+      "normalizedTruthValue": "speaker 4",
+      "normalizedOutputValue": "speaker 4"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[3].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 4,
+      "outputValue": 4
+    },
+    {
+      "path": "speaker_profiles[3].grounded.acoustic_descriptors[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "urgent, broadcast style",
+      "outputValue": "urgent, broadcast style",
+      "normalizedTruthValue": "urgent broadcast style",
+      "normalizedOutputValue": "urgent broadcast style"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[4].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_005",
+      "outputValue": "spk_005"
+    },
+    {
+      "path": "speaker_profiles[4].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 5",
+      "outputValue": "Speaker 5",
+      "normalizedTruthValue": "speaker 5",
+      "normalizedOutputValue": "speaker 5"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[4].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 5,
+      "outputValue": 5
+    },
+    {
+      "path": "speaker_profiles[4].grounded.acoustic_descriptors[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "authoritative, news-anchor delivery",
+      "outputValue": "authoritative, news-anchor delivery",
+      "normalizedTruthValue": "authoritative news anchor delivery",
+      "normalizedOutputValue": "authoritative news anchor delivery"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.88,
+      "outputValue": 0.88,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[4].inferred_traits.traits[0].trait",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "gender"
+    },
+    {
+      "path": "speaker_profiles[4].inferred_traits.traits[0].value",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "female",
+      "outputValue": "female"
+    },
+    {
+      "path": "speaker_profiles[4].inferred_traits.traits[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[4].inferred_traits.traits[0].note",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": null,
+      "outputValue": null
+    },
+    {
+      "path": "speaker_profiles[5].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_006",
+      "outputValue": "spk_006"
+    },
+    {
+      "path": "speaker_profiles[5].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 6",
+      "outputValue": "Speaker 6",
+      "normalizedTruthValue": "speaker 6",
+      "normalizedOutputValue": "speaker 6"
+    },
+    {
+      "path": "speaker_profiles[5].grounded.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[5].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 6,
+      "outputValue": 6
+    },
+    {
+      "path": "speaker_profiles[5].grounded.acoustic_descriptors[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "distressed, character voice",
+      "outputValue": "distressed, character voice",
+      "normalizedTruthValue": "distressed character voice",
+      "normalizedOutputValue": "distressed character voice"
+    },
+    {
+      "path": "speaker_profiles[5].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.8,
+      "outputValue": 0.8,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[5].inferred_traits.traits[0].trait",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "gender"
+    },
+    {
+      "path": "speaker_profiles[5].inferred_traits.traits[0].value",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "male"
+    },
+    {
+      "path": "speaker_profiles[5].inferred_traits.traits[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[5].inferred_traits.traits[0].note",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": null,
+      "outputValue": null
+    },
+    {
+      "path": "speaker_profiles[6].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_007",
+      "outputValue": "spk_007"
+    },
+    {
+      "path": "speaker_profiles[6].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 7",
+      "outputValue": "Speaker 7",
+      "normalizedTruthValue": "speaker 7",
+      "normalizedOutputValue": "speaker 7"
+    },
+    {
+      "path": "speaker_profiles[6].grounded.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[6].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 7,
+      "outputValue": 7
+    },
+    {
+      "path": "speaker_profiles[6].grounded.linked_segment_indexes[1]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 8,
+      "outputValue": 8
+    },
+    {
+      "path": "speaker_profiles[6].grounded.linked_segment_indexes[2]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 34,
+      "outputValue": 34
+    },
+    {
+      "path": "speaker_profiles[6].grounded.acoustic_descriptors[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "authoritative, gravelly, mature",
+      "outputValue": "authoritative, gravelly, mature",
+      "normalizedTruthValue": "authoritative gravelly mature",
+      "normalizedOutputValue": "authoritative gravelly mature"
+    },
+    {
+      "path": "speaker_profiles[6].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[6].inferred_traits.traits[0].trait",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "gender"
+    },
+    {
+      "path": "speaker_profiles[6].inferred_traits.traits[0].value",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "male"
+    },
+    {
+      "path": "speaker_profiles[6].inferred_traits.traits[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[6].inferred_traits.traits[0].note",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": null,
+      "outputValue": null
+    },
+    {
+      "path": "speaker_profiles[7].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_008",
+      "outputValue": "spk_008"
+    },
+    {
+      "path": "speaker_profiles[7].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 8",
+      "outputValue": "Speaker 8",
+      "normalizedTruthValue": "speaker 8",
+      "normalizedOutputValue": "speaker 8"
+    },
+    {
+      "path": "speaker_profiles[7].grounded.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[7].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 9,
+      "outputValue": 9
+    },
+    {
+      "path": "speaker_profiles[7].grounded.acoustic_descriptors[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "authoritative, military radio voice",
+      "outputValue": "authoritative, military radio voice",
+      "normalizedTruthValue": "authoritative military radio voice",
+      "normalizedOutputValue": "authoritative military radio voice"
+    },
+    {
+      "path": "speaker_profiles[7].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[7].inferred_traits.traits[0].trait",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "gender"
+    },
+    {
+      "path": "speaker_profiles[7].inferred_traits.traits[0].value",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "male"
+    },
+    {
+      "path": "speaker_profiles[7].inferred_traits.traits[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.8,
+      "outputValue": 0.8,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[7].inferred_traits.traits[0].note",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "typical military radio cadence",
+      "outputValue": "typical military radio cadence",
+      "normalizedTruthValue": "typical military radio cadence",
+      "normalizedOutputValue": "typical military radio cadence"
+    },
+    {
+      "path": "speaker_profiles[8].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_009",
+      "outputValue": "spk_009"
+    },
+    {
+      "path": "speaker_profiles[8].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 9",
+      "outputValue": "Speaker 9",
+      "normalizedTruthValue": "speaker 9",
+      "normalizedOutputValue": "speaker 9"
+    },
+    {
+      "path": "speaker_profiles[8].grounded.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[8].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 10,
+      "outputValue": 10
+    },
+    {
+      "path": "speaker_profiles[8].grounded.linked_segment_indexes[1]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 11,
+      "outputValue": 11
+    },
+    {
+      "path": "speaker_profiles[8].grounded.acoustic_descriptors[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "distressed, intense",
+      "outputValue": "distressed, intense",
+      "normalizedTruthValue": "distressed intense",
+      "normalizedOutputValue": "distressed intense"
+    },
+    {
+      "path": "speaker_profiles[8].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[8].inferred_traits.traits[0].trait",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "gender"
+    },
+    {
+      "path": "speaker_profiles[8].inferred_traits.traits[0].value",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "male"
+    },
+    {
+      "path": "speaker_profiles[8].inferred_traits.traits[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[8].inferred_traits.traits[0].note",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "vocal pitch and intensity",
+      "outputValue": "vocal pitch and intensity",
+      "normalizedTruthValue": "vocal pitch and intensity",
+      "normalizedOutputValue": "vocal pitch and intensity"
+    },
+    {
+      "path": "speaker_profiles[9].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_010",
+      "outputValue": "spk_010"
+    },
+    {
+      "path": "speaker_profiles[9].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 10",
+      "outputValue": "Speaker 10",
+      "normalizedTruthValue": "speaker 10",
+      "normalizedOutputValue": "speaker 10"
+    },
+    {
+      "path": "speaker_profiles[9].grounded.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[9].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 12,
+      "outputValue": 12
+    },
+    {
+      "path": "speaker_profiles[9].grounded.linked_segment_indexes[1]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 14,
+      "outputValue": 14
+    },
+    {
+      "path": "speaker_profiles[9].grounded.linked_segment_indexes[2]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 16,
+      "outputValue": 16
+    },
+    {
+      "path": "speaker_profiles[9].grounded.linked_segment_indexes[3]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 18,
+      "outputValue": 18
+    },
+    {
+      "path": "speaker_profiles[9].grounded.linked_segment_indexes[4]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 20,
+      "outputValue": 20
+    },
+    {
+      "path": "speaker_profiles[9].grounded.linked_segment_indexes[5]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 22,
+      "outputValue": 22
+    },
+    {
+      "path": "speaker_profiles[9].grounded.linked_segment_indexes[6]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 24,
+      "outputValue": 24
+    },
+    {
+      "path": "speaker_profiles[9].grounded.linked_segment_indexes[7]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 26,
+      "outputValue": 26
+    },
+    {
+      "path": "speaker_profiles[9].grounded.linked_segment_indexes[8]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 28,
+      "outputValue": 28
+    },
+    {
+      "path": "speaker_profiles[9].grounded.acoustic_descriptors[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "group chanting, rhythmic, intense",
+      "outputValue": "group chanting, rhythmic, intense",
+      "normalizedTruthValue": "group chanting rhythmic intense",
+      "normalizedOutputValue": "group chanting rhythmic intense"
+    },
+    {
+      "path": "speaker_profiles[9].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[10].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_011",
+      "outputValue": "spk_011"
+    },
+    {
+      "path": "speaker_profiles[10].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 11",
+      "outputValue": "Speaker 11",
+      "normalizedTruthValue": "speaker 11",
+      "normalizedOutputValue": "speaker 11"
+    },
+    {
+      "path": "speaker_profiles[10].grounded.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[10].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 13,
+      "outputValue": 13
+    },
+    {
+      "path": "speaker_profiles[10].grounded.linked_segment_indexes[1]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 15,
+      "outputValue": 15
+    },
+    {
+      "path": "speaker_profiles[10].grounded.linked_segment_indexes[2]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 17,
+      "outputValue": 17
+    },
+    {
+      "path": "speaker_profiles[10].grounded.linked_segment_indexes[3]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 19,
+      "outputValue": 19
+    },
+    {
+      "path": "speaker_profiles[10].grounded.linked_segment_indexes[4]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 21,
+      "outputValue": 21
+    },
+    {
+      "path": "speaker_profiles[10].grounded.linked_segment_indexes[5]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 23,
+      "outputValue": 23
+    },
+    {
+      "path": "speaker_profiles[10].grounded.linked_segment_indexes[6]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 25,
+      "outputValue": 25
+    },
+    {
+      "path": "speaker_profiles[10].grounded.linked_segment_indexes[7]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 27,
+      "outputValue": 27
+    },
+    {
+      "path": "speaker_profiles[10].grounded.linked_segment_indexes[8]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 29,
+      "outputValue": 29
+    },
+    {
+      "path": "speaker_profiles[10].grounded.linked_segment_indexes[9]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 36,
+      "outputValue": 36
+    },
+    {
+      "path": "speaker_profiles[10].grounded.linked_segment_indexes[10]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 37,
+      "outputValue": 37
+    },
+    {
+      "path": "speaker_profiles[10].grounded.acoustic_descriptors[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "authoritative, dramatic, cinematic narration",
+      "outputValue": "authoritative, dramatic, cinematic narration",
+      "normalizedTruthValue": "authoritative dramatic cinematic narration",
+      "normalizedOutputValue": "authoritative dramatic cinematic narration"
+    },
+    {
+      "path": "speaker_profiles[10].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[10].inferred_traits.traits[0].trait",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "gender"
+    },
+    {
+      "path": "speaker_profiles[10].inferred_traits.traits[0].value",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "male"
+    },
+    {
+      "path": "speaker_profiles[10].inferred_traits.traits[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.8,
+      "outputValue": 0.8,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[10].inferred_traits.traits[0].note",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "matches prior registry",
+      "outputValue": "matches prior registry",
+      "normalizedTruthValue": "matches prior registry",
+      "normalizedOutputValue": "matches prior registry"
+    },
+    {
+      "path": "speaker_profiles[11].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_012",
+      "outputValue": "spk_012"
+    },
+    {
+      "path": "speaker_profiles[11].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 12",
+      "outputValue": "Speaker 12",
+      "normalizedTruthValue": "speaker 12",
+      "normalizedOutputValue": "speaker 12"
+    },
+    {
+      "path": "speaker_profiles[11].grounded.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[11].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 30,
+      "outputValue": 30
+    },
+    {
+      "path": "speaker_profiles[11].grounded.acoustic_descriptors[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "urgent, commanding tone",
+      "outputValue": "urgent, commanding tone",
+      "normalizedTruthValue": "urgent commanding tone",
+      "normalizedOutputValue": "urgent commanding tone"
+    },
+    {
+      "path": "speaker_profiles[11].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[11].inferred_traits.traits[0].trait",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "gender"
+    },
+    {
+      "path": "speaker_profiles[11].inferred_traits.traits[0].value",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "male"
+    },
+    {
+      "path": "speaker_profiles[11].inferred_traits.traits[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.7,
+      "outputValue": 0.7,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[11].inferred_traits.traits[0].note",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "based on vocal pitch and intensity",
+      "outputValue": "based on vocal pitch and intensity",
+      "normalizedTruthValue": "based on vocal pitch and intensity",
+      "normalizedOutputValue": "based on vocal pitch and intensity"
+    },
+    {
+      "path": "speaker_profiles[12].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_013",
+      "outputValue": "spk_013"
+    },
+    {
+      "path": "speaker_profiles[12].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 13",
+      "outputValue": "Speaker 13",
+      "normalizedTruthValue": "speaker 13",
+      "normalizedOutputValue": "speaker 13"
+    },
+    {
+      "path": "speaker_profiles[12].grounded.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[12].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 38,
+      "outputValue": 38
+    },
+    {
+      "path": "speaker_profiles[12].grounded.acoustic_descriptors[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "cinematic, trailer-style voiceover",
+      "outputValue": "cinematic, trailer-style voiceover",
+      "normalizedTruthValue": "cinematic trailer style voiceover",
+      "normalizedOutputValue": "cinematic trailer style voiceover"
+    },
+    {
+      "path": "speaker_profiles[12].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[12].inferred_traits.traits[0].trait",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "gender"
+    },
+    {
+      "path": "speaker_profiles[12].inferred_traits.traits[0].value",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "male"
+    },
+    {
+      "path": "speaker_profiles[12].inferred_traits.traits[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.85,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[12].inferred_traits.traits[0].note",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "deep, resonant tone",
+      "outputValue": "deep, resonant tone",
+      "normalizedTruthValue": "deep resonant tone",
+      "normalizedOutputValue": "deep resonant tone"
+    },
+    {
+      "path": "summary",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 4: Menendez is a terrorist.\nSpeaker 5: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 7: A lot of people are counting on us for answers.\nSpeaker 8: Specter One, report.\nSpeaker 9: This isn't real.\nSpeaker 9: The hell it isn't!\nSpeaker 10: Control, Menendez!\nSpeaker 11: The world is on the brink of collapse.\nSpeaker 10: Control, Menendez!\nSpeaker 11: Chaos is the only truth.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The system is broken.\nSpeaker 10: Control, Menendez!\nSpeaker 11: We are the architects of our own destruction.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And he is the catalyst.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The end is not coming. It is here.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And there is no turning back.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The future is written in blood.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And he is the author.\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave, that is killing men.\nSpeaker 2: It's a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 7: No more games. This ends now.\nSpeaker 2: Obey your master!\nSpeaker 11: Get the Reznov challenge pack.\nSpeaker 11: And you pre-order now.\nSpeaker 13: The world is changing. The only way to survive is to be prepared. We are the future.",
+      "outputValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 4: Menendez is a terrorist.\nSpeaker 5: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 7: A lot of people are counting on us for answers.\nSpeaker 8: Specter One, report.\nSpeaker 9: This isn't real.\nSpeaker 9: The hell it isn't!\nSpeaker 10: Control, Menendez!\nSpeaker 11: The world is on the brink of collapse.\nSpeaker 10: Control, Menendez!\nSpeaker 11: Chaos is the only truth.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The system is broken.\nSpeaker 10: Control, Menendez!\nSpeaker 11: We are the architects of our own destruction.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And he is the catalyst.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The end is not coming. It is here.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And there is no turning back.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The future is written in blood.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And he is the author.\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave, that is killing men.\nSpeaker 2: It's a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 7: No more games. This ends now.\nSpeaker 2: Obey your master!\nSpeaker 11: Get the Reznov challenge pack.\nSpeaker 11: And you pre-order now.\nSpeaker 13: The world is changing. The only way to survive is to be prepared. We are the future.",
+      "normalizedTruthValue": "speaker 1 they want you afraid fear makes you easier to control speaker 1 it s time to wake up speaker 2 your streets shall once again run red with your blood speaker 3 raul menendez ignited global unrest on an unprecedented scale speaker 4 menendez is a terrorist speaker 5 we re bringing peace and security to the world speaker 6 he refuses to let me go speaker 7 stop looking backwards david what matters is what we do next speaker 7 a lot of people are counting on us for answers speaker 8 specter one report speaker 9 this isn t real speaker 9 the hell it isn t speaker 10 control menendez speaker 11 the world is on the brink of collapse speaker 10 control menendez speaker 11 chaos is the only truth speaker 10 control menendez speaker 11 the system is broken speaker 10 control menendez speaker 11 we are the architects of our own destruction speaker 10 control menendez speaker 11 and he is the catalyst speaker 10 control menendez speaker 11 the end is not coming it is here speaker 10 control menendez speaker 11 and there is no turning back speaker 10 control menendez speaker 11 the future is written in blood speaker 10 control menendez speaker 11 and he is the author speaker 12 pull it together man speaker 2 so eager to leave that is killing men speaker 2 it s a hell of a lot easier than killing the idea speaker 1 you were never cut out to be a mason speaker 7 no more games this ends now speaker 2 obey your master speaker 11 get the reznov challenge pack speaker 11 and you pre order now speaker 13 the world is changing the only way to survive is to be prepared we are the future",
+      "normalizedOutputValue": "speaker 1 they want you afraid fear makes you easier to control speaker 1 it s time to wake up speaker 2 your streets shall once again run red with your blood speaker 3 raul menendez ignited global unrest on an unprecedented scale speaker 4 menendez is a terrorist speaker 5 we re bringing peace and security to the world speaker 6 he refuses to let me go speaker 7 stop looking backwards david what matters is what we do next speaker 7 a lot of people are counting on us for answers speaker 8 specter one report speaker 9 this isn t real speaker 9 the hell it isn t speaker 10 control menendez speaker 11 the world is on the brink of collapse speaker 10 control menendez speaker 11 chaos is the only truth speaker 10 control menendez speaker 11 the system is broken speaker 10 control menendez speaker 11 we are the architects of our own destruction speaker 10 control menendez speaker 11 and he is the catalyst speaker 10 control menendez speaker 11 the end is not coming it is here speaker 10 control menendez speaker 11 and there is no turning back speaker 10 control menendez speaker 11 the future is written in blood speaker 10 control menendez speaker 11 and he is the author speaker 12 pull it together man speaker 2 so eager to leave that is killing men speaker 2 it s a hell of a lot easier than killing the idea speaker 1 you were never cut out to be a mason speaker 7 no more games this ends now speaker 2 obey your master speaker 11 get the reznov challenge pack speaker 11 and you pre order now speaker 13 the world is changing the only way to survive is to be prepared we are the future"
+    },
+    {
+      "path": "totalDuration",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 140.042449,
+      "outputValue": 140.042449,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "handoffContext",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: dramatic, cinematic narration style | inferred traits: gender: female | recent lines: It's time to wake up. / You were never cut out to be a Mason.\n- spk_002 => Speaker 2 | grounded confidence: 0.85 | acoustic cues: menacing, deep, gravelly tone; menacing, gravelly tone | inferred traits: gender: male | recent lines: It's a hell of a lot easier than killing the idea. / Obey your master!\n- spk_003 => Speaker 3 | grounded confidence: 0.90 | acoustic cues: authoritative, news-anchor delivery | recent lines: Raul Menendez ignited global unrest on an unprecedented scale.\n- spk_004 => Speaker 4 | grounded confidence: 0.85 | acoustic cues: urgent, broadcast style | recent lines: Menendez is a terrorist terrorist.\n- spk_005 => Speaker 5 | grounded confidence: 0.90 | acoustic cues: authoritative, news-anchor delivery | inferred traits: gender: female | recent lines: We're bringing peace and security to the world.\n- spk_006 => Speaker 6 | grounded confidence: 0.85 | acoustic cues: distressed, character voice | inferred traits: gender: male | recent lines: He refuses to let me go.\n- spk_007 => Speaker 7 | grounded confidence: 0.90 | acoustic cues: authoritative, gravelly, mature | inferred traits: gender: male | recent lines: A lot of people counting on us for answers. / No more games. This ends now.\n- spk_008 => Speaker 8 | grounded confidence: 0.90 | acoustic cues: authoritative, military radio voice | inferred traits: gender: male | recent lines: Specter one, report.\n- spk_009 => Speaker 9 | grounded confidence: 0.90 | acoustic cues: distressed, intense | inferred traits: gender: male | recent lines: This isn't real. / The hell it isn't!\n- spk_010 => Speaker 10 | grounded confidence: 0.90 | acoustic cues: group chanting, rhythmic, intense | recent lines: Control, Menendez! / Control, Menendez!\n- spk_011 => Speaker 11 | grounded confidence: 0.85 | acoustic cues: authoritative, dramatic, cinematic narration | inferred traits: gender: male | recent lines: Get the Reznov challenge pack. / And you pre-order now.\n- spk_012 => Speaker 12 | grounded confidence: 0.85 | acoustic cues: urgent, commanding tone | inferred traits: gender: male | recent lines: Pull it together, man!\n- spk_013 => Speaker 13 | grounded confidence: 0.85 | acoustic cues: cinematic, trailer-style voiceover | inferred traits: gender: male | recent lines: The world is changing. The only way to survive is to be prepared. We are the future.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Before reusing any prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If this chunk creates a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 11 (spk_011): And you pre-order now.\n- Speaker 13 (spk_013): The world is changing. The only way to survive is to be prepared. We are the future.",
+      "outputValue": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.90 | acoustic cues: dramatic, cinematic narration style | inferred traits: gender: female | recent lines: It's time to wake up. / You were never cut out to be a Mason.\n- spk_002 => Speaker 2 | grounded confidence: 0.85 | acoustic cues: menacing, deep, gravelly tone; menacing, gravelly tone | inferred traits: gender: male | recent lines: It's a hell of a lot easier than killing the idea. / Obey your master!\n- spk_003 => Speaker 3 | grounded confidence: 0.90 | acoustic cues: authoritative, news-anchor delivery | recent lines: Raul Menendez ignited global unrest on an unprecedented scale.\n- spk_004 => Speaker 4 | grounded confidence: 0.85 | acoustic cues: urgent, broadcast style | recent lines: Menendez is a terrorist terrorist.\n- spk_005 => Speaker 5 | grounded confidence: 0.90 | acoustic cues: authoritative, news-anchor delivery | inferred traits: gender: female | recent lines: We're bringing peace and security to the world.\n- spk_006 => Speaker 6 | grounded confidence: 0.85 | acoustic cues: distressed, character voice | inferred traits: gender: male | recent lines: He refuses to let me go.\n- spk_007 => Speaker 7 | grounded confidence: 0.90 | acoustic cues: authoritative, gravelly, mature | inferred traits: gender: male | recent lines: A lot of people counting on us for answers. / No more games. This ends now.\n- spk_008 => Speaker 8 | grounded confidence: 0.90 | acoustic cues: authoritative, military radio voice | inferred traits: gender: male | recent lines: Specter one, report.\n- spk_009 => Speaker 9 | grounded confidence: 0.90 | acoustic cues: distressed, intense | inferred traits: gender: male | recent lines: This isn't real. / The hell it isn't!\n- spk_010 => Speaker 10 | grounded confidence: 0.90 | acoustic cues: group chanting, rhythmic, intense | recent lines: Control, Menendez! / Control, Menendez!\n- spk_011 => Speaker 11 | grounded confidence: 0.85 | acoustic cues: authoritative, dramatic, cinematic narration | inferred traits: gender: male | recent lines: Get the Reznov challenge pack. / And you pre-order now.\n- spk_012 => Speaker 12 | grounded confidence: 0.85 | acoustic cues: urgent, commanding tone | inferred traits: gender: male | recent lines: Pull it together, man!\n- spk_013 => Speaker 13 | grounded confidence: 0.85 | acoustic cues: cinematic, trailer-style voiceover | inferred traits: gender: male | recent lines: The world is changing. The only way to survive is to be prepared. We are the future.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Before reusing any prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If this chunk creates a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 11 (spk_011): And you pre-order now.\n- Speaker 13 (spk_013): The world is changing. The only way to survive is to be prepared. We are the future.",
+      "normalizedTruthValue": "speaker registry reuse speaker id only for the same acoustic voice spk 001 speaker 1 grounded confidence 0 90 acoustic cues dramatic cinematic narration style inferred traits gender female recent lines it s time to wake up you were never cut out to be a mason spk 002 speaker 2 grounded confidence 0 85 acoustic cues menacing deep gravelly tone menacing gravelly tone inferred traits gender male recent lines it s a hell of a lot easier than killing the idea obey your master spk 003 speaker 3 grounded confidence 0 90 acoustic cues authoritative news anchor delivery recent lines raul menendez ignited global unrest on an unprecedented scale spk 004 speaker 4 grounded confidence 0 85 acoustic cues urgent broadcast style recent lines menendez is a terrorist terrorist spk 005 speaker 5 grounded confidence 0 90 acoustic cues authoritative news anchor delivery inferred traits gender female recent lines we re bringing peace and security to the world spk 006 speaker 6 grounded confidence 0 85 acoustic cues distressed character voice inferred traits gender male recent lines he refuses to let me go spk 007 speaker 7 grounded confidence 0 90 acoustic cues authoritative gravelly mature inferred traits gender male recent lines a lot of people counting on us for answers no more games this ends now spk 008 speaker 8 grounded confidence 0 90 acoustic cues authoritative military radio voice inferred traits gender male recent lines specter one report spk 009 speaker 9 grounded confidence 0 90 acoustic cues distressed intense inferred traits gender male recent lines this isn t real the hell it isn t spk 010 speaker 10 grounded confidence 0 90 acoustic cues group chanting rhythmic intense recent lines control menendez control menendez spk 011 speaker 11 grounded confidence 0 85 acoustic cues authoritative dramatic cinematic narration inferred traits gender male recent lines get the reznov challenge pack and you pre order now spk 012 speaker 12 grounded confidence 0 85 acoustic cues urgent commanding tone inferred traits gender male recent lines pull it together man spk 013 speaker 13 grounded confidence 0 85 acoustic cues cinematic trailer style voiceover inferred traits gender male recent lines the world is changing the only way to survive is to be prepared we are the future voice separation reminders speaker id continuity is acoustic not semantic a speaker naming another person is not evidence they are that person before reusing any prior speaker id compare the audible match across vocal timbre age impression gender presentation accent dialect impression delivery mode and recording texture if those cues do not clearly line up create a new speaker id do not merge narration figurehead vo antagonist taunts female radio comms gruff soldier responses and promo announcer copy unless the voice itself clearly matches default official public address newsreel expository narration to a distinct speaker id from villain threats unless the acoustic match is very strong if delivery shifts from direct character threat speech into official public address newsreel briefing or expository narration prefer a new speaker id unless the exact same voice clearly continues if this chunk creates a new official public address newsreel expository speaker id keep the immediately adjacent follow on official line on that same speaker id unless strong acoustic evidence indicates another change if adjacent words are one uninterrupted utterance from the same voice keep them together instead of splitting them into artificial fragments the handoff is reference only memory never copy or continue prior lines unless they are audibly present in this chunk if the current chunk only contains one audible promo narration line return only that line do not invent follow up tactical chatter from prior chunks recent dialogue tail reference only not transcript continuation speaker 11 spk 011 and you pre order now speaker 13 spk 013 the world is changing the only way to survive is to be prepared we are the future",
+      "normalizedOutputValue": "speaker registry reuse speaker id only for the same acoustic voice spk 001 speaker 1 grounded confidence 0 90 acoustic cues dramatic cinematic narration style inferred traits gender female recent lines it s time to wake up you were never cut out to be a mason spk 002 speaker 2 grounded confidence 0 85 acoustic cues menacing deep gravelly tone menacing gravelly tone inferred traits gender male recent lines it s a hell of a lot easier than killing the idea obey your master spk 003 speaker 3 grounded confidence 0 90 acoustic cues authoritative news anchor delivery recent lines raul menendez ignited global unrest on an unprecedented scale spk 004 speaker 4 grounded confidence 0 85 acoustic cues urgent broadcast style recent lines menendez is a terrorist terrorist spk 005 speaker 5 grounded confidence 0 90 acoustic cues authoritative news anchor delivery inferred traits gender female recent lines we re bringing peace and security to the world spk 006 speaker 6 grounded confidence 0 85 acoustic cues distressed character voice inferred traits gender male recent lines he refuses to let me go spk 007 speaker 7 grounded confidence 0 90 acoustic cues authoritative gravelly mature inferred traits gender male recent lines a lot of people counting on us for answers no more games this ends now spk 008 speaker 8 grounded confidence 0 90 acoustic cues authoritative military radio voice inferred traits gender male recent lines specter one report spk 009 speaker 9 grounded confidence 0 90 acoustic cues distressed intense inferred traits gender male recent lines this isn t real the hell it isn t spk 010 speaker 10 grounded confidence 0 90 acoustic cues group chanting rhythmic intense recent lines control menendez control menendez spk 011 speaker 11 grounded confidence 0 85 acoustic cues authoritative dramatic cinematic narration inferred traits gender male recent lines get the reznov challenge pack and you pre order now spk 012 speaker 12 grounded confidence 0 85 acoustic cues urgent commanding tone inferred traits gender male recent lines pull it together man spk 013 speaker 13 grounded confidence 0 85 acoustic cues cinematic trailer style voiceover inferred traits gender male recent lines the world is changing the only way to survive is to be prepared we are the future voice separation reminders speaker id continuity is acoustic not semantic a speaker naming another person is not evidence they are that person before reusing any prior speaker id compare the audible match across vocal timbre age impression gender presentation accent dialect impression delivery mode and recording texture if those cues do not clearly line up create a new speaker id do not merge narration figurehead vo antagonist taunts female radio comms gruff soldier responses and promo announcer copy unless the voice itself clearly matches default official public address newsreel expository narration to a distinct speaker id from villain threats unless the acoustic match is very strong if delivery shifts from direct character threat speech into official public address newsreel briefing or expository narration prefer a new speaker id unless the exact same voice clearly continues if this chunk creates a new official public address newsreel expository speaker id keep the immediately adjacent follow on official line on that same speaker id unless strong acoustic evidence indicates another change if adjacent words are one uninterrupted utterance from the same voice keep them together instead of splitting them into artificial fragments the handoff is reference only memory never copy or continue prior lines unless they are audibly present in this chunk if the current chunk only contains one audible promo narration line return only that line do not invent follow up tactical chatter from prior chunks recent dialogue tail reference only not transcript continuation speaker 11 spk 011 and you pre order now speaker 13 spk 013 the world is changing the only way to survive is to be prepared we are the future"
+    },
+    {
+      "path": "cleanedTranscript",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 4: Menendez is a terrorist.\nSpeaker 5: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 7: A lot of people are counting on us for answers.\nSpeaker 8: Specter One, report.\nSpeaker 9: This isn't real.\nSpeaker 9: The hell it isn't!\nSpeaker 10: Control, Menendez!\nSpeaker 11: The world is on the brink of collapse.\nSpeaker 10: Control, Menendez!\nSpeaker 11: Chaos is the only truth.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The system is broken.\nSpeaker 10: Control, Menendez!\nSpeaker 11: We are the architects of our own destruction.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And he is the catalyst.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The end is not coming. It is here.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And there is no turning back.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The future is written in blood.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And he is the author.\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave, that is killing men.\nSpeaker 2: It's a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 7: No more games. This ends now.\nSpeaker 2: Obey your master!\nSpeaker 11: Get the Reznov challenge pack.\nSpeaker 11: And you pre-order now.\nSpeaker 13: The world is changing. The only way to survive is to be prepared. We are the future.",
+      "outputValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 4: Menendez is a terrorist.\nSpeaker 5: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 7: A lot of people are counting on us for answers.\nSpeaker 8: Specter One, report.\nSpeaker 9: This isn't real.\nSpeaker 9: The hell it isn't!\nSpeaker 10: Control, Menendez!\nSpeaker 11: The world is on the brink of collapse.\nSpeaker 10: Control, Menendez!\nSpeaker 11: Chaos is the only truth.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The system is broken.\nSpeaker 10: Control, Menendez!\nSpeaker 11: We are the architects of our own destruction.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And he is the catalyst.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The end is not coming. It is here.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And there is no turning back.\nSpeaker 10: Control, Menendez!\nSpeaker 11: The future is written in blood.\nSpeaker 10: Control, Menendez!\nSpeaker 11: And he is the author.\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave, that is killing men.\nSpeaker 2: It's a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 7: No more games. This ends now.\nSpeaker 2: Obey your master!\nSpeaker 11: Get the Reznov challenge pack.\nSpeaker 11: And you pre-order now.\nSpeaker 13: The world is changing. The only way to survive is to be prepared. We are the future.",
+      "normalizedTruthValue": "speaker 1 they want you afraid fear makes you easier to control speaker 1 it s time to wake up speaker 2 your streets shall once again run red with your blood speaker 3 raul menendez ignited global unrest on an unprecedented scale speaker 4 menendez is a terrorist speaker 5 we re bringing peace and security to the world speaker 6 he refuses to let me go speaker 7 stop looking backwards david what matters is what we do next speaker 7 a lot of people are counting on us for answers speaker 8 specter one report speaker 9 this isn t real speaker 9 the hell it isn t speaker 10 control menendez speaker 11 the world is on the brink of collapse speaker 10 control menendez speaker 11 chaos is the only truth speaker 10 control menendez speaker 11 the system is broken speaker 10 control menendez speaker 11 we are the architects of our own destruction speaker 10 control menendez speaker 11 and he is the catalyst speaker 10 control menendez speaker 11 the end is not coming it is here speaker 10 control menendez speaker 11 and there is no turning back speaker 10 control menendez speaker 11 the future is written in blood speaker 10 control menendez speaker 11 and he is the author speaker 12 pull it together man speaker 2 so eager to leave that is killing men speaker 2 it s a hell of a lot easier than killing the idea speaker 1 you were never cut out to be a mason speaker 7 no more games this ends now speaker 2 obey your master speaker 11 get the reznov challenge pack speaker 11 and you pre order now speaker 13 the world is changing the only way to survive is to be prepared we are the future",
+      "normalizedOutputValue": "speaker 1 they want you afraid fear makes you easier to control speaker 1 it s time to wake up speaker 2 your streets shall once again run red with your blood speaker 3 raul menendez ignited global unrest on an unprecedented scale speaker 4 menendez is a terrorist speaker 5 we re bringing peace and security to the world speaker 6 he refuses to let me go speaker 7 stop looking backwards david what matters is what we do next speaker 7 a lot of people are counting on us for answers speaker 8 specter one report speaker 9 this isn t real speaker 9 the hell it isn t speaker 10 control menendez speaker 11 the world is on the brink of collapse speaker 10 control menendez speaker 11 chaos is the only truth speaker 10 control menendez speaker 11 the system is broken speaker 10 control menendez speaker 11 we are the architects of our own destruction speaker 10 control menendez speaker 11 and he is the catalyst speaker 10 control menendez speaker 11 the end is not coming it is here speaker 10 control menendez speaker 11 and there is no turning back speaker 10 control menendez speaker 11 the future is written in blood speaker 10 control menendez speaker 11 and he is the author speaker 12 pull it together man speaker 2 so eager to leave that is killing men speaker 2 it s a hell of a lot easier than killing the idea speaker 1 you were never cut out to be a mason speaker 7 no more games this ends now speaker 2 obey your master speaker 11 get the reznov challenge pack speaker 11 and you pre order now speaker 13 the world is changing the only way to survive is to be prepared we are the future"
+    }
+  ],
+  "summary": "423/423 scoreable fields passed; 0/423 truth fields were skipped.",
+  "context": {
+    "fixtureId": "cod-test",
+    "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",
+    "truthPath": "benchmarks/fixtures/cod-test/truth/dialogue-data.json",
+    "outputPath": "output/cod-test/phase1-gather-context/dialogue-data.json"
+  }
+}

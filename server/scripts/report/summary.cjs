@@ -40,8 +40,7 @@ async function run(input) {
     metricsData = {},
     recommendationData = {},
     emotionalAnalysis = {},
-    chunkAnalysis = { chunks: [], totalTokens: 0, videoDuration: 0 },
-    perSecondData = { per_second_data: [], totalSeconds: 0 }
+    chunkAnalysis = { chunks: [], totalTokens: 0, videoDuration: 0 }
   } = artifacts;
 
   // Build metadata
@@ -50,10 +49,10 @@ async function run(input) {
   const metadata = {
     generatedAt: new Date().toISOString(),
     pipelineVersion: config?.version || '8.0.0',
-    videoDuration: chunkAnalysis.videoDuration || perSecondData.totalSeconds || emotionalAnalysis?.summary?.videoDuration || 0,
+    videoDuration: chunkAnalysis.videoDuration || emotionalAnalysis?.summary?.videoDuration || metricsData?.summary?.videoDuration || 0,
     chunksAnalyzed: successfulChunks.length,
     failedChunks: failedChunks.length,
-    totalSeconds: perSecondData.per_second_data?.length || emotionalAnalysis?.summary?.totalSeconds || metricsData?.summary?.totalSeconds || 0,
+    totalSeconds: emotionalAnalysis?.summary?.totalSeconds || metricsData?.summary?.totalSeconds || 0,
     totalTokens: chunkAnalysis.totalTokens || 0
   };
 
@@ -322,13 +321,6 @@ if (require.main === module) {
         videoDuration: 180,
         totalTokens: 15000
       },
-      perSecondData: {
-        per_second_data: [
-          { timestamp: 0, boredom: 0.4, excitement: 0.6, curiosity: 0.5, tension: 0.3, satisfaction: 0.7 },
-          { timestamp: 1, boredom: 0.5, excitement: 0.5, curiosity: 0.4, tension: 0.4, satisfaction: 0.6 }
-        ],
-        totalSeconds: 180
-      }
     },
     config: { version: '8.0.0', name: 'Test Pipeline' }
   })

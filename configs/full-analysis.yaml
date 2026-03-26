@@ -19,7 +19,6 @@ process:
             - patience
             - boredom
             - excitement
-    - script: server/scripts/process/video-per-second.cjs
 report:
   - server/scripts/report/evaluation.cjs
 settings:

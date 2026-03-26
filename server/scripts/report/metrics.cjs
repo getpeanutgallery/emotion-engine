@@ -33,40 +33,33 @@ async function run(input) {
   fs.mkdirSync(outputDir, { recursive: true });
 
   const {
-    chunkAnalysis = { chunks: [], totalTokens: 0, videoDuration: 0 },
-    perSecondData = { per_second_data: [], totalSeconds: 0 }
+    chunkAnalysis = { chunks: [], totalTokens: 0, videoDuration: 0 }
   } = artifacts;
 
   const chunks = chunkAnalysis.chunks || [];
   const { successfulChunks, failedChunks } = splitChunksByStatus(chunks);
-  const perSecondDataArray = perSecondData.per_second_data || [];
-
-  const normalizedPerSecond = normalizePerSecondRows(perSecondDataArray);
-  const hasNativePerSecondData = normalizedPerSecond.length > 0;
-  const computedPerSecond = hasNativePerSecondData
-    ? normalizedPerSecond
-    : buildPerSecondFromChunks(successfulChunks, chunkAnalysis.videoDuration || perSecondData.totalSeconds || 0);
+  const computedTimeline = buildTimelineFromChunks(successfulChunks, chunkAnalysis.videoDuration || 0);
 
   console.log('   📈 Computing averages per emotion lens...');
-  const averages = calculateAverageScores(computedPerSecond);
+  const averages = calculateAverageScores(computedTimeline);
 
   console.log('   🎯 Finding peak moments...');
-  const peakMoments = findPeakMoments(computedPerSecond);
+  const peakMoments = findPeakMoments(computedTimeline);
 
   console.log('   📊 Analyzing emotional trends...');
-  const trends = analyzeTrends(computedPerSecond);
+  const trends = analyzeTrends(computedTimeline);
 
   console.log('   ⚡ Calculating friction index...');
-  const frictionIndex = calculateFrictionIndex(computedPerSecond);
+  const frictionIndex = calculateFrictionIndex(computedTimeline);
 
-  const status = computedPerSecond.length > 0
+  const status = computedTimeline.length > 0
     ? {
         state: 'computed',
-        dataSource: hasNativePerSecondData ? 'phase2.perSecondData' : 'derived-from-phase2.chunkAnalysis',
+        dataSource: 'derived-from-phase2.chunkAnalysis',
       }
     : {
         state: 'not_implemented',
-        reason: 'No usable phase2 emotion timeseries (perSecondData or chunkAnalysis) found.'
+        reason: 'No usable phase2 chunkAnalysis emotion timeseries was found.'
       };
 
   const metrics = {
@@ -75,8 +68,8 @@ async function run(input) {
     summary: {
       totalChunks: successfulChunks.length,
       failedChunks: failedChunks.length,
-      totalSeconds: computedPerSecond.length,
-      videoDuration: chunkAnalysis.videoDuration || perSecondData.totalSeconds || 0
+      totalSeconds: computedTimeline.length,
+      videoDuration: chunkAnalysis.videoDuration || 0
     },
     implementationStatus: status,
     averages,
@@ -91,20 +84,20 @@ async function run(input) {
   console.log(`   ✅ Metrics saved to: ${metricsPath}`);
 
   const warnings = [];
-  if (!hasNativePerSecondData && computedPerSecond.length > 0) {
-    warnings.push('Derived per-second metrics from chunkAnalysis because native perSecondData was unavailable.');
+  if (computedTimeline.length > 0) {
+    warnings.push('Computed report metrics from chunkAnalysis without a dedicated per-second phase artifact.');
   }
   if (failedChunks.length > 0) {
     warnings.push(`Excluded ${failedChunks.length} failed chunk(s) from metrics aggregation.`);
   }
-  if (computedPerSecond.length === 0) {
+  if (computedTimeline.length === 0) {
     warnings.push('No usable phase2 emotion timeseries was available; emitted schema-valid placeholder metrics for downstream continuity.');
   }
 
   return {
     primaryArtifactKey: 'metricsData',
     metrics: {
-      totalSeconds: computedPerSecond.length,
+      totalSeconds: computedTimeline.length,
       successfulChunks: successfulChunks.length,
       failedChunks: failedChunks.length
     },
@@ -168,8 +161,8 @@ function normalizeEmotionMap(source = {}) {
   return normalized;
 }
 
-function normalizePerSecondRows(perSecondData = []) {
-  return perSecondData.map((row, index) => {
+function normalizeTimelineRows(rows = []) {
+  return rows.map((row, index) => {
     const fromNested = row && typeof row === 'object' && row.emotions
       ? normalizeEmotionMap(row.emotions)
       : normalizeEmotionMap(row);
@@ -181,7 +174,7 @@ function normalizePerSecondRows(perSecondData = []) {
   }).filter((row) => Object.keys(row).some((key) => key !== 'timestamp'));
 }
 
-function buildPerSecondFromChunks(chunks = [], videoDuration = 0) {
+function buildTimelineFromChunks(chunks = [], videoDuration = 0) {
   if (!Array.isArray(chunks) || chunks.length === 0) return [];
 
   const rows = [];
@@ -209,15 +202,15 @@ function buildPerSecondFromChunks(chunks = [], videoDuration = 0) {
   return Array.from(deduped.values()).sort((a, b) => a.timestamp - b.timestamp);
 }
 
-function calculateAverageScores(perSecondData) {
-  if (!perSecondData || perSecondData.length === 0) return {};
+function calculateAverageScores(timelineRows) {
+  if (!timelineRows || timelineRows.length === 0) return {};
 
-  const emotionKeys = getEmotionKeysFromRows(perSecondData);
+  const emotionKeys = getEmotionKeysFromRows(timelineRows);
   if (emotionKeys.length === 0) return {};
 
   const averages = {};
   for (const emotion of emotionKeys) {
-    const scores = perSecondData.map((d) => d[emotion]).filter((score) => typeof score === 'number');
+    const scores = timelineRows.map((d) => d[emotion]).filter((score) => typeof score === 'number');
     if (scores.length === 0) continue;
     const sum = scores.reduce((a, b) => a + b, 0);
     averages[emotion] = sum / scores.length;
@@ -226,10 +219,10 @@ function calculateAverageScores(perSecondData) {
   return averages;
 }
 
-function findPeakMoments(perSecondData) {
-  if (!perSecondData || perSecondData.length === 0) return {};
+function findPeakMoments(timelineRows) {
+  if (!timelineRows || timelineRows.length === 0) return {};
 
-  const emotionKeys = getEmotionKeysFromRows(perSecondData);
+  const emotionKeys = getEmotionKeysFromRows(timelineRows);
   if (emotionKeys.length === 0) return {};
 
   const peakMoments = {};
@@ -240,9 +233,9 @@ function findPeakMoments(perSecondData) {
     let maxTimestamp = 0;
     let minTimestamp = 0;
 
-    for (let i = 0; i < perSecondData.length; i++) {
-      const score = typeof perSecondData[i][emotion] === 'number' ? perSecondData[i][emotion] : 0;
-      const timestamp = perSecondData[i].timestamp || i;
+    for (let i = 0; i < timelineRows.length; i++) {
+      const score = typeof timelineRows[i][emotion] === 'number' ? timelineRows[i][emotion] : 0;
+      const timestamp = timelineRows[i].timestamp || i;
 
       if (score > maxScore) {
         maxScore = score;
@@ -264,16 +257,16 @@ function findPeakMoments(perSecondData) {
   return peakMoments;
 }
 
-function analyzeTrends(perSecondData) {
-  if (!perSecondData || perSecondData.length < 2) return {};
+function analyzeTrends(timelineRows) {
+  if (!timelineRows || timelineRows.length < 2) return {};
 
-  const emotionKeys = getEmotionKeysFromRows(perSecondData);
+  const emotionKeys = getEmotionKeysFromRows(timelineRows);
   if (emotionKeys.length === 0) return {};
 
   const trends = {};
 
   for (const emotion of emotionKeys) {
-    const scores = perSecondData.map((d) => d[emotion]).filter((score) => typeof score === 'number');
+    const scores = timelineRows.map((d) => d[emotion]).filter((score) => typeof score === 'number');
     if (scores.length < 2) continue;
 
     const midpoint = Math.floor(scores.length / 2);
@@ -297,16 +290,16 @@ function analyzeTrends(perSecondData) {
   return trends;
 }
 
-function calculateFrictionIndex(perSecondData) {
-  if (!perSecondData || perSecondData.length === 0) return 0;
+function calculateFrictionIndex(timelineRows) {
+  if (!timelineRows || timelineRows.length === 0) return 0;
 
-  const emotionKeys = getEmotionKeysFromRows(perSecondData);
+  const emotionKeys = getEmotionKeysFromRows(timelineRows);
   if (emotionKeys.length === 0) return 0;
 
   let totalVariance = 0;
 
   for (const emotion of emotionKeys) {
-    const scores = perSecondData.map((d) => d[emotion]).filter((score) => typeof score === 'number');
+    const scores = timelineRows.map((d) => d[emotion]).filter((score) => typeof score === 'number');
     if (scores.length === 0) continue;
 
     const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
@@ -315,9 +308,9 @@ function calculateFrictionIndex(perSecondData) {
   }
 
   let transitions = 0;
-  for (let i = 1; i < perSecondData.length; i++) {
-    const prev = perSecondData[i - 1];
-    const curr = perSecondData[i];
+  for (let i = 1; i < timelineRows.length; i++) {
+    const prev = timelineRows[i - 1];
+    const curr = timelineRows[i];
 
     for (const emotion of emotionKeys) {
       const diff = Math.abs((curr[emotion] || 0) - (prev[emotion] || 0));
@@ -326,7 +319,7 @@ function calculateFrictionIndex(perSecondData) {
   }
 
   const avgVariance = totalVariance / emotionKeys.length;
-  const transitionRate = transitions / (perSecondData.length * emotionKeys.length);
+  const transitionRate = transitions / (timelineRows.length * emotionKeys.length);
   const frictionIndex = (avgVariance * 60 + transitionRate * 100 * 40);
 
   return Math.min(100, Math.max(0, frictionIndex));
@@ -342,7 +335,7 @@ const deterministicRecovery = {
   degradedSuccess: {
     allowed: true,
     conditions: [
-      'metrics may be derived from successful chunkAnalysis when perSecondData is unavailable',
+      'metrics are computed from successful chunkAnalysis without requiring a dedicated per-second phase artifact',
       'empty placeholder metrics may be emitted only when downstream summary/final-report continuity is explicitly preserved'
     ]
   }
@@ -360,14 +353,6 @@ if (require.main === module) {
         chunks: [{ emotions: { boredom: 0.5, excitement: 0.3 } }],
         videoDuration: 120
       },
-      perSecondData: {
-        per_second_data: [
-          { timestamp: 0, boredom: 0.4, excitement: 0.6, curiosity: 0.5, tension: 0.3, satisfaction: 0.7 },
-          { timestamp: 1, boredom: 0.5, excitement: 0.5, curiosity: 0.4, tension: 0.4, satisfaction: 0.6 },
-          { timestamp: 2, boredom: 0.6, excitement: 0.4, curiosity: 0.3, tension: 0.5, satisfaction: 0.5 }
-        ],
-        totalSeconds: 3
-      }
     },
     config: { version: '8.0.0', name: 'Test Pipeline' }
   })
