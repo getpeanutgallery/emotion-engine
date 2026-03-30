@@ -130,7 +130,7 @@ This bead is now closed because the provenance boundary is explicit in source-ow
 - closed beads for all work directly associated with this plan (`ee-q6oj`, `ee-blal`, `ee-prta`, `ee-ix33`); no bead remains intentionally open for this plan
 
 **Commits:**
-- Pending final commit pass; fill in after committing.
+- `c73edb8` - Harden cod-test dialogue truth provenance
 
 **Lessons Learned:**
 - the highest-value benchmark hardening work was not "review everything" but "review the part humans actually care about most" — dialogue identity/order truth
