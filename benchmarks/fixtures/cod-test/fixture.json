@@ -30,6 +30,7 @@
     "This fixture is the MVP source-owned scaffold for the truth benchmark system.",
     "Truth artifacts are JSON-only and must preserve schema parity with real pipeline outputs.",
     "The initial dialogue/music truth files were bootstrapped from the current cod-test artifact set so the runner has durable source-controlled inputs before full editorial review.",
+    "Dialogue truth now includes a first human-reviewed pass captured directly in truth/dialogue-data.json, with provenance boundaries documented in docs/cod-test-dialogue-truth-provenance-2026-03-30.md instead of adding comparator-facing schema drift to the truth payload.",
     "Those truth files should be human-reviewed and tightened over time; comparator semantics remain in benchmark.json + runner code, not inside the truth payloads.",
     "Recommendation benchmarking is now included as bootstrap truth with comparator-owned skips for volatile metadata (generatedAt and ai debug/usage payloads).",
     "Chunk-analysis benchmarking is now included using bootstrap truth copied from output/cod-test/phase2-process/chunk-analysis.json; it is not yet a human-reviewed gold truth artifact.",
