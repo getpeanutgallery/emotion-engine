@@ -20,6 +20,10 @@ Human review directly corrected or approved the following dialogue surfaces:
 - the post-segment-8 ordering reset, replacing the obviously wrong bootstrap continuation with the recovered actual-order lines
 - `speaker_profiles[*].grounded.linked_segment_indexes` for the reviewed speakers used by those segments
 - the most important `speaker_profiles[*].grounded.acoustic_descriptors` / `inferred_traits` needed to encode speaker separation honestly
+- in the follow-up reviewed wording pass, the targeted speaker-profile grounding text for `spk_003`, `spk_008`, and `spk_013`, with `spk_012`, `spk_014`, and `spk_015` explicitly kept as already-approved wording
+- in the follow-up timing sanity pass, `dialogue_segments[*].start` / `end` were explicitly re-approved as currently stored for segments `0` through `28`, and segment `29` was corrected from `2:07-2:08` to `2:07-2:10`
+- in the follow-up summary-only pass, `summary` was replaced with approved human-reviewed overview prose aligned to the corrected dialogue order and themes
+- in the follow-up confidence pass, `dialogue_segments[*].confidence` for segments `0` through `29` were updated from untouched scaffold values to human-reviewed confidence judgments derived from Derrick's line-by-line review, using rounded benchmark-friendly numbers and preserving uncertainty rather than fake calibration
 - `cleanedTranscript`, regenerated from the revised ordered segment list
 - `handoffContext`, rewritten to reflect the corrected registry and to preserve uncertainty instead of hiding it
 
@@ -27,20 +31,21 @@ Human review directly corrected or approved the following dialogue surfaces:
 
 These fields were kept as minimal scaffold rather than promoted to "fully reviewed gold" status:
 
-- `dialogue_segments[*].confidence` — retained as benchmark-tolerant numeric scaffolding, not a separately human-verified scoring pass
+- `dialogue_segments[*].confidence` outside the reviewed `0..29` cod-test sequence would still be scaffold if present; for the current reviewed sequence, those values are now human-reviewed confidence judgments derived from the review conversation rather than untouched bootstrap numerics
 - `speaker_profiles[*].label` — generic `Speaker N` labels kept for schema parity with pipeline output style
 - `speaker_profiles[*].grounded.confidence` — pragmatic truth-shaping values, not a fresh confidence adjudication exercise
-- `totalDuration` — carried forward from existing fixture context; this pass was about dialogue truth, not duration remeasurement
-- `summary` — rewritten to stop reflecting the bad bootstrap order, but still treated as a compact derived overview rather than line-by-line editorial gold prose
+- `totalDuration` — carried forward from existing fixture context; even after the timing sanity pass this was not a duration remeasurement task
+- `summary` — no longer bootstrap-carried after the follow-up human-reviewed summary-only pass; it is now approved human-reviewed overview prose, while still remaining compact and pipeline-shaped
+- the reviewed `dialogue_segments[*].confidence` numerics are still editorial judgment calls for benchmark honesty, not mathematically calibrated probabilities
 
 ## Intentionally uncertain fields / decisions
 
 Where the human review was uncertain, the truth was made honest rather than overconfident:
 
-- `spk_003` stays a separate expository speaker with inferred `male`, but is **not** merged with the later older general/leader
+- `spk_003` keeps an authoritative male expository/briefing read, but the identity remains intentionally open: it could be the older African-American general/leader or a separate one-off expository speaker, and there is still not enough confidence to merge it
 - `spk_014` (`"You shall know fear."`) is kept as an older processed antagonist-coded male voice and **not** promoted to confirmed Raul identity
-- `spk_008` covers both comms lines (`"Specter one, report."` / `"Need a sitrep."`) because they are likely the same voice, but that reuse remains explicitly uncertain in notes
-- `spk_013` (`"Killing the man..."`) stays a distinct uncertain white male-sounding montage voice and is **not** collapsed into Raul, David, or Woods as fact
+- `spk_008` now treats both comms lines (`"Specter one, report."` / `"Need a sitrep."`) as the same younger male comms speaker based on human review, while preserving the African-American read as an audible-pronunciation cue rather than hard fact
+- `spk_013` (`"Killing the man..."`) stays a distinct uncertain white male-sounding montage voice tied to Frank Woods visual imagery and is **not** collapsed into Raul, David, or Woods as fact
 - `spk_015` exists because `"You were never cut out to be a Mason."` is an overlap-heavy hallucination blend; treating it as a single clean identity would be dishonest
 - sung `Master of Puppets` lines are separated from scene dialogue as `spk_011`
 - the preorder tag is separated from scene dialogue and lyrics as promo VO `spk_016`
@@ -56,6 +61,7 @@ That means:
 - lyrics stayed lyrics
 - promo VO stayed promo VO
 - human-reviewed corrections replaced obviously wrong bootstrap text even when that meant larger downstream sequence surgery
+- human-reviewed segment timings are editorially accurate, but still approximate enough that benchmark comparison should allow roughly `1-2` seconds of fuzziness for otherwise-correct model outputs
 
 ## How to use dialogue fixtures during future prompt iteration
 
@@ -86,7 +92,7 @@ Current limits that still matter:
 
 - only part of the dialogue payload has been promoted to human-reviewed gold truth
 - `cod-test` is still just one fixture, so prompt changes can overfit this trailer if we treat one pass here as universal proof
-- confidence-like numeric fields remain mostly scaffold, not deeply adjudicated human truth
+- many confidence-like numeric fields outside `dialogue_segments[*].confidence` remain scaffold-ish or lightly adjudicated rather than deeply calibrated human truth
 - non-dialogue benchmark artifacts in this fixture (recommendation, chunk-analysis, metrics, emotional-analysis) still contain substantial bootstrap truth and should not be treated as equally trustworthy semantic regression signals
 
 So the right reading is: use `cod-test` dialogue truth as the main source-owned regression guard for dialogue prompt work now, but keep a human in the loop and expand the corpus before making broad claims about prompt quality across all cases.

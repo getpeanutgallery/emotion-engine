@@ -6,7 +6,7 @@
       "speaker": "Speaker 1",
       "speaker_id": "spk_001",
       "text": "They want you afraid. Fear makes you easier to control.",
-      "confidence": 0.99,
+      "confidence": 0.95,
       "index": 0
     },
     {
@@ -15,7 +15,7 @@
       "speaker": "Speaker 1",
       "speaker_id": "spk_001",
       "text": "It's time to wake up.",
-      "confidence": 0.98,
+      "confidence": 0.95,
       "index": 1
     },
     {
@@ -24,7 +24,7 @@
       "speaker": "Speaker 2",
       "speaker_id": "spk_002",
       "text": "Your streets, shall once again run red with your blood.",
-      "confidence": 0.95,
+      "confidence": 0.98,
       "index": 2
     },
     {
@@ -33,7 +33,7 @@
       "speaker": "Speaker 3",
       "speaker_id": "spk_003",
       "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
-      "confidence": 0.98,
+      "confidence": 0.85,
       "index": 3
     },
     {
@@ -42,7 +42,7 @@
       "speaker": "Speaker 1",
       "speaker_id": "spk_001",
       "text": "Menendez is a terrorist.",
-      "confidence": 0.96,
+      "confidence": 0.9,
       "index": 4
     },
     {
@@ -51,7 +51,7 @@
       "speaker": "Speaker 1",
       "speaker_id": "spk_001",
       "text": "We're bringing peace and security to the world.",
-      "confidence": 0.96,
+      "confidence": 0.9,
       "index": 5
     },
     {
@@ -60,7 +60,7 @@
       "speaker": "Speaker 6",
       "speaker_id": "spk_006",
       "text": "He refuses to let me go.",
-      "confidence": 0.93,
+      "confidence": 0.9,
       "index": 6
     },
     {
@@ -69,7 +69,7 @@
       "speaker": "Speaker 7",
       "speaker_id": "spk_007",
       "text": "Stop looking backwards, David. What matters is what we do next.",
-      "confidence": 0.96,
+      "confidence": 0.95,
       "index": 7
     },
     {
@@ -78,7 +78,7 @@
       "speaker": "Speaker 6",
       "speaker_id": "spk_006",
       "text": "A lot of people counting on us for answers.",
-      "confidence": 0.93,
+      "confidence": 0.88,
       "index": 8
     },
     {
@@ -87,7 +87,7 @@
       "speaker": "Speaker 14",
       "speaker_id": "spk_014",
       "text": "You shall know fear.",
-      "confidence": 0.91,
+      "confidence": 0.8,
       "index": 9
     },
     {
@@ -96,7 +96,7 @@
       "speaker": "Speaker 8",
       "speaker_id": "spk_008",
       "text": "Specter one, report.",
-      "confidence": 0.92,
+      "confidence": 0.95,
       "index": 10
     },
     {
@@ -105,7 +105,7 @@
       "speaker": "Speaker 8",
       "speaker_id": "spk_008",
       "text": "Need a sitrep.",
-      "confidence": 0.91,
+      "confidence": 0.95,
       "index": 11
     },
     {
@@ -114,7 +114,7 @@
       "speaker": "Speaker 9",
       "speaker_id": "spk_009",
       "text": "This isn't real.",
-      "confidence": 0.94,
+      "confidence": 0.9,
       "index": 12
     },
     {
@@ -123,7 +123,7 @@
       "speaker": "Speaker 10",
       "speaker_id": "spk_010",
       "text": "The hell it ain't!",
-      "confidence": 0.94,
+      "confidence": 0.9,
       "index": 13
     },
     {
@@ -132,7 +132,7 @@
       "speaker": "Speaker 11",
       "speaker_id": "spk_011",
       "text": "Obey your master.",
-      "confidence": 0.93,
+      "confidence": 0.9,
       "index": 14
     },
     {
@@ -141,7 +141,7 @@
       "speaker": "Speaker 11",
       "speaker_id": "spk_011",
       "text": "Control faster.",
-      "confidence": 0.92,
+      "confidence": 0.9,
       "index": 15
     },
     {
@@ -150,7 +150,7 @@
       "speaker": "Speaker 11",
       "speaker_id": "spk_011",
       "text": "Master of puppets are pulling the strings!",
-      "confidence": 0.94,
+      "confidence": 0.9,
       "index": 16
     },
     {
@@ -159,7 +159,7 @@
       "speaker": "Speaker 11",
       "speaker_id": "spk_011",
       "text": "Twisting your mind, smashing your dreams!",
-      "confidence": 0.94,
+      "confidence": 0.9,
       "index": 17
     },
     {
@@ -168,7 +168,7 @@
       "speaker": "Speaker 11",
       "speaker_id": "spk_011",
       "text": "Blinded by me, you can’t see a thing",
-      "confidence": 0.94,
+      "confidence": 0.9,
       "index": 18
     },
     {
@@ -177,7 +177,7 @@
       "speaker": "Speaker 11",
       "speaker_id": "spk_011",
       "text": "Just call my name ’cause I’ll hear you scream",
-      "confidence": 0.93,
+      "confidence": 0.9,
       "index": 19
     },
     {
@@ -186,7 +186,7 @@
       "speaker": "Speaker 11",
       "speaker_id": "spk_011",
       "text": "Master, master, where’s the dreams that I’ve been after?",
-      "confidence": 0.94,
+      "confidence": 0.9,
       "index": 20
     },
     {
@@ -195,7 +195,7 @@
       "speaker": "Speaker 11",
       "speaker_id": "spk_011",
       "text": "Master, master, you promised only lies!",
-      "confidence": 0.94,
+      "confidence": 0.9,
       "index": 21
     },
     {
@@ -213,7 +213,7 @@
       "speaker": "Speaker 2",
       "speaker_id": "spk_002",
       "text": "So eager to leave daddy.",
-      "confidence": 0.95,
+      "confidence": 0.9,
       "index": 23
     },
     {
@@ -222,7 +222,7 @@
       "speaker": "Speaker 13",
       "speaker_id": "spk_013",
       "text": "Killing the man is a hell of a lot easier than killing the idea.",
-      "confidence": 0.94,
+      "confidence": 0.8,
       "index": 24
     },
     {
@@ -231,7 +231,7 @@
       "speaker": "Speaker 15",
       "speaker_id": "spk_015",
       "text": "You were never cut out to be a Mason.",
-      "confidence": 0.9,
+      "confidence": 0.6,
       "index": 25
     },
     {
@@ -249,7 +249,7 @@
       "speaker": "Speaker 11",
       "speaker_id": "spk_011",
       "text": "Obey your master!",
-      "confidence": 0.93,
+      "confidence": 0.9,
       "index": 27
     },
     {
@@ -258,16 +258,16 @@
       "speaker": "Speaker 16",
       "speaker_id": "spk_016",
       "text": "Get the Reznov challenge pack when you preorder now!",
-      "confidence": 0.94,
+      "confidence": 0.95,
       "index": 28
     },
     {
       "start": 127,
-      "end": 128,
+      "end": 130,
       "speaker": "Speaker 11",
       "speaker_id": "spk_011",
       "text": "Master, master",
-      "confidence": 0.92,
+      "confidence": 0.9,
       "index": 29
     }
   ],
@@ -338,7 +338,7 @@
         ],
         "acoustic_descriptors": [
           {
-            "label": "authoritative expository/briefing delivery",
+            "label": "authoritative male expository/briefing delivery",
             "confidence": 0.86
           }
         ]
@@ -349,7 +349,7 @@
             "trait": "gender",
             "value": "male",
             "confidence": 0.72,
-            "note": "human review inferred male; overlap with later older leader remains uncertain"
+            "note": "human review supports an authoritative male delivery, but identity remains uncertain: could be the older African-American general/leader or a separate one-off expository speaker, with not enough confidence to merge yet"
           }
         ]
       }
@@ -419,7 +419,7 @@
         ],
         "acoustic_descriptors": [
           {
-            "label": "distressed younger comms/radio voice",
+            "label": "younger male comms/radio voice",
             "confidence": 0.86
           }
         ]
@@ -430,7 +430,7 @@
             "trait": "gender",
             "value": "male",
             "confidence": 0.76,
-            "note": "likely same comms speaker across both lines; racial presentation remains uncertain"
+            "note": "human review now effectively confirms the same younger male comms speaker across both lines; an African-American read is supported by the audible \"rahport\" pronunciation cue on \"report\", but that remains a read rather than hard fact"
           }
         ]
       }
@@ -558,7 +558,7 @@
         ],
         "acoustic_descriptors": [
           {
-            "label": "white male-sounding montage voice tied to Woods imagery",
+            "label": "white male-sounding montage voice tied to Frank Woods visual imagery",
             "confidence": 0.8
           }
         ]
@@ -653,8 +653,8 @@
       }
     }
   ],
-  "summary": "Human-reviewed cod-test dialogue truth now corrects the opening speaker assignments and replaces the post-segment-8 bootstrap regression with the recovered actual trailer order: office/corporate opening VO, David/general exchange, an uncertain processed threat, distressed comms, squadmate reactions, Master of Puppets lyric inserts, Menendez and montage taunts, David’s confrontation line, and the closing promo/lyric tag.",
+  "summary": "The trailer’s dialogue sets up Raul Menendez as the puppet-master behind fear, unrest, and psychological manipulation, while David and his squad are pulled through a surreal hallucinatory mission shaped by trauma, memory, and control. Corporate propaganda, military urgency, squad confusion, Menendez taunts, and Master of Puppets lyrics all reinforce the same theme: people are being manipulated like puppets. The dialogue arc ends with David choosing to confront that force directly, before the trailer shifts into a preorder promo.",
   "totalDuration": 140.042449,
-  "handoffContext": "Speaker registry (human-reviewed on the listed cod-test truth segments; uncertain identities stay uncertain):\n- spk_001 => Speaker 1 | grounded confidence: 0.92 | acoustic cues: urgent female office/corporate delivery | inferred traits: gender: female (human-reviewed opening speaker read) | recent lines: Menendez is a terrorist. / We're bringing peace and security to the world.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: menacing, deep, gravelly antagonist delivery | inferred traits: gender: male (human-reviewed Raul Menendez read on reviewed segments) | recent lines: Your streets, shall once again run red with your blood. / So eager to leave daddy.\n- spk_003 => Speaker 3 | grounded confidence: 0.90 | acoustic cues: authoritative expository/briefing delivery | inferred traits: gender: male (human review inferred male; overlap with later older leader remains uncertain) | recent lines: Raul Menendez ignited global unrest on an unprecedented scale.\n- spk_006 => Speaker 6 | grounded confidence: 0.88 | acoustic cues: distressed younger male character voice | inferred traits: gender: male (human-reviewed as David on these segments) | recent lines: A lot of people counting on us for answers. / No more games! This ends now.\n- spk_007 => Speaker 7 | grounded confidence: 0.90 | acoustic cues: authoritative, gravelly, older military-leader cadence | inferred traits: gender: male (human-reviewed older general/leader read) | recent lines: Stop looking backwards, David. What matters is what we do next.\n- spk_008 => Speaker 8 | grounded confidence: 0.88 | acoustic cues: distressed younger comms/radio voice | inferred traits: gender: male (likely same comms speaker across both lines; racial presentation remains uncertain) | recent lines: Specter one, report. / Need a sitrep.\n- spk_009 => Speaker 9 | grounded confidence: 0.86 | acoustic cues: deeper squadmate voice, grounded in-scene delivery | inferred traits: gender: male (human review read this as a deeper African-American male squadmate voice) | recent lines: This isn't real.\n- spk_010 => Speaker 10 | grounded confidence: 0.86 | acoustic cues: angry, frustrated white male squadmate delivery | inferred traits: gender: male (human review explicitly ruled out David) | recent lines: The hell it ain't!\n- spk_011 => Speaker 11 | grounded confidence: 0.92 | acoustic cues: sung heavy-metal lyric vocal | inferred traits: gender: male (Master of Puppets vocalist / music lyric, not in-scene dialogue) | recent lines: Obey your master! / Master, master\n- spk_012 => Speaker 12 | grounded confidence: 0.88 | acoustic cues: urgent adult squadmate command | inferred traits: gender: female (human review read an African-American female squadmate with tattoos) | recent lines: Pull it together, man!\n- spk_013 => Speaker 13 | grounded confidence: 0.85 | acoustic cues: white male-sounding montage voice tied to Woods imagery | inferred traits: gender: male (identity remains uncertain; do not collapse into Raul or David) | recent lines: Killing the man is a hell of a lot easier than killing the idea.\n- spk_014 => Speaker 14 | grounded confidence: 0.85 | acoustic cues: older male voice with robotic/processed filter | inferred traits: gender: male (antagonist-coded; possibly Raul Menendez but identity intentionally left uncertain) | recent lines: You shall know fear.\n- spk_015 => Speaker 15 | grounded confidence: 0.80 | acoustic cues: mixed overlapping voices with female-primary layer | inferred traits: gender: ambiguous (male and female layers overlap; primary audible layer resembles Speaker 1) | recent lines: You were never cut out to be a Mason.\n- spk_016 => Speaker 16 | grounded confidence: 0.88 | acoustic cues: white adult male sales/promo voiceover | inferred traits: gender: male (promo VO, distinct from scene dialogue and lyrics) | recent lines: Get the Reznov challenge pack when you preorder now!\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic.\n- Do not collapse scene dialogue, comms, sung lyrics, promo VO, and overlapping hallucination blends into one speaker unless the voice clearly matches.\n- If identity is uncertain, preserve the uncertainty in notes/descriptors instead of promoting a guess to fact.\n- The mixed \"You were never cut out to be a Mason\" line is intentionally represented as an overlap-heavy speaker bucket rather than a falsely precise identity claim.",
+  "handoffContext": "Speaker registry (human-reviewed on the listed cod-test truth segments; uncertain identities stay uncertain):\n- spk_001 => Speaker 1 | grounded confidence: 0.92 | acoustic cues: urgent female office/corporate delivery | inferred traits: gender: female (human-reviewed opening speaker read) | recent lines: Menendez is a terrorist. / We're bringing peace and security to the world.\n- spk_002 => Speaker 2 | grounded confidence: 0.90 | acoustic cues: menacing, deep, gravelly antagonist delivery | inferred traits: gender: male (human-reviewed Raul Menendez read on reviewed segments) | recent lines: Your streets, shall once again run red with your blood. / So eager to leave daddy.\n- spk_003 => Speaker 3 | grounded confidence: 0.90 | acoustic cues: authoritative male expository/briefing delivery | inferred traits: gender: male (human review supports an authoritative male delivery, but identity remains uncertain: could be the older African-American general/leader or a separate one-off expository speaker, with not enough confidence to merge yet) | recent lines: Raul Menendez ignited global unrest on an unprecedented scale.\n- spk_006 => Speaker 6 | grounded confidence: 0.88 | acoustic cues: distressed younger male character voice | inferred traits: gender: male (human-reviewed as David on these segments) | recent lines: A lot of people counting on us for answers. / No more games! This ends now.\n- spk_007 => Speaker 7 | grounded confidence: 0.90 | acoustic cues: authoritative, gravelly, older military-leader cadence | inferred traits: gender: male (human-reviewed older general/leader read) | recent lines: Stop looking backwards, David. What matters is what we do next.\n- spk_008 => Speaker 8 | grounded confidence: 0.88 | acoustic cues: younger male comms/radio voice | inferred traits: gender: male (human review now effectively confirms the same younger male comms speaker across both lines; an African-American read is supported by the audible \"rahport\" pronunciation cue on \"report\", but that remains a read rather than hard fact) | recent lines: Specter one, report. / Need a sitrep.\n- spk_009 => Speaker 9 | grounded confidence: 0.86 | acoustic cues: deeper squadmate voice, grounded in-scene delivery | inferred traits: gender: male (human review read this as a deeper African-American male squadmate voice) | recent lines: This isn't real.\n- spk_010 => Speaker 10 | grounded confidence: 0.86 | acoustic cues: angry, frustrated white male squadmate delivery | inferred traits: gender: male (human review explicitly ruled out David) | recent lines: The hell it ain't!\n- spk_011 => Speaker 11 | grounded confidence: 0.92 | acoustic cues: sung heavy-metal lyric vocal | inferred traits: gender: male (Master of Puppets vocalist / music lyric, not in-scene dialogue) | recent lines: Obey your master! / Master, master\n- spk_012 => Speaker 12 | grounded confidence: 0.88 | acoustic cues: urgent adult squadmate command | inferred traits: gender: female (human review read an African-American female squadmate with tattoos) | recent lines: Pull it together, man!\n- spk_013 => Speaker 13 | grounded confidence: 0.85 | acoustic cues: white male-sounding montage voice tied to Frank Woods visual imagery | inferred traits: gender: male (identity remains uncertain; do not collapse into Raul or David) | recent lines: Killing the man is a hell of a lot easier than killing the idea.\n- spk_014 => Speaker 14 | grounded confidence: 0.85 | acoustic cues: older male voice with robotic/processed filter | inferred traits: gender: male (antagonist-coded; possibly Raul Menendez but identity intentionally left uncertain) | recent lines: You shall know fear.\n- spk_015 => Speaker 15 | grounded confidence: 0.80 | acoustic cues: mixed overlapping voices with female-primary layer | inferred traits: gender: ambiguous (male and female layers overlap; primary audible layer resembles Speaker 1) | recent lines: You were never cut out to be a Mason.\n- spk_016 => Speaker 16 | grounded confidence: 0.88 | acoustic cues: white adult male sales/promo voiceover | inferred traits: gender: male (promo VO, distinct from scene dialogue and lyrics) | recent lines: Get the Reznov challenge pack when you preorder now!\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic.\n- Do not collapse scene dialogue, comms, sung lyrics, promo VO, and overlapping hallucination blends into one speaker unless the voice clearly matches.\n- If identity is uncertain, preserve the uncertainty in notes/descriptors instead of promoting a guess to fact.\n- The mixed \"You were never cut out to be a Mason\" line is intentionally represented as an overlap-heavy speaker bucket rather than a falsely precise identity claim.",
   "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets, shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 6: A lot of people counting on us for answers.\nSpeaker 14: You shall know fear.\nSpeaker 8: Specter one, report.\nSpeaker 8: Need a sitrep.\nSpeaker 9: This isn't real.\nSpeaker 10: The hell it ain't!\nSpeaker 11: Obey your master.\nSpeaker 11: Control faster.\nSpeaker 11: Master of puppets are pulling the strings!\nSpeaker 11: Twisting your mind, smashing your dreams!\nSpeaker 11: Blinded by me, you can’t see a thing\nSpeaker 11: Just call my name ’cause I’ll hear you scream\nSpeaker 11: Master, master, where’s the dreams that I’ve been after?\nSpeaker 11: Master, master, you promised only lies!\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave daddy.\nSpeaker 13: Killing the man is a hell of a lot easier than killing the idea.\nSpeaker 15: You were never cut out to be a Mason.\nSpeaker 6: No more games! This ends now.\nSpeaker 11: Obey your master!\nSpeaker 16: Get the Reznov challenge pack when you preorder now!\nSpeaker 11: Master, master"
 }
