@@ -389,7 +389,7 @@ test('Get Music Script', async (t) => {
       const processedMusicDir = path.join(testOutputDir, 'assets', 'processed', 'music');
       ok(fs.existsSync(path.join(processedMusicDir, 'audio.mp3')));
       ok(fs.existsSync(path.join(processedMusicDir, 'chunks', 'chunk_000.mp3')));
-      assert.equal(completionOptions[0]?.attachments?.[0]?.mimeType, 'audio/mpeg');
+      assert.equal(completionOptions[0]?.attachments?.[0]?.mimeType, 'audio/mp3');
     });
 
     tNested.test('cleans processed music temp files when debug.keepProcessedIntermediates=false', async () => {

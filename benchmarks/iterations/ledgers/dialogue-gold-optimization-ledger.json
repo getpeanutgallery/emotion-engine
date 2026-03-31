@@ -1,0 +1,233 @@
+{
+  "contractVersion": "ee.benchmark-iteration-ledger/v1",
+  "laneId": "dialogue-gold-optimization",
+  "displayName": "Dialogue gold optimization",
+  "status": "active",
+  "artifact": {
+    "key": "dialogueData"
+  },
+  "fixture": {
+    "id": "cod-test"
+  },
+  "scope": {
+    "narrowConfigPath": "configs/cod-test-dialogue-benchmark-baseline.yaml",
+    "benchmarkManifestPath": "benchmarks/fixtures/cod-test/dialogue-only/benchmark.json",
+    "laneConfigPath": "benchmarks/iterations/lanes/dialogue-gold-optimization.json"
+  },
+  "targets": {
+    "accuracyRate": 0.9,
+    "benchmarkStatus": "pass",
+    "maxScoredAttemptsPerSession": 5
+  },
+  "activeBaseline": {
+    "baselineId": "baseline-2026-03-30-dialogue-only",
+    "establishedAt": "2026-03-30",
+    "source": "Task 1 baseline reconstruction",
+    "commands": [
+      "node server/run-pipeline.cjs --config configs/cod-test-dialogue-benchmark-baseline.yaml --dry-run --verbose",
+      "node server/run-pipeline.cjs --config configs/cod-test-dialogue-benchmark-baseline.yaml --verbose 2>&1 | tee .logs/cod-test-dialogue-benchmark-baseline-20260330-ee-u577.log"
+    ],
+    "result": {
+      "status": "error",
+      "accuracy": {
+        "passed": 132,
+        "failed": 179,
+        "rate": 0.42443729903536975
+      },
+      "coverage": {
+        "scoreable": 311,
+        "skipped": 1,
+        "totalTruthFields": 338,
+        "rate": 0.9201183431952663
+      },
+      "artifacts": [
+        {
+          "artifactKey": "dialogueData",
+          "status": "error",
+          "accuracyRate": 0.42443729903536975,
+          "coverageRate": 0.9201183431952663
+        }
+      ]
+    },
+    "references": {
+      "benchmarkSummaryJsonPath": "benchmarks/fixtures/cod-test/dialogue-only/_reports/benchmark-summary.json",
+      "benchmarkSummaryMdPath": "benchmarks/fixtures/cod-test/dialogue-only/_reports/benchmark-summary.md",
+      "artifactResultJsonPath": "benchmarks/fixtures/cod-test/dialogue-only/_reports/artifact-results/dialogueData.json",
+      "pipelineLogPath": ".logs/cod-test-dialogue-benchmark-baseline-20260330-ee-u577.log",
+      "outputArtifactPath": "output/cod-test-dialogue-benchmark-baseline/phase1-gather-context/dialogue-data.json"
+    },
+    "knownMismatchBuckets": [
+      {
+        "kind": "field-mismatch",
+        "pathPrefix": "dialogue_segments.text",
+        "rule": "fuzzy",
+        "count": 20,
+        "note": "Transcript text drift after early alignment."
+      },
+      {
+        "kind": "field-mismatch",
+        "pathPrefix": "dialogue_segments.speaker",
+        "rule": "exact",
+        "count": 20,
+        "note": "Speaker attribution drift after transcript shift."
+      },
+      {
+        "kind": "field-mismatch",
+        "pathPrefix": "dialogue_segments.speaker_id",
+        "rule": "exact",
+        "count": 20,
+        "note": "Speaker registry drift tracks attribution drift."
+      },
+      {
+        "kind": "field-mismatch",
+        "pathPrefix": "dialogue_segments.end",
+        "rule": "tolerant-time",
+        "count": 19,
+        "note": "Segment seam timing misalignment."
+      },
+      {
+        "kind": "field-mismatch",
+        "pathPrefix": "dialogue_segments.start",
+        "rule": "tolerant-time",
+        "count": 16,
+        "note": "Segment start offsets drift after alignment loss."
+      },
+      {
+        "kind": "field-mismatch",
+        "pathPrefix": "speaker_profiles.grounded.acoustic_descriptors[0]",
+        "rule": "fuzzy",
+        "count": 13,
+        "note": "Speaker profile descriptors diverge with speaker drift."
+      },
+      {
+        "kind": "field-mismatch",
+        "pathPrefix": "speaker_profiles.inferred_traits.traits[0]",
+        "rule": "fuzzy",
+        "count": 13,
+        "note": "Trait labels drift alongside misgrouped profiles."
+      },
+      {
+        "kind": "structural",
+        "pathPrefix": "dialogue_segments[23..29]",
+        "count": 7,
+        "note": "Missing tail segments because output produced 23 segments while truth expects 30."
+      },
+      {
+        "kind": "structural",
+        "pathPrefix": "speaker_profiles",
+        "count": 19,
+        "note": "Linked profile structure diverges after transcript/speaker drift; truth length 14 vs output length 17."
+      }
+    ]
+  },
+  "history": {
+    "sessions": [
+      {
+        "sessionId": "2026-03-30-task-2-contract-bootstrap",
+        "startedAt": "2026-03-30T19:10:00-04:00",
+        "endedAt": "2026-03-30T19:10:00-04:00",
+        "summary": "Initialized reusable lane config and durable ledger contract using the existing baseline artifacts; no scored optimization attempt executed in this session.",
+        "attempts": []
+      },
+      {
+        "sessionId": "2026-03-30-dialogue-opt-loop",
+        "startedAt": "2026-03-30T19:51:00-04:00",
+        "endedAt": "2026-03-31T00:20:00-04:00",
+        "summary": "Ran two narrow dialogue optimization attempts, rejected one after it exposed a fallback transport bug, then landed a generic MP3 MIME normalization fix that completed the lane but regressed benchmark accuracy/coverage. Stopped early to avoid thrash.",
+        "attempts": [
+          1,
+          2
+        ]
+      }
+    ],
+    "attempts": [
+      {
+        "attemptNumber": 1,
+        "sessionId": "2026-03-30-dialogue-opt-loop",
+        "proposal": "Reject full-span bracketed no-dialogue placeholders in chunked dialogue output so the target chain falls through instead of locking in false negatives.",
+        "challengeReview": {
+          "benchmarkEvidence": "Baseline drift includes a long false no-dialogue/music span and a missing lyric/promo tail.",
+          "genericityCheck": "Applies to generic chunked dialogue pipelines that receive stage-direction placeholders instead of audible words.",
+          "regressionRisk": "Medium: promoting failover can expose target-chain incompatibilities or alternate-model drift.",
+          "scopeCheck": "Narrow: one acceptance-rule change in get-dialogue plus one regression test.",
+          "successSignal": "Same narrow lane completes and improves accuracy without fixture-specific hints."
+        },
+        "decision": "rejected_after_run",
+        "filesTouched": [
+          "server/scripts/get-context/get-dialogue.cjs",
+          "test/scripts/get-dialogue.test.js"
+        ],
+        "commands": [
+          "bd update ee-nmex --status in_progress --json",
+          "node scripts/benchmark-iteration-runner.cjs inspect --lane benchmarks/iterations/lanes/dialogue-gold-optimization.json --session-id 2026-03-30-dialogue-opt-loop",
+          "node --test test/scripts/get-dialogue.test.js",
+          "node scripts/benchmark-iteration-runner.cjs scaffold --lane benchmarks/iterations/lanes/dialogue-gold-optimization.json --session-id 2026-03-30-dialogue-opt-loop --proposal \"Reject full-span bracketed no-dialogue placeholders for chunked dialogue transcription so the target chain falls through instead of locking in false negatives.\" --json",
+          "node scripts/benchmark-iteration-runner.cjs run --lane benchmarks/iterations/lanes/dialogue-gold-optimization.json --session-id 2026-03-30-dialogue-opt-loop --verbose"
+        ],
+        "result": {
+          "status": "pipeline_error",
+          "accuracyRate": null,
+          "coverageRate": null,
+          "benchmarkSummaryJsonPath": "benchmarks/fixtures/cod-test/dialogue-only/_reports/benchmark-summary.json",
+          "errorSummaryPath": "output/cod-test-dialogue-benchmark-baseline/phase1-gather-context/raw/_meta/errors.summary.json"
+        },
+        "deltaVsBaseline": {
+          "accuracyRate": null,
+          "coverageRate": null,
+          "statusChanged": null
+        },
+        "tradeoffs": "Change looked generic, but the run immediately revealed a separate transport compatibility bug in the fallback chain, so the attempt could not be fairly scored and was reverted rather than compounded.",
+        "baselineDecision": "Rejected; baseline unchanged.",
+        "nextHypothesis": "Fix MP3 attachment MIME/format normalization first so fallback-capable dialogue attempts can actually execute."
+      },
+      {
+        "attemptNumber": 2,
+        "sessionId": "2026-03-30-dialogue-opt-loop",
+        "proposal": "Normalize MP3 dialogue attachments to audio/mp3 so OpenRouter/OpenAI audio fallbacks can execute instead of fatally rejecting input_audio.format=mpeg.",
+        "challengeReview": {
+          "benchmarkEvidence": "Attempt 1 exposed a hard 400 from the dialogue target chain that blocked fair scoring.",
+          "genericityCheck": "Applies to any MP3-backed dialogue/music extraction path using OpenRouter/OpenAI audio input handling.",
+          "regressionRisk": "Medium: transport normalization can alter which downstream target answers and therefore shift benchmark behavior.",
+          "scopeCheck": "Narrow: one MIME mapping change plus focused test expectation updates.",
+          "successSignal": "Focused tests pass, the narrow lane completes, and benchmark accuracy/coverage hold or improve versus baseline."
+        },
+        "decision": "accepted_regressed",
+        "filesTouched": [
+          "server/lib/ffmpeg-config.cjs",
+          "test/lib/ffmpeg-config.test.js",
+          "test/scripts/get-dialogue.test.js",
+          "test/scripts/get-music.test.js"
+        ],
+        "commands": [
+          "node --test test/lib/ffmpeg-config.test.js test/scripts/get-dialogue.test.js test/scripts/get-music.test.js",
+          "node scripts/benchmark-iteration-runner.cjs inspect --lane benchmarks/iterations/lanes/dialogue-gold-optimization.json --session-id 2026-03-30-dialogue-opt-loop",
+          "node scripts/benchmark-iteration-runner.cjs scaffold --lane benchmarks/iterations/lanes/dialogue-gold-optimization.json --session-id 2026-03-30-dialogue-opt-loop --proposal \"Normalize MP3 dialogue attachments to audio/mp3 so OpenRouter/OpenAI audio fallbacks can execute instead of fatally rejecting input_audio.format=mpeg.\" --json",
+          "node scripts/benchmark-iteration-runner.cjs run --lane benchmarks/iterations/lanes/dialogue-gold-optimization.json --session-id 2026-03-30-dialogue-opt-loop --verbose"
+        ],
+        "result": {
+          "status": "error",
+          "accuracyRate": 0.3565217391304348,
+          "coverageRate": 0.8550185873605948,
+          "benchmarkSummaryJsonPath": "benchmarks/fixtures/cod-test/dialogue-only/_reports/benchmark-summary.json",
+          "benchmarkSummaryMdPath": "benchmarks/fixtures/cod-test/dialogue-only/_reports/benchmark-summary.md",
+          "artifactResultJsonPath": "benchmarks/fixtures/cod-test/dialogue-only/_reports/artifact-results/dialogueData.json",
+          "outputArtifactPath": "output/cod-test-dialogue-benchmark-baseline/phase1-gather-context/dialogue-data.json"
+        },
+        "deltaVsBaseline": {
+          "accuracyRate": -0.06791555990493495,
+          "coverageRate": -0.06509975583467148,
+          "statusChanged": false
+        },
+        "tradeoffs": "Generic fallback compatibility improved, but the completed run produced only 21 dialogue segments versus the truth's 30 and widened structural tail/profile drift.",
+        "baselineDecision": "Did not beat baseline; keep baseline-2026-03-30-dialogue-only as active baseline.",
+        "nextHypothesis": "Reduce rolling-handoff transcript leakage so later chunks lean on acoustic speaker registry cues without inheriting too much lexical momentum from previous chunks."
+      }
+    ]
+  },
+  "nextAttemptNumber": 3,
+  "notes": [
+    "This ledger intentionally separates durable lane state from the human-readable plan so future runner tooling can append attempts without scraping markdown.",
+    "The current baseline remains the Task 1 dialogue-only run until a future accepted attempt beats or supersedes it.",
+    "2026-03-30 session stop note: paused after one unscored blocker-reveal and one scored regression instead of exhausting the five-attempt cap without a stronger next hypothesis."
+  ]
+}

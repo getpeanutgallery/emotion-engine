@@ -115,7 +115,7 @@ test('ffmpeg-config supports explicit MP3 bitrate controls', () => {
     '/tmp/audio.mp3'
   ]);
   assert.equal(getAudioOutputExtension(config), 'mp3');
-  assert.equal(getAudioMimeType(config), 'audio/mpeg');
+  assert.equal(getAudioMimeType(config), 'audio/mp3');
 });
 
 test('ffmpeg-config requires explicit bitrate for MP3 extraction', () => {

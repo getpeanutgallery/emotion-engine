@@ -336,7 +336,7 @@ test('Get Dialogue Script', async (t) => {
 
       const processedDialogueDir = path.join(testOutputDir, 'assets', 'processed', 'dialogue');
       ok(fs.existsSync(path.join(processedDialogueDir, 'audio.mp3')));
-      assert.equal(completionOptions[0]?.attachments?.[0]?.mimeType, 'audio/mpeg');
+      assert.equal(completionOptions[0]?.attachments?.[0]?.mimeType, 'audio/mp3');
     });
 
     tNested.test('cleans processed dialogue temp files when debug.keepProcessedIntermediates=false', async () => {
@@ -1081,6 +1081,7 @@ test('Get Dialogue Script', async (t) => {
       is(result.artifacts.dialogueData.totalDuration, 10);
       ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.start >= 4));
     });
+
   });
 
   t.test('input validation', (tNested) => {

@@ -1,0 +1,84 @@
+{
+  "contractVersion": "ee.benchmark-iteration-lane/v1",
+  "laneId": "dialogue-gold-optimization",
+  "displayName": "Dialogue gold optimization",
+  "status": "active",
+  "goal": "Improve generic dialogue extraction quality against a human-reviewed gold benchmark without fixture-specific specialization.",
+  "artifact": {
+    "key": "dialogueData",
+    "family": "structured-json",
+    "scope": "single-artifact"
+  },
+  "fixture": {
+    "id": "cod-test"
+  },
+  "scope": {
+    "narrowConfigPath": "configs/cod-test-dialogue-benchmark-baseline.yaml",
+    "benchmarkManifestPath": "benchmarks/fixtures/cod-test/dialogue-only/benchmark.json",
+    "ledgerPath": "benchmarks/iterations/ledgers/dialogue-gold-optimization-ledger.json"
+  },
+  "targets": {
+    "accuracyRate": 0.9,
+    "benchmarkStatus": "pass"
+  },
+  "sessionPolicy": {
+    "maxScoredAttemptsPerSession": 5,
+    "stopConditions": [
+      "target-score-reached",
+      "session-cap-reached",
+      "two-consecutive-flat-or-noisy-attempts",
+      "overfitting-risk-rises",
+      "next-step-requires-broader-design-work",
+      "human-review-needed-before-trusting-further-optimization"
+    ]
+  },
+  "changePolicy": {
+    "allowedTouchSurfaces": [
+      "server/scripts/get-context/",
+      "server/lib/",
+      "test/",
+      "configs/cod-test-dialogue-benchmark-baseline.yaml",
+      ".plans/2026-03-30-dialogue-benchmark-iteration-against-human-gold.md",
+      "benchmarks/iterations/"
+    ],
+    "genericOnlyConstraints": [
+      "Keep dialogue prompt and product logic portable across unrelated fixtures and media sources.",
+      "Prefer fixes rooted in generic speaker continuity, acoustic evidence, abstention behavior, segment stitching, timestamp handling, and normalization.",
+      "Treat each scored attempt as one main implementation change tied to a measurable hypothesis."
+    ],
+    "forbiddenSpecialization": [
+      "Do not mention or imply Call of Duty, military context, trailer-specific lore, named characters, or benchmark-only clues in product logic or prompts.",
+      "Do not add fixture-name checks, path-specific behavior, or hardcoded transcript fragments/truth values.",
+      "Do not change truth/comparator semantics in this lane to hide product weaknesses."
+    ]
+  },
+  "logging": {
+    "requireChallengerReview": true,
+    "requireExactCommands": true,
+    "requireFilesTouched": true,
+    "requireDeltaVsBaseline": true,
+    "requireAttemptDecision": true,
+    "requireReportReferences": true,
+    "requiredArtifacts": [
+      "benchmark-summary-json",
+      "benchmark-summary-md",
+      "artifact-result-json",
+      "pipeline-log",
+      "output-artifact"
+    ],
+    "requiredAttemptFields": [
+      "attemptNumber",
+      "sessionId",
+      "proposal",
+      "challengeReview",
+      "decision",
+      "filesTouched",
+      "commands",
+      "result",
+      "deltaVsBaseline",
+      "tradeoffs",
+      "baselineDecision",
+      "nextHypothesis"
+    ]
+  }
+}

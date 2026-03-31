@@ -13,7 +13,7 @@ const VIDEO_AGGRESSIVE_REQUIRED_NUMBER_FIELDS = ['maxrate_multiplier', 'bufsize_
 const BITRATE_PATTERN = /^\d+k$/;
 const AUDIO_MIME_TYPES = {
   wav: 'audio/wav',
-  mp3: 'audio/mpeg',
+  mp3: 'audio/mp3',
   m4a: 'audio/mp4',
   mp4: 'audio/mp4',
   ogg: 'audio/ogg',

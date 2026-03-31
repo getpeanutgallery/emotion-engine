@@ -323,6 +323,24 @@ Ensure these exist and match sibling repo layout:
 
 ---
 
+## Benchmark iteration helper
+
+A small reusable runner now exists for benchmark-iteration lanes:
+
+```bash
+node scripts/benchmark-iteration-runner.cjs inspect --lane benchmarks/iterations/lanes/dialogue-gold-optimization.json
+node scripts/benchmark-iteration-runner.cjs scaffold --lane benchmarks/iterations/lanes/dialogue-gold-optimization.json --session-id 2026-03-30-dialogue-tuning --proposal "Tighten generic speaker continuity handling"
+node scripts/benchmark-iteration-runner.cjs run --lane benchmarks/iterations/lanes/dialogue-gold-optimization.json --session-id 2026-03-30-dialogue-tuning --dry-run --verbose
+```
+
+What it does in v1:
+- validates the lane, ledger, narrow config, and benchmark manifest wiring
+- surfaces baseline status/accuracy/coverage, next attempt number, and session caps
+- scaffolds a JSON attempt record using the harness contract fields
+- optionally executes the lane's narrow benchmark path and summarizes deltas versus baseline
+
+It intentionally does **not** auto-edit the ledger or launch a large autonomous tuning loop. Use it as the disciplined helper around the lane contract, not as a fully automatic optimizer.
+
 ## Docs
 
 - `docs/AI-LANE-CONTRACT.md` — universal schema / validator contract for structured AI lanes
