@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 
 const {
   normalizeThinkingLevel,
+  normalizeAdapterTarget,
   normalizeAdapterParamsForProvider,
   buildProviderOptions,
   DEFAULT_DEVELOPMENT_MAX_TOKENS,
@@ -14,7 +15,8 @@ const {
   getErrorClassification,
   getPersistedErrorInfo,
   isRetryableRuntimeError,
-  executeWithTargets
+  executeWithTargets,
+  getProviderForTarget
 } = require('../../server/lib/ai-targets.cjs');
 
 test('normalizeThinkingLevel accepts normalized levels case-insensitively', () => {
@@ -23,6 +25,31 @@ test('normalizeThinkingLevel accepts normalized levels case-insensitively', () =
   assert.equal(normalizeThinkingLevel('off'), 'off');
   assert.equal(normalizeThinkingLevel('invalid'), null);
   assert.equal(normalizeThinkingLevel(42), null);
+});
+
+test('normalizeAdapterTarget preserves adapter extras needed by media delivery overrides', () => {
+  const target = normalizeAdapterTarget({
+    adapter: {
+      name: 'openrouter',
+      model: 'xiaomi/mimo-v2-omni',
+      params: { temperature: 0.1 },
+      media: {
+        source_video: {
+          preferredMode: 'inline',
+          allowedModes: ['inline']
+        }
+      }
+    }
+  });
+
+  assert.equal(target.adapter.name, 'openrouter');
+  assert.equal(target.adapter.model, 'xiaomi/mimo-v2-omni');
+  assert.deepEqual(target.adapter.media, {
+    source_video: {
+      preferredMode: 'inline',
+      allowedModes: ['inline']
+    }
+  });
 });
 
 test('normalizeAdapterParamsForProvider maps normalized YAML params for openrouter', () => {
@@ -292,4 +319,23 @@ test('executeWithTargets retries wrapped transport aborts after metadata preserv
   assert.equal(wrappedAbort.code, 'ECONNRESET');
   assert.equal(wrappedAbort.requestId, 'req_retry_123');
   assert.equal(wrappedAbort.aiTargets.classification, 'retryable');
+});
+
+test('getProviderForTarget loads repo-local xiaomi provider via the provider registry overlay', () => {
+  const provider = getProviderForTarget({
+    configForTarget: {
+      ai: {
+        provider: 'xiaomi'
+      }
+    },
+    target: {
+      adapter: {
+        name: 'xiaomi',
+        model: 'mimo-v2-omni'
+      }
+    }
+  });
+
+  assert.equal(provider.name, 'xiaomi');
+  assert.deepEqual(provider.capabilities.media.video.url.urlTypes, ['public', 'presigned']);
 });

@@ -355,6 +355,183 @@ test('Get Music Script', async (t) => {
       is(result.artifacts.musicData.segments[0].description, 'Recovered music description');
     });
 
+    tNested.test('supports explicit whole-asset music mode with additive metadata', async () => {
+      mockDurationSeconds = 90;
+      completeImplementation = async (options) => {
+        completionPrompts.push(String(options?.prompt || ''));
+        completionOptions.push(options || {});
+        return {
+          content: JSON.stringify({
+            summary: 'Whole-asset music arc rises from ominous pulse into aggressive release.',
+            hasMusic: true,
+            globalArc: {
+              dominantMood: 'energetic',
+              energyCurve: 'rising_then_plateau_then_drop',
+              notableTransitions: [
+                { start: 32, end: 40, label: 'Percussion slams into distorted chorus' }
+              ]
+            },
+            segments: [
+              { start: 0, end: 32, type: 'music', description: 'Low ominous pulse under trailer setup.', mood: 'tense', intensity: 5 },
+              { start: 32, end: 90, type: 'music', description: 'Aggressive chorus with dense percussion.', mood: 'energetic', intensity: 9 }
+            ],
+            qualityNotes: ['Whole-pass timing is coarse but preserves the trailer-scale arc.']
+          }),
+          usage: { input: 120, output: 80 }
+        };
+      };
+
+      const config = makeMusicConfig();
+      config.settings.phase1 = {
+        music: {
+          mode: 'whole_asset',
+          max_whole_asset_duration_seconds: 180
+        }
+      };
+
+      const result = await getMusicScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config
+      });
+
+      is(completionPrompts.length, 1);
+      ok(completionPrompts[0].includes('Analyze the complete extracted audio track'));
+      is(result.artifacts.musicData.analysisMode, 'whole_asset');
+      is(result.artifacts.musicData.timingMode, 'full_timeline');
+      is(result.artifacts.musicData.provenance.usedChunking, false);
+      is(result.artifacts.musicData.provenance.wholeAssetSucceeded, true);
+      is(result.artifacts.musicData.summary, 'Whole-asset music arc rises from ominous pulse into aggressive release.');
+      is(result.artifacts.musicData.segments.length, 2);
+      is(result.artifacts.musicData.globalArc.dominantMood, 'energetic');
+    });
+
+    tNested.test('supports hybrid music mode by carrying whole-asset context into chunk refinement', async () => {
+      mockDurationSeconds = 60;
+      completeImplementation = async (options) => {
+        const prompt = String(options?.prompt || '');
+        completionPrompts.push(prompt);
+        completionOptions.push(options || {});
+
+        if (prompt.includes('Analyze the complete extracted audio track')) {
+          return {
+            content: JSON.stringify({
+              summary: 'Trailer-wide music arc climbs from menace into a sustained action sprint.',
+              hasMusic: true,
+              globalArc: {
+                dominantMood: 'tense',
+                energyCurve: 'steady_rise',
+                notableTransitions: [
+                  { start: 28, end: 35, label: 'Beat drop into combat sprint' }
+                ]
+              },
+              segments: [
+                { start: 0, end: 28, type: 'music', description: 'Menacing pulse with restrained percussion.', mood: 'tense', intensity: 5 },
+                { start: 28, end: 60, type: 'music', description: 'Driving action cue with heavier percussion.', mood: 'energetic', intensity: 8 }
+              ],
+              qualityNotes: ['Whole-pass arc used to guide chunk refinement.']
+            }),
+            usage: { input: 100, output: 60 }
+          };
+        }
+
+        if (prompt.includes('0.0s to 30.0s')) {
+          return {
+            content: JSON.stringify({
+              analysis: {
+                type: 'music',
+                description: 'Local chunk keeps the restrained menace and pulsing bass.',
+                mood: 'tense',
+                intensity: 5
+              },
+              rollingSummary: 'The score starts restrained and threatening.'
+            }),
+            usage: { input: 40, output: 30 }
+          };
+        }
+
+        return {
+          content: JSON.stringify({
+            analysis: {
+              type: 'music',
+              description: 'Local chunk confirms the heavier sprint-phase percussion.',
+              mood: 'energetic',
+              intensity: 8
+            },
+            rollingSummary: 'The score escalates into a sustained action sprint.'
+          }),
+          usage: { input: 42, output: 31 }
+        };
+      };
+
+      const config = makeMusicConfig();
+      config.settings.phase1 = {
+        music: {
+          mode: 'hybrid',
+          max_whole_asset_duration_seconds: 180,
+          analysis_window_seconds: 30
+        }
+      };
+
+      const result = await getMusicScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config
+      });
+
+      is(completionPrompts.length, 3);
+      ok(completionPrompts[1].includes('Whole-asset continuity context:'));
+      ok(completionPrompts[1].includes('Whole-asset summary: Trailer-wide music arc climbs from menace into a sustained action sprint.'));
+      is(result.artifacts.musicData.analysisMode, 'hybrid');
+      is(result.artifacts.musicData.summary, 'Trailer-wide music arc climbs from menace into a sustained action sprint.');
+      is(result.artifacts.musicData.provenance.usedChunking, true);
+      is(result.artifacts.musicData.provenance.chunkCount, 2);
+      is(result.artifacts.musicData.provenance.wholeAssetSucceeded, true);
+      is(result.artifacts.musicData.segments.length, 2);
+      is(result.artifacts.musicData.globalArc.energyCurve, 'steady_rise');
+    });
+
+    tNested.test('falls back to chunked mode when whole-asset music is over budget and fallback is enabled', async () => {
+      completeImplementation = async (options) => {
+        completionPrompts.push(String(options?.prompt || ''));
+        completionOptions.push(options || {});
+        return {
+          content: JSON.stringify({
+            analysis: {
+              type: 'music',
+              description: 'Chunked fallback analysis still finds the musical bed.',
+              mood: 'upbeat',
+              intensity: 7
+            },
+            rollingSummary: 'Chunked fallback kept the music lane alive.'
+          }),
+          usage: { input: 30, output: 20 }
+        };
+      };
+
+      const config = makeMusicConfig();
+      config.settings.audio_base64_max_bytes = 4;
+      config.settings.phase1 = {
+        music: {
+          mode: 'whole_asset',
+          fallback_to_chunked: true,
+          max_whole_asset_duration_seconds: 180
+        }
+      };
+
+      const result = await getMusicScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config
+      });
+
+      ok(completionPrompts.every((prompt) => !prompt.includes('Analyze the complete extracted audio track')));
+      is(result.artifacts.musicData.analysisMode, 'chunked');
+      is(result.artifacts.musicData.provenance.fallbackApplied, true);
+      ok(String(result.artifacts.musicData.provenance.fallbackReason).includes('base64 budget'));
+      ok(result.artifacts.musicData.qualityNotes.some((note) => note.includes('fell back to chunked mode')));
+    });
+
     tNested.test('keeps processed music temp files by default', async () => {
       const input = {
         assetPath: '/path/to/test-video.mp4',

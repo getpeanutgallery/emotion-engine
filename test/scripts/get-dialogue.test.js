@@ -250,6 +250,152 @@ test('Get Dialogue Script', async (t) => {
       property(data, 'summary');
     });
 
+    tNested.test('adds additive whole-asset analysis metadata without breaking the dialogue contract', async () => {
+      const result = await getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeDialogueConfig()
+      });
+
+      is(result.artifacts.dialogueData.analysisMode, 'whole_asset');
+      is(result.artifacts.dialogueData.timingMode, 'full_timeline');
+      is(result.artifacts.dialogueData.sourceStrategy, 'base64');
+      assert.deepEqual(result.artifacts.dialogueData.coverage, {
+        start: 0,
+        end: 10,
+        duration: 10,
+        complete: true
+      });
+      assert.deepEqual(result.artifacts.dialogueData.provenance, {
+        transportMode: 'inline',
+        usedChunking: false,
+        chunkCount: 0,
+        fallbackApplied: false
+      });
+      ok(Array.isArray(result.artifacts.dialogueData.dialogue_segments));
+      ok(Array.isArray(result.artifacts.dialogueData.speaker_profiles));
+    });
+
+    tNested.test('hybrid mode preserves whole-asset summary while refining timing through chunked stitching', async () => {
+      let chunkCallCount = 0;
+      completeImplementation = async (options) => {
+        const prompt = String(options?.prompt || '');
+        completionPrompts.push(prompt);
+        completionOptions.push(options || {});
+
+        if (prompt.includes('dialogue transcript stitcher')) {
+          return {
+            content: JSON.stringify({
+              cleanedTranscript: 'HYBRID CLEANED TRANSCRIPT',
+              auditTrail: [{ op: 'merge_boundary', chunkIndex: 0, detail: 'hybrid test' }],
+              debug: { refs: [] }
+            }),
+            usage: { input: 50, output: 60 }
+          };
+        }
+
+        if (prompt.includes('You are transcribing CHUNK')) {
+          chunkCallCount += 1;
+          return {
+            content: JSON.stringify({
+              dialogue_segments: [
+                {
+                  start: 0.5,
+                  end: 1.5,
+                  speaker: `Speaker ${chunkCallCount}`,
+                  speaker_id: `spk_${String(chunkCallCount).padStart(3, '0')}`,
+                  text: `Chunk ${chunkCallCount}`,
+                  confidence: 0.95
+                }
+              ],
+              speaker_profiles: [
+                {
+                  speaker_id: `spk_${String(chunkCallCount).padStart(3, '0')}`,
+                  label: `Speaker ${chunkCallCount}`,
+                  grounded: {
+                    confidence: 0.82,
+                    linked_segment_indexes: [0],
+                    acoustic_descriptors: []
+                  },
+                  inferred_traits: { traits: [] }
+                }
+              ],
+              summary: `Chunk ${chunkCallCount}`,
+              handoffContext: `Continue chunk ${chunkCallCount}`,
+              totalDuration: 4
+            }),
+            usage: { input: 40, output: 45 }
+          };
+        }
+
+        return {
+          content: JSON.stringify({
+            dialogue_segments: [
+              {
+                start: 0.5,
+                end: 8.5,
+                speaker: 'Speaker 1',
+                speaker_id: 'spk_001',
+                text: 'Whole asset narration',
+                confidence: 0.93
+              }
+            ],
+            speaker_profiles: [
+              {
+                speaker_id: 'spk_001',
+                label: 'Speaker 1',
+                grounded: {
+                  confidence: 0.84,
+                  linked_segment_indexes: [0],
+                  acoustic_descriptors: []
+                },
+                inferred_traits: { traits: [] }
+              }
+            ],
+            summary: 'Whole-asset summary wins',
+            totalDuration: 10
+          }),
+          usage: { input: 100, output: 120 }
+        };
+      };
+
+      const result = await getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ...makeDialogueConfig({ adapterName: 'openrouter' }),
+          settings: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).settings,
+            dialogue_forced_chunk_duration_seconds: 4,
+            phase1: {
+              dialogue: {
+                mode: 'hybrid',
+                max_whole_asset_duration_seconds: 5
+              }
+            }
+          },
+          ai: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).ai,
+            dialogue_stitch: {
+              targets: [
+                { adapter: { name: 'openrouter', model: 'test-stitch-model' } }
+              ]
+            }
+          }
+        }
+      });
+
+      is(result.artifacts.dialogueData.analysisMode, 'hybrid');
+      is(result.artifacts.dialogueData.timingMode, 'chunk_local');
+      is(result.artifacts.dialogueData.summary, 'Whole-asset summary wins');
+      is(result.artifacts.dialogueData.provenance.usedChunking, true);
+      ok(result.artifacts.dialogueData.provenance.chunkCount >= 2);
+      ok(Array.isArray(result.artifacts.dialogueData.qualityNotes));
+      ok(result.artifacts.dialogueData.qualityNotes[0].includes('Whole-asset summary/context was preserved'));
+      ok(completionPrompts.some((prompt) => prompt.includes('You are transcribing CHUNK')));
+      ok(completionPrompts.some((prompt) => prompt.includes('dialogue transcript stitcher')));
+    });
+
     tNested.test('selects provider from YAML config.ai.provider', async () => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
@@ -410,6 +556,43 @@ test('Get Dialogue Script', async (t) => {
 
       const metaSummary = JSON.parse(fs.readFileSync(metaSummaryPath, 'utf8'));
       is(metaSummary.phase, 'phase1-gather-context');
+    });
+
+    tNested.test('persists aiTargets diagnostics into raw capture artifacts on parse-stage failure', async () => {
+      completeImplementation = async (options) => {
+        completionPrompts.push(String(options?.prompt || ''));
+        completionOptions.push(options || {});
+        return {
+          content: 'not valid json',
+          usage: { input: 22, output: 5 }
+        };
+      };
+
+      await assert.rejects(() => getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ...makeDialogueConfig({ adapterName: 'openrouter' }),
+          debug: { captureRaw: true, keepProcessedIntermediates: false }
+        }
+      }), /invalid_output/i);
+
+      const aiPointerPath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ai', 'dialogue-transcription.json');
+      const pointer = JSON.parse(fs.readFileSync(aiPointerPath, 'utf8'));
+      const attemptCapturePath = path.join(testOutputDir, 'phase1-gather-context', 'raw', 'ai', pointer.target.file);
+      const attemptCapture = JSON.parse(fs.readFileSync(attemptCapturePath, 'utf8'));
+
+      is(attemptCapture.errorClassification, 'retryable');
+      property(attemptCapture, 'aiTargets');
+      is(attemptCapture.aiTargets.group, 'parse');
+      is(attemptCapture.aiTargets.raw, 'not valid json');
+      is(attemptCapture.aiTargets.completion.content, 'not valid json');
+      ok(typeof attemptCapture.aiTargets.parseError === 'string' && attemptCapture.aiTargets.parseError.length > 0);
+      property(attemptCapture, 'rawResponse');
+      is(attemptCapture.rawResponse.content, 'not valid json');
+      property(attemptCapture, 'toolLoop');
+      ok(Array.isArray(attemptCapture.aiTargets.toolLoop.history));
+      ok(attemptCapture.aiTargets.toolLoop.history.length > 0);
     });
 
     tNested.test('chunks + runs required stitcher when Base64 budget is exceeded', async () => {

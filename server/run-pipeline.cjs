@@ -127,7 +127,7 @@ async function runPipeline(configPath, options = {}) {
 
   const keysToHydrate = [];
   if (phase1Scripts.length === 0) {
-    keysToHydrate.push('dialogueData', 'musicData');
+    keysToHydrate.push('dialogueData', 'musicData', 'visualIdentityData');
   }
   if (phase2Scripts.length === 0) {
     keysToHydrate.push('chunkAnalysis');

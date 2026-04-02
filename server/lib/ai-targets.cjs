@@ -16,7 +16,7 @@
  *  - Capability mismatch errors fail fast (no retry, no failover).
  */
 
-const aiProviderInterface = require('ai-providers/ai-provider-interface.js');
+const providerRegistry = require('./provider-registry.cjs');
 
 const NORMALIZED_THINKING_LEVELS = new Set(['off', 'low', 'medium', 'high']);
 const DEFAULT_DEVELOPMENT_MAX_TOKENS = 25000;
@@ -232,11 +232,13 @@ function normalizeAdapterTarget(target) {
     throw new Error('AI targets: target.adapter.model must be a non-empty string');
   }
 
+  const { name: _ignoredName, model: _ignoredModel, ...adapterExtras } = adapter || {};
   const params = adapter?.params;
 
   return {
     ...target,
     adapter: {
+      ...adapterExtras,
       name: name.trim(),
       model: model.trim(),
       ...(params !== undefined ? { params } : {})
@@ -338,18 +340,27 @@ function buildProviderOptions({ adapter, defaults = {} } = {}) {
 }
 
 function getProviderForTarget({ configForTarget, target }) {
-  const adapterName = target?.adapter?.name;
+  const adapterName = target?.adapter?.name || configForTarget?.ai?.provider;
 
-  // Preferred: provider determined from config (applyTargetToConfig sets ai.provider).
-  if (typeof aiProviderInterface.getProviderFromConfig === 'function') {
-    return aiProviderInterface.getProviderFromConfig(configForTarget);
+  if (configForTarget && typeof providerRegistry.getProviderFromConfig === 'function') {
+    try {
+      return providerRegistry.getProviderFromConfig(configForTarget);
+    } catch (error) {
+      if (!adapterName) {
+        throw error;
+      }
+    }
   }
 
-  if (typeof aiProviderInterface.loadProvider === 'function') {
-    return aiProviderInterface.loadProvider(adapterName);
+  if (!adapterName) {
+    throw new Error('AI targets: target adapter name is required to load a provider');
   }
 
-  throw new Error('AI targets: ai-provider-interface missing loadProvider/getProviderFromConfig');
+  if (typeof providerRegistry.loadProvider === 'function') {
+    return providerRegistry.loadProvider(adapterName);
+  }
+
+  throw new Error('AI targets: provider registry is missing loadProvider/getProviderFromConfig');
 }
 
 function createRetryableError(message, extra = {}) {

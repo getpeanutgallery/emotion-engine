@@ -11,6 +11,7 @@
  * Fallback source (legacy / older runs):
  * - output/<run>/phase1-gather-context/dialogue-data.json
  * - output/<run>/phase1-gather-context/music-data.json
+ * - output/<run>/phase1-gather-context/visual-identity-data.json
  * - output/<run>/phase2-process/chunk-analysis.json
  */
 
@@ -25,7 +26,9 @@ const {
 const DEFAULT_LOCATIONS = {
   dialogueData: ['phase1-gather-context', 'dialogue-data.json'],
   musicData: ['phase1-gather-context', 'music-data.json'],
+  visualIdentityData: ['phase1-gather-context', 'visual-identity-data.json'],
   chunkAnalysis: ['phase2-process', 'chunk-analysis.json'],
+  wholeVideoAnalysis: ['phase2-process', 'whole-video-analysis.json'],
 };
 
 function safeReadJson(filePath) {

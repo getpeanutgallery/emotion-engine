@@ -41,6 +41,11 @@ const {
   executeRecommendationValidatorTool,
   parseRecommendationToolCallEnvelope
 } = require('../../lib/recommendation-validator-tool.cjs');
+const {
+  resolveProviderRuntimeConfigForTarget,
+  ensureRuntimeAuthForDomain,
+  buildProviderOptionDefaults
+} = require('../../lib/provider-runtime-config.cjs');
 
 const PHASE_KEY = 'phase3-report';
 const SCRIPT_ID = 'recommendation';
@@ -213,7 +218,8 @@ async function executeRecommendationToolLoop({
   toolLoopConfig,
   promptRef,
   events,
-  ctx
+  ctx,
+  runtimeConfig
 }) {
   const toolContract = buildRecommendationValidatorToolContract();
   const history = [];
@@ -240,12 +246,13 @@ async function executeRecommendationToolLoop({
     const completion = await provider.complete({
       prompt,
       model: adapter?.model,
-      apiKey: process.env.AI_API_KEY,
+      apiKey: runtimeConfig?.apiKey,
+      baseUrl: runtimeConfig?.baseUrl,
       options: buildProviderOptions({
         adapter,
-        defaults: {
+        defaults: buildProviderOptionDefaults(runtimeConfig, {
           temperature: 0.2
-        }
+        })
       })
     });
 
@@ -494,10 +501,12 @@ async function run(input) {
 
   const replayMode = isReplayMode();
 
-  if (!replayMode && !process.env.AI_API_KEY) {
-    console.error('   ❌ ERROR: AI_API_KEY environment variable is not set');
-    throw new Error('AI_API_KEY is required for recommendations unless DIGITAL_TWIN_MODE=replay');
-  }
+  ensureRuntimeAuthForDomain({
+    config,
+    domain: 'recommendation',
+    replayMode,
+    prefix: 'Recommendation'
+  });
 
   const configForRecommendation = config || {};
   const retryConfig = getRetryConfig(configForRecommendation);
@@ -630,6 +639,10 @@ async function run(input) {
           configForTarget: ctx.configForTarget,
           target: ctx.target
         });
+        const runtimeConfig = resolveProviderRuntimeConfigForTarget({
+          configForTarget: ctx.configForTarget,
+          target: ctx.target
+        });
 
         const providerCallStart = Date.now();
         events.emit({
@@ -653,7 +666,8 @@ async function run(input) {
             toolLoopConfig,
             promptRef,
             events,
-            ctx
+            ctx,
+            runtimeConfig
           });
 
           events.emit({

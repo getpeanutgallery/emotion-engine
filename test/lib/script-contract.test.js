@@ -214,6 +214,48 @@ test('script-contract - createFailureResult persists next-action and lineage for
   assert.strictEqual(toolWrapperFailure.envelope.recoveryPolicy.nextAction.target, 'retry-after-path-normalization');
 });
 
+test('script-contract - createFailureResult persists aiTargets diagnostics for structured-output failures', () => {
+  const outputDir = makeTempDir('ee-script-ai-targets-');
+  const failure = createFailureResult({
+    phase: 'phase1-gather-context',
+    script: 'get-dialogue',
+    config: { name: 'test-run' },
+    outputDir,
+    error: Object.assign(new Error('invalid_output: malformed dialogue json'), {
+      aiTargets: {
+        classification: 'retryable',
+        group: 'parse',
+        raw: 'not-json',
+        extracted: '{"bad":',
+        parseError: 'Unexpected end of JSON input',
+        validationSummary: 'dialogue transcription output was invalid',
+        validationErrors: ['missing dialogue_segments'],
+        completion: { content: 'not-json', usage: { input: 12, output: 3 } },
+        toolLoop: { turns: 1 },
+        promptRef: { file: '_meta/ai/_prompts/dialogue.json', sha256: 'abc123' },
+        attempts: 1,
+        domain: 'dialogue',
+        targetIndex: 0,
+        targetCount: 1,
+        adapter: { name: 'openrouter', model: 'mistralai/mimo' }
+      }
+    }),
+    previousExecution: null,
+    declaration: lookupDeterministicRecoveryDeclaration({ scriptId: 'get-dialogue' }),
+    startedAt: new Date('2026-03-14T18:00:00.000Z'),
+    completedAt: new Date('2026-03-14T18:00:02.000Z')
+  });
+
+  assert.strictEqual(failure.envelope.diagnostics.provider, 'openrouter');
+  assert.strictEqual(failure.envelope.diagnostics.structured.parseError, 'Unexpected end of JSON input');
+  assert.strictEqual(failure.envelope.diagnostics.structured.validationSummary, 'dialogue transcription output was invalid');
+  assert.deepStrictEqual(failure.envelope.diagnostics.structured.validationErrors, ['missing dialogue_segments']);
+  assert.strictEqual(failure.envelope.diagnostics.aiTargets.group, 'parse');
+  assert.strictEqual(failure.envelope.diagnostics.aiTargets.raw, 'not-json');
+  assert.strictEqual(failure.envelope.diagnostics.aiTargets.completion.content, 'not-json');
+  assert.strictEqual(failure.envelope.diagnostics.aiTargets.toolLoop.turns, 1);
+});
+
 test('script-contract - createFailureResult advances eligible AI lanes to ai_recovery after applicable deterministic retries are exhausted', () => {
   const outputDir = makeTempDir('ee-script-ai-recovery-');
   const failure = createFailureResult({

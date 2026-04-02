@@ -72,8 +72,10 @@ const DEFAULT_RECOVERY_CONFIG = Object.freeze({
 const PRIMARY_ARTIFACT_LOCATIONS = Object.freeze({
   dialogueData: 'phase1-gather-context/dialogue-data.json',
   musicData: 'phase1-gather-context/music-data.json',
+  visualIdentityData: 'phase1-gather-context/visual-identity-data.json',
   metadataData: 'phase1-gather-context/metadata.json',
   chunkAnalysis: 'phase2-process/chunk-analysis.json',
+  wholeVideoAnalysis: 'phase2-process/whole-video-analysis.json',
   metricsData: 'phase3-report/metrics/metrics.json',
   recommendationData: 'phase3-report/recommendation/recommendation.json',
   emotionalAnalysis: 'phase3-report/emotional-analysis/emotional-analysis.json',
@@ -115,7 +117,9 @@ const SCRIPT_FAMILY_DECLARATIONS = Object.freeze({
 const SCRIPT_FAMILY_HINTS = Object.freeze({
   'get-dialogue': 'ai.structured-output.v1',
   'get-music': 'ai.structured-output.v1',
+  'get-visual-identity': 'ai.structured-output.v1',
   'video-chunks': 'ai.structured-output.v1',
+  'whole-video-mimo': 'ai.structured-output.v1',
   'recommendation': 'ai.structured-output.v1',
   metrics: 'computed.report.v1',
   'emotional-analysis': 'computed.report.v1',
@@ -431,6 +435,34 @@ function createFailureCode(scriptId, category, error) {
   return `${normalizedScript}_${normalizedCategory}`;
 }
 
+function buildAiTargetsDiagnostics(error) {
+  const aiTargets = error?.aiTargets;
+  if (!isPlainObject(aiTargets)) return null;
+
+  const diagnostics = {
+    classification: aiTargets.classification || null,
+    group: aiTargets.group || null,
+    raw: aiTargets.raw ?? null,
+    extracted: aiTargets.extracted ?? null,
+    parseError: aiTargets.parseError ?? null,
+    validationErrors: Array.isArray(aiTargets.validationErrors) ? aiTargets.validationErrors : [],
+    validationSummary: aiTargets.validationSummary || null,
+    completion: aiTargets.completion ?? null,
+    toolLoop: aiTargets.toolLoop ?? null,
+    promptRef: aiTargets.promptRef ?? null,
+    attempts: Number.isInteger(aiTargets.attempts) ? aiTargets.attempts : null,
+    domain: aiTargets.domain || null,
+    targetIndex: Number.isInteger(aiTargets.targetIndex) ? aiTargets.targetIndex : null,
+    targetCount: Number.isInteger(aiTargets.targetCount) ? aiTargets.targetCount : null,
+    adapter: aiTargets.adapter ?? null
+  };
+
+  return Object.values(diagnostics).some((value) => {
+    if (Array.isArray(value)) return value.length > 0;
+    return value !== null;
+  }) ? cloneJson(diagnostics) : null;
+}
+
 function classifyFailure(error, scriptId) {
   const message = String(error?.message || error || 'Unknown error');
   const lower = message.toLowerCase();
@@ -473,7 +505,9 @@ function classifyFailure(error, scriptId) {
 function resolveConfiguredAiDomain(scriptId) {
   if (scriptId === 'get-dialogue') return 'dialogue';
   if (scriptId === 'get-music') return 'music';
+  if (scriptId === 'get-visual-identity') return 'video_identity';
   if (scriptId === 'video-chunks') return 'video';
+  if (scriptId === 'whole-video-mimo') return 'video';
   if (scriptId === 'recommendation') return 'recommendation';
   return null;
 }
@@ -700,15 +734,19 @@ function buildFailureEnvelope({ phase, script, config, outputDir, runAttempt, st
   const aiRecoveryState = buildAiRecoveryState({ failure, previousExecution, recoveryConfig });
   const failureCountsByCategory = buildFailureCounts(previousExecution, failure.category);
   const nextAction = determineNextAction({ failure, deterministicState, aiRecoveryState, failureCountsByCategory, recoveryConfig });
+  const aiTargetsDiagnostics = buildAiTargetsDiagnostics(error);
   const diagnostics = {
     summary: failure.message,
     stage: error?.stage || 'script.run',
-    provider: error?.provider || null,
+    provider: error?.provider || aiTargetsDiagnostics?.adapter?.name || null,
     structured: {
-      parseError: error?.parseError || null,
-      validationErrors: Array.isArray(error?.validationErrors) ? error.validationErrors : [],
-      validationSummary: error?.validationSummary || null
+      parseError: error?.parseError || aiTargetsDiagnostics?.parseError || null,
+      validationErrors: Array.isArray(error?.validationErrors)
+        ? error.validationErrors
+        : (aiTargetsDiagnostics?.validationErrors || []),
+      validationSummary: error?.validationSummary || aiTargetsDiagnostics?.validationSummary || null
     },
+    ...(aiTargetsDiagnostics ? { aiTargets: aiTargetsDiagnostics } : {}),
     rawCaptureRefs: collectDefaultCaptureRefs({ outputDir, phase, payload: error?.payload || null, diagnostics: error?.diagnostics || null }),
     stack: error?.stack || null
   };

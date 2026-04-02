@@ -14,6 +14,7 @@ const yaml = require('js-yaml');
 const { validateRecoveryConfig } = require('./script-contract.cjs');
 const { validateFfmpegSettings } = require('./ffmpeg-config.cjs');
 const { resolveBenchmarkConfig } = require('./benchmark-runner.cjs');
+const { validateMediaDeliveryConfig } = require('./media-delivery.cjs');
 
 /**
  * Load configuration from file (YAML or JSON)
@@ -216,6 +217,10 @@ function validateConfig(config, options = {}) {
       validateTargets('dialogue_stitch');
     }
 
+    if (config.ai?.video_identity !== undefined) {
+      validateTargets('video_identity');
+    }
+
     // Recommendation is phase3-only. If the recommendation report script is present, require explicit ai.recommendation.targets.
     const reportScripts = getScriptsFromPhase(config.report);
     const usesRecommendationScript = reportScripts.some((s) => {
@@ -232,6 +237,7 @@ function validateConfig(config, options = {}) {
   }
 
   errors.push(...validateFfmpegSettings(config));
+  errors.push(...validateMediaDeliveryConfig(config));
 
   // Validate recovery configuration when provided
   const recoveryValidation = validateRecoveryConfig(config.recovery);

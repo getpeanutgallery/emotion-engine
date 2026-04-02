@@ -98,6 +98,52 @@ test('dialogue transcription validator preserves inferred traits separately from
   assert.equal(Object.hasOwn(result.normalizedValue.speaker_profiles[0].grounded, 'confidence_abstained'), false);
 });
 
+test('dialogue transcription validator preserves additive analysis metadata', () => {
+  const result = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hello', confidence: 0.9 }
+      ],
+      summary: 'Whole-asset summary',
+      totalDuration: 1,
+      analysisMode: 'whole_asset',
+      timingMode: 'full_timeline',
+      sourceStrategy: 'base64',
+      coverage: {
+        start: 0,
+        end: 1,
+        duration: 1,
+        complete: true
+      },
+      provenance: {
+        transportMode: 'inline',
+        usedChunking: false,
+        chunkCount: 0,
+        fallbackApplied: false
+      },
+      qualityNotes: ['Whole-asset timing preserved full coverage.']
+    }
+  });
+
+  assert.equal(result.valid, true);
+  assert.equal(result.normalizedValue.analysisMode, 'whole_asset');
+  assert.equal(result.normalizedValue.timingMode, 'full_timeline');
+  assert.equal(result.normalizedValue.sourceStrategy, 'base64');
+  assert.deepEqual(result.normalizedValue.coverage, {
+    start: 0,
+    end: 1,
+    duration: 1,
+    complete: true
+  });
+  assert.deepEqual(result.normalizedValue.provenance, {
+    transportMode: 'inline',
+    usedChunking: false,
+    chunkCount: 0,
+    fallbackApplied: false
+  });
+  assert.deepEqual(result.normalizedValue.qualityNotes, ['Whole-asset timing preserved full coverage.']);
+});
+
 test('dialogue transcription validator merges duplicate speaker profiles by speaker_id and preserves the strongest stable label', () => {
   const result = executeDialogueTranscriptionValidatorTool({
     transcription: {

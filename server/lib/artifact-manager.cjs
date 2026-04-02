@@ -266,10 +266,10 @@ function validateArtifacts(artifacts, requiredPaths) {
  */
 function getPhaseForArtifact(key) {
   // Phase 1: Gather Context
-  const phase1Artifacts = ['dialogueData', 'musicData'];
+  const phase1Artifacts = ['dialogueData', 'musicData', 'visualIdentityData'];
   
   // Phase 2: Process
-  const phase2Artifacts = ['chunkAnalysis'];
+  const phase2Artifacts = ['chunkAnalysis', 'wholeVideoAnalysis'];
   
   // Phase 3: Report
   const phase3Artifacts = ['metricsData', 'recommendationData', 'emotionalAnalysis', 'summaryData'];

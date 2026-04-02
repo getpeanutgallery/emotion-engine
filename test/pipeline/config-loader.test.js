@@ -634,6 +634,31 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
     const result = validateConfig(config);
     assert.strictEqual(result.valid, true);
   });
+
+  await t.test('should allow optional ai.video_identity targets when configured', () => {
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai: {
+        ...makeAiConfig(),
+        video_identity: {
+          targets: [
+            {
+              adapter: {
+                name: 'openrouter',
+                model: 'xiaomi/mimo-v2-omni',
+                params: { maxTokens: 8000 }
+              }
+            }
+          ]
+        }
+      },
+      settings: makeFfmpegSettings(),
+      gather_context: ['server/scripts/get-context/get-visual-identity.cjs']
+    };
+
+    const result = validateConfig(config);
+    assert.strictEqual(result.valid, true);
+  });
 });
 
 test('Config Loader - getScriptsFromPhase', async (t) => {

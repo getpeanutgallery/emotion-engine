@@ -22,7 +22,20 @@ npm test
 
 ### Required for live calls
 
-- `AI_API_KEY` — API key used by the configured provider adapter(s)
+- `AI_API_KEY` — canonical fallback API key used by the configured provider adapter(s)
+
+### Provider-specific overrides
+
+These are preferred when mixing providers in one repo/runtime:
+
+- `OPENROUTER_API_KEY`
+- `OPENAI_API_KEY`
+- `ANTHROPIC_API_KEY`
+- `GEMINI_API_KEY`
+- `XIAOMI_API_KEY`
+- `XIAOMI_BASE_URL` — defaults to `https://api.xiaomimimo.com/v1`
+- `XIAOMI_TIMEOUT_MS`
+- `XIAOMI_AUTH_MODE` — `bearer` or `api-key`
 
 ### Digital twin (record/replay)
 

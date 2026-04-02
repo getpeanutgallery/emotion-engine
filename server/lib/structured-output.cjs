@@ -472,6 +472,129 @@ function normalizeDialogueSpeakerContract(dialogue_segments, speaker_profiles = 
   };
 }
 
+const DIALOGUE_ANALYSIS_MODES = new Set(['chunked', 'whole_asset', 'hybrid']);
+const DIALOGUE_TIMING_MODES = new Set(['chunk_local', 'full_timeline']);
+const DIALOGUE_SOURCE_STRATEGIES = new Set(['base64', 'public_url', 'file_handle', 'mixed']);
+const DIALOGUE_TRANSPORT_MODES = new Set(['inline', 'remote_url']);
+
+function validateOptionalEnumString(value, allowedValues, path, label, errors) {
+  if (value === undefined || value === null || value === '') return null;
+  const normalized = validateNonEmptyString(value, path, label, errors);
+  if (!normalized) return null;
+  if (!allowedValues.has(normalized)) {
+    pushError(errors, path, 'invalid_value', `${label} must be one of: ${Array.from(allowedValues).join(', ')}.`);
+    return null;
+  }
+  return normalized;
+}
+
+function validateDialogueCoverage(input, errors, path = '$.coverage') {
+  if (input === undefined || input === null) return null;
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    pushError(errors, path, 'invalid_type', 'coverage must be an object.');
+    return null;
+  }
+
+  const start = validateFiniteNumber(input.start, `${path}.start`, 'coverage.start', errors, { min: 0 });
+  const end = validateFiniteNumber(input.end, `${path}.end`, 'coverage.end', errors, { min: 0 });
+  const duration = validateFiniteNumber(input.duration, `${path}.duration`, 'coverage.duration', errors, { min: 0 });
+  const complete = validateBoolean(input.complete, `${path}.complete`, 'coverage.complete', errors);
+
+  return {
+    start,
+    end,
+    duration,
+    complete
+  };
+}
+
+function validateDialogueProvenance(input, errors, path = '$.provenance') {
+  if (input === undefined || input === null) return null;
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    pushError(errors, path, 'invalid_type', 'provenance must be an object.');
+    return null;
+  }
+
+  const transportMode = validateOptionalEnumString(
+    input.transportMode,
+    DIALOGUE_TRANSPORT_MODES,
+    `${path}.transportMode`,
+    'provenance.transportMode',
+    errors
+  );
+  const usedChunking = validateOptionalBoolean(input.usedChunking, `${path}.usedChunking`, 'provenance.usedChunking', errors);
+  const chunkCountRaw = validateOptionalFiniteNumber(input.chunkCount, `${path}.chunkCount`, 'provenance.chunkCount', errors, { min: 0 });
+  const fallbackApplied = validateOptionalBoolean(input.fallbackApplied, `${path}.fallbackApplied`, 'provenance.fallbackApplied', errors);
+  const fallbackReason = validateOptionalNonEmptyString(input.fallbackReason, `${path}.fallbackReason`, 'provenance.fallbackReason', errors);
+
+  const provenance = {
+    ...(transportMode ? { transportMode } : {}),
+    ...(usedChunking !== null ? { usedChunking } : {}),
+    ...(chunkCountRaw !== null ? { chunkCount: Math.trunc(chunkCountRaw) } : {}),
+    ...(fallbackApplied !== null ? { fallbackApplied } : {}),
+    ...(fallbackReason ? { fallbackReason } : {})
+  };
+
+  const chunkPlan = input.chunkPlan;
+  if (chunkPlan !== undefined && chunkPlan !== null) {
+    if (!chunkPlan || typeof chunkPlan !== 'object' || Array.isArray(chunkPlan)) {
+      pushError(errors, `${path}.chunkPlan`, 'invalid_type', 'provenance.chunkPlan must be an object.');
+    } else {
+      const reason = validateOptionalNonEmptyString(chunkPlan.reason, `${path}.chunkPlan.reason`, 'provenance.chunkPlan.reason', errors);
+      const recommendedChunkDurationSeconds = validateOptionalFiniteNumber(
+        chunkPlan.recommendedChunkDurationSeconds,
+        `${path}.chunkPlan.recommendedChunkDurationSeconds`,
+        'provenance.chunkPlan.recommendedChunkDurationSeconds',
+        errors,
+        { min: 0 }
+      );
+
+      let openingArbitration = null;
+      if (chunkPlan.openingArbitration !== undefined && chunkPlan.openingArbitration !== null) {
+        if (!chunkPlan.openingArbitration || typeof chunkPlan.openingArbitration !== 'object' || Array.isArray(chunkPlan.openingArbitration)) {
+          pushError(errors, `${path}.chunkPlan.openingArbitration`, 'invalid_type', 'provenance.chunkPlan.openingArbitration must be an object.');
+        } else {
+          const coverageSeconds = validateOptionalFiniteNumber(
+            chunkPlan.openingArbitration.coverageSeconds,
+            `${path}.chunkPlan.openingArbitration.coverageSeconds`,
+            'provenance.chunkPlan.openingArbitration.coverageSeconds',
+            errors,
+            { min: 0 }
+          );
+          const chunkDurationSeconds = validateOptionalFiniteNumber(
+            chunkPlan.openingArbitration.chunkDurationSeconds,
+            `${path}.chunkPlan.openingArbitration.chunkDurationSeconds`,
+            'provenance.chunkPlan.openingArbitration.chunkDurationSeconds',
+            errors,
+            { min: 0 }
+          );
+          openingArbitration = {
+            ...(coverageSeconds !== null ? { coverageSeconds } : {}),
+            ...(chunkDurationSeconds !== null ? { chunkDurationSeconds } : {})
+          };
+        }
+      }
+
+      provenance.chunkPlan = {
+        ...(reason ? { reason } : {}),
+        ...(recommendedChunkDurationSeconds !== null ? { recommendedChunkDurationSeconds } : {}),
+        ...(openingArbitration && Object.keys(openingArbitration).length > 0 ? { openingArbitration } : {})
+      };
+    }
+  }
+
+  return provenance;
+}
+
+function validateDialogueQualityNotes(input, errors, path = '$.qualityNotes') {
+  if (input === undefined || input === null) return null;
+  if (!Array.isArray(input)) {
+    pushError(errors, path, 'required_array', 'qualityNotes must be an array.');
+    return null;
+  }
+
+  return input.map((entry, index) => validateNonEmptyString(entry, `${path}[${index}]`, 'quality note', errors)).filter(Boolean);
+}
 function validateDialogueTranscriptionObject(input, { requireHandoff = false } = {}) {
   const errors = [];
 
@@ -489,6 +612,12 @@ function validateDialogueTranscriptionObject(input, { requireHandoff = false } =
   const speaker_profiles = validateSpeakerProfiles(input.speaker_profiles ?? input.speakerProfiles, errors);
   const summary = validateNonEmptyString(input.summary, '$.summary', 'summary', errors);
   const totalDuration = validateFiniteNumber(input.totalDuration, '$.totalDuration', 'totalDuration', errors, { min: 0 });
+  const analysisMode = validateOptionalEnumString(input.analysisMode, DIALOGUE_ANALYSIS_MODES, '$.analysisMode', 'analysisMode', errors);
+  const timingMode = validateOptionalEnumString(input.timingMode, DIALOGUE_TIMING_MODES, '$.timingMode', 'timingMode', errors);
+  const sourceStrategy = validateOptionalEnumString(input.sourceStrategy, DIALOGUE_SOURCE_STRATEGIES, '$.sourceStrategy', 'sourceStrategy', errors);
+  const coverage = validateDialogueCoverage(input.coverage, errors);
+  const provenance = validateDialogueProvenance(input.provenance, errors);
+  const qualityNotes = validateDialogueQualityNotes(input.qualityNotes, errors);
 
   const handoffValue = input.handoffContext ?? input.handoff;
   let handoffContext = null;
@@ -510,15 +639,23 @@ function validateDialogueTranscriptionObject(input, { requireHandoff = false } =
 
   const normalizedSpeakerContract = normalizeDialogueSpeakerContract(dialogue_segments, speaker_profiles);
 
+  const normalizedValue = {
+    dialogue_segments: normalizedSpeakerContract.dialogue_segments,
+    speaker_profiles: normalizedSpeakerContract.speaker_profiles,
+    summary,
+    totalDuration,
+    handoffContext: handoffContext || null,
+    ...(analysisMode ? { analysisMode } : {}),
+    ...(timingMode ? { timingMode } : {}),
+    ...(sourceStrategy ? { sourceStrategy } : {}),
+    ...(coverage ? { coverage } : {}),
+    ...(provenance ? { provenance } : {}),
+    ...(qualityNotes ? { qualityNotes } : {})
+  };
+
   return {
     ok: true,
-    value: {
-      dialogue_segments: normalizedSpeakerContract.dialogue_segments,
-      speaker_profiles: normalizedSpeakerContract.speaker_profiles,
-      summary,
-      totalDuration,
-      handoffContext: handoffContext || null
-    },
+    value: normalizedValue,
     errors: [],
     summary: null,
     meta: { stage: 'validation' }

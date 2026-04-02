@@ -36,7 +36,8 @@ async function run(input) {
       chunkAnalysis: artifacts.chunkAnalysis || null,
       computedTimeline,
       dialogueData: artifacts.dialogueData || null,
-      musicData: artifacts.musicData || null
+      musicData: artifacts.musicData || null,
+      visualIdentityData: artifacts.visualIdentityData || null
     }
   };
 

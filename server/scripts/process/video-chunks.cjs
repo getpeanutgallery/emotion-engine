@@ -23,6 +23,7 @@ const { shouldKeepProcessedIntermediates } = require('../../lib/processed-assets
 const { shouldCaptureRaw, getRawPhaseDir, sanitizeRawCaptureValue, writeRawJson } = require('../../lib/raw-capture.cjs');
 const { ensureToolVersionsCaptured } = require('../../lib/tool-versions.cjs');
 const { ffmpegPath, ffprobePath } = require('../../lib/ffmpeg-path.cjs');
+const { resolveVideoContextForTarget } = require('../../lib/media-delivery.cjs');
 const {
   executeWithTargets,
   createRetryableError,
@@ -34,6 +35,10 @@ const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
 const { applyFailureMetadata } = require('../../lib/tool-wrapper-contract.cjs');
+const {
+  resolveProviderRuntimeConfigForTarget,
+  ensureRuntimeAuthForDomain
+} = require('../../lib/provider-runtime-config.cjs');
 
 const execAsync = promisify(exec);
 const ENGINE_REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
@@ -284,11 +289,12 @@ async function run(input) {
 
   const replayMode = isReplayMode();
 
-  // Verify AI_API_KEY is available for live calls only
-  if (!replayMode && !process.env.AI_API_KEY) {
-    console.error('   ❌ ERROR: AI_API_KEY environment variable is not set');
-    throw new Error('AI_API_KEY is required for chunk analysis unless DIGITAL_TWIN_MODE=replay');
-  }
+  ensureRuntimeAuthForDomain({
+    config,
+    domain: 'video',
+    replayMode,
+    prefix: 'VideoChunks'
+  });
 
   // Ensure output directory exists
   fs.mkdirSync(outputDir, { recursive: true });
@@ -717,11 +723,20 @@ async function run(input) {
 
               const analyzeInput = {
                 ...analyzeInputBase,
+                videoContext: resolveVideoContextForTarget({
+                  config: ctx.configForTarget,
+                  target: ctx.target,
+                  videoContext: analyzeInputBase.videoContext,
+                }),
                 toolVariables: toolVariablesForAttempt,
                 config: ctx.configForTarget
               };
 
               const provider = getProviderForTarget({
+                configForTarget: ctx.configForTarget,
+                target: ctx.target
+              });
+              const runtimeConfig = resolveProviderRuntimeConfigForTarget({
                 configForTarget: ctx.configForTarget,
                 target: ctx.target
               });
@@ -763,7 +778,7 @@ async function run(input) {
                   promptRef,
                   events,
                   ctx,
-                  apiKey: process.env.AI_API_KEY,
+                  apiKey: runtimeConfig?.apiKey,
                   config: ctx.configForTarget
                 });
 

@@ -431,6 +431,121 @@ test('Video Chunks Script', async (t) => {
       is(analyzeCalls[0].videoContext.transferStrategy, 'base64');
     });
 
+    await tNested.test('resolves staged public video URLs for OpenRouter targets via shared media refs', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          asset: {
+            inputPath: 'examples/videos/emotion-tests/cod.mp4',
+            media: {
+              refs: {
+                source_video: {
+                  kind: 'video',
+                  source: { path: 'examples/videos/emotion-tests/cod.mp4' },
+                  staged: {
+                    url: 'https://example.com/cod.mp4',
+                    urlType: 'public'
+                  },
+                  delivery: {
+                    preferredMode: 'url',
+                    allowedModes: ['url', 'inline'],
+                    allowFallback: false
+                  },
+                  metadata: {
+                    mimeType: 'video/mp4'
+                  }
+                }
+              }
+            }
+          },
+          ai: {
+            video: {
+              inputRefs: ['source_video'],
+              targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ]
+            }
+          },
+          settings: { max_chunks: 1 }
+        }
+      });
+
+      is(analyzeCalls.length > 0, true);
+      is(analyzeCalls[0].videoContext.deliveryMode, 'url');
+      is(analyzeCalls[0].videoContext.transferStrategy, 'url');
+      is(analyzeCalls[0].videoContext.url, 'https://example.com/cod.mp4');
+      is('chunkPath' in analyzeCalls[0].videoContext, false);
+    });
+
+    await tNested.test('honors per-target inline overrides when shared media refs allow multiple modes', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          asset: {
+            inputPath: 'examples/videos/emotion-tests/cod.mp4',
+            media: {
+              refs: {
+                source_video: {
+                  kind: 'video',
+                  source: { path: 'examples/videos/emotion-tests/cod.mp4' },
+                  staged: {
+                    url: 'https://example.com/cod.mp4',
+                    urlType: 'public'
+                  },
+                  delivery: {
+                    preferredMode: 'url',
+                    allowedModes: ['url', 'inline'],
+                    allowFallback: true
+                  },
+                  metadata: {
+                    mimeType: 'video/mp4'
+                  }
+                }
+              }
+            }
+          },
+          ai: {
+            video: {
+              inputRefs: ['source_video'],
+              targets: [
+                {
+                  adapter: {
+                    name: 'openrouter',
+                    model: 'yaml-video-model',
+                    media: {
+                      source_video: {
+                        preferredMode: 'inline',
+                        allowedModes: ['inline'],
+                        allowFallback: false
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          settings: { max_chunks: 1 }
+        }
+      });
+
+      is(analyzeCalls.length > 0, true);
+      is(analyzeCalls[0].videoContext.deliveryMode, 'inline');
+      is(analyzeCalls[0].videoContext.transferStrategy, 'base64');
+      is(analyzeCalls[0].videoContext.chunkPath.endsWith('chunk-0.mp4'), true);
+    });
+
     await tNested.test('passes trailer-wide music summary plus chunk-overlapping music segments into the emotion lane', async () => {
       await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',
@@ -903,9 +1018,13 @@ test('Video Chunks Script', async (t) => {
     });
   });
 
-  t.test('AI_API_KEY requirement by DIGITAL_TWIN_MODE', async (tNested) => {
-    await tNested.test('requires AI_API_KEY when DIGITAL_TWIN_MODE is off', async () => {
+  t.test('provider credential requirement by DIGITAL_TWIN_MODE', async (tNested) => {
+    await tNested.test('requires provider credentials when DIGITAL_TWIN_MODE is off', async () => {
+      const originalAiApiKey = process.env.AI_API_KEY;
+      const originalOpenrouterApiKey = process.env.OPENROUTER_API_KEY;
+
       delete process.env.AI_API_KEY;
+      delete process.env.OPENROUTER_API_KEY;
       process.env.DIGITAL_TWIN_MODE = 'off';
 
       try {
@@ -923,9 +1042,14 @@ test('Video Chunks Script', async (t) => {
               video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
             }
           }
-        }), /AI_API_KEY is required for chunk analysis unless DIGITAL_TWIN_MODE=replay/);
+        }), /VideoChunks: missing provider credentials for domain "video".*openrouter: OPENROUTER_API_KEY or AI_API_KEY/);
       } finally {
-        process.env.AI_API_KEY = 'test-api-key';
+        if (originalAiApiKey === undefined) delete process.env.AI_API_KEY;
+        else process.env.AI_API_KEY = originalAiApiKey;
+
+        if (originalOpenrouterApiKey === undefined) delete process.env.OPENROUTER_API_KEY;
+        else process.env.OPENROUTER_API_KEY = originalOpenrouterApiKey;
+
         delete process.env.DIGITAL_TWIN_MODE;
       }
     });

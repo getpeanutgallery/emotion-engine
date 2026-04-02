@@ -55,6 +55,11 @@ const {
 } = require('../../lib/phase1-validator-tools.cjs');
 const { executeLocalValidatorToolLoop } = require('../../lib/local-validator-tool-loop.cjs');
 const { applyFailureMetadata } = require('../../lib/tool-wrapper-contract.cjs');
+const {
+  resolveProviderRuntimeConfigForTarget,
+  ensureRuntimeAuthForDomain,
+  buildProviderOptionDefaults
+} = require('../../lib/provider-runtime-config.cjs');
 
 const PHASE_KEY = 'phase1-gather-context';
 const SCRIPT_ID = 'get-dialogue';
@@ -293,13 +298,19 @@ function buildOpeningWeightedChunkPlan({ durationSeconds, baseChunkDurationSecon
   };
 }
 
-function resolveDialogueChunkingPreflight(preflight, config = {}) {
+function resolveDialogueChunkingPreflight(preflight, config = {}, options = {}) {
   const durationSeconds = Number.isFinite(preflight?.durationSeconds) ? preflight.durationSeconds : 0;
-  const maxWholeFileDurationSeconds = Number.isFinite(config?.settings?.dialogue_max_whole_file_duration_seconds)
-    ? Math.max(5, config.settings.dialogue_max_whole_file_duration_seconds)
-    : 60;
+  const maxWholeFileDurationSeconds = Number.isFinite(options?.maxWholeAssetDurationSeconds)
+    ? Math.max(5, options.maxWholeAssetDurationSeconds)
+    : (Number.isFinite(config?.settings?.dialogue_max_whole_file_duration_seconds)
+        ? Math.max(5, config.settings.dialogue_max_whole_file_duration_seconds)
+        : 60);
+  const forceChunking = options?.forceChunking === true;
+  const forcedReason = typeof options?.forceReason === 'string' && options.forceReason.trim().length > 0
+    ? options.forceReason.trim()
+    : 'dialogue_timing_force_chunking';
 
-  if (preflight?.needsChunking || durationSeconds <= maxWholeFileDurationSeconds) {
+  if (preflight?.needsChunking || (!forceChunking && durationSeconds <= maxWholeFileDurationSeconds)) {
     const baseChunkDurationSeconds = Number.isFinite(preflight?.recommendedChunkDurationSeconds) && preflight.recommendedChunkDurationSeconds > 0
       ? preflight.recommendedChunkDurationSeconds
       : Math.min(20, Math.max(5, durationSeconds));
@@ -339,9 +350,9 @@ function resolveDialogueChunkingPreflight(preflight, config = {}) {
     recommendedChunkDurationSeconds: forcedChunkDurationSeconds,
     chunkPlan: openingWeightedPlan.chunkPlan,
     trace: {
-      ...preflight.trace,
-      reason: 'dialogue_timing_force_chunking',
-      originalReason: preflight.trace?.reason || null,
+      ...(preflight?.trace || {}),
+      reason: forcedReason,
+      originalReason: preflight?.trace?.reason || null,
       maxWholeFileDurationSeconds,
       recommendedChunkDurationSeconds: forcedChunkDurationSeconds,
       chunks: openingWeightedPlan.chunkPlan.length,
@@ -351,6 +362,121 @@ function resolveDialogueChunkingPreflight(preflight, config = {}) {
       } : null
     }
   };
+}
+
+function roundDialogueMetric(value, digits = 4) {
+  if (!Number.isFinite(value)) return null;
+  return Number(value.toFixed(digits));
+}
+
+function normalizeDialoguePhase1ModeConfig(config = {}) {
+  const phase1Dialogue = config?.settings?.phase1?.dialogue;
+  const phase1Config = phase1Dialogue && typeof phase1Dialogue === 'object' && !Array.isArray(phase1Dialogue)
+    ? phase1Dialogue
+    : {};
+  const requestedModeRaw = typeof phase1Config.mode === 'string' ? phase1Config.mode.trim().toLowerCase() : 'auto';
+  const requestedMode = ['auto', 'chunked', 'whole_asset', 'hybrid'].includes(requestedModeRaw)
+    ? requestedModeRaw
+    : 'auto';
+  const timingRefinementRaw = typeof phase1Config.timing_refinement === 'string'
+    ? phase1Config.timing_refinement.trim().toLowerCase()
+    : 'auto';
+  const timingRefinement = ['auto', 'disabled', 'chunk_refine'].includes(timingRefinementRaw)
+    ? timingRefinementRaw
+    : 'auto';
+  const legacyMaxWholeFileDurationSeconds = Number.isFinite(config?.settings?.dialogue_max_whole_file_duration_seconds)
+    ? Math.max(5, config.settings.dialogue_max_whole_file_duration_seconds)
+    : 60;
+  const maxWholeAssetDurationSeconds = Number.isFinite(phase1Config.max_whole_asset_duration_seconds)
+    ? Math.max(5, phase1Config.max_whole_asset_duration_seconds)
+    : legacyMaxWholeFileDurationSeconds;
+
+  return {
+    requestedMode,
+    timingRefinement,
+    maxWholeAssetDurationSeconds,
+    fallbackToChunked: phase1Config.fallback_to_chunked !== false,
+    preserveChunkPlanMetadata: phase1Config.preserve_chunk_plan_metadata !== false
+  };
+}
+
+function buildDialogueAnalysisMetadata({
+  dialogueData,
+  analysisMode,
+  timingMode,
+  sourceStrategy = 'base64',
+  durationSeconds,
+  usedChunking = false,
+  chunkPlan = null,
+  fallbackApplied = false,
+  fallbackReason = null,
+  preserveChunkPlanMetadata = false,
+  qualityNotes = []
+} = {}) {
+  const normalizedDialogueData = dialogueData && typeof dialogueData === 'object' ? { ...dialogueData } : {};
+  const normalizedDuration = Number.isFinite(durationSeconds)
+    ? Math.max(0, durationSeconds)
+    : (Number.isFinite(normalizedDialogueData?.totalDuration) ? Math.max(0, normalizedDialogueData.totalDuration) : 0);
+  const normalizedQualityNotes = Array.from(new Set(
+    (Array.isArray(qualityNotes) ? qualityNotes : [])
+      .map((entry) => String(entry || '').trim())
+      .filter(Boolean)
+  ));
+
+  const provenance = {
+    transportMode: sourceStrategy === 'public_url' ? 'remote_url' : 'inline',
+    usedChunking,
+    chunkCount: Array.isArray(chunkPlan?.chunkPlan) ? chunkPlan.chunkPlan.length : 0,
+    fallbackApplied,
+    ...(fallbackApplied && fallbackReason ? { fallbackReason } : {})
+  };
+
+  if (preserveChunkPlanMetadata && usedChunking && chunkPlan) {
+    provenance.chunkPlan = {
+      ...(chunkPlan?.trace?.reason ? { reason: chunkPlan.trace.reason } : {}),
+      ...(Number.isFinite(chunkPlan?.recommendedChunkDurationSeconds)
+        ? { recommendedChunkDurationSeconds: roundDialogueMetric(chunkPlan.recommendedChunkDurationSeconds, 3) }
+        : {}),
+      ...(chunkPlan?.trace?.openingArbitration ? {
+        openingArbitration: {
+          ...(Number.isFinite(chunkPlan.trace.openingArbitration.coverageSeconds)
+            ? { coverageSeconds: roundDialogueMetric(chunkPlan.trace.openingArbitration.coverageSeconds, 3) }
+            : {}),
+          ...(Number.isFinite(chunkPlan.trace.openingArbitration.chunkDurationSeconds)
+            ? { chunkDurationSeconds: roundDialogueMetric(chunkPlan.trace.openingArbitration.chunkDurationSeconds, 3) }
+            : {})
+        }
+      } : {})
+    };
+  }
+
+  return {
+    ...normalizedDialogueData,
+    analysisMode,
+    timingMode,
+    sourceStrategy,
+    coverage: {
+      start: 0,
+      end: roundDialogueMetric(normalizedDuration, 3),
+      duration: roundDialogueMetric(normalizedDuration, 3),
+      complete: true
+    },
+    provenance,
+    ...(normalizedQualityNotes.length > 0 ? { qualityNotes: normalizedQualityNotes } : {})
+  };
+}
+
+function describeDialogueChunkingReason(preflight) {
+  if (preflight?.trace?.reason === 'dialogue_timing_force_chunking') {
+    return `timing-stability guard over ${preflight.trace?.maxWholeFileDurationSeconds ?? 'unknown'}s`;
+  }
+  if (preflight?.trace?.reason === 'dialogue_mode_chunked') {
+    return 'explicit chunked mode';
+  }
+  if (preflight?.trace?.reason === 'dialogue_hybrid_timing_refinement') {
+    return 'hybrid timing refinement';
+  }
+  return 'Base64 budget';
 }
 
 function runCommand(command, args) {
@@ -579,41 +705,97 @@ async function run(input) {
       config
     });
 
-    const preflight = resolveDialogueChunkingPreflight(preflightAudio({
+    const transportPreflight = preflightAudio({
       audioPath,
       config,
       rawCapture: {
         captureRaw,
         rawLogger: (payload) => writeRawJson(ffmpegRawDir, 'ffprobe-audio-duration.json', payload)
       }
-    }), config);
+    });
+    const dialogueModeConfig = normalizeDialoguePhase1ModeConfig(config);
+    const shouldAttemptWholeAsset = !transportPreflight.needsChunking && (
+      dialogueModeConfig.requestedMode === 'whole_asset'
+      || dialogueModeConfig.requestedMode === 'hybrid'
+      || (dialogueModeConfig.requestedMode === 'auto' && transportPreflight.durationSeconds <= dialogueModeConfig.maxWholeAssetDurationSeconds)
+    );
+    const hybridTimingRefinementRequested = dialogueModeConfig.requestedMode === 'hybrid' && !transportPreflight.needsChunking && (
+      dialogueModeConfig.timingRefinement === 'chunk_refine'
+      || (dialogueModeConfig.timingRefinement === 'auto' && transportPreflight.durationSeconds > dialogueModeConfig.maxWholeAssetDurationSeconds)
+    );
+    const shouldRunChunked = transportPreflight.needsChunking
+      || dialogueModeConfig.requestedMode === 'chunked'
+      || (dialogueModeConfig.requestedMode === 'auto' && !shouldAttemptWholeAsset)
+      || hybridTimingRefinementRequested
+      || ((dialogueModeConfig.requestedMode === 'whole_asset' || dialogueModeConfig.requestedMode === 'hybrid')
+        && transportPreflight.needsChunking
+        && dialogueModeConfig.fallbackToChunked);
+    const chunkingPreflight = shouldRunChunked
+      ? resolveDialogueChunkingPreflight(transportPreflight, config, {
+          maxWholeAssetDurationSeconds: dialogueModeConfig.maxWholeAssetDurationSeconds,
+          forceChunking: dialogueModeConfig.requestedMode === 'chunked' || hybridTimingRefinementRequested,
+          forceReason: dialogueModeConfig.requestedMode === 'chunked'
+            ? 'dialogue_mode_chunked'
+            : (hybridTimingRefinementRequested ? 'dialogue_hybrid_timing_refinement' : 'dialogue_timing_force_chunking')
+        })
+      : null;
+    const executionTrace = {
+      requestedMode: dialogueModeConfig.requestedMode,
+      timingRefinement: dialogueModeConfig.timingRefinement,
+      transport: transportPreflight.trace,
+      effective: shouldRunChunked && chunkingPreflight ? chunkingPreflight.trace : transportPreflight.trace,
+      strategy: {
+        wholeAsset: shouldAttemptWholeAsset,
+        chunked: shouldRunChunked,
+        effectiveMode: shouldAttemptWholeAsset && shouldRunChunked
+          ? 'hybrid'
+          : (shouldAttemptWholeAsset ? 'whole_asset' : 'chunked')
+      }
+    };
+
+    if (!shouldAttemptWholeAsset
+      && !shouldRunChunked
+      && !dialogueModeConfig.fallbackToChunked
+      && (dialogueModeConfig.requestedMode === 'whole_asset' || dialogueModeConfig.requestedMode === 'hybrid')
+      && transportPreflight.needsChunking) {
+      throw new Error(`GetDialogue: phase1 dialogue mode "${dialogueModeConfig.requestedMode}" requires whole-asset delivery, but the source exceeded the inline audio budget and fallback_to_chunked=false.`);
+    }
+
+    if (!shouldAttemptWholeAsset && !shouldRunChunked) {
+      throw new Error(`GetDialogue: phase1 dialogue mode "${dialogueModeConfig.requestedMode}" had no viable execution path.`);
+    }
 
     events.emit({
       kind: 'audio.preflight',
       phase: PHASE_KEY,
       script: SCRIPT_ID,
       domain: 'dialogue',
-      trace: preflight.trace
+      trace: executionTrace
     });
 
     if (captureRaw) {
       const planPath = writeRawJson(ffmpegRawDir, 'chunk-plan.json', {
-        schemaVersion: 1,
+        schemaVersion: 2,
         kind: 'audio.chunk.plan',
         domain: 'dialogue',
         createdAt: new Date().toISOString(),
-        trace: preflight.trace,
-        chunks: preflight.chunkPlan
+        requestedMode: dialogueModeConfig.requestedMode,
+        timingRefinement: dialogueModeConfig.timingRefinement,
+        transportTrace: transportPreflight.trace,
+        effectiveTrace: shouldRunChunked && chunkingPreflight ? chunkingPreflight.trace : transportPreflight.trace,
+        chunks: shouldRunChunked && chunkingPreflight ? chunkingPreflight.chunkPlan : transportPreflight.chunkPlan
       });
       events.artifactWrite({ absolutePath: planPath, role: 'raw.ffmpeg.plan', phase: PHASE_KEY, script: SCRIPT_ID });
     }
 
     // config.ai.dialogue.targets[*].adapter.model is required (validated by config-loader)
 
-    const apiKey = process.env.AI_API_KEY;
-    if (!apiKey) {
-      throw new Error('GetDialogue: AI_API_KEY environment variable is required');
-    }
+    ensureRuntimeAuthForDomain({
+      config,
+      domain: 'dialogue',
+      replayMode: false,
+      prefix: 'GetDialogue'
+    });
 
     const retryConfig = getRetryConfig(config, 'dialogue');
     const toolLoopConfig = getToolLoopConfig(config, 'dialogue');
@@ -742,7 +924,10 @@ async function run(input) {
       return lines.join('\n').trim();
     };
 
-    if (!preflight.needsChunking) {
+    let wholeAssetDialogueResult = null;
+    let chunkedDialogueResult = null;
+
+    if (shouldAttemptWholeAsset) {
       // --------------------
       // Within-budget path
       // --------------------
@@ -795,6 +980,10 @@ async function run(input) {
             configForTarget: ctx.configForTarget,
             target: ctx.target
           });
+          const runtimeConfig = resolveProviderRuntimeConfigForTarget({
+            configForTarget: ctx.configForTarget,
+            target: ctx.target
+          });
 
           const providerCallStart = Date.now();
           events.emit({
@@ -819,7 +1008,7 @@ async function run(input) {
               promptRef,
               events,
               ctx,
-              apiKey,
+              runtimeConfig,
               audioBase64,
               audioMimeType,
               requireHandoff: false,
@@ -845,7 +1034,7 @@ async function run(input) {
               model: adapter?.model || null,
             });
 
-            const actualDuration = preflight.durationSeconds;
+            const actualDuration = transportPreflight.durationSeconds;
             const dialogueData = normalizeDialogueDataToDuration(toolLoopResult.parsed, actualDuration);
 
             return { completion: toolLoopResult.completion, dialogueData, toolLoop: toolLoopResult.toolLoop };
@@ -905,6 +1094,23 @@ async function run(input) {
           if (!captureRaw) return;
 
           const adapter = target?.adapter || null;
+          const failureAiTargets = !ok && error?.aiTargets ? sanitizeRawCaptureValue({
+            classification: error.aiTargets.classification || null,
+            group: error.aiTargets.group || null,
+            raw: error.aiTargets.raw || null,
+            extracted: error.aiTargets.extracted || null,
+            parseError: error.aiTargets.parseError || null,
+            validationErrors: error.aiTargets.validationErrors || [],
+            validationSummary: error.aiTargets.validationSummary || null,
+            completion: error.aiTargets.completion || null,
+            toolLoop: error.aiTargets.toolLoop || null,
+            promptRef: error.aiTargets.promptRef || null,
+            attempts: Number.isInteger(error.aiTargets.attempts) ? error.aiTargets.attempts : null,
+            domain: error.aiTargets.domain || null,
+            targetIndex: Number.isInteger(error.aiTargets.targetIndex) ? error.aiTargets.targetIndex : null,
+            targetCount: Number.isInteger(error.aiTargets.targetCount) ? error.aiTargets.targetCount : null,
+            adapter: error.aiTargets.adapter || null
+          }) : null;
 
           writeDialogueRaw(attempt, {
             attempt,
@@ -914,9 +1120,14 @@ async function run(input) {
             adapter,
             failover: failover || null,
             promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
-            rawResponse: ok ? sanitizeRawCaptureValue(result?.completion) : null,
+            rawResponse: ok
+              ? sanitizeRawCaptureValue(result?.completion)
+              : (sanitizeRawCaptureValue(error?.aiTargets?.completion || error?.aiTargets?.raw) || null),
             parsed: ok ? result?.dialogueData : null,
-            toolLoop: ok ? sanitizeRawCaptureValue(result?.toolLoop) : (sanitizeRawCaptureValue(error?.debug?.toolLoop) || null),
+            toolLoop: ok
+              ? sanitizeRawCaptureValue(result?.toolLoop)
+              : (sanitizeRawCaptureValue(error?.aiTargets?.toolLoop || error?.debug?.toolLoop) || null),
+            aiTargets: failureAiTargets,
             error: ok ? null : (error?.message || String(error)),
             errorName: ok ? null : (error?.name || null),
             errorCode: ok ? null : (error?.code || null),
@@ -944,32 +1155,22 @@ async function run(input) {
       response = dialogueResult?.completion || null;
       const dialogueData = dialogueResult.dialogueData;
       model = meta?.target?.adapter?.model || null;
-
-      // Write intermediate artifact to phase directory
-      const artifactPath = path.join(phaseDir, 'dialogue-data.json');
-      fs.writeFileSync(artifactPath, JSON.stringify(dialogueData, null, 2));
-      events.artifactWrite({ absolutePath: artifactPath, role: 'artifact', phase: PHASE_KEY, script: SCRIPT_ID });
-
-      console.log('   ✅ Dialogue extraction complete');
-      console.log(`      Output: ${artifactPath}`);
-      console.log(`      Found ${dialogueData.dialogue_segments.length} dialogue segments`);
-      console.log(`      Total duration: ${dialogueData.totalDuration.toFixed(1)}s`);
-
-      return {
-        artifacts: {
-          dialogueData
-        }
+      wholeAssetDialogueResult = {
+        dialogueData,
+        response,
+        model
       };
     }
 
     // --------------------
-    // Over-budget path: chunk + rolling handoff + REQUIRED stitcher
+    // Over-budget / refinement path: chunk + rolling handoff + REQUIRED stitcher
     // --------------------
-    if (!config?.ai?.dialogue_stitch?.targets || !Array.isArray(config.ai.dialogue_stitch.targets) || config.ai.dialogue_stitch.targets.length === 0) {
-      throw new Error('GetDialogue: chunking requires config.ai.dialogue_stitch.targets (OpenRouter-only stitcher chain)');
-    }
+    if (shouldRunChunked) {
+      if (!config?.ai?.dialogue_stitch?.targets || !Array.isArray(config.ai.dialogue_stitch.targets) || config.ai.dialogue_stitch.targets.length === 0) {
+        throw new Error('GetDialogue: chunking requires config.ai.dialogue_stitch.targets (OpenRouter-only stitcher chain)');
+      }
 
-    const chunksDir = captureRaw
+      const chunksDir = captureRaw
       ? path.join(ffmpegRawDir, 'chunks')
       : path.join(tempDir, 'chunks');
     fs.mkdirSync(chunksDir, { recursive: true });
@@ -981,16 +1182,14 @@ async function run(input) {
 
     let rollingHandoff = '';
 
-    const chunkingReason = preflight.trace?.reason === 'dialogue_timing_force_chunking'
-      ? `timing-stability guard over ${preflight.trace?.maxWholeFileDurationSeconds ?? 'unknown'}s`
-      : 'Base64 budget';
-    const openingArbitration = preflight.trace?.openingArbitration;
+    const chunkingReason = describeDialogueChunkingReason(chunkingPreflight);
+    const openingArbitration = chunkingPreflight.trace?.openingArbitration;
     const openingArbitrationNote = openingArbitration
       ? ` with opening provenance arbitration (${Number(openingArbitration.coverageSeconds).toFixed(1)}s @ ~${Number(openingArbitration.chunkDurationSeconds).toFixed(1)}s chunks)`
       : '';
-    console.log(`   🧩 Dialogue chunking enabled via ${chunkingReason}${openingArbitrationNote}, chunking into ${preflight.chunkPlan.length} chunks (~${preflight.recommendedChunkDurationSeconds.toFixed(1)}s base chunks)`);
+    console.log(`   🧩 Dialogue chunking enabled via ${chunkingReason}${openingArbitrationNote}, chunking into ${chunkingPreflight.chunkPlan.length} chunks (~${chunkingPreflight.recommendedChunkDurationSeconds.toFixed(1)}s base chunks)`);
 
-    for (const chunk of preflight.chunkPlan) {
+    for (const chunk of chunkingPreflight.chunkPlan) {
       const { index: chunkIndex, startTime, endTime } = chunk;
 
       const extraction = await extractAudioChunk(
@@ -1033,8 +1232,8 @@ async function run(input) {
         endTime,
         priorHandoff: rollingHandoff,
         recoveryRuntime,
-        openingArbitration: preflight.trace?.openingArbitration && startTime < preflight.trace.openingArbitration.coverageSeconds
-          ? preflight.trace.openingArbitration
+        openingArbitration: chunkingPreflight.trace?.openingArbitration && startTime < chunkingPreflight.trace.openingArbitration.coverageSeconds
+          ? chunkingPreflight.trace.openingArbitration
           : null
       });
 
@@ -1076,6 +1275,10 @@ async function run(input) {
             configForTarget: ctx.configForTarget,
             target: ctx.target
           });
+          const runtimeConfig = resolveProviderRuntimeConfigForTarget({
+            configForTarget: ctx.configForTarget,
+            target: ctx.target
+          });
 
           const providerCallStart = Date.now();
           events.emit({
@@ -1101,7 +1304,7 @@ async function run(input) {
               promptRef: chunkPromptRef,
               events,
               ctx,
-              apiKey,
+              runtimeConfig,
               audioBase64,
               audioMimeType,
               requireHandoff: true,
@@ -1190,6 +1393,23 @@ async function run(input) {
           if (!captureRaw) return;
 
           const adapter = target?.adapter || null;
+          const failureAiTargets = !ok && error?.aiTargets ? sanitizeRawCaptureValue({
+            classification: error.aiTargets.classification || null,
+            group: error.aiTargets.group || null,
+            raw: error.aiTargets.raw || null,
+            extracted: error.aiTargets.extracted || null,
+            parseError: error.aiTargets.parseError || null,
+            validationErrors: error.aiTargets.validationErrors || [],
+            validationSummary: error.aiTargets.validationSummary || null,
+            completion: error.aiTargets.completion || null,
+            toolLoop: error.aiTargets.toolLoop || null,
+            promptRef: error.aiTargets.promptRef || null,
+            attempts: Number.isInteger(error.aiTargets.attempts) ? error.aiTargets.attempts : null,
+            domain: error.aiTargets.domain || null,
+            targetIndex: Number.isInteger(error.aiTargets.targetIndex) ? error.aiTargets.targetIndex : null,
+            targetCount: Number.isInteger(error.aiTargets.targetCount) ? error.aiTargets.targetCount : null,
+            adapter: error.aiTargets.adapter || null
+          }) : null;
 
           writeDialogueChunkRaw(chunkIndex, attempt, {
             chunkIndex,
@@ -1203,9 +1423,14 @@ async function run(input) {
             adapter,
             failover: failover || null,
             promptRef: chunkPromptRef ? { sha256: chunkPromptRef.sha256, file: chunkPromptRef.file } : null,
-            rawResponse: ok ? sanitizeRawCaptureValue(result?.completion) : null,
+            rawResponse: ok
+              ? sanitizeRawCaptureValue(result?.completion)
+              : (sanitizeRawCaptureValue(error?.aiTargets?.completion || error?.aiTargets?.raw) || null),
             parsed: ok ? result?.dialogueData : null,
-            toolLoop: ok ? sanitizeRawCaptureValue(result?.toolLoop) : (sanitizeRawCaptureValue(error?.debug?.toolLoop) || null),
+            toolLoop: ok
+              ? sanitizeRawCaptureValue(result?.toolLoop)
+              : (sanitizeRawCaptureValue(error?.aiTargets?.toolLoop || error?.debug?.toolLoop) || null),
+            aiTargets: failureAiTargets,
             error: ok ? null : (error?.message || String(error)),
             errorName: ok ? null : (error?.name || null),
             errorCode: ok ? null : (error?.code || null),
@@ -1284,7 +1509,7 @@ async function run(input) {
 
     // Mechanical stitched transcript (best-effort)
     const mechanicalLines = [];
-    for (const chunk of preflight.chunkPlan) {
+    for (const chunk of chunkingPreflight.chunkPlan) {
       mechanicalLines.push(`--- CHUNK ${chunk.index} [${chunk.startTime.toFixed(2)}s - ${chunk.endTime.toFixed(2)}s] ---`);
       const segs = chunkSegments.filter((s) => s.start < chunk.endTime && s.end > chunk.startTime);
       for (const seg of segs) {
@@ -1307,7 +1532,7 @@ async function run(input) {
       schemaVersion: 1,
       kind: 'dialogue.stitch.input',
       createdAt: new Date().toISOString(),
-      preflight: preflight.trace,
+      preflight: chunkingPreflight.trace,
       chunks: chunkSummaries,
       debugRefs: debugChunkRefs.map((ref) => ({
         chunkIndex: ref.chunkIndex,
@@ -1390,6 +1615,10 @@ async function run(input) {
           configForTarget: ctx.configForTarget,
           target: ctx.target
         });
+        const runtimeConfig = resolveProviderRuntimeConfigForTarget({
+          configForTarget: ctx.configForTarget,
+          target: ctx.target
+        });
 
         const providerCallStart = Date.now();
         events.emit({
@@ -1414,7 +1643,7 @@ async function run(input) {
             promptRef: stitcherPromptRef,
             events,
             ctx,
-            apiKey
+            runtimeConfig
           });
 
           events.emit({
@@ -1488,6 +1717,23 @@ async function run(input) {
         if (!captureRaw) return;
 
         const adapter = target?.adapter || null;
+        const failureAiTargets = !ok && error?.aiTargets ? sanitizeRawCaptureValue({
+          classification: error.aiTargets.classification || null,
+          group: error.aiTargets.group || null,
+          raw: error.aiTargets.raw || null,
+          extracted: error.aiTargets.extracted || null,
+          parseError: error.aiTargets.parseError || null,
+          validationErrors: error.aiTargets.validationErrors || [],
+          validationSummary: error.aiTargets.validationSummary || null,
+          completion: error.aiTargets.completion || null,
+          toolLoop: error.aiTargets.toolLoop || null,
+          promptRef: error.aiTargets.promptRef || null,
+          attempts: Number.isInteger(error.aiTargets.attempts) ? error.aiTargets.attempts : null,
+          domain: error.aiTargets.domain || null,
+          targetIndex: Number.isInteger(error.aiTargets.targetIndex) ? error.aiTargets.targetIndex : null,
+          targetCount: Number.isInteger(error.aiTargets.targetCount) ? error.aiTargets.targetCount : null,
+          adapter: error.aiTargets.adapter || null
+        }) : null;
 
         writeStitchRaw(attempt, {
           attempt,
@@ -1498,9 +1744,14 @@ async function run(input) {
           failover: failover || null,
           promptRef: stitcherPromptRef ? { sha256: stitcherPromptRef.sha256, file: stitcherPromptRef.file } : null,
           stitchInputRef: stitchInputPath ? path.relative(events.runOutputDir || outputDir, stitchInputPath).split(path.sep).join('/') : null,
-          rawResponse: ok ? sanitizeRawCaptureValue(result?.completion) : null,
+          rawResponse: ok
+            ? sanitizeRawCaptureValue(result?.completion)
+            : (sanitizeRawCaptureValue(error?.aiTargets?.completion || error?.aiTargets?.raw) || null),
           parsed: ok ? result?.parsed : null,
-          toolLoop: ok ? sanitizeRawCaptureValue(result?.toolLoop) : (sanitizeRawCaptureValue(error?.debug?.toolLoop) || null),
+          toolLoop: ok
+            ? sanitizeRawCaptureValue(result?.toolLoop)
+            : (sanitizeRawCaptureValue(error?.aiTargets?.toolLoop || error?.debug?.toolLoop) || null),
+          aiTargets: failureAiTargets,
           error: ok ? null : (error?.message || String(error)),
           errorName: ok ? null : (error?.name || null),
           errorCode: ok ? null : (error?.code || null),
@@ -1543,7 +1794,7 @@ async function run(input) {
       dialogue_segments: chunkSegments,
       speaker_profiles: chunkSpeakerProfiles,
       summary: cleanedTranscript || 'Chunked transcription completed',
-      totalDuration: preflight.durationSeconds,
+      totalDuration: transportPreflight.durationSeconds,
       ...(rollingHandoff ? { handoffContext: rollingHandoff } : {})
     });
 
@@ -1557,20 +1808,95 @@ async function run(input) {
     };
 
     model = stitchMeta?.target?.adapter?.model || null;
+    chunkedDialogueResult = {
+      dialogueData,
+      response: stitchResult?.completion || null,
+      model
+    };
+    }
 
-    // Write intermediate artifact to phase directory
+    if (!wholeAssetDialogueResult && !chunkedDialogueResult) {
+      throw new Error('GetDialogue: no dialogue result was produced.');
+    }
+
+    const fallbackReason = (dialogueModeConfig.requestedMode === 'whole_asset' || dialogueModeConfig.requestedMode === 'hybrid')
+      && !wholeAssetDialogueResult
+      && chunkedDialogueResult
+      ? (transportPreflight?.trace?.reason || chunkingPreflight?.trace?.reason || 'transport_budget_exceeded')
+      : null;
+
+    const effectiveAnalysisMode = wholeAssetDialogueResult && chunkedDialogueResult
+      ? 'hybrid'
+      : (wholeAssetDialogueResult ? 'whole_asset' : 'chunked');
+
+    let finalDialogueData = null;
+
+    if (wholeAssetDialogueResult && chunkedDialogueResult) {
+      finalDialogueData = buildDialogueAnalysisMetadata({
+        dialogueData: {
+          ...chunkedDialogueResult.dialogueData,
+          summary: wholeAssetDialogueResult.dialogueData?.summary || chunkedDialogueResult.dialogueData?.summary,
+          handoffContext: chunkedDialogueResult.dialogueData?.handoffContext
+            || wholeAssetDialogueResult.dialogueData?.handoffContext
+            || null
+        },
+        analysisMode: 'hybrid',
+        timingMode: 'chunk_local',
+        sourceStrategy: 'base64',
+        durationSeconds: transportPreflight.durationSeconds,
+        usedChunking: true,
+        chunkPlan: chunkingPreflight,
+        preserveChunkPlanMetadata: dialogueModeConfig.preserveChunkPlanMetadata,
+        qualityNotes: [
+          'Whole-asset summary/context was preserved while chunked stitching retained local timing fidelity.'
+        ]
+      });
+    } else if (wholeAssetDialogueResult) {
+      finalDialogueData = buildDialogueAnalysisMetadata({
+        dialogueData: wholeAssetDialogueResult.dialogueData,
+        analysisMode: 'whole_asset',
+        timingMode: 'full_timeline',
+        sourceStrategy: 'base64',
+        durationSeconds: transportPreflight.durationSeconds,
+        usedChunking: false,
+        preserveChunkPlanMetadata: dialogueModeConfig.preserveChunkPlanMetadata,
+        qualityNotes: dialogueModeConfig.requestedMode === 'hybrid'
+          ? ['Hybrid mode resolved to a single whole-asset pass because chunk refinement was not needed.']
+          : []
+      });
+    } else {
+      finalDialogueData = buildDialogueAnalysisMetadata({
+        dialogueData: chunkedDialogueResult.dialogueData,
+        analysisMode: 'chunked',
+        timingMode: 'chunk_local',
+        sourceStrategy: 'base64',
+        durationSeconds: transportPreflight.durationSeconds,
+        usedChunking: true,
+        chunkPlan: chunkingPreflight,
+        fallbackApplied: Boolean(fallbackReason),
+        fallbackReason,
+        preserveChunkPlanMetadata: dialogueModeConfig.preserveChunkPlanMetadata,
+        qualityNotes: fallbackReason
+          ? ['Whole-asset dialogue delivery was unavailable, so chunked fallback remained active.']
+          : []
+      });
+    }
+
+    response = chunkedDialogueResult?.response || wholeAssetDialogueResult?.response || response;
+    model = chunkedDialogueResult?.model || wholeAssetDialogueResult?.model || model;
+
     const artifactPath = path.join(phaseDir, 'dialogue-data.json');
-    fs.writeFileSync(artifactPath, JSON.stringify(dialogueData, null, 2));
+    fs.writeFileSync(artifactPath, JSON.stringify(finalDialogueData, null, 2));
     events.artifactWrite({ absolutePath: artifactPath, role: 'artifact', phase: PHASE_KEY, script: SCRIPT_ID });
 
-    console.log('   ✅ Dialogue extraction complete (chunked)');
+    console.log(`   ✅ Dialogue extraction complete (${effectiveAnalysisMode})`);
     console.log(`      Output: ${artifactPath}`);
-    console.log(`      Found ${dialogueData.dialogue_segments.length} dialogue segments`);
-    console.log(`      Total duration: ${dialogueData.totalDuration.toFixed(1)}s`);
+    console.log(`      Found ${finalDialogueData.dialogue_segments.length} dialogue segments`);
+    console.log(`      Total duration: ${finalDialogueData.totalDuration.toFixed(1)}s`);
 
     return {
       artifacts: {
-        dialogueData
+        dialogueData: finalDialogueData
       }
     };
   } catch (error) {
@@ -1802,7 +2128,7 @@ async function executeDialogueTranscriptionToolLoop({
   promptRef,
   events,
   ctx,
-  apiKey,
+  runtimeConfig,
   audioBase64,
   audioMimeType,
   requireHandoff = false,
@@ -1830,7 +2156,8 @@ async function executeDialogueTranscriptionToolLoop({
     callProvider: ({ prompt }) => provider.complete({
       prompt,
       model: adapter?.model,
-      apiKey,
+      apiKey: runtimeConfig?.apiKey,
+      baseUrl: runtimeConfig?.baseUrl,
       attachments: [
         {
           type: 'audio',
@@ -1840,9 +2167,9 @@ async function executeDialogueTranscriptionToolLoop({
       ],
       options: buildProviderOptions({
         adapter,
-        defaults: {
+        defaults: buildProviderOptionDefaults(runtimeConfig, {
           temperature: 0.3
-        }
+        })
       })
     }),
     executeValidatorTool: (args) => executeDialogueTranscriptionValidatorTool(args, { requireHandoff }),
@@ -1858,7 +2185,7 @@ async function executeDialogueStitchToolLoop({
   promptRef,
   events,
   ctx,
-  apiKey
+  runtimeConfig
 }) {
   const toolContract = buildDialogueStitchValidatorToolContract();
 
@@ -1883,12 +2210,13 @@ async function executeDialogueStitchToolLoop({
     callProvider: ({ prompt }) => provider.complete({
       prompt,
       model: adapter?.model,
-      apiKey,
+      apiKey: runtimeConfig?.apiKey,
+      baseUrl: runtimeConfig?.baseUrl,
       options: buildProviderOptions({
         adapter,
-        defaults: {
+        defaults: buildProviderOptionDefaults(runtimeConfig, {
           temperature: 0.2
-        }
+        })
       })
     }),
     executeValidatorTool: executeDialogueStitchValidatorTool,

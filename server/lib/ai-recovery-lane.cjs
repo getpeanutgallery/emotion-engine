@@ -6,6 +6,10 @@ const path = require('path');
 
 const { getProviderForTarget, buildProviderOptions } = require('./ai-targets.cjs');
 const {
+  resolveProviderRuntimeConfigForTarget,
+  buildProviderOptionDefaults
+} = require('./provider-runtime-config.cjs');
+const {
   AI_RECOVERY_INPUT_CONTRACT_VERSION,
   AI_RECOVERY_RESULT_CONTRACT_VERSION,
   normalizeRecoveryConfig
@@ -309,6 +313,7 @@ async function attemptAiRecovery({ phase, scriptId, scriptModule, input, failure
   };
 
   const provider = getProviderForTarget({ configForTarget, target });
+  const runtimeConfig = resolveProviderRuntimeConfigForTarget({ configForTarget, target });
   const toolContract = buildAiRecoveryValidatorToolContract();
   let completion = null;
 
@@ -336,14 +341,15 @@ async function attemptAiRecovery({ phase, scriptId, scriptModule, input, failure
       callProvider: ({ prompt }) => provider.complete({
         prompt,
         model: aiPolicy.model,
-        apiKey: process.env.AI_API_KEY,
+        apiKey: runtimeConfig.apiKey,
+        baseUrl: runtimeConfig.baseUrl,
         options: buildProviderOptions({
           adapter: target.adapter,
-          defaults: {
+          defaults: buildProviderOptionDefaults(runtimeConfig, {
             temperature: aiPolicy.temperature,
             timeoutMs: aiPolicy.timeoutMs,
             maxTokens: aiPolicy.budgets.maxOutputTokens
-          }
+          })
         })
       }),
       executeValidatorTool: (args) => executeAiRecoveryValidatorTool(args),

@@ -49,11 +49,48 @@ const {
   executeMusicAnalysisValidatorTool
 } = require('../../lib/phase1-validator-tools.cjs');
 const { executeLocalValidatorToolLoop } = require('../../lib/local-validator-tool-loop.cjs');
+const {
+  resolveProviderRuntimeConfigForTarget,
+  ensureRuntimeAuthForDomain,
+  buildProviderOptionDefaults
+} = require('../../lib/provider-runtime-config.cjs');
 const { applyFailureMetadata } = require('../../lib/tool-wrapper-contract.cjs');
 
 const PHASE_KEY = 'phase1-gather-context';
 const SCRIPT_ID = 'get-music';
 const DEFAULT_MUSIC_ANALYSIS_WINDOW_SECONDS = 30;
+const DEFAULT_PHASE1_MUSIC_MAX_WHOLE_ASSET_DURATION_SECONDS = 240;
+const VALID_PHASE1_MUSIC_MODES = new Set(['auto', 'chunked', 'whole_asset', 'hybrid']);
+
+function compactString(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function normalizePhase1MusicMode(value) {
+  const normalized = compactString(value).toLowerCase();
+  return VALID_PHASE1_MUSIC_MODES.has(normalized) ? normalized : null;
+}
+
+function resolveRequestedPhase1MusicMode(config = {}) {
+  return normalizePhase1MusicMode(config?.settings?.phase1?.music?.mode) || 'chunked';
+}
+
+function shouldFallbackWholeAssetMusicToChunked(config = {}) {
+  return config?.settings?.phase1?.music?.fallback_to_chunked !== false;
+}
+
+function resolveMaxWholeAssetMusicDurationSeconds(config = {}) {
+  const configured = Number(config?.settings?.phase1?.music?.max_whole_asset_duration_seconds);
+  if (Number.isFinite(configured) && configured > 0) {
+    return configured;
+  }
+
+  return DEFAULT_PHASE1_MUSIC_MAX_WHOLE_ASSET_DURATION_SECONDS;
+}
+
+function shouldEmitMusicGlobalArc(config = {}) {
+  return config?.settings?.phase1?.music?.emit_global_arc !== false;
+}
 
 function pad(value, width) {
   return String(value).padStart(width, '0');
@@ -113,12 +150,53 @@ function getToolLoopConfig(config = {}, domain = 'music') {
 }
 
 function resolveMusicAnalysisWindowSeconds(config = {}) {
-  const configured = config?.ai?.music?.analysisWindowSeconds;
-  if (Number.isFinite(configured) && configured > 0) {
-    return configured;
+  const configuredPhase1 = Number(config?.settings?.phase1?.music?.analysis_window_seconds);
+  if (Number.isFinite(configuredPhase1) && configuredPhase1 > 0) {
+    return configuredPhase1;
+  }
+
+  const configuredLegacy = Number(config?.ai?.music?.analysisWindowSeconds);
+  if (Number.isFinite(configuredLegacy) && configuredLegacy > 0) {
+    return configuredLegacy;
   }
 
   return DEFAULT_MUSIC_ANALYSIS_WINDOW_SECONDS;
+}
+
+function resolveMusicAnalysisStrategy(preflight, config = {}) {
+  const requestedMode = resolveRequestedPhase1MusicMode(config);
+  const maxWholeAssetDurationSeconds = resolveMaxWholeAssetMusicDurationSeconds(config);
+  const durationSeconds = Number(preflight?.durationSeconds) || 0;
+  const inlineWholeAssetSafe = preflight?.needsChunking !== true;
+  const durationEligible = durationSeconds <= maxWholeAssetDurationSeconds;
+  const wholeAssetEligible = inlineWholeAssetSafe && durationEligible;
+
+  let actualMode = requestedMode;
+  if (requestedMode === 'auto') {
+    actualMode = wholeAssetEligible ? 'whole_asset' : 'chunked';
+  }
+
+  let wholeAssetUnavailableReason = null;
+  if (!inlineWholeAssetSafe) {
+    wholeAssetUnavailableReason = 'Whole-asset inline audio exceeds the configured base64 budget for this lane.';
+  } else if (!durationEligible) {
+    wholeAssetUnavailableReason = `Asset duration ${durationSeconds.toFixed(1)}s exceeds configured whole-asset limit ${maxWholeAssetDurationSeconds.toFixed(1)}s.`;
+  }
+
+  return {
+    requestedMode,
+    actualMode,
+    wholeAssetEligible,
+    wholeAssetUnavailableReason,
+    durationSeconds,
+    maxWholeAssetDurationSeconds,
+    fallbackToChunked: shouldFallbackWholeAssetMusicToChunked(config)
+  };
+}
+
+function buildFallbackNote(reason) {
+  const normalized = compactString(reason);
+  return normalized ? `Whole-asset music analysis fell back to chunked mode: ${normalized}` : null;
 }
 
 function buildMusicAnalysisChunkPlan(preflight, config = {}) {
@@ -313,6 +391,29 @@ async function run(input) {
     events.artifactWrite({ absolutePath: pointerPath, role: 'raw.ai.pointer', phase: PHASE_KEY, script: SCRIPT_ID });
   };
 
+  const writeWholeAssetMusicRaw = (attempt, payload) => {
+    if (!captureRaw) return;
+
+    const legacyFileName = 'music-whole-asset.json';
+    const attemptRelDir = path.join('music-whole-asset', `attempt-${pad(attempt, 2)}`);
+    const attemptRelPath = path.join(attemptRelDir, 'capture.json');
+
+    const capturePath = writeRawJson(aiRawDir, attemptRelPath, payload);
+    events.artifactWrite({ absolutePath: capturePath, role: 'raw.ai.attempt', phase: PHASE_KEY, script: SCRIPT_ID });
+
+    const pointerPath = writeRawJson(aiRawDir, legacyFileName, {
+      schemaVersion: 2,
+      kind: 'pointer',
+      updatedAt: new Date().toISOString(),
+      latestAttempt: attempt,
+      target: {
+        dir: attemptRelDir,
+        file: attemptRelPath
+      }
+    });
+    events.artifactWrite({ absolutePath: pointerPath, role: 'raw.ai.pointer', phase: PHASE_KEY, script: SCRIPT_ID });
+  };
+
   try {
     // Extract audio from video (if needed)
     const audioPath = await extractAudio(assetPath, tempDir, {
@@ -364,18 +465,27 @@ async function run(input) {
     }
 
     const duration = preflight.durationSeconds;
+    const strategy = resolveMusicAnalysisStrategy(preflight, config);
 
     console.log(`   📊 Audio duration: ${duration.toFixed(1)}s (${analysisChunkPlan.length} analysis chunk(s) from ${preflight.chunkPlan.length} transport chunk(s))`);
+    console.log(`   🎼 Music analysis mode: requested=${strategy.requestedMode}, selected=${strategy.actualMode}`);
 
     const segments = [];
     let hasMusic = false;
+    let finalAnalysisMode = strategy.actualMode;
+    let wholeAssetAnalysis = null;
+    let fallbackApplied = false;
+    let fallbackReason = null;
+    const qualityNotes = [];
 
     // config.ai.music.targets[*].adapter.model is required (validated by config-loader)
 
-    const apiKey = process.env.AI_API_KEY;
-    if (!apiKey) {
-      throw new Error('GetMusic: AI_API_KEY environment variable is required');
-    }
+    ensureRuntimeAuthForDomain({
+      config,
+      domain: 'music',
+      replayMode: false,
+      prefix: 'GetMusic'
+    });
 
     const retryConfig = getRetryConfig(config, 'music');
     const toolLoopConfig = getToolLoopConfig(config, 'music');
@@ -388,8 +498,69 @@ async function run(input) {
 
     let rollingSummary = '';
 
+    if (strategy.actualMode === 'whole_asset' || strategy.actualMode === 'hybrid') {
+      if (!strategy.wholeAssetEligible) {
+        fallbackReason = strategy.wholeAssetUnavailableReason || 'Whole-asset music analysis was not eligible for this asset.';
+        if (!strategy.fallbackToChunked) {
+          throw new Error(fallbackReason);
+        }
+
+        fallbackApplied = true;
+        finalAnalysisMode = 'chunked';
+        const fallbackNote = buildFallbackNote(fallbackReason);
+        if (fallbackNote) qualityNotes.push(fallbackNote);
+      } else {
+        const wholeAssetAudioBase64 = fs.readFileSync(audioPath).toString('base64');
+        const wholeAssetPrompt = buildWholeAssetMusicPrompt(duration, recoveryRuntime, {
+          intent: strategy.actualMode === 'hybrid' ? 'hybrid' : 'whole_asset'
+        });
+        const wholeAssetPromptRef = captureRaw
+          ? storePromptPayload({ outputDir, payload: wholeAssetPrompt })
+          : null;
+
+        if (wholeAssetPromptRef?.absolutePath) {
+          events.artifactWrite({ absolutePath: wholeAssetPromptRef.absolutePath, role: 'raw.prompt', phase: PHASE_KEY, script: SCRIPT_ID });
+        }
+
+        try {
+          const wholeAssetResult = await executeWholeAssetMusicAnalysis({
+            config,
+            retryConfig,
+            audioBase64: wholeAssetAudioBase64,
+            audioMimeType: getAudioMimeType(config),
+            durationSeconds: duration,
+            recoveryRuntime,
+            events,
+            captureRaw,
+            writeWholeAssetMusicRaw,
+            promptRef: wholeAssetPromptRef,
+            intent: strategy.actualMode === 'hybrid' ? 'hybrid' : 'whole_asset'
+          });
+
+          wholeAssetAnalysis = wholeAssetResult.parsed;
+          hasMusic = wholeAssetAnalysis.hasMusic;
+
+          if (strategy.actualMode === 'whole_asset') {
+            qualityNotes.push('Whole-asset music analysis preserved cross-asset continuity without chunk seams.');
+          } else {
+            qualityNotes.push('Whole-asset music analysis supplied global arc context before chunk-level timing refinement.');
+          }
+        } catch (error) {
+          if (!strategy.fallbackToChunked) {
+            throw error;
+          }
+
+          fallbackApplied = true;
+          fallbackReason = error?.message || 'Whole-asset music analysis failed.';
+          finalAnalysisMode = 'chunked';
+          const fallbackNote = buildFallbackNote(fallbackReason);
+          if (fallbackNote) qualityNotes.push(fallbackNote);
+        }
+      }
+    }
+
     // Analyze each chunk sequentially (rolling-summary carry)
-    for (const chunk of analysisChunkPlan) {
+    if (finalAnalysisMode !== 'whole_asset') for (const chunk of analysisChunkPlan) {
       const chunkIndex = chunk.index;
       const startTime = chunk.startTime;
       const endTime = chunk.endTime;
@@ -429,7 +600,7 @@ async function run(input) {
 
       const audioBase64 = fs.readFileSync(extraction.chunkPath).toString('base64');
 
-      const prompt = buildRollingAnalysisPrompt(startTime, endTime, rollingSummary, recoveryRuntime);
+      const prompt = buildRollingAnalysisPrompt(startTime, endTime, rollingSummary, recoveryRuntime, wholeAssetAnalysis);
       const promptRef = captureRaw
         ? storePromptPayload({ outputDir, payload: prompt })
         : null;
@@ -469,6 +640,10 @@ async function run(input) {
               configForTarget: ctx.configForTarget,
               target: ctx.target
             });
+            const runtimeConfig = resolveProviderRuntimeConfigForTarget({
+              configForTarget: ctx.configForTarget,
+              target: ctx.target
+            });
 
             const providerCallStart = Date.now();
             events.emit({
@@ -494,7 +669,7 @@ async function run(input) {
                 promptRef,
                 events,
                 ctx,
-                apiKey,
+                runtimeConfig,
                 audioBase64,
                 audioMimeType: getAudioMimeType(config)
               });
@@ -658,11 +833,50 @@ async function run(input) {
       }
     }
 
+    const finalSegments = finalAnalysisMode === 'whole_asset'
+      ? (Array.isArray(wholeAssetAnalysis?.segments) ? wholeAssetAnalysis.segments : [])
+      : segments;
+    const finalSummary = finalAnalysisMode === 'whole_asset'
+      ? (compactString(wholeAssetAnalysis?.summary) || generateSummary(finalSegments))
+      : (compactString(wholeAssetAnalysis?.summary) || rollingSummary || generateSummary(finalSegments));
+    const finalHasMusic = Boolean((finalAnalysisMode === 'whole_asset' ? wholeAssetAnalysis?.hasMusic : hasMusic) || wholeAssetAnalysis?.hasMusic);
+    const timingMode = finalAnalysisMode === 'chunked' ? 'chunk_local' : 'full_timeline';
+    const usedChunking = finalAnalysisMode !== 'whole_asset';
+    const finalQualityNotes = Array.from(new Set([
+      ...qualityNotes,
+      ...(Array.isArray(wholeAssetAnalysis?.qualityNotes) ? wholeAssetAnalysis.qualityNotes : [])
+    ].filter((value) => compactString(value))));
+
     // Build music data
     const musicData = {
-      segments,
-      summary: rollingSummary || generateSummary(segments),
-      hasMusic
+      segments: finalSegments,
+      summary: finalSummary,
+      hasMusic: finalHasMusic,
+      analysisMode: finalAnalysisMode,
+      timingMode,
+      sourceStrategy: 'base64',
+      coverage: {
+        start: 0,
+        end: duration,
+        duration,
+        complete: true
+      },
+      ...(shouldEmitMusicGlobalArc(config) && wholeAssetAnalysis?.globalArc ? { globalArc: wholeAssetAnalysis.globalArc } : {}),
+      provenance: {
+        requestedMode: strategy.requestedMode,
+        transportMode: 'inline',
+        usedChunking,
+        chunkCount: usedChunking ? analysisChunkPlan.length : 0,
+        analysisWindowSeconds: usedChunking ? resolveMusicAnalysisWindowSeconds(config) : null,
+        fallbackApplied,
+        fallbackReason: fallbackReason || null,
+        wholeAssetAttempted: strategy.actualMode === 'whole_asset' || strategy.actualMode === 'hybrid',
+        wholeAssetSucceeded: !!wholeAssetAnalysis,
+        preflightReason: preflight?.trace?.reason || null,
+        estimatedBase64Bytes: Number(preflight?.estimatedBase64Bytes) || null,
+        base64BudgetBytes: Number(preflight?.budgetBytes) || null
+      },
+      ...(finalQualityNotes.length > 0 ? { qualityNotes: finalQualityNotes } : {})
     };
 
     // Write intermediate artifact to phase directory
@@ -672,8 +886,8 @@ async function run(input) {
 
     console.log('   ✅ Music/audio analysis complete');
     console.log(`      Output: ${artifactPath}`);
-    console.log(`      Found ${segments.length} segment(s)`);
-    console.log(`      Music detected: ${hasMusic ? 'Yes' : 'No'}`);
+    console.log(`      Found ${finalSegments.length} segment(s)`);
+    console.log(`      Music detected: ${finalHasMusic ? 'Yes' : 'No'}`);
 
     return {
       artifacts: {
@@ -917,11 +1131,257 @@ function parseJsonResponse(responseContent) {
   return parsed.ok ? parsed.value : null;
 }
 
-function buildRollingAnalysisPrompt(startTime, endTime, rollingSummary, recoveryRuntime = null) {
+function validateWholeAssetMusicAnalysisObject(input, durationSeconds = 0) {
+  const errors = [];
+  const maxDuration = Number.isFinite(durationSeconds) && durationSeconds >= 0 ? durationSeconds : Number.POSITIVE_INFINITY;
+
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    return {
+      ok: false,
+      value: null,
+      errors: [{ path: '$', code: 'invalid_type', message: 'Whole-asset music output must be a JSON object.' }],
+      summary: 'Whole-asset music output must be a JSON object. Return corrected JSON only.',
+      meta: { stage: 'validation' }
+    };
+  }
+
+  const summary = compactString(input.summary);
+  if (!summary) {
+    errors.push({ path: '$.summary', code: 'required_string', message: 'summary must be a non-empty string.' });
+  }
+
+  const hasMusic = typeof input.hasMusic === 'boolean' ? input.hasMusic : null;
+  if (hasMusic === null) {
+    errors.push({ path: '$.hasMusic', code: 'required_boolean', message: 'hasMusic must be a boolean.' });
+  }
+
+  const segmentsInput = Array.isArray(input.segments) ? input.segments : null;
+  if (!segmentsInput) {
+    errors.push({ path: '$.segments', code: 'required_array', message: 'segments must be an array.' });
+  }
+
+  const normalizedSegments = (segmentsInput || []).map((segment, index) => {
+    const itemPath = `$.segments[${index}]`;
+    if (!segment || typeof segment !== 'object' || Array.isArray(segment)) {
+      errors.push({ path: itemPath, code: 'invalid_type', message: 'Each segment must be an object.' });
+      return null;
+    }
+
+    const start = Number(segment.start);
+    const end = Number(segment.end);
+    const type = compactString(segment.type);
+    const description = compactString(segment.description);
+    const mood = segment.mood === undefined || segment.mood === null ? null : compactString(segment.mood);
+    const intensity = Number(segment.intensity);
+
+    if (!Number.isFinite(start) || start < 0 || start > maxDuration) {
+      errors.push({ path: `${itemPath}.start`, code: 'invalid_number', message: 'segment start must be a finite number within the asset timeline.' });
+    }
+    if (!Number.isFinite(end) || end < 0 || end > maxDuration) {
+      errors.push({ path: `${itemPath}.end`, code: 'invalid_number', message: 'segment end must be a finite number within the asset timeline.' });
+    }
+    if (Number.isFinite(start) && Number.isFinite(end) && end <= start) {
+      errors.push({ path: itemPath, code: 'invalid_range', message: 'segment end must be greater than start.' });
+    }
+    if (!type) {
+      errors.push({ path: `${itemPath}.type`, code: 'required_string', message: 'segment type must be a non-empty string.' });
+    }
+    if (!description) {
+      errors.push({ path: `${itemPath}.description`, code: 'required_string', message: 'segment description must be a non-empty string.' });
+    }
+    if (segment.mood !== undefined && segment.mood !== null && !mood) {
+      errors.push({ path: `${itemPath}.mood`, code: 'required_string', message: 'segment mood must be a non-empty string when provided.' });
+    }
+    if (!Number.isFinite(intensity) || intensity < 0 || intensity > 10) {
+      errors.push({ path: `${itemPath}.intensity`, code: 'invalid_number', message: 'segment intensity must be a finite number between 0 and 10.' });
+    }
+
+    return {
+      start,
+      end,
+      type: type || 'unknown',
+      description: description || 'Unknown audio content',
+      mood: mood || null,
+      intensity: Number.isFinite(intensity) ? intensity : 0
+    };
+  }).filter(Boolean).sort((left, right) => left.start - right.start);
+
+  if (normalizedSegments.length === 0) {
+    errors.push({ path: '$.segments', code: 'required_non_empty_array', message: 'segments must contain at least one timeline segment.' });
+  }
+
+  const globalArcInput = input.globalArc;
+  let globalArc = null;
+  if (globalArcInput !== undefined && globalArcInput !== null) {
+    if (!globalArcInput || typeof globalArcInput !== 'object' || Array.isArray(globalArcInput)) {
+      errors.push({ path: '$.globalArc', code: 'invalid_type', message: 'globalArc must be an object when provided.' });
+    } else {
+      const dominantMood = globalArcInput.dominantMood === undefined || globalArcInput.dominantMood === null
+        ? null
+        : compactString(globalArcInput.dominantMood);
+      const energyCurve = globalArcInput.energyCurve === undefined || globalArcInput.energyCurve === null
+        ? null
+        : compactString(globalArcInput.energyCurve);
+      const notableTransitions = Array.isArray(globalArcInput.notableTransitions)
+        ? globalArcInput.notableTransitions.map((transition, index) => {
+            const itemPath = `$.globalArc.notableTransitions[${index}]`;
+            if (!transition || typeof transition !== 'object' || Array.isArray(transition)) {
+              errors.push({ path: itemPath, code: 'invalid_type', message: 'Each notable transition must be an object.' });
+              return null;
+            }
+
+            const start = Number(transition.start);
+            const end = Number(transition.end);
+            const label = compactString(transition.label);
+
+            if (!Number.isFinite(start) || start < 0 || start > maxDuration) {
+              errors.push({ path: `${itemPath}.start`, code: 'invalid_number', message: 'transition start must be within the asset timeline.' });
+            }
+            if (!Number.isFinite(end) || end < 0 || end > maxDuration) {
+              errors.push({ path: `${itemPath}.end`, code: 'invalid_number', message: 'transition end must be within the asset timeline.' });
+            }
+            if (Number.isFinite(start) && Number.isFinite(end) && end <= start) {
+              errors.push({ path: itemPath, code: 'invalid_range', message: 'transition end must be greater than start.' });
+            }
+            if (!label) {
+              errors.push({ path: `${itemPath}.label`, code: 'required_string', message: 'transition label must be a non-empty string.' });
+            }
+
+            return {
+              start,
+              end,
+              label: label || 'transition'
+            };
+          }).filter(Boolean)
+        : [];
+
+      if (globalArcInput.notableTransitions !== undefined && !Array.isArray(globalArcInput.notableTransitions)) {
+        errors.push({ path: '$.globalArc.notableTransitions', code: 'required_array', message: 'globalArc.notableTransitions must be an array when provided.' });
+      }
+
+      globalArc = {
+        dominantMood: dominantMood || null,
+        energyCurve: energyCurve || null,
+        notableTransitions
+      };
+    }
+  }
+
+  const qualityNotes = Array.isArray(input.qualityNotes)
+    ? input.qualityNotes.map((note, index) => {
+        const normalized = compactString(note);
+        if (!normalized) {
+          errors.push({ path: `$.qualityNotes[${index}]`, code: 'required_string', message: 'qualityNotes entries must be non-empty strings.' });
+          return null;
+        }
+        return normalized;
+      }).filter(Boolean)
+    : [];
+
+  if (input.qualityNotes !== undefined && !Array.isArray(input.qualityNotes)) {
+    errors.push({ path: '$.qualityNotes', code: 'required_array', message: 'qualityNotes must be an array when provided.' });
+  }
+
+  return {
+    ok: errors.length === 0,
+    value: errors.length === 0 ? {
+      summary,
+      hasMusic,
+      segments: normalizedSegments,
+      globalArc,
+      qualityNotes
+    } : null,
+    errors,
+    summary: errors.length === 0 ? null : `Whole-asset music JSON validation failed. ${errors.slice(0, 6).map((error) => `${error.path}: ${error.message}`).join(' | ')} Return corrected JSON only.`,
+    meta: { stage: 'validation' }
+  };
+}
+
+function buildWholeAssetMusicPrompt(durationSeconds, recoveryRuntime = null, { intent = 'whole_asset' } = {}) {
+  const modeNote = intent === 'hybrid'
+    ? 'This full-asset pass provides global music arc context for a later chunk-refinement pass.'
+    : 'This is the primary whole-asset music analysis pass.';
+
+  const prompt = `Analyze the complete extracted audio track for the original asset timeline (0.0s to ${durationSeconds.toFixed(1)}s).
+
+${modeNote}
+
+Identify the overall music arc across the full asset, then emit coarse timeline-aware segments for major audio changes.
+
+Return JSON only in this format:
+{
+  "summary": "Concise full-asset summary",
+  "hasMusic": true,
+  "globalArc": {
+    "dominantMood": "energetic",
+    "energyCurve": "rising_then_plateau_then_drop",
+    "notableTransitions": [
+      { "start": 58.0, "end": 65.0, "label": "rock vocal entry" }
+    ]
+  },
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 35.0,
+      "type": "music",
+      "description": "Opening pulse with restrained percussion",
+      "mood": "tense",
+      "intensity": 6
+    }
+  ],
+  "qualityNotes": [
+    "Optional note about confidence, timing precision, or continuity."
+  ]
+}
+
+Rules:
+- Use the original full timeline in seconds for every segment and transition.
+- Provide 1-12 segments covering the major audio changes across the full asset.
+- Keep start/end in ascending order and within 0.0s to ${durationSeconds.toFixed(1)}s.
+- If music is absent, set hasMusic to false and still return best-effort segments using types like speech, silence, ambient, or sfx.
+- summary must describe the whole asset, not just one moment.
+- globalArc.notableTransitions may be empty.
+- JSON only. No markdown, no explanation.`;
+
+  return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
+}
+
+function formatWholeAssetMusicContext(wholeAssetAnalysis = null) {
+  if (!wholeAssetAnalysis || typeof wholeAssetAnalysis !== 'object') {
+    return '';
+  }
+
+  const lines = [];
+  if (compactString(wholeAssetAnalysis.summary)) {
+    lines.push(`Whole-asset summary: ${compactString(wholeAssetAnalysis.summary)}`);
+  }
+
+  const dominantMood = compactString(wholeAssetAnalysis?.globalArc?.dominantMood);
+  if (dominantMood) {
+    lines.push(`Dominant mood: ${dominantMood}`);
+  }
+
+  const energyCurve = compactString(wholeAssetAnalysis?.globalArc?.energyCurve);
+  if (energyCurve) {
+    lines.push(`Energy curve: ${energyCurve}`);
+  }
+
+  const transitions = Array.isArray(wholeAssetAnalysis?.globalArc?.notableTransitions)
+    ? wholeAssetAnalysis.globalArc.notableTransitions.slice(0, 4)
+    : [];
+  if (transitions.length > 0) {
+    lines.push(`Notable transitions: ${transitions.map((transition) => `${Number(transition.start).toFixed(1)}-${Number(transition.end).toFixed(1)}s ${transition.label}`).join('; ')}`);
+  }
+
+  return lines.length > 0 ? `Whole-asset continuity context:\n- ${lines.join('\n- ')}\n\n` : '';
+}
+
+function buildRollingAnalysisPrompt(startTime, endTime, rollingSummary, recoveryRuntime = null, wholeAssetAnalysis = null) {
   const roll = typeof rollingSummary === 'string' && rollingSummary.trim().length > 0
     ? rollingSummary.trim()
     : null;
   const chunkDurationSeconds = Math.max(0, endTime - startTime);
+  const wholeAssetContext = formatWholeAssetMusicContext(wholeAssetAnalysis);
 
   const prompt = `Analyze the audio in this chunk (${startTime.toFixed(1)}s to ${endTime.toFixed(1)}s).
 
@@ -932,7 +1392,7 @@ Important grounding:
 - Do NOT claim the requested range exceeds the file duration just because the attached chunk is shorter than the full trailer.
 - Analyze only the audio that is actually present in the attached chunk.
 
-${roll ? `Rolling summary so far (from previous chunks):\n${roll}\n\n` : ''}Identify:
+${wholeAssetContext}${roll ? `Rolling summary so far (from previous chunks):\n${roll}\n\n` : ''}Identify:
 1. Type of audio: music, speech, silence, ambient noise, sound effects
 2. If music: describe the mood (upbeat, calm, tense, sad, energetic, etc.)
 3. Intensity level from 1-10
@@ -982,6 +1442,26 @@ function parseRollingMusicResponse(responseContent, startTime, endTime) {
   };
 }
 
+function parseWholeAssetMusicResponse(responseContent, durationSeconds) {
+  const parsed = parseAndValidateJsonObject(
+    responseContent,
+    (value) => validateWholeAssetMusicAnalysisObject(value, durationSeconds)
+  );
+
+  if (!parsed.ok) {
+    throw createRetryableError(`invalid_output: ${parsed.summary || 'whole-asset music analysis output was invalid'}`, {
+      group: parsed.meta?.stage || 'parse',
+      raw: parsed.meta?.raw || responseContent || null,
+      extracted: parsed.meta?.extracted || null,
+      parseError: parsed.meta?.parseError || null,
+      validationErrors: parsed.errors,
+      validationSummary: parsed.summary
+    });
+  }
+
+  return parsed.value;
+}
+
 async function executeMusicAnalysisToolLoop({
   provider,
   adapter,
@@ -990,7 +1470,7 @@ async function executeMusicAnalysisToolLoop({
   promptRef,
   events,
   ctx,
-  apiKey,
+  runtimeConfig,
   audioBase64,
   audioMimeType
 }) {
@@ -1017,7 +1497,8 @@ async function executeMusicAnalysisToolLoop({
     callProvider: ({ prompt }) => provider.complete({
       prompt,
       model: adapter?.model,
-      apiKey,
+      apiKey: runtimeConfig?.apiKey,
+      baseUrl: runtimeConfig?.baseUrl,
       attachments: [
         {
           type: 'audio',
@@ -1027,14 +1508,216 @@ async function executeMusicAnalysisToolLoop({
       ],
       options: buildProviderOptions({
         adapter,
-        defaults: {
+        defaults: buildProviderOptionDefaults(runtimeConfig, {
           temperature: 0.5
-        }
+        })
       })
     }),
     executeValidatorTool: executeMusicAnalysisValidatorTool,
     normalizeValidatedValue: (value) => JSON.stringify(value)
   });
+}
+
+async function executeWholeAssetMusicAnalysis({
+  config,
+  retryConfig,
+  audioBase64,
+  audioMimeType,
+  durationSeconds,
+  recoveryRuntime,
+  events,
+  captureRaw,
+  writeWholeAssetMusicRaw,
+  promptRef,
+  intent = 'whole_asset'
+}) {
+  const prompt = buildWholeAssetMusicPrompt(durationSeconds, recoveryRuntime, { intent });
+  const attemptStartMs = new Map();
+
+  const { result } = await executeWithTargets({
+    config,
+    domain: 'music',
+    retry: retryConfig,
+    operation: async (ctx) => {
+      const adapter = ctx?.target?.adapter;
+      const attemptKey = String(ctx?.attempt || '');
+
+      if (attemptKey && !attemptStartMs.has(attemptKey)) {
+        attemptStartMs.set(attemptKey, Date.now());
+        events.emit({
+          kind: 'attempt.start',
+          phase: PHASE_KEY,
+          script: SCRIPT_ID,
+          domain: 'music',
+          scope: 'whole_asset',
+          attempt: ctx.attempt,
+          attemptInTarget: ctx.attemptInTarget,
+          targetIndex: ctx.targetIndex,
+          targetCount: ctx.targetCount,
+          adapter: adapter || null,
+        });
+      }
+
+      const provider = getProviderForTarget({
+        configForTarget: ctx.configForTarget,
+        target: ctx.target
+      });
+      const runtimeConfig = resolveProviderRuntimeConfigForTarget({
+        configForTarget: ctx.configForTarget,
+        target: ctx.target
+      });
+
+      const providerCallStart = Date.now();
+      events.emit({
+        kind: 'provider.call.start',
+        phase: PHASE_KEY,
+        script: SCRIPT_ID,
+        domain: 'music',
+        scope: 'whole_asset',
+        attempt: ctx.attempt,
+        attemptInTarget: ctx.attemptInTarget,
+        targetIndex: ctx.targetIndex,
+        targetCount: ctx.targetCount,
+        provider: adapter?.name || null,
+        model: adapter?.model || null,
+      });
+
+      try {
+        const completion = await provider.complete({
+          prompt,
+          model: adapter?.model,
+          apiKey: runtimeConfig?.apiKey,
+          baseUrl: runtimeConfig?.baseUrl,
+          attachments: [
+            {
+              type: 'audio',
+              data: audioBase64,
+              mimeType: audioMimeType
+            }
+          ],
+          options: buildProviderOptions({
+            adapter,
+            defaults: buildProviderOptionDefaults(runtimeConfig, {
+              temperature: 0.4
+            })
+          })
+        });
+
+        const parsed = parseWholeAssetMusicResponse(completion?.content, durationSeconds);
+
+        events.emit({
+          kind: 'provider.call.end',
+          phase: PHASE_KEY,
+          script: SCRIPT_ID,
+          domain: 'music',
+          scope: 'whole_asset',
+          attempt: ctx.attempt,
+          attemptInTarget: ctx.attemptInTarget,
+          targetIndex: ctx.targetIndex,
+          ok: true,
+          durationMs: Date.now() - providerCallStart,
+          provider: adapter?.name || null,
+          model: adapter?.model || null,
+        });
+
+        return { completion, parsed };
+      } catch (error) {
+        events.emit({
+          kind: 'provider.call.end',
+          phase: PHASE_KEY,
+          script: SCRIPT_ID,
+          domain: 'music',
+          scope: 'whole_asset',
+          attempt: ctx.attempt,
+          attemptInTarget: ctx.attemptInTarget,
+          targetIndex: ctx.targetIndex,
+          ok: false,
+          durationMs: Date.now() - providerCallStart,
+          provider: adapter?.name || null,
+          model: adapter?.model || null,
+          error: error?.message || String(error),
+        });
+        throw error;
+      }
+    },
+    onAttempt: ({
+      ok,
+      attempt,
+      attemptInTarget,
+      target,
+      targetIndex,
+      targetCount,
+      failover,
+      result,
+      error
+    }) => {
+      const attemptKey = String(attempt || '');
+      const startedAt = attemptKey && attemptStartMs.has(attemptKey) ? attemptStartMs.get(attemptKey) : null;
+      const persistedError = ok ? null : getPersistedErrorInfo(error);
+
+      events.emit({
+        kind: 'attempt.end',
+        phase: PHASE_KEY,
+        script: SCRIPT_ID,
+        domain: 'music',
+        scope: 'whole_asset',
+        attempt,
+        attemptInTarget,
+        targetIndex,
+        targetCount,
+        ok,
+        durationMs: startedAt ? (Date.now() - startedAt) : null,
+        provider: target?.adapter?.name || null,
+        model: target?.adapter?.model || null,
+        error: ok ? null : (error?.message || String(error)),
+        errorStatus: persistedError?.status || null,
+        errorRequestId: persistedError?.requestId || null,
+        errorClassification: persistedError?.classification || null,
+      });
+
+      if (!captureRaw) return;
+
+      writeWholeAssetMusicRaw(attempt, {
+        attempt,
+        attemptInTarget,
+        targetIndex,
+        targetCount,
+        adapter: target?.adapter || null,
+        failover: failover || null,
+        promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
+        rawResponse: ok ? sanitizeRawCaptureValue(result?.completion) : null,
+        parsed: ok ? result?.parsed : null,
+        error: ok ? null : (error?.message || String(error)),
+        errorName: ok ? null : (error?.name || null),
+        errorCode: ok ? null : (error?.code || null),
+        errorStatus: ok ? null : (persistedError?.status || null),
+        errorRequestId: ok ? null : (persistedError?.requestId || null),
+        errorClassification: ok ? null : (persistedError?.classification || null),
+        errorStack: ok ? null : (typeof error?.stack === 'string' ? error.stack : null),
+        errorDebug: ok ? null : (sanitizeRawCaptureValue(error?.debug) || null),
+        errorResponse: ok ? null : (sanitizeRawCaptureValue(persistedError?.response) || null),
+        provider: target?.adapter?.name || null,
+        model: target?.adapter?.model || null,
+        requestMeta: {
+          adapter: target?.adapter || null,
+          provider: target?.adapter?.name || null,
+          model: target?.adapter?.model || null,
+          attempt,
+          attemptInTarget,
+          targetIndex,
+          targetCount,
+          scope: 'whole_asset',
+          intent
+        }
+      });
+    }
+  });
+
+  return {
+    prompt,
+    parsed: result.parsed,
+    completion: result.completion
+  };
 }
 
 /**

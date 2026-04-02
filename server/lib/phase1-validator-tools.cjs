@@ -83,8 +83,8 @@ function buildDialogueTranscriptionValidatorToolContract({ requireHandoff = fals
     argumentKey: 'transcription',
     description: 'Validate a Phase 1 dialogue transcription JSON candidate against the required local schema before final submission.',
     candidateDescription: requireHandoff
-      ? 'Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, and totalDuration.'
-      : 'Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, and totalDuration.',
+      ? 'Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, totalDuration, and additive analysis/provenance metadata.'
+      : 'Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, totalDuration, and additive analysis/provenance metadata.',
     example: {
       dialogue_segments: [
         {
@@ -124,7 +124,25 @@ function buildDialogueTranscriptionValidatorToolContract({ requireHandoff = fals
       ],
       summary: 'Short summary of the dialogue.',
       ...(requireHandoff ? { handoffContext: 'Short continuity handoff for the next chunk.' } : {}),
-      totalDuration: 10.5
+      totalDuration: 10.5,
+      analysisMode: requireHandoff ? 'chunked' : 'whole_asset',
+      timingMode: requireHandoff ? 'chunk_local' : 'full_timeline',
+      sourceStrategy: 'base64',
+      coverage: {
+        start: 0,
+        end: 10.5,
+        duration: 10.5,
+        complete: true
+      },
+      provenance: {
+        transportMode: 'inline',
+        usedChunking: Boolean(requireHandoff),
+        chunkCount: requireHandoff ? 1 : 0,
+        fallbackApplied: false
+      },
+      qualityNotes: requireHandoff
+        ? ['Chunk-local timing was preserved for downstream stitching.']
+        : ['Whole-asset transcription preserved full-timeline timing.']
     }
   });
 }
