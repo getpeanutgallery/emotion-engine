@@ -33,6 +33,14 @@ report: []
 
 settings:
   api_request_delay: 500
+  retry_strategy:
+    type: exponential-backoff
+    config:
+      maxRetries: 3
+      initialDelayMs: 1000
+      maxDelayMs: 10000
+      exponentialBase: 2
+      jitter: true
   ffmpeg:
     audio:
       loglevel: error
@@ -68,6 +76,22 @@ recovery:
   deterministic:
     maxAttemptsPerFailure: 1
     maxRepeatedStrategyUsesPerFailure: 0
+  ai:
+    enabled: true
+    lane: structured-output-repair
+    adapter: openrouter
+    model: google/gemini-3.1-pro-preview
+    temperature: 0
+    timeoutMs: 45000
+    attempts:
+      maxPerFailure: 1
+      maxPerScriptRun: 1
+      maxPerPipelineRun: 3
+    budgets:
+      maxInputTokens: 12000
+      maxOutputTokens: 2000
+      maxTotalTokens: 14000
+      maxCostUsd: 0.25
 
 tool_variables:
   soulPath: ../cast/impatient-teenager/SOUL.md
