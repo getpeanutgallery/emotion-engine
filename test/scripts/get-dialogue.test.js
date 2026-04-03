@@ -370,7 +370,7 @@ test('Get Dialogue Script', async (t) => {
             phase1: {
               dialogue: {
                 mode: 'hybrid',
-                max_whole_asset_duration_seconds: 5
+                max_whole_asset_duration_seconds: 15
               }
             }
           },
@@ -394,6 +394,96 @@ test('Get Dialogue Script', async (t) => {
       ok(result.artifacts.dialogueData.qualityNotes[0].includes('Whole-asset summary/context was preserved'));
       ok(completionPrompts.some((prompt) => prompt.includes('You are transcribing CHUNK')));
       ok(completionPrompts.some((prompt) => prompt.includes('dialogue transcript stitcher')));
+    });
+
+    tNested.test('falls back to chunked dialogue when whole-asset mode exceeds max_whole_asset_duration_seconds', async () => {
+      let chunkCallCount = 0;
+      completeImplementation = async (options) => {
+        const prompt = String(options?.prompt || '');
+        completionPrompts.push(prompt);
+        completionOptions.push(options || {});
+
+        if (prompt.includes('dialogue transcript stitcher')) {
+          return {
+            content: JSON.stringify({
+              cleanedTranscript: 'THRESHOLD FALLBACK TRANSCRIPT',
+              auditTrail: [{ op: 'merge_boundary', chunkIndex: 0, detail: 'duration threshold fallback test' }],
+              debug: { refs: [] }
+            }),
+            usage: { input: 50, output: 60 }
+          };
+        }
+
+        if (prompt.includes('You are transcribing CHUNK')) {
+          chunkCallCount += 1;
+          return {
+            content: JSON.stringify({
+              dialogue_segments: [
+                {
+                  start: 0.5,
+                  end: 1.5,
+                  speaker: `Speaker ${chunkCallCount}`,
+                  speaker_id: `spk_${String(chunkCallCount).padStart(3, '0')}`,
+                  text: `Chunk ${chunkCallCount}`,
+                  confidence: 0.95
+                }
+              ],
+              speaker_profiles: [
+                {
+                  speaker_id: `spk_${String(chunkCallCount).padStart(3, '0')}`,
+                  label: `Speaker ${chunkCallCount}`,
+                  grounded: {
+                    confidence: 0.82,
+                    linked_segment_indexes: [0],
+                    acoustic_descriptors: []
+                  },
+                  inferred_traits: { traits: [] }
+                }
+              ],
+              summary: `Chunk ${chunkCallCount}`,
+              handoffContext: `Continue chunk ${chunkCallCount}`,
+              totalDuration: 4
+            }),
+            usage: { input: 40, output: 45 }
+          };
+        }
+
+        throw new Error('Whole-asset prompt should not run when duration exceeds the configured max whole-asset threshold.');
+      };
+
+      const result = await getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ...makeDialogueConfig({ adapterName: 'openrouter' }),
+          settings: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).settings,
+            dialogue_forced_chunk_duration_seconds: 4,
+            phase1: {
+              dialogue: {
+                mode: 'whole_asset',
+                max_whole_asset_duration_seconds: 5,
+                fallback_to_chunked: true
+              }
+            }
+          },
+          ai: {
+            ...makeDialogueConfig({ adapterName: 'openrouter' }).ai,
+            dialogue_stitch: {
+              targets: [
+                { adapter: { name: 'openrouter', model: 'test-stitch-model' } }
+              ]
+            }
+          }
+        }
+      });
+
+      is(result.artifacts.dialogueData.analysisMode, 'chunked');
+      is(result.artifacts.dialogueData.provenance.fallbackApplied, true);
+      is(result.artifacts.dialogueData.provenance.fallbackReason, 'max_whole_asset_duration_exceeded');
+      ok(chunkCallCount >= 2);
+      ok(completionPrompts.every((prompt) => !prompt.includes('Transcribe the audio in this file.')));
+      ok(completionPrompts.some((prompt) => prompt.includes('You are transcribing CHUNK')));
     });
 
     tNested.test('selects provider from YAML config.ai.provider', async () => {

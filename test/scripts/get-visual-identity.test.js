@@ -246,6 +246,9 @@ test('get-visual-identity script', async (t) => {
     const artifact = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
 
     assert.equal(result.artifacts.visualIdentityData.analysisMode, 'whole_asset');
+    assert.equal(result.artifacts.visualIdentityData.provenance.requestedMode, 'auto');
+    assert.equal(result.artifacts.visualIdentityData.provenance.effectiveMode, 'whole_asset');
+    assert.equal(result.artifacts.visualIdentityData.provenance.modeAliasApplied, false);
     assert.equal(result.artifacts.visualIdentityData.provenance.provider.transport, 'public_url');
     assert.equal(result.artifacts.visualIdentityData.provenance.configuredDomain, 'video');
     assert.equal(result.artifacts.visualIdentityData.videoDuration, 60);
@@ -262,4 +265,123 @@ test('get-visual-identity script', async (t) => {
     assert.match(providerCalls[0].prompt, /SUPPORTING NON-VISUAL CONTEXT/);
     assert.match(providerCalls[0].prompt, /visualBeats/);
   });
+  await t.test('records hybrid requests honestly while aliasing execution to whole_asset', async () => {
+    const result = await getVisualIdentity.run({
+      assetPath: videoPath,
+      outputDir,
+      artifacts: {},
+      config: {
+        asset: {
+          media: {
+            refs: {
+              source_video: {
+                kind: 'video',
+                role: 'primary',
+                source: { path: videoPath },
+                staged: {
+                  url: 'https://gambit-games-tests.s3.us-east-1.amazonaws.com/peanut-gallery/cod.mp4',
+                  urlType: 'public'
+                },
+                delivery: {
+                  preferredMode: 'url',
+                  allowedModes: ['url', 'inline'],
+                  allowFallback: false
+                },
+                metadata: {
+                  filename: 'cod.mp4',
+                  mimeType: 'video/mp4',
+                  durationSeconds: 60
+                }
+              }
+            }
+          }
+        },
+        ai: {
+          video: {
+            targets: [
+              {
+                adapter: {
+                  name: 'openrouter',
+                  model: 'xiaomi/mimo-v2-omni'
+                }
+              }
+            ]
+          }
+        },
+        settings: {
+          phase1: {
+            visual_identity: {
+              mode: 'hybrid',
+              max_whole_asset_duration_seconds: 90,
+              fallback_to_chunked: true
+            }
+          }
+        }
+      }
+    });
+
+    assert.equal(result.artifacts.visualIdentityData.analysisMode, 'whole_asset');
+    assert.equal(result.artifacts.visualIdentityData.provenance.requestedMode, 'hybrid');
+    assert.equal(result.artifacts.visualIdentityData.provenance.effectiveMode, 'whole_asset');
+    assert.equal(result.artifacts.visualIdentityData.provenance.modeAliasApplied, true);
+    assert.equal(result.artifacts.visualIdentityData.provenance.modeAliasReason, 'hybrid_currently_maps_to_whole_asset');
+    assert.ok(Array.isArray(result.artifacts.visualIdentityData.qualityNotes));
+    assert.match(result.artifacts.visualIdentityData.qualityNotes[0], /aliases to whole-asset visual identity analysis/);
+  });
+
+  await t.test('fails clearly when chunked visual identity mode is requested', async () => {
+    await assert.rejects(() => getVisualIdentity.run({
+      assetPath: videoPath,
+      outputDir,
+      artifacts: {},
+      config: {
+        asset: {
+          media: {
+            refs: {
+              source_video: {
+                kind: 'video',
+                role: 'primary',
+                source: { path: videoPath },
+                staged: {
+                  url: 'https://gambit-games-tests.s3.us-east-1.amazonaws.com/peanut-gallery/cod.mp4',
+                  urlType: 'public'
+                },
+                delivery: {
+                  preferredMode: 'url',
+                  allowedModes: ['url', 'inline'],
+                  allowFallback: false
+                },
+                metadata: {
+                  filename: 'cod.mp4',
+                  mimeType: 'video/mp4',
+                  durationSeconds: 60
+                }
+              }
+            }
+          }
+        },
+        ai: {
+          video: {
+            targets: [
+              {
+                adapter: {
+                  name: 'openrouter',
+                  model: 'xiaomi/mimo-v2-omni'
+                }
+              }
+            ]
+          }
+        },
+        settings: {
+          phase1: {
+            visual_identity: {
+              mode: 'chunked'
+            }
+          }
+        }
+      }
+    }), /chunked" is not supported yet/);
+  });
+
+
 });

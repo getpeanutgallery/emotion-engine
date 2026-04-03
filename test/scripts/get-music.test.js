@@ -106,7 +106,7 @@ mockModule('child_process', mockChildProcess);
 // Require module under test
 const getMusicScript = require('../../server/scripts/get-context/get-music.cjs');
 
-function makeMusicConfig({ adapterName = 'openrouter', model = 'test-music-model', params, retry, ffmpegAudio } = {}) {
+function makeMusicConfig({ adapterName = 'openrouter', model = 'test-music-model', params, retry, ffmpegAudio, phase1Music } = {}) {
   return {
     ai: {
       music: {
@@ -131,6 +131,11 @@ function makeMusicConfig({ adapterName = 'openrouter', model = 'test-music-model
           channels: 1,
           container: 'wav'
         }
+      },
+      phase1: {
+        music: phase1Music && typeof phase1Music === 'object'
+          ? phase1Music
+          : { mode: 'chunked' }
       }
     }
   };
@@ -229,6 +234,44 @@ test('Get Music Script', async (t) => {
       const data = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
       property(data, 'segments');
       property(data, 'summary');
+    });
+
+    tNested.test('defaults music mode to auto and prefers whole-asset analysis when eligible', async () => {
+      mockDurationSeconds = 30;
+      completeImplementation = async (options) => {
+        completionPrompts.push(String(options?.prompt || ''));
+        completionOptions.push(options || {});
+        return {
+          content: JSON.stringify({
+            summary: 'Default auto whole-asset summary.',
+            hasMusic: true,
+            globalArc: {
+              dominantMood: 'energetic',
+              energyCurve: 'steady_rise',
+              notableTransitions: []
+            },
+            segments: [
+              { start: 0, end: 30, type: 'music', description: 'Whole asset lane selected by default auto mode.', mood: 'energetic', intensity: 7 }
+            ],
+            qualityNotes: []
+          }),
+          usage: { input: 90, output: 70 }
+        };
+      };
+
+      const result = await getMusicScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: {
+          ai: makeMusicConfig().ai,
+          settings: makeMusicConfig().settings.ffmpeg ? { ffmpeg: makeMusicConfig().settings.ffmpeg } : {}
+        }
+      });
+
+      is(result.artifacts.musicData.analysisMode, 'whole_asset');
+      is(result.artifacts.musicData.provenance.requestedMode, 'auto');
+      is(result.artifacts.musicData.provenance.usedChunking, false);
+      ok(completionPrompts[0].includes('Analyze the complete extracted audio track'));
     });
 
     tNested.test('splits long music analysis into bounded time windows even when transport preflight stays within budget', async () => {

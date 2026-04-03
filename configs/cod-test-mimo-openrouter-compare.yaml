@@ -33,6 +33,19 @@ report: []
 
 settings:
   api_request_delay: 500
+  phase1:
+    dialogue:
+      mode: hybrid
+      timing_refinement: chunk_refine
+      max_whole_asset_duration_seconds: 180
+      fallback_to_chunked: true
+      preserve_chunk_plan_metadata: true
+    music:
+      mode: hybrid
+      max_whole_asset_duration_seconds: 180
+      analysis_window_seconds: 30
+      emit_global_arc: true
+      fallback_to_chunked: true
   retry_strategy:
     type: exponential-backoff
     config:

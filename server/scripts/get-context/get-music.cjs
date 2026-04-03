@@ -72,7 +72,7 @@ function normalizePhase1MusicMode(value) {
 }
 
 function resolveRequestedPhase1MusicMode(config = {}) {
-  return normalizePhase1MusicMode(config?.settings?.phase1?.music?.mode) || 'chunked';
+  return normalizePhase1MusicMode(config?.settings?.phase1?.music?.mode) || 'auto';
 }
 
 function shouldFallbackWholeAssetMusicToChunked(config = {}) {

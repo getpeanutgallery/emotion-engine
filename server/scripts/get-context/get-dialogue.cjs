@@ -714,21 +714,26 @@ async function run(input) {
       }
     });
     const dialogueModeConfig = normalizeDialoguePhase1ModeConfig(config);
-    const shouldAttemptWholeAsset = !transportPreflight.needsChunking && (
+    const wholeAssetTransportSafe = !transportPreflight.needsChunking;
+    const wholeAssetDurationEligible = transportPreflight.durationSeconds <= dialogueModeConfig.maxWholeAssetDurationSeconds;
+    const wholeAssetEligible = wholeAssetTransportSafe && wholeAssetDurationEligible;
+    const shouldAttemptWholeAsset = wholeAssetEligible && (
       dialogueModeConfig.requestedMode === 'whole_asset'
       || dialogueModeConfig.requestedMode === 'hybrid'
-      || (dialogueModeConfig.requestedMode === 'auto' && transportPreflight.durationSeconds <= dialogueModeConfig.maxWholeAssetDurationSeconds)
+      || dialogueModeConfig.requestedMode === 'auto'
     );
-    const hybridTimingRefinementRequested = dialogueModeConfig.requestedMode === 'hybrid' && !transportPreflight.needsChunking && (
-      dialogueModeConfig.timingRefinement === 'chunk_refine'
-      || (dialogueModeConfig.timingRefinement === 'auto' && transportPreflight.durationSeconds > dialogueModeConfig.maxWholeAssetDurationSeconds)
-    );
+    const hybridTimingRefinementRequested = dialogueModeConfig.requestedMode === 'hybrid'
+      && wholeAssetEligible
+      && dialogueModeConfig.timingRefinement !== 'disabled';
+    const wholeAssetUnavailableReason = !wholeAssetTransportSafe
+      ? 'inline_audio_budget_exceeded'
+      : (!wholeAssetDurationEligible ? 'max_whole_asset_duration_exceeded' : null);
     const shouldRunChunked = transportPreflight.needsChunking
       || dialogueModeConfig.requestedMode === 'chunked'
       || (dialogueModeConfig.requestedMode === 'auto' && !shouldAttemptWholeAsset)
       || hybridTimingRefinementRequested
       || ((dialogueModeConfig.requestedMode === 'whole_asset' || dialogueModeConfig.requestedMode === 'hybrid')
-        && transportPreflight.needsChunking
+        && !wholeAssetEligible
         && dialogueModeConfig.fallbackToChunked);
     const chunkingPreflight = shouldRunChunked
       ? resolveDialogueChunkingPreflight(transportPreflight, config, {
@@ -757,8 +762,11 @@ async function run(input) {
       && !shouldRunChunked
       && !dialogueModeConfig.fallbackToChunked
       && (dialogueModeConfig.requestedMode === 'whole_asset' || dialogueModeConfig.requestedMode === 'hybrid')
-      && transportPreflight.needsChunking) {
-      throw new Error(`GetDialogue: phase1 dialogue mode "${dialogueModeConfig.requestedMode}" requires whole-asset delivery, but the source exceeded the inline audio budget and fallback_to_chunked=false.`);
+      && !wholeAssetEligible) {
+      const reasonMessage = wholeAssetUnavailableReason === 'inline_audio_budget_exceeded'
+        ? 'the source exceeded the inline audio budget'
+        : `the source duration ${transportPreflight.durationSeconds.toFixed(1)}s exceeded max_whole_asset_duration_seconds=${dialogueModeConfig.maxWholeAssetDurationSeconds.toFixed(1)}`;
+      throw new Error(`GetDialogue: phase1 dialogue mode "${dialogueModeConfig.requestedMode}" requires whole-asset delivery, but ${reasonMessage} and fallback_to_chunked=false.`);
     }
 
     if (!shouldAttemptWholeAsset && !shouldRunChunked) {
@@ -1822,7 +1830,7 @@ async function run(input) {
     const fallbackReason = (dialogueModeConfig.requestedMode === 'whole_asset' || dialogueModeConfig.requestedMode === 'hybrid')
       && !wholeAssetDialogueResult
       && chunkedDialogueResult
-      ? (transportPreflight?.trace?.reason || chunkingPreflight?.trace?.reason || 'transport_budget_exceeded')
+      ? (wholeAssetUnavailableReason || transportPreflight?.trace?.reason || chunkingPreflight?.trace?.reason || 'transport_budget_exceeded')
       : null;
 
     const effectiveAnalysisMode = wholeAssetDialogueResult && chunkedDialogueResult

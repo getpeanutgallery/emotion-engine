@@ -42,6 +42,8 @@ const { ffprobePath } = require('../../lib/ffmpeg-path.cjs');
 const execAsync = promisify(exec);
 const PHASE_KEY = 'phase1-gather-context';
 const SCRIPT_ID = 'get-visual-identity';
+const DEFAULT_VISUAL_IDENTITY_MAX_WHOLE_ASSET_DURATION_SECONDS = 600;
+const VALID_PHASE1_VISUAL_IDENTITY_MODES = new Set(['auto', 'chunked', 'whole_asset', 'hybrid']);
 
 function compactString(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -49,6 +51,50 @@ function compactString(value) {
 
 function isReplayMode() {
   return (process.env.DIGITAL_TWIN_MODE || '').trim().toLowerCase() === 'replay';
+}
+
+function normalizePhase1VisualIdentityMode(value) {
+  const normalized = compactString(value).toLowerCase();
+  return VALID_PHASE1_VISUAL_IDENTITY_MODES.has(normalized) ? normalized : null;
+}
+
+function resolvePhase1VisualIdentityConfig(config = {}) {
+  const laneConfig = config?.settings?.phase1?.visual_identity;
+  const normalizedLaneConfig = laneConfig && typeof laneConfig === 'object' && !Array.isArray(laneConfig)
+    ? laneConfig
+    : {};
+  const configuredMaxWholeAssetDurationSeconds = Number(normalizedLaneConfig.max_whole_asset_duration_seconds);
+
+  return {
+    requestedMode: normalizePhase1VisualIdentityMode(normalizedLaneConfig.mode) || 'auto',
+    fallbackToChunked: normalizedLaneConfig.fallback_to_chunked !== false,
+    maxWholeAssetDurationSeconds: Number.isFinite(configuredMaxWholeAssetDurationSeconds) && configuredMaxWholeAssetDurationSeconds > 0
+      ? configuredMaxWholeAssetDurationSeconds
+      : DEFAULT_VISUAL_IDENTITY_MAX_WHOLE_ASSET_DURATION_SECONDS
+  };
+}
+
+function resolvePhase1VisualIdentityExecution(config = {}) {
+  const laneConfig = resolvePhase1VisualIdentityConfig(config);
+
+  if (laneConfig.requestedMode === 'chunked') {
+    const error = new Error('GetVisualIdentity: phase1 visual_identity mode "chunked" is not supported yet. Use auto, whole_asset, or hybrid.');
+    error.code = 'VISUAL_IDENTITY_CHUNKED_UNSUPPORTED';
+    throw error;
+  }
+
+  const effectiveMode = 'whole_asset';
+  const qualityNotes = [];
+  if (laneConfig.requestedMode === 'hybrid') {
+    qualityNotes.push('Hybrid mode currently aliases to whole-asset visual identity analysis because no chunk-refinement lane exists yet.');
+  }
+
+  return {
+    ...laneConfig,
+    effectiveMode,
+    qualityNotes,
+    aliasApplied: laneConfig.requestedMode === 'hybrid'
+  };
 }
 
 function getRetryConfig(config = {}, domain = 'video_identity') {
@@ -307,7 +353,8 @@ function buildFinalArtifact({
   adapter,
   durationSeconds,
   completion,
-  domain
+  domain,
+  strategy
 }) {
   const usage = completion?.usage || {};
   const inputTokens = Number(usage.input) || 0;
@@ -315,10 +362,14 @@ function buildFinalArtifact({
   const coreProvenance = visualIdentityCore?.provenance && typeof visualIdentityCore.provenance === 'object' && !Array.isArray(visualIdentityCore.provenance)
     ? visualIdentityCore.provenance
     : {};
+  const qualityNotes = Array.from(new Set([
+    ...(Array.isArray(visualIdentityCore?.qualityNotes) ? visualIdentityCore.qualityNotes : []),
+    ...(Array.isArray(strategy?.qualityNotes) ? strategy.qualityNotes : [])
+  ].map((entry) => compactString(entry)).filter(Boolean)));
 
   return {
     schemaVersion: 1,
-    analysisMode: visualIdentityCore.analysisMode || 'whole_asset',
+    analysisMode: strategy?.effectiveMode || visualIdentityCore.analysisMode || 'whole_asset',
     timingMode: visualIdentityCore.timingMode || 'full_timeline',
     videoDuration: durationSeconds,
     summary: visualIdentityCore.summary,
@@ -347,6 +398,12 @@ function buildFinalArtifact({
       ...coreProvenance,
       lane: 'phase1.visual_identity',
       configuredDomain: domain,
+      requestedMode: strategy?.requestedMode || 'auto',
+      effectiveMode: strategy?.effectiveMode || 'whole_asset',
+      modeAliasApplied: strategy?.aliasApplied === true,
+      modeAliasReason: strategy?.aliasApplied === true ? 'hybrid_currently_maps_to_whole_asset' : null,
+      maxWholeAssetDurationSeconds: Number.isFinite(strategy?.maxWholeAssetDurationSeconds) ? strategy.maxWholeAssetDurationSeconds : null,
+      fallbackToChunked: strategy?.fallbackToChunked !== false,
       usedChunking: false,
       fallbackApplied: false,
       transportMode: resolvedAttachment?.deliveryMode === 'url' ? 'remote_url' : 'inline',
@@ -373,7 +430,8 @@ function buildFinalArtifact({
       safeForLegacyReporting: true,
       intendedConsumers: ['phase2_optional', 'phase3_optional'],
       note: 'visualIdentityData is additive and should not replace chunkAnalysis.'
-    }
+    },
+    ...(qualityNotes.length > 0 ? { qualityNotes } : {})
   };
 }
 
@@ -387,6 +445,7 @@ async function run(input) {
 
   const replayMode = isReplayMode();
   const domain = resolveVisualIdentityDomain(config);
+  const strategy = resolvePhase1VisualIdentityExecution(config);
 
   ensureRuntimeAuthForDomain({
     config,
@@ -512,6 +571,7 @@ async function run(input) {
           finalArtifactDescription: 'Return the visual identity analysis core JSON only. Runtime metadata such as provenance and input details are added locally after validation.',
           finalArtifactRules: [
             'Include analysisMode, timingMode, summary, timeline, identityRegistry, visualBeats, and editorialSignals.',
+            'For this first-pass unified strategy surface, return analysisMode=whole_asset and timingMode=full_timeline even when the requested mode was auto or hybrid.',
             'Keep the timeline sparse and evidence-based instead of frame-by-frame.',
             'Treat title cards, novelty peaks, continuity callbacks, fatigue risks, and CTA screens as first-class visual evidence.',
             'Do not collapse this output into chunkAnalysis.'
@@ -538,7 +598,8 @@ async function run(input) {
           adapter,
           durationSeconds,
           completion: toolLoopResult.completion,
-          domain
+          domain,
+          strategy
         });
 
         return {
@@ -633,6 +694,8 @@ module.exports = {
     buildVisualIdentityPrompt,
     resolveVisualIdentityDomain,
     buildFinalArtifact,
+    resolvePhase1VisualIdentityConfig,
+    resolvePhase1VisualIdentityExecution,
     formatTransportLabel,
     formatSourceStrategy,
     toProviderAttachment,
