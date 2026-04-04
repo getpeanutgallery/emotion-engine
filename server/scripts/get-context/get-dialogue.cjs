@@ -205,7 +205,11 @@ function mergeAdjacentDialogueSegments(segments) {
   return merged;
 }
 
-function normalizeDialogueDataToDuration(dialogueData, actualDuration, { requireHandoff = false } = {}) {
+function normalizeDialogueDataToDuration(
+  dialogueData,
+  actualDuration,
+  { requireHandoff = false, preserveReportedTotalDuration = false } = {}
+) {
   const boundedDuration = Number.isFinite(actualDuration) && actualDuration >= 0 ? actualDuration : 0;
   const inputSegments = Array.isArray(dialogueData?.dialogue_segments) ? dialogueData.dialogue_segments : [];
 
@@ -223,10 +227,18 @@ function normalizeDialogueDataToDuration(dialogueData, actualDuration, { require
     };
   }).filter(Boolean);
 
+  const supportedSegmentEnd = clampedSegments.reduce((maxEnd, segment) => {
+    if (!Number.isFinite(segment?.end)) return maxEnd;
+    return Math.max(maxEnd, segment.end);
+  }, 0);
+  const normalizedTotalDuration = preserveReportedTotalDuration && Number.isFinite(dialogueData?.totalDuration)
+    ? Math.max(supportedSegmentEnd, clampNumber(dialogueData.totalDuration, 0, boundedDuration))
+    : boundedDuration;
+
   const normalized = validateDialogueTranscriptionObject({
     ...dialogueData,
     dialogue_segments: clampedSegments,
-    totalDuration: boundedDuration
+    totalDuration: normalizedTotalDuration
   }, { requireHandoff });
 
   if (!normalized.ok) {
@@ -1088,7 +1100,9 @@ async function run(input) {
             });
 
             const actualDuration = transportPreflight.durationSeconds;
-            const dialogueData = normalizeDialogueDataToDuration(toolLoopResult.parsed, actualDuration);
+            const dialogueData = normalizeDialogueDataToDuration(toolLoopResult.parsed, actualDuration, {
+              preserveReportedTotalDuration: true
+            });
 
             return { completion: toolLoopResult.completion, dialogueData, toolLoop: toolLoopResult.toolLoop };
           } catch (error) {

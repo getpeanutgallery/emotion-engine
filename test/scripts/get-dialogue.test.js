@@ -322,6 +322,51 @@ test('Get Dialogue Script', async (t) => {
       });
     });
 
+    tNested.test('keeps shorter model-reported whole-asset duration instead of inflating it to the source runtime', async () => {
+      completeImplementation = async (options) => {
+        const prompt = String(options?.prompt || '');
+        completionPrompts.push(prompt);
+        completionOptions.push(options || {});
+
+        return {
+          content: JSON.stringify({
+            dialogue_segments: [
+              {
+                start: 0.5,
+                end: 3.2,
+                speaker: 'Speaker 1',
+                speaker_id: 'spk_001',
+                text: 'Approximate opening-only transcript',
+                confidence: 0.78
+              }
+            ],
+            summary: 'Only the opening dialogue could be grounded.',
+            totalDuration: 4.0,
+            qualityNotes: ['Transcription estimated from partial evidence; timestamps are approximate.']
+          }),
+          usage: { input: 100, output: 150 }
+        };
+      };
+
+      const result = await getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeDialogueConfig()
+      });
+
+      is(result.artifacts.dialogueData.totalDuration, 4);
+      is(result.artifacts.dialogueData.timingMode, 'full_timeline');
+      assert.deepEqual(result.artifacts.dialogueData.coverage, {
+        start: 0.5,
+        end: 3.2,
+        duration: 2.7,
+        complete: false
+      });
+      assert.deepEqual(result.artifacts.dialogueData.qualityNotes, [
+        'Transcription estimated from partial evidence; timestamps are approximate.'
+      ]);
+    });
+
     tNested.test('hybrid mode preserves whole-asset summary while refining timing through chunked stitching', async () => {
       let chunkCallCount = 0;
       completeImplementation = async (options) => {
