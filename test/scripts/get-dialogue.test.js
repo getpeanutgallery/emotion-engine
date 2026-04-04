@@ -1552,6 +1552,10 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts[0].includes('If you create a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change'));
       ok(completionPrompts[0].includes('If adjacent words are one uninterrupted utterance from the same voice'));
       ok(completionPrompts[0].includes('A speaker naming a person, character, organization, or title is not evidence that the speaker is that entity'));
+      ok(completionPrompts[0].includes('The attached audio runtime was measured locally at 10.00 seconds'));
+      ok(completionPrompts[0].includes('Set totalDuration to this full attached runtime rather than estimating from dialogue coverage or the last spoken line'));
+      ok(completionPrompts[0].includes('Sparse or non-speech tails, silence, ambience, music-only sections, or intermittent end-of-file vocals do not mean the file ended early'));
+      ok(completionPrompts[0].includes('Keep spoken-dialogue coverage honest, but keep totalDuration anchored to the full attached runtime'));
       ok(!completionPrompts[0].includes('Raul Menendez or David'));
       ok(!completionPrompts[0].includes('set abstained=true'));
     });

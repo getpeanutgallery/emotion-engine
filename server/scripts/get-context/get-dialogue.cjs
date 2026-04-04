@@ -1001,7 +1001,10 @@ async function run(input) {
       const audioMimeType = getAudioMimeType(config);
 
       // Build transcription prompt
-      prompt = buildTranscriptionPrompt(recoveryRuntime);
+      prompt = buildTranscriptionPrompt({
+        recoveryRuntime,
+        measuredRuntimeSeconds: transportPreflight.durationSeconds
+      });
 
       promptRef = captureRaw
         ? storePromptPayload({ outputDir, payload: prompt })
@@ -2090,7 +2093,11 @@ async function extractAudio(videoPath, outputDir, rawCapture = {}) {
  * @function buildTranscriptionPrompt
  * @returns {string} - Transcription prompt
  */
-function buildTranscriptionPrompt(recoveryRuntime = null) {
+function buildTranscriptionPrompt({ recoveryRuntime = null, measuredRuntimeSeconds = null } = {}) {
+  const runtimeAnchor = Number.isFinite(measuredRuntimeSeconds)
+    ? `- The attached audio runtime was measured locally at ${Number(measuredRuntimeSeconds).toFixed(2)} seconds. Set totalDuration to this full attached runtime rather than estimating from dialogue coverage or the last spoken line.\n- Sparse or non-speech tails, silence, ambience, music-only sections, or intermittent end-of-file vocals do not mean the file ended early. Keep spoken-dialogue coverage honest, but keep totalDuration anchored to the full attached runtime.\n`
+    : '';
+
   const prompt = `Transcribe the audio in this file. Identify different speakers and provide timestamps.
 
 Respond with a JSON object in the following format:
@@ -2136,7 +2143,7 @@ Respond with a JSON object in the following format:
 \`\`\`
 
 IMPORTANT:
-- Return JSON only. No markdown or explanation.
+${runtimeAnchor}- Return JSON only. No markdown or explanation.
 - Identify speakers as "Speaker 1", "Speaker 2", etc. for display labels, but also reuse anonymous speaker_id values like "spk_001" when segments belong to the same acoustic voice.
 - Provide accurate timestamps in seconds.
 - Include confidence scores from 0.0 to 1.0.
