@@ -16,6 +16,8 @@ test('dialogue transcription validator tool contract is lane-specific', () => {
   assert.equal(contract.argumentKey, 'transcription');
   assert.deepEqual(contract.inputSchema.required, ['transcription']);
   assert.equal(contract.canonicalEnvelope.tool, 'validate_dialogue_transcription_json');
+  assert.match(contract.description, /dialogue\/vocal-script transcription/i);
+  assert.match(contract.inputSchema.properties.transcription.description, /audible spoken or sung words/i);
   assert.ok(contract.canonicalEnvelope.transcription.handoffContext);
 });
 

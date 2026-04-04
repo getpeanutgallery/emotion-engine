@@ -81,10 +81,10 @@ function buildDialogueTranscriptionValidatorToolContract({ requireHandoff = fals
   return buildContract({
     name: DIALOGUE_TRANSCRIPTION_TOOL_NAME,
     argumentKey: 'transcription',
-    description: 'Validate a Phase 1 dialogue transcription JSON candidate against the required local schema before final submission.',
+    description: 'Validate a Phase 1 dialogue/vocal-script transcription JSON candidate against the required local schema before final submission.',
     candidateDescription: requireHandoff
-      ? 'Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, totalDuration, and additive analysis/provenance metadata.'
-      : 'Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, totalDuration, and additive analysis/provenance metadata.',
+      ? 'Candidate dialogue/vocal-script transcription JSON with dialogue_segments covering audible spoken or sung words, optional speaker_profiles, summary, handoffContext, totalDuration, and additive analysis/provenance metadata.'
+      : 'Candidate dialogue/vocal-script transcription JSON with dialogue_segments covering audible spoken or sung words, optional speaker_profiles, summary, totalDuration, and additive analysis/provenance metadata.',
     example: {
       dialogue_segments: [
         {

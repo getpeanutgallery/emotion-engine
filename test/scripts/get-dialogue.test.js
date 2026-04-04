@@ -1621,6 +1621,10 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts[0].includes('speaker_id continuity is acoustic, not semantic'));
       ok(completionPrompts[0].includes('Before reusing a speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture'));
       ok(completionPrompts[0].includes('Do not merge clearly different voices just because the scene is continuous'));
+      ok(completionPrompts[0].includes('Treat this as a vocal-script extraction task, not a speech-only dialogue pass'));
+      ok(completionPrompts[0].includes('Include audible spoken lines, sung lyrics, chant-like vocals, and other clearly vocalized words when they are present and relevant to the media'));
+      ok(completionPrompts[0].includes('Exclude purely instrumental or otherwise non-vocal sections from dialogue_segments'));
+      ok(completionPrompts[0].includes('If no audible spoken or sung words are detected, return an empty dialogue_segments array'));
       ok(completionPrompts[0].includes('Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong'));
       ok(completionPrompts[0].includes('If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration'));
       ok(completionPrompts[0].includes('If you create a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change'));
