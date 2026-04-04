@@ -115,7 +115,7 @@ For push hygiene, only the completed plan archival/change was staged and committ
 
 **Commits:**
 - `d606dae` - Add runtime anchor to whole-asset dialogue prompt
-- `a74fdf8` - Archive runtime-anchored Xiaomi experiment plan with final review and conclusions
+- `6be39cb` - Archive runtime-anchored Xiaomi experiment plan with final review and conclusions
 
 **Lessons Learned:**
 - Generic runtime anchoring helps this Xiaomi/OpenRouter lane materially; the model is more willing to carry timing close to the true asset end instead of collapsing around the earlier ~80–121s behavior.
