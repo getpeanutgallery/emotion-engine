@@ -1,7 +1,7 @@
 # emotion-engine: closeout handoff, archive, beads, and push
 
 **Date:** 2026-04-04  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -111,26 +111,47 @@ Verification/commit outcome for this pass:
 - `.plans/2026-04-04-closeout-handoff-archive-beads-push.md`
 - final handoff/archive files as needed
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending. Recommended starting set for the next pass:
-- close only the strong stale-bead candidates already identified in Task 1 and verified against archived-plan evidence
-- keep `ee-5ktn` open unless/until the new coverage-overstatement seam is explicitly resolved or re-scoped
-- push only the `emotion-engine` docs/plan/archive commit from this pass unless a new source diff appears elsewhere
+**Results:** Reviewed the prepared closeout state anchored by commit `058ed7a` and `docs/handoffs/2026-04-04-closeout-handoff.md`, then finished the truthful closeout pass.
+
+Beads closed in this pass because the evidence shows they were complete or clearly superseded:
+- `ee-3va9` — implemented clean-live runtime isolation for the Xiaomi verification lane; completion already documented in archived closeout evidence
+- `ee-hkk0` — executed the clean-live Xiaomi/OpenRouter verification rerun; rerun evidence already captured in archived plans
+- `ee-jcps` — later rerun reviews and the April 4 handoff superseded this blocked review bead
+- `ee-6bp3` — archived April 1 OpenRouter MiMo audit plan marks this verification complete
+- `ee-4kl0`, `ee-byhu`, `ee-d768`, `ee-7g5f`, `ee-ut5u`, `ee-4uqf` — older optimized-asset / OpenRouter-fix beads were superseded by the later executed lane recorded in `.plans/2026-04-01-mimo-optimized-video-and-openrouter-url-fix.md`
+
+Beads intentionally left open because the work is still genuinely active, ambiguous, or future-facing:
+- `ee-5ktn` — left open because the new `coverage.end = 140.04` vs saved-segments-`~85s` mismatch is still an active honesty seam
+- `ee-kh15`, `ee-h64p` — still pending in `.plans/2026-03-31-phase1-proof-compare-after-mimo-tranche2.md`
+- `ee-9hk`, `ee-avf` — still open future-work / reconciliation items in `.plans/2026-03-22-dialogue-system-grounding-and-speaker-contract.md`
+- `ee-ic7` — still a legitimate lower-priority raw-capture ergonomics cleanup
+
+Sibling repo push audit was rechecked before final push:
+- no sibling repo had actual source/code/doc changes to push
+- only `emotion-engine` was eligible to push in this closeout
+- sibling runtime noise remained intentionally untouched
+
+Plan archival / repo result:
+- archived this closeout plan after updating it with final outcomes
+- created the final repo commit with message `Archive April 4 closeout handoff plan`
+- ready to push `emotion-engine` `main` only; no sibling pushes were needed
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ In Progress
+**Status:** ✅ Complete
 
-**What We Built:** Prepared the truthful closeout state: audited repo/polyrepo drift, verified there are no git-visible `node_modules` edits, archived the clearly completed April 1/3/4 plans, left the regressive mid/late recovery lane active, and wrote a next-session handoff that points directly at the coverage-overstatement mismatch now visible in the latest rerun.
+**What We Built:** Finalized the truthful repo closeout. The repo now has an explicit April 4 handoff, completed plans archived, only clearly eligible old Beads closed, and the still-open investigative/future-work Beads left open. The runtime-anchor lane remains archived as a real win; the mid/late recovery lane remains active because its latest result was partial/regressive; and the next clean repo-owned seam is still the `coverage.end = 140.04` versus saved-dialogue-`~85s` mismatch.
 
 **Commits:**
-- `Archive completed dialogue closeout plans` (local commit created in this pass; see git history for exact hash)
+- `058ed7a` - `Archive completed dialogue closeout plans`
+- `Archive April 4 closeout handoff plan`
 
-**Lessons Learned:** Closeout needs evidence, not vibes. The runtime-anchor lane was real progress and deserved archival; the mid/late recovery lane did not earn archival because it remained partial/regressive; and the next honest move is to fix the new `coverage.end = 140.04` vs saved-segments-`~85s` mismatch rather than pretending the late-recovery experiment solved it.
+**Lessons Learned:** Closeout needs evidence, not vibes. It was correct to close only the beads backed by archived-plan proof or obvious supersession, and equally correct to leave `ee-5ktn`, `ee-kh15`, `ee-h64p`, `ee-9hk`, `ee-avf`, and `ee-ic7` open because the work behind them is still real.
 
 ---
 
-*Completed on Pending*
+*Completed on 2026-04-04*
