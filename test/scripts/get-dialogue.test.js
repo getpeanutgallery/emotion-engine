@@ -816,7 +816,86 @@ test('Get Dialogue Script', async (t) => {
       ok(fs.existsSync(path.join(stitchDir, 'mechanical-transcript.txt')));
     });
 
-    tNested.test('clamps whole-file totalDuration and segments to the real source runtime', async () => {
+    tNested.test('repairs a slight whole-asset late suffix overrun back into the measured runtime', async () => {
+      completeImplementation = async (options) => {
+        completionPrompts.push(String(options?.prompt || ''));
+        completionOptions.push(options || {});
+
+        return {
+          content: JSON.stringify({
+            dialogue_segments: [
+              {
+                start: 8.3,
+                end: 8.9,
+                speaker: 'Speaker 1',
+                speaker_id: 'spk_001',
+                text: 'Mid-late line',
+                confidence: 0.93
+              },
+              {
+                start: 10.3,
+                end: 11.1,
+                speaker: 'Speaker 2',
+                speaker_id: 'spk_002',
+                text: 'Recovered tail line',
+                confidence: 0.9
+              }
+            ],
+            speaker_profiles: [
+              {
+                speaker_id: 'spk_001',
+                label: 'Speaker 1',
+                grounded: {
+                  confidence: 0.84,
+                  linked_segment_indexes: [0],
+                  acoustic_descriptors: []
+                },
+                inferred_traits: { traits: [] }
+              },
+              {
+                speaker_id: 'spk_002',
+                label: 'Speaker 2',
+                grounded: {
+                  confidence: 0.81,
+                  linked_segment_indexes: [1],
+                  acoustic_descriptors: []
+                },
+                inferred_traits: { traits: [] }
+              }
+            ],
+            summary: 'Late suffix repair test',
+            totalDuration: 220
+          }),
+          usage: { input: 100, output: 150 }
+        };
+      };
+
+      const result = await getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeDialogueConfig()
+      });
+
+      is(result.artifacts.dialogueData.totalDuration, 10);
+      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ speaker_id, start, end, text }) => ({
+        speaker_id,
+        start: Number(start.toFixed(4)),
+        end: Number(end.toFixed(4)),
+        text
+      })), [
+        { speaker_id: 'spk_001', start: 8.3, end: 8.9, text: 'Mid-late line' },
+        { speaker_id: 'spk_002', start: 9.2, end: 10, text: 'Recovered tail line' }
+      ]);
+      assert.deepEqual(result.artifacts.dialogueData.speaker_profiles.map((profile) => ({
+        speaker_id: profile.speaker_id,
+        linked_segment_indexes: profile.grounded.linked_segment_indexes
+      })), [
+        { speaker_id: 'spk_001', linked_segment_indexes: [0] },
+        { speaker_id: 'spk_002', linked_segment_indexes: [1] }
+      ]);
+    });
+
+    tNested.test('clamps whole-file totalDuration and drops unrecoverable far-overrun tail segments', async () => {
       completeImplementation = async (options) => {
         completionPrompts.push(String(options?.prompt || ''));
         completionOptions.push(options || {});

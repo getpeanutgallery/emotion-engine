@@ -205,13 +205,71 @@ function mergeAdjacentDialogueSegments(segments) {
   return merged;
 }
 
+function looksLikeRepairableLateSuffixOverrun(segments, boundedDuration) {
+  if (!Array.isArray(segments) || segments.length === 0) return false;
+  if (!Number.isFinite(boundedDuration) || boundedDuration <= 0) return false;
+
+  let previousStart = -Infinity;
+  let previousEnd = -Infinity;
+  for (const segment of segments) {
+    const start = Number.isFinite(segment?.start) ? segment.start : null;
+    const end = Number.isFinite(segment?.end) ? segment.end : null;
+    if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return false;
+    if (start < previousStart - 0.1) return false;
+    if (end < previousEnd - 0.1) return false;
+    previousStart = start;
+    previousEnd = end;
+  }
+
+  const firstOverrunIndex = segments.findIndex((segment) => segment.end > boundedDuration + 0.001 || segment.start >= boundedDuration);
+  if (firstOverrunIndex < 0) return false;
+
+  const suffix = segments.slice(firstOverrunIndex);
+  const prefix = segments.slice(0, firstOverrunIndex);
+  const prefixEnd = prefix.reduce((maxEnd, segment) => Number.isFinite(segment?.end) ? Math.max(maxEnd, segment.end) : maxEnd, 0);
+  const suffixStart = Number.isFinite(suffix[0]?.start) ? suffix[0].start : null;
+  const suffixEnd = Number.isFinite(suffix[suffix.length - 1]?.end) ? suffix[suffix.length - 1].end : null;
+  if (!Number.isFinite(suffixStart) || !Number.isFinite(suffixEnd)) return false;
+
+  const overrunSeconds = suffixEnd - boundedDuration;
+  const maxOverrunSeconds = Math.max(1.5, Math.min(8, boundedDuration * 0.05));
+  if (overrunSeconds <= 0 || overrunSeconds > maxOverrunSeconds) return false;
+
+  const lateWindowSeconds = Math.max(6, Math.min(24, boundedDuration * 0.2));
+  if (suffixStart < Math.max(0, boundedDuration - lateWindowSeconds)) return false;
+
+  const shiftedSuffixStart = suffixStart - overrunSeconds;
+  if (shiftedSuffixStart < prefixEnd - 0.15) return false;
+
+  return true;
+}
+
+function repairLateSuffixDialogueSegmentOverrun(segments, boundedDuration) {
+  if (!looksLikeRepairableLateSuffixOverrun(segments, boundedDuration)) return Array.isArray(segments) ? segments.slice() : [];
+
+  const repaired = segments.map((segment) => ({ ...segment }));
+  const firstOverrunIndex = repaired.findIndex((segment) => segment.end > boundedDuration + 0.001 || segment.start >= boundedDuration);
+  const suffixEnd = repaired[repaired.length - 1].end;
+  const shiftSeconds = suffixEnd - boundedDuration;
+
+  for (let index = firstOverrunIndex; index < repaired.length; index += 1) {
+    repaired[index].start = Math.max(0, repaired[index].start - shiftSeconds);
+    repaired[index].end = Math.max(repaired[index].start, repaired[index].end - shiftSeconds);
+  }
+
+  return repaired;
+}
+
 function normalizeDialogueDataToDuration(
   dialogueData,
   actualDuration,
   { requireHandoff = false, preserveReportedTotalDuration = false } = {}
 ) {
   const boundedDuration = Number.isFinite(actualDuration) && actualDuration >= 0 ? actualDuration : 0;
-  const inputSegments = Array.isArray(dialogueData?.dialogue_segments) ? dialogueData.dialogue_segments : [];
+  const rawInputSegments = Array.isArray(dialogueData?.dialogue_segments) ? dialogueData.dialogue_segments : [];
+  const inputSegments = requireHandoff
+    ? rawInputSegments
+    : repairLateSuffixDialogueSegmentOverrun(rawInputSegments, boundedDuration);
 
   const clampedSegments = inputSegments.map((segment) => {
     const start = Number.isFinite(segment?.start) ? clampNumber(segment.start, 0, boundedDuration) : 0;
