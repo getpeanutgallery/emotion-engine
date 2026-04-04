@@ -1,4 +1,7 @@
-const { parseJsonObjectInput } = require('./json-validator.cjs');
+const {
+  parseJsonObjectInput,
+  parseMinuteSecondTimestampToSeconds
+} = require('./json-validator.cjs');
 
 function compactString(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -43,6 +46,17 @@ function validateFiniteNumber(value, path, label, errors, { min = null, max = nu
 
 function validateOptionalFiniteNumber(value, path, label, errors, range = {}) {
   if (value === undefined || value === null) return null;
+  return validateFiniteNumber(value, path, label, errors, range);
+}
+
+function validateDialogueTimestamp(value, path, label, errors, range = {}) {
+  if (typeof value === 'string') {
+    const normalized = parseMinuteSecondTimestampToSeconds(compactString(value));
+    if (normalized !== null) {
+      return validateFiniteNumber(normalized, path, label, errors, range);
+    }
+  }
+
   return validateFiniteNumber(value, path, label, errors, range);
 }
 
@@ -249,8 +263,8 @@ function validateDialogueSegments(segments, errors, path = '$.dialogue_segments'
     }
 
     return {
-      start: validateFiniteNumber(segment.start, `${itemPath}.start`, 'dialogue segment start', errors, { min: 0 }) ?? 0,
-      end: validateFiniteNumber(segment.end, `${itemPath}.end`, 'dialogue segment end', errors, { min: 0 }) ?? 0,
+      start: validateDialogueTimestamp(segment.start, `${itemPath}.start`, 'dialogue segment start', errors, { min: 0 }) ?? 0,
+      end: validateDialogueTimestamp(segment.end, `${itemPath}.end`, 'dialogue segment end', errors, { min: 0 }) ?? 0,
       speaker,
       speaker_id: speaker_id || null,
       text: validateNonEmptyString(segment.text, `${itemPath}.text`, 'dialogue segment text', errors) ?? '',

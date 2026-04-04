@@ -142,6 +142,46 @@ test('dialogue transcription validator preserves additive analysis metadata', ()
   assert.deepEqual(result.normalizedValue.qualityNotes, ['Whole-asset timing preserved full coverage.']);
 });
 
+test('dialogue transcription validator normalizes numeric and m:ss(.d) segment timestamps into seconds', () => {
+  const result = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 80, end: 82.5, speaker: 'Speaker 1', text: 'Plain numeric seconds', confidence: 0.95 },
+        { start: '1:23', end: '1:25', speaker: 'Speaker 2', text: 'Minute second timestamps', confidence: 0.92 },
+        { start: '2:17.5', end: '2:20.0', speaker: 'Speaker 3', text: 'Fractional minute second timestamps', confidence: 0.91 }
+      ],
+      summary: 'Whole-asset summary',
+      totalDuration: 140.04
+    }
+  });
+
+  assert.equal(result.valid, true);
+  assert.deepEqual(
+    result.normalizedValue.dialogue_segments.map((segment) => [segment.start, segment.end]),
+    [
+      [80, 82.5],
+      [83, 85],
+      [137.5, 140]
+    ]
+  );
+});
+
+test('dialogue transcription validator still rejects malformed non-time timestamp variants', () => {
+  const result = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: '1:2', end: 'not-a-time', speaker: 'Speaker 1', text: 'Bad timestamps', confidence: 0.95 }
+      ],
+      summary: 'Whole-asset summary',
+      totalDuration: 10
+    }
+  });
+
+  assert.equal(result.valid, false);
+  assert.match(result.summary, /dialogue segment start must be a finite number/i);
+  assert.match(result.summary, /dialogue segment end must be a finite number/i);
+});
+
 test('dialogue transcription validator merges duplicate speaker profiles by speaker_id and preserves the strongest stable label', () => {
   const result = executeDialogueTranscriptionValidatorTool({
     transcription: {

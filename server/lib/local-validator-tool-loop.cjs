@@ -115,6 +115,16 @@ function parseValidatorToolCallEnvelope(input, { toolName, argKey }) {
   };
 }
 
+function getJsonParseOptions(toolContract) {
+  if (toolContract?.name === 'validate_dialogue_transcription_json') {
+    return {
+      repairTimestampKeys: ['start', 'end']
+    };
+  }
+
+  return {};
+}
+
 function buildLocalValidatorToolPrompt({
   basePrompt,
   toolContract,
@@ -248,7 +258,7 @@ async function executeLocalValidatorToolLoop({
 
     history.push({ role: 'assistant', turn, kind: 'model_output', raw: rawContent });
 
-    const parsedObject = parseJsonObjectInput(rawContent);
+    const parsedObject = parseJsonObjectInput(rawContent, getJsonParseOptions(toolContract));
     if (!parsedObject.ok) {
       throw createRetryableError(`invalid_output: ${artifactLabel} response was not valid JSON`, {
         group: parsedObject.meta?.stage || 'parse',

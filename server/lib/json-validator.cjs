@@ -48,7 +48,36 @@ function extractBalancedJsonObject(text) {
   return null;
 }
 
-function normalizeJsonCandidate(candidate) {
+function parseMinuteSecondTimestampToSeconds(value) {
+  if (typeof value !== 'string') return null;
+
+  const match = value.trim().match(/^(\d+):([0-5]\d)(\.\d+)?$/);
+  if (!match) return null;
+
+  const minutes = Number(match[1]);
+  const seconds = Number(`${match[2]}${match[3] || ''}`);
+  if (!Number.isFinite(minutes) || !Number.isFinite(seconds)) return null;
+
+  return (minutes * 60) + seconds;
+}
+
+function normalizeUnquotedTimestampFields(candidate, keys = []) {
+  if (typeof candidate !== 'string' || !Array.isArray(keys) || keys.length === 0) return candidate;
+
+  const escapedKeys = keys
+    .filter((key) => typeof key === 'string' && key.trim().length > 0)
+    .map((key) => key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+
+  if (escapedKeys.length === 0) return candidate;
+
+  const pattern = new RegExp(`("(?:${escapedKeys.join('|')})"\\s*:\\s*)(\\d+:\\d{2}(?:\\.\\d+)?)(?=\\s*[,}\\]])`, 'g');
+  return candidate.replace(pattern, (match, prefix, timestamp) => {
+    const normalized = parseMinuteSecondTimestampToSeconds(timestamp);
+    return normalized === null ? match : `${prefix}${normalized}`;
+  });
+}
+
+function normalizeJsonCandidate(candidate, options = {}) {
   if (typeof candidate !== 'string') return candidate;
 
   let text = candidate.trim();
@@ -58,6 +87,10 @@ function normalizeJsonCandidate(candidate) {
   text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
   text = text.replace(/^json\s*/i, '').trim();
   text = text.replace(/,\s*([}\]])/g, '$1');
+
+  if (Array.isArray(options.repairTimestampKeys) && options.repairTimestampKeys.length > 0) {
+    text = normalizeUnquotedTimestampFields(text, options.repairTimestampKeys);
+  }
 
   return text;
 }
@@ -98,7 +131,7 @@ function buildInvalidJsonResult({ raw, candidates, parseError }) {
   };
 }
 
-function parseJsonObjectInput(input) {
+function parseJsonObjectInput(input, options = {}) {
   if (input && typeof input === 'object' && !Array.isArray(input)) {
     return {
       ok: true,
@@ -122,7 +155,7 @@ function parseJsonObjectInput(input) {
   const seen = new Set();
 
   const pushCandidate = (value) => {
-    const normalized = normalizeJsonCandidate(value);
+    const normalized = normalizeJsonCandidate(value, options);
     if (typeof normalized !== 'string' || normalized.length === 0) return;
     if (seen.has(normalized)) return;
     seen.add(normalized);
@@ -169,7 +202,7 @@ function parseJsonObjectInput(input) {
           raw,
           extracted: candidate,
           parseError: null,
-          repairApplied: candidate !== normalizeJsonCandidate(raw),
+          repairApplied: candidate !== normalizeJsonCandidate(raw, options),
           sourceType: 'string'
         }
       };
@@ -182,6 +215,8 @@ function parseJsonObjectInput(input) {
 
 module.exports = {
   extractBalancedJsonObject,
+  parseMinuteSecondTimestampToSeconds,
+  normalizeUnquotedTimestampFields,
   normalizeJsonCandidate,
   parseJsonObjectCandidate,
   parseJsonObjectInput

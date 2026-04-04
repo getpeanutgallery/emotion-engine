@@ -137,3 +137,50 @@ test('executeLocalValidatorToolLoop preserves failure diagnostics for rejected c
     }
   );
 });
+
+test('executeLocalValidatorToolLoop repairs unquoted m:ss(.d) dialogue timestamps before validation', async () => {
+  const { args } = createBaseArgs({
+    toolContract: {
+      name: 'validate_dialogue_transcription_json',
+      argumentKey: 'transcription',
+      canonicalEnvelope: {
+        tool: 'validate_dialogue_transcription_json',
+        transcription: {
+          dialogue_segments: []
+        }
+      }
+    },
+    artifactLabel: 'dialogue transcription',
+    callProvider: async () => ({
+      content: `{
+  "tool": "validate_dialogue_transcription_json",
+  "transcription": {
+    "dialogue_segments": [
+      {
+        "start": 1:20,
+        "end": 1:23.5,
+        "speaker": "Speaker 1",
+        "text": "Need a sit-rep.",
+        "confidence": 0.95
+      }
+    ],
+    "summary": "Whole asset summary",
+    "totalDuration": 140.04
+  }
+}`
+    }),
+    executeValidatorTool: ({ transcription }) => ({
+      ok: true,
+      valid: true,
+      toolName: 'validate_dialogue_transcription_json',
+      summary: 'Accepted.',
+      errors: [],
+      normalizedValue: transcription
+    })
+  });
+
+  const result = await executeLocalValidatorToolLoop(args);
+
+  assert.equal(result.parsed.dialogue_segments[0].start, 80);
+  assert.equal(result.parsed.dialogue_segments[0].end, 83.5);
+});
