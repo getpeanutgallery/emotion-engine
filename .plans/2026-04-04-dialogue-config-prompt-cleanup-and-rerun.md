@@ -1,7 +1,7 @@
 # emotion-engine: dialogue config, prompt cleanup, and Xiaomi rerun
 
 **Date:** 2026-04-04  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -76,16 +76,26 @@ One correction before execution: the current config on disk already says `max_to
 
 **Folders Created/Deleted/Modified:**
 - `.plans/`
-- `.logs/`
 - `output/`
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-04-04-dialogue-config-prompt-cleanup-and-rerun.md`
-- fresh logs/output artifacts
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/assets/input/config.yaml`
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/assets/processed/dialogue/audio.mp3`
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/_meta/ai/_prompts/7ae2086b5d9b6f3b92f2492634238f7d7f9ecacb52a8657ab4288e196517d8ec.json`
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/raw/ai/dialogue-transcription/attempt-01/capture.json`
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/raw/ai/dialogue-transcription.json`
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/script-results/get-dialogue.failure.json`
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/raw/_meta/errors.summary.json`
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/recovery/get-dialogue/next-action.json`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Ran the exact canonical rerun command at 2026-04-04 18:20 EDT: `node server/run-pipeline.cjs --config configs/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun.yaml --clean-live-digital-twin --verbose`. The run failed in Phase 1 after 27.254s, before music or whole-video analysis, with `GET_DIALOGUE_INVALID_OUTPUT` / `invalid_output: dialogue transcription response was not valid JSON` (`phase1-gather-context/script-results/get-dialogue.failure.json`). The fresh raw capture is at `phase1-gather-context/raw/ai/dialogue-transcription/attempt-01/capture.json`, and the fresh prompt capture is `_meta/ai/_prompts/7ae2086b5d9b6f3b92f2492634238f7d7f9ecacb52a8657ab4288e196517d8ec.json`.
+
+Verification from the fresh artifacts is still useful even though the run failed. The config copied into the run and the source config both show the dialogue target at `max_tokens: 43219` (`configs/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun.yaml`, dialogue target block). The raw prompt capture contains no `abstained` string at all. Its runtime-anchor wording is generic across attached media rather than cod-test-specific: it says “The attached media runtime was measured locally at 140.04 seconds” and “Sparse or non-speech tails ... do not mean the asset ended early,” which is asset-agnostic language.
+
+The fresh dialogue artifact outcome itself regressed rather than improved. There is no successful new `phase1-gather-context/dialogue-data.json` from this rerun because the pipeline stopped in `get-dialogue`. The raw provider content in `capture.json` shows why: Xiaomi returned timestamp values like `1:20.0`, `1:23.5`, and `2:17.5` inside an otherwise detailed transcription payload, which broke JSON parsing against the seconds-only contract. So the cleanup goals were verified, but the actual rerun result stayed mixed at best and operationally regressed because it failed earlier than the previous successful whole-asset run.
 
 ---
 
@@ -93,13 +103,14 @@ One correction before execution: the current config on disk already says `max_to
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Tasks 1 and 2 are complete: the dialogue contract/prompt/test cleanup landed, the runtime anchor wording is now generic across attached media/assets, and the Xiaomi rerun config now sets the dialogue target to `max_tokens: 43219`. Task 3 remains pending in a separate lane.
+**What We Built:** The dialogue contract/prompt cleanup and config change landed successfully, and the fresh rerun artifacts verify the intended prompt/config state: the Xiaomi dialogue target is configured at `max_tokens: 43219`, the raw prompt no longer contains abstained language, and the runtime-anchor wording is generic across attached media. However, the verification rerun itself failed in Phase 1 with invalid JSON from Xiaomi dialogue transcription, so this lane truthfully ends as verified cleanup plus a regressed rerun outcome rather than a clean improved result.
 
 **Commits:**
-- Pending lane-owned commit for Tasks 1 and 2.
+- `5f659f5` - Clean up dialogue contract and raise Xiaomi token budget
+- Pending lane-owned commit for Task 3 verification / plan update.
 
-**Lessons Learned:** Dialogue cleanup needed to touch prompt text, validator behavior, and tests together; leaving any one of those behind would have preserved the old abstained contract in practice.
+**Lessons Learned:** Prompt/config cleanup and rerun quality are separate questions. The cleanup evidence is clear in the raw prompt and config artifacts, but the live Xiaomi whole-asset dialogue lane is still vulnerable to malformed timestamp formatting (`m:ss.s`) that can kill the run before any dialogue artifact is produced.
 
 ---
 
-*Created on 2026-04-04*
+*Completed on 2026-04-04*
