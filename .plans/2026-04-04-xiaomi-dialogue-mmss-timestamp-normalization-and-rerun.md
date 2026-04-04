@@ -1,7 +1,7 @@
 # emotion-engine: Xiaomi dialogue m:ss timestamp normalization and rerun
 
 **Date:** 2026-04-04  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -84,22 +84,22 @@ This should be treated as a narrow parser/normalization hardening lane, not a br
 - optional related April 4 plan/handoff files
 - fresh log/output artifacts
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Ran the canonical rerun exactly as planned: `node server/run-pipeline.cjs --config configs/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun.yaml --clean-live-digital-twin --verbose` from the repo root. The rerun completed successfully with exit code 0 and produced fresh Phase 1 + Phase 2 artifacts under `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/`. Parser-survival success is confirmed, not just inferred: the fresh raw Xiaomi capture at `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/raw/ai/dialogue-transcription/attempt-01/capture.json` still contains bare `m:ss(.d)` tokens such as `1:04.0`, `1:18.5`, and `2:13.5` inside the validator tool envelope, yet the run now succeeds and emits normalized numeric-second dialogue output at `phase1-gather-context/dialogue-data.json` and `phase1-gather-context/script-results/get-dialogue.success.json`. Fresh evidence paths: `phase1-gather-context/dialogue-data.json`, `phase1-gather-context/script-results/get-dialogue.success.json`, `phase1-gather-context/raw/ai/dialogue-transcription.json` → `dialogue-transcription/attempt-01/capture.json`, `phase1-gather-context/raw/_meta/errors.summary.json` (0 errors), `phase2-process/whole-video-analysis.json`, and top-level `artifacts-complete.json`. Truthful quality read: this lane fixed parse survival, but it did **not** prove a major dialogue-quality breakthrough. The produced dialogue artifact is usable and timeline-aligned, but still fairly sparse for a 140s trailer: 20 dialogue segments, 18 distinct speaker IDs, about 63.8s of explicit speech coverage (~45.6% of runtime), and two long 24s non-dialogue gaps (40.0→64.0 and 80.5→104.5). That is consistent with a trailer containing long action/music stretches, but it also means the output remains a cautious partial win rather than a strong transcription-quality leap. The whole-video artifact likewise stays mixed rather than celebratory: good hook/music energy, but retention remains only `maybe` because the runtime is long and the exposition/CTA packaging still drag.
 
 ---
 
 ## Final Results
 
-**Status:** ⚠️ Partial
+**Status:** ✅ Complete
 
-**What We Built:** Completed Task 1 and Task 2 for the Xiaomi dialogue timestamp hardening lane. The parser now survives the exact bare `m:ss(.d)` `start/end` seam observed in the latest Phase 1 failure, and the dialogue validator now normalizes intended `m:ss(.d)` string variants into numeric seconds while still rejecting malformed timestamp-like junk. Task 3 rerun/evaluation remains for the next lane.
+**What We Built:** Completed the full Xiaomi timestamp-hardening verification lane end to end. The parser now survives the exact bare `m:ss(.d)` `start/end` seam observed in the failing Phase 1 Xiaomi dialogue response, and a fresh canonical rerun completed successfully through Phase 2 with normalized numeric-second dialogue output. The repair is verified against live Xiaomi behavior, not only tests: the fresh raw capture still emitted bare `m:ss(.d)` timestamps inside the validator tool envelope, and the pipeline still produced `dialogue-data.json` plus downstream whole-video artifacts.
 
 **Commits:**
-- Pending local commit for Tasks 1-2 lane work.
+- Pending local commit for Task 3 verification + plan update.
 
-**Lessons Learned:** The true narrow seam was not the broader dialogue contract but the dialogue-specific local validator tool loop: once parse survival was restored there, the validator could safely keep the acceptance contract tight and explicit.
+**Lessons Learned:** The true narrow seam was not the broader dialogue contract but the dialogue-specific local validator tool loop. Fixing that seam restored pipeline survival without widening unrelated JSON acceptance. Also, parser survival and dialogue quality are separate questions: this rerun proves the former, while the latter improved only to the level of a usable but still sparse whole-asset transcription artifact rather than a definitive quality win.
 
 ---
 
