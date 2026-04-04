@@ -400,6 +400,56 @@ function normalizeDialoguePhase1ModeConfig(config = {}) {
   };
 }
 
+function deriveDialogueCoverage(dialogueData, totalDuration) {
+  const normalizedDialogueData = dialogueData && typeof dialogueData === 'object' ? dialogueData : {};
+  const normalizedTotalDuration = Number.isFinite(totalDuration)
+    ? Math.max(0, totalDuration)
+    : (Number.isFinite(normalizedDialogueData?.totalDuration) ? Math.max(0, normalizedDialogueData.totalDuration) : 0);
+  const roundedTotalDuration = roundDialogueMetric(normalizedTotalDuration, 3);
+  const totalCoverageGapToleranceSeconds = 0.001;
+  const coverageCanTruthfullyBeComplete = (start, end) => start <= totalCoverageGapToleranceSeconds
+    && end >= Math.max(0, roundedTotalDuration - totalCoverageGapToleranceSeconds);
+  const existingCoverage = normalizedDialogueData?.coverage && typeof normalizedDialogueData.coverage === 'object'
+    ? normalizedDialogueData.coverage
+    : null;
+
+  if (existingCoverage) {
+    const start = roundDialogueMetric(Number.isFinite(existingCoverage.start) ? Math.max(0, existingCoverage.start) : 0, 3);
+    const end = roundDialogueMetric(Number.isFinite(existingCoverage.end) ? Math.max(start, existingCoverage.end) : start, 3);
+    const duration = roundDialogueMetric(Number.isFinite(existingCoverage.duration) ? Math.max(0, existingCoverage.duration) : 0, 3);
+
+    return {
+      start,
+      end,
+      duration,
+      complete: existingCoverage.complete === true && coverageCanTruthfullyBeComplete(start, end)
+    };
+  }
+
+  const segments = Array.isArray(normalizedDialogueData?.dialogue_segments) ? normalizedDialogueData.dialogue_segments : [];
+  const timedSegments = segments.filter((segment) => Number.isFinite(segment?.start) && Number.isFinite(segment?.end));
+
+  if (timedSegments.length === 0) {
+    return {
+      start: 0,
+      end: 0,
+      duration: 0,
+      complete: false
+    };
+  }
+
+  const start = roundDialogueMetric(Math.max(0, Math.min(...timedSegments.map((segment) => segment.start))), 3);
+  const end = roundDialogueMetric(Math.max(start, Math.max(...timedSegments.map((segment) => segment.end))), 3);
+  const duration = roundDialogueMetric(Math.max(0, end - start), 3);
+
+  return {
+    start,
+    end,
+    duration,
+    complete: coverageCanTruthfullyBeComplete(start, end)
+  };
+}
+
 function buildDialogueAnalysisMetadata({
   dialogueData,
   analysisMode,
@@ -455,12 +505,7 @@ function buildDialogueAnalysisMetadata({
     analysisMode,
     timingMode,
     sourceStrategy,
-    coverage: {
-      start: 0,
-      end: roundDialogueMetric(normalizedDuration, 3),
-      duration: roundDialogueMetric(normalizedDuration, 3),
-      complete: true
-    },
+    coverage: deriveDialogueCoverage(normalizedDialogueData, normalizedDuration),
     provenance,
     ...(normalizedQualityNotes.length > 0 ? { qualityNotes: normalizedQualityNotes } : {})
   };

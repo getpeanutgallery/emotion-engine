@@ -1,10 +1,10 @@
-name: COD Test MiMo OpenRouter Compare
-description: Narrow cod-test OpenRouter MiMo comparison lane using the staged public S3 video URL
+name: COD Test Xiaomi MiMo v2 Omni OpenRouter High Thinking Rerun
+description: Narrow cod-test Xiaomi MiMo v2 Omni OpenRouter rerun lane using staged public S3 video URL with high thinking across dialogue, music, and whole-video analysis
 version: '1.0'
 
 asset:
   inputPath: examples/videos/emotion-tests/cod.mp4
-  outputDir: output/cod-test-mimo-openrouter-compare
+  outputDir: output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun
   media:
     refs:
       source_video:
@@ -120,22 +120,23 @@ ai:
     targets:
       - adapter:
           name: openrouter
-          model: google/gemini-3.1-flash-lite-preview
+          model: xiaomi/mimo-v2-omni
           params:
             max_tokens: 25000
             timeoutMs: 180000
             thinking:
-              level: low
+              level: high
   music:
     analysisWindowSeconds: 30
     targets:
       - adapter:
           name: openrouter
-          model: google/gemini-3.1-flash-lite-preview
+          model: xiaomi/mimo-v2-omni
           params:
             max_tokens: 25000
+            timeoutMs: 180000
             thinking:
-              level: low
+              level: high
   dialogue_stitch:
     targets:
       - adapter:
@@ -156,4 +157,4 @@ ai:
             max_tokens: 4000
             timeoutMs: 180000
             thinking:
-              level: low
+              level: high

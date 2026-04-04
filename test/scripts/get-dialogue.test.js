@@ -261,10 +261,10 @@ test('Get Dialogue Script', async (t) => {
       is(result.artifacts.dialogueData.timingMode, 'full_timeline');
       is(result.artifacts.dialogueData.sourceStrategy, 'base64');
       assert.deepEqual(result.artifacts.dialogueData.coverage, {
-        start: 0,
-        end: 10,
-        duration: 10,
-        complete: true
+        start: 0.5,
+        end: 3.2,
+        duration: 2.7,
+        complete: false
       });
       assert.deepEqual(result.artifacts.dialogueData.provenance, {
         transportMode: 'inline',
@@ -274,6 +274,52 @@ test('Get Dialogue Script', async (t) => {
       });
       ok(Array.isArray(result.artifacts.dialogueData.dialogue_segments));
       ok(Array.isArray(result.artifacts.dialogueData.speaker_profiles));
+    });
+
+    tNested.test('preserves model-supplied coverage span but truth-checks complete on whole-asset output', async () => {
+      completeImplementation = async (options) => {
+        const prompt = String(options?.prompt || '');
+        completionPrompts.push(prompt);
+        completionOptions.push(options || {});
+
+        return {
+          content: JSON.stringify({
+            dialogue_segments: [
+              {
+                start: 0.5,
+                end: 3.2,
+                speaker: 'Speaker 1',
+                speaker_id: 'spk_001',
+                text: 'Test transcription',
+                confidence: 0.95
+              }
+            ],
+            summary: 'Test dialogue summary',
+            handoffContext: 'Speaker 1 continues...',
+            totalDuration: 10.0,
+            coverage: {
+              start: 0.5,
+              end: 7.5,
+              duration: 7,
+              complete: true
+            }
+          }),
+          usage: { input: 100, output: 150 }
+        };
+      };
+
+      const result = await getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeDialogueConfig()
+      });
+
+      assert.deepEqual(result.artifacts.dialogueData.coverage, {
+        start: 0.5,
+        end: 7.5,
+        duration: 7,
+        complete: false
+      });
     });
 
     tNested.test('hybrid mode preserves whole-asset summary while refining timing through chunked stitching', async () => {

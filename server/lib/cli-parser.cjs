@@ -16,6 +16,7 @@ const path = require('path');
  * - --config <path> (required)
  * - --verbose (optional)
  * - --dry-run (optional)
+ * - --clean-live-digital-twin (optional)
  * - --help, -h (print help)
  * - --version, -v (print version)
  * 
@@ -33,6 +34,7 @@ function parseArgs(argv) {
     config: null,
     verbose: false,
     dryRun: false,
+    cleanLiveDigitalTwin: false,
     help: false,
     version: false,
     _: [] // Non-flag arguments
@@ -58,6 +60,8 @@ function parseArgs(argv) {
       args.verbose = true;
     } else if (arg === '--dry-run') {
       args.dryRun = true;
+    } else if (arg === '--clean-live-digital-twin') {
+      args.cleanLiveDigitalTwin = true;
     } else if (arg === '--help' || arg === '-h') {
       args.help = true;
     } else if (arg === '--version' || arg === '-V') {
@@ -93,6 +97,9 @@ Options:
   --config, -c <path>    Path to YAML/JSON config file (REQUIRED)
   --verbose              Enable verbose logging
   --dry-run              Validate config without executing scripts
+  --clean-live-digital-twin
+                         Remove DIGITAL_TWIN_MODE / PACK / CASSETTE after dotenv load
+                         while preserving other .env secrets for a clean live run
   --help, -h             Print this help message
   --version, -V          Print version information
 

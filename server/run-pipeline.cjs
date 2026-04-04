@@ -30,6 +30,25 @@ const { runReport } = require('./lib/phases/report-runner.cjs');
 const { createAssetsDirectory, copyInputAssets, createRawDirectories } = require('./lib/output-manager.cjs');
 const { getEventsLogger } = require('./lib/events-timeline.cjs');
 
+const CLEAN_LIVE_DIGITAL_TWIN_ENV_KEYS = [
+  'DIGITAL_TWIN_MODE',
+  'DIGITAL_TWIN_PACK',
+  'DIGITAL_TWIN_CASSETTE',
+];
+
+function scrubDigitalTwinEnvForCleanLiveRun() {
+  const removed = [];
+
+  for (const key of CLEAN_LIVE_DIGITAL_TWIN_ENV_KEYS) {
+    if (Object.prototype.hasOwnProperty.call(process.env, key)) {
+      removed.push(key);
+      delete process.env[key];
+    }
+  }
+
+  return removed;
+}
+
 /**
  * Run the complete pipeline
  * 
@@ -48,11 +67,25 @@ const { getEventsLogger } = require('./lib/events-timeline.cjs');
  * console.log('Pipeline complete:', result.success);
  */
 async function runPipeline(configPath, options = {}) {
-  const { verbose = false, dryRun = false } = options;
+  const {
+    verbose = false,
+    dryRun = false,
+    cleanLiveDigitalTwin = false,
+  } = options;
   
   console.log('🚀 Emotion Engine Pipeline Orchestrator');
   console.log('========================================\n');
   
+  if (cleanLiveDigitalTwin) {
+    const removedTwinKeys = scrubDigitalTwinEnvForCleanLiveRun();
+    console.log('🧼 Clean live digital-twin isolation enabled');
+    if (removedTwinKeys.length > 0) {
+      console.log(`   Removed env keys: ${removedTwinKeys.join(', ')}`);
+    } else {
+      console.log('   No DIGITAL_TWIN_* env keys were present');
+    }
+  }
+
   // Step 1: Load configuration
   console.log('📄 Loading configuration...');
   const config = await loadConfig(configPath);
@@ -362,7 +395,8 @@ async function main() {
     // Run pipeline
     await runPipeline(args.config, {
       verbose: args.verbose,
-      dryRun: args.dryRun
+      dryRun: args.dryRun,
+      cleanLiveDigitalTwin: args.cleanLiveDigitalTwin,
     });
     
     process.exit(0);
