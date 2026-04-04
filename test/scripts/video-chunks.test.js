@@ -597,8 +597,7 @@ test('Video Chunks Script', async (t) => {
                 grounded: {
                   confidence: 0.81,
                   linked_segment_indexes: [0],
-                  acoustic_descriptors: [{ label: 'measured delivery', confidence: 0.58 }],
-                  acoustic_descriptors_abstained: false
+                  acoustic_descriptors: [{ label: 'measured delivery', confidence: 0.58 }]
                 },
                 inferred_traits: {
                   traits: []

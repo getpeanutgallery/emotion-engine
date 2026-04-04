@@ -2153,7 +2153,7 @@ async function extractAudio(videoPath, outputDir, rawCapture = {}) {
  */
 function buildTranscriptionPrompt({ recoveryRuntime = null, measuredRuntimeSeconds = null } = {}) {
   const runtimeAnchor = Number.isFinite(measuredRuntimeSeconds)
-    ? `- The attached audio runtime was measured locally at ${Number(measuredRuntimeSeconds).toFixed(2)} seconds. Set totalDuration to this full attached runtime rather than estimating from dialogue coverage or the last spoken line.\n- Sparse or non-speech tails, silence, ambience, music-only sections, or intermittent end-of-file vocals do not mean the file ended early. Keep spoken-dialogue coverage honest, but keep totalDuration anchored to the full attached runtime.\n`
+    ? `- The attached media runtime was measured locally at ${Number(measuredRuntimeSeconds).toFixed(2)} seconds. Set totalDuration to the full attached runtime rather than estimating from dialogue coverage or the last spoken line.\n- Sparse or non-speech tails, silence, ambience, music-only sections, or intermittent end-of-file vocals do not mean the asset ended early. Keep spoken-dialogue coverage honest, but keep totalDuration anchored to the full attached runtime.\n`
     : '';
 
   const prompt = `Transcribe the audio in this file. Identify different speakers and provide timestamps.
@@ -2205,10 +2205,10 @@ ${runtimeAnchor}- Return JSON only. No markdown or explanation.
 - Identify speakers as "Speaker 1", "Speaker 2", etc. for display labels, but also reuse anonymous speaker_id values like "spk_001" when segments belong to the same acoustic voice.
 - Provide accurate timestamps in seconds.
 - Include confidence scores from 0.0 to 1.0.
-- Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0. Do not use grounded.confidence_abstained.
+- Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0.
 - Keep grounded speaker identity separate from inferred_traits.
 - Grounded data should only include anonymous speaker IDs, same-speaker linkage, and cautious acoustic descriptors that are actually supported by the audio.
-- Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
+- If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
 - inferred_traits must always be present as an object with a traits array. Keep it clearly speculative / non-authoritative and attempt reviewable traits for each speaker when the audio supports them; otherwise return an empty traits array.
 - speaker_id continuity is acoustic, not semantic. A speaker naming a person, character, organization, or title is not evidence that the speaker is that entity.
 - Before reusing a speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.
@@ -2415,9 +2415,9 @@ Rules:
 - Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.
 - Treat the handoff speaker registry as the continuity memory. Reuse a prior speaker_id only when the current voice still matches that prior acoustic profile.
 - If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.
-- Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0. Do not use grounded.confidence_abstained.
+- Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0.
 - Keep grounded speaker identity separate from inferred_traits.
-- Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
+- If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
 - inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.
 - speaker_id continuity is acoustic, not semantic. A line that names a person, character, organization, or title may still be spoken by someone else.
 - Before reusing a prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.

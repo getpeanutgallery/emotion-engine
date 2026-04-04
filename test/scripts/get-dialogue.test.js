@@ -929,8 +929,7 @@ test('Get Dialogue Script', async (t) => {
                   linked_segment_indexes: [0, 1],
                   acoustic_descriptors: [
                     { label: 'calm, measured delivery', confidence: 0.62 }
-                  ],
-                  acoustic_descriptors_abstained: false
+                  ]
                 },
                 inferred_traits: {
                   traits: []
@@ -991,8 +990,7 @@ test('Get Dialogue Script', async (t) => {
                 grounded: {
                   confidence: 0.83,
                   linked_segment_indexes: [0],
-                  acoustic_descriptors: [],
-                  acoustic_descriptors_abstained: true
+                  acoustic_descriptors: []
                 },
                 inferred_traits: {
                   traits: []
@@ -1004,8 +1002,7 @@ test('Get Dialogue Script', async (t) => {
                 grounded: {
                   confidence: 0.79,
                   linked_segment_indexes: [1],
-                  acoustic_descriptors: [],
-                  acoustic_descriptors_abstained: true
+                  acoustic_descriptors: []
                 },
                 inferred_traits: {
                   traits: []
@@ -1156,7 +1153,7 @@ test('Get Dialogue Script', async (t) => {
       ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.text === 'Chunk tail'));
       is(result.artifacts.dialogueData.speaker_profiles[0].grounded.acoustic_descriptors[0].label, 'steady, resolute delivery');
       is(result.artifacts.dialogueData.speaker_profiles[0].inferred_traits.traits[0].trait, 'accent');
-      is(Object.hasOwn(result.artifacts.dialogueData.speaker_profiles[0].grounded, 'acoustic_descriptors_abstained'), false);
+      assert.deepEqual(Object.keys(result.artifacts.dialogueData.speaker_profiles[0].grounded).sort(), ['acoustic_descriptors', 'confidence', 'linked_segment_indexes']);
     });
 
     tNested.test('merges same-speaker continuation fragments across chunk boundaries into one continuous passage', async () => {
@@ -1463,8 +1460,7 @@ test('Get Dialogue Script', async (t) => {
                 grounded: {
                   confidence: 0.8,
                   linked_segment_indexes: [0],
-                  acoustic_descriptors: [],
-                  acoustic_descriptors_abstained: true
+                  acoustic_descriptors: []
                 },
                 inferred_traits: {
                   traits: [
@@ -1604,8 +1600,7 @@ test('Get Dialogue Script', async (t) => {
       property(profile.grounded, 'linked_segment_indexes');
       property(profile.grounded, 'acoustic_descriptors');
       property(profile.grounded, 'confidence');
-      ok(!Object.hasOwn(profile.grounded, 'acoustic_descriptors_abstained'));
-      ok(!Object.hasOwn(profile.grounded, 'confidence_abstained'));
+      assert.deepEqual(Object.keys(profile.grounded).sort(), ['acoustic_descriptors', 'confidence', 'linked_segment_indexes']);
       property(profile, 'inferred_traits');
       property(profile.inferred_traits, 'traits');
       is(profile.grounded.linked_segment_indexes[0], 0);
@@ -1621,8 +1616,8 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts[0].includes('speaker_profiles'));
       ok(completionPrompts[0].includes('grounded speaker identity separate from inferred_traits'));
       ok(completionPrompts[0].includes('inferred_traits must always be present as an object with a traits array'));
-      ok(completionPrompts[0].includes('Do not persist acoustic_descriptors_abstained'));
-      ok(completionPrompts[0].includes('Do not use grounded.confidence_abstained'));
+      ok(completionPrompts[0].includes('Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0.'));
+      ok(completionPrompts[0].includes('If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.'));
       ok(completionPrompts[0].includes('speaker_id continuity is acoustic, not semantic'));
       ok(completionPrompts[0].includes('Before reusing a speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture'));
       ok(completionPrompts[0].includes('Do not merge clearly different voices just because the scene is continuous'));
@@ -1631,9 +1626,9 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts[0].includes('If you create a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change'));
       ok(completionPrompts[0].includes('If adjacent words are one uninterrupted utterance from the same voice'));
       ok(completionPrompts[0].includes('A speaker naming a person, character, organization, or title is not evidence that the speaker is that entity'));
-      ok(completionPrompts[0].includes('The attached audio runtime was measured locally at 10.00 seconds'));
-      ok(completionPrompts[0].includes('Set totalDuration to this full attached runtime rather than estimating from dialogue coverage or the last spoken line'));
-      ok(completionPrompts[0].includes('Sparse or non-speech tails, silence, ambience, music-only sections, or intermittent end-of-file vocals do not mean the file ended early'));
+      ok(completionPrompts[0].includes('The attached media runtime was measured locally at 10.00 seconds'));
+      ok(completionPrompts[0].includes('Set totalDuration to the full attached runtime rather than estimating from dialogue coverage or the last spoken line'));
+      ok(completionPrompts[0].includes('Sparse or non-speech tails, silence, ambience, music-only sections, or intermittent end-of-file vocals do not mean the asset ended early'));
       ok(completionPrompts[0].includes('Keep spoken-dialogue coverage honest, but keep totalDuration anchored to the full attached runtime'));
       ok(!completionPrompts[0].includes('Raul Menendez or David'));
       ok(!completionPrompts[0].includes('set abstained=true'));

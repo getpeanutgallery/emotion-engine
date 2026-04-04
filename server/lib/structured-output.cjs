@@ -176,10 +176,6 @@ function validateGroundedSpeakerProfile(input, errors, path = '$.grounded') {
   );
 
   const confidence = validateOptionalFiniteNumber(input.confidence, `${path}.confidence`, 'grounded confidence', errors, { min: 0, max: 1 });
-  const acousticAbstainedInput = input.acoustic_descriptors_abstained ?? input.acousticDescriptorsAbstained;
-  if (acousticAbstainedInput !== undefined && acousticAbstainedInput !== null) {
-    validateOptionalBoolean(acousticAbstainedInput, `${path}.acoustic_descriptors_abstained`, 'acoustic descriptors abstained', errors);
-  }
 
   return {
     confidence,
