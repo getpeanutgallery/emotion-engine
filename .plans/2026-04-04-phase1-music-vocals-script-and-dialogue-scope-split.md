@@ -155,22 +155,95 @@ Implementation notes for Task 2:
 - `.plans/2026-04-04-phase1-music-vocals-script-and-dialogue-scope-split.md`
 - fresh output/log artifacts
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Reran the canonical lane successfully with:
+
+`node server/run-pipeline.cjs --config configs/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun.yaml --clean-live-digital-twin --verbose`
+
+The rerun completed end-to-end with exit code `0`: Phase 1 dialogue succeeded, Phase 1 music succeeded, `musicVocalsData` was emitted as a first-class artifact, and Phase 2 `whole-video-mimo` also completed. Fresh key artifact paths:
+
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/dialogue-data.json`
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/music-data.json`
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/music-vocals-data.json`
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase2-process/whole-video-analysis.json`
+- supporting success envelopes: `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/script-results/get-dialogue.success.json`, `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/script-results/get-music.success.json`, and `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase2-process/script-results/whole-video-mimo.success.json`
+
+Truth comparison against `benchmarks/fixtures/cod-test/truth/dialogue-data.json` after applying the split contract:
+
+### Spoken benchmark vs `dialogueData`
+
+Treating the spoken benchmark as the 20 non-`spk_011` truth lines, the new spoken-only dialogue artifact is materially cleaner than the pre-split lyric-in-dialogue attempts.
+
+Strong spoken recoveries in `dialogueData`:
+- Opening propaganda line is preserved, but split across two adjacent segments: `They want you afraid.` + `Fear makes you easier to control.`
+- Exact or near-exact spoken recovery is present for most of the core non-lyric lines, including:
+  - `It's time to wake up.`
+  - `Your streets ... run red with your blood.`
+  - `Raul Menendez ignited global unrest...`
+  - `Menendez is a terrorist.`
+  - `We're bringing peace and security to the world.`
+  - `He refuses to let me go.`
+  - `Stop looking backwards, David...`
+  - `A lot of people counting on us for answers.`
+  - `Need a sitrep.`
+  - `This isn't real.`
+  - `The hell it ain't!`
+  - `Pull it together, man.`
+  - `Killing the man is a hell of a lot easier than killing the idea.`
+  - `You were never cut out to be a Mason.`
+  - `No more games. This ends now.`
+  - `Get the Reznov challenge pack when you pre-order now.`
+
+Remaining spoken misses / distortions:
+- `You shall know fear.` is still absent.
+- `Specter one, report.` drifted to `Inspector One report.`
+- `So eager to leave daddy.` drifted to `So eager to leave, are we?`
+- Timing is still compressed and late in the mid/late trailer region: for example `Pull it together, man!` truth `98-99s` landed at `60-61s`, and the promo line truth `122-124s` landed at `130-135s`.
+
+Bottom line on spoken dialogue: **yes, the split reduced dialogue distortion.** The dialogue lane no longer contains the earlier giant lyric/chant contamination blob or music-led paraphrase soup. Instead it behaves like a mostly spoken-only transcript with a few remaining wording/timing errors.
+
+### Lyric / chant benchmark vs `musicVocalsData`
+
+Treating the lyric benchmark as the 10 `spk_011` truth lines, the new `musicVocalsData` artifact is a partial recovery, not a benchmark-faithful lyric transcript.
+
+What `musicVocalsData` recovered usefully:
+- It captured an explicit late hook segment `Obey your master!` at `115-120s`, which is close to the benchmark `116-118s` line and is now cleanly separated out of `dialogueData`.
+- It captured a recognizable `Master! Master! ... I'll be after! Master! Master!` chorus-like segment at `90-95s`, which is adjacent to the benchmark `Master, master, where's the dreams that I've been after?` / closing `Master, master` region, but the wording is still paraphrased / drifted.
+- It captured a dedicated lyric-bearing region at `65-90s` instead of forcing all music-led text through the spoken dialogue lane.
+
+What is still missing or too distorted to count as strong lyric coverage:
+- `Control faster.` is not recovered.
+- `Master of puppets are pulling the strings!` is not recovered.
+- `Twisting your mind, smashing your dreams!` is not recovered.
+- `Blinded by me, you can't see a thing` is not recovered.
+- `Just call my name 'cause I'll hear you scream` is not recovered.
+- `Master, master, you promised only lies!` is not recovered.
+- The first lyric onset is still badly misplaced: truth `Obey your master.` occurs at `64-65s`, while the strongest late `Obey your master!` recovery lands at `115-120s`.
+- The first long lyric segment contains obvious non-benchmark wording drift: `I'll face any monster Come crawling faster`.
+- The final `We rise tonight` tail at `120-140s` does not correspond to the benchmark closing lyric truth and looks more like low-trust paraphrase / invention than useful cod-test lyric coverage.
+
+Bottom line on lyric coverage: **the split preserved some lyric awareness, but `musicVocalsData` is not yet materially useful as a benchmark-faithful lyric transcript.** It is useful architecturally because the lyric-like material now has its own lane and no longer distorts `dialogueData`, but the actual cod-test lyric fidelity remains partial and weak.
+
+Overall evaluation of the split:
+- **Dialogue quality improved:** yes, clearly. Spoken dialogue is cleaner and less music-distorted than the pre-split attempts.
+- **Lyric coverage preserved/improved enough to justify the lane split:** partially. The new lane proves the architecture is directionally correct and captures some lyric hooks, but current lyric fidelity is still too incomplete / paraphrastic to call a strong benchmark win.
+- **Net verdict:** the scope split was the right architectural move for Phase 1, but the dedicated `musicVocalsData` prompt/validation/timing behavior still needs another tightening pass before it can be treated as materially useful cod-test lyric truth.
+
+Committed the verification writeup only (no push) so the plan now records the truthful rerun outcome and verdict. Runtime noise like `.beads/interactions.jsonl` and `tmp/` was intentionally excluded from the commit.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ⚠️ Partial
 
-**What We Built:** Pending.
+**What We Built:** Implemented the Phase 1 spoken-dialogue vs music-vocals split, reran the canonical cod-test successfully, and verified the outcome against the human cod benchmark. The rerun proves the split architecture works operationally: the pipeline now emits `dialogueData`, `musicData`, `musicVocalsData`, and `whole-video-analysis.json` together from the canonical lane. On evaluation, the spoken dialogue lane is noticeably cleaner and less distorted by lyrics than before, but the new `musicVocalsData` lane still only partially captures the benchmark lyric/chant block and is not yet benchmark-strong.
 
 **Commits:**
-- Pending.
+- Local verification writeup commit created for Task 3 (reported in execution handoff; not pushed).
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** Separating contracts helped immediately at the architecture level: once lyrics stopped competing with spoken dialogue inside one prompt, the spoken lane got cleaner. But contract separation alone is not enough for lyric fidelity. The dedicated music-vocals lane still needs better wording grounding and timing anchoring, especially for the `64-98s` Metallica block and the closing lyric tail.
 
 ---
 
