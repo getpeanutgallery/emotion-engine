@@ -198,6 +198,36 @@ function formatMusicContext(musicData = {}, { maxSegments = 30 } = {}) {
   return lines.join('\n');
 }
 
+function formatMusicVocalsContext(musicVocalsData = {}, { maxSegments = 30 } = {}) {
+  const lines = [];
+
+  if (compactString(musicVocalsData?.summary)) {
+    lines.push(`- Summary: ${compactString(musicVocalsData.summary)}`);
+  }
+
+  const segments = Array.isArray(musicVocalsData?.vocal_segments) ? musicVocalsData.vocal_segments.slice(0, maxSegments) : [];
+  if (segments.length > 0) {
+    lines.push('- Text-bearing music-led vocal moments:');
+    for (const segment of segments) {
+      const start = Number(segment?.start);
+      const end = Number(segment?.end);
+      const timing = Number.isFinite(start) && Number.isFinite(end)
+        ? `${start.toFixed(1)}s-${end.toFixed(1)}s`
+        : `${segment?.start ?? '?'}s-${segment?.end ?? '?'}s`;
+      const performer = compactString(segment?.performer) || 'Vocal';
+      const text = compactString(segment?.text) || '[unavailable]';
+      const delivery = compactString(segment?.delivery);
+      lines.push(`  - ${timing}: ${performer}${delivery ? ` (${delivery})` : ''}: ${text}`);
+    }
+
+    if (Array.isArray(musicVocalsData?.vocal_segments) && musicVocalsData.vocal_segments.length > segments.length) {
+      lines.push(`  - … ${musicVocalsData.vocal_segments.length - segments.length} additional vocal segment(s) omitted for brevity.`);
+    }
+  }
+
+  return lines.join('\n');
+}
+
 function formatVisualIdentityContext(visualIdentityData = {}, { maxTimeline = 12, maxBeats = 3 } = {}) {
   const lines = [];
 
@@ -327,6 +357,7 @@ function buildWholeVideoPrompt({
   resolvedAttachment,
   dialogueData,
   musicData,
+  musicVocalsData,
   visualIdentityData
 }) {
   let prompt = '';
@@ -369,6 +400,12 @@ function buildWholeVideoPrompt({
   if (musicContext) {
     prompt += '# MUSIC CONTEXT\n\n';
     prompt += `${musicContext}\n\n`;
+  }
+
+  const musicVocalsContext = formatMusicVocalsContext(musicVocalsData);
+  if (musicVocalsContext) {
+    prompt += '# MUSIC VOCALS CONTEXT\n\n';
+    prompt += `${musicVocalsContext}\n\n`;
   }
 
   const visualIdentityContext = formatVisualIdentityContext(visualIdentityData);
@@ -606,6 +643,7 @@ async function run(input) {
   const toolLoopConfig = getToolLoopConfig(config);
   const dialogueData = artifacts.dialogueData || {};
   const musicData = artifacts.musicData || {};
+  const musicVocalsData = artifacts.musicVocalsData || {};
   const visualIdentityData = artifacts.visualIdentityData || {};
   const toolContract = buildWholeVideoAnalysisValidatorToolContract({ lenses: primaryLenses });
 
@@ -648,6 +686,7 @@ async function run(input) {
           resolvedAttachment,
           dialogueData,
           musicData,
+          musicVocalsData,
           visualIdentityData
         })}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 

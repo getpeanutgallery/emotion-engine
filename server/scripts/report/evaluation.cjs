@@ -37,6 +37,7 @@ async function run(input) {
       computedTimeline,
       dialogueData: artifacts.dialogueData || null,
       musicData: artifacts.musicData || null,
+      musicVocalsData: artifacts.musicVocalsData || null,
       visualIdentityData: artifacts.visualIdentityData || null
     }
   };

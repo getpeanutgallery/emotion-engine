@@ -66,6 +66,89 @@ function compactString(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
+const MUSIC_VOCAL_DELIVERIES = new Set(['sung', 'chant', 'rap', 'melodic_refrain', 'hybrid']);
+
+function clampMusicVocalTime(value, maxDuration) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return null;
+  const upperBound = Number.isFinite(maxDuration) && maxDuration >= 0 ? maxDuration : Number.POSITIVE_INFINITY;
+  return Math.max(0, Math.min(upperBound, Number(numeric.toFixed(3))));
+}
+
+function normalizeMusicVocalSegments(segments, { maxDuration = Number.POSITIVE_INFINITY } = {}) {
+  if (!Array.isArray(segments)) return [];
+
+  return segments.map((segment) => {
+    if (!segment || typeof segment !== 'object' || Array.isArray(segment)) return null;
+
+    const start = clampMusicVocalTime(segment.start, maxDuration);
+    const end = clampMusicVocalTime(segment.end, maxDuration);
+    const text = compactString(segment.text);
+    if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start || !text) return null;
+
+    const performer = compactString(segment.performer || segment.singer || segment.voice) || null;
+    const performerIdSource = compactString(segment.performer_id || segment.performerId || segment.singer_id || segment.singerId);
+    const performer_id = performerIdSource
+      ? performerIdSource.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || null
+      : null;
+    const confidence = Number(segment.confidence);
+    const delivery = compactString(segment.delivery).toLowerCase();
+
+    return {
+      start,
+      end,
+      text,
+      confidence: Number.isFinite(confidence) ? Math.max(0, Math.min(1, Number(confidence.toFixed(4)))) : null,
+      performer,
+      performer_id,
+      delivery: MUSIC_VOCAL_DELIVERIES.has(delivery) ? delivery : null
+    };
+  }).filter(Boolean).sort((left, right) => left.start - right.start || left.end - right.end);
+}
+
+function generateMusicVocalsSummary(segments = []) {
+  if (!Array.isArray(segments) || segments.length === 0) {
+    return 'No text-bearing music-led vocals detected.';
+  }
+
+  const deliveries = Array.from(new Set(segments.map((segment) => compactString(segment.delivery)).filter(Boolean)));
+  const deliveryLabel = deliveries.length > 0 ? deliveries.join(', ') : 'music-led';
+  return `${segments.length} text-bearing ${deliveryLabel} vocal segment(s) detected in the music lane.`;
+}
+
+function buildMusicVocalsData({
+  vocalSegments,
+  summary,
+  duration,
+  analysisMode,
+  timingMode,
+  sourceStrategy,
+  provenance,
+  qualityNotes
+}) {
+  const normalizedSegments = normalizeMusicVocalSegments(vocalSegments, { maxDuration: duration });
+  const normalizedSummary = compactString(summary) || generateMusicVocalsSummary(normalizedSegments);
+  const normalizedQualityNotes = Array.from(new Set((Array.isArray(qualityNotes) ? qualityNotes : []).map((value) => compactString(value)).filter(Boolean)));
+
+  return {
+    vocal_segments: normalizedSegments,
+    summary: normalizedSummary,
+    hasVocals: normalizedSegments.length > 0,
+    totalDuration: duration,
+    analysisMode,
+    timingMode,
+    sourceStrategy,
+    coverage: {
+      start: 0,
+      end: duration,
+      duration,
+      complete: true
+    },
+    provenance: { ...(provenance || {}) },
+    ...(normalizedQualityNotes.length > 0 ? { qualityNotes: normalizedQualityNotes } : {})
+  };
+}
+
 function normalizePhase1MusicMode(value) {
   const normalized = compactString(value).toLowerCase();
   return VALID_PHASE1_MUSIC_MODES.has(normalized) ? normalized : null;
@@ -497,6 +580,8 @@ async function run(input) {
     fs.mkdirSync(chunksDir, { recursive: true });
 
     let rollingSummary = '';
+    const musicVocalSegments = [];
+    let rollingVocalSummary = '';
 
     if (strategy.actualMode === 'whole_asset' || strategy.actualMode === 'hybrid') {
       if (!strategy.wholeAssetEligible) {
@@ -698,7 +783,9 @@ async function run(input) {
                   mood: toolLoopResult.parsed.analysis.mood,
                   intensity: toolLoopResult.parsed.analysis.intensity
                 },
-                rollingSummary: toolLoopResult.parsed.rollingSummary
+                rollingSummary: toolLoopResult.parsed.rollingSummary,
+                vocalSummary: toolLoopResult.parsed.vocalSummary,
+                vocal_segments: normalizeMusicVocalSegments(toolLoopResult.parsed.vocal_segments, { maxDuration: duration })
               };
               return { completion: toolLoopResult.completion, parsed, toolLoop: toolLoopResult.toolLoop };
             } catch (error) {
@@ -809,6 +896,12 @@ async function run(input) {
         rollingSummary = typeof parsed.rollingSummary === 'string' && parsed.rollingSummary.trim().length > 0
           ? parsed.rollingSummary.trim()
           : rollingSummary;
+        if (Array.isArray(parsed.vocal_segments) && parsed.vocal_segments.length > 0) {
+          musicVocalSegments.push(...parsed.vocal_segments);
+        }
+        rollingVocalSummary = typeof parsed.vocalSummary === 'string' && parsed.vocalSummary.trim().length > 0
+          ? parsed.vocalSummary.trim()
+          : rollingVocalSummary;
       } catch (error) {
         phaseOutcome = 'failed';
         fatalPhaseError = error;
@@ -846,6 +939,20 @@ async function run(input) {
       ...qualityNotes,
       ...(Array.isArray(wholeAssetAnalysis?.qualityNotes) ? wholeAssetAnalysis.qualityNotes : [])
     ].filter((value) => compactString(value))));
+    const sharedProvenance = {
+      requestedMode: strategy.requestedMode,
+      transportMode: 'inline',
+      usedChunking,
+      chunkCount: usedChunking ? analysisChunkPlan.length : 0,
+      analysisWindowSeconds: usedChunking ? resolveMusicAnalysisWindowSeconds(config) : null,
+      fallbackApplied,
+      fallbackReason: fallbackReason || null,
+      wholeAssetAttempted: strategy.actualMode === 'whole_asset' || strategy.actualMode === 'hybrid',
+      wholeAssetSucceeded: !!wholeAssetAnalysis,
+      preflightReason: preflight?.trace?.reason || null,
+      estimatedBase64Bytes: Number(preflight?.estimatedBase64Bytes) || null,
+      base64BudgetBytes: Number(preflight?.budgetBytes) || null
+    };
 
     // Build music data
     const musicData = {
@@ -862,36 +969,44 @@ async function run(input) {
         complete: true
       },
       ...(shouldEmitMusicGlobalArc(config) && wholeAssetAnalysis?.globalArc ? { globalArc: wholeAssetAnalysis.globalArc } : {}),
-      provenance: {
-        requestedMode: strategy.requestedMode,
-        transportMode: 'inline',
-        usedChunking,
-        chunkCount: usedChunking ? analysisChunkPlan.length : 0,
-        analysisWindowSeconds: usedChunking ? resolveMusicAnalysisWindowSeconds(config) : null,
-        fallbackApplied,
-        fallbackReason: fallbackReason || null,
-        wholeAssetAttempted: strategy.actualMode === 'whole_asset' || strategy.actualMode === 'hybrid',
-        wholeAssetSucceeded: !!wholeAssetAnalysis,
-        preflightReason: preflight?.trace?.reason || null,
-        estimatedBase64Bytes: Number(preflight?.estimatedBase64Bytes) || null,
-        base64BudgetBytes: Number(preflight?.budgetBytes) || null
-      },
+      provenance: sharedProvenance,
       ...(finalQualityNotes.length > 0 ? { qualityNotes: finalQualityNotes } : {})
     };
+    const finalMusicVocalSegments = finalAnalysisMode === 'whole_asset'
+      ? normalizeMusicVocalSegments(wholeAssetAnalysis?.vocal_segments, { maxDuration: duration })
+      : normalizeMusicVocalSegments(musicVocalSegments, { maxDuration: duration });
+    const musicVocalsData = buildMusicVocalsData({
+      vocalSegments: finalMusicVocalSegments,
+      summary: finalAnalysisMode === 'whole_asset'
+        ? wholeAssetAnalysis?.vocalSummary
+        : (rollingVocalSummary || wholeAssetAnalysis?.vocalSummary),
+      duration,
+      analysisMode: finalAnalysisMode,
+      timingMode,
+      sourceStrategy: 'base64',
+      provenance: sharedProvenance,
+      qualityNotes: finalQualityNotes
+    });
 
-    // Write intermediate artifact to phase directory
+    // Write intermediate artifacts to phase directory
     const artifactPath = path.join(phaseDir, 'music-data.json');
     fs.writeFileSync(artifactPath, JSON.stringify(musicData, null, 2));
     events.artifactWrite({ absolutePath: artifactPath, role: 'artifact', phase: PHASE_KEY, script: SCRIPT_ID });
+    const musicVocalsArtifactPath = path.join(phaseDir, 'music-vocals-data.json');
+    fs.writeFileSync(musicVocalsArtifactPath, JSON.stringify(musicVocalsData, null, 2));
+    events.artifactWrite({ absolutePath: musicVocalsArtifactPath, role: 'artifact', phase: PHASE_KEY, script: SCRIPT_ID });
 
     console.log('   ✅ Music/audio analysis complete');
     console.log(`      Output: ${artifactPath}`);
+    console.log(`      Music-vocal output: ${musicVocalsArtifactPath}`);
     console.log(`      Found ${finalSegments.length} segment(s)`);
     console.log(`      Music detected: ${finalHasMusic ? 'Yes' : 'No'}`);
+    console.log(`      Text-bearing music vocals: ${musicVocalsData.hasVocals ? `${musicVocalsData.vocal_segments.length} segment(s)` : 'None'}`);
 
     return {
       artifacts: {
-        musicData
+        musicData,
+        musicVocalsData
       }
     };
   } catch (error) {
@@ -1096,6 +1211,7 @@ Identify:
 2. If music: describe the mood (upbeat, calm, tense, sad, energetic, etc.)
 3. Intensity level from 1-10
 4. Brief description
+5. Optional transcript-like music vocals for sung lyrics, chant-like hooks, rap, melodic refrains, or inseparable music-led hybrid delivery
 
 Respond with a JSON object in the following format:
 
@@ -1282,6 +1398,19 @@ function validateWholeAssetMusicAnalysisObject(input, durationSeconds = 0) {
     errors.push({ path: '$.qualityNotes', code: 'required_array', message: 'qualityNotes must be an array when provided.' });
   }
 
+  const vocal_segments = normalizeMusicVocalSegments(input.vocal_segments, { maxDuration });
+  if (input.vocal_segments !== undefined && !Array.isArray(input.vocal_segments)) {
+    errors.push({ path: '$.vocal_segments', code: 'required_array', message: 'vocal_segments must be an array when provided.' });
+  }
+
+  const vocalSummarySource = input.vocalSummary ?? input.vocal_summary ?? input.musicVocalsSummary;
+  const vocalSummary = vocalSummarySource === undefined || vocalSummarySource === null
+    ? null
+    : compactString(vocalSummarySource);
+  if (vocalSummarySource !== undefined && vocalSummarySource !== null && !vocalSummary) {
+    errors.push({ path: '$.vocalSummary', code: 'required_string', message: 'vocalSummary must be a non-empty string when provided.' });
+  }
+
   return {
     ok: errors.length === 0,
     value: errors.length === 0 ? {
@@ -1289,7 +1418,9 @@ function validateWholeAssetMusicAnalysisObject(input, durationSeconds = 0) {
       hasMusic,
       segments: normalizedSegments,
       globalArc,
-      qualityNotes
+      qualityNotes,
+      vocalSummary,
+      vocal_segments
     } : null,
     errors,
     summary: errors.length === 0 ? null : `Whole-asset music JSON validation failed. ${errors.slice(0, 6).map((error) => `${error.path}: ${error.message}`).join(' | ')} Return corrected JSON only.`,
@@ -1306,7 +1437,7 @@ function buildWholeAssetMusicPrompt(durationSeconds, recoveryRuntime = null, { i
 
 ${modeNote}
 
-Identify the overall music arc across the full asset, then emit coarse timeline-aware segments for major audio changes.
+Identify the overall music arc across the full asset, then emit coarse timeline-aware segments for major audio changes and a transcript-like pass for any text-bearing music-led vocals.
 
 Return JSON only in this format:
 {
@@ -1331,6 +1462,18 @@ Return JSON only in this format:
   ],
   "qualityNotes": [
     "Optional note about confidence, timing precision, or continuity."
+  ],
+  "vocalSummary": "Short summary of any text-bearing music-led vocals, or omit when none are present.",
+  "vocal_segments": [
+    {
+      "start": 58.0,
+      "end": 61.2,
+      "text": "We rise tonight",
+      "confidence": 0.91,
+      "performer": "Vocalist 1",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    }
   ]
 }
 
@@ -1339,8 +1482,12 @@ Rules:
 - Provide 1-12 segments covering the major audio changes across the full asset.
 - Keep start/end in ascending order and within 0.0s to ${durationSeconds.toFixed(1)}s.
 - If music is absent, set hasMusic to false and still return best-effort segments using types like speech, silence, ambient, or sfx.
+- Keep spoken narration or dialogue over score out of vocal_segments; that belongs in the dialogue lane.
+- Use vocal_segments only for sung lyrics, chant-like vocals, rap synchronized to music, melodic refrains, or truly inseparable hybrid music-led delivery.
+- If spoken dialogue and music-led vocals alternate, split them into adjacent segments instead of merging them.
 - summary must describe the whole asset, not just one moment.
 - globalArc.notableTransitions may be empty.
+- delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.
 - JSON only. No markdown, no explanation.`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
@@ -1407,11 +1554,27 @@ Return JSON only in this format:
     "intensity": 5
   },
   "chunkSummary": "1-2 sentences",
-  "rollingSummary": "Updated rolling summary for the entire audio so far (keep concise)"
+  "rollingSummary": "Updated rolling summary for the entire audio so far (keep concise)",
+  "vocalSummary": "Optional concise update about text-bearing music-led vocals so far",
+  "vocal_segments": [
+    {
+      "start": ${startTime.toFixed(1)},
+      "end": ${endTime.toFixed(1)},
+      "text": "We rise tonight",
+      "confidence": 0.91,
+      "performer": "Vocalist 1",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    }
+  ]
 }
 
 Allowed values for analysis.type: music | speech | silence | ambient | sfx.
-Allowed values for analysis.mood: upbeat | calm | tense | sad | energetic | neutral.`;
+Allowed values for analysis.mood: upbeat | calm | tense | sad | energetic | neutral.
+Keep spoken narration or dialogue over score out of vocal_segments; that belongs in dialogueData.
+Use vocal_segments only for text-bearing music-led vocals.
+If spoken delivery changes into music-led delivery inside the chunk, split them into adjacent segments instead of merging them.
+Allowed values for vocal_segments[*].delivery: sung | chant | rap | melodic_refrain | hybrid.`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }
@@ -1492,7 +1655,9 @@ async function executeMusicAnalysisToolLoop({
     finalArtifactDescription: 'The final artifact must be the music analysis JSON object for this chunk.',
     finalArtifactRules: [
       'Report analysis.type, analysis.description, optional analysis.mood, and analysis.intensity.',
-      'Include rollingSummary when you have continuity context from prior chunks.'
+      'Include rollingSummary when you have continuity context from prior chunks.',
+      'Include vocal_segments and optional vocalSummary only for text-bearing music-led vocals (sung lyrics, chant-like hooks, rap, melodic refrains, or inseparable hybrid delivery).',
+      'Do not put spoken narration or dialogue-over-score into vocal_segments; those belong in the dialogue lane.'
     ],
     callProvider: ({ prompt }) => provider.complete({
       prompt,

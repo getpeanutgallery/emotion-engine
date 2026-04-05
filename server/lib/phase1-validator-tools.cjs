@@ -81,10 +81,10 @@ function buildDialogueTranscriptionValidatorToolContract({ requireHandoff = fals
   return buildContract({
     name: DIALOGUE_TRANSCRIPTION_TOOL_NAME,
     argumentKey: 'transcription',
-    description: 'Validate a Phase 1 dialogue/vocal-script transcription JSON candidate against the required local schema before final submission.',
+    description: 'Validate a Phase 1 spoken-dialogue transcription JSON candidate against the required local schema before final submission.',
     candidateDescription: requireHandoff
-      ? 'Candidate dialogue/vocal-script transcription JSON with dialogue_segments covering audible spoken or sung words, optional speaker_profiles, summary, handoffContext, totalDuration, and additive analysis/provenance metadata.'
-      : 'Candidate dialogue/vocal-script transcription JSON with dialogue_segments covering audible spoken or sung words, optional speaker_profiles, summary, totalDuration, and additive analysis/provenance metadata.',
+      ? 'Candidate spoken-dialogue transcription JSON with dialogue_segments covering audible spoken words only, optional speaker_profiles, summary, handoffContext, totalDuration, and additive analysis/provenance metadata.'
+      : 'Candidate spoken-dialogue transcription JSON with dialogue_segments covering audible spoken words only, optional speaker_profiles, summary, totalDuration, and additive analysis/provenance metadata.',
     example: {
       dialogue_segments: [
         {
@@ -214,8 +214,8 @@ function buildMusicAnalysisValidatorToolContract() {
   return buildContract({
     name: MUSIC_ANALYSIS_TOOL_NAME,
     argumentKey: 'musicAnalysis',
-    description: 'Validate a Phase 1 music analysis JSON candidate against the required local schema before final submission.',
-    candidateDescription: 'Candidate music analysis JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, and optional rollingSummary.',
+    description: 'Validate a Phase 1 music-lane JSON candidate against the required local schema before final submission.',
+    candidateDescription: 'Candidate music-lane JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, optional rollingSummary, and optional vocal_segments / vocalSummary for text-bearing music-led vocals.',
     example: {
       analysis: {
         type: 'music',
@@ -223,7 +223,19 @@ function buildMusicAnalysisValidatorToolContract() {
         mood: 'energetic',
         intensity: 7
       },
-      rollingSummary: 'The audio stays upbeat and music-led so far.'
+      rollingSummary: 'The audio stays upbeat and music-led so far.',
+      vocalSummary: 'A repeated sung hook lands over the percussion.',
+      vocal_segments: [
+        {
+          start: 4.2,
+          end: 5.8,
+          text: 'We rise tonight',
+          confidence: 0.91,
+          performer: 'Vocalist 1',
+          performer_id: 'voc_001',
+          delivery: 'sung'
+        }
+      ]
     }
   });
 }

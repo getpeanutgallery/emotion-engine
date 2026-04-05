@@ -16,9 +16,43 @@ test('dialogue transcription validator tool contract is lane-specific', () => {
   assert.equal(contract.argumentKey, 'transcription');
   assert.deepEqual(contract.inputSchema.required, ['transcription']);
   assert.equal(contract.canonicalEnvelope.tool, 'validate_dialogue_transcription_json');
-  assert.match(contract.description, /dialogue\/vocal-script transcription/i);
-  assert.match(contract.inputSchema.properties.transcription.description, /audible spoken or sung words/i);
+  assert.match(contract.description, /spoken-dialogue transcription/i);
+  assert.match(contract.inputSchema.properties.transcription.description, /audible spoken words only/i);
   assert.ok(contract.canonicalEnvelope.transcription.handoffContext);
+});
+
+test('music analysis validator accepts optional music-lane vocal segments', () => {
+  const contract = buildMusicAnalysisValidatorToolContract();
+  assert.match(contract.description, /music-lane JSON candidate/i);
+  assert.match(contract.inputSchema.properties.musicAnalysis.description, /vocal_segments/i);
+
+  const result = executeMusicAnalysisValidatorTool({
+    musicAnalysis: {
+      analysis: {
+        type: 'music',
+        description: 'Driving chant-led percussion.',
+        mood: 'energetic',
+        intensity: 8
+      },
+      rollingSummary: 'The cue stays music-led and aggressive.',
+      vocalSummary: 'A chant hook repeats over the downbeat.',
+      vocal_segments: [
+        {
+          start: 2,
+          end: 4,
+          text: 'Run it back',
+          confidence: 0.92,
+          performer: 'Crowd',
+          performer_id: 'crowd_1',
+          delivery: 'chant'
+        }
+      ]
+    }
+  });
+
+  assert.equal(result.valid, true);
+  assert.equal(result.normalizedValue.vocalSummary, 'A chant hook repeats over the downbeat.');
+  assert.equal(result.normalizedValue.vocal_segments[0].delivery, 'chant');
 });
 
 test('dialogue transcription validator tool enforces required handoff fields', () => {

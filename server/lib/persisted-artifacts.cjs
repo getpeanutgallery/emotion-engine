@@ -26,6 +26,7 @@ const {
 const DEFAULT_LOCATIONS = {
   dialogueData: ['phase1-gather-context', 'dialogue-data.json'],
   musicData: ['phase1-gather-context', 'music-data.json'],
+  musicVocalsData: ['phase1-gather-context', 'music-vocals-data.json'],
   visualIdentityData: ['phase1-gather-context', 'visual-identity-data.json'],
   chunkAnalysis: ['phase2-process', 'chunk-analysis.json'],
   wholeVideoAnalysis: ['phase2-process', 'whole-video-analysis.json'],

@@ -1142,9 +1142,9 @@ async function run(input) {
                 'Identify speakers as Speaker 1, Speaker 2, etc. for human-readable labels, while reusing anonymous speaker_id values for same-speaker linkage.',
                 'Provide accurate timestamps in seconds and place each vocal line where it is actually heard in the timeline.',
                 'Keep grounded speaker identity separate from any inferred_traits guesswork.',
-                'Include audible spoken lines, sung lyrics, chant-like vocals, and other clearly vocalized words when they are present and relevant; exclude purely instrumental or otherwise non-vocal sections.',
-                'When sung or chant-like vocals contain audibly distinct lines, hooks, or repeated refrains, split them into separate dialogue_segments rather than one merged block.',
-                'If no audible spoken or sung words are detected, return an empty dialogue_segments array.'
+                'Include audible spoken words only. Exclude sung lyrics, chant-like vocals, rap synchronized to music, melodic refrains, and purely instrumental or otherwise non-vocal sections.',
+                'If spoken delivery and music-led vocals alternate, keep only the spoken spans in dialogue_segments and let adjacent music-vocal spans live in the music lane.',
+                'If no audible spoken words are detected, return an empty dialogue_segments array.'
               ]
             });
 
@@ -1442,9 +1442,9 @@ async function run(input) {
                 'Timestamps must be relative to this chunk and start at 0, with each vocal line placed where it is actually heard in the chunk.',
                 'Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.',
                 'Keep grounded speaker identity separate from any inferred_traits guesswork.',
-                'Include audible spoken lines, sung lyrics, chant-like vocals, and other clearly vocalized words when they are present and relevant in the chunk; exclude purely instrumental or otherwise non-vocal sections.',
-                'When sung or chant-like vocals contain audibly distinct lines, hooks, or repeated refrains, split them into separate dialogue_segments rather than one merged block.',
-                'If no audible spoken or sung words are detected, return an empty dialogue_segments array.',
+                'Include audible spoken words only in this chunk. Exclude sung lyrics, chant-like vocals, rap synchronized to music, melodic refrains, and purely instrumental or otherwise non-vocal sections.',
+                'If spoken delivery and music-led vocals alternate inside the chunk, keep only the spoken spans in dialogue_segments and let adjacent music-vocal spans live in the music lane.',
+                'If no audible spoken words are detected, return an empty dialogue_segments array.',
                 'handoffContext must stay brief and continuity-focused.'
               ]
             });
@@ -2223,14 +2223,15 @@ ${runtimeAnchor}- Return JSON only. No markdown or explanation.
 - If you create a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.
 - If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.
 - If a later line sounds like a different voice, do not reuse the old speaker_id just because the scene context mentions the same character.
-- Treat this as a vocal-script extraction task, not a speech-only dialogue pass. Include audible spoken lines, sung lyrics, chant-like vocals, and other clearly vocalized words when they are present and relevant to the media.
-- For sung material, do not collapse multiple audibly distinct lyric lines, chant-like hooks, or repeated refrains into one oversized segment.
-- Break sung or chant-like vocals into separate dialogue_segments whenever wording, timing, pauses, repetition, or delivery are audibly distinct.
+- Treat this as a spoken-dialogue extraction task. Include audible spoken words only.
+- Exclude sung lyrics, chant-like vocals, rap synchronized to music, melodic refrains, and other music-led vocal phrases from dialogue_segments.
+- Spoken narration or dialogue over a score still belongs in dialogue_segments.
+- If delivery changes mode between spoken dialogue and music-led vocals, split them into adjacent segments instead of merging them.
 - Treat long non-vocal gaps, instrumental stretches, and silence/music-only spans as timeline evidence that later vocal lines belong later; keep those gaps instead of bridging across them.
 - Do not move a later lyric line earlier just because it appears to share the same singer, melody, hook, or section type as an earlier vocal phrase.
 - Exclude purely instrumental or otherwise non-vocal sections from dialogue_segments.
-- Do not compress the whole file's dialogue into the opening seconds or pull later lyric lines earlier to cover a larger musical region; place each line where it actually occurs in the full timeline.
-- If no audible spoken or sung words are detected, return an empty dialogue_segments array.`;
+- Do not compress the whole file's dialogue into the opening seconds or pull later spoken lines earlier to cover a larger region; place each spoken line where it actually occurs in the full timeline.
+- If no audible spoken words are detected, return an empty dialogue_segments array.`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }
@@ -2439,14 +2440,15 @@ Rules:
 - If a threat line is followed by an official/public-address sounding line, treat that as a speaker change unless the exact same voice clearly continues.
 - If you create a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.
 - If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.
-- Treat this as a vocal-script extraction task for this chunk, not a speech-only dialogue pass. Include audible spoken lines, sung lyrics, chant-like vocals, and other clearly vocalized words when they are present and relevant in the chunk.
-- For sung material, do not collapse multiple audibly distinct lyric lines, chant-like hooks, or repeated refrains into one oversized segment.
-- Break sung or chant-like vocals into separate dialogue_segments whenever wording, timing, pauses, repetition, or delivery are audibly distinct.
+- Treat this as a spoken-dialogue extraction task for this chunk. Include audible spoken words only.
+- Exclude sung lyrics, chant-like vocals, rap synchronized to music, melodic refrains, and other music-led vocal phrases from dialogue_segments.
+- Spoken narration or dialogue over a score still belongs in dialogue_segments.
+- If delivery changes mode between spoken dialogue and music-led vocals, split them into adjacent segments instead of merging them.
 - Treat long non-vocal gaps, instrumental stretches, and silence/music-only spans as timeline evidence that later vocal lines belong later; keep those gaps instead of bridging across them.
 - Do not move a later lyric line earlier just because it appears to share the same singer, melody, hook, or section type as an earlier vocal phrase.
 - Exclude purely instrumental or otherwise non-vocal sections from dialogue_segments.
-- Do not compress the whole chunk's dialogue into the opening seconds or pull later lyric lines earlier to cover a larger musical region; spread timestamps across the actual chunk timeline where lines occur.
-- If no audible spoken or sung words are detected, return an empty dialogue_segments array.
+- Do not compress the whole chunk's dialogue into the opening seconds or pull later spoken lines earlier to cover a larger region; spread timestamps across the actual chunk timeline where lines occur.
+- If no audible spoken words are detected, return an empty dialogue_segments array.
 - Keep handoffContext brief (<= ~10 lines).`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;

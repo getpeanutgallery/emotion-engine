@@ -727,6 +727,55 @@ function validateDialogueStitchObject(input) {
   };
 }
 
+const MUSIC_VOCAL_DELIVERIES = new Set(['sung', 'chant', 'rap', 'melodic_refrain', 'hybrid']);
+
+function validateMusicVocalSegments(segments, errors, path = '$.vocal_segments') {
+  if (segments === undefined || segments === null) return [];
+
+  if (!Array.isArray(segments)) {
+    pushError(errors, path, 'required_array', 'vocal_segments must be an array when provided.');
+    return [];
+  }
+
+  return segments.map((segment, index) => {
+    const itemPath = `${path}[${index}]`;
+    if (!segment || typeof segment !== 'object' || Array.isArray(segment)) {
+      pushError(errors, itemPath, 'invalid_type', 'Each music vocal segment must be an object.');
+      return null;
+    }
+
+    const performer = validateOptionalNonEmptyString(
+      segment.performer ?? segment.singer ?? segment.voice,
+      `${itemPath}.performer`,
+      'music vocal performer',
+      errors
+    );
+    const performer_id = validateOptionalNonEmptyString(
+      segment.performer_id ?? segment.performerId ?? segment.singer_id ?? segment.singerId,
+      `${itemPath}.performer_id`,
+      'music vocal performer_id',
+      errors
+    );
+    const delivery = validateOptionalEnumString(
+      segment.delivery,
+      MUSIC_VOCAL_DELIVERIES,
+      `${itemPath}.delivery`,
+      'music vocal delivery',
+      errors
+    );
+
+    return {
+      start: validateDialogueTimestamp(segment.start, `${itemPath}.start`, 'music vocal segment start', errors, { min: 0 }) ?? 0,
+      end: validateDialogueTimestamp(segment.end, `${itemPath}.end`, 'music vocal segment end', errors, { min: 0 }) ?? 0,
+      text: validateNonEmptyString(segment.text, `${itemPath}.text`, 'music vocal segment text', errors) ?? '',
+      confidence: validateFiniteNumber(segment.confidence, `${itemPath}.confidence`, 'music vocal segment confidence', errors, { min: 0, max: 1 }) ?? 0,
+      performer: performer || null,
+      performer_id: performer_id || null,
+      delivery: delivery || null
+    };
+  }).filter(Boolean);
+}
+
 function validateMusicAnalysisObject(input) {
   const errors = [];
 
@@ -756,6 +805,12 @@ function validateMusicAnalysisObject(input) {
     ? null
     : validateNonEmptyString(rollingSummarySource, '$.rollingSummary', 'rollingSummary', errors);
 
+  const vocalSummarySource = input.vocalSummary ?? input.vocal_summary ?? input.musicVocalsSummary;
+  const vocalSummary = vocalSummarySource === undefined || vocalSummarySource === null
+    ? null
+    : validateOptionalNonEmptyString(vocalSummarySource, '$.vocalSummary', 'vocalSummary', errors);
+  const vocal_segments = validateMusicVocalSegments(input.vocal_segments, errors);
+
   return {
     ok: errors.length === 0,
     value: errors.length === 0 ? {
@@ -765,7 +820,9 @@ function validateMusicAnalysisObject(input) {
         mood: mood || null,
         intensity
       },
-      rollingSummary: rollingSummary || null
+      rollingSummary: rollingSummary || null,
+      vocalSummary: vocalSummary || null,
+      vocal_segments
     } : null,
     errors,
     summary: summarizeValidationErrors('Music JSON validation failed.', errors),
