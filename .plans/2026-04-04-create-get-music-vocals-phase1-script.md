@@ -1,7 +1,7 @@
 # emotion-engine: create get-music-vocals Phase 1 script
 
 **Date:** 2026-04-04  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -208,23 +208,83 @@ Parity exceptions: none documented; the new lane reuses the existing Phase 1 mus
 - `.plans/2026-04-04-create-get-music-vocals-phase1-script.md`
 - fresh log/output artifacts
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Ran the canonical rerun command exactly as required:
+`node server/run-pipeline.cjs --config configs/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun.yaml --clean-live-digital-twin --verbose`
+
+The rerun completed successfully with exit code `0`. Fresh artifacts were regenerated under `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/`, including the three Phase 1 outputs now owned by separate scripts/lane entries:
+- `phase1-gather-context/dialogue-data.json`
+- `phase1-gather-context/music-data.json`
+- `phase1-gather-context/music-vocals-data.json`
+- supporting success envelopes: `phase1-gather-context/script-results/get-dialogue.success.json`, `get-music.success.json`, and `get-music-vocals.success.json`
+- Phase 1 raw error summary stayed clean: `phase1-gather-context/raw/_meta/errors.summary.json` reports `totalErrors: 0`
+
+Separate-lane/config verification:
+- `configs/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun.yaml` now runs `get-dialogue.cjs`, `get-music.cjs`, and `get-music-vocals.cjs` sequentially in `gather_context`
+- the same config defines independent AI branches for `ai.dialogue`, `ai.music`, and `ai.music_vocals`
+- all three branches are aligned to the intended verification settings: `timeoutMs: 180000`, `max_tokens: 43219`, and `thinking.level: high`
+- the fresh Phase 1 success envelopes prove the lane ownership split is real at runtime rather than just a dry-run config claim
+
+### Spoken benchmark vs `dialogueData`
+
+Using `benchmarks/fixtures/cod-test/truth/dialogue-data.json` and treating the spoken benchmark as the non-`spk_011` truth lines:
+- the fresh `dialogueData` artifact stayed **scope-clean**: it contains spoken dialogue only and does not leak the Metallica lyric block into the spoken lane
+- strong or near-exact spoken recoveries are present for the early spoken block (`They want you afraid` / `Fear makes you easier to control` / `It's time to wake up` / `Your streets...run red...` / `Raul Menendez ignited global unrest...` / `Menendez is a terrorist` / `We're bringing peace and security to the world` / `He refuses to let me go` / `Stop looking backwards, David...` / `A lot of people counting on us for answers`)
+- late spoken recovery is mixed but still recognizably spoken-only: `This isn't real`, `The hell it ain't!`, `Pull it together, man!`, `So eager to leave...`, `Killing the man...`, `You were never cut out to be a Mason`, and `No more games. This ends now.`
+- remaining spoken misses/regressions are important: `You shall know fear.`, `Specter one, report.`, `Need a sitrep.`, and the promo VO line are absent from the saved artifact, and several late timings remain shifted late (`Pull it together, man!` lands at `113-114.5s` instead of `98-99s`)
+
+Bottom line on dialogue: **spoken dialogue stayed cleaner than the mixed-lane designs and remained free of lyric contamination, but it is still incomplete and late-shifted in the trailer back half.**
+
+### Music lane vs `musicData`
+
+The fresh `musicData` artifact stayed **non-lexical in ownership**:
+- it emits structural/music-analysis output only (`segments`, `summary`, `globalArc`, `qualityNotes`, `provenance`)
+- it does **not** emit lyric transcript fields and no longer owns `musicVocalsData`
+- the saved segments remain coarse music/speech structure such as `type: "music"` / `type: "speech"` with mood/intensity descriptions rather than transcript text
+
+Bottom line on music lane: **yes, music remained the non-lexical analysis lane.** It still references that aggressive vocals exist inside descriptive prose, but it no longer owns transcript-like lyric extraction.
+
+### Lyric benchmark vs `musicVocalsData`
+
+Using the lyric benchmark as the 10 `spk_011` truth lines in `benchmarks/fixtures/cod-test/truth/dialogue-data.json`, the dedicated `music-vocals-data.json` output is still **not benchmark-faithful**.
+
+What the dedicated lane recovered:
+- exact or near-exact hook recovery for `Obey your master!` at `80-82s`
+- another clean `Obey your master!` return at `118-120s`, which is close to the late truth hook at `116-118s`
+- the output is more structurally separated than before: six dedicated `vocal_segments`, separate performer metadata, and no need to piggyback on `get-music.cjs`
+
+What it still missed or degraded:
+- no faithful recovery of `Control faster.`
+- no faithful recovery of `Master of puppets are pulling the strings!`
+- no faithful recovery of `Twisting your mind, smashing your dreams!`
+- no faithful recovery of `Blinded by me, you can't see a thing`
+- no faithful recovery of `Just call my name 'cause I'll hear you scream`
+- no faithful recovery of either benchmark `Master, master ...` line
+- several segments drift into obvious non-benchmark/hallucinated wording such as `What's that? I thought you said this would be easy!`
+- the top-level summary is internally contradictory (`No text-bearing music-led vocals detected in this chunk.`) even though the artifact contains six non-empty lyric segments
+
+Bottom line on music-vocals usefulness: **the dedicated lane is architecturally cleaner and slightly more segmented, but it did not materially improve lyric usefulness versus the prior shared-lane design.** The lane is still not trustworthy as a cod-test lyric transcript because the core benchmark lines remain mostly missing or paraphrased, and the final artifact still mixes in fabricated wording.
+
+Fresh failure artifacts:
+- none new from this rerun; the pipeline completed cleanly and `phase1-gather-context/raw/_meta/errors.summary.json` reports `totalErrors: 0`
+
+Committed the verification writeup only (no push) after updating this plan. Runtime noise such as `.beads/interactions.jsonl` and `tmp/` remains intentionally excluded from the commit.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ⚠️ Partial
 
-**What We Built:** Pending.
+**What We Built:** We completed the dedicated `get-music-vocals.cjs` Phase 1 split end to end: implementation landed, the canonical Xiaomi/OpenRouter high-thinking rerun completed successfully, and the pipeline now truthfully emits three separate Phase 1 artifacts from three separate runtime lanes: spoken `dialogueData`, non-lexical `musicData`, and dedicated lyric-oriented `musicVocalsData`. The structural/config split is verified at runtime, not just in tests.
 
 **Commits:**
-- Pending.
+- `94c0c46` - Add dedicated Phase 1 music vocals lane
+- `668bfcd` - docs: record dedicated music-vocals rerun verification
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** Separating ownership is necessary but not sufficient. The dedicated lane clearly protects spoken dialogue from lyric contamination and keeps the music lane non-lexical, which is a real architectural win. But lyric usefulness depends on transcript fidelity, timing, and anti-hallucination behavior, and the fresh dedicated-lane rerun still misses most benchmark lyric lines while inventing some wording. The next improvement lane should target lyric grounding/validator behavior rather than more ownership reshuffling.
 
 ---
 
-*Created on 2026-04-04*
+*Updated on 2026-04-04*
