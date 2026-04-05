@@ -1414,11 +1414,18 @@ Return JSON only in this format:
 
 Rules:
 - Use the original full timeline in seconds for every vocal segment.
+- Aim for full-trailer lyric coverage, not just representative examples.
+- Capture each distinct lyric-bearing entry, reprise, or short return at the point it occurs on the global timeline.
+- Do not skip a lyric segment merely because the phrase already appeared earlier; repeated hooks later in the trailer still need their own vocal_segments.
 - Keep spoken narration, spoken dialogue over score, and non-lexical vocalizations out of vocal_segments.
 - Use vocal_segments only for audible sung lyrics, chant-like hooks, rap, melodic refrains, or truly inseparable hybrid music-led delivery.
+- If speech and song overlap, keep only the clearly music-led lexical content in vocal_segments; spoken overlay remains outside this lane.
 - Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.
+- When masking reduces certainty, prefer a shorter lower-confidence literal fragment plus a qualityNotes caution over omitting the segment.
 - Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.
 - Do not merge multiple lyric lines into one segment.
+- Use hybrid only when the same continuous utterance is truly inseparable as both speech-led and music-led; otherwise split adjacent spoken and sung spans and keep only the sung side here.
+- Use the whole-asset context as a checklist so chunk refinement revisits late and brief lyric windows instead of forgetting them.
 - recognizedSong is optional. Use it only when the heard sung/chant/rap evidence supports a plausible famous-song hypothesis.
 - Prefer recognizedSong.status = unknown, possible, or multiple_possible over inventing certainty.
 - Every recognizedSong candidate must cite audio-grounded evidence; literal matchedLyrics are stronger than vibe-only guesses.
@@ -1497,9 +1504,14 @@ Return JSON only in this format:
 Rules:
 - Keep spoken narration, spoken dialogue over score, and non-lexical vocalizations out of vocal_segments.
 - Use vocal_segments only for audible sung lyrics, chant-like hooks, rap, melodic refrains, or truly inseparable hybrid music-led delivery.
+- If speech and song overlap, keep only the clearly music-led lexical content in vocal_segments; spoken overlay remains outside this lane.
 - Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.
+- When masking reduces certainty, prefer a shorter lower-confidence literal fragment plus a qualityNotes caution over omitting the segment.
 - Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.
+- Do not skip a lyric segment merely because the phrase already appeared earlier; repeated hooks later in the trailer still need their own vocal_segments.
 - Do not merge multiple lyric lines into one segment.
+- Use hybrid only when the same continuous utterance is truly inseparable as both speech-led and music-led; otherwise split adjacent spoken and sung spans and keep only the sung side here.
+- Use rollingSummary and whole-asset context as a checklist so late and brief lyric windows are revisited instead of forgotten.
 - recognizedSong is optional. Use it only when the heard sung/chant/rap evidence supports a plausible famous-song hypothesis.
 - Prefer recognizedSong.status = unknown, possible, or multiple_possible over inventing certainty.
 - Every recognizedSong candidate must cite audio-grounded evidence; literal matchedLyrics are stronger than vibe-only guesses.
@@ -1576,10 +1588,13 @@ async function executeMusicVocalsAnalysisToolLoop({
       'Include rollingSummary, vocalSummary, and vocal_segments.',
       'Keep spoken narration, spoken dialogue over score, and non-lexical vocalizations out of vocal_segments.',
       'Use vocal_segments only for audible sung lyrics, chant-like hooks, rap, melodic refrains, or truly inseparable hybrid music-led delivery.',
+      'If speech and song overlap, keep only the clearly music-led lexical content in vocal_segments; spoken overlay remains outside this lane.',
       'Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.',
+      'When masking reduces certainty, prefer a shorter lower-confidence literal fragment plus a qualityNotes caution over omitting the segment.',
       'Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.',
+      'Do not skip repeated hooks, reprises, or short late re-entries just because similar lyrics appeared earlier.',
       'recognizedSong and recognitionNotes are optional, but when present they must be grounded in heard sung/chant/rap evidence and must not use spoken dialogue over music as lyric evidence.',
-      'delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.'
+      'delivery must be one of: sung, chant, rap, melodic_refrain, hybrid, with hybrid reserved for truly inseparable mixed delivery.'
     ],
     callProvider: ({ prompt }) => provider.complete({
       prompt,

@@ -27,6 +27,8 @@ test('music analysis validator accepts optional famous-song grounding while stay
   const contract = buildMusicAnalysisValidatorToolContract();
   assert.match(contract.description, /music-lane JSON candidate/i);
   assert.match(contract.inputSchema.properties.musicAnalysis.description, /recognizedSong/i);
+  assert.match(contract.inputSchema.properties.musicAnalysis.description, /coarse non-lexical music analysis/i);
+  assert.match(contract.inputSchema.properties.musicAnalysis.description, /describe score even in mixed chunks/i);
   assert.match(contract.inputSchema.properties.musicAnalysis.description, /spoken dialogue over score is not lyric evidence/i);
 
   const result = executeMusicAnalysisValidatorTool({
@@ -70,6 +72,9 @@ test('music vocals validator accepts optional famous-song grounding with lyric e
   const contract = buildMusicVocalsValidatorToolContract();
   assert.match(contract.description, /music-vocals JSON candidate/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /recognizedSong/i);
+  assert.match(contract.inputSchema.properties.musicVocals.description, /full lyric-bearing timeline coverage/i);
+  assert.match(contract.inputSchema.properties.musicVocals.description, /repeated hooks and reprises as distinct segments/i);
+  assert.match(contract.inputSchema.properties.musicVocals.description, /hybrid for truly inseparable mixed delivery/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /Spoken dialogue over score is not lyric evidence/i);
 
   const result = executeMusicVocalsValidatorTool({

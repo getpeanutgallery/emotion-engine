@@ -268,6 +268,9 @@ test('Get Music Script', async (t) => {
       is(result.artifacts.musicData.segments.length, 1);
       ok(!completionPrompts[0].includes('vocal_segments'));
       ok(!completionPrompts[0].includes('text-bearing music-led vocals'));
+      ok(completionPrompts[0].includes('Keep this lane coarse and non-lexical; do not transcribe spoken lines or sung lyrics.'));
+      ok(completionPrompts[0].includes('For mixed chunks, describe the score bed even when spoken dialogue is present; do not let analysis.type = speech erase meaningful underlying music.'));
+      ok(completionPrompts[0].includes('If lyrics, chant, rap, or a melodic hook are audible, note that a text-bearing vocal cue exists while keeping the description non-lexical.'));
       ok(completionPrompts[0].includes('Do not treat spoken dialogue, narration, radio chatter, or promo VO over score as lyric evidence.'));
     });
 
@@ -611,6 +614,7 @@ test('Get Music Script', async (t) => {
       is(completionPrompts.length, 3);
       ok(completionPrompts[1].includes('Whole-asset continuity context:'));
       ok(completionPrompts[1].includes('Whole-asset summary: Trailer-wide music arc climbs from menace into a sustained action sprint.'));
+      ok(completionPrompts[1].includes('Differentiate spoken-over-score from music-led vocals in analysis.description or rollingSummary, but leave exact words and transcript boundaries to the dialogue and music-vocals lanes.'));
       ok(!completionPrompts[1].includes('vocal_segments'));
       is(result.artifacts.musicData.analysisMode, 'hybrid');
       is(result.artifacts.musicData.summary, 'Trailer-wide music arc climbs from menace into a sustained action sprint.');

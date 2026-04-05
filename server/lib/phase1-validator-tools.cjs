@@ -217,7 +217,7 @@ function buildMusicAnalysisValidatorToolContract() {
     name: MUSIC_ANALYSIS_TOOL_NAME,
     argumentKey: 'musicAnalysis',
     description: 'Validate a Phase 1 music-lane JSON candidate against the required local schema before final submission.',
-    candidateDescription: 'Candidate music-lane JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, optional rollingSummary, and optional famous-song grounding via recognizedSong + recognitionNotes. Keep this lane focused on non-lexical music analysis; spoken dialogue over score is not lyric evidence.',
+    candidateDescription: 'Candidate music-lane JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, optional rollingSummary, and optional famous-song grounding via recognizedSong + recognitionNotes. Keep this lane focused on coarse non-lexical music analysis, describe score even in mixed chunks, and remember that spoken dialogue over score is not lyric evidence.',
     example: {
       analysis: {
         type: 'music',
@@ -277,7 +277,7 @@ function buildMusicVocalsValidatorToolContract() {
     name: MUSIC_VOCALS_TOOL_NAME,
     argumentKey: 'musicVocals',
     description: 'Validate a Phase 1 music-vocals JSON candidate against the required local schema before final submission.',
-    candidateDescription: 'Candidate music-vocals JSON with rollingSummary, vocalSummary, vocal_segments, optional famous-song grounding via recognizedSong + recognitionNotes, and optional qualityNotes. Spoken dialogue over score is not lyric evidence.',
+    candidateDescription: 'Candidate music-vocals JSON with rollingSummary, vocalSummary, vocal_segments, optional famous-song grounding via recognizedSong + recognitionNotes, and optional qualityNotes. Aim for full lyric-bearing timeline coverage, keep repeated hooks and reprises as distinct segments, reserve hybrid for truly inseparable mixed delivery, and remember that spoken dialogue over score is not lyric evidence.',
     example: {
       rollingSummary: 'A repeated sung hook dominates the music-led vocals so far.',
       vocalSummary: 'A repeated sung hook lands over the percussion.',

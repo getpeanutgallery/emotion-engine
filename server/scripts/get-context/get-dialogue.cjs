@@ -2225,8 +2225,14 @@ ${runtimeAnchor}- Return JSON only. No markdown or explanation.
 - If a later line sounds like a different voice, do not reuse the old speaker_id just because the scene context mentions the same character.
 - Treat this as a spoken-dialogue extraction task. Include audible spoken words only.
 - Exclude sung lyrics, chant-like vocals, rap synchronized to music, melodic refrains, and other music-led vocal phrases from dialogue_segments.
+- When a voice rides over music or SFX, classify by delivery mode, not by foreground loudness.
 - Spoken narration or dialogue over a score still belongs in dialogue_segments.
+- Keep quiet or partially masked spoken words in dialogue_segments when they are still intelligible enough to transcribe at least partially.
+- Use short best-effort literal fragments for masked speech rather than discarding the spoken line entirely.
+- If a phrase begins spoken and resolves into sung, chant-like, rap, or other music-led delivery, split at the delivery pivot; do not keep the sung tail in dialogue.
+- If audible words are too melodic or rhythm-locked to be confidently treated as speech, exclude them from dialogue_segments and let the music-vocals lane claim them.
 - If delivery changes mode between spoken dialogue and music-led vocals, split them into adjacent segments instead of merging them.
+- Do not use continuity from neighboring spoken segments to pull a lyric phrase into dialogue.
 - Treat long non-vocal gaps, instrumental stretches, and silence/music-only spans as timeline evidence that later vocal lines belong later; keep those gaps instead of bridging across them.
 - Do not move a later lyric line earlier just because it appears to share the same singer, melody, hook, or section type as an earlier vocal phrase.
 - Exclude purely instrumental or otherwise non-vocal sections from dialogue_segments.
@@ -2442,8 +2448,14 @@ Rules:
 - If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.
 - Treat this as a spoken-dialogue extraction task for this chunk. Include audible spoken words only.
 - Exclude sung lyrics, chant-like vocals, rap synchronized to music, melodic refrains, and other music-led vocal phrases from dialogue_segments.
+- When a voice rides over music or SFX, classify by delivery mode, not by foreground loudness.
 - Spoken narration or dialogue over a score still belongs in dialogue_segments.
+- Keep quiet or partially masked spoken words in dialogue_segments when they are still intelligible enough to transcribe at least partially.
+- Use short best-effort literal fragments for masked speech rather than discarding the spoken line entirely.
+- If a phrase begins spoken and resolves into sung, chant-like, rap, or other music-led delivery, split at the delivery pivot; do not keep the sung tail in dialogue.
+- If audible words are too melodic or rhythm-locked to be confidently treated as speech, exclude them from dialogue_segments and let the music-vocals lane claim them.
 - If delivery changes mode between spoken dialogue and music-led vocals, split them into adjacent segments instead of merging them.
+- Do not use continuity from neighboring spoken segments to pull a lyric phrase into dialogue.
 - Treat long non-vocal gaps, instrumental stretches, and silence/music-only spans as timeline evidence that later vocal lines belong later; keep those gaps instead of bridging across them.
 - Do not move a later lyric line earlier just because it appears to share the same singer, melody, hook, or section type as an earlier vocal phrase.
 - Exclude purely instrumental or otherwise non-vocal sections from dialogue_segments.

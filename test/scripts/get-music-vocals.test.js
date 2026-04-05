@@ -231,7 +231,10 @@ test('Get Music Vocals Script', async (t) => {
     ok(completionPrompts[0].includes('Upstream music-lane context:'));
     ok(completionPrompts[0].includes('Music-lane summary: The score stays intense and chant-driven.'));
     ok(completionPrompts[0].includes('Keep spoken narration, spoken dialogue over score, and non-lexical vocalizations out of vocal_segments.'));
+    ok(completionPrompts[0].includes('If speech and song overlap, keep only the clearly music-led lexical content in vocal_segments; spoken overlay remains outside this lane.'));
     ok(completionPrompts[0].includes('Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.'));
+    ok(completionPrompts[0].includes('Use hybrid only when the same continuous utterance is truly inseparable as both speech-led and music-led; otherwise split adjacent spoken and sung spans and keep only the sung side here.'));
+    ok(completionPrompts[0].includes('Use rollingSummary and whole-asset context as a checklist so late and brief lyric windows are revisited instead of forgotten.'));
     ok(completionPrompts[0].includes('Spoken dialogue, narration, radio chatter, or promo VO over music are never lyric evidence.'));
   });
 
