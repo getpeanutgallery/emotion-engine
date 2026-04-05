@@ -281,7 +281,7 @@ Committed the verification writeup only (no push) after updating this plan. Runt
 
 **Commits:**
 - `94c0c46` - Add dedicated Phase 1 music vocals lane
-- `668bfcd` - docs: record dedicated music-vocals rerun verification
+- verification writeup committed locally in Task 3 (see latest local history; not pushed)
 
 **Lessons Learned:** Separating ownership is necessary but not sufficient. The dedicated lane clearly protects spoken dialogue from lyric contamination and keeps the music lane non-lexical, which is a real architectural win. But lyric usefulness depends on transcript fidelity, timing, and anti-hallucination behavior, and the fresh dedicated-lane rerun still misses most benchmark lyric lines while inventing some wording. The next improvement lane should target lyric grounding/validator behavior rather than more ownership reshuffling.
 
