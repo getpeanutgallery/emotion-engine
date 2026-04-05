@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Get Music Script
+ * Get Music Vocals Script
  * 
  * Extracts and analyzes music/audio from video to identify mood, intensity, and segments.
  * This script runs in Phase 1 (Gather Context) of the pipeline.
@@ -10,7 +10,7 @@
  * - legacy flat files preserved as pointer JSON
  * - phase error artifacts written to raw/_meta/errors.jsonl + errors.summary.json
  *
- * @module scripts/get-context/get-music
+ * @module scripts/get-context/get-music-vocals
  */
 
 const fs = require('fs');
@@ -42,11 +42,11 @@ const {
 } = require('../../lib/ffmpeg-config.cjs');
 const {
   parseAndValidateJsonObject,
-  validateMusicAnalysisObject
+  validateMusicVocalsAnalysisObject
 } = require('../../lib/structured-output.cjs');
 const {
-  buildMusicAnalysisValidatorToolContract,
-  executeMusicAnalysisValidatorTool
+  buildMusicVocalsValidatorToolContract,
+  executeMusicVocalsValidatorTool
 } = require('../../lib/phase1-validator-tools.cjs');
 const { executeLocalValidatorToolLoop } = require('../../lib/local-validator-tool-loop.cjs');
 const {
@@ -55,10 +55,10 @@ const {
   buildProviderOptionDefaults
 } = require('../../lib/provider-runtime-config.cjs');
 const { applyFailureMetadata } = require('../../lib/tool-wrapper-contract.cjs');
-const { compactString } = require('../../lib/music-vocals-artifact.cjs');
+const { compactString, normalizeMusicVocalSegments, buildMusicVocalsData } = require('../../lib/music-vocals-artifact.cjs');
 
 const PHASE_KEY = 'phase1-gather-context';
-const SCRIPT_ID = 'get-music';
+const SCRIPT_ID = 'get-music-vocals';
 const DEFAULT_MUSIC_ANALYSIS_WINDOW_SECONDS = 30;
 const DEFAULT_PHASE1_MUSIC_MAX_WHOLE_ASSET_DURATION_SECONDS = 240;
 const VALID_PHASE1_MUSIC_MODES = new Set(['auto', 'chunked', 'whole_asset', 'hybrid']);
@@ -128,7 +128,7 @@ function runCommand(command, args) {
   });
 }
 
-function getRetryConfig(config = {}, domain = 'music') {
+function getRetryConfig(config = {}, domain = 'music_vocals') {
   const retry = config?.ai?.[domain]?.retry || {};
 
   return {
@@ -137,7 +137,7 @@ function getRetryConfig(config = {}, domain = 'music') {
   };
 }
 
-function getToolLoopConfig(config = {}, domain = 'music') {
+function getToolLoopConfig(config = {}, domain = 'music_vocals') {
   const toolLoop = config?.ai?.[domain]?.toolLoop || {};
 
   return {
@@ -152,7 +152,7 @@ function resolveMusicAnalysisWindowSeconds(config = {}) {
     return configuredPhase1;
   }
 
-  const configuredLegacy = Number(config?.ai?.music?.analysisWindowSeconds);
+  const configuredLegacy = Number(config?.ai?.music_vocals?.analysisWindowSeconds ?? config?.ai?.music?.analysisWindowSeconds);
   if (Number.isFinite(configuredLegacy) && configuredLegacy > 0) {
     return configuredLegacy;
   }
@@ -193,7 +193,7 @@ function resolveMusicAnalysisStrategy(preflight, config = {}) {
 
 function buildFallbackNote(reason) {
   const normalized = compactString(reason);
-  return normalized ? `Whole-asset music analysis fell back to chunked mode: ${normalized}` : null;
+  return normalized ? `Whole-asset music-vocals analysis fell back to chunked mode: ${normalized}` : null;
 }
 
 function buildMusicAnalysisChunkPlan(preflight, config = {}) {
@@ -300,7 +300,7 @@ async function run(input) {
   const { assetPath, outputDir, config } = input;
   const recoveryRuntime = getRecoveryRuntime(input);
 
-  console.log('   🎵 Extracting and analyzing music/audio from:', assetPath);
+  console.log('   🎤 Extracting and analyzing music-led vocals from:', assetPath);
 
   // Create phase-aware output directory
   const phaseDir = outputManager.createPhaseDirectory(outputDir, PHASE_KEY);
@@ -363,12 +363,12 @@ async function run(input) {
     });
   };
 
-  const writeMusicSegmentRaw = (segmentIndex, attempt, payload) => {
+  const writeMusicVocalsSegmentRaw = (segmentIndex, attempt, payload) => {
     if (!captureRaw) return;
 
-    const legacyFileName = `music-segment-${segmentIndex}.json`;
+    const legacyFileName = `music-vocals-segment-${segmentIndex}.json`;
 
-    const attemptRelDir = path.join(`music-segment-${pad(segmentIndex, 4)}`, `attempt-${pad(attempt, 2)}`);
+    const attemptRelDir = path.join(`music-vocals-segment-${pad(segmentIndex, 4)}`, `attempt-${pad(attempt, 2)}`);
     const attemptRelPath = path.join(attemptRelDir, 'capture.json');
 
     const capturePath = writeRawJson(aiRawDir, attemptRelPath, payload);
@@ -388,11 +388,11 @@ async function run(input) {
     events.artifactWrite({ absolutePath: pointerPath, role: 'raw.ai.pointer', phase: PHASE_KEY, script: SCRIPT_ID });
   };
 
-  const writeWholeAssetMusicRaw = (attempt, payload) => {
+  const writeWholeAssetMusicVocalsRaw = (attempt, payload) => {
     if (!captureRaw) return;
 
-    const legacyFileName = 'music-whole-asset.json';
-    const attemptRelDir = path.join('music-whole-asset', `attempt-${pad(attempt, 2)}`);
+    const legacyFileName = 'music-vocals-whole-asset.json';
+    const attemptRelDir = path.join('music-vocals-whole-asset', `attempt-${pad(attempt, 2)}`);
     const attemptRelPath = path.join(attemptRelDir, 'capture.json');
 
     const capturePath = writeRawJson(aiRawDir, attemptRelPath, payload);
@@ -433,7 +433,7 @@ async function run(input) {
       kind: 'audio.preflight',
       phase: PHASE_KEY,
       script: SCRIPT_ID,
-      domain: 'music',
+      domain: 'music_vocals',
       trace: preflight.trace
     });
 
@@ -444,7 +444,7 @@ async function run(input) {
       const planPath = writeRawJson(ffmpegRawDir, 'chunk-plan.json', {
         schemaVersion: 2,
         kind: 'audio.chunk.plan',
-        domain: 'music',
+        domain: 'music_vocals',
         createdAt: new Date().toISOString(),
         transportTrace: preflight.trace,
         analysisPolicy: {
@@ -465,10 +465,13 @@ async function run(input) {
     const strategy = resolveMusicAnalysisStrategy(preflight, config);
 
     console.log(`   📊 Audio duration: ${duration.toFixed(1)}s (${analysisChunkPlan.length} analysis chunk(s) from ${preflight.chunkPlan.length} transport chunk(s))`);
-    console.log(`   🎼 Music analysis mode: requested=${strategy.requestedMode}, selected=${strategy.actualMode}`);
+    console.log(`   🎼 Music-vocals analysis mode: requested=${strategy.requestedMode}, selected=${strategy.actualMode}`);
 
     const segments = [];
     let hasMusic = false;
+    const collectedVocalSegments = [];
+    const collectedQualityNotes = [];
+    let rollingVocalSummary = '';
     let finalAnalysisMode = strategy.actualMode;
     let wholeAssetAnalysis = null;
     let fallbackApplied = false;
@@ -479,14 +482,14 @@ async function run(input) {
 
     ensureRuntimeAuthForDomain({
       config,
-      domain: 'music',
+      domain: 'music_vocals',
       replayMode: false,
       prefix: 'GetMusic'
     });
 
-    const retryConfig = getRetryConfig(config, 'music');
-    const toolLoopConfig = getToolLoopConfig(config, 'music');
-    console.log(`   🔁 Music retry config: attempts=${retryConfig.maxAttempts}, backoffMs=${retryConfig.backoffMs}`);
+    const retryConfig = getRetryConfig(config, 'music_vocals');
+    const toolLoopConfig = getToolLoopConfig(config, 'music_vocals');
+    console.log(`   🔁 Music-vocals retry config: attempts=${retryConfig.maxAttempts}, backoffMs=${retryConfig.backoffMs}`);
 
     const chunksDir = captureRaw
       ? path.join(ffmpegRawDir, 'chunks')
@@ -508,7 +511,7 @@ async function run(input) {
         if (fallbackNote) qualityNotes.push(fallbackNote);
       } else {
         const wholeAssetAudioBase64 = fs.readFileSync(audioPath).toString('base64');
-        const wholeAssetPrompt = buildWholeAssetMusicPrompt(duration, recoveryRuntime, {
+        const wholeAssetPrompt = buildWholeAssetMusicVocalsPrompt(duration, recoveryRuntime, {
           intent: strategy.actualMode === 'hybrid' ? 'hybrid' : 'whole_asset'
         });
         const wholeAssetPromptRef = captureRaw
@@ -520,7 +523,7 @@ async function run(input) {
         }
 
         try {
-          const wholeAssetResult = await executeWholeAssetMusicAnalysis({
+          const wholeAssetResult = await executeWholeAssetMusicVocalsAnalysis({
             config,
             retryConfig,
             audioBase64: wholeAssetAudioBase64,
@@ -529,13 +532,13 @@ async function run(input) {
             recoveryRuntime,
             events,
             captureRaw,
-            writeWholeAssetMusicRaw,
+            writeWholeAssetMusicVocalsRaw,
             promptRef: wholeAssetPromptRef,
-            intent: strategy.actualMode === 'hybrid' ? 'hybrid' : 'whole_asset'
+            intent: strategy.actualMode === 'hybrid' ? 'hybrid' : 'whole_asset',
+            musicContext: input?.artifacts?.musicData || null
           });
 
           wholeAssetAnalysis = wholeAssetResult.parsed;
-          hasMusic = wholeAssetAnalysis.hasMusic;
 
           if (strategy.actualMode === 'whole_asset') {
             qualityNotes.push('Whole-asset music analysis preserved cross-asset continuity without chunk seams.');
@@ -597,7 +600,7 @@ async function run(input) {
 
       const audioBase64 = fs.readFileSync(extraction.chunkPath).toString('base64');
 
-      const prompt = buildRollingAnalysisPrompt(startTime, endTime, rollingSummary, recoveryRuntime, wholeAssetAnalysis);
+      const prompt = buildRollingVocalsAnalysisPrompt(startTime, endTime, rollingSummary, recoveryRuntime, wholeAssetAnalysis, input?.artifacts?.musicData || null);
       const promptRef = captureRaw
         ? storePromptPayload({ outputDir, payload: prompt })
         : null;
@@ -611,7 +614,7 @@ async function run(input) {
       try {
         const { result: segmentResult } = await executeWithTargets({
           config,
-          domain: 'music',
+          domain: 'music_vocals',
           retry: retryConfig,
           operation: async (ctx) => {
             const adapter = ctx?.target?.adapter;
@@ -623,7 +626,7 @@ async function run(input) {
                 kind: 'attempt.start',
                 phase: PHASE_KEY,
                 script: SCRIPT_ID,
-                domain: 'music',
+                domain: 'music_vocals',
                 segmentIndex: chunkIndex,
                 attempt: ctx.attempt,
                 attemptInTarget: ctx.attemptInTarget,
@@ -647,7 +650,7 @@ async function run(input) {
               kind: 'provider.call.start',
               phase: PHASE_KEY,
               script: SCRIPT_ID,
-              domain: 'music',
+              domain: 'music_vocals',
               segmentIndex: chunkIndex,
               attempt: ctx.attempt,
               attemptInTarget: ctx.attemptInTarget,
@@ -658,7 +661,7 @@ async function run(input) {
             });
 
             try {
-              const toolLoopResult = await executeMusicAnalysisToolLoop({
+              const toolLoopResult = await executeMusicVocalsAnalysisToolLoop({
                 provider,
                 adapter,
                 basePrompt: prompt,
@@ -675,7 +678,7 @@ async function run(input) {
                 kind: 'provider.call.end',
                 phase: PHASE_KEY,
                 script: SCRIPT_ID,
-                domain: 'music',
+                domain: 'music_vocals',
                 segmentIndex: chunkIndex,
                 attempt: ctx.attempt,
                 attemptInTarget: ctx.attemptInTarget,
@@ -687,15 +690,10 @@ async function run(input) {
               });
 
               const parsed = {
-                segment: {
-                  start: startTime,
-                  end: endTime,
-                  type: toolLoopResult.parsed.analysis.type,
-                  description: toolLoopResult.parsed.analysis.description,
-                  mood: toolLoopResult.parsed.analysis.mood,
-                  intensity: toolLoopResult.parsed.analysis.intensity
-                },
                 rollingSummary: toolLoopResult.parsed.rollingSummary,
+                vocalSummary: toolLoopResult.parsed.vocalSummary,
+                vocal_segments: normalizeMusicVocalSegments(toolLoopResult.parsed.vocal_segments, { maxDuration: duration }),
+                qualityNotes: Array.isArray(toolLoopResult.parsed.qualityNotes) ? toolLoopResult.parsed.qualityNotes : []
               };
               return { completion: toolLoopResult.completion, parsed, toolLoop: toolLoopResult.toolLoop };
             } catch (error) {
@@ -703,7 +701,7 @@ async function run(input) {
                 kind: 'provider.call.end',
                 phase: PHASE_KEY,
                 script: SCRIPT_ID,
-                domain: 'music',
+                domain: 'music_vocals',
                 segmentIndex: chunkIndex,
                 attempt: ctx.attempt,
                 attemptInTarget: ctx.attemptInTarget,
@@ -737,7 +735,7 @@ async function run(input) {
               kind: 'attempt.end',
               phase: PHASE_KEY,
               script: SCRIPT_ID,
-              domain: 'music',
+              domain: 'music_vocals',
               segmentIndex: chunkIndex,
               attempt,
               attemptInTarget,
@@ -757,7 +755,7 @@ async function run(input) {
 
             const adapter = target?.adapter || null;
 
-            writeMusicSegmentRaw(chunkIndex, attempt, {
+            writeMusicVocalsSegmentRaw(chunkIndex, attempt, {
               segmentIndex: chunkIndex,
               startTime,
               endTime,
@@ -798,14 +796,19 @@ async function run(input) {
         });
 
         const parsed = segmentResult.parsed;
-        segments.push(parsed.segment);
-        if (parsed.segment.type === 'music' || parsed.segment.mood) {
-          hasMusic = true;
-        }
 
         rollingSummary = typeof parsed.rollingSummary === 'string' && parsed.rollingSummary.trim().length > 0
           ? parsed.rollingSummary.trim()
           : rollingSummary;
+        if (Array.isArray(parsed.vocal_segments) && parsed.vocal_segments.length > 0) {
+          collectedVocalSegments.push(...parsed.vocal_segments);
+        }
+        rollingVocalSummary = typeof parsed.vocalSummary === 'string' && parsed.vocalSummary.trim().length > 0
+          ? parsed.vocalSummary.trim()
+          : rollingVocalSummary;
+        if (Array.isArray(parsed.qualityNotes) && parsed.qualityNotes.length > 0) {
+          collectedQualityNotes.push(...parsed.qualityNotes);
+        }
       } catch (error) {
         phaseOutcome = 'failed';
         fatalPhaseError = error;
@@ -830,17 +833,11 @@ async function run(input) {
       }
     }
 
-    const finalSegments = finalAnalysisMode === 'whole_asset'
-      ? (Array.isArray(wholeAssetAnalysis?.segments) ? wholeAssetAnalysis.segments : [])
-      : segments;
-    const finalSummary = finalAnalysisMode === 'whole_asset'
-      ? (compactString(wholeAssetAnalysis?.summary) || generateSummary(finalSegments))
-      : (compactString(wholeAssetAnalysis?.summary) || rollingSummary || generateSummary(finalSegments));
-    const finalHasMusic = Boolean((finalAnalysisMode === 'whole_asset' ? wholeAssetAnalysis?.hasMusic : hasMusic) || wholeAssetAnalysis?.hasMusic);
     const timingMode = finalAnalysisMode === 'chunked' ? 'chunk_local' : 'full_timeline';
     const usedChunking = finalAnalysisMode !== 'whole_asset';
     const finalQualityNotes = Array.from(new Set([
       ...qualityNotes,
+      ...collectedQualityNotes,
       ...(Array.isArray(wholeAssetAnalysis?.qualityNotes) ? wholeAssetAnalysis.qualityNotes : [])
     ].filter((value) => compactString(value))));
     const sharedProvenance = {
@@ -855,44 +852,43 @@ async function run(input) {
       wholeAssetSucceeded: !!wholeAssetAnalysis,
       preflightReason: preflight?.trace?.reason || null,
       estimatedBase64Bytes: Number(preflight?.estimatedBase64Bytes) || null,
-      base64BudgetBytes: Number(preflight?.budgetBytes) || null
+      base64BudgetBytes: Number(preflight?.budgetBytes) || null,
+      musicContextAvailable: !!input?.artifacts?.musicData
     };
 
-    // Build music data
-    const musicData = {
-      segments: finalSegments,
-      summary: finalSummary,
-      hasMusic: finalHasMusic,
+    // Write intermediate artifacts to phase directory
+    const musicVocalsData = buildMusicVocalsData({
+      vocalSegments: finalAnalysisMode === 'whole_asset'
+        ? normalizeMusicVocalSegments(wholeAssetAnalysis?.vocal_segments, { maxDuration: duration })
+        : normalizeMusicVocalSegments(collectedVocalSegments, { maxDuration: duration }),
+      summary: finalAnalysisMode === 'whole_asset'
+        ? wholeAssetAnalysis?.vocalSummary
+        : (rollingVocalSummary || wholeAssetAnalysis?.vocalSummary),
+      duration,
       analysisMode: finalAnalysisMode,
       timingMode,
       sourceStrategy: 'base64',
-      coverage: {
-        start: 0,
-        end: duration,
-        duration,
-        complete: true
-      },
-      ...(shouldEmitMusicGlobalArc(config) && wholeAssetAnalysis?.globalArc ? { globalArc: wholeAssetAnalysis.globalArc } : {}),
       provenance: sharedProvenance,
-      ...(finalQualityNotes.length > 0 ? { qualityNotes: finalQualityNotes } : {})
-    };
-    // Write intermediate artifacts to phase directory
-    const artifactPath = path.join(phaseDir, 'music-data.json');
-    fs.writeFileSync(artifactPath, JSON.stringify(musicData, null, 2));
+      qualityNotes: finalQualityNotes
+    });
+
+    const artifactPath = path.join(phaseDir, 'music-vocals-data.json');
+    fs.writeFileSync(artifactPath, JSON.stringify(musicVocalsData, null, 2));
     events.artifactWrite({ absolutePath: artifactPath, role: 'artifact', phase: PHASE_KEY, script: SCRIPT_ID });
 
-    console.log('   ✅ Music/audio analysis complete');
+    console.log('   ✅ Music-vocals analysis complete');
     console.log(`      Output: ${artifactPath}`);
-    console.log(`      Found ${finalSegments.length} segment(s)`);
-    console.log(`      Music detected: ${finalHasMusic ? 'Yes' : 'No'}`);
+    console.log(`      Vocals detected: ${musicVocalsData.hasVocals ? 'Yes' : 'No'}`);
+    console.log(`      Found ${musicVocalsData.vocal_segments.length} vocal segment(s)`);
 
     return {
+      primaryArtifactKey: 'musicVocalsData',
       artifacts: {
-        musicData
+        musicVocalsData
       }
     };
   } catch (error) {
-    console.error('   ❌ Error analyzing music:', error.message);
+    console.error('   ❌ Error analyzing music vocals:', error.message);
     throw error;
   } finally {
     ensurePhaseErrorArtifacts({
@@ -1294,92 +1290,97 @@ function validateWholeAssetMusicAnalysisObject(input, durationSeconds = 0) {
   };
 }
 
-function buildWholeAssetMusicPrompt(durationSeconds, recoveryRuntime = null, { intent = 'whole_asset' } = {}) {
-  const modeNote = intent === 'hybrid'
-    ? 'This full-asset pass provides global music arc context for a later chunk-refinement pass.'
-    : 'This is the primary whole-asset music analysis pass.';
-
-  const prompt = `Analyze the complete extracted audio track for the original asset timeline (0.0s to ${durationSeconds.toFixed(1)}s).
-
-${modeNote}
-
-Identify the overall music arc across the full asset, then emit coarse timeline-aware segments for major audio changes.
-
-Return JSON only in this format:
-{
-  "summary": "Concise full-asset summary",
-  "hasMusic": true,
-  "globalArc": {
-    "dominantMood": "energetic",
-    "energyCurve": "rising_then_plateau_then_drop",
-    "notableTransitions": [
-      { "start": 58.0, "end": 65.0, "label": "rock vocal entry" }
-    ]
-  },
-  "segments": [
-    {
-      "start": 0.0,
-      "end": 35.0,
-      "type": "music",
-      "description": "Opening pulse with restrained percussion",
-      "mood": "tense",
-      "intensity": 6
-    }
-  ],
-  "qualityNotes": [
-    "Optional note about confidence, timing precision, or continuity."
-  ],
-}
-
-Rules:
-- Use the original full timeline in seconds for every segment and transition.
-- Provide 1-12 segments covering the major audio changes across the full asset.
-- Keep start/end in ascending order and within 0.0s to ${durationSeconds.toFixed(1)}s.
-- If music is absent, set hasMusic to false and still return best-effort segments using types like speech, silence, ambient, or sfx.
-- summary must describe the whole asset, not just one moment.
-- globalArc.notableTransitions may be empty.
-- delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.
-- JSON only. No markdown, no explanation.`;
-
-  return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
-}
-
-function formatWholeAssetMusicContext(wholeAssetAnalysis = null) {
-  if (!wholeAssetAnalysis || typeof wholeAssetAnalysis !== 'object') {
-    return '';
-  }
+function formatMusicLaneContext(musicData = null) {
+  if (!musicData || typeof musicData !== 'object') return '';
 
   const lines = [];
-  if (compactString(wholeAssetAnalysis.summary)) {
-    lines.push(`Whole-asset summary: ${compactString(wholeAssetAnalysis.summary)}`);
+  if (compactString(musicData.summary)) {
+    lines.push(`Music-lane summary: ${compactString(musicData.summary)}`);
   }
 
-  const dominantMood = compactString(wholeAssetAnalysis?.globalArc?.dominantMood);
-  if (dominantMood) {
-    lines.push(`Dominant mood: ${dominantMood}`);
+  if (compactString(musicData?.globalArc?.dominantMood)) {
+    lines.push(`Dominant mood: ${compactString(musicData.globalArc.dominantMood)}`);
   }
 
-  const energyCurve = compactString(wholeAssetAnalysis?.globalArc?.energyCurve);
-  if (energyCurve) {
-    lines.push(`Energy curve: ${energyCurve}`);
-  }
-
-  const transitions = Array.isArray(wholeAssetAnalysis?.globalArc?.notableTransitions)
-    ? wholeAssetAnalysis.globalArc.notableTransitions.slice(0, 4)
+  const transitions = Array.isArray(musicData?.globalArc?.notableTransitions)
+    ? musicData.globalArc.notableTransitions.slice(0, 4)
     : [];
   if (transitions.length > 0) {
     lines.push(`Notable transitions: ${transitions.map((transition) => `${Number(transition.start).toFixed(1)}-${Number(transition.end).toFixed(1)}s ${transition.label}`).join('; ')}`);
   }
 
-  return lines.length > 0 ? `Whole-asset continuity context:\n- ${lines.join('\n- ')}\n\n` : '';
+  return lines.length > 0 ? `Upstream music-lane context:\n- ${lines.join('\n- ')}\n\n` : '';
 }
 
-function buildRollingAnalysisPrompt(startTime, endTime, rollingSummary, recoveryRuntime = null, wholeAssetAnalysis = null) {
+function formatWholeAssetVocalsContext(wholeAssetAnalysis = null) {
+  if (!wholeAssetAnalysis || typeof wholeAssetAnalysis !== 'object') {
+    return '';
+  }
+
+  const lines = [];
+  if (compactString(wholeAssetAnalysis.vocalSummary)) {
+    lines.push(`Whole-asset vocals summary: ${compactString(wholeAssetAnalysis.vocalSummary)}`);
+  }
+
+  const segments = Array.isArray(wholeAssetAnalysis.vocal_segments) ? wholeAssetAnalysis.vocal_segments.slice(0, 4) : [];
+  if (segments.length > 0) {
+    lines.push(`Observed vocal phrases: ${segments.map((segment) => `${Number(segment.start).toFixed(1)}-${Number(segment.end).toFixed(1)}s "${segment.text}"`).join('; ')}`);
+  }
+
+  return lines.length > 0 ? `Whole-asset vocals continuity context:\n- ${lines.join('\n- ')}\n\n` : '';
+}
+
+function buildWholeAssetMusicVocalsPrompt(durationSeconds, recoveryRuntime = null, { intent = 'whole_asset', musicContext = null } = {}) {
+  const modeNote = intent === 'hybrid'
+    ? 'This full-asset pass provides music-vocals continuity context for a later chunk-refinement pass.'
+    : 'This is the primary whole-asset music-vocals analysis pass.';
+
+  const prompt = `Analyze the complete extracted audio track for the original asset timeline (0.0s to ${durationSeconds.toFixed(1)}s).
+
+${modeNote}
+
+${formatMusicLaneContext(musicContext)}Extract only text-bearing music-led vocals across the full asset.
+
+Return JSON only in this format:
+{
+  "vocalSummary": "Concise summary of any sung/chanted/rapped lexical vocals across the asset, or say no text-bearing music-led vocals were detected.",
+  "vocal_segments": [
+    {
+      "start": 58.0,
+      "end": 61.2,
+      "text": "We rise tonight",
+      "confidence": 0.91,
+      "performer": "Vocalist 1",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    }
+  ],
+  "qualityNotes": [
+    "Optional note about confidence, timing precision, or ambiguity."
+  ]
+}
+
+Rules:
+- Use the original full timeline in seconds for every vocal segment.
+- Keep spoken narration, spoken dialogue over score, and non-lexical vocalizations out of vocal_segments.
+- Use vocal_segments only for audible sung lyrics, chant-like hooks, rap, melodic refrains, or truly inseparable hybrid music-led delivery.
+- Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.
+- Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.
+- Do not merge multiple lyric lines into one segment.
+- delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.
+- If no text-bearing music-led vocals are present, return vocal_segments as [] and say so in vocalSummary.
+- JSON only. No markdown, no explanation.`;
+
+  return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
+}
+
+function buildRollingVocalsAnalysisPrompt(startTime, endTime, rollingSummary, recoveryRuntime = null, wholeAssetAnalysis = null, musicContext = null) {
   const roll = typeof rollingSummary === 'string' && rollingSummary.trim().length > 0
     ? rollingSummary.trim()
     : null;
   const chunkDurationSeconds = Math.max(0, endTime - startTime);
-  const wholeAssetContext = formatWholeAssetMusicContext(wholeAssetAnalysis);
+  const wholeAssetContext = formatWholeAssetVocalsContext(wholeAssetAnalysis);
+  const musicLaneContext = formatMusicLaneContext(musicContext);
 
   const prompt = `Analyze the audio in this chunk (${startTime.toFixed(1)}s to ${endTime.toFixed(1)}s).
 
@@ -1390,65 +1391,48 @@ Important grounding:
 - Do NOT claim the requested range exceeds the file duration just because the attached chunk is shorter than the full trailer.
 - Analyze only the audio that is actually present in the attached chunk.
 
-${wholeAssetContext}${roll ? `Rolling summary so far (from previous chunks):\n${roll}\n\n` : ''}Identify:
-1. Type of audio: music, speech, silence, ambient noise, sound effects
-2. If music: describe the mood (upbeat, calm, tense, sad, energetic, etc.)
-3. Intensity level from 1-10
-4. Brief description
+${musicLaneContext}${wholeAssetContext}${roll ? `Rolling vocals summary so far (from previous chunks):
+${roll}
+
+` : ''}Extract only text-bearing music-led vocals for this chunk and maintain a concise rolling summary.
 
 Return JSON only in this format:
 {
-  "analysis": {
-    "type": "music",
-    "description": "Brief description of the audio",
-    "mood": "energetic",
-    "intensity": 5
-  },
-  "chunkSummary": "1-2 sentences",
-  "rollingSummary": "Updated rolling summary for the entire audio so far (keep concise)",
+  "rollingSummary": "Updated rolling summary of text-bearing music-led vocals so far.",
+  "vocalSummary": "Concise chunk-local vocals summary, or say none were detected in this chunk.",
+  "vocal_segments": [
+    {
+      "start": ${startTime.toFixed(1)},
+      "end": ${endTime.toFixed(1)},
+      "text": "We rise tonight",
+      "confidence": 0.91,
+      "performer": "Vocalist 1",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    }
+  ],
+  "qualityNotes": [
+    "Optional note about ambiguity or masking in this chunk."
+  ]
 }
 
-Allowed values for analysis.type: music | speech | silence | ambient | sfx.
-Allowed values for analysis.mood: upbeat | calm | tense | sad | energetic | neutral.
-`;
+Rules:
+- Keep spoken narration, spoken dialogue over score, and non-lexical vocalizations out of vocal_segments.
+- Use vocal_segments only for audible sung lyrics, chant-like hooks, rap, melodic refrains, or truly inseparable hybrid music-led delivery.
+- Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.
+- Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.
+- Do not merge multiple lyric lines into one segment.
+- delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.
+- If no text-bearing music-led vocals are present in this chunk, return vocal_segments as [] and say so in vocalSummary.
+- JSON only. No markdown, no explanation.`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }
 
-function parseRollingMusicResponse(responseContent, startTime, endTime) {
-  const parsed = parseAndValidateJsonObject(responseContent, validateMusicAnalysisObject);
+function parseRollingMusicVocalsResponse(responseContent) {
+  const parsed = parseAndValidateJsonObject(responseContent, validateMusicVocalsAnalysisObject);
   if (!parsed.ok) {
-    throw createRetryableError(`invalid_output: ${parsed.summary || 'music analysis output was invalid'}`, {
-      group: parsed.meta?.stage || 'parse',
-      raw: parsed.meta?.raw || responseContent || null,
-      extracted: parsed.meta?.extracted || null,
-      parseError: parsed.meta?.parseError || null,
-      validationErrors: parsed.errors,
-      validationSummary: parsed.summary
-    });
-  }
-
-  return {
-    segment: {
-      start: startTime,
-      end: endTime,
-      type: parsed.value.analysis.type,
-      description: parsed.value.analysis.description,
-      mood: parsed.value.analysis.mood,
-      intensity: parsed.value.analysis.intensity
-    },
-    rollingSummary: parsed.value.rollingSummary
-  };
-}
-
-function parseWholeAssetMusicResponse(responseContent, durationSeconds) {
-  const parsed = parseAndValidateJsonObject(
-    responseContent,
-    (value) => validateWholeAssetMusicAnalysisObject(value, durationSeconds)
-  );
-
-  if (!parsed.ok) {
-    throw createRetryableError(`invalid_output: ${parsed.summary || 'whole-asset music analysis output was invalid'}`, {
+    throw createRetryableError(`invalid_output: ${parsed.summary || 'music vocals output was invalid'}`, {
       group: parsed.meta?.stage || 'parse',
       raw: parsed.meta?.raw || responseContent || null,
       extracted: parsed.meta?.extracted || null,
@@ -1461,7 +1445,24 @@ function parseWholeAssetMusicResponse(responseContent, durationSeconds) {
   return parsed.value;
 }
 
-async function executeMusicAnalysisToolLoop({
+function parseWholeAssetMusicVocalsResponse(responseContent) {
+  const parsed = parseAndValidateJsonObject(responseContent, validateMusicVocalsAnalysisObject);
+
+  if (!parsed.ok) {
+    throw createRetryableError(`invalid_output: ${parsed.summary || 'whole-asset music vocals output was invalid'}`, {
+      group: parsed.meta?.stage || 'parse',
+      raw: parsed.meta?.raw || responseContent || null,
+      extracted: parsed.meta?.extracted || null,
+      parseError: parsed.meta?.parseError || null,
+      validationErrors: parsed.errors,
+      validationSummary: parsed.summary
+    });
+  }
+
+  return parsed.value;
+}
+
+async function executeMusicVocalsAnalysisToolLoop({
   provider,
   adapter,
   basePrompt,
@@ -1473,7 +1474,7 @@ async function executeMusicAnalysisToolLoop({
   audioBase64,
   audioMimeType
 }) {
-  const toolContract = buildMusicAnalysisValidatorToolContract();
+  const toolContract = buildMusicVocalsValidatorToolContract();
 
   return executeLocalValidatorToolLoop({
     provider,
@@ -1486,12 +1487,16 @@ async function executeMusicAnalysisToolLoop({
     ctx,
     phaseKey: PHASE_KEY,
     scriptId: SCRIPT_ID,
-    domain: 'music',
-    artifactLabel: 'music analysis',
-    finalArtifactDescription: 'The final artifact must be the music analysis JSON object for this chunk.',
+    domain: 'music_vocals',
+    artifactLabel: 'music vocals analysis',
+    finalArtifactDescription: 'The final artifact must be the music-vocals JSON object for this chunk.',
     finalArtifactRules: [
-      'Report analysis.type, analysis.description, optional analysis.mood, and analysis.intensity.',
-      'Include rollingSummary when you have continuity context from prior chunks.',
+      'Include rollingSummary, vocalSummary, and vocal_segments.',
+      'Keep spoken narration, spoken dialogue over score, and non-lexical vocalizations out of vocal_segments.',
+      'Use vocal_segments only for audible sung lyrics, chant-like hooks, rap, melodic refrains, or truly inseparable hybrid music-led delivery.',
+      'Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.',
+      'Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.',
+      'delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.'
     ],
     callProvider: ({ prompt }) => provider.complete({
       prompt,
@@ -1508,16 +1513,16 @@ async function executeMusicAnalysisToolLoop({
       options: buildProviderOptions({
         adapter,
         defaults: buildProviderOptionDefaults(runtimeConfig, {
-          temperature: 0.5
+          temperature: 0.3
         })
       })
     }),
-    executeValidatorTool: executeMusicAnalysisValidatorTool,
+    executeValidatorTool: executeMusicVocalsValidatorTool,
     normalizeValidatedValue: (value) => JSON.stringify(value)
   });
 }
 
-async function executeWholeAssetMusicAnalysis({
+async function executeWholeAssetMusicVocalsAnalysis({
   config,
   retryConfig,
   audioBase64,
@@ -1526,16 +1531,17 @@ async function executeWholeAssetMusicAnalysis({
   recoveryRuntime,
   events,
   captureRaw,
-  writeWholeAssetMusicRaw,
+  writeWholeAssetMusicVocalsRaw,
   promptRef,
-  intent = 'whole_asset'
+  intent = 'whole_asset',
+  musicContext = null
 }) {
-  const prompt = buildWholeAssetMusicPrompt(durationSeconds, recoveryRuntime, { intent });
+  const prompt = buildWholeAssetMusicVocalsPrompt(durationSeconds, recoveryRuntime, { intent, musicContext });
   const attemptStartMs = new Map();
 
   const { result } = await executeWithTargets({
     config,
-    domain: 'music',
+    domain: 'music_vocals',
     retry: retryConfig,
     operation: async (ctx) => {
       const adapter = ctx?.target?.adapter;
@@ -1547,7 +1553,7 @@ async function executeWholeAssetMusicAnalysis({
           kind: 'attempt.start',
           phase: PHASE_KEY,
           script: SCRIPT_ID,
-          domain: 'music',
+          domain: 'music_vocals',
           scope: 'whole_asset',
           attempt: ctx.attempt,
           attemptInTarget: ctx.attemptInTarget,
@@ -1571,7 +1577,7 @@ async function executeWholeAssetMusicAnalysis({
         kind: 'provider.call.start',
         phase: PHASE_KEY,
         script: SCRIPT_ID,
-        domain: 'music',
+        domain: 'music_vocals',
         scope: 'whole_asset',
         attempt: ctx.attempt,
         attemptInTarget: ctx.attemptInTarget,
@@ -1602,13 +1608,13 @@ async function executeWholeAssetMusicAnalysis({
           })
         });
 
-        const parsed = parseWholeAssetMusicResponse(completion?.content, durationSeconds);
+        const parsed = parseWholeAssetMusicVocalsResponse(completion?.content, durationSeconds);
 
         events.emit({
           kind: 'provider.call.end',
           phase: PHASE_KEY,
           script: SCRIPT_ID,
-          domain: 'music',
+          domain: 'music_vocals',
           scope: 'whole_asset',
           attempt: ctx.attempt,
           attemptInTarget: ctx.attemptInTarget,
@@ -1625,7 +1631,7 @@ async function executeWholeAssetMusicAnalysis({
           kind: 'provider.call.end',
           phase: PHASE_KEY,
           script: SCRIPT_ID,
-          domain: 'music',
+          domain: 'music_vocals',
           scope: 'whole_asset',
           attempt: ctx.attempt,
           attemptInTarget: ctx.attemptInTarget,
@@ -1658,7 +1664,7 @@ async function executeWholeAssetMusicAnalysis({
         kind: 'attempt.end',
         phase: PHASE_KEY,
         script: SCRIPT_ID,
-        domain: 'music',
+        domain: 'music_vocals',
         scope: 'whole_asset',
         attempt,
         attemptInTarget,
@@ -1676,7 +1682,7 @@ async function executeWholeAssetMusicAnalysis({
 
       if (!captureRaw) return;
 
-      writeWholeAssetMusicRaw(attempt, {
+      writeWholeAssetMusicVocalsRaw(attempt, {
         attempt,
         attemptInTarget,
         targetIndex,
@@ -1813,13 +1819,13 @@ if (require.main === module) {
   const assetPath = process.argv[2] || 'test-audio.wav';
   const outputDir = process.argv[3] || 'output/test-music';
 
-  console.log('Get Music Script - Test Mode');
+  console.log('Get Music Vocals Script - Test Mode');
   console.log('Asset:', assetPath);
   console.log('Output:', outputDir);
   console.log('');
   console.log('⚠️  This script requires:');
   console.log('   - AI_API_KEY environment variable');
-  console.log('   - config.ai.music.targets[*].adapter.{name,model} (set in pipeline YAML)');
+  console.log('   - config.ai.music_vocals.targets[*].adapter.{name,model} (set in pipeline YAML)');
   console.log('   - ffmpeg installed for audio extraction');
   console.log('   - A model that supports audio analysis');
   console.log('');

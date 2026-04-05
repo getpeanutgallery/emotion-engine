@@ -210,10 +210,7 @@ test('Get Music Script', async (t) => {
       property(result.artifacts.musicData, 'segments');
       property(result.artifacts.musicData, 'summary');
       property(result.artifacts.musicData, 'hasMusic');
-      property(result.artifacts, 'musicVocalsData');
-      property(result.artifacts.musicVocalsData, 'vocal_segments');
-      property(result.artifacts.musicVocalsData, 'summary');
-      property(result.artifacts.musicVocalsData, 'hasVocals');
+      assert.equal(result.artifacts.musicVocalsData, undefined);
     });
 
     tNested.test('segments is an array', async () => {
@@ -226,7 +223,7 @@ test('Get Music Script', async (t) => {
       ok(Array.isArray(result.artifacts.musicData.segments));
     });
 
-    tNested.test('writes music-data.json to output directory', async () => {
+    tNested.test('writes music-data.json to output directory without emitting the vocals artifact', async () => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
@@ -239,13 +236,10 @@ test('Get Music Script', async (t) => {
       property(data, 'segments');
       property(data, 'summary');
       const vocalsArtifactPath = path.join(testOutputDir, 'phase1-gather-context', 'music-vocals-data.json');
-      ok(fs.existsSync(vocalsArtifactPath));
-      const vocalsData = JSON.parse(fs.readFileSync(vocalsArtifactPath, 'utf8'));
-      property(vocalsData, 'vocal_segments');
-      property(vocalsData, 'summary');
+      ok(!fs.existsSync(vocalsArtifactPath));
     });
 
-    tNested.test('emits musicVocalsData from music-lane chunk analysis without duplicating the spoken dialogue lane artifact', async () => {
+    tNested.test('keeps music lane focused on non-lexical analysis and does not emit a vocals artifact', async () => {
       mockDurationSeconds = 30;
       completeImplementation = async (options) => {
         completionPrompts.push(String(options?.prompt || ''));
@@ -258,19 +252,7 @@ test('Get Music Script', async (t) => {
               mood: 'energetic',
               intensity: 8
             },
-            rollingSummary: 'The cue stays chant-led and intense.',
-            vocalSummary: 'A repeated chant hook drives the music lane.',
-            vocal_segments: [
-              {
-                start: 2,
-                end: 5,
-                text: 'Run it back',
-                confidence: 0.94,
-                performer: 'Crowd',
-                performer_id: 'crowd_1',
-                delivery: 'chant'
-              }
-            ]
+            rollingSummary: 'The cue stays chant-led and intense.'
           }),
           usage: { input: 70, output: 50 }
         };
@@ -282,17 +264,10 @@ test('Get Music Script', async (t) => {
         config: makeMusicConfig({ phase1Music: { mode: 'chunked', analysis_window_seconds: 30 } })
       });
 
-      is(result.artifacts.musicVocalsData.hasVocals, true);
-      is(result.artifacts.musicVocalsData.vocal_segments.length, 1);
-      is(result.artifacts.musicVocalsData.vocal_segments[0].text, 'Run it back');
-      is(result.artifacts.musicVocalsData.vocal_segments[0].delivery, 'chant');
-      is(result.artifacts.musicVocalsData.summary, 'A repeated chant hook drives the music lane.');
+      assert.equal(result.artifacts.musicVocalsData, undefined);
       is(result.artifacts.musicData.segments.length, 1);
-      ok(completionPrompts[0].includes('Include only audible sung/chanted/rapped words with discernible lexical content.'));
-      ok(completionPrompts[0].includes('Prefer literal heard words or short partial fragments over paraphrase or invented completions when uncertain.'));
-      ok(completionPrompts[0].includes('Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.'));
-      ok(completionPrompts[0].includes('Do not merge multiple lyric lines into one summary segment.'));
-      ok(completionPrompts[0].includes('Do not leak music summary/description language into vocal_segments text.'));
+      ok(!completionPrompts[0].includes('vocal_segments'));
+      ok(!completionPrompts[0].includes('text-bearing music-led vocals'));
     });
 
     tNested.test('defaults music mode to auto and prefers whole-asset analysis when eligible', async () => {
@@ -331,12 +306,8 @@ test('Get Music Script', async (t) => {
       is(result.artifacts.musicData.provenance.requestedMode, 'auto');
       is(result.artifacts.musicData.provenance.usedChunking, false);
       ok(completionPrompts[0].includes('Analyze the complete extracted audio track'));
-      ok(completionPrompts[0].includes('transcript-like pass for any text-bearing music-led vocals'));
-      ok(completionPrompts[0].includes('Keep spoken narration or dialogue over score out of vocal_segments'));
-      ok(completionPrompts[0].includes('For music-lane vocals, include only audible sung/chanted/rapped words with discernible lexical content.'));
-      ok(completionPrompts[0].includes('Prefer literal heard words or short partial fragments over paraphrase, cleanup, or invented completions when the lyric is unclear.'));
-      ok(completionPrompts[0].includes('Do not merge multiple lyric lines into one summary segment.'));
-      ok(completionPrompts[0].includes('Do not leak music summary/description language into vocal_segments text.'));
+      ok(!completionPrompts[0].includes('text-bearing music-led vocals'));
+      ok(!completionPrompts[0].includes('vocal_segments'));
     });
 
     tNested.test('splits long music analysis into bounded time windows even when transport preflight stays within budget', async () => {
@@ -590,7 +561,7 @@ test('Get Music Script', async (t) => {
       is(completionPrompts.length, 3);
       ok(completionPrompts[1].includes('Whole-asset continuity context:'));
       ok(completionPrompts[1].includes('Whole-asset summary: Trailer-wide music arc climbs from menace into a sustained action sprint.'));
-      ok(completionPrompts[1].includes('Use vocal_segments only for text-bearing music-led vocals.'));
+      ok(!completionPrompts[1].includes('vocal_segments'));
       is(result.artifacts.musicData.analysisMode, 'hybrid');
       is(result.artifacts.musicData.summary, 'Trailer-wide music arc climbs from menace into a sustained action sprint.');
       is(result.artifacts.musicData.provenance.usedChunking, true);

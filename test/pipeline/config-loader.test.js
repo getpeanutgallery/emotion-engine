@@ -58,12 +58,15 @@ function makeAiConfig({
   adapterName = 'openrouter',
   dialogueModel = 'qwen/qwen-3.5-397b-a17b',
   musicModel = 'qwen/qwen-3.5-397b-a17b',
+  musicVocalsModel = 'qwen/qwen-3.5-397b-a17b',
   videoModel = 'qwen/qwen-3.5-397b-a17b',
   dialogueParams,
   musicParams,
+  musicVocalsParams,
   videoParams,
   dialogueRetry,
   musicRetry,
+  musicVocalsRetry,
   videoRetry
 } = {}) {
   const target = (model, params) => ({
@@ -82,6 +85,10 @@ function makeAiConfig({
     music: {
       ...(musicRetry !== undefined ? { retry: musicRetry } : {}),
       targets: [target(musicModel, musicParams)]
+    },
+    music_vocals: {
+      ...(musicVocalsRetry !== undefined ? { retry: musicVocalsRetry } : {}),
+      targets: [target(musicVocalsModel, musicVocalsParams)]
     },
     video: {
       ...(videoRetry !== undefined ? { retry: videoRetry } : {}),
@@ -630,6 +637,39 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
 
     // Ensure ai.model is explicitly undefined (not present)
     assert.strictEqual(config.ai.model, undefined);
+
+    const result = validateConfig(config);
+    assert.strictEqual(result.valid, true);
+  });
+
+  await t.test('should require ai.music_vocals.targets when get-music-vocals is configured', () => {
+    const ai = makeAiConfig();
+    delete ai.music_vocals;
+
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai,
+      settings: makeFfmpegSettings(),
+      gather_context: ['server/scripts/get-context/get-music-vocals.cjs']
+    };
+
+    const result = validateConfig(config);
+    assert.strictEqual(result.valid, false);
+    assert(result.errors.some(e => e.includes('Missing required "ai.music_vocals.targets"')));
+  });
+
+  await t.test('should validate ai.music_vocals targets when get-music-vocals is configured', () => {
+    const config = {
+      asset: { inputPath: 'test.mp4', outputDir: 'output' },
+      ai: makeAiConfig({
+        musicVocalsRetry: {
+          maxAttempts: 2,
+          backoffMs: 250
+        }
+      }),
+      settings: makeFfmpegSettings(),
+      gather_context: ['server/scripts/get-context/get-music-vocals.cjs']
+    };
 
     const result = validateConfig(config);
     assert.strictEqual(result.valid, true);

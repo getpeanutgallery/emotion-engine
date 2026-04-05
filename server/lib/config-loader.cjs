@@ -211,6 +211,16 @@ function validateConfig(config, options = {}) {
     validateTargets('music');
     validateTargets('video');
 
+    const gatherScripts = getScriptsFromPhase(config.gather_context);
+    const usesMusicVocalsScript = gatherScripts.some((s) => {
+      const p = (s && typeof s.script === 'string') ? s.script : '';
+      return p.endsWith('/get-music-vocals.cjs') || p === 'server/scripts/get-context/get-music-vocals.cjs' || p.includes('scripts/get-context/get-music-vocals.cjs');
+    });
+
+    if (usesMusicVocalsScript || config.ai?.music_vocals !== undefined) {
+      validateTargets('music_vocals');
+    }
+
     // Optional: dialogue stitcher is phase1-only and used when dialogue chunking is triggered.
     // Validate only when configured explicitly.
     if (config.ai?.dialogue_stitch !== undefined) {

@@ -805,12 +805,6 @@ function validateMusicAnalysisObject(input) {
     ? null
     : validateNonEmptyString(rollingSummarySource, '$.rollingSummary', 'rollingSummary', errors);
 
-  const vocalSummarySource = input.vocalSummary ?? input.vocal_summary ?? input.musicVocalsSummary;
-  const vocalSummary = vocalSummarySource === undefined || vocalSummarySource === null
-    ? null
-    : validateOptionalNonEmptyString(vocalSummarySource, '$.vocalSummary', 'vocalSummary', errors);
-  const vocal_segments = validateMusicVocalSegments(input.vocal_segments, errors);
-
   return {
     ok: errors.length === 0,
     value: errors.length === 0 ? {
@@ -820,12 +814,60 @@ function validateMusicAnalysisObject(input) {
         mood: mood || null,
         intensity
       },
-      rollingSummary: rollingSummary || null,
-      vocalSummary: vocalSummary || null,
-      vocal_segments
+      rollingSummary: rollingSummary || null
     } : null,
     errors,
     summary: summarizeValidationErrors('Music JSON validation failed.', errors),
+    meta: { stage: 'validation' }
+  };
+}
+
+function validateMusicVocalsAnalysisObject(input) {
+  const errors = [];
+
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    return {
+      ok: false,
+      value: null,
+      errors: [{ path: '$', code: 'invalid_type', message: 'Music vocals output must be a JSON object.' }],
+      summary: 'Music vocals output must be a JSON object. Return corrected JSON only.',
+      meta: { stage: 'validation' }
+    };
+  }
+
+  const rollingSummarySource = input.rollingSummary ?? input.rolling_summary ?? input.chunkSummary;
+  const rollingSummary = rollingSummarySource === undefined || rollingSummarySource === null
+    ? null
+    : validateOptionalNonEmptyString(rollingSummarySource, '$.rollingSummary', 'rollingSummary', errors);
+
+  const vocalSummarySource = input.vocalSummary ?? input.vocal_summary ?? input.musicVocalsSummary ?? input.summary;
+  const vocalSummary = vocalSummarySource === undefined || vocalSummarySource === null
+    ? null
+    : validateOptionalNonEmptyString(vocalSummarySource, '$.vocalSummary', 'vocalSummary', errors);
+
+  const vocal_segments = validateMusicVocalSegments(input.vocal_segments, errors);
+
+  const qualityNotes = Array.isArray(input.qualityNotes)
+    ? input.qualityNotes.map((note, index) => {
+        const normalized = validateOptionalNonEmptyString(note, `$.qualityNotes[${index}]`, 'qualityNotes entry', errors);
+        return normalized || null;
+      }).filter(Boolean)
+    : [];
+
+  if (input.qualityNotes !== undefined && !Array.isArray(input.qualityNotes)) {
+    pushError(errors, '$.qualityNotes', 'invalid_type', 'qualityNotes must be an array when provided.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    value: errors.length === 0 ? {
+      rollingSummary: rollingSummary || null,
+      vocalSummary: vocalSummary || null,
+      vocal_segments,
+      qualityNotes
+    } : null,
+    errors,
+    summary: summarizeValidationErrors('Music vocals JSON validation failed.', errors),
     meta: { stage: 'validation' }
   };
 }
@@ -920,5 +962,6 @@ module.exports = {
   validateDialogueTranscriptionObject,
   validateDialogueStitchObject,
   validateMusicAnalysisObject,
+  validateMusicVocalsAnalysisObject,
   validateEmotionStateObject
 };

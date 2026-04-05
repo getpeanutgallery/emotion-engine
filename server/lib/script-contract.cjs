@@ -118,6 +118,7 @@ const SCRIPT_FAMILY_DECLARATIONS = Object.freeze({
 const SCRIPT_FAMILY_HINTS = Object.freeze({
   'get-dialogue': 'ai.structured-output.v1',
   'get-music': 'ai.structured-output.v1',
+  'get-music-vocals': 'ai.structured-output.v1',
   'get-visual-identity': 'ai.structured-output.v1',
   'video-chunks': 'ai.structured-output.v1',
   'whole-video-mimo': 'ai.structured-output.v1',
@@ -506,6 +507,7 @@ function classifyFailure(error, scriptId) {
 function resolveConfiguredAiDomain(scriptId) {
   if (scriptId === 'get-dialogue') return 'dialogue';
   if (scriptId === 'get-music') return 'music';
+  if (scriptId === 'get-music-vocals') return 'music_vocals';
   if (scriptId === 'get-visual-identity') return 'video_identity';
   if (scriptId === 'video-chunks') return 'video';
   if (scriptId === 'whole-video-mimo') return 'video';

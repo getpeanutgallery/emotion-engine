@@ -25,6 +25,7 @@ asset:
 gather_context:
   - server/scripts/get-context/get-dialogue.cjs
   - server/scripts/get-context/get-music.cjs
+  - server/scripts/get-context/get-music-vocals.cjs
 
 process:
   - server/scripts/process/whole-video-mimo.cjs
@@ -133,7 +134,18 @@ ai:
           name: openrouter
           model: xiaomi/mimo-v2-omni
           params:
-            max_tokens: 25000
+            max_tokens: 43219
+            timeoutMs: 180000
+            thinking:
+              level: high
+  music_vocals:
+    analysisWindowSeconds: 30
+    targets:
+      - adapter:
+          name: openrouter
+          model: xiaomi/mimo-v2-omni
+          params:
+            max_tokens: 43219
             timeoutMs: 180000
             thinking:
               level: high

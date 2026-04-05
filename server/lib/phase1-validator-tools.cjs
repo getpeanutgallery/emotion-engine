@@ -1,12 +1,14 @@
 const {
   validateDialogueTranscriptionObject,
   validateDialogueStitchObject,
-  validateMusicAnalysisObject
+  validateMusicAnalysisObject,
+  validateMusicVocalsAnalysisObject
 } = require('./structured-output.cjs');
 
 const DIALOGUE_TRANSCRIPTION_TOOL_NAME = 'validate_dialogue_transcription_json';
 const DIALOGUE_STITCH_TOOL_NAME = 'validate_dialogue_stitch_json';
 const MUSIC_ANALYSIS_TOOL_NAME = 'validate_music_analysis_json';
+const MUSIC_VOCALS_TOOL_NAME = 'validate_music_vocals_json';
 
 function buildContract({ name, description, argumentKey, candidateDescription, example }) {
   return {
@@ -215,7 +217,7 @@ function buildMusicAnalysisValidatorToolContract() {
     name: MUSIC_ANALYSIS_TOOL_NAME,
     argumentKey: 'musicAnalysis',
     description: 'Validate a Phase 1 music-lane JSON candidate against the required local schema before final submission.',
-    candidateDescription: 'Candidate music-lane JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, optional rollingSummary, and optional vocal_segments / vocalSummary for transcript-like text-bearing music-led vocals using literal lexical capture when audible.',
+    candidateDescription: 'Candidate music-lane JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, and optional rollingSummary for non-lexical music analysis only.',
     example: {
       analysis: {
         type: 'music',
@@ -223,19 +225,7 @@ function buildMusicAnalysisValidatorToolContract() {
         mood: 'energetic',
         intensity: 7
       },
-      rollingSummary: 'The audio stays upbeat and music-led so far.',
-      vocalSummary: 'A repeated sung hook lands over the percussion.',
-      vocal_segments: [
-        {
-          start: 4.2,
-          end: 5.8,
-          text: 'We rise tonight',
-          confidence: 0.91,
-          performer: 'Vocalist 1',
-          performer_id: 'voc_001',
-          delivery: 'sung'
-        }
-      ]
+      rollingSummary: 'The audio stays upbeat and music-led so far.'
     }
   });
 }
@@ -261,14 +251,63 @@ function executeMusicAnalysisValidatorTool(args) {
   });
 }
 
+function buildMusicVocalsValidatorToolContract() {
+  return buildContract({
+    name: MUSIC_VOCALS_TOOL_NAME,
+    argumentKey: 'musicVocals',
+    description: 'Validate a Phase 1 music-vocals JSON candidate against the required local schema before final submission.',
+    candidateDescription: 'Candidate music-vocals JSON with rollingSummary, vocalSummary, vocal_segments, and optional qualityNotes.',
+    example: {
+      rollingSummary: 'A repeated sung hook dominates the music-led vocals so far.',
+      vocalSummary: 'A repeated sung hook lands over the percussion.',
+      vocal_segments: [
+        {
+          start: 4.2,
+          end: 5.8,
+          text: 'We rise tonight',
+          confidence: 0.91,
+          performer: 'Vocalist 1',
+          performer_id: 'voc_001',
+          delivery: 'sung'
+        }
+      ],
+      qualityNotes: ['Crowd noise partially masks the tail of the final word.']
+    }
+  });
+}
+
+function executeMusicVocalsValidatorTool(args) {
+  const normalizedArgs = normalizeObjectArgument(args, 'musicVocals');
+  if (!normalizedArgs.ok) {
+    return {
+      ok: false,
+      valid: false,
+      toolName: MUSIC_VOCALS_TOOL_NAME,
+      summary: 'Tool arguments were invalid. Provide {"musicVocals": {...}}.',
+      errors: normalizedArgs.errors,
+      normalizedValue: null
+    };
+  }
+
+  const validation = validateMusicVocalsAnalysisObject(normalizedArgs.value.musicVocals);
+  return buildToolResult({
+    validation,
+    toolName: MUSIC_VOCALS_TOOL_NAME,
+    invalidArgsSummary: 'Tool arguments were invalid. Provide {"musicVocals": {...}}.'
+  });
+}
+
 module.exports = {
   DIALOGUE_TRANSCRIPTION_TOOL_NAME,
   DIALOGUE_STITCH_TOOL_NAME,
   MUSIC_ANALYSIS_TOOL_NAME,
+  MUSIC_VOCALS_TOOL_NAME,
   buildDialogueTranscriptionValidatorToolContract,
   executeDialogueTranscriptionValidatorTool,
   buildDialogueStitchValidatorToolContract,
   executeDialogueStitchValidatorTool,
   buildMusicAnalysisValidatorToolContract,
-  executeMusicAnalysisValidatorTool
+  executeMusicAnalysisValidatorTool,
+  buildMusicVocalsValidatorToolContract,
+  executeMusicVocalsValidatorTool
 };

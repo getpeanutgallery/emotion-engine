@@ -8,6 +8,7 @@ asset:
 gather_context:
   - server/scripts/get-context/get-dialogue.cjs
   - server/scripts/get-context/get-music.cjs
+  - server/scripts/get-context/get-music-vocals.cjs
 
 process: []
 report: []
@@ -127,6 +128,37 @@ ai:
             thinking:
               level: low
   music:
+    analysisWindowSeconds: 30
+    targets:
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-flash-lite-preview
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: openai/gpt-audio
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: openai/gpt-audio-mini
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+      - adapter:
+          name: openrouter
+          model: mistralai/voxtral-small-24b-2507
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low
+  music_vocals:
     analysisWindowSeconds: 30
     targets:
       - adapter:
