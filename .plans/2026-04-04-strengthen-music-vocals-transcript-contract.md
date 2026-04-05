@@ -8,15 +8,15 @@
 
 ## Goal
 
-Strengthen the isolated `musicVocalsData` lane so it behaves more like a conservative lyric transcript and less like a music-summary generator, then rerun the canonical cod-test to compare lyric capture against benchmark truth.
+Strengthen `musicVocalsData` so it behaves more like a conservative lyric transcript and less like a music-summary generator, then rerun the canonical cod-test to compare lyric capture against benchmark truth.
 
 ---
 
 ## Overview
 
-The Phase 1 split succeeded architecturally: spoken dialogue got cleaner once `get-dialogue.cjs` returned to spoken-only scope, and the music lane now owns text-bearing music-led vocals through `musicVocalsData`. That solved the contract conflict, but the new music-vocals lane is still not benchmark-strong. It recovers some useful lyric material, yet it still misses key lines, rewrites lyrics into statistically plausible substitutes, and sometimes emits summary-flavored vocal text rather than conservative transcript-like capture.
+The Phase 1 split fixed the contract conflict: spoken dialogue is cleaner once `get-dialogue.cjs` stays spoken-only, and the music lane now owns text-bearing music-led vocals via `musicVocalsData`. But the lane still is not benchmark-strong. It has been recovering some useful lyric material while still missing key lines, paraphrasing or inventing substitutes, and sometimes collapsing lyrics into summary-like blobs.
 
-The next lane should stay focused on `musicVocalsData` only. We want to tighten the prompt and validator expectations so this artifact captures audible lexical vocals literally when possible, falls back to short partial fragments rather than fluent inventions when uncertain, and preserves line/refrain boundaries instead of collapsing them into summary blobs. This should improve benchmark fidelity without reopening the spoken-dialogue lane we just cleaned up.
+This lane tightened the prompt/validator contract so `musicVocalsData` should prefer literal heard words or short partial fragments, preserve distinct lyric/refrain boundaries, and avoid leaking music-summary language into transcript text. The verification rerun below records what actually happened after that change.
 
 ---
 
@@ -25,46 +25,47 @@ The next lane should stay focused on `musicVocalsData` only. We want to tighten 
 ### Task 1: Refine the music-vocals prompt/contract for literal lexical capture
 
 **Bead ID:** `ee-uaoa`  
-**SubAgent:** `coder`  
-**Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine, refine the existing Phase 1 music-lane prompt/contract so musicVocalsData behaves like a transcript-like lexical vocal capture, not a summary. Keep the wording generic across assets. Emphasize: only include audible sung/chanted/rapped words with discernible lexical content; prefer literal heard words or short partial fragments over paraphrase or invented completions; break vocal_segments when lyric wording changes, refrains repeat after a gap, or a new vocal phrase is audibly distinct; do not merge multiple lyric lines into one summary segment; do not leak musicData summary language into musicVocalsData text. Update focused tests if needed, update this plan with exact Task 1 results, commit after tests pass, and do not push.`
-
-**Folders Created/Deleted/Modified:**
-- `.plans/`
-- `server/scripts/get-context/`
-- `server/lib/`
-- `test/`
-
-**Files Created/Deleted/Modified:**
-- `.plans/2026-04-04-strengthen-music-vocals-transcript-contract.md`
-- `server/scripts/get-context/get-music.cjs`
-- `server/lib/phase1-validator-tools.cjs`
-- `test/scripts/get-music.test.js`
-- `test/lib/phase1-validator-tools.test.js`
+**SubAgent:** `coder`
 
 **Status:** ✅ Complete
 
-**Results:** Tightened the Phase 1 music-lane contract so `musicVocalsData` is explicitly transcript-like lexical capture rather than summary-flavored text. In `server/scripts/get-context/get-music.cjs`, both the whole-asset and chunk prompts now require: only audible sung/chanted/rapped words with discernible lexical content; literal heard words or short partial fragments over paraphrase / invented completions; new `vocal_segments` whenever lyric wording changes, a refrain repeats after a gap, or a vocal phrase is audibly distinct; no merging of multiple lyric lines into a single summary segment; and no leaking `musicData` summary/description language into `vocal_segments` text. The validator-tool loop rules were updated with the same lexical-capture guidance, and the validator-tool contract text in `server/lib/phase1-validator-tools.cjs` now describes `vocal_segments` / `vocalSummary` as transcript-like literal lexical capture. Focused regression coverage was added in `test/scripts/get-music.test.js` and `test/lib/phase1-validator-tools.test.js` to assert the new whole-asset/chunk prompt language and validator contract wording. Focused verification passed with `node --test test/scripts/get-music.test.js test/lib/phase1-validator-tools.test.js` (39 tests passed). A repo-wide `npm test -- test/scripts/get-music.test.js test/lib/phase1-validator-tools.test.js` invocation was also attempted, but the package test script expanded to the full suite and hit a pre-existing unrelated failure in `test/lib/script-contract.test.js` (`script-runner - executeScript performs one bounded AI recovery re-entry for eligible AI lanes`, expected `2`, actual `1`).
+**Results:** Tightened the Phase 1 music-lane contract so `musicVocalsData` is explicitly transcript-like lexical capture rather than summary-flavored text. The whole-asset and chunk prompts now require: only audible sung/chanted/rapped words with discernible lexical content; literal heard words or short partial fragments over paraphrase / invented completions; new `vocal_segments` whenever lyric wording changes, a refrain repeats after a gap, or a vocal phrase is audibly distinct; no merging of multiple lyric lines into one segment; and no leaking `musicData` summary language into `vocal_segments`. Focused verification passed with `node --test test/scripts/get-music.test.js test/lib/phase1-validator-tools.test.js` (39 passing).
 
 ---
 
 ### Task 2: Rerun the canonical cod-test and compare lyric capture against benchmark truth
 
 **Bead ID:** `ee-jeni`  
-**SubAgent:** `primary`  
-**Prompt:** `In /home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine, rerun the canonical cod-test after Task 1 lands: node server/run-pipeline.cjs --config configs/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun.yaml --clean-live-digital-twin --verbose. Compare musicVocalsData specifically against the benchmark lyric/chant lines. Evaluate whether the lane becomes more transcript-like: fewer paraphrased/hallucinated lyric substitutes, better recovery of distinct lyric lines, and clearer refrain segmentation. Keep the writeup truthful and separate lyric-capture gains from any remaining timing drift. Update the plan with exact evidence, commit the verification writeup if appropriate, and do not push.`
+**SubAgent:** `primary`
 
-**Folders Created/Deleted/Modified:**
-- `.plans/`
-- `.logs/`
-- `output/`
+**Status:** ❌ Failed
 
-**Files Created/Deleted/Modified:**
-- `.plans/2026-04-04-strengthen-music-vocals-transcript-contract.md`
-- fresh output/log artifacts
+**Results:** Ran the canonical command exactly as requested:
+`node server/run-pipeline.cjs --config configs/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun.yaml --clean-live-digital-twin --verbose`
 
-**Status:** ⏳ Pending
+The rerun did **not** complete successfully. Phase 1 dialogue succeeded and refreshed `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/dialogue-data.json`, but Phase 1 music failed in `server/scripts/get-context/get-music.cjs` with `OpenRouterNoContentError: OpenRouter: No content in response`.
 
-**Results:** Pending.
+Fresh failure artifact:
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/raw/_meta/errors.summary.json`
+
+Key artifact paths to report truthfully:
+- fresh dialogue artifact from the failed attempt: `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/dialogue-data.json`
+- stale prior-success `musicVocalsData` still on disk: `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/music-vocals-data.json`
+- stale prior-success `musicData` still on disk: `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/music-data.json`
+- stale prior-success `whole-video-analysis.json` still on disk: `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase2-process/whole-video-analysis.json`
+- fresh whole-asset raw music capture from this failed attempt: `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/raw/ai/music-whole-asset/attempt-01/capture.json`
+- fresh partial chunk raw capture before failure: `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/raw/ai/music-segment-0002/attempt-01/capture.json`
+- failing chunk raw record: `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/raw/ai/music-segment-0003/attempt-01/capture.json`
+
+Benchmark lyric/chant truth used for comparison: `benchmarks/fixtures/cod-test/truth/dialogue-data.json` lines 14-21, 27, 29 (`spk_011`).
+
+Truthful comparison result:
+- Because the rerun failed before Phase 1 music completed, there is **no fresh regenerated `musicVocalsData` artifact** from this attempt to compare directly against the benchmark.
+- The still-present top-level `music-vocals-data.json` is the older pre-failure artifact from the prior successful split-lane rerun, so it cannot be counted as this task's rerun output.
+- Fresh partial evidence does exist in the raw whole-asset music capture. That raw pass is more transcript-like than the previous saved split-lane `musicVocalsData`: it breaks out distinct lyric lines instead of collapsing them into four summary-like segments, and it newly surfaces near-literal versions of several benchmark lines including `Master of puppets ... pulling the strings`, `Twisting your mind ... smashing your dreams`, `Blinded by me ...`, and `Just call my name ... hear you scream`.
+- But that partial win is not enough to claim Task 2 succeeded. The same fresh raw whole-asset pass still shows timing drift and remaining text drift (`Obey your master, master.` too early around `60-63s`; late return at `130-133s`; no fresh benchmark-faithful recovery of `Control faster.` or the longer `Master, master ... where's the dreams / you promised only lies` refrain pair).
+- The failed `90-120s` chunk explains why no new final artifact landed. In `music-segment-0003/attempt-01/capture.json`, OpenRouter/Xiaomi returned HTTP 200 with `finish_reason: "length"`, `message.content: null`, and an enormous repeated `Master! Master!` reasoning trace, which then surfaced as `OpenRouter: No content in response`.
+- Bottom line: there is **promising partial raw evidence of improved transcript-likeness**, but the canonical rerun itself failed, so there is **no truthful fresh final `musicVocalsData` verification result** to compare against the benchmark.
 
 ---
 
@@ -72,13 +73,11 @@ The next lane should stay focused on `musicVocalsData` only. We want to tighten 
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Task 1 is complete: the music-vocals lane contract now pushes `musicVocalsData` toward conservative transcript-like lexical capture, with focused regression tests covering the new prompt/contract language. Task 2 remains pending.
+**What We Built:** Task 1 successfully tightened the `musicVocalsData` contract toward literal lexical capture. Task 2 then ran the canonical rerun command exactly, but the verification pass failed in Phase 1 music before it could regenerate a fresh final `musicVocalsData` artifact. The only fresh lyric evidence from this attempt is partial raw capture, which looks directionally more transcript-like but is not a valid replacement for the missing final artifact.
 
 **Commits:**
 - Pending.
 
-**Lessons Learned:** Tightening transcript behavior here is mostly a prompt/contract problem, so targeted assertions on exact wording are useful to keep the lane from drifting back toward summary-style vocal text.
+**Lessons Learned:** Prompt/contract tightening appears directionally helpful for lyric line literalness and segmentation in the whole-asset raw pass, but the lane is still vulnerable to provider/path failures on later chunk refinement. Future verification must distinguish: (1) fresh final artifact success, (2) partial raw evidence, and (3) leftover prior-success artifacts still on disk.
 
----
-
-*Created on 2026-04-04*
+*Updated on 2026-04-04*
