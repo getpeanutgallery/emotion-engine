@@ -98,7 +98,7 @@ Bottom line for Task 2: the prompt-only change appears to have succeeded at the 
 
 **Commits:**
 - `a313e94` - Include sung vocals in dialogue prompt contract
-- `c5939a6` - Document lyric coverage rerun verification
+- Local verification-plan update committed in this lane (`git log --oneline -n 1` at handoff time shows the current hash).
 
 **Lessons Learned:** Prompt-contract framing matters: explicitly allowing sung vocals changed the model’s inclusion behavior enough to recover a missing chant/lyric region. But recovery at the inclusion layer is not the same as transcription truth. Future work should treat (1) vocal presence/coverage, (2) exact lyric wording, and (3) speaker/timing alignment as separate quality axes rather than assuming one prompt fix solves all three.
 
