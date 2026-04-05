@@ -79,25 +79,46 @@ Also updated `test/scripts/get-dialogue.test.js` to assert the new prompt wordin
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-04-04-late-lyric-timeline-anchor-prompt-lane.md`
-- fresh log/output artifacts
+- `.logs/2026-04-04-123328-cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun-ee-a0x0.log`
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/dialogue-data.json`
+- related fresh rerun artifacts under `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Reran the canonical pipeline exactly with `node server/run-pipeline.cjs --config configs/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun.yaml --clean-live-digital-twin --verbose` and it completed successfully (exit 0). Fresh dialogue artifact: `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/dialogue-data.json`. Fresh log: `.logs/2026-04-04-123328-cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun-ee-a0x0.log`. Benchmark truth used for comparison: `benchmarks/fixtures/cod-test/truth/dialogue-data.json`. Previous prompt-refined comparison baseline: `output/_archives/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun-pre-ee-x0g9-2026-04-04-103401/phase1-gather-context/dialogue-data.json`.
+
+Timing-anchor result is mixed rather than cleanly improved. The lyric block is still front-loaded much too early versus benchmark truth, but the later tail does move later than the previous prompt-refined rerun:
+- Truth lyric region runs from `64-98s` with the preorder line at `122-124s`.
+- Previous prompt-refined rerun (`ee-x0g9`) collapsed the lyric material into `42-50s`, then jumped to `Obey your master, master.` at `68-75s`, with the preorder line at `75-80s`.
+- Fresh rerun starts the lyric block even earlier at `35.5s`, but keeps it active through `67s`, places the follow-on scene lines later than before (`Pull it together, man.` at `67.5-69.5s`, `So eager to leave, David.` at `70-72.5s`), and moves the preorder promo later to `86-89.5s`.
+
+Benchmark-focused timing summary:
+- **Lyric onset regressed:** benchmark first lyric line `Obey your master.` is `64-65s`; fresh rerun places it at `35.5-38s` (about `28.5s` early), worse than the previous rerun’s `42-50s` merged lyric blob.
+- **Mid-lyric lines remain early:** `Master of puppets...` truth `76-78s` vs fresh `41.5-45s`; `Twisting your mind...` truth `80-83s` vs fresh `45.5-49s`; `Blinded by me...` truth `84-86s` vs fresh `49.5-53s`.
+- **Late lyric tail is still early but extends later than before:** the fresh rerun reaches `Master, master.` at `64.5-67s`, whereas the previous rerun’s lyric material effectively ended its first cluster by `50s` and then resumed a single lyric remnant at `68-75s`. So the new run preserves a longer lateward spread, but still fails to anchor the lyric cluster into its true `64-98s` window.
+- **Preorder tail improved but remains very early:** truth `Get the Reznov challenge pack...` is `122-124s`; previous rerun had it at `75-80s`; fresh rerun moves it to `86-89.5s`, about `11s` later than the previous rerun but still roughly `36s` early versus truth.
+
+Segmentation / wording / speaker findings:
+- **Segmentation gain preserved:** the previous rerun’s merged lyric blob (`42-50s`: `Obey your master, master. Come crawling faster, faster. Master, master.`) is now split into line-level segments (`Obey your master.` / `Come crawling faster.` / `A master of puppet's pulling your strings.` / `Twisting your mind and smashing your dreams.` / `Blinded by me...` / `Just call my name...` / repeated `Master, master.`). So the anti-merge behavior survived the timeline-anchor prompt change.
+- **Segmentation regression:** the fresh rerun drops the benchmark lyric lines `Master, master, where’s the dreams that I’ve been after?` and `Master, master, you promised only lies!` and instead repeats `Just call my name...` plus `Master, master.` This is structurally more split than before, but less benchmark-faithful in the late lyric tail text.
+- **Wording drift remains:** `Control faster.` becomes `Come crawling faster.`; `Master of puppets are pulling the strings!` becomes `A master of puppet's pulling your strings.`; `So eager to leave daddy.` remains `So eager to leave, David.`; `Killing the man... killing the idea.` remains `Killing a man... killing an idea.`
+- **Speaker drift remains:** the fresh run still uses speculative speaker buckets and does not materially improve speaker fidelity; the main measurable change in this lane is segmentation plus partial late-tail movement, not speaker identity quality.
+
+Bottom line: the timeline-anchor prompt did **not** solve the core late-placement problem. It produced a **partial anchoring gain at the far tail** (especially the preorder promo and some downstream scene lines), but the lyric block still starts dramatically too early and remains compressed far ahead of its true `64-98s` benchmark window. Net result versus the previous prompt-refined rerun: **better line splitting, somewhat later tail placement, but no overall late-lyric anchoring fix**.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ⚠️ Partial
 
-**What We Built:** Pending.
+**What We Built:** A prompt-only late-lyric timeline-anchor refinement plus a verified canonical rerun record. The rerun proves the updated prompt preserved the earlier line-splitting improvement and nudged some later downstream material farther right on the timeline, especially the preorder tail. But it also proves the main benchmark problem remains: the lyric block is still pulled far too early, its onset is even earlier than the prior prompt-refined rerun, and the latest lyric-tail lines still drift into repetitions/substitutions instead of the benchmark’s true late lines.
 
 **Commits:**
-- Pending.
+- `docs: record late lyric timeline-anchor rerun findings`
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** Prompting alone can preserve structural lyric segmentation and slightly delay some downstream tail material without actually anchoring the full sung block into its true late timeline window. The next successful fix will likely need stronger runtime/timeline grounding for later vocal entries, because prompt-only guidance is still letting the model front-load lyrics based on musical affinity instead of actual late-occurring vocal evidence.
 
 ---
 
-*Created on 2026-04-04*
+*Completed on 2026-04-04*
