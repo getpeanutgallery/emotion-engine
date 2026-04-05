@@ -85,8 +85,8 @@ function buildDialogueTranscriptionValidatorToolContract({ requireHandoff = fals
     argumentKey: 'transcription',
     description: 'Validate a Phase 1 spoken-dialogue transcription JSON candidate against the required local schema before final submission.',
     candidateDescription: requireHandoff
-      ? 'Candidate spoken-dialogue transcription JSON with dialogue_segments covering audible spoken words only, optional speaker_profiles, summary, handoffContext, totalDuration, and additive analysis/provenance metadata.'
-      : 'Candidate spoken-dialogue transcription JSON with dialogue_segments covering audible spoken words only, optional speaker_profiles, summary, totalDuration, and additive analysis/provenance metadata.',
+      ? 'Candidate spoken-dialogue transcription JSON with dialogue_segments covering audible spoken words only, optional speaker_profiles, summary, handoffContext, totalDuration, and additive analysis/provenance metadata. Preserve short masked spoken fragments literally, split immediately at spoken-to-sung pivots, and never reconstruct lyric-like tails into polished dialogue text.'
+      : 'Candidate spoken-dialogue transcription JSON with dialogue_segments covering audible spoken words only, optional speaker_profiles, summary, totalDuration, and additive analysis/provenance metadata. Preserve short masked spoken fragments literally, split immediately at spoken-to-sung pivots, and never reconstruct lyric-like tails into polished dialogue text.',
     example: {
       dialogue_segments: [
         {
@@ -217,7 +217,7 @@ function buildMusicAnalysisValidatorToolContract() {
     name: MUSIC_ANALYSIS_TOOL_NAME,
     argumentKey: 'musicAnalysis',
     description: 'Validate a Phase 1 music-lane JSON candidate against the required local schema before final submission.',
-    candidateDescription: 'Candidate music-lane JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, optional rollingSummary, and optional famous-song grounding via recognizedSong + recognitionNotes. Keep this lane focused on coarse non-lexical music analysis, describe score even in mixed chunks, and remember that spoken dialogue over score is not lyric evidence.',
+    candidateDescription: 'Candidate music-lane JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, optional rollingSummary, and optional famous-song grounding via recognizedSong + recognitionNotes. Keep this lane focused on coarse non-lexical music analysis, describe score even in mixed chunks, explicitly distinguish spoken-overlay from lyric-bearing music, and remember that spoken dialogue over score is not lyric evidence.',
     example: {
       analysis: {
         type: 'music',
@@ -277,7 +277,7 @@ function buildMusicVocalsValidatorToolContract() {
     name: MUSIC_VOCALS_TOOL_NAME,
     argumentKey: 'musicVocals',
     description: 'Validate a Phase 1 music-vocals JSON candidate against the required local schema before final submission.',
-    candidateDescription: 'Candidate music-vocals JSON with rollingSummary, vocalSummary, vocal_segments, optional famous-song grounding via recognizedSong + recognitionNotes, and optional qualityNotes. Aim for full lyric-bearing timeline coverage, keep repeated hooks and reprises as distinct segments, reserve hybrid for truly inseparable mixed delivery, and remember that spoken dialogue over score is not lyric evidence.',
+    candidateDescription: 'Candidate music-vocals JSON with rollingSummary, vocalSummary, vocal_segments, optional famous-song grounding via recognizedSong + recognitionNotes, and optional qualityNotes. Aim for full lyric-bearing timeline coverage, use whole-asset context as a recall scaffold during chunk refinement, keep repeated hooks and reprises as distinct segments, prefer short literal fragments over polished wrong lyric variants, reserve hybrid for truly inseparable mixed delivery, and remember that spoken dialogue over score is not lyric evidence.',
     example: {
       rollingSummary: 'A repeated sung hook dominates the music-led vocals so far.',
       vocalSummary: 'A repeated sung hook lands over the percussion.',

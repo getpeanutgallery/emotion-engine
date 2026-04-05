@@ -433,6 +433,7 @@ test('Get Music Script', async (t) => {
       is(result.artifacts.musicData.segments.length, 5);
       ok(completionPrompts[2].includes('The attached audio file is already the extracted audio for this exact global window.'));
       ok(completionPrompts[2].includes('Do NOT claim the requested range exceeds the file duration just because the attached chunk is shorter than the full trailer.'));
+      ok(completionPrompts[2].includes('When speech rides over a continuing score bed, explicitly say spoken overlay is present rather than implying lyric vocals.'));
       assert.deepEqual(
         result.artifacts.musicData.segments.map((segment) => segment.type),
         ['music', 'music', 'music', 'music', 'music']

@@ -1389,6 +1389,7 @@ Rules:
 - Keep this lane coarse and non-lexical; do not transcribe spoken lines or sung lyrics.
 - For mixed stretches, describe the score bed even when spoken dialogue is present; do not let speech erase meaningful underlying music.
 - Differentiate spoken-over-score from music-led vocals in the description or summary, but leave exact words and transcript boundaries to the dialogue and music-vocals lanes.
+- When speech rides over a continuing score bed, explicitly say spoken overlay is present rather than implying lyric vocals.
 - If lyrics, chant, rap, or a melodic hook are audible, note that a text-bearing vocal cue exists while keeping the description non-lexical.
 - Do not let spoken overlay suppress a music classification when score remains the dominant bed of the segment.
 - Reserve speech for segments where spoken audio, not score, is the primary audible driver.
@@ -1494,6 +1495,7 @@ Additional rules:
 - Keep this lane coarse and non-lexical; do not transcribe spoken lines or sung lyrics.
 - For mixed chunks, describe the score bed even when spoken dialogue is present; do not let analysis.type = speech erase meaningful underlying music.
 - Differentiate spoken-over-score from music-led vocals in analysis.description or rollingSummary, but leave exact words and transcript boundaries to the dialogue and music-vocals lanes.
+- When speech rides over a continuing score bed, explicitly say spoken overlay is present rather than implying lyric vocals.
 - If lyrics, chant, rap, or a melodic hook are audible, note that a text-bearing vocal cue exists while keeping the description non-lexical.
 - Do not let spoken overlay suppress a music classification when score remains the dominant bed of the chunk.
 - Reserve analysis.type = speech for chunks where spoken audio, not score, is the primary audible driver.
@@ -1589,6 +1591,7 @@ async function executeMusicAnalysisToolLoop({
       'Keep this lane coarse and non-lexical: describe the score bed, but do not transcribe spoken lines or sung lyrics.',
       'For mixed chunks, describe the score bed even when spoken dialogue is present; do not let analysis.type = speech erase meaningful underlying music.',
       'recognizedSong and recognitionNotes are optional, but when present they must stay evidence-gated and must not use spoken dialogue over score as lyric evidence.',
+      'Explicitly distinguish spoken overlay from lyric-bearing music while keeping this lane non-lexical.',
     ],
     callProvider: ({ prompt }) => provider.complete({
       prompt,

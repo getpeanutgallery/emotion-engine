@@ -20,6 +20,8 @@ test('dialogue transcription validator tool contract is lane-specific', () => {
   assert.equal(contract.canonicalEnvelope.tool, 'validate_dialogue_transcription_json');
   assert.match(contract.description, /spoken-dialogue transcription/i);
   assert.match(contract.inputSchema.properties.transcription.description, /audible spoken words only/i);
+  assert.match(contract.inputSchema.properties.transcription.description, /Preserve short masked spoken fragments literally/i);
+  assert.match(contract.inputSchema.properties.transcription.description, /split immediately at spoken-to-sung pivots/i);
   assert.ok(contract.canonicalEnvelope.transcription.handoffContext);
 });
 
@@ -29,6 +31,7 @@ test('music analysis validator accepts optional famous-song grounding while stay
   assert.match(contract.inputSchema.properties.musicAnalysis.description, /recognizedSong/i);
   assert.match(contract.inputSchema.properties.musicAnalysis.description, /coarse non-lexical music analysis/i);
   assert.match(contract.inputSchema.properties.musicAnalysis.description, /describe score even in mixed chunks/i);
+  assert.match(contract.inputSchema.properties.musicAnalysis.description, /explicitly distinguish spoken-overlay from lyric-bearing music/i);
   assert.match(contract.inputSchema.properties.musicAnalysis.description, /spoken dialogue over score is not lyric evidence/i);
 
   const result = executeMusicAnalysisValidatorTool({
@@ -73,7 +76,9 @@ test('music vocals validator accepts optional famous-song grounding with lyric e
   assert.match(contract.description, /music-vocals JSON candidate/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /recognizedSong/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /full lyric-bearing timeline coverage/i);
+  assert.match(contract.inputSchema.properties.musicVocals.description, /whole-asset context as a recall scaffold during chunk refinement/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /repeated hooks and reprises as distinct segments/i);
+  assert.match(contract.inputSchema.properties.musicVocals.description, /prefer short literal fragments over polished wrong lyric variants/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /hybrid for truly inseparable mixed delivery/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /Spoken dialogue over score is not lyric evidence/i);
 

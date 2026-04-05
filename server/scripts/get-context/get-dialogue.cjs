@@ -2229,7 +2229,9 @@ ${runtimeAnchor}- Return JSON only. No markdown or explanation.
 - Spoken narration or dialogue over a score still belongs in dialogue_segments.
 - Keep quiet or partially masked spoken words in dialogue_segments when they are still intelligible enough to transcribe at least partially.
 - Use short best-effort literal fragments for masked speech rather than discarding the spoken line entirely.
-- If a phrase begins spoken and resolves into sung, chant-like, rap, or other music-led delivery, split at the delivery pivot; do not keep the sung tail in dialogue.
+- Preserve masked spoken fragments as-heard; do not smooth them into a fuller sentence or reconstruct missing lyric-like words from context.
+- If a phrase begins spoken and resolves into sung, chant-like, rap, or other music-led delivery, split immediately at the delivery pivot even if the spoken fragment is very short; do not keep the sung tail in dialogue.
+- Prefer a short literal spoken prefix over a polished but wrong full-line reconstruction.
 - If audible words are too melodic or rhythm-locked to be confidently treated as speech, exclude them from dialogue_segments and let the music-vocals lane claim them.
 - If delivery changes mode between spoken dialogue and music-led vocals, split them into adjacent segments instead of merging them.
 - Do not use continuity from neighboring spoken segments to pull a lyric phrase into dialogue.
@@ -2452,7 +2454,9 @@ Rules:
 - Spoken narration or dialogue over a score still belongs in dialogue_segments.
 - Keep quiet or partially masked spoken words in dialogue_segments when they are still intelligible enough to transcribe at least partially.
 - Use short best-effort literal fragments for masked speech rather than discarding the spoken line entirely.
-- If a phrase begins spoken and resolves into sung, chant-like, rap, or other music-led delivery, split at the delivery pivot; do not keep the sung tail in dialogue.
+- Preserve masked spoken fragments as-heard; do not smooth them into a fuller sentence or reconstruct missing lyric-like words from context.
+- If a phrase begins spoken and resolves into sung, chant-like, rap, or other music-led delivery, split immediately at the delivery pivot even if the spoken fragment is very short; do not keep the sung tail in dialogue.
+- Prefer a short literal spoken prefix over a polished but wrong full-line reconstruction.
 - If audible words are too melodic or rhythm-locked to be confidently treated as speech, exclude them from dialogue_segments and let the music-vocals lane claim them.
 - If delivery changes mode between spoken dialogue and music-led vocals, split them into adjacent segments instead of merging them.
 - Do not use continuity from neighboring spoken segments to pull a lyric phrase into dialogue.

@@ -1632,6 +1632,9 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts[0].includes('Spoken narration or dialogue over a score still belongs in dialogue_segments'));
       ok(completionPrompts[0].includes('Keep quiet or partially masked spoken words in dialogue_segments when they are still intelligible enough to transcribe at least partially'));
       ok(completionPrompts[0].includes('Use short best-effort literal fragments for masked speech rather than discarding the spoken line entirely'));
+      ok(completionPrompts[0].includes('Preserve masked spoken fragments as-heard; do not smooth them into a fuller sentence or reconstruct missing lyric-like words from context'));
+      ok(completionPrompts[0].includes('split immediately at the delivery pivot even if the spoken fragment is very short'));
+      ok(completionPrompts[0].includes('Prefer a short literal spoken prefix over a polished but wrong full-line reconstruction'));
       ok(completionPrompts[0].includes('If audible words are too melodic or rhythm-locked to be confidently treated as speech, exclude them from dialogue_segments and let the music-vocals lane claim them'));
       ok(completionPrompts[0].includes('If delivery changes mode between spoken dialogue and music-led vocals, split them into adjacent segments instead of merging them'));
       ok(completionPrompts[0].includes('Do not use continuity from neighboring spoken segments to pull a lyric phrase into dialogue'));

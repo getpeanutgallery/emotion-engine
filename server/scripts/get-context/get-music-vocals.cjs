@@ -1355,12 +1355,47 @@ function formatWholeAssetVocalsContext(wholeAssetAnalysis = null) {
     lines.push(`Whole-asset vocals summary: ${compactString(wholeAssetAnalysis.vocalSummary)}`);
   }
 
-  const segments = Array.isArray(wholeAssetAnalysis.vocal_segments) ? wholeAssetAnalysis.vocal_segments.slice(0, 4) : [];
+  const segments = Array.isArray(wholeAssetAnalysis.vocal_segments) ? wholeAssetAnalysis.vocal_segments.slice(0, 12) : [];
   if (segments.length > 0) {
-    lines.push(`Observed vocal phrases: ${segments.map((segment) => `${Number(segment.start).toFixed(1)}-${Number(segment.end).toFixed(1)}s "${segment.text}"`).join('; ')}`);
+    lines.push(`Whole-asset lyric-bearing moments: ${segments.map((segment) => `${Number(segment.start).toFixed(1)}-${Number(segment.end).toFixed(1)}s "${segment.text}"`).join('; ')}`);
   }
 
   return lines.length > 0 ? `Whole-asset vocals continuity context:\n- ${lines.join('\n- ')}\n\n` : '';
+}
+
+function formatWholeAssetVocalsChunkChecklist(wholeAssetAnalysis = null, startTime = 0, endTime = 0) {
+  const segments = Array.isArray(wholeAssetAnalysis?.vocal_segments)
+    ? wholeAssetAnalysis.vocal_segments.filter((segment) => segment && typeof segment === 'object')
+    : [];
+  if (segments.length === 0) return '';
+
+  const overlapping = [];
+  const nearby = [];
+  for (const segment of segments) {
+    const start = Number(segment.start);
+    const end = Number(segment.end);
+    if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) continue;
+
+    const text = compactString(segment.text);
+    const label = `${start.toFixed(1)}-${end.toFixed(1)}s${text ? ` "${text}"` : ''}`;
+    if (end >= startTime - 0.25 && start <= endTime + 0.25) {
+      overlapping.push(label);
+    } else if (end >= startTime - 4 && start <= endTime + 4) {
+      nearby.push(label);
+    }
+  }
+
+  if (overlapping.length === 0 && nearby.length === 0) return '';
+
+  const lines = [];
+  if (overlapping.length > 0) {
+    lines.push(`Expected lyric-bearing moments in or touching this chunk: ${overlapping.join('; ')}`);
+  }
+  if (nearby.length > 0) {
+    lines.push(`Nearby lyric-bearing context to confirm, refine, or reject carefully: ${nearby.join('; ')}`);
+  }
+
+  return `Whole-asset recall checklist for this chunk:\n- ${lines.join('\n- ')}\n\n`;
 }
 
 function buildWholeAssetMusicVocalsPrompt(durationSeconds, recoveryRuntime = null, { intent = 'whole_asset', musicContext = null } = {}) {
@@ -1421,11 +1456,13 @@ Rules:
 - Use vocal_segments only for audible sung lyrics, chant-like hooks, rap, melodic refrains, or truly inseparable hybrid music-led delivery.
 - If speech and song overlap, keep only the clearly music-led lexical content in vocal_segments; spoken overlay remains outside this lane.
 - Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.
+- Prefer short literal fragments over polished wrong lyric variants when the audio is masked or ambiguous.
 - When masking reduces certainty, prefer a shorter lower-confidence literal fragment plus a qualityNotes caution over omitting the segment.
 - Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.
 - Do not merge multiple lyric lines into one segment.
 - Use hybrid only when the same continuous utterance is truly inseparable as both speech-led and music-led; otherwise split adjacent spoken and sung spans and keep only the sung side here.
 - Use the whole-asset context as a checklist so chunk refinement revisits late and brief lyric windows instead of forgetting them.
+- Treat whole-asset lyric phrases as recall scaffolding only: confirm, shorten, correct, or reject them based on the chunk audio rather than copying them blindly.
 - recognizedSong is optional. Use it only when the heard sung/chant/rap evidence supports a plausible famous-song hypothesis.
 - Prefer recognizedSong.status = unknown, possible, or multiple_possible over inventing certainty.
 - Every recognizedSong candidate must cite audio-grounded evidence; literal matchedLyrics are stronger than vibe-only guesses.
@@ -1444,6 +1481,7 @@ function buildRollingVocalsAnalysisPrompt(startTime, endTime, rollingSummary, re
     : null;
   const chunkDurationSeconds = Math.max(0, endTime - startTime);
   const wholeAssetContext = formatWholeAssetVocalsContext(wholeAssetAnalysis);
+  const wholeAssetChecklist = formatWholeAssetVocalsChunkChecklist(wholeAssetAnalysis, startTime, endTime);
   const musicLaneContext = formatMusicLaneContext(musicContext);
 
   const prompt = `Analyze the audio in this chunk (${startTime.toFixed(1)}s to ${endTime.toFixed(1)}s).
@@ -1455,10 +1493,10 @@ Important grounding:
 - Do NOT claim the requested range exceeds the file duration just because the attached chunk is shorter than the full trailer.
 - Analyze only the audio that is actually present in the attached chunk.
 
-${musicLaneContext}${wholeAssetContext}${roll ? `Rolling vocals summary so far (from previous chunks):
+${musicLaneContext}${wholeAssetContext}${wholeAssetChecklist}${roll ? `Rolling vocals summary so far (from previous chunks):
 ${roll}
 
-` : ''}Extract only text-bearing music-led vocals for this chunk and maintain a concise rolling summary.
+` : ''}Extract only text-bearing music-led vocals for this chunk and maintain a concise rolling summary. Use the whole-asset context as a recall scaffold: confirm, refine, or reject expected lyric-bearing moments for this window based on the actual chunk audio.
 
 Return JSON only in this format:
 {
@@ -1506,12 +1544,14 @@ Rules:
 - Use vocal_segments only for audible sung lyrics, chant-like hooks, rap, melodic refrains, or truly inseparable hybrid music-led delivery.
 - If speech and song overlap, keep only the clearly music-led lexical content in vocal_segments; spoken overlay remains outside this lane.
 - Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.
+- Prefer short literal fragments over polished wrong lyric variants when the chunk is masked or ambiguous.
 - When masking reduces certainty, prefer a shorter lower-confidence literal fragment plus a qualityNotes caution over omitting the segment.
 - Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.
 - Do not skip a lyric segment merely because the phrase already appeared earlier; repeated hooks later in the trailer still need their own vocal_segments.
 - Do not merge multiple lyric lines into one segment.
 - Use hybrid only when the same continuous utterance is truly inseparable as both speech-led and music-led; otherwise split adjacent spoken and sung spans and keep only the sung side here.
 - Use rollingSummary and whole-asset context as a checklist so late and brief lyric windows are revisited instead of forgotten.
+- Treat whole-asset lyric phrases as recall scaffolding only: confirm, shorten, correct, or reject them based on this chunk rather than copying them blindly.
 - recognizedSong is optional. Use it only when the heard sung/chant/rap evidence supports a plausible famous-song hypothesis.
 - Prefer recognizedSong.status = unknown, possible, or multiple_possible over inventing certainty.
 - Every recognizedSong candidate must cite audio-grounded evidence; literal matchedLyrics are stronger than vibe-only guesses.
@@ -1591,8 +1631,10 @@ async function executeMusicVocalsAnalysisToolLoop({
       'If speech and song overlap, keep only the clearly music-led lexical content in vocal_segments; spoken overlay remains outside this lane.',
       'Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.',
       'When masking reduces certainty, prefer a shorter lower-confidence literal fragment plus a qualityNotes caution over omitting the segment.',
+      'Prefer short literal fragments over polished wrong lyric variants when the audio is masked or ambiguous.',
       'Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.',
       'Do not skip repeated hooks, reprises, or short late re-entries just because similar lyrics appeared earlier.',
+      'Use whole-asset context as recall scaffolding during chunk refinement: confirm, shorten, correct, or reject expected lyric moments based on the actual chunk audio.',
       'recognizedSong and recognitionNotes are optional, but when present they must be grounded in heard sung/chant/rap evidence and must not use spoken dialogue over music as lyric evidence.',
       'delivery must be one of: sung, chant, rap, melodic_refrain, hybrid, with hybrid reserved for truly inseparable mixed delivery.'
     ],
