@@ -270,7 +270,7 @@ function createComparator(artifact) {
     throw new Error(`Unsupported comparator kind: ${artifact.comparator.kind}`);
   }
 
-  const supportedProfiles = new Set(['dialogue-default', 'music-default', 'recommendation-default', 'chunk-analysis-default', 'metrics-default', 'emotional-analysis-default']);
+  const supportedProfiles = new Set(['dialogue-default', 'music-default', 'music-vocals-default', 'recommendation-default', 'chunk-analysis-default', 'metrics-default', 'emotional-analysis-default']);
   if (!supportedProfiles.has(artifact.comparator.profile)) {
     throw new Error(`Unsupported comparator profile for MVP: ${artifact.comparator.profile}`);
   }

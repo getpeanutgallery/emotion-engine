@@ -268,6 +268,56 @@ test('Get Music Script', async (t) => {
       is(result.artifacts.musicData.segments.length, 1);
       ok(!completionPrompts[0].includes('vocal_segments'));
       ok(!completionPrompts[0].includes('text-bearing music-led vocals'));
+      ok(completionPrompts[0].includes('Do not treat spoken dialogue, narration, radio chatter, or promo VO over score as lyric evidence.'));
+    });
+
+    tNested.test('preserves optional recognizedSong grounding in the music artifact', async () => {
+      mockDurationSeconds = 30;
+      completeImplementation = async (options) => {
+        completionPrompts.push(String(options?.prompt || ''));
+        completionOptions.push(options || {});
+        return {
+          content: JSON.stringify({
+            analysis: {
+              type: 'music',
+              description: 'Aggressive metal cue with a distinctive repeating hook.',
+              mood: 'energetic',
+              intensity: 8
+            },
+            rollingSummary: 'The cue stays music-led and aggressive.',
+            recognizedSong: {
+              status: 'possible',
+              confidence: 0.84,
+              candidates: [
+                {
+                  title: 'Master of Puppets',
+                  artist: 'Metallica',
+                  confidence: 0.84,
+                  evidence: ['Distinctive repeated master hook in the music lane.'],
+                  matchedLyrics: ['Master, master'],
+                  timeRanges: [{ start: 0, end: 30 }],
+                  ambiguity: 'Dialogue overlap partially masks the hook.'
+                }
+              ],
+              primaryEvidence: 'The arrangement strongly suggests one famous song.',
+              multipleSongsDetected: false
+            },
+            recognitionNotes: ['Spoken dialogue over score was excluded from lyric evidence.']
+          }),
+          usage: { input: 70, output: 50 }
+        };
+      };
+
+      const result = await getMusicScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeMusicConfig({ phase1Music: { mode: 'chunked', analysis_window_seconds: 30 } })
+      });
+
+      is(result.artifacts.musicData.recognizedSong.status, 'possible');
+      is(result.artifacts.musicData.recognizedSong.candidates[0].title, 'Master of Puppets');
+      is(result.artifacts.musicData.recognitionNotes[0], 'Spoken dialogue over score was excluded from lyric evidence.');
+      ok(completionPrompts[0].includes('recognizedSong is optional.'));
     });
 
     tNested.test('defaults music mode to auto and prefers whole-asset analysis when eligible', async () => {

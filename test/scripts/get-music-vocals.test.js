@@ -232,6 +232,61 @@ test('Get Music Vocals Script', async (t) => {
     ok(completionPrompts[0].includes('Music-lane summary: The score stays intense and chant-driven.'));
     ok(completionPrompts[0].includes('Keep spoken narration, spoken dialogue over score, and non-lexical vocalizations out of vocal_segments.'));
     ok(completionPrompts[0].includes('Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.'));
+    ok(completionPrompts[0].includes('Spoken dialogue, narration, radio chatter, or promo VO over music are never lyric evidence.'));
+  });
+
+  await t.test('preserves optional recognizedSong grounding in the music-vocals artifact', async () => {
+    completeImplementation = async (options) => {
+      completionPrompts.push(String(options?.prompt || ''));
+      completionOptions.push(options || {});
+      return {
+        content: JSON.stringify({
+          rollingSummary: 'A repeated lyric refrain dominates the cue.',
+          vocalSummary: 'A repeated refrain clearly lands over the heavy guitars.',
+          vocal_segments: [
+            {
+              start: 2,
+              end: 5,
+              text: 'Master of puppets are pulling the strings!',
+              confidence: 0.94,
+              performer: 'Metallica lead vocal',
+              performer_id: 'voc_001',
+              delivery: 'sung'
+            }
+          ],
+          recognizedSong: {
+            status: 'recognized',
+            confidence: 0.97,
+            candidates: [
+              {
+                title: 'Master of Puppets',
+                artist: 'Metallica',
+                confidence: 0.97,
+                evidence: ['Literal lyric fragments directly match the heard vocal.'],
+                matchedLyrics: ['Master of puppets are pulling the strings!'],
+                timeRanges: [{ start: 2, end: 5 }]
+              }
+            ],
+            primaryEvidence: 'Literal lyric evidence grounds one specific song.',
+            multipleSongsDetected: false
+          },
+          recognitionNotes: ['Spoken dialogue elsewhere in the trailer was excluded from lyric evidence.'],
+          qualityNotes: ['Crowd noise lightly masks the final consonant.']
+        }),
+        usage: { input: 90, output: 70 }
+      };
+    };
+
+    const result = await getMusicVocalsScript.run({
+      assetPath: '/path/to/test-video.mp4',
+      outputDir: testOutputDir,
+      config: makeMusicVocalsConfig()
+    });
+
+    is(result.artifacts.musicVocalsData.recognizedSong.status, 'recognized');
+    is(result.artifacts.musicVocalsData.recognizedSong.candidates[0].title, 'Master of Puppets');
+    is(result.artifacts.musicVocalsData.recognitionNotes[0], 'Spoken dialogue elsewhere in the trailer was excluded from lyric evidence.');
+    ok(completionPrompts[0].includes('recognizedSong is optional.'));
   });
 
   await t.test('captures raw AI and ffmpeg artifacts with tool-loop parity', async () => {

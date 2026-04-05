@@ -1018,3 +1018,155 @@ test('benchmark runner - emotional analysis comparator benchmarks deterministic 
   assert(result.artifactResults[0].fieldResults.some((field) => field.path === 'scrollRiskTimeline[timestamp=0].scrollRisk' && field.rule === 'tolerant-number'));
   assert(result.artifactResults[0].fieldResults.some((field) => field.path === 'criticalMoments[timestamp=5,emotion=boredom,type=threshold-low,chunkIndex=1].timestamp' && field.rule === 'tolerant-time'));
 });
+
+test('benchmark runner - music-vocals truth is benchmarked separately from dialogue truth', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-music-vocals');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const configDir = path.join(rootDir, 'configs');
+  const benchmarkDir = path.join(rootDir, 'benchmarks', 'fixtures', 'temp-music-vocals-fixture');
+  const outputDir = path.join(rootDir, 'output', 'temp-run');
+  const configPath = path.join(configDir, 'temp.yaml');
+  const fixturePath = path.join(benchmarkDir, 'fixture.json');
+  const benchmarkPath = path.join(benchmarkDir, 'benchmark.json');
+  const dialogueTruthPath = path.join(benchmarkDir, 'truth', 'dialogue-data.json');
+  const vocalsTruthPath = path.join(benchmarkDir, 'truth', 'music-vocals-data.json');
+  const dialogueOutputPath = path.join(outputDir, 'phase1-gather-context', 'dialogue-data.json');
+  const vocalsOutputPath = path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.json');
+
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.writeFileSync(configPath, 'name: temp music vocals benchmark config\n', 'utf8');
+
+  writeJson(fixturePath, {
+    contractVersion: FIXTURE_CONTRACT_VERSION,
+    fixtureId: 'temp-music-vocals-fixture',
+    asset: { repoPath: 'examples/videos/emotion-tests/cod.mp4' },
+    config: { repoPath: 'configs/temp.yaml' },
+    benchmark: { entryPath: 'benchmark.json' },
+    notes: ['temp music vocals benchmark fixture']
+  });
+
+  writeJson(benchmarkPath, {
+    contractVersion: MANIFEST_CONTRACT_VERSION,
+    fixtureId: 'temp-music-vocals-fixture',
+    fixture: { path: 'fixture.json' },
+    reports: { outputDir: '_reports' },
+    artifacts: [
+      {
+        artifactKey: 'dialogueData',
+        label: 'Dialogue',
+        phase: 'phase1-gather-context',
+        script: 'get-dialogue',
+        output: { path: 'phase1-gather-context/dialogue-data.json' },
+        truth: { path: 'truth/dialogue-data.json' },
+        comparator: {
+          kind: 'json-structured',
+          profile: 'dialogue-default',
+          options: { timingToleranceSeconds: 2, unknownSentinels: ['unknown', 'ambiguous'] }
+        },
+        required: true
+      },
+      {
+        artifactKey: 'musicVocalsData',
+        label: 'Music vocals',
+        phase: 'phase1-gather-context',
+        script: 'get-music-vocals',
+        output: { path: 'phase1-gather-context/music-vocals-data.json' },
+        truth: { path: 'truth/music-vocals-data.json' },
+        comparator: {
+          kind: 'json-structured',
+          profile: 'music-vocals-default',
+          options: { timingToleranceSeconds: 2, unknownSentinels: ['unknown', 'ambiguous'] }
+        },
+        required: true
+      }
+    ]
+  });
+
+  writeJson(dialogueTruthPath, {
+    dialogue_segments: [
+      { start: 0, end: 1, speaker: 'Speaker 1', text: 'Wake up now.', confidence: 0.98 }
+    ],
+    summary: 'Spoken dialogue only.',
+    totalDuration: 10,
+    handoffContext: null
+  });
+  writeJson(vocalsTruthPath, {
+    vocal_segments: [
+      { start: 2, end: 4, text: 'Master, master', confidence: 0.95, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' }
+    ],
+    summary: 'Sung vocals only.',
+    hasVocals: true,
+    totalDuration: 10,
+    recognizedSong: {
+      status: 'recognized',
+      confidence: 0.95,
+      candidates: [
+        {
+          title: 'Master of Puppets',
+          artist: 'Metallica',
+          confidence: 0.95,
+          evidence: ['Literal lyric fragment matches the heard chant.'],
+          matchedLyrics: ['Master, master'],
+          timeRanges: [{ start: 2, end: 4 }]
+        }
+      ],
+      primaryEvidence: 'Literal lyric evidence grounds one specific song.',
+      multipleSongsDetected: false
+    },
+    recognitionNotes: ['Dialogue was excluded from lyric evidence.']
+  });
+
+  writeJson(dialogueOutputPath, {
+    dialogue_segments: [
+      { start: 0, end: 1, speaker: 'Speaker 1', text: 'Wake up now.', confidence: 0.98 }
+    ],
+    summary: 'Spoken dialogue only.',
+    totalDuration: 10,
+    handoffContext: null
+  });
+  writeJson(vocalsOutputPath, {
+    vocal_segments: [
+      { start: 2, end: 4, text: 'Master, master', confidence: 0.91, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' }
+    ],
+    summary: 'Sung vocals only.',
+    hasVocals: true,
+    totalDuration: 10,
+    recognizedSong: {
+      status: 'recognized',
+      confidence: 0.9,
+      candidates: [
+        {
+          title: 'Master of Puppets',
+          artist: 'Metallica',
+          confidence: 0.9,
+          evidence: ['Literal lyric fragment matches the heard chant.'],
+          matchedLyrics: ['Master, master'],
+          timeRanges: [{ start: 2, end: 4 }]
+        }
+      ],
+      primaryEvidence: 'Literal lyric evidence grounds one specific song.',
+      multipleSongsDetected: false
+    },
+    recognitionNotes: ['Dialogue was excluded from lyric evidence.']
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark music vocals',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-music-vocals-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  assert.strictEqual(result.status, 'pass');
+  assert.strictEqual(result.artifactResults.length, 2);
+  assert(result.artifactResults.some((artifact) => artifact.artifactKey === 'dialogueData' && artifact.status === 'pass'));
+  assert(result.artifactResults.some((artifact) => artifact.artifactKey === 'musicVocalsData' && artifact.status === 'pass'));
+  assert(fs.existsSync(path.join(result.reportDir, 'artifact-results', 'musicVocalsData.json')));
+});

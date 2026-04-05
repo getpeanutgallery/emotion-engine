@@ -5,6 +5,7 @@ function compactString(value) {
 }
 
 const MUSIC_VOCAL_DELIVERIES = new Set(['sung', 'chant', 'rap', 'melodic_refrain', 'hybrid']);
+const RECOGNIZED_SONG_STATUSES = new Set(['recognized', 'possible', 'multiple_possible', 'unknown', 'none_present']);
 
 function clampMusicVocalTime(value, maxDuration) {
   const numeric = Number(value);
@@ -54,6 +55,62 @@ function generateMusicVocalsSummary(segments = []) {
   return `${segments.length} text-bearing ${deliveryLabel} vocal segment(s) detected in the music lane.`;
 }
 
+function normalizeRecognitionNotes(values) {
+  return Array.from(new Set((Array.isArray(values) ? values : []).map((value) => compactString(value)).filter(Boolean)));
+}
+
+function normalizeRecognizedSong(recognizedSong, { maxDuration = Number.POSITIVE_INFINITY } = {}) {
+  if (!recognizedSong || typeof recognizedSong !== 'object' || Array.isArray(recognizedSong)) return null;
+
+  const status = compactString(recognizedSong.status).toLowerCase();
+  if (!RECOGNIZED_SONG_STATUSES.has(status)) return null;
+
+  const confidence = Number(recognizedSong.confidence);
+  const primaryEvidence = compactString(recognizedSong.primaryEvidence) || null;
+  const ambiguity = compactString(recognizedSong.ambiguity) || null;
+  const multipleSongsDetected = recognizedSong.multipleSongsDetected === true;
+  const candidates = Array.isArray(recognizedSong.candidates)
+    ? recognizedSong.candidates.slice(0, 3).map((candidate) => {
+        if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return null;
+        const title = compactString(candidate.title) || null;
+        const artist = compactString(candidate.artist) || null;
+        const candidateConfidence = Number(candidate.confidence);
+        const evidence = normalizeRecognitionNotes(candidate.evidence);
+        if (evidence.length === 0) return null;
+        const matchedLyrics = normalizeRecognitionNotes(candidate.matchedLyrics);
+        const timeRanges = Array.isArray(candidate.timeRanges)
+          ? candidate.timeRanges.map((range) => {
+              if (!range || typeof range !== 'object' || Array.isArray(range)) return null;
+              const start = clampMusicVocalTime(range.start, maxDuration);
+              const end = clampMusicVocalTime(range.end, maxDuration);
+              if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return null;
+              return { start, end };
+            }).filter(Boolean)
+          : [];
+        const candidateAmbiguity = compactString(candidate.ambiguity) || null;
+
+        return {
+          title,
+          artist,
+          confidence: Number.isFinite(candidateConfidence) ? Math.max(0, Math.min(1, Number(candidateConfidence.toFixed(4)))) : 0,
+          evidence,
+          ...(matchedLyrics.length > 0 ? { matchedLyrics } : {}),
+          ...(timeRanges.length > 0 ? { timeRanges } : {}),
+          ...(candidateAmbiguity ? { ambiguity: candidateAmbiguity } : {})
+        };
+      }).filter(Boolean)
+    : [];
+
+  return {
+    status,
+    confidence: Number.isFinite(confidence) ? Math.max(0, Math.min(1, Number(confidence.toFixed(4)))) : 0,
+    candidates,
+    ...(primaryEvidence ? { primaryEvidence } : {}),
+    ...(ambiguity ? { ambiguity } : {}),
+    multipleSongsDetected
+  };
+}
+
 function buildMusicVocalsData({
   vocalSegments,
   summary,
@@ -62,11 +119,15 @@ function buildMusicVocalsData({
   timingMode,
   sourceStrategy,
   provenance,
-  qualityNotes
+  qualityNotes,
+  recognizedSong,
+  recognitionNotes
 }) {
   const normalizedSegments = normalizeMusicVocalSegments(vocalSegments, { maxDuration: duration });
   const normalizedSummary = compactString(summary) || generateMusicVocalsSummary(normalizedSegments);
   const normalizedQualityNotes = Array.from(new Set((Array.isArray(qualityNotes) ? qualityNotes : []).map((value) => compactString(value)).filter(Boolean)));
+  const normalizedRecognizedSong = normalizeRecognizedSong(recognizedSong, { maxDuration: duration });
+  const normalizedRecognitionNotes = normalizeRecognitionNotes(recognitionNotes);
 
   return {
     vocal_segments: normalizedSegments,
@@ -83,6 +144,8 @@ function buildMusicVocalsData({
       complete: true
     },
     provenance: { ...(provenance || {}) },
+    ...(normalizedRecognizedSong ? { recognizedSong: normalizedRecognizedSong } : {}),
+    ...(normalizedRecognitionNotes.length > 0 ? { recognitionNotes: normalizedRecognitionNotes } : {}),
     ...(normalizedQualityNotes.length > 0 ? { qualityNotes: normalizedQualityNotes } : {})
   };
 }
@@ -93,5 +156,7 @@ module.exports = {
   clampMusicVocalTime,
   normalizeMusicVocalSegments,
   generateMusicVocalsSummary,
+  normalizeRecognizedSong,
+  normalizeRecognitionNotes,
   buildMusicVocalsData
 };

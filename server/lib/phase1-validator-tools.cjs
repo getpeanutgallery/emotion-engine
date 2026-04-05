@@ -217,7 +217,7 @@ function buildMusicAnalysisValidatorToolContract() {
     name: MUSIC_ANALYSIS_TOOL_NAME,
     argumentKey: 'musicAnalysis',
     description: 'Validate a Phase 1 music-lane JSON candidate against the required local schema before final submission.',
-    candidateDescription: 'Candidate music-lane JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, and optional rollingSummary for non-lexical music analysis only.',
+    candidateDescription: 'Candidate music-lane JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, optional rollingSummary, and optional famous-song grounding via recognizedSong + recognitionNotes. Keep this lane focused on non-lexical music analysis; spoken dialogue over score is not lyric evidence.',
     example: {
       analysis: {
         type: 'music',
@@ -225,7 +225,28 @@ function buildMusicAnalysisValidatorToolContract() {
         mood: 'energetic',
         intensity: 7
       },
-      rollingSummary: 'The audio stays upbeat and music-led so far.'
+      rollingSummary: 'The audio stays upbeat and music-led so far.',
+      recognizedSong: {
+        status: 'possible',
+        confidence: 0.64,
+        candidates: [
+          {
+            title: 'Master of Puppets',
+            artist: 'Metallica',
+            confidence: 0.64,
+            evidence: ['Distinctive thrash-metal hook and repeated master chant in the score-adjacent vocal layer.'],
+            matchedLyrics: ['Master, master'],
+            timeRanges: [
+              { start: 76, end: 98 }
+            ],
+            ambiguity: 'Dialogue, SFX, and trailer editing partially mask the hook.'
+          }
+        ],
+        primaryEvidence: 'A distinctive repeated hook aligns with a likely famous-song match, but masking prevents certainty.',
+        ambiguity: 'Recognition remains evidence-gated and partially masked.',
+        multipleSongsDetected: false
+      },
+      recognitionNotes: ['Do not treat spoken dialogue over score as lyric evidence.']
     }
   });
 }
@@ -256,7 +277,7 @@ function buildMusicVocalsValidatorToolContract() {
     name: MUSIC_VOCALS_TOOL_NAME,
     argumentKey: 'musicVocals',
     description: 'Validate a Phase 1 music-vocals JSON candidate against the required local schema before final submission.',
-    candidateDescription: 'Candidate music-vocals JSON with rollingSummary, vocalSummary, vocal_segments, and optional qualityNotes.',
+    candidateDescription: 'Candidate music-vocals JSON with rollingSummary, vocalSummary, vocal_segments, optional famous-song grounding via recognizedSong + recognitionNotes, and optional qualityNotes. Spoken dialogue over score is not lyric evidence.',
     example: {
       rollingSummary: 'A repeated sung hook dominates the music-led vocals so far.',
       vocalSummary: 'A repeated sung hook lands over the percussion.',
@@ -271,6 +292,25 @@ function buildMusicVocalsValidatorToolContract() {
           delivery: 'sung'
         }
       ],
+      recognizedSong: {
+        status: 'recognized',
+        confidence: 0.93,
+        candidates: [
+          {
+            title: 'Master of Puppets',
+            artist: 'Metallica',
+            confidence: 0.93,
+            evidence: ['Literal lyric fragments match the heard refrain.'],
+            matchedLyrics: ['Master, master', 'Obey your master'],
+            timeRanges: [
+              { start: 76, end: 98 }
+            ]
+          }
+        ],
+        primaryEvidence: 'Distinct lyric fragments and delivery strongly support one specific song.',
+        multipleSongsDetected: false
+      },
+      recognitionNotes: ['Spoken dialogue elsewhere in the trailer was excluded from lyric evidence.'],
       qualityNotes: ['Crowd noise partially masks the tail of the final word.']
     }
   });

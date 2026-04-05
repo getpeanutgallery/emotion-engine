@@ -7,7 +7,9 @@ const {
   buildDialogueStitchValidatorToolContract,
   executeDialogueStitchValidatorTool,
   buildMusicAnalysisValidatorToolContract,
-  executeMusicAnalysisValidatorTool
+  executeMusicAnalysisValidatorTool,
+  buildMusicVocalsValidatorToolContract,
+  executeMusicVocalsValidatorTool
 } = require('../../server/lib/phase1-validator-tools.cjs');
 
 test('dialogue transcription validator tool contract is lane-specific', () => {
@@ -21,40 +23,93 @@ test('dialogue transcription validator tool contract is lane-specific', () => {
   assert.ok(contract.canonicalEnvelope.transcription.handoffContext);
 });
 
-test('music analysis validator accepts optional music-lane vocal segments', () => {
+test('music analysis validator accepts optional famous-song grounding while staying non-lexical', () => {
   const contract = buildMusicAnalysisValidatorToolContract();
   assert.match(contract.description, /music-lane JSON candidate/i);
-  assert.match(contract.inputSchema.properties.musicAnalysis.description, /vocal_segments/i);
-  assert.match(contract.inputSchema.properties.musicAnalysis.description, /transcript-like text-bearing music-led vocals/i);
-  assert.match(contract.inputSchema.properties.musicAnalysis.description, /literal lexical capture/i);
+  assert.match(contract.inputSchema.properties.musicAnalysis.description, /recognizedSong/i);
+  assert.match(contract.inputSchema.properties.musicAnalysis.description, /spoken dialogue over score is not lyric evidence/i);
 
   const result = executeMusicAnalysisValidatorTool({
     musicAnalysis: {
       analysis: {
         type: 'music',
-        description: 'Driving chant-led percussion.',
+        description: 'Driving thrash-metal cue under the trailer montage.',
         mood: 'energetic',
         intensity: 8
       },
       rollingSummary: 'The cue stays music-led and aggressive.',
-      vocalSummary: 'A chant hook repeats over the downbeat.',
-      vocal_segments: [
-        {
-          start: 2,
-          end: 4,
-          text: 'Run it back',
-          confidence: 0.92,
-          performer: 'Crowd',
-          performer_id: 'crowd_1',
-          delivery: 'chant'
-        }
-      ]
+      recognizedSong: {
+        status: 'possible',
+        confidence: 0.84,
+        candidates: [
+          {
+            title: 'Master of Puppets',
+            artist: 'Metallica',
+            confidence: 0.84,
+            evidence: ['Distinctive repeated master hook in the music lane.'],
+            matchedLyrics: ['Master, master'],
+            timeRanges: [{ start: 76, end: 98 }],
+            ambiguity: 'Dialogue overlap partially masks the cue.'
+          }
+        ],
+        primaryEvidence: 'The arrangement and repeated hook strongly suggest one famous song.',
+        multipleSongsDetected: false
+      },
+      recognitionNotes: ['Spoken dialogue over the score was excluded from lyric evidence.']
     }
   });
 
   assert.equal(result.valid, true);
-  assert.equal(result.normalizedValue.vocalSummary, 'A chant hook repeats over the downbeat.');
-  assert.equal(result.normalizedValue.vocal_segments[0].delivery, 'chant');
+  assert.equal(result.normalizedValue.recognizedSong.status, 'possible');
+  assert.equal(result.normalizedValue.recognizedSong.candidates[0].title, 'Master of Puppets');
+  assert.equal(result.normalizedValue.recognitionNotes[0], 'Spoken dialogue over the score was excluded from lyric evidence.');
+});
+
+
+test('music vocals validator accepts optional famous-song grounding with lyric evidence', () => {
+  const contract = buildMusicVocalsValidatorToolContract();
+  assert.match(contract.description, /music-vocals JSON candidate/i);
+  assert.match(contract.inputSchema.properties.musicVocals.description, /recognizedSong/i);
+  assert.match(contract.inputSchema.properties.musicVocals.description, /Spoken dialogue over score is not lyric evidence/i);
+
+  const result = executeMusicVocalsValidatorTool({
+    musicVocals: {
+      rollingSummary: 'A repeated lyric refrain dominates the cue.',
+      vocalSummary: 'A repeated refrain clearly lands over the heavy guitars.',
+      vocal_segments: [
+        {
+          start: 76,
+          end: 78,
+          text: 'Master of puppets are pulling the strings!',
+          confidence: 0.92,
+          performer: 'Metallica lead vocal',
+          performer_id: 'voc_001',
+          delivery: 'sung'
+        }
+      ],
+      recognizedSong: {
+        status: 'recognized',
+        confidence: 0.97,
+        candidates: [
+          {
+            title: 'Master of Puppets',
+            artist: 'Metallica',
+            confidence: 0.97,
+            evidence: ['Literal lyric fragments directly match the heard vocal.'],
+            matchedLyrics: ['Master of puppets are pulling the strings!'],
+            timeRanges: [{ start: 76, end: 78 }]
+          }
+        ],
+        primaryEvidence: 'Literal lyric evidence grounds one specific song.',
+        multipleSongsDetected: false
+      },
+      recognitionNotes: ['Promo VO elsewhere in the trailer was excluded from lyric evidence.']
+    }
+  });
+
+  assert.equal(result.valid, true);
+  assert.equal(result.normalizedValue.recognizedSong.status, 'recognized');
+  assert.equal(result.normalizedValue.vocal_segments[0].delivery, 'sung');
 });
 
 test('dialogue transcription validator tool enforces required handoff fields', () => {

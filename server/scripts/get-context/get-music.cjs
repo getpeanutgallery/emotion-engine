@@ -42,7 +42,9 @@ const {
 } = require('../../lib/ffmpeg-config.cjs');
 const {
   parseAndValidateJsonObject,
-  validateMusicAnalysisObject
+  validateMusicAnalysisObject,
+  validateRecognizedSong,
+  validateOptionalRecognitionNotes
 } = require('../../lib/structured-output.cjs');
 const {
   buildMusicAnalysisValidatorToolContract,
@@ -55,7 +57,7 @@ const {
   buildProviderOptionDefaults
 } = require('../../lib/provider-runtime-config.cjs');
 const { applyFailureMetadata } = require('../../lib/tool-wrapper-contract.cjs');
-const { compactString } = require('../../lib/music-vocals-artifact.cjs');
+const { compactString, normalizeRecognizedSong, normalizeRecognitionNotes } = require('../../lib/music-vocals-artifact.cjs');
 
 const PHASE_KEY = 'phase1-gather-context';
 const SCRIPT_ID = 'get-music';
@@ -494,6 +496,8 @@ async function run(input) {
     fs.mkdirSync(chunksDir, { recursive: true });
 
     let rollingSummary = '';
+    let lastChunkRecognizedSong = null;
+    const collectedRecognitionNotes = [];
 
     if (strategy.actualMode === 'whole_asset' || strategy.actualMode === 'hybrid') {
       if (!strategy.wholeAssetEligible) {
@@ -696,6 +700,8 @@ async function run(input) {
                   intensity: toolLoopResult.parsed.analysis.intensity
                 },
                 rollingSummary: toolLoopResult.parsed.rollingSummary,
+                recognizedSong: toolLoopResult.parsed.recognizedSong || null,
+                recognitionNotes: Array.isArray(toolLoopResult.parsed.recognitionNotes) ? toolLoopResult.parsed.recognitionNotes : []
               };
               return { completion: toolLoopResult.completion, parsed, toolLoop: toolLoopResult.toolLoop };
             } catch (error) {
@@ -806,6 +812,12 @@ async function run(input) {
         rollingSummary = typeof parsed.rollingSummary === 'string' && parsed.rollingSummary.trim().length > 0
           ? parsed.rollingSummary.trim()
           : rollingSummary;
+        if (parsed.recognizedSong) {
+          lastChunkRecognizedSong = parsed.recognizedSong;
+        }
+        if (Array.isArray(parsed.recognitionNotes) && parsed.recognitionNotes.length > 0) {
+          collectedRecognitionNotes.push(...parsed.recognitionNotes);
+        }
       } catch (error) {
         phaseOutcome = 'failed';
         fatalPhaseError = error;
@@ -843,6 +855,14 @@ async function run(input) {
       ...qualityNotes,
       ...(Array.isArray(wholeAssetAnalysis?.qualityNotes) ? wholeAssetAnalysis.qualityNotes : [])
     ].filter((value) => compactString(value))));
+    const finalRecognizedSong = normalizeRecognizedSong(
+      wholeAssetAnalysis?.recognizedSong || lastChunkRecognizedSong,
+      { maxDuration: duration }
+    );
+    const finalRecognitionNotes = normalizeRecognitionNotes([
+      ...collectedRecognitionNotes,
+      ...(Array.isArray(wholeAssetAnalysis?.recognitionNotes) ? wholeAssetAnalysis.recognitionNotes : [])
+    ]);
     const sharedProvenance = {
       requestedMode: strategy.requestedMode,
       transportMode: 'inline',
@@ -874,6 +894,8 @@ async function run(input) {
       },
       ...(shouldEmitMusicGlobalArc(config) && wholeAssetAnalysis?.globalArc ? { globalArc: wholeAssetAnalysis.globalArc } : {}),
       provenance: sharedProvenance,
+      ...(finalRecognizedSong ? { recognizedSong: finalRecognizedSong } : {}),
+      ...(finalRecognitionNotes.length > 0 ? { recognitionNotes: finalRecognitionNotes } : {}),
       ...(finalQualityNotes.length > 0 ? { qualityNotes: finalQualityNotes } : {})
     };
     // Write intermediate artifacts to phase directory
@@ -1264,6 +1286,9 @@ function validateWholeAssetMusicAnalysisObject(input, durationSeconds = 0) {
     }
   }
 
+  const recognizedSong = validateRecognizedSong(input.recognizedSong, errors, '$.recognizedSong', { minTime: 0, maxTime: maxDuration });
+  const recognitionNotes = validateOptionalRecognitionNotes(input.recognitionNotes, errors);
+
   const qualityNotes = Array.isArray(input.qualityNotes)
     ? input.qualityNotes.map((note, index) => {
         const normalized = compactString(note);
@@ -1286,6 +1311,8 @@ function validateWholeAssetMusicAnalysisObject(input, durationSeconds = 0) {
       hasMusic,
       segments: normalizedSegments,
       globalArc,
+      ...(recognizedSong ? { recognizedSong } : {}),
+      ...(recognitionNotes.length > 0 ? { recognitionNotes } : {}),
       qualityNotes
     } : null,
     errors,
@@ -1326,9 +1353,30 @@ Return JSON only in this format:
       "intensity": 6
     }
   ],
+  "recognizedSong": {
+    "status": "possible",
+    "confidence": 0.64,
+    "candidates": [
+      {
+        "title": "Master of Puppets",
+        "artist": "Metallica",
+        "confidence": 0.64,
+        "evidence": ["Distinctive thrash-metal hook and repeated master chant in the music lane."],
+        "matchedLyrics": ["Master, master"],
+        "timeRanges": [{ "start": 76.0, "end": 98.0 }],
+        "ambiguity": "Trailer dialogue and SFX partially mask the cue."
+      }
+    ],
+    "primaryEvidence": "A likely famous-song hook is present, but recognition remains evidence-gated.",
+    "ambiguity": "Partial masking reduces certainty.",
+    "multipleSongsDetected": false
+  },
+  "recognitionNotes": [
+    "Optional lane-level caution about uncertainty, masking, overlap, or multiple songs."
+  ],
   "qualityNotes": [
     "Optional note about confidence, timing precision, or continuity."
-  ],
+  ]
 }
 
 Rules:
@@ -1338,7 +1386,12 @@ Rules:
 - If music is absent, set hasMusic to false and still return best-effort segments using types like speech, silence, ambient, or sfx.
 - summary must describe the whole asset, not just one moment.
 - globalArc.notableTransitions may be empty.
-- delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.
+- recognizedSong is optional. Use it only when the audio itself supports a plausible famous-song hypothesis.
+- Prefer recognizedSong.status = unknown, possible, or multiple_possible over inventing certainty.
+- Every recognizedSong candidate must be justified by audio-grounded evidence, not vibe-only genre guessing.
+- Do not treat spoken dialogue, narration, radio chatter, or promo VO over score as lyric evidence.
+- Instrumental resemblance alone can justify possible, but not recognized, unless the cue is unusually specific.
+- If multiple songs or cues are plausibly present, set multipleSongsDetected to true and prefer multiple_possible unless one clearly dominates.
 - JSON only. No markdown, no explanation.`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
@@ -1406,10 +1459,37 @@ Return JSON only in this format:
   },
   "chunkSummary": "1-2 sentences",
   "rollingSummary": "Updated rolling summary for the entire audio so far (keep concise)",
+  "recognizedSong": {
+    "status": "possible",
+    "confidence": 0.64,
+    "candidates": [
+      {
+        "title": "Master of Puppets",
+        "artist": "Metallica",
+        "confidence": 0.64,
+        "evidence": ["Distinctive repeated hook in the music lane for this chunk."],
+        "matchedLyrics": ["Master, master"],
+        "timeRanges": [{ "start": ${startTime.toFixed(1)}, "end": ${endTime.toFixed(1)} }],
+        "ambiguity": "Trailer SFX and overlap partially mask the cue."
+      }
+    ],
+    "primaryEvidence": "A plausible famous-song cue appears in this chunk, but certainty remains evidence-gated.",
+    "ambiguity": "Masking or overlap reduces certainty.",
+    "multipleSongsDetected": false
+  },
+  "recognitionNotes": [
+    "Optional lane-level caution about overlap, masking, short duration, or multiple songs."
+  ]
 }
 
 Allowed values for analysis.type: music | speech | silence | ambient | sfx.
 Allowed values for analysis.mood: upbeat | calm | tense | sad | energetic | neutral.
+Additional rules:
+- recognizedSong is optional. Use it only when the audio itself supports a plausible famous-song hypothesis.
+- Prefer recognizedSong.status = unknown, possible, or multiple_possible over inventing certainty.
+- Every recognizedSong candidate must be justified by audio-grounded evidence, not vibe-only genre guessing.
+- Do not treat spoken dialogue, narration, radio chatter, or promo VO over score as lyric evidence.
+- Instrumental resemblance alone can justify possible, but not recognized, unless the cue is unusually specific.
 `;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
@@ -1437,7 +1517,9 @@ function parseRollingMusicResponse(responseContent, startTime, endTime) {
       mood: parsed.value.analysis.mood,
       intensity: parsed.value.analysis.intensity
     },
-    rollingSummary: parsed.value.rollingSummary
+    rollingSummary: parsed.value.rollingSummary,
+    recognizedSong: parsed.value.recognizedSong || null,
+    recognitionNotes: Array.isArray(parsed.value.recognitionNotes) ? parsed.value.recognitionNotes : []
   };
 }
 
@@ -1492,6 +1574,7 @@ async function executeMusicAnalysisToolLoop({
     finalArtifactRules: [
       'Report analysis.type, analysis.description, optional analysis.mood, and analysis.intensity.',
       'Include rollingSummary when you have continuity context from prior chunks.',
+      'recognizedSong and recognitionNotes are optional, but when present they must stay evidence-gated and must not use spoken dialogue over score as lyric evidence.',
     ],
     callProvider: ({ prompt }) => provider.complete({
       prompt,

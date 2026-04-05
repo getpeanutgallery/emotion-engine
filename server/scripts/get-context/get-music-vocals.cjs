@@ -42,7 +42,9 @@ const {
 } = require('../../lib/ffmpeg-config.cjs');
 const {
   parseAndValidateJsonObject,
-  validateMusicVocalsAnalysisObject
+  validateMusicVocalsAnalysisObject,
+  validateRecognizedSong,
+  validateOptionalRecognitionNotes
 } = require('../../lib/structured-output.cjs');
 const {
   buildMusicVocalsValidatorToolContract,
@@ -55,7 +57,13 @@ const {
   buildProviderOptionDefaults
 } = require('../../lib/provider-runtime-config.cjs');
 const { applyFailureMetadata } = require('../../lib/tool-wrapper-contract.cjs');
-const { compactString, normalizeMusicVocalSegments, buildMusicVocalsData } = require('../../lib/music-vocals-artifact.cjs');
+const {
+  compactString,
+  normalizeMusicVocalSegments,
+  normalizeRecognizedSong,
+  normalizeRecognitionNotes,
+  buildMusicVocalsData
+} = require('../../lib/music-vocals-artifact.cjs');
 
 const PHASE_KEY = 'phase1-gather-context';
 const SCRIPT_ID = 'get-music-vocals';
@@ -497,6 +505,8 @@ async function run(input) {
     fs.mkdirSync(chunksDir, { recursive: true });
 
     let rollingSummary = '';
+    let lastChunkRecognizedSong = null;
+    const collectedRecognitionNotes = [];
 
     if (strategy.actualMode === 'whole_asset' || strategy.actualMode === 'hybrid') {
       if (!strategy.wholeAssetEligible) {
@@ -693,6 +703,8 @@ async function run(input) {
                 rollingSummary: toolLoopResult.parsed.rollingSummary,
                 vocalSummary: toolLoopResult.parsed.vocalSummary,
                 vocal_segments: normalizeMusicVocalSegments(toolLoopResult.parsed.vocal_segments, { maxDuration: duration }),
+                recognizedSong: toolLoopResult.parsed.recognizedSong || null,
+                recognitionNotes: Array.isArray(toolLoopResult.parsed.recognitionNotes) ? toolLoopResult.parsed.recognitionNotes : [],
                 qualityNotes: Array.isArray(toolLoopResult.parsed.qualityNotes) ? toolLoopResult.parsed.qualityNotes : []
               };
               return { completion: toolLoopResult.completion, parsed, toolLoop: toolLoopResult.toolLoop };
@@ -806,6 +818,12 @@ async function run(input) {
         rollingVocalSummary = typeof parsed.vocalSummary === 'string' && parsed.vocalSummary.trim().length > 0
           ? parsed.vocalSummary.trim()
           : rollingVocalSummary;
+        if (parsed.recognizedSong) {
+          lastChunkRecognizedSong = parsed.recognizedSong;
+        }
+        if (Array.isArray(parsed.recognitionNotes) && parsed.recognitionNotes.length > 0) {
+          collectedRecognitionNotes.push(...parsed.recognitionNotes);
+        }
         if (Array.isArray(parsed.qualityNotes) && parsed.qualityNotes.length > 0) {
           collectedQualityNotes.push(...parsed.qualityNotes);
         }
@@ -840,6 +858,14 @@ async function run(input) {
       ...collectedQualityNotes,
       ...(Array.isArray(wholeAssetAnalysis?.qualityNotes) ? wholeAssetAnalysis.qualityNotes : [])
     ].filter((value) => compactString(value))));
+    const finalRecognizedSong = normalizeRecognizedSong(
+      wholeAssetAnalysis?.recognizedSong || lastChunkRecognizedSong,
+      { maxDuration: duration }
+    );
+    const finalRecognitionNotes = normalizeRecognitionNotes([
+      ...collectedRecognitionNotes,
+      ...(Array.isArray(wholeAssetAnalysis?.recognitionNotes) ? wholeAssetAnalysis.recognitionNotes : [])
+    ]);
     const sharedProvenance = {
       requestedMode: strategy.requestedMode,
       transportMode: 'inline',
@@ -869,7 +895,9 @@ async function run(input) {
       timingMode,
       sourceStrategy: 'base64',
       provenance: sharedProvenance,
-      qualityNotes: finalQualityNotes
+      qualityNotes: finalQualityNotes,
+      recognizedSong: finalRecognizedSong,
+      recognitionNotes: finalRecognitionNotes
     });
 
     const artifactPath = path.join(phaseDir, 'music-vocals-data.json');
@@ -1260,6 +1288,9 @@ function validateWholeAssetMusicAnalysisObject(input, durationSeconds = 0) {
     }
   }
 
+  const recognizedSong = validateRecognizedSong(input.recognizedSong, errors, '$.recognizedSong', { minTime: 0, maxTime: maxDuration });
+  const recognitionNotes = validateOptionalRecognitionNotes(input.recognitionNotes, errors);
+
   const qualityNotes = Array.isArray(input.qualityNotes)
     ? input.qualityNotes.map((note, index) => {
         const normalized = compactString(note);
@@ -1282,6 +1313,8 @@ function validateWholeAssetMusicAnalysisObject(input, durationSeconds = 0) {
       hasMusic,
       segments: normalizedSegments,
       globalArc,
+      ...(recognizedSong ? { recognizedSong } : {}),
+      ...(recognitionNotes.length > 0 ? { recognitionNotes } : {}),
       qualityNotes
     } : null,
     errors,
@@ -1355,6 +1388,25 @@ Return JSON only in this format:
       "delivery": "sung"
     }
   ],
+  "recognizedSong": {
+    "status": "recognized",
+    "confidence": 0.93,
+    "candidates": [
+      {
+        "title": "Master of Puppets",
+        "artist": "Metallica",
+        "confidence": 0.93,
+        "evidence": ["Literal lyric fragments match the heard refrain."],
+        "matchedLyrics": ["Master, master", "Obey your master"],
+        "timeRanges": [{ "start": 76.0, "end": 98.0 }]
+      }
+    ],
+    "primaryEvidence": "Distinct lyric fragments and delivery strongly support one specific song.",
+    "multipleSongsDetected": false
+  },
+  "recognitionNotes": [
+    "Optional lane-level caution about overlap, masking, short duration, or multiple songs."
+  ],
   "qualityNotes": [
     "Optional note about confidence, timing precision, or ambiguity."
   ]
@@ -1367,6 +1419,11 @@ Rules:
 - Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.
 - Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.
 - Do not merge multiple lyric lines into one segment.
+- recognizedSong is optional. Use it only when the heard sung/chant/rap evidence supports a plausible famous-song hypothesis.
+- Prefer recognizedSong.status = unknown, possible, or multiple_possible over inventing certainty.
+- Every recognizedSong candidate must cite audio-grounded evidence; literal matchedLyrics are stronger than vibe-only guesses.
+- Spoken dialogue, narration, radio chatter, or promo VO over music are never lyric evidence. If overlap weakens confidence, mention that in recognitionNotes.
+- If multiple songs or cues are plausibly present, set multipleSongsDetected to true and prefer multiple_possible unless one clearly dominates.
 - delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.
 - If no text-bearing music-led vocals are present, return vocal_segments as [] and say so in vocalSummary.
 - JSON only. No markdown, no explanation.`;
@@ -1411,6 +1468,27 @@ Return JSON only in this format:
       "delivery": "sung"
     }
   ],
+  "recognizedSong": {
+    "status": "possible",
+    "confidence": 0.78,
+    "candidates": [
+      {
+        "title": "Master of Puppets",
+        "artist": "Metallica",
+        "confidence": 0.78,
+        "evidence": ["Literal lyric fragment and delivery align with one specific song."],
+        "matchedLyrics": ["Master, master"],
+        "timeRanges": [{ "start": ${startTime.toFixed(1)}, "end": ${endTime.toFixed(1)} }],
+        "ambiguity": "Only a short refrain is audible in this chunk."
+      }
+    ],
+    "primaryEvidence": "A short lyric fragment suggests a specific song, but certainty remains evidence-gated.",
+    "ambiguity": "Short chunk duration limits certainty.",
+    "multipleSongsDetected": false
+  },
+  "recognitionNotes": [
+    "Optional lane-level caution about overlap, masking, short duration, or multiple songs."
+  ],
   "qualityNotes": [
     "Optional note about ambiguity or masking in this chunk."
   ]
@@ -1422,6 +1500,10 @@ Rules:
 - Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.
 - Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.
 - Do not merge multiple lyric lines into one segment.
+- recognizedSong is optional. Use it only when the heard sung/chant/rap evidence supports a plausible famous-song hypothesis.
+- Prefer recognizedSong.status = unknown, possible, or multiple_possible over inventing certainty.
+- Every recognizedSong candidate must cite audio-grounded evidence; literal matchedLyrics are stronger than vibe-only guesses.
+- Spoken dialogue, narration, radio chatter, or promo VO over music are never lyric evidence. If overlap weakens confidence, mention that in recognitionNotes.
 - delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.
 - If no text-bearing music-led vocals are present in this chunk, return vocal_segments as [] and say so in vocalSummary.
 - JSON only. No markdown, no explanation.`;
@@ -1496,6 +1578,7 @@ async function executeMusicVocalsAnalysisToolLoop({
       'Use vocal_segments only for audible sung lyrics, chant-like hooks, rap, melodic refrains, or truly inseparable hybrid music-led delivery.',
       'Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.',
       'Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.',
+      'recognizedSong and recognitionNotes are optional, but when present they must be grounded in heard sung/chant/rap evidence and must not use spoken dialogue over music as lyric evidence.',
       'delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.'
     ],
     callProvider: ({ prompt }) => provider.complete({

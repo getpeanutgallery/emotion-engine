@@ -728,6 +728,7 @@ function validateDialogueStitchObject(input) {
 }
 
 const MUSIC_VOCAL_DELIVERIES = new Set(['sung', 'chant', 'rap', 'melodic_refrain', 'hybrid']);
+const RECOGNIZED_SONG_STATUSES = new Set(['recognized', 'possible', 'multiple_possible', 'unknown', 'none_present']);
 
 function validateMusicVocalSegments(segments, errors, path = '$.vocal_segments') {
   if (segments === undefined || segments === null) return [];
@@ -776,6 +777,128 @@ function validateMusicVocalSegments(segments, errors, path = '$.vocal_segments')
   }).filter(Boolean);
 }
 
+function validateRecognitionEvidenceArray(values, errors, path, label) {
+  if (!Array.isArray(values)) {
+    pushError(errors, path, 'required_array', `${label} must be an array.`);
+    return [];
+  }
+
+  const normalized = values.map((value, index) => {
+    const itemPath = `${path}[${index}]`;
+    return validateNonEmptyString(value, itemPath, `${label} entry`, errors);
+  }).filter(Boolean);
+
+  if (normalized.length === 0) {
+    pushError(errors, path, 'required_non_empty_array', `${label} must contain at least one entry.`);
+  }
+
+  return normalized;
+}
+
+function validateOptionalRecognitionNotes(values, errors, path = '$.recognitionNotes') {
+  if (values === undefined || values === null) return [];
+  if (!Array.isArray(values)) {
+    pushError(errors, path, 'required_array', 'recognitionNotes must be an array when provided.');
+    return [];
+  }
+
+  return values.map((value, index) => {
+    const itemPath = `${path}[${index}]`;
+    return validateNonEmptyString(value, itemPath, 'recognitionNotes entry', errors);
+  }).filter(Boolean);
+}
+
+function validateRecognizedSongCandidate(candidate, errors, path, { minTime = 0, maxTime = Number.POSITIVE_INFINITY } = {}) {
+  if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) {
+    pushError(errors, path, 'invalid_type', 'recognizedSong candidates must be objects.');
+    return null;
+  }
+
+  const title = validateOptionalNonEmptyString(candidate.title, `${path}.title`, 'recognized song candidate title', errors);
+  const artist = validateOptionalNonEmptyString(candidate.artist, `${path}.artist`, 'recognized song candidate artist', errors);
+  const confidence = validateFiniteNumber(candidate.confidence, `${path}.confidence`, 'recognized song candidate confidence', errors, { min: 0, max: 1 });
+  const evidence = validateRecognitionEvidenceArray(candidate.evidence, errors, `${path}.evidence`, 'recognized song candidate evidence');
+  const matchedLyrics = candidate.matchedLyrics === undefined || candidate.matchedLyrics === null
+    ? []
+    : validateRecognitionEvidenceArray(candidate.matchedLyrics, errors, `${path}.matchedLyrics`, 'recognized song candidate matchedLyrics');
+  const timeRanges = candidate.timeRanges === undefined || candidate.timeRanges === null
+    ? []
+    : Array.isArray(candidate.timeRanges)
+      ? candidate.timeRanges.map((range, index) => {
+          const itemPath = `${path}.timeRanges[${index}]`;
+          if (!range || typeof range !== 'object' || Array.isArray(range)) {
+            pushError(errors, itemPath, 'invalid_type', 'recognized song candidate timeRanges entries must be objects.');
+            return null;
+          }
+
+          const start = validateDialogueTimestamp(range.start, `${itemPath}.start`, 'recognized song candidate time range start', errors, { min: minTime, max: maxTime });
+          const end = validateDialogueTimestamp(range.end, `${itemPath}.end`, 'recognized song candidate time range end', errors, { min: minTime, max: maxTime });
+          if (start !== null && end !== null && end <= start) {
+            pushError(errors, itemPath, 'invalid_range', 'recognized song candidate time range end must be greater than start.');
+          }
+
+          return start !== null && end !== null ? { start, end } : null;
+        }).filter(Boolean)
+      : (pushError(errors, `${path}.timeRanges`, 'required_array', 'recognized song candidate timeRanges must be an array when provided.'), []);
+  const ambiguity = validateOptionalNonEmptyString(candidate.ambiguity, `${path}.ambiguity`, 'recognized song candidate ambiguity', errors);
+
+  return {
+    title: title || null,
+    artist: artist || null,
+    confidence: confidence ?? 0,
+    evidence,
+    ...(matchedLyrics.length > 0 ? { matchedLyrics } : {}),
+    ...(timeRanges.length > 0 ? { timeRanges } : {}),
+    ...(ambiguity ? { ambiguity } : {})
+  };
+}
+
+function validateRecognizedSong(input, errors, path = '$.recognizedSong', { minTime = 0, maxTime = Number.POSITIVE_INFINITY } = {}) {
+  if (input === undefined || input === null) return null;
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    pushError(errors, path, 'invalid_type', 'recognizedSong must be an object when provided.');
+    return null;
+  }
+
+  const status = validateOptionalEnumString(input.status, RECOGNIZED_SONG_STATUSES, `${path}.status`, 'recognizedSong status', errors);
+  const confidence = validateFiniteNumber(input.confidence, `${path}.confidence`, 'recognizedSong confidence', errors, { min: 0, max: 1 });
+  const candidatesInput = input.candidates;
+  let candidates = [];
+  if (!Array.isArray(candidatesInput)) {
+    pushError(errors, `${path}.candidates`, 'required_array', 'recognizedSong candidates must be an array.');
+  } else {
+    if (candidatesInput.length > 3) {
+      pushError(errors, `${path}.candidates`, 'out_of_range', 'recognizedSong candidates may contain at most 3 entries.');
+    }
+    candidates = candidatesInput.slice(0, 3).map((candidate, index) => (
+      validateRecognizedSongCandidate(candidate, errors, `${path}.candidates[${index}]`, { minTime, maxTime })
+    )).filter(Boolean);
+  }
+
+  const primaryEvidence = validateOptionalNonEmptyString(input.primaryEvidence, `${path}.primaryEvidence`, 'recognizedSong primaryEvidence', errors);
+  const ambiguity = validateOptionalNonEmptyString(input.ambiguity, `${path}.ambiguity`, 'recognizedSong ambiguity', errors);
+  const multipleSongsDetected = validateBoolean(input.multipleSongsDetected, `${path}.multipleSongsDetected`, 'recognizedSong multipleSongsDetected', errors);
+
+  if ((status === 'recognized' || status === 'possible' || status === 'multiple_possible') && candidates.length === 0) {
+    pushError(errors, `${path}.candidates`, 'required_non_empty_array', `recognizedSong candidates must contain at least one entry when status is ${status}.`);
+  }
+  if (status === 'multiple_possible' && multipleSongsDetected === false) {
+    pushError(errors, `${path}.multipleSongsDetected`, 'invalid_value', 'recognizedSong multipleSongsDetected must be true when status is multiple_possible.');
+  }
+  if (status === 'recognized' && candidates.length > 1 && multipleSongsDetected !== true) {
+    pushError(errors, `${path}.multipleSongsDetected`, 'invalid_value', 'recognizedSong multipleSongsDetected must be true when multiple recognized-song candidates are supplied.');
+  }
+
+  return {
+    status: status || 'unknown',
+    confidence: confidence ?? 0,
+    candidates,
+    primaryEvidence: primaryEvidence || null,
+    ambiguity: ambiguity || null,
+    multipleSongsDetected: multipleSongsDetected ?? false
+  };
+}
+
 function validateMusicAnalysisObject(input) {
   const errors = [];
 
@@ -804,6 +927,8 @@ function validateMusicAnalysisObject(input) {
   const rollingSummary = rollingSummarySource === undefined || rollingSummarySource === null
     ? null
     : validateNonEmptyString(rollingSummarySource, '$.rollingSummary', 'rollingSummary', errors);
+  const recognizedSong = validateRecognizedSong(input.recognizedSong, errors, '$.recognizedSong');
+  const recognitionNotes = validateOptionalRecognitionNotes(input.recognitionNotes, errors);
 
   return {
     ok: errors.length === 0,
@@ -814,7 +939,9 @@ function validateMusicAnalysisObject(input) {
         mood: mood || null,
         intensity
       },
-      rollingSummary: rollingSummary || null
+      rollingSummary: rollingSummary || null,
+      ...(recognizedSong ? { recognizedSong } : {}),
+      ...(recognitionNotes.length > 0 ? { recognitionNotes } : {})
     } : null,
     errors,
     summary: summarizeValidationErrors('Music JSON validation failed.', errors),
@@ -846,6 +973,8 @@ function validateMusicVocalsAnalysisObject(input) {
     : validateOptionalNonEmptyString(vocalSummarySource, '$.vocalSummary', 'vocalSummary', errors);
 
   const vocal_segments = validateMusicVocalSegments(input.vocal_segments, errors);
+  const recognizedSong = validateRecognizedSong(input.recognizedSong, errors, '$.recognizedSong');
+  const recognitionNotes = validateOptionalRecognitionNotes(input.recognitionNotes, errors);
 
   const qualityNotes = Array.isArray(input.qualityNotes)
     ? input.qualityNotes.map((note, index) => {
@@ -864,6 +993,8 @@ function validateMusicVocalsAnalysisObject(input) {
       rollingSummary: rollingSummary || null,
       vocalSummary: vocalSummary || null,
       vocal_segments,
+      ...(recognizedSong ? { recognizedSong } : {}),
+      ...(recognitionNotes.length > 0 ? { recognitionNotes } : {}),
       qualityNotes
     } : null,
     errors,
@@ -963,5 +1094,7 @@ module.exports = {
   validateDialogueStitchObject,
   validateMusicAnalysisObject,
   validateMusicVocalsAnalysisObject,
+  validateRecognizedSong,
+  validateOptionalRecognitionNotes,
   validateEmotionStateObject
 };

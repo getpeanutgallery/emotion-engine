@@ -51,6 +51,27 @@
       "required": true
     },
     {
+      "artifactKey": "musicVocalsData",
+      "label": "Phase 1 music vocals",
+      "phase": "phase1-gather-context",
+      "script": "get-music-vocals",
+      "output": {
+        "path": "phase1-gather-context/music-vocals-data.json"
+      },
+      "truth": {
+        "path": "truth/music-vocals-data.json"
+      },
+      "comparator": {
+        "kind": "json-structured",
+        "profile": "music-vocals-default",
+        "options": {
+          "timingToleranceSeconds": 2,
+          "unknownSentinels": ["unknown", "ambiguous"]
+        }
+      },
+      "required": true
+    },
+    {
       "artifactKey": "recommendationData",
       "label": "Phase 3 recommendation",
       "phase": "phase3-report",
