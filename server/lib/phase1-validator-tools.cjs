@@ -215,7 +215,7 @@ function buildMusicAnalysisValidatorToolContract() {
     name: MUSIC_ANALYSIS_TOOL_NAME,
     argumentKey: 'musicAnalysis',
     description: 'Validate a Phase 1 music-lane JSON candidate against the required local schema before final submission.',
-    candidateDescription: 'Candidate music-lane JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, optional rollingSummary, and optional vocal_segments / vocalSummary for text-bearing music-led vocals.',
+    candidateDescription: 'Candidate music-lane JSON with analysis.type, analysis.description, optional analysis.mood, analysis.intensity, optional rollingSummary, and optional vocal_segments / vocalSummary for transcript-like text-bearing music-led vocals using literal lexical capture when audible.',
     example: {
       analysis: {
         type: 'music',

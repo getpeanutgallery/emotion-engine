@@ -288,6 +288,11 @@ test('Get Music Script', async (t) => {
       is(result.artifacts.musicVocalsData.vocal_segments[0].delivery, 'chant');
       is(result.artifacts.musicVocalsData.summary, 'A repeated chant hook drives the music lane.');
       is(result.artifacts.musicData.segments.length, 1);
+      ok(completionPrompts[0].includes('Include only audible sung/chanted/rapped words with discernible lexical content.'));
+      ok(completionPrompts[0].includes('Prefer literal heard words or short partial fragments over paraphrase or invented completions when uncertain.'));
+      ok(completionPrompts[0].includes('Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.'));
+      ok(completionPrompts[0].includes('Do not merge multiple lyric lines into one summary segment.'));
+      ok(completionPrompts[0].includes('Do not leak music summary/description language into vocal_segments text.'));
     });
 
     tNested.test('defaults music mode to auto and prefers whole-asset analysis when eligible', async () => {
@@ -328,6 +333,10 @@ test('Get Music Script', async (t) => {
       ok(completionPrompts[0].includes('Analyze the complete extracted audio track'));
       ok(completionPrompts[0].includes('transcript-like pass for any text-bearing music-led vocals'));
       ok(completionPrompts[0].includes('Keep spoken narration or dialogue over score out of vocal_segments'));
+      ok(completionPrompts[0].includes('For music-lane vocals, include only audible sung/chanted/rapped words with discernible lexical content.'));
+      ok(completionPrompts[0].includes('Prefer literal heard words or short partial fragments over paraphrase, cleanup, or invented completions when the lyric is unclear.'));
+      ok(completionPrompts[0].includes('Do not merge multiple lyric lines into one summary segment.'));
+      ok(completionPrompts[0].includes('Do not leak music summary/description language into vocal_segments text.'));
     });
 
     tNested.test('splits long music analysis into bounded time windows even when transport preflight stays within budget', async () => {

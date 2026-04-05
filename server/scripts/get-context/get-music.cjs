@@ -1484,6 +1484,11 @@ Rules:
 - If music is absent, set hasMusic to false and still return best-effort segments using types like speech, silence, ambient, or sfx.
 - Keep spoken narration or dialogue over score out of vocal_segments; that belongs in the dialogue lane.
 - Use vocal_segments only for sung lyrics, chant-like vocals, rap synchronized to music, melodic refrains, or truly inseparable hybrid music-led delivery.
+- For music-lane vocals, include only audible sung/chanted/rapped words with discernible lexical content.
+- Prefer literal heard words or short partial fragments over paraphrase, cleanup, or invented completions when the lyric is unclear.
+- Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.
+- Do not merge multiple lyric lines into one summary segment.
+- Do not leak music summary/description language into vocal_segments text.
 - If spoken dialogue and music-led vocals alternate, split them into adjacent segments instead of merging them.
 - summary must describe the whole asset, not just one moment.
 - globalArc.notableTransitions may be empty.
@@ -1573,6 +1578,11 @@ Allowed values for analysis.type: music | speech | silence | ambient | sfx.
 Allowed values for analysis.mood: upbeat | calm | tense | sad | energetic | neutral.
 Keep spoken narration or dialogue over score out of vocal_segments; that belongs in dialogueData.
 Use vocal_segments only for text-bearing music-led vocals.
+Include only audible sung/chanted/rapped words with discernible lexical content.
+Prefer literal heard words or short partial fragments over paraphrase or invented completions when uncertain.
+Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.
+Do not merge multiple lyric lines into one summary segment.
+Do not leak music summary/description language into vocal_segments text.
 If spoken delivery changes into music-led delivery inside the chunk, split them into adjacent segments instead of merging them.
 Allowed values for vocal_segments[*].delivery: sung | chant | rap | melodic_refrain | hybrid.`;
 
@@ -1657,7 +1667,9 @@ async function executeMusicAnalysisToolLoop({
       'Report analysis.type, analysis.description, optional analysis.mood, and analysis.intensity.',
       'Include rollingSummary when you have continuity context from prior chunks.',
       'Include vocal_segments and optional vocalSummary only for text-bearing music-led vocals (sung lyrics, chant-like hooks, rap, melodic refrains, or inseparable hybrid delivery).',
-      'Do not put spoken narration or dialogue-over-score into vocal_segments; those belong in the dialogue lane.'
+      'Do not put spoken narration or dialogue-over-score into vocal_segments; those belong in the dialogue lane.',
+      'For music-lane vocals, include only audible sung/chanted/rapped words with discernible lexical content and prefer literal heard words or short partial fragments over paraphrase or invented completions.',
+      'Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct. Do not merge multiple lyric lines into one summary segment or leak music summary language into vocal_segments text.'
     ],
     callProvider: ({ prompt }) => provider.complete({
       prompt,

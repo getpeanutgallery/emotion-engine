@@ -25,6 +25,8 @@ test('music analysis validator accepts optional music-lane vocal segments', () =
   const contract = buildMusicAnalysisValidatorToolContract();
   assert.match(contract.description, /music-lane JSON candidate/i);
   assert.match(contract.inputSchema.properties.musicAnalysis.description, /vocal_segments/i);
+  assert.match(contract.inputSchema.properties.musicAnalysis.description, /transcript-like text-bearing music-led vocals/i);
+  assert.match(contract.inputSchema.properties.musicAnalysis.description, /literal lexical capture/i);
 
   const result = executeMusicAnalysisValidatorTool({
     musicAnalysis: {
