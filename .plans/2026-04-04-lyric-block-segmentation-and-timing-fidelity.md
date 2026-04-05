@@ -1,7 +1,7 @@
 # emotion-engine: lyric block segmentation and timing fidelity
 
 **Date:** 2026-04-04  
-**Status:** Draft  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -66,9 +66,9 @@ Exact prompt additions for chunk mode:
 **Files Created/Deleted/Modified:**
 - `.plans/2026-04-04-lyric-block-segmentation-and-timing-fidelity.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Derrick reviewed the exact wording in chat and approved proceeding with the rerun, so this gating step was satisfied before Task 3 execution.
 
 ---
 
@@ -80,30 +80,51 @@ Exact prompt additions for chunk mode:
 
 **Folders Created/Deleted/Modified:**
 - `.plans/`
-- `.logs/`
 - `output/`
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-04-04-lyric-block-segmentation-and-timing-fidelity.md`
-- fresh output/log artifacts
+- `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/dialogue-data.json`
+- related rerun artifacts under `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Reran the canonical pipeline exactly with `node server/run-pipeline.cjs --config configs/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun.yaml --clean-live-digital-twin --verbose` and the pipeline completed successfully (exit 0). Fresh Phase 1 dialogue artifact: `output/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun/phase1-gather-context/dialogue-data.json`. Pre-refinement comparison artifact used as baseline: `output/_archives/cod-test-xiaomi-mimo-v2-omni-openrouter-high-thinking-rerun-pre-ee-x0g9-2026-04-04-103401/phase1-gather-context/dialogue-data.json`. Benchmark truth used for evaluation: `benchmarks/fixtures/cod-test/truth/dialogue-data.json`.
+
+Lyric-segmentation result versus the prior lyric-inclusion rerun is clearly improved structurally: the old oversized merged sung-vocal block at pre-rerun segment 14 (`42-50s`: `Obey your master, master. Come crawling faster, faster. Master, master.`) is no longer one blob. The fresh rerun splits that region into multiple smaller segments:
+- `34-36s` `Obey your master, master.`
+- `36.5-38s` `Come crawling faster.`
+- `38.5-42s` `Master of puppets, I'm pulling your strings.`
+- `42.5-45s` `Twisting your mind and smashing your dreams.`
+- `45.5-48s` `Blinded by me, you can't see a thing.`
+- `48.5-51s` `Just call my name, 'cause I'll hear you scream.`
+- `51.5-52.5s` `Master, master.`
+- `53-55s` `Just call my name, 'cause I'll hear you scream.`
+- `55.5-56.5s` `Master, master.`
+
+Against benchmark truth, this is a real segmentation win: several benchmark lyric lines that were previously swallowed into one merged block are now represented as distinct segments, and the model now surfaces recognizable versions of benchmark lines 14-19 instead of collapsing them into a single chant summary. However, the timestamps are not improved. The lyric cluster is pulled far too early relative to benchmark (fresh lyric region begins around `34s`, while benchmark lyric material does not begin until `64s` and major sung lines run through `98s`). This is materially worse than the pre-refinement rerun, whose merged lyric block at least sat closer to the right neighborhood (`42-50s`).
+
+New regressions / remaining failures:
+- **Severe early compression:** dialogue after the opening is now consistently placed much too early, with the benchmark lyric block shifted earlier by roughly `30s`.
+- **Coverage remains incomplete/inaccurate:** benchmark lines 20-21 (`Master, master, where’s the dreams...` / `you promised only lies!`) are still not recovered. Instead the rerun repeats `Just call my name...` and `Master, master.`
+- **Text fidelity drift remains:** `Master of puppets are pulling the strings!` becomes `Master of puppets, I'm pulling your strings.`; `So eager to leave daddy.` becomes `So eager to leave, David.`; `Killing the man ... killing the idea.` becomes `Killing a man ... killing an idea.`
+- **Tail remains early:** the preorder line lands at `71.5-74s` instead of the benchmark `122-124s`.
+
+Bottom line: the prompt refinement succeeded at the narrow segmentation goal but exposed / worsened timeline placement. The fresh result is more benchmark-faithful in line splitting inside the lyric block, but substantially less benchmark-faithful in timestamp alignment, and it still introduces lyrical substitution/repetition errors.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ⚠️ Partial
 
-**What We Built:** Pending.
+**What We Built:** A prompt-only lyric-segmentation refinement plus a verified canonical rerun record. The rerun proves the refined prompt can break the previously oversized merged sung-vocal block into multiple line-level dialogue segments that more closely mirror benchmark lyric boundaries. But the same rerun also shows that timestamp fidelity regressed sharply: the lyric region is now dragged much earlier than the benchmark timeline, several lyric lines are still substituted or repeated, and late-scene dialogue remains badly compressed forward.
 
 **Commits:**
-- Pending.
+- `docs: record lyric segmentation rerun findings` (verification writeup commit; see current git history for final hash)
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** Prompting can improve structural segmentation without improving timeline anchoring. For this lane, lyric inclusion and lyric splitting are no longer the dominant blockers; timestamp placement / runtime anchoring is. Future work should preserve the new anti-merge behavior while specifically constraining sung-vocal timestamps to the actual later-occurring region instead of letting the model front-load the recovered lyrics.
 
 ---
 
-*Created on 2026-04-04*
+*Completed on 2026-04-04*
