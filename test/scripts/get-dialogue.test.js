@@ -1519,6 +1519,8 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts.some((prompt) => prompt.includes('If adjacent words are one uninterrupted utterance from the same voice')));
       ok(completionPrompts.some((prompt) => prompt.includes('For sung material, do not collapse multiple audibly distinct lyric lines, chant-like hooks, or repeated refrains into one oversized segment')));
       ok(completionPrompts.some((prompt) => prompt.includes('Break sung or chant-like vocals into separate dialogue_segments whenever wording, timing, pauses, repetition, or delivery are audibly distinct')));
+      ok(completionPrompts.some((prompt) => prompt.includes('Treat long non-vocal gaps, instrumental stretches, and silence/music-only spans as timeline evidence that later vocal lines belong later; keep those gaps instead of bridging across them')));
+      ok(completionPrompts.some((prompt) => prompt.includes('Do not move a later lyric line earlier just because it appears to share the same singer, melody, hook, or section type as an earlier vocal phrase')));
       ok(completionPrompts.some((prompt) => prompt.includes('Do not compress the whole chunk\'s dialogue into the opening seconds or pull later lyric lines earlier to cover a larger musical region')));
       is(result.artifacts.dialogueData.totalDuration, 10);
       ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.start >= 4));
@@ -1628,6 +1630,8 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts[0].includes('Include audible spoken lines, sung lyrics, chant-like vocals, and other clearly vocalized words when they are present and relevant to the media'));
       ok(completionPrompts[0].includes('For sung material, do not collapse multiple audibly distinct lyric lines, chant-like hooks, or repeated refrains into one oversized segment'));
       ok(completionPrompts[0].includes('Break sung or chant-like vocals into separate dialogue_segments whenever wording, timing, pauses, repetition, or delivery are audibly distinct'));
+      ok(completionPrompts[0].includes('Treat long non-vocal gaps, instrumental stretches, and silence/music-only spans as timeline evidence that later vocal lines belong later; keep those gaps instead of bridging across them'));
+      ok(completionPrompts[0].includes('Do not move a later lyric line earlier just because it appears to share the same singer, melody, hook, or section type as an earlier vocal phrase'));
       ok(completionPrompts[0].includes('Exclude purely instrumental or otherwise non-vocal sections from dialogue_segments'));
       ok(completionPrompts[0].includes('Do not compress the whole file\'s dialogue into the opening seconds or pull later lyric lines earlier to cover a larger musical region'));
       ok(completionPrompts[0].includes('If no audible spoken or sung words are detected, return an empty dialogue_segments array'));

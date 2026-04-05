@@ -2226,6 +2226,8 @@ ${runtimeAnchor}- Return JSON only. No markdown or explanation.
 - Treat this as a vocal-script extraction task, not a speech-only dialogue pass. Include audible spoken lines, sung lyrics, chant-like vocals, and other clearly vocalized words when they are present and relevant to the media.
 - For sung material, do not collapse multiple audibly distinct lyric lines, chant-like hooks, or repeated refrains into one oversized segment.
 - Break sung or chant-like vocals into separate dialogue_segments whenever wording, timing, pauses, repetition, or delivery are audibly distinct.
+- Treat long non-vocal gaps, instrumental stretches, and silence/music-only spans as timeline evidence that later vocal lines belong later; keep those gaps instead of bridging across them.
+- Do not move a later lyric line earlier just because it appears to share the same singer, melody, hook, or section type as an earlier vocal phrase.
 - Exclude purely instrumental or otherwise non-vocal sections from dialogue_segments.
 - Do not compress the whole file's dialogue into the opening seconds or pull later lyric lines earlier to cover a larger musical region; place each line where it actually occurs in the full timeline.
 - If no audible spoken or sung words are detected, return an empty dialogue_segments array.`;
@@ -2440,6 +2442,8 @@ Rules:
 - Treat this as a vocal-script extraction task for this chunk, not a speech-only dialogue pass. Include audible spoken lines, sung lyrics, chant-like vocals, and other clearly vocalized words when they are present and relevant in the chunk.
 - For sung material, do not collapse multiple audibly distinct lyric lines, chant-like hooks, or repeated refrains into one oversized segment.
 - Break sung or chant-like vocals into separate dialogue_segments whenever wording, timing, pauses, repetition, or delivery are audibly distinct.
+- Treat long non-vocal gaps, instrumental stretches, and silence/music-only spans as timeline evidence that later vocal lines belong later; keep those gaps instead of bridging across them.
+- Do not move a later lyric line earlier just because it appears to share the same singer, melody, hook, or section type as an earlier vocal phrase.
 - Exclude purely instrumental or otherwise non-vocal sections from dialogue_segments.
 - Do not compress the whole chunk's dialogue into the opening seconds or pull later lyric lines earlier to cover a larger musical region; spread timestamps across the actual chunk timeline where lines occur.
 - If no audible spoken or sung words are detected, return an empty dialogue_segments array.
