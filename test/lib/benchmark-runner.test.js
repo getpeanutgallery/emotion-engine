@@ -477,6 +477,177 @@ test('benchmark runner - recommendation comparator supports ignored volatile met
   assert(result.artifactResults[0].skips.some((skip) => skip.path === 'ai.usage.input'));
 });
 
+test('benchmark runner - truth-declared _benchmark.ignorePaths are stripped from truth comparison and surfaced as ignored differences', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-recommendation-truth-directives');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempRecommendationFixture(rootDir, {
+    truthPayload: {
+      _benchmark: {
+        ignorePaths: ['$.generatedAt', '$.ai']
+      },
+      generatedAt: '2026-03-26T00:00:00.000Z',
+      pipelineVersion: '1.0',
+      text: 'Front-load the strongest spectacle.',
+      reasoning: 'The opening is weak, while later visuals are stronger.',
+      confidence: 0.92,
+      keyFindings: ['Opening underperforms.', 'Mid-video spectacle works.'],
+      suggestions: ['Open on action.', 'Trim exposition.'],
+      failedChunks: 0,
+      ai: {
+        attempt: 1,
+        provider: 'openrouter',
+        model: 'openai/gpt-5.4',
+        failover: null,
+        toolLoop: { turns: 2, validatorCalls: 2 },
+        usage: { input: 100, output: 50 }
+      }
+    },
+    outputPayload: {
+      generatedAt: '2026-03-27T12:34:56.000Z',
+      pipelineVersion: '1.0',
+      text: 'Front-load the strongest spectacle.',
+      reasoning: 'The opening is weak, while later visuals are stronger.',
+      confidence: 0.92,
+      keyFindings: ['Opening underperforms.', 'Mid-video spectacle works.'],
+      suggestions: ['Open on action.', 'Trim exposition.'],
+      failedChunks: 0,
+      ai: {
+        attempt: 2,
+        provider: 'openrouter',
+        model: 'openai/gpt-5.4',
+        failover: null,
+        toolLoop: { turns: 3, validatorCalls: 1 },
+        usage: { input: 999, output: 111 },
+        cache: { hit: true }
+      }
+    }
+  });
+
+  const benchmarkPath = path.join(rootDir, 'benchmarks', 'fixtures', 'temp-recommendation-fixture', 'benchmark.json');
+  const benchmark = JSON.parse(fs.readFileSync(benchmarkPath, 'utf8'));
+  delete benchmark.artifacts[0].comparator.options.ignorePaths;
+  fs.writeFileSync(benchmarkPath, JSON.stringify(benchmark, null, 2), 'utf8');
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark recommendation truth directives',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-recommendation-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(result.status, 'pass');
+  assert.strictEqual(artifact.status, 'pass');
+  assert.deepStrictEqual(artifact.comparator.directives.truthIgnorePaths, ['$.generatedAt', '$.ai']);
+  assert.deepStrictEqual(artifact.comparator.directives.comparatorIgnorePaths, []);
+  assert(artifact.comparator.directives.effectiveIgnorePaths.includes('$.generatedAt'));
+  assert(artifact.comparator.directives.effectiveIgnorePaths.includes('$.ai'));
+  assert(!artifact.fieldResults.some((field) => field.path.includes('_benchmark')));
+  assert(artifact.skips.some((skip) => skip.path === 'generatedAt'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'generatedAt'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'ai.usage.input'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'ai.cache'));
+  assert.strictEqual(artifact.counts.ignoredDifferenceFields, artifact.ignoredDifferences.length);
+  assert.strictEqual(result.aggregate.coverage.ignoredDifferences, artifact.ignoredDifferences.length);
+});
+
+test('benchmark runner - invalid truth _benchmark.ignorePaths fails fast', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-invalid-truth-directives');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempRecommendationFixture(rootDir, {
+    truthPayload: {
+      _benchmark: {
+        ignorePaths: ['$.generatedAt', '']
+      },
+      generatedAt: '2026-03-26T00:00:00.000Z',
+      pipelineVersion: '1.0',
+      text: 'Front-load the strongest spectacle.',
+      reasoning: 'The opening is weak, while later visuals are stronger.',
+      confidence: 0.92,
+      keyFindings: ['Opening underperforms.'],
+      suggestions: ['Open on action.'],
+      failedChunks: 0,
+      ai: { attempt: 1, provider: 'openrouter', model: 'openai/gpt-5.4', failover: null, toolLoop: { turns: 2, validatorCalls: 2 }, usage: { input: 100, output: 50 } }
+    }
+  });
+
+  const benchmarkPath = path.join(rootDir, 'benchmarks', 'fixtures', 'temp-recommendation-fixture', 'benchmark.json');
+  const benchmark = JSON.parse(fs.readFileSync(benchmarkPath, 'utf8'));
+  delete benchmark.artifacts[0].comparator.options.ignorePaths;
+  fs.writeFileSync(benchmarkPath, JSON.stringify(benchmark, null, 2), 'utf8');
+
+  assert.throws(() => runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark invalid truth directives',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-recommendation-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  }), /Invalid ignorePaths/);
+});
+
+test('benchmark runner - truth-declared ignorePaths suppress extra output-only fields even when truth omits them', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-extra-output-ignore');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempFixture(rootDir, {
+    truthPayload: {
+      _benchmark: {
+        ignorePaths: ['$.analysisMode', '$.coverage']
+      },
+      dialogue_segments: [
+        { start: 1, end: 3, speaker: 'Speaker 1', text: 'Wake up now.', confidence: 0.98 }
+      ],
+      summary: 'Trailer dialogue sample.',
+      totalDuration: 20,
+      handoffContext: null
+    },
+    outputPayload: {
+      dialogue_segments: [
+        { start: 1, end: 3, speaker: 'Speaker 1', text: 'Wake up now.', confidence: 0.98 }
+      ],
+      summary: 'Trailer dialogue sample.',
+      totalDuration: 20,
+      handoffContext: null,
+      analysisMode: 'chunked',
+      coverage: { start: 0, end: 20, duration: 20, complete: true }
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark extra output ignore',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(result.status, 'pass');
+  assert.strictEqual(artifact.status, 'pass');
+  assert(!artifact.errors.some((entry) => entry.path === 'analysisMode'));
+  assert(!artifact.errors.some((entry) => entry.path === 'coverage'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'analysisMode'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'coverage'));
+});
+
 function makeTempChunkAnalysisFixture(rootDir, options = {}) {
   const configDir = path.join(rootDir, 'configs');
   const benchmarkDir = path.join(rootDir, 'benchmarks', 'fixtures', 'temp-chunk-analysis-fixture');

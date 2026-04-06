@@ -1,4 +1,13 @@
 {
+  "_benchmark": {
+    "ignorePaths": [
+      "$.analysisMode",
+      "$.timingMode",
+      "$.sourceStrategy",
+      "$.coverage",
+      "$.provenance"
+    ]
+  },
   "segments": [
     {
       "start": 0,

@@ -1,4 +1,13 @@
 {
+  "_benchmark": {
+    "ignorePaths": [
+      "$.analysisMode",
+      "$.timingMode",
+      "$.sourceStrategy",
+      "$.coverage",
+      "$.provenance"
+    ]
+  },
   "vocal_segments": [
     {
       "start": 64,
@@ -21,7 +30,7 @@
     {
       "start": 76,
       "end": 78,
-      "text": "Master of puppets I’m pulling your strings",
+      "text": "Master of puppets I\u2019m pulling your strings",
       "confidence": 0.9,
       "performer": "Metallica lead vocal",
       "performer_id": "voc_001",
@@ -39,7 +48,7 @@
     {
       "start": 84,
       "end": 86,
-      "text": "Blinded by me, you can’t see a thing",
+      "text": "Blinded by me, you can\u2019t see a thing",
       "confidence": 0.9,
       "performer": "Metallica lead vocal",
       "performer_id": "voc_001",
@@ -48,7 +57,7 @@
     {
       "start": 87,
       "end": 88,
-      "text": "Just call my name, ‘cause I’ll hear you scream",
+      "text": "Just call my name, \u2018cause I\u2019ll hear you scream",
       "confidence": 0.9,
       "performer": "Metallica lead vocal",
       "performer_id": "voc_001",
@@ -66,7 +75,7 @@
     {
       "start": 91,
       "end": 94,
-      "text": "Where’s the dreams that I’ve been after?",
+      "text": "Where\u2019s the dreams that I\u2019ve been after?",
       "confidence": 0.9,
       "performer": "Metallica lead vocal",
       "performer_id": "voc_001",
@@ -109,7 +118,7 @@
       "delivery": "chant"
     }
   ],
-  "summary": "Metallica vocal refrains and lyric lines from “Master of Puppets” drive the trailer's sung music-vocals lane from the first \"Obey your master\" chant through the recurring \"Master, master\" refrain.",
+  "summary": "Metallica vocal refrains and lyric lines from \u201cMaster of Puppets\u201d drive the trailer's sung music-vocals lane from the first \"Obey your master\" chant through the recurring \"Master, master\" refrain.",
   "hasVocals": true,
   "totalDuration": 140.042449,
   "recognizedSong": {
@@ -126,7 +135,7 @@
         ],
         "matchedLyrics": [
           "Obey your master",
-          "Master, master, where’s the dreams that I’ve been after?",
+          "Master, master, where\u2019s the dreams that I\u2019ve been after?",
           "Master, master, you promised only lies!"
         ],
         "timeRanges": [

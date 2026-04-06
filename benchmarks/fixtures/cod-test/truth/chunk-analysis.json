@@ -1,4 +1,10 @@
 {
+  "_benchmark": {
+    "ignorePaths": [
+      "$.chunks[*].tokens",
+      "$.totalTokens"
+    ]
+  },
   "chunks": [
     {
       "chunkIndex": 0,
@@ -18,7 +24,7 @@
         },
         "excitement": {
           "score": 4,
-          "reasoning": "High-production destruction scenes offer some visual punch, but the cliché intro suppresses genuine excitement."
+          "reasoning": "High-production destruction scenes offer some visual punch, but the clich\u00e9 intro suppresses genuine excitement."
         }
       },
       "dominant_emotion": "boredom",
@@ -188,7 +194,7 @@
         },
         "excitement": {
           "score": 6,
-          "reasoning": "High-intensity music and detailed mech designs maintain engagement despite cliché dialogue."
+          "reasoning": "High-intensity music and detailed mech designs maintain engagement despite clich\u00e9 dialogue."
         }
       },
       "dominant_emotion": "excitement",
@@ -214,7 +220,7 @@
       "emotions": {
         "patience": {
           "score": 4,
-          "reasoning": "The quick cuts keep me from scrolling immediately, but the cliché 'stop looking backwards' dialogue tests my limited patience."
+          "reasoning": "The quick cuts keep me from scrolling immediately, but the clich\u00e9 'stop looking backwards' dialogue tests my limited patience."
         },
         "boredom": {
           "score": 3,
@@ -248,7 +254,7 @@
       "emotions": {
         "patience": {
           "score": 7,
-          "reasoning": "Visuals change every 1-2 seconds satisfying the 3-second hook rule, but the dialogue is a generic military cliché."
+          "reasoning": "Visuals change every 1-2 seconds satisfying the 3-second hook rule, but the dialogue is a generic military clich\u00e9."
         },
         "boredom": {
           "score": 3,
@@ -384,7 +390,7 @@
       "emotions": {
         "patience": {
           "score": 8,
-          "reasoning": "Fast cuts and clear action keep me watching—no slow buildup or corporate intros. The visual punch in first frame grabs attention immediately."
+          "reasoning": "Fast cuts and clear action keep me watching\u2014no slow buildup or corporate intros. The visual punch in first frame grabs attention immediately."
         },
         "boredom": {
           "score": 2,
@@ -452,7 +458,7 @@
       "emotions": {
         "patience": {
           "score": 6,
-          "reasoning": "The dialogue is a bit cliché ('brink of collapse'), but the constant visual pattern interrupts and surreal environments keep me from scrolling."
+          "reasoning": "The dialogue is a bit clich\u00e9 ('brink of collapse'), but the constant visual pattern interrupts and surreal environments keep me from scrolling."
         },
         "boredom": {
           "score": 3,
@@ -460,7 +466,7 @@
         },
         "excitement": {
           "score": 8,
-          "reasoning": "The visuals are wild—especially the curved road in the sky and the floating islands. It's visually striking and the high-energy music matches the chaos perfectly."
+          "reasoning": "The visuals are wild\u2014especially the curved road in the sky and the floating islands. It's visually striking and the high-energy music matches the chaos perfectly."
         }
       },
       "dominant_emotion": "excitement",
@@ -758,7 +764,7 @@
       "emotions": {
         "patience": {
           "score": 7,
-          "reasoning": "First frame is blurry mess, but then boom—soldiers running and sparks. I'll stay because the action is non-stop."
+          "reasoning": "First frame is blurry mess, but then boom\u2014soldiers running and sparks. I'll stay because the action is non-stop."
         },
         "boredom": {
           "score": 2,
@@ -864,7 +870,7 @@
         },
         "boredom": {
           "score": 5,
-          "reasoning": "Static text screen triggers the '2-second rule' dislike, and the voiceover uses cliché buzzwords."
+          "reasoning": "Static text screen triggers the '2-second rule' dislike, and the voiceover uses clich\u00e9 buzzwords."
         },
         "excitement": {
           "score": 7,
@@ -890,7 +896,7 @@
       "startTime": 130,
       "endTime": 135,
       "status": "success",
-      "summary": "Fast-paced action montage featuring hand-to-hand combat, gunplay, and a vehicle driving through snow, accompanied by a cliché dramatic voiceover.",
+      "summary": "Fast-paced action montage featuring hand-to-hand combat, gunplay, and a vehicle driving through snow, accompanied by a clich\u00e9 dramatic voiceover.",
       "emotions": {
         "patience": {
           "score": 3,
@@ -936,7 +942,7 @@
         },
         "excitement": {
           "score": 9,
-          "reasoning": "Explosions, magic, snow, combat—high sensory overload matches my dopamine needs."
+          "reasoning": "Explosions, magic, snow, combat\u2014high sensory overload matches my dopamine needs."
         }
       },
       "dominant_emotion": "excitement",

@@ -1,4 +1,10 @@
 {
+  "_benchmark": {
+    "ignorePaths": [
+      "$.generatedAt",
+      "$.ai"
+    ]
+  },
   "generatedAt": "2026-03-26T13:35:50.598Z",
   "pipelineVersion": "1.0",
   "text": "Front-load the strongest surreal/action imagery and strip out the generic trailer setup, because the biggest retention leak is the opening and any later exposition/title-card stretches. The edit already proves it can hold attention when it delivers rapid visual novelty, so the goal is to re-cut around those peaks and compress the corporate CTA material at the end. Keep the emotional profile as high-intensity, but create clearer spike-and-release pacing so the second half feels escalatory instead of long.",

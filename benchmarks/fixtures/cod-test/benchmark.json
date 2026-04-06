@@ -24,7 +24,10 @@
         "profile": "dialogue-default",
         "options": {
           "timingToleranceSeconds": 2,
-          "unknownSentinels": ["unknown", "ambiguous"]
+          "unknownSentinels": [
+            "unknown",
+            "ambiguous"
+          ]
         }
       },
       "required": true
@@ -45,7 +48,10 @@
         "profile": "music-default",
         "options": {
           "timingToleranceSeconds": 2,
-          "unknownSentinels": ["unknown", "ambiguous"]
+          "unknownSentinels": [
+            "unknown",
+            "ambiguous"
+          ]
         }
       },
       "required": true
@@ -66,7 +72,10 @@
         "profile": "music-vocals-default",
         "options": {
           "timingToleranceSeconds": 2,
-          "unknownSentinels": ["unknown", "ambiguous"]
+          "unknownSentinels": [
+            "unknown",
+            "ambiguous"
+          ]
         }
       },
       "required": true
@@ -87,8 +96,10 @@
         "profile": "recommendation-default",
         "options": {
           "numericTolerance": 0.1,
-          "unknownSentinels": ["unknown", "ambiguous"],
-          "ignorePaths": ["$.generatedAt", "$.ai"]
+          "unknownSentinels": [
+            "unknown",
+            "ambiguous"
+          ]
         }
       },
       "required": true
@@ -110,8 +121,10 @@
         "options": {
           "timingToleranceSeconds": 2,
           "numericTolerance": 0.1,
-          "unknownSentinels": ["unknown", "ambiguous"],
-          "ignorePaths": ["$.chunks[*].tokens", "$.totalTokens"]
+          "unknownSentinels": [
+            "unknown",
+            "ambiguous"
+          ]
         }
       },
       "required": true
@@ -133,8 +146,10 @@
         "options": {
           "timingToleranceSeconds": 2,
           "numericTolerance": 0.1,
-          "unknownSentinels": ["unknown", "ambiguous"],
-          "ignorePaths": ["$.generatedAt"]
+          "unknownSentinels": [
+            "unknown",
+            "ambiguous"
+          ]
         }
       },
       "required": true
@@ -156,8 +171,10 @@
         "options": {
           "timingToleranceSeconds": 2,
           "numericTolerance": 0.1,
-          "unknownSentinels": ["unknown", "ambiguous"],
-          "ignorePaths": ["$.generatedAt", "$.criticalMoments[*].context"]
+          "unknownSentinels": [
+            "unknown",
+            "ambiguous"
+          ]
         }
       },
       "required": true

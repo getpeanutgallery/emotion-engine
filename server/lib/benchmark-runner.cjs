@@ -227,6 +227,52 @@ function isIgnoredPath(pathString, ignorePaths = []) {
   });
 }
 
+function validateIgnorePaths(ignorePaths, label) {
+  if (!Array.isArray(ignorePaths) || ignorePaths.some((value) => typeof value !== 'string' || value.trim().length === 0)) {
+    throw new Error(`Invalid ignorePaths for ${label}`);
+  }
+}
+
+function normalizeIgnorePaths(ignorePaths = []) {
+  return [...new Set(ignorePaths.map((value) => value.trim()))];
+}
+
+function extractTruthBenchmarkDirectives(truthData, artifact, truthAbsolutePath) {
+  if (!isPlainObject(truthData) || !Object.prototype.hasOwnProperty.call(truthData, '_benchmark')) {
+    return {
+      truthData,
+      directives: {
+        ignorePaths: []
+      }
+    };
+  }
+
+  const benchmarkDirectives = truthData._benchmark;
+  if (!isPlainObject(benchmarkDirectives)) {
+    throw new Error(`Invalid _benchmark block for ${artifact.artifactKey}: ${truthAbsolutePath}`);
+  }
+
+  const supportedDirectiveKeys = new Set(['ignorePaths']);
+  for (const key of Object.keys(benchmarkDirectives)) {
+    if (!supportedDirectiveKeys.has(key)) {
+      throw new Error(`Unsupported _benchmark directive "${key}" for ${artifact.artifactKey}: ${truthAbsolutePath}`);
+    }
+  }
+
+  const ignorePaths = benchmarkDirectives.ignorePaths || [];
+  validateIgnorePaths(ignorePaths, `${artifact.artifactKey} truth _benchmark.ignorePaths`);
+
+  const sanitizedTruthData = { ...truthData };
+  delete sanitizedTruthData._benchmark;
+
+  return {
+    truthData: sanitizedTruthData,
+    directives: {
+      ignorePaths: normalizeIgnorePaths(ignorePaths)
+    }
+  };
+}
+
 function getArrayAlignmentKey(pathString, comparator, item) {
   if (!isPlainObject(item)) return null;
 
@@ -266,7 +312,7 @@ function getArrayAlignmentKey(pathString, comparator, item) {
   return null;
 }
 
-function createComparator(artifact) {
+function createComparator(artifact, directives = {}) {
   if (artifact.comparator.kind !== 'json-structured') {
     throw new Error(`Unsupported comparator kind: ${artifact.comparator.kind}`);
   }
@@ -276,12 +322,18 @@ function createComparator(artifact) {
     throw new Error(`Unsupported comparator profile for MVP: ${artifact.comparator.profile}`);
   }
 
+  const comparatorIgnorePaths = artifact.comparator.options?.ignorePaths || [];
+  const truthIgnorePaths = directives.ignorePaths || [];
+  validateIgnorePaths(comparatorIgnorePaths, `${artifact.artifactKey} comparator options`);
+  validateIgnorePaths(truthIgnorePaths, `${artifact.artifactKey} truth directives`);
+
   const resolvedOptions = {
     timingToleranceSeconds: DEFAULT_TIMING_TOLERANCE_SECONDS,
     numericTolerance: DEFAULT_NUMERIC_TOLERANCE,
     unknownSentinels: [...DEFAULT_UNKNOWN_SENTINELS],
     ignorePaths: [],
-    ...(artifact.comparator.options || {})
+    ...(artifact.comparator.options || {}),
+    ignorePaths: normalizeIgnorePaths([...comparatorIgnorePaths, ...truthIgnorePaths])
   };
 
   if (!Number.isFinite(resolvedOptions.timingToleranceSeconds) || resolvedOptions.timingToleranceSeconds < 0) {
@@ -296,14 +348,17 @@ function createComparator(artifact) {
     throw new Error(`Invalid unknownSentinels for ${artifact.artifactKey}`);
   }
 
-  if (!Array.isArray(resolvedOptions.ignorePaths) || resolvedOptions.ignorePaths.some((value) => typeof value !== 'string' || value.trim().length === 0)) {
-    throw new Error(`Invalid ignorePaths for ${artifact.artifactKey}`);
-  }
+  validateIgnorePaths(resolvedOptions.ignorePaths, artifact.artifactKey);
 
   return {
     kind: artifact.comparator.kind,
     profile: artifact.comparator.profile,
-    resolvedOptions
+    resolvedOptions,
+    directives: {
+      comparatorIgnorePaths: normalizeIgnorePaths(comparatorIgnorePaths),
+      truthIgnorePaths: normalizeIgnorePaths(truthIgnorePaths),
+      effectiveIgnorePaths: [...resolvedOptions.ignorePaths]
+    }
   };
 }
 
@@ -312,6 +367,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
   const failures = [];
   const skips = [];
   const errors = [];
+  const ignoredDifferences = [];
 
   let hardError = null;
 
@@ -354,7 +410,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
     hardError = hardError || reason;
   }
 
-  function emitIgnoredSubtree(pathString, truthValue, outputValue, reason = 'Comparator ignored volatile field') {
+  function emitIgnoredSubtree(pathString, truthValue, outputValue, reason = 'Comparator ignored benchmark path') {
     if (Array.isArray(truthValue)) {
       truthValue.forEach((entry, index) => {
         emitIgnoredSubtree(`${pathString}[${index}]`, entry, Array.isArray(outputValue) ? outputValue[index] : undefined, reason);
@@ -377,6 +433,73 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
       outputValue,
       reason
     });
+  }
+
+  function emitIgnoredDifference(pathString, reason, truthValue, outputValue) {
+    ignoredDifferences.push({
+      path: pathString,
+      truthValue,
+      outputValue,
+      reason
+    });
+  }
+
+  function collectIgnoredDifferences(pathString, truthValue, outputValue) {
+    if (Array.isArray(truthValue)) {
+      if (!Array.isArray(outputValue)) {
+        emitIgnoredDifference(pathString, 'Ignored path output shape mismatch: expected array', truthValue, outputValue);
+        return;
+      }
+
+      if (truthValue.length != outputValue.length) {
+        emitIgnoredDifference(pathString, `Ignored path array length mismatch: truth=${truthValue.length} output=${outputValue.length}`, { length: truthValue.length }, { length: outputValue.length });
+      }
+
+      const maxLength = Math.max(truthValue.length, outputValue.length);
+      for (let i = 0; i < maxLength; i += 1) {
+        const childPath = `${pathString}[${i}]`;
+        if (i >= truthValue.length) {
+          emitIgnoredDifference(childPath, 'Ignored path contains extra output item', undefined, outputValue[i]);
+          continue;
+        }
+        if (i >= outputValue.length) {
+          emitIgnoredDifference(childPath, 'Ignored path is missing output item', truthValue[i], undefined);
+          continue;
+        }
+        collectIgnoredDifferences(childPath, truthValue[i], outputValue[i]);
+      }
+      return;
+    }
+
+    if (isPlainObject(truthValue)) {
+      if (!isPlainObject(outputValue)) {
+        emitIgnoredDifference(pathString, 'Ignored path output shape mismatch: expected object', truthValue, outputValue);
+        return;
+      }
+
+      const truthKeys = new Set(Object.keys(truthValue));
+      const outputKeys = new Set(Object.keys(outputValue));
+
+      for (const key of outputKeys) {
+        if (!truthKeys.has(key)) {
+          emitIgnoredDifference(pathString === '$' ? key : `${pathString}.${key}`, 'Ignored path contains extra output field', undefined, outputValue[key]);
+        }
+      }
+
+      for (const key of truthKeys) {
+        const childPath = pathString === '$' ? key : `${pathString}.${key}`;
+        if (!outputKeys.has(key)) {
+          emitIgnoredDifference(childPath, 'Ignored path is missing output field', truthValue[key], undefined);
+          continue;
+        }
+        collectIgnoredDifferences(childPath, truthValue[key], outputValue[key]);
+      }
+      return;
+    }
+
+    if (truthValue !== outputValue) {
+      emitIgnoredDifference(pathString, 'Ignored path values differed', truthValue, outputValue);
+    }
   }
 
   function chooseRule(pathString, truthValue) {
@@ -514,6 +637,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
 
     if (isIgnoredPath(currentPath, comparator.resolvedOptions.ignorePaths)) {
       emitIgnoredSubtree(currentPath, truthValue, outputValue);
+      collectIgnoredDifferences(currentPath, truthValue, outputValue);
       return;
     }
 
@@ -577,6 +701,10 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
       for (let i = 0; i < maxLength; i += 1) {
         const childPath = `${currentPath}[${i}]`;
         if (i >= truthValue.length) {
+          if (isIgnoredPath(childPath, comparator.resolvedOptions.ignorePaths)) {
+            emitIgnoredDifference(childPath, 'Ignored path contains extra output item', undefined, outputValue[i]);
+            continue;
+          }
           emitHardError(childPath, 'Truth array missing item present in output', undefined, outputValue[i]);
           continue;
         }
@@ -602,7 +730,12 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
 
       for (const key of outputKeys) {
         if (!truthKeySet.has(key)) {
-          emitHardError(currentPath === '$' ? key : `${currentPath}.${key}`, 'Truth object missing field present in output', undefined, outputValue[key]);
+          const childPath = currentPath === '$' ? key : `${currentPath}.${key}`;
+          if (isIgnoredPath(childPath, comparator.resolvedOptions.ignorePaths)) {
+            emitIgnoredDifference(childPath, 'Ignored path contains extra output field', undefined, outputValue[key]);
+            continue;
+          }
+          emitHardError(childPath, 'Truth object missing field present in output', undefined, outputValue[key]);
         }
       }
 
@@ -628,7 +761,8 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
     skippedFields: fieldResults.filter((result) => result.status === 'skip').length,
     passedFields: fieldResults.filter((result) => result.status === 'pass').length,
     failedFields: fieldResults.filter((result) => result.status === 'fail').length,
-    erroredFields: fieldResults.filter((result) => result.status === 'error').length
+    erroredFields: fieldResults.filter((result) => result.status === 'error').length,
+    ignoredDifferenceFields: ignoredDifferences.length
   };
 
   const accuracyRate = counts.scoreableFields > 0 ? counts.passedFields / counts.scoreableFields : null;
@@ -656,7 +790,8 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
     comparator: {
       kind: comparator.kind,
       profile: comparator.profile,
-      resolvedOptions: comparator.resolvedOptions
+      resolvedOptions: comparator.resolvedOptions,
+      directives: comparator.directives
     },
     counts,
     accuracy: {
@@ -672,6 +807,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
     },
     failures,
     skips,
+    ignoredDifferences,
     errors,
     fieldResults,
     summary,
@@ -700,11 +836,12 @@ function buildMarkdownSummary(summary) {
   lines.push(`- Accuracy: ${summary.accuracy.passed}/${summary.accuracy.passed + summary.accuracy.failed} scoreable fields passed${summary.accuracy.rate === null ? '' : ` (${(summary.accuracy.rate * 100).toFixed(1)}%)`}`);
   lines.push(`- Coverage: ${summary.coverage.scoreable}/${summary.coverage.totalTruthFields} truth fields scoreable${summary.coverage.rate === null ? '' : ` (${(summary.coverage.rate * 100).toFixed(1)}%)`}`);
   lines.push(`- Skipped truth fields: ${summary.coverage.skipped}`);
+  lines.push(`- Ignored differences surfaced outside score: ${summary.coverage.ignoredDifferences}`);
   lines.push('');
   lines.push('## Artifacts');
   lines.push('');
   for (const artifact of summary.artifacts) {
-    lines.push(`- **${artifact.artifactKey}** — ${artifact.status}; accuracy=${artifact.accuracyRate === null ? 'n/a' : (artifact.accuracyRate * 100).toFixed(1) + '%'}, coverage=${artifact.coverageRate === null ? 'n/a' : (artifact.coverageRate * 100).toFixed(1) + '%'}`);
+    lines.push(`- **${artifact.artifactKey}** — ${artifact.status}; accuracy=${artifact.accuracyRate === null ? 'n/a' : (artifact.accuracyRate * 100).toFixed(1) + '%'}, coverage=${artifact.coverageRate === null ? 'n/a' : (artifact.coverageRate * 100).toFixed(1) + '%'}, ignoredDiffs=${artifact.ignoredDifferenceCount}`);
   }
   lines.push('');
   lines.push(summary.summary);
@@ -742,7 +879,6 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
 
   const artifactResults = [];
   for (const artifact of manifest.artifacts) {
-    const comparator = createComparator(artifact);
     const truthAbsolutePath = path.resolve(manifestDir, artifact.truth.path);
     const outputResolution = resolvePhase1ArtifactPath(outputDir, artifact.artifactKey, { config, strict: artifact.required });
     const outputAbsolutePath = outputResolution.resolvedPath || path.resolve(outputDir, artifact.output.path);
@@ -755,7 +891,10 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
       throw new Error(`Produced artifact missing for ${artifact.artifactKey}: ${outputAbsolutePath}`);
     }
 
-    const truthData = readJsonFile(truthAbsolutePath, `truth artifact ${artifact.artifactKey}`);
+    const rawTruthData = readJsonFile(truthAbsolutePath, `truth artifact ${artifact.artifactKey}`);
+    const truthDirectives = extractTruthBenchmarkDirectives(rawTruthData, artifact, truthAbsolutePath);
+    const comparator = createComparator(artifact, truthDirectives.directives);
+    const truthData = truthDirectives.truthData;
     const outputData = readJsonFile(outputAbsolutePath, `produced artifact ${artifact.artifactKey}`);
 
     const result = compareArtifact({
@@ -786,6 +925,7 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
     acc.passedFields += result.counts.passedFields;
     acc.failedFields += result.counts.failedFields;
     acc.erroredFields += result.counts.erroredFields;
+    acc.ignoredDifferenceFields += result.counts.ignoredDifferenceFields;
     return acc;
   }, {
     artifactsTotal: 0,
@@ -797,7 +937,8 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
     skippedFields: 0,
     passedFields: 0,
     failedFields: 0,
-    erroredFields: 0
+    erroredFields: 0,
+    ignoredDifferenceFields: 0
   });
 
   const status = totals.artifactsErrored > 0
@@ -824,7 +965,8 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
       artifactKey: result.artifactKey,
       status: result.status,
       accuracyRate: result.accuracy.rate,
-      coverageRate: result.coverage.rate
+      coverageRate: result.coverage.rate,
+      ignoredDifferenceCount: result.counts.ignoredDifferenceFields
     })),
     totals,
     accuracy: {
@@ -835,6 +977,7 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
     coverage: {
       scoreable: totals.scoreableFields,
       skipped: totals.skippedFields,
+      ignoredDifferences: totals.ignoredDifferenceFields,
       totalTruthFields: totals.totalTruthFields,
       rate: totals.totalTruthFields > 0 ? totals.scoreableFields / totals.totalTruthFields : null
     },
