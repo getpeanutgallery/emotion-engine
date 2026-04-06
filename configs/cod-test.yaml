@@ -234,7 +234,7 @@ ai:
           model: qwen/qwen3.5-397b-a17b
           params:
             max_tokens: 25000
-            timeoutMs: 10000
+            timeoutMs: 30000
             thinking:
               level: low
       - adapter:
