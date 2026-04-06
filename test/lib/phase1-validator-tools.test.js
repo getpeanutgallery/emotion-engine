@@ -76,9 +76,9 @@ test('music vocals validator accepts optional famous-song grounding with lyric e
   assert.match(contract.description, /music-vocals JSON candidate/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /recognizedSong/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /full lyric-bearing timeline coverage/i);
-  assert.match(contract.inputSchema.properties.musicVocals.description, /whole-asset context as a recall scaffold during chunk refinement/i);
+  assert.match(contract.inputSchema.properties.musicVocals.description, /whole-asset context plus any high-confidence recognizedSong match as bounded recall scaffolding during chunk refinement/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /repeated hooks and reprises as distinct segments/i);
-  assert.match(contract.inputSchema.properties.musicVocals.description, /prefer short literal fragments over polished wrong lyric variants/i);
+  assert.match(contract.inputSchema.properties.musicVocals.description, /prefer short literal fragments over polished wrong lyric variants when support is partial/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /hybrid for truly inseparable mixed delivery/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /Spoken dialogue over score is not lyric evidence/i);
 

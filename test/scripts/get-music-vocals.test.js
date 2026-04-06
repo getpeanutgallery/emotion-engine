@@ -235,7 +235,10 @@ test('Get Music Vocals Script', async (t) => {
     ok(completionPrompts[0].includes('Include only literal heard words or short partial fragments with discernible lexical content; do not paraphrase or invent missing words.'));
     ok(completionPrompts[0].includes('Prefer short literal fragments over polished wrong lyric variants when the chunk is masked or ambiguous.'));
     ok(completionPrompts[0].includes('Use hybrid only when the same continuous utterance is truly inseparable as both speech-led and music-led; otherwise split adjacent spoken and sung spans and keep only the sung side here.'));
-    ok(completionPrompts[0].includes('Use rollingSummary and whole-asset context as a checklist so late and brief lyric windows are revisited instead of forgotten.'));
+    ok(completionPrompts[0].includes('Use rollingSummary, whole-asset context, and any high-confidence recognizedSong match as a checklist so late and brief lyric windows are revisited instead of forgotten.'));
+    ok(completionPrompts[0].includes('Treat whole-asset lyric phrases and recognizedSong matches as bounded recall scaffolding only: confirm, shorten, correct, or reject them based on this chunk rather than copying them blindly.'));
+    ok(completionPrompts[0].includes('If an expected canonical line is only partly supported in this chunk, emit only the shortest audibly supported fragment instead of a polished full-line rewrite.'));
+    ok(completionPrompts[0].includes('Do not promote a weak hook/vibe match into a canonical lyric line just because the likely song identity is known.'));
     ok(completionPrompts[0].includes('Use the whole-asset context as a recall scaffold: confirm, refine, or reject expected lyric-bearing moments for this window based on the actual chunk audio.'));
     ok(completionPrompts[0].includes('Spoken dialogue, narration, radio chatter, or promo VO over music are never lyric evidence.'));
   });

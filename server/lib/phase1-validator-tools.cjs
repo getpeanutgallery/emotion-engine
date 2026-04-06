@@ -277,7 +277,7 @@ function buildMusicVocalsValidatorToolContract() {
     name: MUSIC_VOCALS_TOOL_NAME,
     argumentKey: 'musicVocals',
     description: 'Validate a Phase 1 music-vocals JSON candidate against the required local schema before final submission.',
-    candidateDescription: 'Candidate music-vocals JSON with rollingSummary, vocalSummary, vocal_segments, optional famous-song grounding via recognizedSong + recognitionNotes, and optional qualityNotes. Aim for full lyric-bearing timeline coverage, use whole-asset context as a recall scaffold during chunk refinement, keep repeated hooks and reprises as distinct segments, prefer short literal fragments over polished wrong lyric variants, reserve hybrid for truly inseparable mixed delivery, and remember that spoken dialogue over score is not lyric evidence.',
+    candidateDescription: 'Candidate music-vocals JSON with rollingSummary, vocalSummary, vocal_segments, optional famous-song grounding via recognizedSong + recognitionNotes, and optional qualityNotes. Aim for full lyric-bearing timeline coverage, use whole-asset context plus any high-confidence recognizedSong match as bounded recall scaffolding during chunk refinement, keep repeated hooks and reprises as distinct segments, prefer short literal fragments over polished wrong lyric variants when support is partial, reserve hybrid for truly inseparable mixed delivery, and remember that spoken dialogue over score is not lyric evidence.',
     example: {
       rollingSummary: 'A repeated sung hook dominates the music-led vocals so far.',
       vocalSummary: 'A repeated sung hook lands over the percussion.',

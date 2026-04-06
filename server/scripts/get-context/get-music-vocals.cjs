@@ -1462,7 +1462,10 @@ Rules:
 - Do not merge multiple lyric lines into one segment.
 - Use hybrid only when the same continuous utterance is truly inseparable as both speech-led and music-led; otherwise split adjacent spoken and sung spans and keep only the sung side here.
 - Use the whole-asset context as a checklist so chunk refinement revisits late and brief lyric windows instead of forgetting them.
-- Treat whole-asset lyric phrases as recall scaffolding only: confirm, shorten, correct, or reject them based on the chunk audio rather than copying them blindly.
+- After at least one literal lyric fragment grounds a likely song, you may use a high-confidence recognizedSong hypothesis as bounded recall scaffolding for nearby lines in the same cue.
+- Treat whole-asset lyric phrases and recognizedSong matches as recall scaffolding only: confirm, shorten, correct, or reject them based on the chunk audio rather than copying them blindly.
+- If an expected canonical line is only partly supported by the audio, emit only the shortest audibly supported fragment instead of a polished full-line rewrite.
+- Do not promote a vague melody/hook match into a full canonical lyric line without audible lexical support in this asset.
 - recognizedSong is optional. Use it only when the heard sung/chant/rap evidence supports a plausible famous-song hypothesis.
 - Prefer recognizedSong.status = unknown, possible, or multiple_possible over inventing certainty.
 - Every recognizedSong candidate must cite audio-grounded evidence; literal matchedLyrics are stronger than vibe-only guesses.
@@ -1550,8 +1553,10 @@ Rules:
 - Do not skip a lyric segment merely because the phrase already appeared earlier; repeated hooks later in the trailer still need their own vocal_segments.
 - Do not merge multiple lyric lines into one segment.
 - Use hybrid only when the same continuous utterance is truly inseparable as both speech-led and music-led; otherwise split adjacent spoken and sung spans and keep only the sung side here.
-- Use rollingSummary and whole-asset context as a checklist so late and brief lyric windows are revisited instead of forgotten.
-- Treat whole-asset lyric phrases as recall scaffolding only: confirm, shorten, correct, or reject them based on this chunk rather than copying them blindly.
+- Use rollingSummary, whole-asset context, and any high-confidence recognizedSong match as a checklist so late and brief lyric windows are revisited instead of forgotten.
+- Treat whole-asset lyric phrases and recognizedSong matches as bounded recall scaffolding only: confirm, shorten, correct, or reject them based on this chunk rather than copying them blindly.
+- If an expected canonical line is only partly supported in this chunk, emit only the shortest audibly supported fragment instead of a polished full-line rewrite.
+- Do not promote a weak hook/vibe match into a canonical lyric line just because the likely song identity is known.
 - recognizedSong is optional. Use it only when the heard sung/chant/rap evidence supports a plausible famous-song hypothesis.
 - Prefer recognizedSong.status = unknown, possible, or multiple_possible over inventing certainty.
 - Every recognizedSong candidate must cite audio-grounded evidence; literal matchedLyrics are stronger than vibe-only guesses.
