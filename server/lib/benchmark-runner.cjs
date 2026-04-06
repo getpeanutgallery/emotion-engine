@@ -312,6 +312,192 @@ function getArrayAlignmentKey(pathString, comparator, item) {
   return null;
 }
 
+function getTimeAwareArrayAlignmentConfig(pathString, comparator) {
+  const comparablePath = normalizeComparablePath(pathString);
+  if (comparator.profile === 'dialogue-default' && comparablePath === 'dialogue_segments') {
+    return {
+      kind: 'time-aware-segments',
+      label: 'dialogue_segments'
+    };
+  }
+
+  if (comparator.profile === 'music-vocals-default' && comparablePath === 'vocal_segments') {
+    return {
+      kind: 'time-aware-segments',
+      label: 'vocal_segments'
+    };
+  }
+
+  return null;
+}
+
+function getSegmentTiming(item) {
+  if (!isPlainObject(item) || !Number.isFinite(item.start) || !Number.isFinite(item.end)) {
+    return null;
+  }
+
+  const start = Number(item.start);
+  const end = Number(item.end);
+  const normalizedEnd = end >= start ? end : start;
+  return {
+    start,
+    end: normalizedEnd,
+    center: (start + normalizedEnd) / 2,
+    duration: Math.max(normalizedEnd - start, 0)
+  };
+}
+
+function scoreTimeAwareSegmentCandidate(truthItem, outputItem, truthIndex, outputIndex, comparator) {
+  const truthTiming = getSegmentTiming(truthItem);
+  const outputTiming = getSegmentTiming(outputItem);
+  if (!truthTiming || !outputTiming) {
+    return null;
+  }
+
+  const overlapStart = Math.max(truthTiming.start, outputTiming.start);
+  const overlapEnd = Math.min(truthTiming.end, outputTiming.end);
+  const overlapSeconds = Math.max(0, overlapEnd - overlapStart);
+  const unionSeconds = Math.max(truthTiming.end, outputTiming.end) - Math.min(truthTiming.start, outputTiming.start);
+  const overlapRatio = unionSeconds > 0 ? overlapSeconds / unionSeconds : 0;
+  const centerDelta = Math.abs(truthTiming.center - outputTiming.center);
+  const startDelta = Math.abs(truthTiming.start - outputTiming.start);
+  const endDelta = Math.abs(truthTiming.end - outputTiming.end);
+  const indexDelta = Math.abs(truthIndex - outputIndex);
+  const searchWindowSeconds = Math.max(comparator.resolvedOptions.timingToleranceSeconds * 4, 6);
+  const eligible = overlapSeconds > 0 || centerDelta <= searchWindowSeconds || startDelta <= searchWindowSeconds || endDelta <= searchWindowSeconds;
+  if (!eligible) {
+    return null;
+  }
+
+  const score = 1000 + (overlapRatio * 1000) + (overlapSeconds * 50) - (centerDelta * 20) - (startDelta * 5) - (endDelta * 2) - indexDelta;
+  if (score <= 0) {
+    return null;
+  }
+
+  return {
+    score,
+    overlapSeconds,
+    overlapRatio,
+    centerDelta,
+    startDelta,
+    endDelta,
+    indexDelta,
+    searchWindowSeconds,
+    truthTiming,
+    outputTiming
+  };
+}
+
+function alignTimeAwareSegments(truthValue, outputValue, comparator) {
+  const truthCount = truthValue.length;
+  const outputCount = outputValue.length;
+  const dp = Array.from({ length: truthCount + 1 }, () => Array(outputCount + 1).fill(0));
+  const steps = Array.from({ length: truthCount + 1 }, () => Array(outputCount + 1).fill(null));
+  const candidates = Array.from({ length: truthCount }, () => Array(outputCount).fill(null));
+
+  for (let i = 0; i < truthCount; i += 1) {
+    for (let j = 0; j < outputCount; j += 1) {
+      candidates[i][j] = scoreTimeAwareSegmentCandidate(truthValue[i], outputValue[j], i, j, comparator);
+    }
+  }
+
+  for (let i = truthCount; i >= 0; i -= 1) {
+    for (let j = outputCount; j >= 0; j -= 1) {
+      if (i === truthCount && j === outputCount) {
+        continue;
+      }
+
+      let bestScore = Number.NEGATIVE_INFINITY;
+      let bestStep = null;
+
+      if (i < truthCount) {
+        const candidateScore = dp[i + 1][j];
+        if (candidateScore > bestScore) {
+          bestScore = candidateScore;
+          bestStep = { kind: 'skip-truth' };
+        }
+      }
+
+      if (j < outputCount) {
+        const candidateScore = dp[i][j + 1];
+        if (candidateScore > bestScore) {
+          bestScore = candidateScore;
+          bestStep = { kind: 'skip-output' };
+        }
+      }
+
+      if (i < truthCount && j < outputCount && candidates[i][j]) {
+        const candidateScore = candidates[i][j].score + dp[i + 1][j + 1];
+        if (candidateScore > bestScore) {
+          bestScore = candidateScore;
+          bestStep = { kind: 'match', candidate: candidates[i][j] };
+        }
+      }
+
+      dp[i][j] = Number.isFinite(bestScore) ? bestScore : 0;
+      steps[i][j] = bestStep;
+    }
+  }
+
+  const matches = [];
+  const unmatchedTruthIndexes = [];
+  const unmatchedOutputIndexes = [];
+  let i = 0;
+  let j = 0;
+  while (i < truthCount || j < outputCount) {
+    const step = steps[i][j];
+    if (!step) break;
+
+    if (step.kind === 'match') {
+      matches.push({
+        truthIndex: i,
+        outputIndex: j,
+        score: step.candidate.score,
+        overlapSeconds: step.candidate.overlapSeconds,
+        overlapRatio: step.candidate.overlapRatio,
+        centerDelta: step.candidate.centerDelta,
+        startDelta: step.candidate.startDelta,
+        endDelta: step.candidate.endDelta,
+        indexDelta: step.candidate.indexDelta,
+        searchWindowSeconds: step.candidate.searchWindowSeconds,
+        truthTiming: step.candidate.truthTiming,
+        outputTiming: step.candidate.outputTiming
+      });
+      i += 1;
+      j += 1;
+      continue;
+    }
+
+    if (step.kind === 'skip-truth') {
+      unmatchedTruthIndexes.push(i);
+      i += 1;
+      continue;
+    }
+
+    if (step.kind === 'skip-output') {
+      unmatchedOutputIndexes.push(j);
+      j += 1;
+      continue;
+    }
+  }
+
+  while (i < truthCount) {
+    unmatchedTruthIndexes.push(i);
+    i += 1;
+  }
+  while (j < outputCount) {
+    unmatchedOutputIndexes.push(j);
+    j += 1;
+  }
+
+  return {
+    matches,
+    unmatchedTruthIndexes,
+    unmatchedOutputIndexes,
+    totalScore: dp[0][0]
+  };
+}
+
 function createComparator(artifact, directives = {}) {
   if (artifact.comparator.kind !== 'json-structured') {
     throw new Error(`Unsupported comparator kind: ${artifact.comparator.kind}`);
@@ -368,6 +554,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
   const skips = [];
   const errors = [];
   const ignoredDifferences = [];
+  const alignments = [];
 
   let hardError = null;
 
@@ -632,6 +819,122 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
     });
   }
 
+  function compareTimeAwareSegmentArray(pathString, truthValue, outputValue, alignmentConfig) {
+    const alignment = alignTimeAwareSegments(truthValue, outputValue, comparator);
+    const matchedOutputIndexes = new Set(alignment.matches.map((entry) => entry.outputIndex));
+    const matchedTruthIndexes = new Set(alignment.matches.map((entry) => entry.truthIndex));
+    const outputTimings = outputValue.map((item) => getSegmentTiming(item));
+    const truthTimings = truthValue.map((item) => getSegmentTiming(item));
+    const searchWindowSeconds = Math.max(comparator.resolvedOptions.timingToleranceSeconds * 4, 6);
+
+    const inferSuspicion = (kind, index) => {
+      if (kind === 'truth') {
+        const timing = truthTimings[index];
+        if (!timing) return null;
+        const nearbyUnmatchedOutputs = alignment.unmatchedOutputIndexes.filter((outputIndex) => {
+          const outputTiming = outputTimings[outputIndex];
+          if (!outputTiming) return false;
+          return Math.abs(outputTiming.center - timing.center) <= searchWindowSeconds;
+        });
+        if (nearbyUnmatchedOutputs.length >= 2) {
+          return 'possible truth segment split across multiple output segments';
+        }
+        const nearbyMatchedOutputs = alignment.matches.filter((entry) => {
+          const outputTiming = outputTimings[entry.outputIndex];
+          if (!outputTiming) return false;
+          return Math.abs(outputTiming.center - timing.center) <= searchWindowSeconds;
+        });
+        if (nearbyMatchedOutputs.length >= 1 && nearbyUnmatchedOutputs.length >= 1) {
+          return 'possible merged/split neighborhood around matched output segment';
+        }
+        return null;
+      }
+
+      const timing = outputTimings[index];
+      if (!timing) return null;
+      const nearbyUnmatchedTruth = alignment.unmatchedTruthIndexes.filter((truthIndex) => {
+        const truthTiming = truthTimings[truthIndex];
+        if (!truthTiming) return false;
+        return Math.abs(truthTiming.center - timing.center) <= searchWindowSeconds;
+      });
+      if (nearbyUnmatchedTruth.length >= 2) {
+        return 'possible output segment merged across multiple truth segments';
+      }
+      const nearbyMatchedTruth = alignment.matches.filter((entry) => {
+        const truthTiming = truthTimings[entry.truthIndex];
+        if (!truthTiming) return false;
+        return Math.abs(truthTiming.center - timing.center) <= searchWindowSeconds;
+      });
+      if (nearbyMatchedTruth.length >= 1 && nearbyUnmatchedTruth.length >= 1) {
+        return 'possible merged/split neighborhood around matched truth segment';
+      }
+      return null;
+    };
+
+    if (truthValue.length !== outputValue.length) {
+      pushFieldResult({
+        path: pathString,
+        status: 'fail',
+        rule: 'structural',
+        truthValue: { length: truthValue.length },
+        outputValue: { length: outputValue.length },
+        reason: `Array length mismatch: truth=${truthValue.length} output=${outputValue.length}`
+      });
+    }
+
+    alignments.push({
+      path: pathString,
+      strategy: alignmentConfig.kind,
+      matches: alignment.matches.map((entry) => ({
+        truthIndex: entry.truthIndex,
+        outputIndex: entry.outputIndex,
+        overlapSeconds: entry.overlapSeconds,
+        overlapRatio: entry.overlapRatio,
+        centerDelta: entry.centerDelta,
+        startDelta: entry.startDelta,
+        endDelta: entry.endDelta,
+        indexDelta: entry.indexDelta,
+        score: entry.score
+      })),
+      unmatchedTruth: alignment.unmatchedTruthIndexes.map((truthIndex) => ({
+        truthIndex,
+        reason: inferSuspicion('truth', truthIndex) || 'no plausible time-aware output match',
+        segment: truthValue[truthIndex]
+      })),
+      unmatchedOutput: alignment.unmatchedOutputIndexes.map((outputIndex) => ({
+        outputIndex,
+        reason: inferSuspicion('output', outputIndex) || 'no plausible time-aware truth match',
+        segment: outputValue[outputIndex]
+      }))
+    });
+
+    for (const entry of alignment.matches) {
+      walk(`${pathString}[truth=${entry.truthIndex},output=${entry.outputIndex}]`, truthValue[entry.truthIndex], outputValue[entry.outputIndex]);
+    }
+
+    for (const truthIndex of alignment.unmatchedTruthIndexes) {
+      pushFieldResult({
+        path: `${pathString}[truth=${truthIndex}]`,
+        status: 'fail',
+        rule: 'structural',
+        truthValue: truthValue[truthIndex],
+        outputValue: undefined,
+        reason: inferSuspicion('truth', truthIndex) || 'Unmatched truth segment: no plausible time-aware output match'
+      });
+    }
+
+    for (const outputIndex of alignment.unmatchedOutputIndexes) {
+      pushFieldResult({
+        path: `${pathString}[output=${outputIndex}]`,
+        status: 'fail',
+        rule: 'structural',
+        truthValue: undefined,
+        outputValue: outputValue[outputIndex],
+        reason: inferSuspicion('output', outputIndex) || 'Unmatched output segment: no plausible time-aware truth match'
+      });
+    }
+  }
+
   function walk(pathString, truthValue, outputValue) {
     const currentPath = pathString || '$';
 
@@ -655,6 +958,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
         && outputKeys.every((key) => typeof key === 'string')
         && new Set(truthKeys).size === truthKeys.length
         && new Set(outputKeys).size === outputKeys.length;
+      const timeAwareAlignmentConfig = getTimeAwareArrayAlignmentConfig(currentPath, comparator);
 
       if (canUseKeyedAlignment) {
         if (truthValue.length !== outputValue.length) {
@@ -684,6 +988,11 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
           }
           walk(`${currentPath}[${key}]`, truthEntries.get(key), outputEntries.get(key));
         }
+        return;
+      }
+
+      if (timeAwareAlignmentConfig) {
+        compareTimeAwareSegmentArray(currentPath, truthValue, outputValue, timeAwareAlignmentConfig);
         return;
       }
 
@@ -808,6 +1117,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
     failures,
     skips,
     ignoredDifferences,
+    alignments,
     errors,
     fieldResults,
     summary,

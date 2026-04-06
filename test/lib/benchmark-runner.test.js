@@ -1423,3 +1423,182 @@ test('benchmark runner - music-vocals truth is benchmarked separately from dialo
   assert(result.artifactResults.some((artifact) => artifact.artifactKey === 'musicVocalsData' && artifact.status === 'pass'));
   assert(fs.existsSync(path.join(result.reportDir, 'artifact-results', 'musicVocalsData.json')));
 });
+
+test('benchmark runner - dialogue comparator uses time-aware alignment to avoid cascade after a missing middle segment', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-dialogue-time-aware-alignment');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempFixture(rootDir, {
+    truthPayload: {
+      dialogue_segments: [
+        { start: 0, end: 2, speaker: 'Speaker 1', text: 'Alpha.', confidence: 0.98 },
+        { start: 4, end: 6, speaker: 'Speaker 2', text: 'Bravo.', confidence: 0.98 },
+        { start: 8, end: 10, speaker: 'Speaker 3', text: 'Charlie.', confidence: 0.98 },
+        { start: 12, end: 14, speaker: 'Speaker 4', text: 'Delta.', confidence: 0.98 }
+      ],
+      summary: 'Dialogue alignment test.',
+      totalDuration: 20,
+      handoffContext: null
+    },
+    outputPayload: {
+      dialogue_segments: [
+        { start: 0, end: 2, speaker: 'Speaker 1', text: 'Alpha.', confidence: 0.98 },
+        { start: 8, end: 10, speaker: 'Speaker 3', text: 'Charlie.', confidence: 0.98 },
+        { start: 12, end: 14, speaker: 'Speaker 4', text: 'Delta.', confidence: 0.98 }
+      ],
+      summary: 'Dialogue alignment test.',
+      totalDuration: 20,
+      handoffContext: null
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark dialogue time-aware alignment',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(result.status, 'fail');
+  assert.strictEqual(artifact.status, 'fail');
+  assert.strictEqual(artifact.errors.length, 0);
+  assert(artifact.alignments.some((entry) => entry.path === 'dialogue_segments' && entry.matches.some((match) => match.truthIndex === 2 && match.outputIndex === 1)));
+  assert(artifact.failures.some((failure) => failure.path === 'dialogue_segments[truth=1]'));
+  assert(artifact.fieldResults.some((field) => field.path === 'dialogue_segments[truth=2,output=1].text' && field.status === 'pass'));
+  assert(artifact.fieldResults.some((field) => field.path === 'dialogue_segments[truth=3,output=2].text' && field.status === 'pass'));
+});
+
+test('benchmark runner - music-vocals comparator uses time-aware alignment to recover later lyric matches after early truth-only chant segments', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-music-vocals-time-aware-alignment');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const configDir = path.join(rootDir, 'configs');
+  const benchmarkDir = path.join(rootDir, 'benchmarks', 'fixtures', 'temp-music-vocals-time-aware-fixture');
+  const outputDir = path.join(rootDir, 'output', 'temp-run');
+  const configPath = path.join(configDir, 'temp.yaml');
+  const fixturePath = path.join(benchmarkDir, 'fixture.json');
+  const benchmarkPath = path.join(benchmarkDir, 'benchmark.json');
+  const truthPath = path.join(benchmarkDir, 'truth', 'music-vocals-data.json');
+  const outputPath = path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.json');
+
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.writeFileSync(configPath, 'name: temp music vocals time-aware benchmark config\n', 'utf8');
+
+  writeJson(fixturePath, {
+    contractVersion: FIXTURE_CONTRACT_VERSION,
+    fixtureId: 'temp-music-vocals-time-aware-fixture',
+    asset: { repoPath: 'examples/videos/emotion-tests/cod.mp4' },
+    config: { repoPath: 'configs/temp.yaml' },
+    benchmark: { entryPath: 'benchmark.json' },
+    notes: ['temp music vocals time-aware fixture']
+  });
+
+  writeJson(benchmarkPath, {
+    contractVersion: MANIFEST_CONTRACT_VERSION,
+    fixtureId: 'temp-music-vocals-time-aware-fixture',
+    fixture: { path: 'fixture.json' },
+    reports: { outputDir: '_reports' },
+    artifacts: [
+      {
+        artifactKey: 'musicVocalsData',
+        label: 'Music vocals',
+        phase: 'phase1-gather-context',
+        script: 'get-music-vocals',
+        output: { path: 'phase1-gather-context/music-vocals-data.json' },
+        truth: { path: 'truth/music-vocals-data.json' },
+        comparator: {
+          kind: 'json-structured',
+          profile: 'music-vocals-default',
+          options: { timingToleranceSeconds: 2, unknownSentinels: ['unknown', 'ambiguous'] }
+        },
+        required: true
+      }
+    ]
+  });
+
+  writeJson(truthPath, {
+    vocal_segments: [
+      { start: 10, end: 12, text: 'Obey your master', confidence: 0.9, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' },
+      { start: 14, end: 16, text: 'Your life burns faster', confidence: 0.9, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' },
+      { start: 20, end: 24, text: 'Master of puppets', confidence: 0.9, performer: 'Metallica', performer_id: 'voc_001', delivery: 'sung' },
+      { start: 26, end: 28, text: 'Master, master', confidence: 0.9, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' }
+    ],
+    summary: 'Music vocals alignment test.',
+    hasVocals: true,
+    totalDuration: 40,
+    recognizedSong: {
+      status: 'recognized',
+      confidence: 0.95,
+      candidates: [
+        {
+          title: 'Master of Puppets',
+          artist: 'Metallica',
+          confidence: 0.95,
+          evidence: ['Literal lyric fragments match the heard chant.'],
+          matchedLyrics: ['Master of puppets', 'Master, master'],
+          timeRanges: [{ start: 20, end: 28 }]
+        }
+      ],
+      primaryEvidence: 'Literal lyric evidence grounds one specific song.',
+      multipleSongsDetected: false
+    },
+    recognitionNotes: ['Dialogue was excluded from lyric evidence.']
+  });
+
+  writeJson(outputPath, {
+    vocal_segments: [
+      { start: 20, end: 24, text: 'Master of puppets', confidence: 0.9, performer: 'Metallica', performer_id: 'voc_001', delivery: 'sung' },
+      { start: 26, end: 28, text: 'Master, master', confidence: 0.9, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' }
+    ],
+    summary: 'Music vocals alignment test.',
+    hasVocals: true,
+    totalDuration: 40,
+    recognizedSong: {
+      status: 'recognized',
+      confidence: 0.95,
+      candidates: [
+        {
+          title: 'Master of Puppets',
+          artist: 'Metallica',
+          confidence: 0.95,
+          evidence: ['Literal lyric fragments match the heard chant.'],
+          matchedLyrics: ['Master of puppets', 'Master, master'],
+          timeRanges: [{ start: 20, end: 28 }]
+        }
+      ],
+      primaryEvidence: 'Literal lyric evidence grounds one specific song.',
+      multipleSongsDetected: false
+    },
+    recognitionNotes: ['Dialogue was excluded from lyric evidence.']
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark music vocals time-aware alignment',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-music-vocals-time-aware-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(result.status, 'fail');
+  assert.strictEqual(artifact.status, 'fail');
+  assert.strictEqual(artifact.errors.length, 0);
+  assert(artifact.alignments.some((entry) => entry.path === 'vocal_segments' && entry.matches.some((match) => match.truthIndex === 2 && match.outputIndex === 0)));
+  assert(artifact.failures.some((failure) => failure.path === 'vocal_segments[truth=0]'));
+  assert(artifact.failures.some((failure) => failure.path === 'vocal_segments[truth=1]'));
+  assert(artifact.fieldResults.some((field) => field.path === 'vocal_segments[truth=2,output=0].text' && field.status === 'pass'));
+  assert(artifact.fieldResults.some((field) => field.path === 'vocal_segments[truth=3,output=1].text' && field.status === 'pass'));
+});
