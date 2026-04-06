@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { resolvePhase1ArtifactPath } = require('./phase1-baseline-resolution.cjs');
 
 const MANIFEST_CONTRACT_VERSION = 'ee.benchmark-manifest/v1';
 const FIXTURE_CONTRACT_VERSION = 'ee.benchmark-fixture/v1';
@@ -743,7 +744,8 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
   for (const artifact of manifest.artifacts) {
     const comparator = createComparator(artifact);
     const truthAbsolutePath = path.resolve(manifestDir, artifact.truth.path);
-    const outputAbsolutePath = path.resolve(outputDir, artifact.output.path);
+    const outputResolution = resolvePhase1ArtifactPath(outputDir, artifact.artifactKey, { config, strict: artifact.required });
+    const outputAbsolutePath = outputResolution.resolvedPath || path.resolve(outputDir, artifact.output.path);
 
     if (!fs.existsSync(truthAbsolutePath)) {
       throw new Error(`Truth artifact missing for ${artifact.artifactKey}: ${truthAbsolutePath}`);

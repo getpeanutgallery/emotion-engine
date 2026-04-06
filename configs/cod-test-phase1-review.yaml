@@ -9,6 +9,7 @@ gather_context:
   - server/scripts/get-context/get-dialogue.cjs
   - server/scripts/get-context/get-music.cjs
   - server/scripts/get-context/get-music-vocals.cjs
+  - server/scripts/get-context/reconcile-famous-song-phase1.cjs
 
 process: []
 report: []

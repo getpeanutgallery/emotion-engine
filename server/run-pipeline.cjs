@@ -167,7 +167,7 @@ async function runPipeline(configPath, options = {}) {
   }
 
   if (keysToHydrate.length > 0) {
-    const { artifacts: persisted, sources } = loadPersistedArtifacts(outputDir, { keys: keysToHydrate });
+    const { artifacts: persisted, sources } = loadPersistedArtifacts(outputDir, { keys: keysToHydrate, config });
 
     for (const key of Object.keys(persisted)) {
       if (artifacts[key] === undefined) {

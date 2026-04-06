@@ -22,6 +22,7 @@ const {
   createInvalidOutputFailure,
   applyFailureMetadata
 } = require('./tool-wrapper-contract.cjs');
+const { resolvePhase1ArtifactPath } = require('./phase1-baseline-resolution.cjs');
 
 const DEFAULT_LOCATIONS = {
   dialogueData: ['phase1-gather-context', 'dialogue-data.json'],
@@ -70,7 +71,7 @@ function pickKeys(source, keys) {
  */
 function loadPersistedArtifacts(outputDir, options = {}) {
   const absoluteDir = path.resolve(outputDir);
-  const { keys, strict = false } = options;
+  const { keys, strict = false, config = {} } = options;
 
   if (!fs.existsSync(absoluteDir)) {
     if (strict) {
@@ -106,7 +107,8 @@ function loadPersistedArtifacts(outputDir, options = {}) {
     const rel = DEFAULT_LOCATIONS[key];
     if (!rel) continue;
 
-    const candidate = path.join(absoluteDir, ...rel);
+    const resolution = resolvePhase1ArtifactPath(absoluteDir, key, { config, strict });
+    const candidate = resolution.resolvedPath || path.join(absoluteDir, ...rel);
     if (!fs.existsSync(candidate)) continue;
 
     try {
@@ -129,13 +131,14 @@ function loadPersistedArtifacts(outputDir, options = {}) {
  * @param {string[]} keys
  * @returns {Record<string, string>} key->absolute file path (fallback location)
  */
-function getArtifactFileHints(outputDir, keys) {
+function getArtifactFileHints(outputDir, keys, options = {}) {
   const absoluteDir = path.resolve(outputDir);
   const hints = {};
   for (const key of keys || []) {
     const rel = DEFAULT_LOCATIONS[key];
     if (!rel) continue;
-    hints[key] = path.join(absoluteDir, ...rel);
+    const resolution = resolvePhase1ArtifactPath(absoluteDir, key, { config: options.config || {}, strict: false });
+    hints[key] = resolution.resolvedPath || path.join(absoluteDir, ...rel);
   }
   return hints;
 }

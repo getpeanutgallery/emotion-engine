@@ -69,6 +69,56 @@ test('deterministic persistence helpers emit structured artifact failures', asyn
     const loaded = await loadArtifacts(outputDir);
     assert.deepEqual(loaded, artifacts);
   });
+
+  await t.test('loadPersistedArtifacts prefers reconciled dialogue/music-vocals when reconciliation is configured', () => {
+    const outputDir = makeTempDir('ee-persisted-reconciled-');
+    const phaseDir = path.join(outputDir, 'phase1-gather-context');
+    fs.mkdirSync(phaseDir, { recursive: true });
+
+    fs.writeFileSync(path.join(phaseDir, 'dialogue-data.json'), JSON.stringify({ summary: 'raw dialogue' }), 'utf8');
+    fs.writeFileSync(path.join(phaseDir, 'dialogue-data.reconciled.json'), JSON.stringify({ summary: 'reconciled dialogue' }), 'utf8');
+    fs.writeFileSync(path.join(phaseDir, 'music-vocals-data.json'), JSON.stringify({ summary: 'raw vocals' }), 'utf8');
+    fs.writeFileSync(path.join(phaseDir, 'music-vocals-data.reconciled.json'), JSON.stringify({ summary: 'reconciled vocals' }), 'utf8');
+
+    const loaded = loadPersistedArtifacts(outputDir, {
+      keys: ['dialogueData', 'musicVocalsData'],
+      config: {
+        gather_context: [
+          'server/scripts/get-context/get-dialogue.cjs',
+          'server/scripts/get-context/reconcile-famous-song-phase1.cjs'
+        ]
+      }
+    });
+
+    assert.equal(loaded.artifacts.dialogueData.summary, 'reconciled dialogue');
+    assert.equal(loaded.artifacts.musicVocalsData.summary, 'reconciled vocals');
+  });
+
+  await t.test('loadPersistedArtifacts fails fast only when reconciliation is configured and reconciled output is missing', () => {
+    const outputDir = makeTempDir('ee-persisted-reconciled-missing-');
+    const phaseDir = path.join(outputDir, 'phase1-gather-context');
+    fs.mkdirSync(phaseDir, { recursive: true });
+
+    fs.writeFileSync(path.join(phaseDir, 'dialogue-data.json'), JSON.stringify({ summary: 'raw dialogue' }), 'utf8');
+
+    assert.throws(() => loadPersistedArtifacts(outputDir, {
+      keys: ['dialogueData'],
+      strict: true,
+      config: {
+        gather_context: ['server/scripts/get-context/reconcile-famous-song-phase1.cjs']
+      }
+    }), /reconciled dialogueData artifact is missing/);
+
+    const fallback = loadPersistedArtifacts(outputDir, {
+      keys: ['dialogueData'],
+      strict: true,
+      config: {
+        gather_context: ['server/scripts/get-context/get-dialogue.cjs']
+      }
+    });
+
+    assert.equal(fallback.artifacts.dialogueData.summary, 'raw dialogue');
+  });
 });
 
 test('get-metadata rides the shared tool-wrapper contract with deterministic recovery guidance', async () => {

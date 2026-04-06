@@ -128,6 +128,88 @@ test('benchmark runner - runBenchmarkStage writes reports and passes for matchin
   assert(fs.existsSync(path.join(result.reportDir, 'artifact-results', 'dialogueData.json')), 'artifact report should be written');
 });
 
+test('benchmark runner - runBenchmarkStage uses reconciled phase1 baselines when reconciliation is configured', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-reconciled');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempFixture(rootDir, {
+    outputPayload: {
+      dialogue_segments: [
+        {
+          start: 1,
+          end: 3,
+          speaker: 'Speaker 1',
+          text: 'raw mismatch line',
+          confidence: 0.98
+        }
+      ],
+      summary: 'Raw mismatch payload.',
+      totalDuration: 20,
+      handoffContext: null
+    }
+  });
+
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.reconciled.json'), {
+    dialogue_segments: [
+      {
+        start: 1,
+        end: 3,
+        speaker: 'Speaker 1',
+        text: 'Wake up now.',
+        confidence: 0.98
+      }
+    ],
+    summary: 'Trailer dialogue sample.',
+    totalDuration: 20,
+    handoffContext: null
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark reconciled pass',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-fixture/benchmark.json'
+      },
+      gather_context: [
+        'server/scripts/get-context/get-dialogue.cjs',
+        'server/scripts/get-context/reconcile-famous-song-phase1.cjs'
+      ]
+    },
+    configPath,
+    outputDir
+  });
+
+  assert.strictEqual(result.status, 'pass');
+  assert(result.artifactResults[0].output.path.endsWith('dialogue-data.reconciled.json'));
+});
+
+test('benchmark runner - runBenchmarkStage fails fast when reconciliation is configured but reconciled artifact is missing', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-reconciled-missing');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempFixture(rootDir);
+  fs.rmSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.json'), { force: true });
+
+  assert.throws(() => runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark reconciled missing',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-fixture/benchmark.json'
+      },
+      gather_context: [
+        'server/scripts/get-context/get-dialogue.cjs',
+        'server/scripts/get-context/reconcile-famous-song-phase1.cjs'
+      ]
+    },
+    configPath,
+    outputDir
+  }), /reconciled dialogueData artifact is missing/);
+});
+
 test('benchmark runner - runBenchmarkStage fails for mismatched scoreable values', async (t) => {
   const rootDir = path.join(__dirname, 'tmp-benchmark-fail');
   fs.rmSync(rootDir, { recursive: true, force: true });
