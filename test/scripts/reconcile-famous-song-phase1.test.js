@@ -107,6 +107,160 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     assert.equal(ledger.status, 'applied');
     assert.equal(ledger.decisions.removedDialogueSegments.length, 1);
     assert.equal(ledger.decisions.lyricCorrections.length, 1);
+    assert.equal(ledger.decisions.lyricCorrections[0].lane, 'generic');
+  });
+
+  await t.test('admits anchored near-miss lyric corrections around the relaxed floor', async () => {
+    const artifacts = makeArtifacts({
+      musicVocalsData: {
+        vocal_segments: [
+          { start: 10, end: 12.3, text: 'Come control your master', confidence: 0.9, performer: 'Lead', delivery: 'sung' },
+          { start: 13, end: 14.8, text: 'Control your master', confidence: 0.9, performer: 'Lead', delivery: 'sung' }
+        ],
+        summary: 'Two lyric-bearing vocal segments are present.',
+        totalDuration: 60,
+        recognizedSong: {
+          status: 'recognized',
+          confidence: 0.97,
+          multipleSongsDetected: false,
+          candidates: [
+            {
+              title: 'Master of Puppets',
+              artist: 'Metallica',
+              confidence: 0.97,
+              evidence: ['Matched chorus wording', 'Time-aligned hook'],
+              matchedLyrics: ['Obey your master', 'Twisting your mind'],
+              timeRanges: [{ start: 9.5, end: 16.5 }]
+            }
+          ]
+        }
+      }
+    });
+
+    await reconcileScript.run({ outputDir, artifacts });
+
+    const reconciledMusicVocals = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.reconciled.json'), 'utf8'));
+    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
+
+    assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Obey your master');
+    assert.equal(reconciledMusicVocals.vocal_segments[1].text, 'Obey your master');
+    assert.equal(ledger.decisions.lyricCorrections.length, 2);
+    assert.equal(ledger.decisions.lyricCorrections[0].lane, 'anchored_near_miss');
+    assert.equal(ledger.decisions.lyricCorrections[1].lane, 'generic');
+  });
+
+  await t.test('blocks unsafe fragment-shortening rewrites even when similarity is otherwise high', async () => {
+    const artifacts = makeArtifacts({
+      musicVocalsData: {
+        vocal_segments: [
+          { start: 10, end: 13.3, text: 'Twisting your mind and smashing your dreams', confidence: 0.93, performer: 'Lead', delivery: 'sung' },
+          { start: 14, end: 17.5, text: "Master of puppets, I'm pulling your strings", confidence: 0.93, performer: 'Lead', delivery: 'sung' }
+        ],
+        summary: 'Two lyric-bearing vocal segments are present.',
+        totalDuration: 60,
+        recognizedSong: {
+          status: 'recognized',
+          confidence: 0.97,
+          multipleSongsDetected: false,
+          candidates: [
+            {
+              title: 'Master of Puppets',
+              artist: 'Metallica',
+              confidence: 0.97,
+              evidence: ['Matched chorus wording', 'Time-aligned hook'],
+              matchedLyrics: ['Twisting your mind', 'Master of puppets'],
+              timeRanges: [{ start: 9.5, end: 18 }]
+            }
+          ]
+        }
+      }
+    });
+
+    await reconcileScript.run({ outputDir, artifacts });
+
+    const reconciledMusicVocals = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.reconciled.json'), 'utf8'));
+    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
+
+    assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Twisting your mind and smashing your dreams');
+    assert.equal(reconciledMusicVocals.vocal_segments[1].text, "Master of puppets, I'm pulling your strings");
+    assert.equal(ledger.decisions.lyricCorrections.length, 0);
+    assert.equal(ledger.decisions.skippedCorrections[0].reason, 'target_too_short_relative_to_source');
+    assert.equal(ledger.decisions.skippedCorrections[1].reason, 'target_too_short_relative_to_source');
+  });
+
+  await t.test('keeps weakly anchored fragments from rewriting to a different full lyric', async () => {
+    const artifacts = makeArtifacts({
+      musicVocalsData: {
+        vocal_segments: [
+          { start: 10, end: 12.3, text: 'Master, master', confidence: 0.9, performer: 'Lead', delivery: 'sung' },
+          { start: 12.5, end: 14.2, text: 'Promised only lies', confidence: 0.9, performer: 'Lead', delivery: 'sung' }
+        ],
+        summary: 'Two lyric-bearing vocal segments are present.',
+        totalDuration: 60,
+        recognizedSong: {
+          status: 'recognized',
+          confidence: 0.97,
+          multipleSongsDetected: false,
+          candidates: [
+            {
+              title: 'Master of Puppets',
+              artist: 'Metallica',
+              confidence: 0.97,
+              evidence: ['Matched chorus wording', 'Time-aligned hook'],
+              matchedLyrics: ['Obey your master', 'Twisting your mind'],
+              timeRanges: [{ start: 9.5, end: 16.5 }]
+            }
+          ]
+        }
+      }
+    });
+
+    await reconcileScript.run({ outputDir, artifacts });
+
+    const reconciledMusicVocals = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.reconciled.json'), 'utf8'));
+    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
+
+    assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Master, master');
+    assert.equal(reconciledMusicVocals.vocal_segments[1].text, 'Promised only lies');
+    assert.equal(ledger.decisions.lyricCorrections.length, 0);
+    assert.equal(ledger.decisions.skippedCorrections[0].reason, 'lyric_similarity_below_threshold');
+    assert.equal(ledger.decisions.skippedCorrections[1].reason, 'lyric_similarity_below_threshold');
+  });
+
+  await t.test('uses the real-shape archived near-miss without loosening the strong song gate', async () => {
+    const artifacts = makeArtifacts({
+      musicVocalsData: {
+        vocal_segments: [
+          { start: 10, end: 12.4, text: 'Come control your master', confidence: 0.9, performer: 'Lead', delivery: 'sung' }
+        ],
+        summary: 'One lyric-bearing vocal segment is present.',
+        totalDuration: 60,
+        recognizedSong: {
+          status: 'recognized',
+          confidence: 0.97,
+          multipleSongsDetected: false,
+          candidates: [
+            {
+              title: 'Master of Puppets',
+              artist: 'Metallica',
+              confidence: 0.97,
+              evidence: ['Matched chorus wording', 'Time-aligned hook'],
+              matchedLyrics: ['Obey your master', 'Twisting your mind', 'Master of puppets'],
+              timeRanges: [{ start: 9.5, end: 16.5 }]
+            }
+          ]
+        }
+      }
+    });
+
+    await reconcileScript.run({ outputDir, artifacts });
+
+    const reconciledMusicVocals = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.reconciled.json'), 'utf8'));
+    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
+
+    assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Obey your master');
+    assert.equal(ledger.decisions.lyricCorrections.length, 1);
+    assert.equal(ledger.decisions.lyricCorrections[0].lane, 'anchored_near_miss');
   });
 
   await t.test('does not overcorrect when recognized-song evidence is weak or ambiguous', async () => {
@@ -165,5 +319,16 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     assert.equal(ledger.status, 'skipped');
     assert.equal(Array.isArray(ledger.trigger.reasons), true);
     assert.notEqual(ledger.trigger.reasons.length, 0);
+  });
+
+  await t.test('exposes the anchored lane and truncation guard helpers directly', () => {
+    const decisionNearMiss = reconcileScript._private.classifyLyricCorrection('Come control your master', 'Obey your master', 0.5789473684210527);
+    const decisionTruncation = reconcileScript._private.classifyLyricCorrection('Twisting your mind and smashing your dreams', 'Twisting your mind', 0.6667);
+
+    assert.equal(decisionNearMiss.allowed, true);
+    assert.equal(decisionNearMiss.lane, 'anchored_near_miss');
+    assert.equal(reconcileScript._private.hasStrongPhraseAnchor('Come control your master', 'Obey your master'), true);
+    assert.equal(decisionTruncation.allowed, false);
+    assert.equal(decisionTruncation.reason, 'target_too_short_relative_to_source');
   });
 });

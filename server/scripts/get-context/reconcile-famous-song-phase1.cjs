@@ -15,7 +15,12 @@ const RECOGNITION_CONFIDENCE_GATE = 0.92;
 const MIN_DIALOGUE_OVERLAP_SECONDS = 0.75;
 const MIN_DIALOGUE_OVERLAP_RATIO = 0.5;
 const MIN_CORRECTION_SIMILARITY = 0.66;
+const MIN_NEAR_MISS_CORRECTION_SIMILARITY = 0.57;
 const MIN_DIALOGUE_LYRIC_SIMILARITY = 0.72;
+const MIN_CORRECTION_CONFIDENCE = 0.85;
+const MIN_NEAR_MISS_SHARED_TOKENS = 2;
+const MIN_NEAR_MISS_SHARED_TARGET_RATIO = 0.6;
+const MIN_TARGET_TO_SOURCE_TOKEN_RATIO = 0.75;
 
 function cloneJson(value) {
   return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
@@ -178,6 +183,204 @@ function hasStrongSpokenSignal(dialogueSegments, index) {
   });
 }
 
+function longestContiguousTokenRun(leftTokens, rightTokens) {
+  if (!leftTokens.length || !rightTokens.length) return 0;
+
+  let longest = 0;
+  for (let leftIndex = 0; leftIndex < leftTokens.length; leftIndex += 1) {
+    for (let rightIndex = 0; rightIndex < rightTokens.length; rightIndex += 1) {
+      let run = 0;
+      while (
+        leftIndex + run < leftTokens.length &&
+        rightIndex + run < rightTokens.length &&
+        leftTokens[leftIndex + run] === rightTokens[rightIndex + run]
+      ) {
+        run += 1;
+      }
+      if (run > longest) longest = run;
+    }
+  }
+
+  return longest;
+}
+
+function countSharedTokens(leftTokens, rightTokens) {
+  const leftSet = new Set(leftTokens);
+  const rightSet = new Set(rightTokens);
+  let shared = 0;
+  for (const token of leftSet) {
+    if (rightSet.has(token)) shared += 1;
+  }
+  return shared;
+}
+
+function isContiguousTokenFragment(sourceTokens, targetTokens) {
+  if (!sourceTokens.length || !targetTokens.length || targetTokens.length >= sourceTokens.length) {
+    return false;
+  }
+
+  for (let start = 0; start <= sourceTokens.length - targetTokens.length; start += 1) {
+    let matches = true;
+    for (let offset = 0; offset < targetTokens.length; offset += 1) {
+      if (sourceTokens[start + offset] !== targetTokens[offset]) {
+        matches = false;
+        break;
+      }
+    }
+    if (matches) {
+      return {
+        start,
+        end: start + targetTokens.length - 1,
+        extraLeading: start,
+        extraTrailing: sourceTokens.length - (start + targetTokens.length)
+      };
+    }
+  }
+
+  return false;
+}
+
+function hasStrongPhraseAnchor(sourceText, targetText) {
+  const sourceTokens = tokenize(sourceText);
+  const targetTokens = tokenize(targetText);
+  if (!sourceTokens.length || !targetTokens.length) return false;
+
+  const contiguousRun = longestContiguousTokenRun(sourceTokens, targetTokens);
+  if (contiguousRun >= 2) return true;
+
+  const sharedTokens = countSharedTokens(sourceTokens, targetTokens);
+  return sharedTokens >= MIN_NEAR_MISS_SHARED_TOKENS && (sharedTokens / targetTokens.length) >= MIN_NEAR_MISS_SHARED_TARGET_RATIO;
+}
+
+function withinNearMissTokenDelta(sourceText, targetText) {
+  const sourceCount = tokenize(sourceText).length;
+  const targetCount = tokenize(targetText).length;
+  if (!sourceCount || !targetCount) return false;
+
+  const absoluteDelta = Math.abs(sourceCount - targetCount);
+  const shortPhrase = Math.max(sourceCount, targetCount) <= 4;
+  return shortPhrase ? absoluteDelta <= 1 : absoluteDelta <= 2;
+}
+
+function assessTruncationRisk(sourceText, targetText) {
+  const sourceTokens = tokenize(sourceText);
+  const targetTokens = tokenize(targetText);
+  if (!sourceTokens.length || !targetTokens.length) {
+    return { blocked: true, reason: 'invalid_tokenization' };
+  }
+
+  const targetToSourceRatio = targetTokens.length / sourceTokens.length;
+  if (targetToSourceRatio < MIN_TARGET_TO_SOURCE_TOKEN_RATIO) {
+    return {
+      blocked: true,
+      reason: 'target_too_short_relative_to_source',
+      details: {
+        sourceTokenCount: sourceTokens.length,
+        targetTokenCount: targetTokens.length,
+        targetToSourceRatio: Number(targetToSourceRatio.toFixed(4))
+      }
+    };
+  }
+
+  const tokenDelta = sourceTokens.length - targetTokens.length;
+  if (sourceTokens.length >= 5 && tokenDelta > 2) {
+    return {
+      blocked: true,
+      reason: 'target_truncates_longer_source_phrase',
+      details: {
+        sourceTokenCount: sourceTokens.length,
+        targetTokenCount: targetTokens.length,
+        tokenDelta
+      }
+    };
+  }
+
+  const fragment = isContiguousTokenFragment(sourceTokens, targetTokens);
+  if (fragment) {
+    const onlySingleEdgeFiller =
+      (fragment.extraLeading === 1 && fragment.extraTrailing === 0) ||
+      (fragment.extraLeading === 0 && fragment.extraTrailing === 1);
+
+    if (!onlySingleEdgeFiller) {
+      return {
+        blocked: true,
+        reason: 'target_is_strict_fragment_of_source',
+        details: {
+          sourceTokenCount: sourceTokens.length,
+          targetTokenCount: targetTokens.length,
+          extraLeading: fragment.extraLeading,
+          extraTrailing: fragment.extraTrailing
+        }
+      };
+    }
+  }
+
+  return {
+    blocked: false,
+    reason: null,
+    details: {
+      sourceTokenCount: sourceTokens.length,
+      targetTokenCount: targetTokens.length,
+      targetToSourceRatio: Number(targetToSourceRatio.toFixed(4))
+    }
+  };
+}
+
+function classifyLyricCorrection(sourceText, targetText, similarity) {
+  const truncationRisk = assessTruncationRisk(sourceText, targetText);
+  if (truncationRisk.blocked) {
+    return {
+      allowed: false,
+      lane: null,
+      reason: truncationRisk.reason,
+      details: truncationRisk.details
+    };
+  }
+
+  if (similarity >= MIN_CORRECTION_SIMILARITY) {
+    return {
+      allowed: true,
+      lane: 'generic',
+      reason: 'recognized_song_near_miss',
+      details: truncationRisk.details
+    };
+  }
+
+  if (similarity < MIN_NEAR_MISS_CORRECTION_SIMILARITY) {
+    return {
+      allowed: false,
+      lane: null,
+      reason: 'lyric_similarity_below_threshold',
+      details: truncationRisk.details
+    };
+  }
+
+  if (!hasStrongPhraseAnchor(sourceText, targetText)) {
+    return {
+      allowed: false,
+      lane: null,
+      reason: 'near_miss_anchor_too_weak',
+      details: truncationRisk.details
+    };
+  }
+
+  if (!withinNearMissTokenDelta(sourceText, targetText)) {
+    return {
+      allowed: false,
+      lane: null,
+      reason: 'near_miss_token_delta_too_large',
+      details: truncationRisk.details
+    };
+  }
+
+  return {
+    allowed: true,
+    lane: 'anchored_near_miss',
+    reason: 'recognized_song_anchored_near_miss',
+    details: truncationRisk.details
+  };
+}
+
 function buildRecognitionGate(musicVocalsData, musicData) {
   const recognizedSong = musicVocalsData?.recognizedSong;
   const candidates = Array.isArray(recognizedSong?.candidates) ? recognizedSong.candidates : [];
@@ -269,7 +472,7 @@ function reconcileMusicVocals(musicVocalsData, gate) {
     }
 
     const confidence = Number(segment?.confidence);
-    if (!Number.isFinite(confidence) || confidence < 0.85) {
+    if (!Number.isFinite(confidence) || confidence < MIN_CORRECTION_CONFIDENCE) {
       skippedCorrections.push({ index, reason: 'segment_confidence_below_threshold' });
       continue;
     }
@@ -286,12 +489,15 @@ function reconcileMusicVocals(musicVocalsData, gate) {
       continue;
     }
 
-    if (bestMatch.similarity < MIN_CORRECTION_SIMILARITY) {
+    const decision = classifyLyricCorrection(segment.text, bestMatch.lyric, bestMatch.similarity);
+    if (!decision.allowed) {
       skippedCorrections.push({
         index,
-        reason: 'lyric_similarity_below_threshold',
+        reason: decision.reason,
         similarity: Number(bestMatch.similarity.toFixed(4)),
-        candidateLyric: bestMatch.lyric
+        candidateLyric: bestMatch.lyric,
+        lane: decision.lane,
+        ...decision.details
       });
       continue;
     }
@@ -303,7 +509,8 @@ function reconcileMusicVocals(musicVocalsData, gate) {
       from: segment.text,
       to: bestMatch.lyric,
       similarity: Number(bestMatch.similarity.toFixed(4)),
-      reason: 'recognized_song_near_miss'
+      lane: decision.lane,
+      reason: decision.reason
     });
 
     segment.text = bestMatch.lyric;
@@ -418,7 +625,11 @@ module.exports = {
     reconcileDialogue,
     reconcileMusicVocals,
     chooseBestLyricMatch,
-    overlapsStrongly
+    overlapsStrongly,
+    hasStrongPhraseAnchor,
+    withinNearMissTokenDelta,
+    assessTruncationRisk,
+    classifyLyricCorrection
   }
 };
 
