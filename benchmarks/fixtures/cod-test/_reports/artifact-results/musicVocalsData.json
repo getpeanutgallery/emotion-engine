@@ -24,25 +24,36 @@
     }
   },
   "counts": {
-    "totalTruthFields": 105,
-    "scoreableFields": 95,
+    "totalTruthFields": 108,
+    "scoreableFields": 96,
     "skippedFields": 0,
-    "passedFields": 39,
-    "failedFields": 56,
-    "erroredFields": 10
+    "passedFields": 44,
+    "failedFields": 52,
+    "erroredFields": 12
   },
   "accuracy": {
-    "passed": 39,
-    "failed": 56,
-    "rate": 0.4105263157894737
+    "passed": 44,
+    "failed": 52,
+    "rate": 0.4583333333333333
   },
   "coverage": {
-    "scoreable": 95,
+    "scoreable": 96,
     "skipped": 0,
-    "totalTruthFields": 105,
-    "rate": 0.9047619047619048
+    "totalTruthFields": 108,
+    "rate": 0.8888888888888888
   },
   "failures": [
+    {
+      "path": "vocal_segments",
+      "rule": "structural",
+      "truthValue": {
+        "length": 12
+      },
+      "outputValue": {
+        "length": 10
+      },
+      "reason": "Array length mismatch: truth=12 output=10"
+    },
     {
       "path": "vocal_segments[0].start",
       "rule": "tolerant-time",
@@ -88,7 +99,7 @@
     {
       "path": "vocal_segments[1].text",
       "rule": "fuzzy-string",
-      "truthValue": "Control faster.",
+      "truthValue": "Your life burns faster",
       "outputValue": "Come crawling faster",
       "reason": "Normalized strings differed"
     },
@@ -121,13 +132,6 @@
       "reason": "Time delta 6 exceeded tolerance 2"
     },
     {
-      "path": "vocal_segments[2].text",
-      "rule": "fuzzy-string",
-      "truthValue": "Master of puppets are pulling the strings!",
-      "outputValue": "Master of puppets, I'm pulling your strings",
-      "reason": "Normalized strings differed"
-    },
-    {
       "path": "vocal_segments[2].performer",
       "rule": "exact",
       "truthValue": "Metallica lead vocal",
@@ -147,13 +151,6 @@
       "truthValue": 83,
       "outputValue": 88,
       "reason": "Time delta 5 exceeded tolerance 2"
-    },
-    {
-      "path": "vocal_segments[3].text",
-      "rule": "fuzzy-string",
-      "truthValue": "Twisting your mind, smashing your dreams!",
-      "outputValue": "Twisting your mind and smashing your dreams",
-      "reason": "Normalized strings differed"
     },
     {
       "path": "vocal_segments[3].performer",
@@ -214,16 +211,9 @@
     {
       "path": "vocal_segments[6].end",
       "rule": "tolerant-time",
-      "truthValue": 94,
+      "truthValue": 91,
       "outputValue": 98,
-      "reason": "Time delta 4 exceeded tolerance 2"
-    },
-    {
-      "path": "vocal_segments[6].text",
-      "rule": "fuzzy-string",
-      "truthValue": "Master, master, where’s the dreams that I’ve been after?",
-      "outputValue": "Master, master",
-      "reason": "Normalized strings differed"
+      "reason": "Time delta 7 exceeded tolerance 2"
     },
     {
       "path": "vocal_segments[6].performer",
@@ -235,21 +225,21 @@
     {
       "path": "vocal_segments[7].start",
       "rule": "tolerant-time",
-      "truthValue": 94,
+      "truthValue": 91,
       "outputValue": 98,
-      "reason": "Time delta 4 exceeded tolerance 2"
+      "reason": "Time delta 7 exceeded tolerance 2"
     },
     {
       "path": "vocal_segments[7].end",
       "rule": "tolerant-time",
-      "truthValue": 98,
+      "truthValue": 94,
       "outputValue": 102,
-      "reason": "Time delta 4 exceeded tolerance 2"
+      "reason": "Time delta 8 exceeded tolerance 2"
     },
     {
       "path": "vocal_segments[7].text",
       "rule": "fuzzy-string",
-      "truthValue": "Master, master, you promised only lies!",
+      "truthValue": "Where’s the dreams that I’ve been after?",
       "outputValue": "Just call my name, 'cause I'll hear you scream",
       "reason": "Normalized strings differed"
     },
@@ -263,23 +253,16 @@
     {
       "path": "vocal_segments[8].start",
       "rule": "tolerant-time",
-      "truthValue": 116,
+      "truthValue": 94,
       "outputValue": 102,
-      "reason": "Time delta 14 exceeded tolerance 2"
+      "reason": "Time delta 8 exceeded tolerance 2"
     },
     {
       "path": "vocal_segments[8].end",
       "rule": "tolerant-time",
-      "truthValue": 118,
+      "truthValue": 95.5,
       "outputValue": 104,
-      "reason": "Time delta 14 exceeded tolerance 2"
-    },
-    {
-      "path": "vocal_segments[8].text",
-      "rule": "fuzzy-string",
-      "truthValue": "Obey your master!",
-      "outputValue": "Master, master",
-      "reason": "Normalized strings differed"
+      "reason": "Time delta 8.5 exceeded tolerance 2"
     },
     {
       "path": "vocal_segments[8].performer",
@@ -289,23 +272,23 @@
       "reason": "Values differed"
     },
     {
-      "path": "vocal_segments[8].delivery",
-      "rule": "exact",
-      "truthValue": "chant",
-      "outputValue": "sung",
-      "reason": "Values differed"
-    },
-    {
       "path": "vocal_segments[9].start",
       "rule": "tolerant-time",
-      "truthValue": 127,
+      "truthValue": 95.5,
       "outputValue": 130,
-      "reason": "Time delta 3 exceeded tolerance 2"
+      "reason": "Time delta 34.5 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[9].end",
+      "rule": "tolerant-time",
+      "truthValue": 98,
+      "outputValue": 132,
+      "reason": "Time delta 34 exceeded tolerance 2"
     },
     {
       "path": "vocal_segments[9].text",
       "rule": "fuzzy-string",
-      "truthValue": "Master, master",
+      "truthValue": "You promised only lies",
       "outputValue": "Obey your master",
       "reason": "Normalized strings differed"
     },
@@ -314,13 +297,6 @@
       "rule": "exact",
       "truthValue": "Metallica lead vocal",
       "outputValue": "Vocalist 1",
-      "reason": "Values differed"
-    },
-    {
-      "path": "vocal_segments[9].delivery",
-      "rule": "exact",
-      "truthValue": "chant",
-      "outputValue": "sung",
       "reason": "Values differed"
     },
     {
@@ -508,6 +484,34 @@
       "reason": "Truth object missing field present in output"
     },
     {
+      "path": "vocal_segments[10]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 116,
+        "end": 118,
+        "text": "Obey your master",
+        "confidence": 0.9,
+        "performer": "Metallica lead vocal",
+        "performer_id": "voc_001",
+        "delivery": "chant"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "vocal_segments[11]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 127,
+        "end": 130,
+        "text": "Master, master",
+        "confidence": 0.9,
+        "performer": "Metallica lead vocal",
+        "performer_id": "voc_001",
+        "delivery": "chant"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
       "path": "recognizedSong.candidates[0].evidence[1]",
       "rule": "structural",
       "truthValue": "The surrounding sung lines align with the same famous metal song chorus/verse sequence.",
@@ -597,6 +601,18 @@
       "reason": "Truth object missing field present in output"
     },
     {
+      "path": "vocal_segments",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 12
+      },
+      "outputValue": {
+        "length": 10
+      },
+      "reason": "Array length mismatch: truth=12 output=10"
+    },
+    {
       "path": "vocal_segments[0].start",
       "status": "fail",
       "rule": "tolerant-time",
@@ -624,7 +640,7 @@
       "path": "vocal_segments[0].text",
       "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Obey your master.",
+      "truthValue": "Obey your master",
       "outputValue": "Obey your master",
       "normalizedTruthValue": "obey your master",
       "normalizedOutputValue": "obey your master"
@@ -691,9 +707,9 @@
       "path": "vocal_segments[1].text",
       "status": "fail",
       "rule": "fuzzy-string",
-      "truthValue": "Control faster.",
+      "truthValue": "Your life burns faster",
       "outputValue": "Come crawling faster",
-      "normalizedTruthValue": "control faster",
+      "normalizedTruthValue": "your life burns faster",
       "normalizedOutputValue": "come crawling faster",
       "reason": "Normalized strings differed"
     },
@@ -757,13 +773,12 @@
     },
     {
       "path": "vocal_segments[2].text",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Master of puppets are pulling the strings!",
+      "truthValue": "Master of puppets I’m pulling your strings",
       "outputValue": "Master of puppets, I'm pulling your strings",
-      "normalizedTruthValue": "master of puppets are pulling the strings",
-      "normalizedOutputValue": "master of puppets i m pulling your strings",
-      "reason": "Normalized strings differed"
+      "normalizedTruthValue": "master of puppets i m pulling your strings",
+      "normalizedOutputValue": "master of puppets i m pulling your strings"
     },
     {
       "path": "vocal_segments[2].confidence",
@@ -824,13 +839,12 @@
     },
     {
       "path": "vocal_segments[3].text",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Twisting your mind, smashing your dreams!",
+      "truthValue": "Twisting your mind and smashing your dreams",
       "outputValue": "Twisting your mind and smashing your dreams",
-      "normalizedTruthValue": "twisting your mind smashing your dreams",
-      "normalizedOutputValue": "twisting your mind and smashing your dreams",
-      "reason": "Normalized strings differed"
+      "normalizedTruthValue": "twisting your mind and smashing your dreams",
+      "normalizedOutputValue": "twisting your mind and smashing your dreams"
     },
     {
       "path": "vocal_segments[3].confidence",
@@ -959,7 +973,7 @@
       "path": "vocal_segments[5].text",
       "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Just call my name ’cause I’ll hear you scream",
+      "truthValue": "Just call my name, ‘cause I’ll hear you scream",
       "outputValue": "Just call my name, 'cause I'll hear you scream",
       "normalizedTruthValue": "just call my name cause i ll hear you scream",
       "normalizedOutputValue": "just call my name cause i ll hear you scream"
@@ -1013,23 +1027,22 @@
       "path": "vocal_segments[6].end",
       "status": "fail",
       "rule": "tolerant-time",
-      "truthValue": 94,
+      "truthValue": 91,
       "outputValue": 98,
-      "reason": "Time delta 4 exceeded tolerance 2",
+      "reason": "Time delta 7 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 4,
+        "deltaSeconds": 7,
         "toleranceSeconds": 2
       }
     },
     {
       "path": "vocal_segments[6].text",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Master, master, where’s the dreams that I’ve been after?",
+      "truthValue": "Master, master",
       "outputValue": "Master, master",
-      "normalizedTruthValue": "master master where s the dreams that i ve been after",
-      "normalizedOutputValue": "master master",
-      "reason": "Normalized strings differed"
+      "normalizedTruthValue": "master master",
+      "normalizedOutputValue": "master master"
     },
     {
       "path": "vocal_segments[6].confidence",
@@ -1068,11 +1081,11 @@
       "path": "vocal_segments[7].start",
       "status": "fail",
       "rule": "tolerant-time",
-      "truthValue": 94,
+      "truthValue": 91,
       "outputValue": 98,
-      "reason": "Time delta 4 exceeded tolerance 2",
+      "reason": "Time delta 7 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 4,
+        "deltaSeconds": 7,
         "toleranceSeconds": 2
       }
     },
@@ -1080,11 +1093,11 @@
       "path": "vocal_segments[7].end",
       "status": "fail",
       "rule": "tolerant-time",
-      "truthValue": 98,
+      "truthValue": 94,
       "outputValue": 102,
-      "reason": "Time delta 4 exceeded tolerance 2",
+      "reason": "Time delta 8 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 4,
+        "deltaSeconds": 8,
         "toleranceSeconds": 2
       }
     },
@@ -1092,9 +1105,9 @@
       "path": "vocal_segments[7].text",
       "status": "fail",
       "rule": "fuzzy-string",
-      "truthValue": "Master, master, you promised only lies!",
+      "truthValue": "Where’s the dreams that I’ve been after?",
       "outputValue": "Just call my name, 'cause I'll hear you scream",
-      "normalizedTruthValue": "master master you promised only lies",
+      "normalizedTruthValue": "where s the dreams that i ve been after",
       "normalizedOutputValue": "just call my name cause i ll hear you scream",
       "reason": "Normalized strings differed"
     },
@@ -1135,11 +1148,11 @@
       "path": "vocal_segments[8].start",
       "status": "fail",
       "rule": "tolerant-time",
-      "truthValue": 116,
+      "truthValue": 94,
       "outputValue": 102,
-      "reason": "Time delta 14 exceeded tolerance 2",
+      "reason": "Time delta 8 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 14,
+        "deltaSeconds": 8,
         "toleranceSeconds": 2
       }
     },
@@ -1147,23 +1160,22 @@
       "path": "vocal_segments[8].end",
       "status": "fail",
       "rule": "tolerant-time",
-      "truthValue": 118,
+      "truthValue": 95.5,
       "outputValue": 104,
-      "reason": "Time delta 14 exceeded tolerance 2",
+      "reason": "Time delta 8.5 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 14,
+        "deltaSeconds": 8.5,
         "toleranceSeconds": 2
       }
     },
     {
       "path": "vocal_segments[8].text",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Obey your master!",
+      "truthValue": "Master, master",
       "outputValue": "Master, master",
-      "normalizedTruthValue": "obey your master",
-      "normalizedOutputValue": "master master",
-      "reason": "Normalized strings differed"
+      "normalizedTruthValue": "master master",
+      "normalizedOutputValue": "master master"
     },
     {
       "path": "vocal_segments[8].confidence",
@@ -1193,32 +1205,32 @@
     },
     {
       "path": "vocal_segments[8].delivery",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
-      "truthValue": "chant",
-      "outputValue": "sung",
-      "reason": "Values differed"
+      "truthValue": "sung",
+      "outputValue": "sung"
     },
     {
       "path": "vocal_segments[9].start",
       "status": "fail",
       "rule": "tolerant-time",
-      "truthValue": 127,
+      "truthValue": 95.5,
       "outputValue": 130,
-      "reason": "Time delta 3 exceeded tolerance 2",
+      "reason": "Time delta 34.5 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 3,
+        "deltaSeconds": 34.5,
         "toleranceSeconds": 2
       }
     },
     {
       "path": "vocal_segments[9].end",
-      "status": "pass",
+      "status": "fail",
       "rule": "tolerant-time",
-      "truthValue": 130,
+      "truthValue": 98,
       "outputValue": 132,
+      "reason": "Time delta 34 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 2,
+        "deltaSeconds": 34,
         "toleranceSeconds": 2
       }
     },
@@ -1226,9 +1238,9 @@
       "path": "vocal_segments[9].text",
       "status": "fail",
       "rule": "fuzzy-string",
-      "truthValue": "Master, master",
+      "truthValue": "You promised only lies",
       "outputValue": "Obey your master",
-      "normalizedTruthValue": "master master",
+      "normalizedTruthValue": "you promised only lies",
       "normalizedOutputValue": "obey your master",
       "reason": "Normalized strings differed"
     },
@@ -1260,11 +1272,40 @@
     },
     {
       "path": "vocal_segments[9].delivery",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
-      "truthValue": "chant",
-      "outputValue": "sung",
-      "reason": "Values differed"
+      "truthValue": "sung",
+      "outputValue": "sung"
+    },
+    {
+      "path": "vocal_segments[10]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "start": 116,
+        "end": 118,
+        "text": "Obey your master",
+        "confidence": 0.9,
+        "performer": "Metallica lead vocal",
+        "performer_id": "voc_001",
+        "delivery": "chant"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "vocal_segments[11]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "start": 127,
+        "end": 130,
+        "text": "Master, master",
+        "confidence": 0.9,
+        "performer": "Metallica lead vocal",
+        "performer_id": "voc_001",
+        "delivery": "chant"
+      },
+      "reason": "Output array missing item present in truth"
     },
     {
       "path": "summary",

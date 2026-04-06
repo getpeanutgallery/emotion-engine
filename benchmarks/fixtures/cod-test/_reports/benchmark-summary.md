@@ -1,6 +1,6 @@
 # Benchmark Summary: cod-test
 
-- Status: **pass**
+- Status: **error**
 - Benchmark: `benchmarks/fixtures/cod-test/benchmark.json`
 - Fixture: `benchmarks/fixtures/cod-test/fixture.json`
 - Config: `COD Test Pipeline`
@@ -8,19 +8,20 @@
 
 ## Totals
 
-- Artifacts: 6/6 passed, 0 failed, 0 errored
-- Accuracy: 3154/3154 scoreable fields passed (100.0%)
-- Coverage: 3154/3210 truth fields scoreable (98.3%)
-- Skipped truth fields: 56
+- Artifacts: 0/7 passed, 2 failed, 5 errored
+- Accuracy: 1506/2958 scoreable fields passed (50.9%)
+- Coverage: 2958/3082 truth fields scoreable (96.0%)
+- Skipped truth fields: 46
 
 ## Artifacts
 
-- **dialogueData** — pass; accuracy=100.0%, coverage=100.0%
-- **musicData** — pass; accuracy=100.0%, coverage=100.0%
-- **recommendationData** — pass; accuracy=100.0%, coverage=64.7%
-- **chunkAnalysis** — pass; accuracy=100.0%, coverage=94.9%
-- **metricsData** — pass; accuracy=100.0%, coverage=97.2%
-- **emotionalAnalysisData** — pass; accuracy=100.0%, coverage=99.3%
+- **dialogueData** — error; accuracy=29.7%, coverage=88.2%
+- **musicData** — error; accuracy=34.0%, coverage=80.6%
+- **musicVocalsData** — error; accuracy=45.8%, coverage=88.9%
+- **recommendationData** — error; accuracy=15.8%, coverage=52.8%
+- **chunkAnalysis** — fail; accuracy=61.9%, coverage=94.9%
+- **metricsData** — fail; accuracy=48.6%, coverage=97.2%
+- **emotionalAnalysisData** — error; accuracy=51.1%, coverage=98.7%
 
-6/6 artifacts passed. 3154/3154 scoreable fields passed. Truth coverage was 3154/3210 fields.
+0/7 artifacts passed. 1506/2958 scoreable fields passed. Truth coverage was 2958/3082 fields.
 

@@ -28,8 +28,8 @@
     {
       "artifactKey": "musicVocalsData",
       "status": "error",
-      "accuracyRate": 0.4105263157894737,
-      "coverageRate": 0.9047619047619048
+      "accuracyRate": 0.4583333333333333,
+      "coverageRate": 0.8888888888888888
     },
     {
       "artifactKey": "recommendationData",
@@ -61,23 +61,23 @@
     "artifactsPassed": 0,
     "artifactsFailed": 2,
     "artifactsErrored": 5,
-    "totalTruthFields": 3079,
-    "scoreableFields": 2957,
+    "totalTruthFields": 3082,
+    "scoreableFields": 2958,
     "skippedFields": 46,
-    "passedFields": 1501,
-    "failedFields": 1456,
-    "erroredFields": 76
+    "passedFields": 1506,
+    "failedFields": 1452,
+    "erroredFields": 78
   },
   "accuracy": {
-    "passed": 1501,
-    "failed": 1456,
-    "rate": 0.5076090632397701
+    "passed": 1506,
+    "failed": 1452,
+    "rate": 0.5091277890466531
   },
   "coverage": {
-    "scoreable": 2957,
+    "scoreable": 2958,
     "skipped": 46,
-    "totalTruthFields": 3079,
-    "rate": 0.9603767456966548
+    "totalTruthFields": 3082,
+    "rate": 0.9597663854639844
   },
   "errors": [
     {
@@ -686,6 +686,36 @@
     },
     {
       "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[10]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 116,
+        "end": 118,
+        "text": "Obey your master",
+        "confidence": 0.9,
+        "performer": "Metallica lead vocal",
+        "performer_id": "voc_001",
+        "delivery": "chant"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[11]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 127,
+        "end": 130,
+        "text": "Master, master",
+        "confidence": 0.9,
+        "performer": "Metallica lead vocal",
+        "performer_id": "voc_001",
+        "delivery": "chant"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "musicVocalsData",
       "path": "recognizedSong.candidates[0].evidence[1]",
       "rule": "structural",
       "truthValue": "The surrounding sung lines align with the same famous metal song chorus/verse sequence.",
@@ -1149,5 +1179,5 @@
       "reason": "Output array missing keyed item present in truth"
     }
   ],
-  "summary": "0/7 artifacts passed. 1501/2957 scoreable fields passed. Truth coverage was 2957/3079 fields."
+  "summary": "0/7 artifacts passed. 1506/2958 scoreable fields passed. Truth coverage was 2958/3082 fields."
 }
