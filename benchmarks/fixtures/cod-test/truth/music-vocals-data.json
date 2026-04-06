@@ -3,7 +3,7 @@
     {
       "start": 64,
       "end": 65,
-      "text": "Obey your master.",
+      "text": "Obey your master",
       "confidence": 0.9,
       "performer": "Metallica lead vocal",
       "performer_id": "voc_001",
@@ -12,7 +12,7 @@
     {
       "start": 68,
       "end": 70,
-      "text": "Control faster.",
+      "text": "Your life burns faster",
       "confidence": 0.9,
       "performer": "Metallica lead vocal",
       "performer_id": "voc_001",
@@ -21,7 +21,7 @@
     {
       "start": 76,
       "end": 78,
-      "text": "Master of puppets are pulling the strings!",
+      "text": "Master of puppets I’m pulling your strings",
       "confidence": 0.9,
       "performer": "Metallica lead vocal",
       "performer_id": "voc_001",
@@ -30,7 +30,7 @@
     {
       "start": 80,
       "end": 83,
-      "text": "Twisting your mind, smashing your dreams!",
+      "text": "Twisting your mind and smashing your dreams",
       "confidence": 0.9,
       "performer": "Metallica lead vocal",
       "performer_id": "voc_001",
@@ -48,7 +48,7 @@
     {
       "start": 87,
       "end": 88,
-      "text": "Just call my name ’cause I’ll hear you scream",
+      "text": "Just call my name, ‘cause I’ll hear you scream",
       "confidence": 0.9,
       "performer": "Metallica lead vocal",
       "performer_id": "voc_001",
@@ -56,8 +56,17 @@
     },
     {
       "start": 89,
+      "end": 91,
+      "text": "Master, master",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    },
+    {
+      "start": 91,
       "end": 94,
-      "text": "Master, master, where’s the dreams that I’ve been after?",
+      "text": "Where’s the dreams that I’ve been after?",
       "confidence": 0.9,
       "performer": "Metallica lead vocal",
       "performer_id": "voc_001",
@@ -65,8 +74,17 @@
     },
     {
       "start": 94,
+      "end": 95.5,
+      "text": "Master, master",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    },
+    {
+      "start": 95.5,
       "end": 98,
-      "text": "Master, master, you promised only lies!",
+      "text": "You promised only lies",
       "confidence": 0.9,
       "performer": "Metallica lead vocal",
       "performer_id": "voc_001",
@@ -75,7 +93,7 @@
     {
       "start": 116,
       "end": 118,
-      "text": "Obey your master!",
+      "text": "Obey your master",
       "confidence": 0.9,
       "performer": "Metallica lead vocal",
       "performer_id": "voc_001",
