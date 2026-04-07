@@ -1,3 +1,13 @@
+---
+plan_id: plan-2026-03-31-mimo-v2-omni-feasibility-and-test-plan
+bead_ids:
+  - ee-gdxc
+  - ee-jrtc
+  - ee-k3ls
+  - ee-fx19
+  - ee-7m6f
+  - ee-6bsi
+---
 # emotion-engine: MiMo v2 Omni feasibility and prototype planning
 
 **Date:** 2026-03-31  

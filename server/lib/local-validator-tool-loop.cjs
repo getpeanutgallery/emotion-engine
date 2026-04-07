@@ -1,5 +1,6 @@
 const { parseJsonObjectInput } = require('./json-validator.cjs');
 const { createRetryableError } = require('./ai-targets.cjs');
+const { buildLocalValidationRepairPromptAddendum } = require('./ai-recovery-runtime.cjs');
 
 function defaultNormalizeForComparison(value) {
   if (value === null || value === undefined) return null;
@@ -171,6 +172,113 @@ function buildLocalValidatorToolPrompt({
   ].join('\n');
 }
 
+function buildLeanLocalValidatorPrompt({
+  basePrompt,
+  repairState = null
+}) {
+  if (!repairState) {
+    return basePrompt;
+  }
+
+  return `${basePrompt}${buildLocalValidationRepairPromptAddendum(repairState)}`;
+}
+
+function canUseValidatorCall({
+  runtimeStyle,
+  turn,
+  validatorCalls,
+  toolLoopConfig,
+  finalValidatorGraceUsed = false
+}) {
+  if (validatorCalls < toolLoopConfig.maxValidatorCalls) {
+    return true;
+  }
+
+  return runtimeStyle === 'lean'
+    && !finalValidatorGraceUsed
+    && turn === toolLoopConfig.maxTurns;
+}
+
+function consumeValidatorCall({
+  validatorCalls,
+  toolLoopConfig,
+  finalValidatorGraceUsed = false
+}) {
+  const nextValidatorCalls = validatorCalls + 1;
+  return {
+    validatorCalls: nextValidatorCalls,
+    finalValidatorGraceUsed: finalValidatorGraceUsed || nextValidatorCalls > toolLoopConfig.maxValidatorCalls
+  };
+}
+
+function buildLoopResult({
+  completion,
+  parsed,
+  promptMode,
+  repairSummary,
+  toolContract,
+  toolLoopConfig,
+  turns,
+  validatorCalls,
+  history
+}) {
+  return {
+    completion,
+    parsed,
+    requestPrompt: {
+      mode: promptMode,
+      repairSummary: repairSummary || null
+    },
+    toolLoop: {
+      toolName: toolContract.name,
+      maxTurns: toolLoopConfig.maxTurns,
+      maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
+      turns,
+      validatorCalls,
+      history,
+      finalArtifact: parsed
+    }
+  };
+}
+
+function createToolLoopRetryableError({
+  message,
+  group,
+  raw,
+  extracted = null,
+  parseError = null,
+  validationErrors = [],
+  validationSummary = null,
+  completion,
+  promptMode,
+  promptRef,
+  toolContract,
+  toolLoopConfig,
+  turn,
+  validatorCalls,
+  history
+}) {
+  return createRetryableError(message, {
+    group,
+    raw,
+    extracted,
+    parseError,
+    validationErrors,
+    validationSummary,
+    completion,
+    promptMode,
+    promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
+    toolLoop: {
+      toolName: toolContract.name,
+      maxTurns: toolLoopConfig.maxTurns,
+      maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
+      turn,
+      validatorCalls,
+      history
+    }
+  });
+}
+
 async function executeLocalValidatorToolLoop({
   provider,
   adapter,
@@ -191,30 +299,37 @@ async function executeLocalValidatorToolLoop({
   normalizeValidatedValue = defaultNormalizeForComparison,
   autoValidationKind = 'tool_result_auto_validation',
   finalArtifactAcceptedKind = 'final_artifact_revalidation',
-  requireExplicitToolCallBeforeFinalArtifact = false
+  requireExplicitToolCallBeforeFinalArtifact = false,
+  runtimeStyle = 'tool_loop'
 }) {
   const history = [];
   let successfulValidatedValue = null;
   let validatorCalls = 0;
+  let finalValidatorGraceUsed = false;
   let finalCompletion = null;
-  let finalPromptMode = 'tool_loop';
+  let finalPromptMode = runtimeStyle === 'lean' ? 'lean' : 'tool_loop';
+  let repairState = null;
 
   for (let turn = 1; turn <= toolLoopConfig.maxTurns; turn += 1) {
     const remainingTurns = toolLoopConfig.maxTurns - turn + 1;
     const remainingValidatorCalls = Math.max(toolLoopConfig.maxValidatorCalls - validatorCalls, 0);
-    const prompt = buildLocalValidatorToolPrompt({
-      basePrompt,
-      toolContract,
-      history,
-      remainingTurns,
-      remainingValidatorCalls,
-      artifactLabel,
-      finalArtifactDescription,
-      finalArtifactRules,
-      requireExplicitToolCallBeforeFinalArtifact
-    });
+    const prompt = runtimeStyle === 'lean'
+      ? buildLeanLocalValidatorPrompt({ basePrompt, repairState })
+      : buildLocalValidatorToolPrompt({
+          basePrompt,
+          toolContract,
+          history,
+          remainingTurns,
+          remainingValidatorCalls,
+          artifactLabel,
+          finalArtifactDescription,
+          finalArtifactRules,
+          requireExplicitToolCallBeforeFinalArtifact
+        });
 
-    const promptMode = turn === 1 ? 'tool_loop' : 'tool_loop_followup';
+    const promptMode = runtimeStyle === 'lean'
+      ? (turn === 1 ? 'lean' : 'lean_repair')
+      : (turn === 1 ? 'tool_loop' : 'tool_loop_followup');
     finalPromptMode = promptMode;
 
     if (events) {
@@ -260,7 +375,18 @@ async function executeLocalValidatorToolLoop({
 
     const parsedObject = parseJsonObjectInput(rawContent, getJsonParseOptions(toolContract));
     if (!parsedObject.ok) {
-      throw createRetryableError(`invalid_output: ${artifactLabel} response was not valid JSON`, {
+      repairState = {
+        validationSummary: parsedObject.summary,
+        validationErrors: parsedObject.errors,
+        extraInstructions: ['Return the final JSON object directly.']
+      };
+
+      if (runtimeStyle === 'lean' && turn < toolLoopConfig.maxTurns) {
+        continue;
+      }
+
+      throw createToolLoopRetryableError({
+        message: `invalid_output: ${artifactLabel} response was not valid JSON`,
         group: parsedObject.meta?.stage || 'parse',
         raw: parsedObject.meta?.raw || rawContent || null,
         extracted: parsedObject.meta?.extracted || null,
@@ -269,15 +395,12 @@ async function executeLocalValidatorToolLoop({
         validationSummary: parsedObject.summary,
         completion,
         promptMode,
-        promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
-        toolLoop: {
-          toolName: toolContract.name,
-          maxTurns: toolLoopConfig.maxTurns,
-          maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
-          turn,
-          validatorCalls,
-          history
-        }
+        promptRef,
+        toolContract,
+        toolLoopConfig,
+        turn,
+        validatorCalls,
+        history
       });
     }
 
@@ -287,8 +410,15 @@ async function executeLocalValidatorToolLoop({
     });
 
     if (toolCall.ok) {
-      if (validatorCalls >= toolLoopConfig.maxValidatorCalls) {
-        throw createRetryableError(`invalid_output: exceeded ${toolContract.name} tool-call limit`, {
+      if (!canUseValidatorCall({
+        runtimeStyle,
+        turn,
+        validatorCalls,
+        toolLoopConfig,
+        finalValidatorGraceUsed
+      })) {
+        throw createToolLoopRetryableError({
+          message: `invalid_output: exceeded ${toolContract.name} tool-call limit`,
           group: 'tool_loop',
           raw: rawContent || null,
           extracted: parsedObject.meta?.extracted || null,
@@ -296,19 +426,20 @@ async function executeLocalValidatorToolLoop({
           validationSummary: `Exceeded ${toolContract.name} tool-call limit. Return a final validated ${artifactLabel} JSON.`,
           completion,
           promptMode,
-          promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
-          toolLoop: {
-            toolName: toolContract.name,
-            maxTurns: toolLoopConfig.maxTurns,
-            maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
-            turn,
-            validatorCalls,
-            history
-          }
+          promptRef,
+          toolContract,
+          toolLoopConfig,
+          turn,
+          validatorCalls,
+          history
         });
       }
 
-      validatorCalls += 1;
+      ({ validatorCalls, finalValidatorGraceUsed } = consumeValidatorCall({
+        validatorCalls,
+        toolLoopConfig,
+        finalValidatorGraceUsed
+      }));
       const toolResult = executeValidatorTool(toolCall.value.arguments);
 
       history.push({
@@ -340,25 +471,28 @@ async function executeLocalValidatorToolLoop({
           });
         }
 
-        return {
+        return buildLoopResult({
           completion,
           parsed: successfulValidatedValue,
-          requestPrompt: {
-            mode: promptMode,
-            repairSummary: null
-          },
-          toolLoop: {
-            toolName: toolContract.name,
-            maxTurns: toolLoopConfig.maxTurns,
-            maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
-            turns: turn,
-            validatorCalls,
-            history,
-            finalArtifact: successfulValidatedValue
-          }
-        };
+          promptMode,
+          repairSummary: repairState?.validationSummary || null,
+          toolContract,
+          toolLoopConfig,
+          turns: turn,
+          validatorCalls,
+          history
+        });
       }
 
+      repairState = {
+        validationSummary: toolResult.summary,
+        validationErrors: toolResult.errors,
+        extraInstructions: [
+          runtimeStyle === 'lean'
+            ? 'Return the final JSON object directly.'
+            : `Call ${toolContract.name} again or return a revised ${artifactLabel} JSON candidate.`
+        ]
+      };
       continue;
     }
 
@@ -379,10 +513,27 @@ async function executeLocalValidatorToolLoop({
           malformedEnvelope: true
         }
       });
+      repairState = {
+        validationSummary: toolCall.summary,
+        validationErrors: toolCall.errors || [],
+        extraInstructions: ['Return the final JSON object directly instead of a tool-call envelope.']
+      };
       continue;
     }
 
     if (requireExplicitToolCallBeforeFinalArtifact && !successfulValidatedValue) {
+      const missingToolCallResult = {
+        ok: false,
+        valid: false,
+        toolName: toolContract.name,
+        summary: `You must call ${toolContract.name} and receive valid=true before returning the final ${artifactLabel} JSON.`,
+        errors: [{
+          path: '$',
+          code: 'required_tool_call_missing',
+          message: `Call ${toolContract.name} before returning the final ${artifactLabel} JSON.`
+        }],
+        malformedEnvelope: false
+      };
       history.push({
         role: 'tool',
         turn,
@@ -390,24 +541,25 @@ async function executeLocalValidatorToolLoop({
         toolName: toolContract.name,
         source: 'model_output',
         toolCall: null,
-        result: {
-          ok: false,
-          valid: false,
-          toolName: toolContract.name,
-          summary: `You must call ${toolContract.name} and receive valid=true before returning the final ${artifactLabel} JSON.`,
-          errors: [{
-            path: '$',
-            code: 'required_tool_call_missing',
-            message: `Call ${toolContract.name} before returning the final ${artifactLabel} JSON.`
-          }],
-          malformedEnvelope: false
-        }
+        result: missingToolCallResult
       });
+      repairState = {
+        validationSummary: missingToolCallResult.summary,
+        validationErrors: missingToolCallResult.errors,
+        extraInstructions: [`Call ${toolContract.name} before returning the final ${artifactLabel} JSON.`]
+      };
       continue;
     }
 
-    if (validatorCalls >= toolLoopConfig.maxValidatorCalls) {
-      throw createRetryableError(`invalid_output: exceeded ${toolContract.name} tool-call limit`, {
+    if (!canUseValidatorCall({
+      runtimeStyle,
+      turn,
+      validatorCalls,
+      toolLoopConfig,
+      finalValidatorGraceUsed
+    })) {
+      throw createToolLoopRetryableError({
+        message: `invalid_output: exceeded ${toolContract.name} tool-call limit`,
         group: 'tool_loop',
         raw: rawContent || null,
         extracted: parsedObject.meta?.extracted || null,
@@ -419,19 +571,20 @@ async function executeLocalValidatorToolLoop({
         validationSummary: `Exceeded ${toolContract.name} tool-call limit before ${artifactLabel} could be validated.`,
         completion,
         promptMode,
-        promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
-        toolLoop: {
-          toolName: toolContract.name,
-          maxTurns: toolLoopConfig.maxTurns,
-          maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
-          turn,
-          validatorCalls,
-          history
-        }
+        promptRef,
+        toolContract,
+        toolLoopConfig,
+        turn,
+        validatorCalls,
+        history
       });
     }
 
-    validatorCalls += 1;
+    ({ validatorCalls, finalValidatorGraceUsed } = consumeValidatorCall({
+      validatorCalls,
+      toolLoopConfig,
+      finalValidatorGraceUsed
+    }));
     const autoToolArgs = { [toolContract.argumentKey]: parsedObject.value };
     const toolResult = executeValidatorTool(autoToolArgs);
 
@@ -452,6 +605,11 @@ async function executeLocalValidatorToolLoop({
     });
 
     if (!toolResult.valid) {
+      repairState = {
+        validationSummary: toolResult.summary,
+        validationErrors: toolResult.errors,
+        extraInstructions: ['Return the final JSON object directly.']
+      };
       continue;
     }
 
@@ -466,6 +624,11 @@ async function executeLocalValidatorToolLoop({
 
     if (finalNormalized !== priorNormalized) {
       successfulValidatedValue = validatedValue;
+      repairState = {
+        validationSummary: `${artifactLabel} changed after validation; return the corrected final JSON only.`,
+        validationErrors: [],
+        extraInstructions: ['Return the corrected final JSON object only.']
+      };
       continue;
     }
 
@@ -486,35 +649,32 @@ async function executeLocalValidatorToolLoop({
       });
     }
 
-    return {
+    return buildLoopResult({
       completion,
       parsed: validatedValue,
-      requestPrompt: {
-        mode: promptMode,
-        repairSummary: null
-      },
-      toolLoop: {
-        toolName: toolContract.name,
-        maxTurns: toolLoopConfig.maxTurns,
-        maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
-        turns: turn,
-        validatorCalls,
-        history,
-        finalArtifact: validatedValue
-      }
-    };
+      promptMode,
+      repairSummary: repairState?.validationSummary || null,
+      toolContract,
+      toolLoopConfig,
+      turns: turn,
+      validatorCalls,
+      history
+    });
   }
 
   const lastMissingRequiredToolCall = [...history].reverse().find((entry) => entry?.kind === 'missing_required_tool_call');
-  const exhaustedSummary = lastMissingRequiredToolCall?.result?.summary
-    || `${artifactLabel} tool loop exhausted after ${toolLoopConfig.maxTurns} turns. Ensure the model validates the ${artifactLabel} and then returns final JSON only.`;
+  const exhaustedSummary = runtimeStyle === 'lean'
+    ? (repairState?.validationSummary || `${artifactLabel} remained invalid after ${toolLoopConfig.maxTurns} attempts. Return JSON only with the required schema.`)
+    : (lastMissingRequiredToolCall?.result?.summary
+      || `${artifactLabel} tool loop exhausted after ${toolLoopConfig.maxTurns} turns. Ensure the model validates the ${artifactLabel} and then returns final JSON only.`);
 
-  throw createRetryableError(`invalid_output: ${artifactLabel} tool loop exhausted after ${toolLoopConfig.maxTurns} turns`, {
-    group: 'tool_loop',
+  throw createToolLoopRetryableError({
+    message: `invalid_output: ${artifactLabel} tool loop exhausted after ${toolLoopConfig.maxTurns} turns`,
+    group: runtimeStyle === 'lean' ? 'validation' : 'tool_loop',
     raw: finalCompletion?.content || null,
     extracted: null,
     parseError: null,
-    validationErrors: [{
+    validationErrors: repairState?.validationErrors || [{
       path: '$',
       code: lastMissingRequiredToolCall ? 'required_tool_call_missing' : 'tool_loop_exhausted',
       message: lastMissingRequiredToolCall?.result?.errors?.[0]?.message || `${artifactLabel} tool loop exhausted after ${toolLoopConfig.maxTurns} turns.`
@@ -522,15 +682,12 @@ async function executeLocalValidatorToolLoop({
     validationSummary: exhaustedSummary,
     completion: finalCompletion,
     promptMode: finalPromptMode,
-    promptRef: promptRef ? { sha256: promptRef.sha256, file: promptRef.file } : null,
-    toolLoop: {
-      toolName: toolContract.name,
-      maxTurns: toolLoopConfig.maxTurns,
-      maxValidatorCalls: toolLoopConfig.maxValidatorCalls,
-      turns: toolLoopConfig.maxTurns,
-      validatorCalls,
-      history
-    }
+    promptRef,
+    toolContract,
+    toolLoopConfig,
+    turn: toolLoopConfig.maxTurns,
+    validatorCalls,
+    history
   });
 }
 

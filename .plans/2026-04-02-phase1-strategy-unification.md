@@ -1,3 +1,11 @@
+---
+plan_id: plan-2026-04-02-phase1-strategy-unification
+bead_ids:
+  - ee-wp3q
+  - ee-9720
+  - ee-kc5t
+  - ee-nvwv
+---
 # emotion-engine: unify Phase 1 strategy controls
 
 **Date:** 2026-04-02  

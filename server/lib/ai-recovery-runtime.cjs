@@ -59,7 +59,73 @@ function buildRecoveryPromptAddendum(recoveryRuntime, { heading = 'AI RECOVERY R
   return lines.join('\n');
 }
 
+function normalizeRepairIssueLines({ validationSummary = null, validationErrors = [], maxIssues = 3 } = {}) {
+  const issueLines = [];
+  const trimmedSummary = typeof validationSummary === 'string' ? validationSummary.trim() : '';
+
+  if (trimmedSummary) {
+    issueLines.push(trimmedSummary.replace(/\s+/g, ' '));
+  }
+
+  for (const error of Array.isArray(validationErrors) ? validationErrors : []) {
+    if (issueLines.length >= maxIssues) break;
+    const path = typeof error?.path === 'string' && error.path.trim().length > 0 ? error.path.trim() : '$';
+    const message = typeof error?.message === 'string' && error.message.trim().length > 0
+      ? error.message.trim()
+      : null;
+    if (!message) continue;
+    const formatted = `${path}: ${message}`;
+    if (!issueLines.includes(formatted)) {
+      issueLines.push(formatted);
+    }
+  }
+
+  if (issueLines.length === 0) {
+    issueLines.push('Previous output did not match the required JSON structure.');
+  }
+
+  return issueLines.slice(0, maxIssues);
+}
+
+function buildLocalValidationRepairPromptAddendum({
+  validationSummary = null,
+  validationErrors = [],
+  boundedContextSummary = null,
+  extraInstructions = []
+} = {}) {
+  const issueLines = normalizeRepairIssueLines({ validationSummary, validationErrors });
+  const instructions = normalizeRecoveryTextList(extraInstructions);
+  const lines = [
+    '',
+    'LOCAL VALIDATION REPAIR:',
+    '- Return JSON only with the same required schema.',
+    '- Keep the same task and domain assumptions; fix only the invalid output behavior.',
+    '- Do not wrap the JSON in a tool call envelope, markdown fence, or explanation.',
+    '',
+    'Fix these issues:'
+  ];
+
+  for (const issue of issueLines) {
+    lines.push(`- ${issue}`);
+  }
+
+  if (typeof boundedContextSummary === 'string' && boundedContextSummary.trim().length > 0) {
+    lines.push('', 'Bounded context summary:', boundedContextSummary.trim());
+  }
+
+  if (instructions.length > 0) {
+    lines.push('', 'Additional repair instructions:');
+    for (const instruction of instructions) {
+      lines.push(`- ${instruction}`);
+    }
+  }
+
+  return lines.join('\n');
+}
+
 module.exports = {
   getRecoveryRuntime,
-  buildRecoveryPromptAddendum
+  buildRecoveryPromptAddendum,
+  buildLocalValidationRepairPromptAddendum,
+  normalizeRepairIssueLines
 };

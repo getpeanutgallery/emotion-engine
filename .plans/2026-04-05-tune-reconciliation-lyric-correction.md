@@ -193,9 +193,35 @@ Validation run completed:
 - `.plans/2026-04-05-tune-reconciliation-lyric-correction.md`
 - fresh rerun artifacts/logs/reports
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed `ee-r4u4`, then launched a fresh reconciliation-enabled cod-test with the same command shape as the prior completed reconciliation run:
+
+- **Exact command:** `set -a && . ./.env && set +a && export DIGITAL_TWIN_MODE=record && export DIGITAL_TWIN_CASSETTE="cod-test-record-20260406-081320-ee-r4u4-reconciliation-rerun" && /usr/bin/time -p -o ".logs/cod-test-20260406-081320-ee-r4u4-reconciliation-rerun.time" node server/run-pipeline.cjs --config configs/cod-test.yaml --verbose`
+- **Cassette target:** `/home/derrick/.openclaw/workspace/projects/peanut-gallery/digital-twin-openrouter-emotion-engine/cassettes/cod-test-record-20260406-081320-ee-r4u4-reconciliation-rerun.json`
+- **Live log:** `.logs/cod-test-20260406-081320-ee-r4u4-reconciliation-rerun.log`
+- **Time file:** `.logs/cod-test-20260406-081320-ee-r4u4-reconciliation-rerun.time` (created but empty because the run had to be terminated after the stall)
+- **Preserved partial output:** `output/_archives/cod-test-pre-ee-r4u4-20260406-081320/`
+
+The rerun completed Phase 1 and emitted fresh reconciled artifacts, but it did **not** finish end-to-end. The preserved event ledger at `output/_archives/cod-test-pre-ee-r4u4-20260406-081320/_meta/events.jsonl` ends with `provider.call.start` for Phase 2 `video-chunks` `chunkIndex: 3` (`seq: 513`) plus the prompt artifact write at `seq: 514`, with no matching `provider.call.end` / `run.end`. After waiting well beyond the prior successful wall-clock and confirming no forward progress, the hung process was terminated so the evidence could be documented truthfully.
+
+**Comparison vs prior completed reconciliation-backed run** (`output/_archives/cod-test-pre-ee-k4o2a-20260405-210753/`):
+
+- **Lyric-correction behavior:** the fresh Phase 1 ledger now shows **1** applied lyric correction and **1** removed dialogue contamination segment, versus the prior completed reconciliation run’s **5** lyric corrections and **0** removed dialogue segments.
+  - **Fresh applied correction:** `58.0-61.2` rewrote `"Obey your master, master"` → `"Obey your master"`.
+  - **Fresh removed dialogue contamination:** dialogue segment index `16` (`115.0-117.5`) with text `"Obey your master!"` was removed as `likely_lyric_contamination`.
+  - **Prior completed run corrections:** the earlier reconciliation-backed run corrected five isolated `"Master"` fragments to `"Master, master"`, but did not remove any dialogue segment.
+- **Do more obvious near-miss lyric cases get corrected?** **Partially yes, but not in a simple “more corrections overall” sense.**
+  - The tuned pass did correct a previously more substantial near-miss (`"Obey your master, master"` → `"Obey your master"`), which is a stronger correction than the prior run’s repeated single-token `"Master"` expansions.
+  - But the fresh ledger recorded **fewer** reconciliation rewrites overall (`1` vs `5`) because the underlying `music-vocals` output itself arrived much closer to canonical lyrics, so there were fewer correction candidates to reconcile.
+- **Does dialogue contamination stay improved?** **Yes, and it improved further in this fresh Phase 1 output.**
+  - The fresh reconciled dialogue no longer contains the earlier bogus lyric spillover such as `"I'm a monster."`, `"Control."`, `"Master of the bullet and the blade."`, `"Crushing your bones, smashing your teeth."`, or the long `"... Obey your master."` contaminated segment that appeared in the prior completed reconciliation-backed run.
+  - Instead, the fresh reconciled dialogue keeps only spoken trailer lines plus one explicit contamination removal recorded in the ledger.
+- **Unsafe rewrites check:** **No new unsafe rewrite evidence found in the fresh Phase 1 artifacts.**
+  - The fresh ledger still skips a tempting shortening rewrite with `reason: "target_too_short_relative_to_source"` for a candidate `"Master of puppets"`, showing the new anti-truncation guard is still active.
+  - Remaining skipped candidates are low-similarity `"Obey your master"` proposals, not evidence of aggressive overreach.
+- **Benchmark delta:** **Unavailable from this fresh rerun.** Because the pipeline never reached `run.end`, there is no trustworthy fresh benchmark/report completion to compare against the prior completed reconciliation-backed run’s `1928/2994` passed (`64.4%`). Any benchmark/report files still present under `output/cod-test/` or `benchmarks/fixtures/cod-test/_reports/` after the stall are not reliable as a fresh ee-r4u4 result because this rerun did not complete the full pipeline.
+- **Review conclusion:** the reconciliation tuning appears directionally good on the fresh Phase 1 evidence: it preserved safety guards, removed one clear dialogue-contamination segment, and repaired one more meaningful near-miss lyric phrase while the base `music-vocals` output itself came back substantially cleaner and more canonical than the prior completed run. But the requested fresh benchmark-accuracy judgment remains unresolved because the rerun re-entered the known OpenRouter Phase 2 stall family before benchmark completion.
 
 ---
 
@@ -203,12 +229,13 @@ Validation run completed:
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Implemented the reconciliation-side rule changes for the approved lyric-correction relaxation tranche: the strong song-recognition gate stayed unchanged, music-vocal correction now has a generic lane plus an anchored near-miss lane, and explicit anti-truncation / anti-fragment guards now block unsafe shortening rewrites. Focused regression tests for the real archived near-miss and the unsafe fragment cases are now passing.
+**What We Built:** Implemented the approved reconciliation-tuning tranche in `8533f9e`, validated it with focused tests, then ran a fresh reconciliation-enabled cod-test attempt for bead `ee-r4u4`. That rerun produced useful new Phase 1 evidence: one real near-miss lyric correction, one explicit dialogue-contamination removal, cleaner/canonical `music-vocals` output, and no sign that the anti-truncation safeguards regressed. The run did not finish end-to-end, so benchmark accuracy could not be freshly re-measured.
 
 **Commits:**
-- Pending for Task 2 completion in this plan section; Task 3 rerun commit still outstanding.
+- `8533f9e` - Tune reconciliation lyric correction conservatism
+- No additional Task 3 commit created
 
-**Lessons Learned:** The design target of `~0.58` was directionally right, but the live lexical scorer placed the archived `"Come control your master"` case just under that line at `0.578947...`, so the safe practical implementation point needed to be `0.57` once combined with the stronger anchor and anti-truncation guards.
+**Lessons Learned:** The tuning improved the *quality* of the reconciler’s best correction more than the *count* of corrections in this fresh sample. The bigger blocker is still operational: Phase 2 provider stalls can prevent benchmark-backed judgment even when Phase 1 reconciliation behavior looks better and remains safe.
 
 ---
 

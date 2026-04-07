@@ -1,0 +1,3783 @@
+{
+  "artifactKey": "dialogueData",
+  "label": "Phase 1 dialogue",
+  "phase": "phase1-gather-context",
+  "script": "get-dialogue",
+  "status": "error",
+  "truth": {
+    "path": "benchmarks/fixtures/cod-test/truth/dialogue-data.json"
+  },
+  "output": {
+    "path": "output/cod-test/phase1-gather-context/dialogue-data.reconciled.json"
+  },
+  "comparator": {
+    "kind": "json-structured",
+    "profile": "dialogue-default",
+    "resolvedOptions": {
+      "timingToleranceSeconds": 2,
+      "numericTolerance": 0.1,
+      "unknownSentinels": [
+        "unknown",
+        "ambiguous"
+      ],
+      "ignorePaths": []
+    },
+    "directives": {
+      "comparatorIgnorePaths": [],
+      "truthIgnorePaths": [],
+      "effectiveIgnorePaths": []
+    }
+  },
+  "counts": {
+    "totalTruthFields": 221,
+    "scoreableFields": 195,
+    "skippedFields": 0,
+    "passedFields": 58,
+    "failedFields": 137,
+    "erroredFields": 26,
+    "ignoredDifferenceFields": 0
+  },
+  "accuracy": {
+    "passed": 58,
+    "failed": 137,
+    "rate": 0.29743589743589743
+  },
+  "coverage": {
+    "scoreable": 195,
+    "skipped": 0,
+    "totalTruthFields": 221,
+    "rate": 0.8823529411764706
+  },
+  "failures": [
+    {
+      "path": "dialogue_segments",
+      "rule": "structural",
+      "truthValue": {
+        "length": 20
+      },
+      "outputValue": {
+        "length": 18
+      },
+      "reason": "Array length mismatch: truth=20 output=18"
+    },
+    {
+      "path": "dialogue_segments[2].end",
+      "rule": "tolerant-time",
+      "truthValue": 17,
+      "outputValue": 14,
+      "reason": "Time delta 3 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[2].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 2",
+      "outputValue": "Speaker 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[2].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_002",
+      "outputValue": "spk_001",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[2].text",
+      "rule": "fuzzy-string",
+      "truthValue": "Your streets, shall once again run red with your blood.",
+      "outputValue": "Your streets shall once again run red.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[3].end",
+      "rule": "tolerant-time",
+      "truthValue": 21,
+      "outputValue": 24.5,
+      "reason": "Time delta 3.5 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[3].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 3",
+      "outputValue": "Speaker 2",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[3].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_003",
+      "outputValue": "spk_002",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[3].text",
+      "rule": "fuzzy-string",
+      "truthValue": "Raul Menendez ignited global unrest on an unprecedented scale.",
+      "outputValue": "With your blood, Raul Menendez ignited global unrest on an unprecedented scale. Menendez is a te Paris.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[4].start",
+      "rule": "tolerant-time",
+      "truthValue": 22,
+      "outputValue": 25,
+      "reason": "Time delta 3 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[4].end",
+      "rule": "tolerant-time",
+      "truthValue": 24,
+      "outputValue": 28,
+      "reason": "Time delta 4 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[4].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 1",
+      "outputValue": "Speaker 2",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[4].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_001",
+      "outputValue": "spk_002",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[4].text",
+      "rule": "fuzzy-string",
+      "truthValue": "Menendez is a terrorist.",
+      "outputValue": "We're bringing peace and security to the world.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[5].start",
+      "rule": "tolerant-time",
+      "truthValue": 24,
+      "outputValue": 29,
+      "reason": "Time delta 5 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[5].end",
+      "rule": "tolerant-time",
+      "truthValue": 26,
+      "outputValue": 31,
+      "reason": "Time delta 5 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[5].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 1",
+      "outputValue": "Speaker 3",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[5].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_001",
+      "outputValue": "spk_003",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[5].text",
+      "rule": "fuzzy-string",
+      "truthValue": "We're bringing peace and security to the world.",
+      "outputValue": "He refuses to let me go.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[6].start",
+      "rule": "tolerant-time",
+      "truthValue": 28,
+      "outputValue": 32,
+      "reason": "Time delta 4 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[6].end",
+      "rule": "tolerant-time",
+      "truthValue": 29,
+      "outputValue": 36,
+      "reason": "Time delta 7 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[6].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 6",
+      "outputValue": "Speaker 4",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[6].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_006",
+      "outputValue": "spk_004",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[6].text",
+      "rule": "fuzzy-string",
+      "truthValue": "He refuses to let me go.",
+      "outputValue": "Stop looking backwards, David, but now this is what we do next.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[7].start",
+      "rule": "tolerant-time",
+      "truthValue": 30,
+      "outputValue": 37,
+      "reason": "Time delta 7 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[7].end",
+      "rule": "tolerant-time",
+      "truthValue": 33,
+      "outputValue": 40,
+      "reason": "Time delta 7 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[7].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 7",
+      "outputValue": "Speaker 4",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[7].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_007",
+      "outputValue": "spk_004",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[7].text",
+      "rule": "fuzzy-string",
+      "truthValue": "Stop looking backwards, David. What matters is what we do next.",
+      "outputValue": "A lot of people counting on us for answers.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[8].start",
+      "rule": "tolerant-time",
+      "truthValue": 35,
+      "outputValue": 44,
+      "reason": "Time delta 9 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[8].end",
+      "rule": "tolerant-time",
+      "truthValue": 36,
+      "outputValue": 46,
+      "reason": "Time delta 10 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[8].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 6",
+      "outputValue": "Speaker 5",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[8].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_006",
+      "outputValue": "spk_005",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[8].text",
+      "rule": "fuzzy-string",
+      "truthValue": "A lot of people counting on us for answers.",
+      "outputValue": "Spectre One report.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[9].start",
+      "rule": "tolerant-time",
+      "truthValue": 45,
+      "outputValue": 49,
+      "reason": "Time delta 4 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[9].end",
+      "rule": "tolerant-time",
+      "truthValue": 47,
+      "outputValue": 51,
+      "reason": "Time delta 4 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[9].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 14",
+      "outputValue": "Speaker 5",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[9].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_014",
+      "outputValue": "spk_005",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[9].text",
+      "rule": "fuzzy-string",
+      "truthValue": "You shall know fear.",
+      "outputValue": "Need a sitrep.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[9].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.8,
+      "outputValue": 0.95,
+      "reason": "Numeric delta 0.1499999999999999 exceeded tolerance 0.1"
+    },
+    {
+      "path": "dialogue_segments[10].start",
+      "rule": "tolerant-time",
+      "truthValue": 51,
+      "outputValue": 54,
+      "reason": "Time delta 3 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[10].end",
+      "rule": "tolerant-time",
+      "truthValue": 52,
+      "outputValue": 56,
+      "reason": "Time delta 4 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[10].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 8",
+      "outputValue": "Speaker 3",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[10].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_008",
+      "outputValue": "spk_003",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[10].text",
+      "rule": "fuzzy-string",
+      "truthValue": "Specter one, report.",
+      "outputValue": "This isn't real.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[11].start",
+      "rule": "tolerant-time",
+      "truthValue": 54,
+      "outputValue": 59,
+      "reason": "Time delta 5 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[11].end",
+      "rule": "tolerant-time",
+      "truthValue": 55,
+      "outputValue": 61,
+      "reason": "Time delta 6 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[11].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 8",
+      "outputValue": "Speaker 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[11].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_008",
+      "outputValue": "spk_001",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[11].text",
+      "rule": "fuzzy-string",
+      "truthValue": "Need a sitrep.",
+      "outputValue": "The hell it isn't!",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[12].start",
+      "rule": "tolerant-time",
+      "truthValue": 61,
+      "outputValue": 94,
+      "reason": "Time delta 33 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[12].end",
+      "rule": "tolerant-time",
+      "truthValue": 62,
+      "outputValue": 96,
+      "reason": "Time delta 34 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[12].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 9",
+      "outputValue": "Speaker 4",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[12].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_009",
+      "outputValue": "spk_004",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[12].text",
+      "rule": "fuzzy-string",
+      "truthValue": "This isn't real.",
+      "outputValue": "Pull it together, man!",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[13].start",
+      "rule": "tolerant-time",
+      "truthValue": 63,
+      "outputValue": 99,
+      "reason": "Time delta 36 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[13].end",
+      "rule": "tolerant-time",
+      "truthValue": 64,
+      "outputValue": 107,
+      "reason": "Time delta 43 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[13].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 10",
+      "outputValue": "Speaker 4",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[13].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_010",
+      "outputValue": "spk_004",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[13].text",
+      "rule": "fuzzy-string",
+      "truthValue": "The hell it ain't!",
+      "outputValue": "So eager to leave, David. Killing a man is is a hell of a lot easier than killing the idea.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[14].start",
+      "rule": "tolerant-time",
+      "truthValue": 98,
+      "outputValue": 108,
+      "reason": "Time delta 10 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[14].end",
+      "rule": "tolerant-time",
+      "truthValue": 99,
+      "outputValue": 110,
+      "reason": "Time delta 11 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[14].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 12",
+      "outputValue": "Speaker 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[14].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_012",
+      "outputValue": "spk_001",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[14].text",
+      "rule": "fuzzy-string",
+      "truthValue": "Pull it together, man!",
+      "outputValue": "You were never cut out to be a Mason.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[15].start",
+      "rule": "tolerant-time",
+      "truthValue": 100,
+      "outputValue": 111,
+      "reason": "Time delta 11 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[15].end",
+      "rule": "tolerant-time",
+      "truthValue": 102,
+      "outputValue": 113,
+      "reason": "Time delta 11 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[15].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 2",
+      "outputValue": "Speaker 5",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[15].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_002",
+      "outputValue": "spk_005",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[15].text",
+      "rule": "fuzzy-string",
+      "truthValue": "So eager to leave daddy.",
+      "outputValue": "No more games. This ends now.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[16].start",
+      "rule": "tolerant-time",
+      "truthValue": 103,
+      "outputValue": 119,
+      "reason": "Time delta 16 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[16].end",
+      "rule": "tolerant-time",
+      "truthValue": 105,
+      "outputValue": 122,
+      "reason": "Time delta 17 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[16].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 13",
+      "outputValue": "Speaker 2",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[16].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_013",
+      "outputValue": "spk_002",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[16].text",
+      "rule": "fuzzy-string",
+      "truthValue": "Killing the man is a hell of a lot easier than killing the idea.",
+      "outputValue": "Get the Reznov challenge pack.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[17].start",
+      "rule": "tolerant-time",
+      "truthValue": 108,
+      "outputValue": 124,
+      "reason": "Time delta 16 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[17].end",
+      "rule": "tolerant-time",
+      "truthValue": 110,
+      "outputValue": 126,
+      "reason": "Time delta 16 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[17].speaker",
+      "rule": "exact",
+      "truthValue": "Speaker 15",
+      "outputValue": "Speaker 2",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[17].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_015",
+      "outputValue": "spk_002",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[17].text",
+      "rule": "fuzzy-string",
+      "truthValue": "You were never cut out to be a Mason.",
+      "outputValue": "And you pre-order now.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[17].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.6,
+      "outputValue": 0.95,
+      "reason": "Numeric delta 0.35 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles",
+      "rule": "structural",
+      "truthValue": {
+        "length": 13
+      },
+      "outputValue": {
+        "length": 5
+      },
+      "reason": "Array length mismatch: truth=13 output=5"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.92,
+      "outputValue": 0.82,
+      "reason": "Numeric delta 0.10000000000000009 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes",
+      "rule": "structural",
+      "truthValue": {
+        "length": 4
+      },
+      "outputValue": {
+        "length": 5
+      },
+      "reason": "Array length mismatch: truth=4 output=5"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes[2]",
+      "rule": "exact",
+      "truthValue": 4,
+      "outputValue": 2,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes[3]",
+      "rule": "exact",
+      "truthValue": 5,
+      "outputValue": 11,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors",
+      "rule": "structural",
+      "truthValue": {
+        "length": 1
+      },
+      "outputValue": {
+        "length": 4
+      },
+      "reason": "Array length mismatch: truth=1 output=4"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[0].label",
+      "rule": "fuzzy-string",
+      "truthValue": "urgent female office/corporate delivery",
+      "outputValue": "serious, warning delivery",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.61,
+      "reason": "Numeric delta 0.29000000000000004 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[0].inferred_traits.traits[0].trait",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "age_range",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[0].inferred_traits.traits[0].value",
+      "rule": "exact",
+      "truthValue": "female",
+      "outputValue": "likely adult",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[0].inferred_traits.traits[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.3,
+      "reason": "Numeric delta 0.6000000000000001 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[0].inferred_traits.traits[0].note",
+      "rule": "fuzzy-string",
+      "truthValue": "human-reviewed opening speaker read",
+      "outputValue": "speculative inference from voice only",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.6,
+      "reason": "Numeric delta 0.30000000000000004 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes",
+      "rule": "structural",
+      "truthValue": {
+        "length": 2
+      },
+      "outputValue": {
+        "length": 4
+      },
+      "reason": "Array length mismatch: truth=2 output=4"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[0]",
+      "rule": "exact",
+      "truthValue": 2,
+      "outputValue": 3,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[1]",
+      "rule": "exact",
+      "truthValue": 15,
+      "outputValue": 4,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.acoustic_descriptors[0].label",
+      "rule": "fuzzy-string",
+      "truthValue": "menacing, deep, gravelly antagonist delivery",
+      "outputValue": "expository, newsreel delivery",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.acoustic_descriptors[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.8,
+      "reason": "Numeric delta 0.1499999999999999 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].trait",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "age_range",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].value",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "likely adult",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.92,
+      "outputValue": 0.3,
+      "reason": "Numeric delta 0.6200000000000001 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].note",
+      "rule": "fuzzy-string",
+      "truthValue": "human-reviewed Raul Menendez read on reviewed segments",
+      "outputValue": "speculative inference from voice only",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.6,
+      "reason": "Numeric delta 0.30000000000000004 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.linked_segment_indexes",
+      "rule": "structural",
+      "truthValue": {
+        "length": 1
+      },
+      "outputValue": {
+        "length": 2
+      },
+      "reason": "Array length mismatch: truth=1 output=2"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.linked_segment_indexes[0]",
+      "rule": "exact",
+      "truthValue": 3,
+      "outputValue": 5,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.acoustic_descriptors",
+      "rule": "structural",
+      "truthValue": {
+        "length": 1
+      },
+      "outputValue": {
+        "length": 2
+      },
+      "reason": "Array length mismatch: truth=1 output=2"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.acoustic_descriptors[0].label",
+      "rule": "fuzzy-string",
+      "truthValue": "authoritative male expository/briefing delivery",
+      "outputValue": "emotional, personal delivery",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.acoustic_descriptors[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.86,
+      "outputValue": 0.7,
+      "reason": "Numeric delta 0.16000000000000003 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[2].inferred_traits.traits[0].trait",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "age_range",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[2].inferred_traits.traits[0].value",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "likely adult",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[2].inferred_traits.traits[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.72,
+      "outputValue": 0.3,
+      "reason": "Numeric delta 0.42 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[2].inferred_traits.traits[0].note",
+      "rule": "fuzzy-string",
+      "truthValue": "human review supports an authoritative male delivery, but identity remains uncertain: could be the older African-American general/leader or a separate one-off expository speaker, with not enough confidence to merge yet",
+      "outputValue": "speculative inference from voice only",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[3].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_006",
+      "outputValue": "spk_004",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[3].label",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 6",
+      "outputValue": "Speaker 4",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.88,
+      "outputValue": 0.65,
+      "reason": "Numeric delta 0.22999999999999998 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.linked_segment_indexes",
+      "rule": "structural",
+      "truthValue": {
+        "length": 3
+      },
+      "outputValue": {
+        "length": 4
+      },
+      "reason": "Array length mismatch: truth=3 output=4"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.linked_segment_indexes[1]",
+      "rule": "exact",
+      "truthValue": 8,
+      "outputValue": 7,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.linked_segment_indexes[2]",
+      "rule": "exact",
+      "truthValue": 18,
+      "outputValue": 12,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.acoustic_descriptors[0].label",
+      "rule": "fuzzy-string",
+      "truthValue": "distressed younger male character voice",
+      "outputValue": "authoritative, instructive delivery",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[3].inferred_traits.traits[0].trait",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "age_range",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[3].inferred_traits.traits[0].value",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "likely adult",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[3].inferred_traits.traits[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.86,
+      "outputValue": 0.3,
+      "reason": "Numeric delta 0.56 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[3].inferred_traits.traits[0].note",
+      "rule": "fuzzy-string",
+      "truthValue": "human-reviewed as David on these segments",
+      "outputValue": "speculative inference from voice only",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[4].speaker_id",
+      "rule": "exact",
+      "truthValue": "spk_007",
+      "outputValue": "spk_005",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[4].label",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 7",
+      "outputValue": "Speaker 5",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.7,
+      "reason": "Numeric delta 0.20000000000000007 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.linked_segment_indexes",
+      "rule": "structural",
+      "truthValue": {
+        "length": 1
+      },
+      "outputValue": {
+        "length": 3
+      },
+      "reason": "Array length mismatch: truth=1 output=3"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.linked_segment_indexes[0]",
+      "rule": "exact",
+      "truthValue": 7,
+      "outputValue": 8,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.acoustic_descriptors[0].label",
+      "rule": "fuzzy-string",
+      "truthValue": "authoritative, gravelly, older military-leader cadence",
+      "outputValue": "tactical, command delivery",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[4].inferred_traits.traits[0].trait",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "age_range",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[4].inferred_traits.traits[0].value",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "likely adult",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[4].inferred_traits.traits[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.3,
+      "reason": "Numeric delta 0.6000000000000001 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[4].inferred_traits.traits[0].note",
+      "rule": "fuzzy-string",
+      "truthValue": "human-reviewed older general/leader read",
+      "outputValue": "speculative inference from voice only",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "summary",
+      "rule": "fuzzy-string",
+      "truthValue": "The trailer’s spoken dialogue frames Raul Menendez as the force behind fear, unrest, and psychological manipulation, while David and his squad are dragged through propaganda, military urgency, confusion, taunts, and hallucination-heavy combat setup before the trailer pivots into a preorder promo.",
+      "outputValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 1: Your streets shall once again run red.\nSpeaker 2: With your blood, Raul Menendez ignited global unrest on an unprecedented scale. Menendez is a te Paris.\nSpeaker 2: We're bringing peace and security to the world.\nSpeaker 3: He refuses to let me go.\nSpeaker 4: Stop looking backwards, David, but now this is what we do next.\nSpeaker 4: A lot of people counting on us for answers.\nSpeaker 5: Spectre One report.\nSpeaker 5: Need a sitrep.\nSpeaker 3: This isn't real.\nSpeaker 1: The hell it isn't!\nSpeaker 4: Pull it together, man!\nSpeaker 4: So eager to leave, David. Killing a man is is a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 5: No more games. This ends now.\nSpeaker 2: Get the Reznov challenge pack.\nSpeaker 2: And you pre-order now.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "handoffContext",
+      "rule": "fuzzy-string",
+      "truthValue": "Spoken-dialogue truth only. Sung heavy-metal lyrics were intentionally split into truth/music-vocals-data.json and must not be scored in dialogueData.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic.\n- Do not collapse scene dialogue, comms, promo VO, and overlapping hallucination blends into one speaker unless the voice clearly matches.\n- If identity is uncertain, preserve the uncertainty in notes/descriptors instead of promoting a guess to fact.\n- The mixed \"You were never cut out to be a Mason\" line is intentionally represented as an overlap-heavy speaker bucket rather than a falsely precise identity claim.",
+      "outputValue": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.82 | acoustic cues: serious, warning delivery; threatening, authoritative delivery; threatening, forceful delivery | inferred traits: age_range: likely adult | recent lines: The hell it isn't! / You were never cut out to be a Mason.\n- spk_002 => Speaker 2 | grounded confidence: 0.60 | acoustic cues: expository, newsreel delivery | inferred traits: age_range: likely adult | recent lines: Get the Reznov challenge pack. / And you pre-order now.\n- spk_003 => Speaker 3 | grounded confidence: 0.60 | acoustic cues: emotional, personal delivery; emotional, distressed delivery | inferred traits: age_range: likely adult | recent lines: He refuses to let me go. / This isn't real.\n- spk_004 => Speaker 4 | grounded confidence: 0.65 | acoustic cues: authoritative, instructive delivery | inferred traits: age_range: likely adult | recent lines: Pull it together, man! / So eager to leave, David. Killing a man is is a hell of a lot easier than killing the idea.\n- spk_005 => Speaker 5 | grounded confidence: 0.70 | acoustic cues: tactical, command delivery | inferred traits: age_range: likely adult | recent lines: Need a sitrep. / No more games. This ends now.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Before reusing any prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If this chunk creates a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 2 (spk_002): Get the Reznov challenge pack.\n- Speaker 2 (spk_002): And you pre-order now.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "cleanedTranscript",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets, shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 6: A lot of people counting on us for answers.\nSpeaker 14: You shall know fear.\nSpeaker 8: Specter one, report.\nSpeaker 8: Need a sitrep.\nSpeaker 9: This isn't real.\nSpeaker 10: The hell it ain't!\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave daddy.\nSpeaker 13: Killing the man is a hell of a lot easier than killing the idea.\nSpeaker 15: You were never cut out to be a Mason.\nSpeaker 6: No more games! This ends now.\nSpeaker 16: Get the Reznov challenge pack when you preorder now!",
+      "outputValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 1: Your streets shall once again run red.\nSpeaker 2: With your blood, Raul Menendez ignited global unrest on an unprecedented scale. Menendez is a te Paris.\nSpeaker 2: We're bringing peace and security to the world.\nSpeaker 3: He refuses to let me go.\nSpeaker 4: Stop looking backwards, David, but now this is what we do next.\nSpeaker 4: A lot of people counting on us for answers.\nSpeaker 5: Spectre One report.\nSpeaker 5: Need a sitrep.\nSpeaker 3: This isn't real.\nSpeaker 1: The hell it isn't!\nSpeaker 4: Pull it together, man!\nSpeaker 4: So eager to leave, David. Killing a man is is a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 5: No more games. This ends now.\nSpeaker 2: Get the Reznov challenge pack.\nSpeaker 2: And you pre-order now.",
+      "reason": "Normalized strings differed"
+    }
+  ],
+  "skips": [],
+  "ignoredDifferences": [],
+  "errors": [
+    {
+      "path": "analysisMode",
+      "rule": "structural",
+      "outputValue": "chunked",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "timingMode",
+      "rule": "structural",
+      "outputValue": "chunk_local",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "sourceStrategy",
+      "rule": "structural",
+      "outputValue": "base64",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "coverage",
+      "rule": "structural",
+      "outputValue": {
+        "start": 0,
+        "end": 126,
+        "duration": 126,
+        "complete": false
+      },
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "provenance",
+      "rule": "structural",
+      "outputValue": {
+        "transportMode": "inline",
+        "usedChunking": true,
+        "chunkCount": 9,
+        "fallbackApplied": false,
+        "chunkPlan": {
+          "reason": "dialogue_timing_force_chunking",
+          "recommendedChunkDurationSeconds": 20,
+          "openingArbitration": {
+            "coverageSeconds": 24,
+            "chunkDurationSeconds": 8
+          }
+        }
+      },
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "dialogue_segments[18]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 112,
+        "end": 114,
+        "speaker": "Speaker 6",
+        "speaker_id": "spk_006",
+        "text": "No more games! This ends now.",
+        "confidence": 0.95,
+        "index": 18
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "dialogue_segments[19]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 122,
+        "end": 124,
+        "speaker": "Speaker 16",
+        "speaker_id": "spk_016",
+        "text": "Get the Reznov challenge pack when you preorder now!",
+        "confidence": 0.95,
+        "index": 19
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes[4]",
+      "rule": "structural",
+      "outputValue": 14,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[1]",
+      "rule": "structural",
+      "outputValue": {
+        "label": "threatening, authoritative delivery",
+        "confidence": 0.7
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[2]",
+      "rule": "structural",
+      "outputValue": {
+        "label": "threatening, forceful delivery",
+        "confidence": 0.85
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[3]",
+      "rule": "structural",
+      "outputValue": {
+        "label": "threatening delivery",
+        "confidence": 0.7
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[2]",
+      "rule": "structural",
+      "outputValue": 16,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[3]",
+      "rule": "structural",
+      "outputValue": 17,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.linked_segment_indexes[1]",
+      "rule": "structural",
+      "outputValue": 10,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.acoustic_descriptors[1]",
+      "rule": "structural",
+      "outputValue": {
+        "label": "emotional, distressed delivery",
+        "confidence": 0.8
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.linked_segment_indexes[3]",
+      "rule": "structural",
+      "outputValue": 13,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.linked_segment_indexes[1]",
+      "rule": "structural",
+      "outputValue": 9,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.linked_segment_indexes[2]",
+      "rule": "structural",
+      "outputValue": 15,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[5]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_008",
+        "label": "Speaker 8",
+        "grounded": {
+          "confidence": 0.88,
+          "linked_segment_indexes": [
+            10,
+            11
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "younger male comms/radio voice",
+              "confidence": 0.86
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.76,
+              "note": "human review now effectively confirms the same younger male comms speaker across both lines; an African-American read is supported by the audible \"rahport\" pronunciation cue on \"report\", but that remains a read rather than hard fact"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[6]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_009",
+        "label": "Speaker 9",
+        "grounded": {
+          "confidence": 0.86,
+          "linked_segment_indexes": [
+            12
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "deeper squadmate voice, grounded in-scene delivery",
+              "confidence": 0.84
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.88,
+              "note": "human review read this as a deeper African-American male squadmate voice"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[7]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_010",
+        "label": "Speaker 10",
+        "grounded": {
+          "confidence": 0.86,
+          "linked_segment_indexes": [
+            13
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "angry, frustrated white male squadmate delivery",
+              "confidence": 0.84
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.88,
+              "note": "human review explicitly ruled out David"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[8]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_012",
+        "label": "Speaker 12",
+        "grounded": {
+          "confidence": 0.88,
+          "linked_segment_indexes": [
+            14
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "urgent adult squadmate command",
+              "confidence": 0.86
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "female",
+              "confidence": 0.82,
+              "note": "human review read an African-American female squadmate with tattoos"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[9]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_013",
+        "label": "Speaker 13",
+        "grounded": {
+          "confidence": 0.85,
+          "linked_segment_indexes": [
+            16
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "white male-sounding montage voice tied to Frank Woods visual imagery",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.86,
+              "note": "identity remains uncertain; do not collapse into Raul or David"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[10]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_014",
+        "label": "Speaker 14",
+        "grounded": {
+          "confidence": 0.85,
+          "linked_segment_indexes": [
+            9
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "older male voice with robotic/processed filter",
+              "confidence": 0.86
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.84,
+              "note": "antagonist-coded; possibly Raul Menendez but identity intentionally left uncertain"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[11]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_015",
+        "label": "Speaker 15",
+        "grounded": {
+          "confidence": 0.8,
+          "linked_segment_indexes": [
+            17
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "mixed overlapping voices with female-primary layer",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "ambiguous",
+              "confidence": 0.6,
+              "note": "male and female layers overlap; primary audible layer resembles Speaker 1"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[12]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_016",
+        "label": "Speaker 16",
+        "grounded": {
+          "confidence": 0.88,
+          "linked_segment_indexes": [
+            19
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "white adult male sales/promo voiceover",
+              "confidence": 0.88
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.9,
+              "note": "promo VO, distinct from scene dialogue and lyrics"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    }
+  ],
+  "fieldResults": [
+    {
+      "path": "analysisMode",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": "chunked",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "timingMode",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": "chunk_local",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "sourceStrategy",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": "base64",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "coverage",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": {
+        "start": 0,
+        "end": 126,
+        "duration": 126,
+        "complete": false
+      },
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "provenance",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": {
+        "transportMode": "inline",
+        "usedChunking": true,
+        "chunkCount": 9,
+        "fallbackApplied": false,
+        "chunkPlan": {
+          "reason": "dialogue_timing_force_chunking",
+          "recommendedChunkDurationSeconds": 20,
+          "openingArbitration": {
+            "coverageSeconds": 24,
+            "chunkDurationSeconds": 8
+          }
+        }
+      },
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "dialogue_segments",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 20
+      },
+      "outputValue": {
+        "length": 18
+      },
+      "reason": "Array length mismatch: truth=20 output=18"
+    },
+    {
+      "path": "dialogue_segments[0].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 0,
+      "outputValue": 0,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[0].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 5,
+      "outputValue": 4.5,
+      "metrics": {
+        "deltaSeconds": 0.5,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[0].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 1",
+      "outputValue": "Speaker 1"
+    },
+    {
+      "path": "dialogue_segments[0].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_001",
+      "outputValue": "spk_001"
+    },
+    {
+      "path": "dialogue_segments[0].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "They want you afraid. Fear makes you easier to control.",
+      "outputValue": "They want you afraid. Fear makes you easier to control.",
+      "normalizedTruthValue": "they want you afraid fear makes you easier to control",
+      "normalizedOutputValue": "they want you afraid fear makes you easier to control"
+    },
+    {
+      "path": "dialogue_segments[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[0].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 0,
+      "outputValue": 0
+    },
+    {
+      "path": "dialogue_segments[1].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 8,
+      "outputValue": 8,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[1].end",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 10,
+      "outputValue": 10,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[1].speaker",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Speaker 1",
+      "outputValue": "Speaker 1"
+    },
+    {
+      "path": "dialogue_segments[1].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_001",
+      "outputValue": "spk_001"
+    },
+    {
+      "path": "dialogue_segments[1].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "It's time to wake up.",
+      "outputValue": "It's time to wake up.",
+      "normalizedTruthValue": "it s time to wake up",
+      "normalizedOutputValue": "it s time to wake up"
+    },
+    {
+      "path": "dialogue_segments[1].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[1].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 1,
+      "outputValue": 1
+    },
+    {
+      "path": "dialogue_segments[2].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 12,
+      "outputValue": 11,
+      "metrics": {
+        "deltaSeconds": 1,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[2].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 17,
+      "outputValue": 14,
+      "reason": "Time delta 3 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 3,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[2].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 2",
+      "outputValue": "Speaker 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[2].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_002",
+      "outputValue": "spk_001",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[2].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Your streets, shall once again run red with your blood.",
+      "outputValue": "Your streets shall once again run red.",
+      "normalizedTruthValue": "your streets shall once again run red with your blood",
+      "normalizedOutputValue": "your streets shall once again run red",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[2].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.98,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.030000000000000027,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[2].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 2,
+      "outputValue": 2
+    },
+    {
+      "path": "dialogue_segments[3].start",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 17,
+      "outputValue": 16,
+      "metrics": {
+        "deltaSeconds": 1,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[3].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 21,
+      "outputValue": 24.5,
+      "reason": "Time delta 3.5 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 3.5,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[3].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 3",
+      "outputValue": "Speaker 2",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[3].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_003",
+      "outputValue": "spk_002",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[3].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Raul Menendez ignited global unrest on an unprecedented scale.",
+      "outputValue": "With your blood, Raul Menendez ignited global unrest on an unprecedented scale. Menendez is a te Paris.",
+      "normalizedTruthValue": "raul menendez ignited global unrest on an unprecedented scale",
+      "normalizedOutputValue": "with your blood raul menendez ignited global unrest on an unprecedented scale menendez is a te paris",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[3].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.85,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.09999999999999998,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[3].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 3,
+      "outputValue": 3
+    },
+    {
+      "path": "dialogue_segments[4].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 22,
+      "outputValue": 25,
+      "reason": "Time delta 3 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 3,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[4].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 24,
+      "outputValue": 28,
+      "reason": "Time delta 4 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 4,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[4].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 1",
+      "outputValue": "Speaker 2",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[4].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_001",
+      "outputValue": "spk_002",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[4].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Menendez is a terrorist.",
+      "outputValue": "We're bringing peace and security to the world.",
+      "normalizedTruthValue": "menendez is a terrorist",
+      "normalizedOutputValue": "we re bringing peace and security to the world",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[4].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[4].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 4,
+      "outputValue": 4
+    },
+    {
+      "path": "dialogue_segments[5].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 24,
+      "outputValue": 29,
+      "reason": "Time delta 5 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 5,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[5].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 26,
+      "outputValue": 31,
+      "reason": "Time delta 5 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 5,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[5].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 1",
+      "outputValue": "Speaker 3",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[5].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_001",
+      "outputValue": "spk_003",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[5].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "We're bringing peace and security to the world.",
+      "outputValue": "He refuses to let me go.",
+      "normalizedTruthValue": "we re bringing peace and security to the world",
+      "normalizedOutputValue": "he refuses to let me go",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[5].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[5].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 5,
+      "outputValue": 5
+    },
+    {
+      "path": "dialogue_segments[6].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 28,
+      "outputValue": 32,
+      "reason": "Time delta 4 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 4,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[6].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 29,
+      "outputValue": 36,
+      "reason": "Time delta 7 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 7,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[6].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 6",
+      "outputValue": "Speaker 4",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[6].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_006",
+      "outputValue": "spk_004",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[6].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "He refuses to let me go.",
+      "outputValue": "Stop looking backwards, David, but now this is what we do next.",
+      "normalizedTruthValue": "he refuses to let me go",
+      "normalizedOutputValue": "stop looking backwards david but now this is what we do next",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[6].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[6].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 6,
+      "outputValue": 6
+    },
+    {
+      "path": "dialogue_segments[7].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 30,
+      "outputValue": 37,
+      "reason": "Time delta 7 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 7,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[7].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 33,
+      "outputValue": 40,
+      "reason": "Time delta 7 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 7,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[7].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 7",
+      "outputValue": "Speaker 4",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[7].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_007",
+      "outputValue": "spk_004",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[7].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Stop looking backwards, David. What matters is what we do next.",
+      "outputValue": "A lot of people counting on us for answers.",
+      "normalizedTruthValue": "stop looking backwards david what matters is what we do next",
+      "normalizedOutputValue": "a lot of people counting on us for answers",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[7].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[7].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 7,
+      "outputValue": 7
+    },
+    {
+      "path": "dialogue_segments[8].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 35,
+      "outputValue": 44,
+      "reason": "Time delta 9 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 9,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[8].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 36,
+      "outputValue": 46,
+      "reason": "Time delta 10 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 10,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[8].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 6",
+      "outputValue": "Speaker 5",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[8].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_006",
+      "outputValue": "spk_005",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[8].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "A lot of people counting on us for answers.",
+      "outputValue": "Spectre One report.",
+      "normalizedTruthValue": "a lot of people counting on us for answers",
+      "normalizedOutputValue": "spectre one report",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[8].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.88,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.06999999999999995,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[8].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 8,
+      "outputValue": 8
+    },
+    {
+      "path": "dialogue_segments[9].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 45,
+      "outputValue": 49,
+      "reason": "Time delta 4 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 4,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[9].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 47,
+      "outputValue": 51,
+      "reason": "Time delta 4 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 4,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[9].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 14",
+      "outputValue": "Speaker 5",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[9].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_014",
+      "outputValue": "spk_005",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[9].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "You shall know fear.",
+      "outputValue": "Need a sitrep.",
+      "normalizedTruthValue": "you shall know fear",
+      "normalizedOutputValue": "need a sitrep",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[9].confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.8,
+      "outputValue": 0.95,
+      "reason": "Numeric delta 0.1499999999999999 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.1499999999999999,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[9].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 9,
+      "outputValue": 9
+    },
+    {
+      "path": "dialogue_segments[10].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 51,
+      "outputValue": 54,
+      "reason": "Time delta 3 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 3,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[10].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 52,
+      "outputValue": 56,
+      "reason": "Time delta 4 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 4,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[10].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 8",
+      "outputValue": "Speaker 3",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[10].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_008",
+      "outputValue": "spk_003",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[10].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Specter one, report.",
+      "outputValue": "This isn't real.",
+      "normalizedTruthValue": "specter one report",
+      "normalizedOutputValue": "this isn t real",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[10].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[10].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 10,
+      "outputValue": 10
+    },
+    {
+      "path": "dialogue_segments[11].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 54,
+      "outputValue": 59,
+      "reason": "Time delta 5 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 5,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[11].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 55,
+      "outputValue": 61,
+      "reason": "Time delta 6 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 6,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[11].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 8",
+      "outputValue": "Speaker 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[11].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_008",
+      "outputValue": "spk_001",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[11].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Need a sitrep.",
+      "outputValue": "The hell it isn't!",
+      "normalizedTruthValue": "need a sitrep",
+      "normalizedOutputValue": "the hell it isn t",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[11].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[11].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 11,
+      "outputValue": 11
+    },
+    {
+      "path": "dialogue_segments[12].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 61,
+      "outputValue": 94,
+      "reason": "Time delta 33 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 33,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[12].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 62,
+      "outputValue": 96,
+      "reason": "Time delta 34 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 34,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[12].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 9",
+      "outputValue": "Speaker 4",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[12].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_009",
+      "outputValue": "spk_004",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[12].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "This isn't real.",
+      "outputValue": "Pull it together, man!",
+      "normalizedTruthValue": "this isn t real",
+      "normalizedOutputValue": "pull it together man",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[12].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[12].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 12,
+      "outputValue": 12
+    },
+    {
+      "path": "dialogue_segments[13].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 63,
+      "outputValue": 99,
+      "reason": "Time delta 36 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 36,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[13].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 64,
+      "outputValue": 107,
+      "reason": "Time delta 43 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 43,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[13].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 10",
+      "outputValue": "Speaker 4",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[13].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_010",
+      "outputValue": "spk_004",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[13].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "The hell it ain't!",
+      "outputValue": "So eager to leave, David. Killing a man is is a hell of a lot easier than killing the idea.",
+      "normalizedTruthValue": "the hell it ain t",
+      "normalizedOutputValue": "so eager to leave david killing a man is is a hell of a lot easier than killing the idea",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[13].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[13].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 13,
+      "outputValue": 13
+    },
+    {
+      "path": "dialogue_segments[14].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 98,
+      "outputValue": 108,
+      "reason": "Time delta 10 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 10,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[14].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 99,
+      "outputValue": 110,
+      "reason": "Time delta 11 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 11,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[14].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 12",
+      "outputValue": "Speaker 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[14].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_012",
+      "outputValue": "spk_001",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[14].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Pull it together, man!",
+      "outputValue": "You were never cut out to be a Mason.",
+      "normalizedTruthValue": "pull it together man",
+      "normalizedOutputValue": "you were never cut out to be a mason",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[14].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[14].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 14,
+      "outputValue": 14
+    },
+    {
+      "path": "dialogue_segments[15].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 100,
+      "outputValue": 111,
+      "reason": "Time delta 11 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 11,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[15].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 102,
+      "outputValue": 113,
+      "reason": "Time delta 11 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 11,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[15].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 2",
+      "outputValue": "Speaker 5",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[15].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_002",
+      "outputValue": "spk_005",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[15].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "So eager to leave daddy.",
+      "outputValue": "No more games. This ends now.",
+      "normalizedTruthValue": "so eager to leave daddy",
+      "normalizedOutputValue": "no more games this ends now",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[15].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[15].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 15,
+      "outputValue": 15
+    },
+    {
+      "path": "dialogue_segments[16].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 103,
+      "outputValue": 119,
+      "reason": "Time delta 16 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 16,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[16].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 105,
+      "outputValue": 122,
+      "reason": "Time delta 17 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 17,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[16].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 13",
+      "outputValue": "Speaker 2",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[16].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_013",
+      "outputValue": "spk_002",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[16].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Killing the man is a hell of a lot easier than killing the idea.",
+      "outputValue": "Get the Reznov challenge pack.",
+      "normalizedTruthValue": "killing the man is a hell of a lot easier than killing the idea",
+      "normalizedOutputValue": "get the reznov challenge pack",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[16].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.8,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0.09999999999999998,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[16].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 16,
+      "outputValue": 16
+    },
+    {
+      "path": "dialogue_segments[17].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 108,
+      "outputValue": 124,
+      "reason": "Time delta 16 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 16,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[17].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 110,
+      "outputValue": 126,
+      "reason": "Time delta 16 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 16,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "dialogue_segments[17].speaker",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Speaker 15",
+      "outputValue": "Speaker 2",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[17].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_015",
+      "outputValue": "spk_002",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[17].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "You were never cut out to be a Mason.",
+      "outputValue": "And you pre-order now.",
+      "normalizedTruthValue": "you were never cut out to be a mason",
+      "normalizedOutputValue": "and you pre order now",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[17].confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.6,
+      "outputValue": 0.95,
+      "reason": "Numeric delta 0.35 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.35,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "dialogue_segments[17].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 17,
+      "outputValue": 17
+    },
+    {
+      "path": "dialogue_segments[18]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "start": 112,
+        "end": 114,
+        "speaker": "Speaker 6",
+        "speaker_id": "spk_006",
+        "text": "No more games! This ends now.",
+        "confidence": 0.95,
+        "index": 18
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "dialogue_segments[19]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "start": 122,
+        "end": 124,
+        "speaker": "Speaker 16",
+        "speaker_id": "spk_016",
+        "text": "Get the Reznov challenge pack when you preorder now!",
+        "confidence": 0.95,
+        "index": 19
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 13
+      },
+      "outputValue": {
+        "length": 5
+      },
+      "reason": "Array length mismatch: truth=13 output=5"
+    },
+    {
+      "path": "speaker_profiles[0].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_001",
+      "outputValue": "spk_001"
+    },
+    {
+      "path": "speaker_profiles[0].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 1",
+      "outputValue": "Speaker 1",
+      "normalizedTruthValue": "speaker 1",
+      "normalizedOutputValue": "speaker 1"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.92,
+      "outputValue": 0.82,
+      "reason": "Numeric delta 0.10000000000000009 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.10000000000000009,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 4
+      },
+      "outputValue": {
+        "length": 5
+      },
+      "reason": "Array length mismatch: truth=4 output=5"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 0,
+      "outputValue": 0
+    },
+    {
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes[1]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 1,
+      "outputValue": 1
+    },
+    {
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes[2]",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": 4,
+      "outputValue": 2,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes[3]",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": 5,
+      "outputValue": 11,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes[4]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": 14,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 1
+      },
+      "outputValue": {
+        "length": 4
+      },
+      "reason": "Array length mismatch: truth=1 output=4"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[0].label",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "urgent female office/corporate delivery",
+      "outputValue": "serious, warning delivery",
+      "normalizedTruthValue": "urgent female office corporate delivery",
+      "normalizedOutputValue": "serious warning delivery",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[0].confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.61,
+      "reason": "Numeric delta 0.29000000000000004 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.29000000000000004,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[1]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": {
+        "label": "threatening, authoritative delivery",
+        "confidence": 0.7
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[2]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": {
+        "label": "threatening, forceful delivery",
+        "confidence": 0.85
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[3]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": {
+        "label": "threatening delivery",
+        "confidence": 0.7
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[0].inferred_traits.traits[0].trait",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "age_range",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[0].inferred_traits.traits[0].value",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "female",
+      "outputValue": "likely adult",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[0].inferred_traits.traits[0].confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.3,
+      "reason": "Numeric delta 0.6000000000000001 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.6000000000000001,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[0].inferred_traits.traits[0].note",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "human-reviewed opening speaker read",
+      "outputValue": "speculative inference from voice only",
+      "normalizedTruthValue": "human reviewed opening speaker read",
+      "normalizedOutputValue": "speculative inference from voice only",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[1].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_002",
+      "outputValue": "spk_002"
+    },
+    {
+      "path": "speaker_profiles[1].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 2",
+      "outputValue": "Speaker 2",
+      "normalizedTruthValue": "speaker 2",
+      "normalizedOutputValue": "speaker 2"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.6,
+      "reason": "Numeric delta 0.30000000000000004 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.30000000000000004,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 2
+      },
+      "outputValue": {
+        "length": 4
+      },
+      "reason": "Array length mismatch: truth=2 output=4"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[0]",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": 2,
+      "outputValue": 3,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[1]",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": 15,
+      "outputValue": 4,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[2]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": 16,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[3]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": 17,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.acoustic_descriptors[0].label",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "menacing, deep, gravelly antagonist delivery",
+      "outputValue": "expository, newsreel delivery",
+      "normalizedTruthValue": "menacing deep gravelly antagonist delivery",
+      "normalizedOutputValue": "expository newsreel delivery",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[1].grounded.acoustic_descriptors[0].confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": 0.8,
+      "reason": "Numeric delta 0.1499999999999999 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.1499999999999999,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].trait",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "age_range",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].value",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "likely adult",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.92,
+      "outputValue": 0.3,
+      "reason": "Numeric delta 0.6200000000000001 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.6200000000000001,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].note",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "human-reviewed Raul Menendez read on reviewed segments",
+      "outputValue": "speculative inference from voice only",
+      "normalizedTruthValue": "human reviewed raul menendez read on reviewed segments",
+      "normalizedOutputValue": "speculative inference from voice only",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[2].speaker_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "spk_003",
+      "outputValue": "spk_003"
+    },
+    {
+      "path": "speaker_profiles[2].label",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 3",
+      "outputValue": "Speaker 3",
+      "normalizedTruthValue": "speaker 3",
+      "normalizedOutputValue": "speaker 3"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.6,
+      "reason": "Numeric delta 0.30000000000000004 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.30000000000000004,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[2].grounded.linked_segment_indexes",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 1
+      },
+      "outputValue": {
+        "length": 2
+      },
+      "reason": "Array length mismatch: truth=1 output=2"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.linked_segment_indexes[0]",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": 3,
+      "outputValue": 5,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.linked_segment_indexes[1]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": 10,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.acoustic_descriptors",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 1
+      },
+      "outputValue": {
+        "length": 2
+      },
+      "reason": "Array length mismatch: truth=1 output=2"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.acoustic_descriptors[0].label",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "authoritative male expository/briefing delivery",
+      "outputValue": "emotional, personal delivery",
+      "normalizedTruthValue": "authoritative male expository briefing delivery",
+      "normalizedOutputValue": "emotional personal delivery",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[2].grounded.acoustic_descriptors[0].confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.86,
+      "outputValue": 0.7,
+      "reason": "Numeric delta 0.16000000000000003 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.16000000000000003,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[2].grounded.acoustic_descriptors[1]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": {
+        "label": "emotional, distressed delivery",
+        "confidence": 0.8
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[2].inferred_traits.traits[0].trait",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "age_range",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[2].inferred_traits.traits[0].value",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "likely adult",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[2].inferred_traits.traits[0].confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.72,
+      "outputValue": 0.3,
+      "reason": "Numeric delta 0.42 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.42,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[2].inferred_traits.traits[0].note",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "human review supports an authoritative male delivery, but identity remains uncertain: could be the older African-American general/leader or a separate one-off expository speaker, with not enough confidence to merge yet",
+      "outputValue": "speculative inference from voice only",
+      "normalizedTruthValue": "human review supports an authoritative male delivery but identity remains uncertain could be the older african american general leader or a separate one off expository speaker with not enough confidence to merge yet",
+      "normalizedOutputValue": "speculative inference from voice only",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[3].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_006",
+      "outputValue": "spk_004",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[3].label",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 6",
+      "outputValue": "Speaker 4",
+      "normalizedTruthValue": "speaker 6",
+      "normalizedOutputValue": "speaker 4",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.88,
+      "outputValue": 0.65,
+      "reason": "Numeric delta 0.22999999999999998 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.22999999999999998,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[3].grounded.linked_segment_indexes",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 3
+      },
+      "outputValue": {
+        "length": 4
+      },
+      "reason": "Array length mismatch: truth=3 output=4"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.linked_segment_indexes[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 6,
+      "outputValue": 6
+    },
+    {
+      "path": "speaker_profiles[3].grounded.linked_segment_indexes[1]",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": 8,
+      "outputValue": 7,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.linked_segment_indexes[2]",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": 18,
+      "outputValue": 12,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.linked_segment_indexes[3]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": 13,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.acoustic_descriptors[0].label",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "distressed younger male character voice",
+      "outputValue": "authoritative, instructive delivery",
+      "normalizedTruthValue": "distressed younger male character voice",
+      "normalizedOutputValue": "authoritative instructive delivery",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[3].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.84,
+      "outputValue": 0.8,
+      "metrics": {
+        "delta": 0.039999999999999925,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[3].inferred_traits.traits[0].trait",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "age_range",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[3].inferred_traits.traits[0].value",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "likely adult",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[3].inferred_traits.traits[0].confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.86,
+      "outputValue": 0.3,
+      "reason": "Numeric delta 0.56 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.56,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[3].inferred_traits.traits[0].note",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "human-reviewed as David on these segments",
+      "outputValue": "speculative inference from voice only",
+      "normalizedTruthValue": "human reviewed as david on these segments",
+      "normalizedOutputValue": "speculative inference from voice only",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[4].speaker_id",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "spk_007",
+      "outputValue": "spk_005",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[4].label",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 7",
+      "outputValue": "Speaker 5",
+      "normalizedTruthValue": "speaker 7",
+      "normalizedOutputValue": "speaker 5",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.7,
+      "reason": "Numeric delta 0.20000000000000007 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.20000000000000007,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[4].grounded.linked_segment_indexes",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 1
+      },
+      "outputValue": {
+        "length": 3
+      },
+      "reason": "Array length mismatch: truth=1 output=3"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.linked_segment_indexes[0]",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": 7,
+      "outputValue": 8,
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.linked_segment_indexes[1]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": 9,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.linked_segment_indexes[2]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": 15,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.acoustic_descriptors[0].label",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "authoritative, gravelly, older military-leader cadence",
+      "outputValue": "tactical, command delivery",
+      "normalizedTruthValue": "authoritative gravelly older military leader cadence",
+      "normalizedOutputValue": "tactical command delivery",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.acoustic_descriptors[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.8,
+      "metrics": {
+        "delta": 0.09999999999999998,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[4].inferred_traits.traits[0].trait",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "gender",
+      "outputValue": "age_range",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[4].inferred_traits.traits[0].value",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "male",
+      "outputValue": "likely adult",
+      "reason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[4].inferred_traits.traits[0].confidence",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.3,
+      "reason": "Numeric delta 0.6000000000000001 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.6000000000000001,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "speaker_profiles[4].inferred_traits.traits[0].note",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "human-reviewed older general/leader read",
+      "outputValue": "speculative inference from voice only",
+      "normalizedTruthValue": "human reviewed older general leader read",
+      "normalizedOutputValue": "speculative inference from voice only",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "speaker_profiles[5]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_008",
+        "label": "Speaker 8",
+        "grounded": {
+          "confidence": 0.88,
+          "linked_segment_indexes": [
+            10,
+            11
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "younger male comms/radio voice",
+              "confidence": 0.86
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.76,
+              "note": "human review now effectively confirms the same younger male comms speaker across both lines; an African-American read is supported by the audible \"rahport\" pronunciation cue on \"report\", but that remains a read rather than hard fact"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[6]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_009",
+        "label": "Speaker 9",
+        "grounded": {
+          "confidence": 0.86,
+          "linked_segment_indexes": [
+            12
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "deeper squadmate voice, grounded in-scene delivery",
+              "confidence": 0.84
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.88,
+              "note": "human review read this as a deeper African-American male squadmate voice"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[7]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_010",
+        "label": "Speaker 10",
+        "grounded": {
+          "confidence": 0.86,
+          "linked_segment_indexes": [
+            13
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "angry, frustrated white male squadmate delivery",
+              "confidence": 0.84
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.88,
+              "note": "human review explicitly ruled out David"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[8]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_012",
+        "label": "Speaker 12",
+        "grounded": {
+          "confidence": 0.88,
+          "linked_segment_indexes": [
+            14
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "urgent adult squadmate command",
+              "confidence": 0.86
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "female",
+              "confidence": 0.82,
+              "note": "human review read an African-American female squadmate with tattoos"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[9]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_013",
+        "label": "Speaker 13",
+        "grounded": {
+          "confidence": 0.85,
+          "linked_segment_indexes": [
+            16
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "white male-sounding montage voice tied to Frank Woods visual imagery",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.86,
+              "note": "identity remains uncertain; do not collapse into Raul or David"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[10]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_014",
+        "label": "Speaker 14",
+        "grounded": {
+          "confidence": 0.85,
+          "linked_segment_indexes": [
+            9
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "older male voice with robotic/processed filter",
+              "confidence": 0.86
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.84,
+              "note": "antagonist-coded; possibly Raul Menendez but identity intentionally left uncertain"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[11]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_015",
+        "label": "Speaker 15",
+        "grounded": {
+          "confidence": 0.8,
+          "linked_segment_indexes": [
+            17
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "mixed overlapping voices with female-primary layer",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "ambiguous",
+              "confidence": 0.6,
+              "note": "male and female layers overlap; primary audible layer resembles Speaker 1"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[12]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_016",
+        "label": "Speaker 16",
+        "grounded": {
+          "confidence": 0.88,
+          "linked_segment_indexes": [
+            19
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "white adult male sales/promo voiceover",
+              "confidence": 0.88
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.9,
+              "note": "promo VO, distinct from scene dialogue and lyrics"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "summary",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "The trailer’s spoken dialogue frames Raul Menendez as the force behind fear, unrest, and psychological manipulation, while David and his squad are dragged through propaganda, military urgency, confusion, taunts, and hallucination-heavy combat setup before the trailer pivots into a preorder promo.",
+      "outputValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 1: Your streets shall once again run red.\nSpeaker 2: With your blood, Raul Menendez ignited global unrest on an unprecedented scale. Menendez is a te Paris.\nSpeaker 2: We're bringing peace and security to the world.\nSpeaker 3: He refuses to let me go.\nSpeaker 4: Stop looking backwards, David, but now this is what we do next.\nSpeaker 4: A lot of people counting on us for answers.\nSpeaker 5: Spectre One report.\nSpeaker 5: Need a sitrep.\nSpeaker 3: This isn't real.\nSpeaker 1: The hell it isn't!\nSpeaker 4: Pull it together, man!\nSpeaker 4: So eager to leave, David. Killing a man is is a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 5: No more games. This ends now.\nSpeaker 2: Get the Reznov challenge pack.\nSpeaker 2: And you pre-order now.",
+      "normalizedTruthValue": "the trailer s spoken dialogue frames raul menendez as the force behind fear unrest and psychological manipulation while david and his squad are dragged through propaganda military urgency confusion taunts and hallucination heavy combat setup before the trailer pivots into a preorder promo",
+      "normalizedOutputValue": "speaker 1 they want you afraid fear makes you easier to control speaker 1 it s time to wake up speaker 1 your streets shall once again run red speaker 2 with your blood raul menendez ignited global unrest on an unprecedented scale menendez is a te paris speaker 2 we re bringing peace and security to the world speaker 3 he refuses to let me go speaker 4 stop looking backwards david but now this is what we do next speaker 4 a lot of people counting on us for answers speaker 5 spectre one report speaker 5 need a sitrep speaker 3 this isn t real speaker 1 the hell it isn t speaker 4 pull it together man speaker 4 so eager to leave david killing a man is is a hell of a lot easier than killing the idea speaker 1 you were never cut out to be a mason speaker 5 no more games this ends now speaker 2 get the reznov challenge pack speaker 2 and you pre order now",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "totalDuration",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 140.042449,
+      "outputValue": 140.042449,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "handoffContext",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Spoken-dialogue truth only. Sung heavy-metal lyrics were intentionally split into truth/music-vocals-data.json and must not be scored in dialogueData.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic.\n- Do not collapse scene dialogue, comms, promo VO, and overlapping hallucination blends into one speaker unless the voice clearly matches.\n- If identity is uncertain, preserve the uncertainty in notes/descriptors instead of promoting a guess to fact.\n- The mixed \"You were never cut out to be a Mason\" line is intentionally represented as an overlap-heavy speaker bucket rather than a falsely precise identity claim.",
+      "outputValue": "Speaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.82 | acoustic cues: serious, warning delivery; threatening, authoritative delivery; threatening, forceful delivery | inferred traits: age_range: likely adult | recent lines: The hell it isn't! / You were never cut out to be a Mason.\n- spk_002 => Speaker 2 | grounded confidence: 0.60 | acoustic cues: expository, newsreel delivery | inferred traits: age_range: likely adult | recent lines: Get the Reznov challenge pack. / And you pre-order now.\n- spk_003 => Speaker 3 | grounded confidence: 0.60 | acoustic cues: emotional, personal delivery; emotional, distressed delivery | inferred traits: age_range: likely adult | recent lines: He refuses to let me go. / This isn't real.\n- spk_004 => Speaker 4 | grounded confidence: 0.65 | acoustic cues: authoritative, instructive delivery | inferred traits: age_range: likely adult | recent lines: Pull it together, man! / So eager to leave, David. Killing a man is is a hell of a lot easier than killing the idea.\n- spk_005 => Speaker 5 | grounded confidence: 0.70 | acoustic cues: tactical, command delivery | inferred traits: age_range: likely adult | recent lines: Need a sitrep. / No more games. This ends now.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Before reusing any prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If this chunk creates a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 2 (spk_002): Get the Reznov challenge pack.\n- Speaker 2 (spk_002): And you pre-order now.",
+      "normalizedTruthValue": "spoken dialogue truth only sung heavy metal lyrics were intentionally split into truth music vocals data json and must not be scored in dialoguedata voice separation reminders speaker id continuity is acoustic not semantic do not collapse scene dialogue comms promo vo and overlapping hallucination blends into one speaker unless the voice clearly matches if identity is uncertain preserve the uncertainty in notes descriptors instead of promoting a guess to fact the mixed you were never cut out to be a mason line is intentionally represented as an overlap heavy speaker bucket rather than a falsely precise identity claim",
+      "normalizedOutputValue": "speaker registry reuse speaker id only for the same acoustic voice spk 001 speaker 1 grounded confidence 0 82 acoustic cues serious warning delivery threatening authoritative delivery threatening forceful delivery inferred traits age range likely adult recent lines the hell it isn t you were never cut out to be a mason spk 002 speaker 2 grounded confidence 0 60 acoustic cues expository newsreel delivery inferred traits age range likely adult recent lines get the reznov challenge pack and you pre order now spk 003 speaker 3 grounded confidence 0 60 acoustic cues emotional personal delivery emotional distressed delivery inferred traits age range likely adult recent lines he refuses to let me go this isn t real spk 004 speaker 4 grounded confidence 0 65 acoustic cues authoritative instructive delivery inferred traits age range likely adult recent lines pull it together man so eager to leave david killing a man is is a hell of a lot easier than killing the idea spk 005 speaker 5 grounded confidence 0 70 acoustic cues tactical command delivery inferred traits age range likely adult recent lines need a sitrep no more games this ends now voice separation reminders speaker id continuity is acoustic not semantic a speaker naming another person is not evidence they are that person before reusing any prior speaker id compare the audible match across vocal timbre age impression gender presentation accent dialect impression delivery mode and recording texture if those cues do not clearly line up create a new speaker id do not merge narration figurehead vo antagonist taunts female radio comms gruff soldier responses and promo announcer copy unless the voice itself clearly matches default official public address newsreel expository narration to a distinct speaker id from villain threats unless the acoustic match is very strong if delivery shifts from direct character threat speech into official public address newsreel briefing or expository narration prefer a new speaker id unless the exact same voice clearly continues if this chunk creates a new official public address newsreel expository speaker id keep the immediately adjacent follow on official line on that same speaker id unless strong acoustic evidence indicates another change if adjacent words are one uninterrupted utterance from the same voice keep them together instead of splitting them into artificial fragments the handoff is reference only memory never copy or continue prior lines unless they are audibly present in this chunk if the current chunk only contains one audible promo narration line return only that line do not invent follow up tactical chatter from prior chunks recent dialogue tail reference only not transcript continuation speaker 2 spk 002 get the reznov challenge pack speaker 2 spk 002 and you pre order now",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "cleanedTranscript",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets, shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 6: A lot of people counting on us for answers.\nSpeaker 14: You shall know fear.\nSpeaker 8: Specter one, report.\nSpeaker 8: Need a sitrep.\nSpeaker 9: This isn't real.\nSpeaker 10: The hell it ain't!\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave daddy.\nSpeaker 13: Killing the man is a hell of a lot easier than killing the idea.\nSpeaker 15: You were never cut out to be a Mason.\nSpeaker 6: No more games! This ends now.\nSpeaker 16: Get the Reznov challenge pack when you preorder now!",
+      "outputValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 1: Your streets shall once again run red.\nSpeaker 2: With your blood, Raul Menendez ignited global unrest on an unprecedented scale. Menendez is a te Paris.\nSpeaker 2: We're bringing peace and security to the world.\nSpeaker 3: He refuses to let me go.\nSpeaker 4: Stop looking backwards, David, but now this is what we do next.\nSpeaker 4: A lot of people counting on us for answers.\nSpeaker 5: Spectre One report.\nSpeaker 5: Need a sitrep.\nSpeaker 3: This isn't real.\nSpeaker 1: The hell it isn't!\nSpeaker 4: Pull it together, man!\nSpeaker 4: So eager to leave, David. Killing a man is is a hell of a lot easier than killing the idea.\nSpeaker 1: You were never cut out to be a Mason.\nSpeaker 5: No more games. This ends now.\nSpeaker 2: Get the Reznov challenge pack.\nSpeaker 2: And you pre-order now.",
+      "normalizedTruthValue": "speaker 1 they want you afraid fear makes you easier to control speaker 1 it s time to wake up speaker 2 your streets shall once again run red with your blood speaker 3 raul menendez ignited global unrest on an unprecedented scale speaker 1 menendez is a terrorist speaker 1 we re bringing peace and security to the world speaker 6 he refuses to let me go speaker 7 stop looking backwards david what matters is what we do next speaker 6 a lot of people counting on us for answers speaker 14 you shall know fear speaker 8 specter one report speaker 8 need a sitrep speaker 9 this isn t real speaker 10 the hell it ain t speaker 12 pull it together man speaker 2 so eager to leave daddy speaker 13 killing the man is a hell of a lot easier than killing the idea speaker 15 you were never cut out to be a mason speaker 6 no more games this ends now speaker 16 get the reznov challenge pack when you preorder now",
+      "normalizedOutputValue": "speaker 1 they want you afraid fear makes you easier to control speaker 1 it s time to wake up speaker 1 your streets shall once again run red speaker 2 with your blood raul menendez ignited global unrest on an unprecedented scale menendez is a te paris speaker 2 we re bringing peace and security to the world speaker 3 he refuses to let me go speaker 4 stop looking backwards david but now this is what we do next speaker 4 a lot of people counting on us for answers speaker 5 spectre one report speaker 5 need a sitrep speaker 3 this isn t real speaker 1 the hell it isn t speaker 4 pull it together man speaker 4 so eager to leave david killing a man is is a hell of a lot easier than killing the idea speaker 1 you were never cut out to be a mason speaker 5 no more games this ends now speaker 2 get the reznov challenge pack speaker 2 and you pre order now",
+      "reason": "Normalized strings differed"
+    }
+  ],
+  "summary": "dialogueData benchmark errored: Truth object missing field present in output",
+  "context": {
+    "fixtureId": "cod-test",
+    "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",
+    "truthPath": "benchmarks/fixtures/cod-test/truth/dialogue-data.json",
+    "outputPath": "output/cod-test/phase1-gather-context/dialogue-data.reconciled.json"
+  }
+}

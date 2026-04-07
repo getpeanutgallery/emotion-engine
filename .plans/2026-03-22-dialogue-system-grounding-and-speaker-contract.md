@@ -19,6 +19,8 @@ bead_ids:
   - ee-4cj8
   - ee-mdqq
   - ee-rmyh
+  - ee-mgv0
+  - ee-ecok
 ---
 # emotion-engine: dialogue system grounding and speaker contract
 

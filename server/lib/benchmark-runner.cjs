@@ -194,6 +194,78 @@ function normalizeFuzzyString(value) {
   );
 }
 
+function tokenizeFuzzyString(value) {
+  if (typeof value !== 'string') {
+    return [];
+  }
+  return normalizeFuzzyString(value).split(' ').filter(Boolean);
+}
+
+function scoreTokenOverlap(leftValue, rightValue) {
+  const leftTokens = new Set(tokenizeFuzzyString(leftValue));
+  const rightTokens = new Set(tokenizeFuzzyString(rightValue));
+  if (leftTokens.size === 0 && rightTokens.size === 0) {
+    return 1;
+  }
+  if (leftTokens.size === 0 || rightTokens.size === 0) {
+    return 0;
+  }
+
+  let overlapCount = 0;
+  for (const token of leftTokens) {
+    if (rightTokens.has(token)) {
+      overlapCount += 1;
+    }
+  }
+
+  return (2 * overlapCount) / (leftTokens.size + rightTokens.size);
+}
+
+function alignItemsByScore(truthItems, outputItems, scoreCandidate) {
+  const candidates = [];
+  for (let truthIndex = 0; truthIndex < truthItems.length; truthIndex += 1) {
+    for (let outputIndex = 0; outputIndex < outputItems.length; outputIndex += 1) {
+      const candidate = scoreCandidate(truthItems[truthIndex], outputItems[outputIndex], truthIndex, outputIndex);
+      if (candidate && Number.isFinite(candidate.score) && candidate.score > 0) {
+        candidates.push({
+          truthIndex,
+          outputIndex,
+          ...candidate
+        });
+      }
+    }
+  }
+
+  candidates.sort((left, right) => {
+    if (right.score !== left.score) {
+      return right.score - left.score;
+    }
+    if (left.truthIndex !== right.truthIndex) {
+      return left.truthIndex - right.truthIndex;
+    }
+    return left.outputIndex - right.outputIndex;
+  });
+
+  const usedTruthIndexes = new Set();
+  const usedOutputIndexes = new Set();
+  const matches = [];
+
+  for (const candidate of candidates) {
+    if (usedTruthIndexes.has(candidate.truthIndex) || usedOutputIndexes.has(candidate.outputIndex)) {
+      continue;
+    }
+    usedTruthIndexes.add(candidate.truthIndex);
+    usedOutputIndexes.add(candidate.outputIndex);
+    matches.push(candidate);
+  }
+
+  return {
+    matches,
+    unmatchedTruthIndexes: truthItems.map((_, index) => index).filter((index) => !usedTruthIndexes.has(index)),
+    unmatchedOutputIndexes: outputItems.map((_, index) => index).filter((index) => !usedOutputIndexes.has(index))
+  };
+}
+
 function isPlainObject(value) {
   return !!value && typeof value === 'object' && !Array.isArray(value);
 }
@@ -555,6 +627,10 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
   const errors = [];
   const ignoredDifferences = [];
   const alignments = [];
+  const comparatorState = {
+    dialogueSegmentTruthToOutput: new Map(),
+    dialogueSegmentOutputToTruth: new Map()
+  };
 
   let hardError = null;
 
@@ -821,11 +897,14 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
 
   function compareTimeAwareSegmentArray(pathString, truthValue, outputValue, alignmentConfig) {
     const alignment = alignTimeAwareSegments(truthValue, outputValue, comparator);
-    const matchedOutputIndexes = new Set(alignment.matches.map((entry) => entry.outputIndex));
-    const matchedTruthIndexes = new Set(alignment.matches.map((entry) => entry.truthIndex));
     const outputTimings = outputValue.map((item) => getSegmentTiming(item));
     const truthTimings = truthValue.map((item) => getSegmentTiming(item));
     const searchWindowSeconds = Math.max(comparator.resolvedOptions.timingToleranceSeconds * 4, 6);
+
+    if (alignmentConfig.label === 'dialogue_segments') {
+      comparatorState.dialogueSegmentTruthToOutput = new Map(alignment.matches.map((entry) => [entry.truthIndex, entry.outputIndex]));
+      comparatorState.dialogueSegmentOutputToTruth = new Map(alignment.matches.map((entry) => [entry.outputIndex, entry.truthIndex]));
+    }
 
     const inferSuspicion = (kind, index) => {
       if (kind === 'truth') {
@@ -935,6 +1014,427 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
     }
   }
 
+  function toComparableProfileCoverage(profile, side) {
+    const linkedIndexes = Array.isArray(profile?.grounded?.linked_segment_indexes) ? profile.grounded.linked_segment_indexes : [];
+    return linkedIndexes
+      .filter((index) => Number.isInteger(index))
+      .map((index) => {
+        if (side === 'truth') {
+          if (comparatorState.dialogueSegmentTruthToOutput.has(index)) {
+            return `output=${comparatorState.dialogueSegmentTruthToOutput.get(index)}`;
+          }
+          return `truth-only=${index}`;
+        }
+
+        return `output=${index}`;
+      });
+  }
+
+  function compareLinkedSegmentIndexArray(pathString, truthValue, outputValue) {
+    const truthRefs = truthValue
+      .filter((index) => Number.isInteger(index))
+      .map((index) => comparatorState.dialogueSegmentTruthToOutput.has(index) ? `output=${comparatorState.dialogueSegmentTruthToOutput.get(index)}` : `truth-only=${index}`);
+    const outputRefs = outputValue
+      .filter((index) => Number.isInteger(index))
+      .map((index) => `output=${index}`);
+
+    if (truthRefs.length !== outputRefs.length) {
+      pushFieldResult({
+        path: pathString,
+        status: 'fail',
+        rule: 'structural',
+        truthValue: { length: truthRefs.length, refs: truthRefs },
+        outputValue: { length: outputRefs.length, refs: outputRefs },
+        reason: `Linked segment coverage mismatch: truth=${truthRefs.length} output=${outputRefs.length}`
+      });
+    }
+
+    const truthSet = new Set(truthRefs);
+    const outputSet = new Set(outputRefs);
+
+    for (const truthRef of truthRefs) {
+      pushFieldResult({
+        path: `${pathString}[${truthRef}]`,
+        status: outputSet.has(truthRef) ? 'pass' : 'fail',
+        rule: 'speaker-profile-linked-segments',
+        truthValue: truthRef,
+        outputValue: outputSet.has(truthRef) ? truthRef : undefined,
+        ...(outputSet.has(truthRef) ? {} : { reason: 'Matched speaker profile did not preserve grounded segment coverage' })
+      });
+    }
+
+    for (const outputRef of outputRefs) {
+      if (truthSet.has(outputRef)) {
+        continue;
+      }
+      pushFieldResult({
+        path: `${pathString}[${outputRef}]`,
+        status: 'fail',
+        rule: 'speaker-profile-linked-segments',
+        truthValue: undefined,
+        outputValue: outputRef,
+        reason: 'Matched speaker profile claimed extra grounded segment coverage'
+      });
+    }
+  }
+
+  function compareUnorderedFuzzySupportArray(pathString, truthValue, outputValue, options = {}) {
+    const minimumSimilarity = options.minimumSimilarity || 0.5;
+    const rule = options.rule || 'fuzzy-support-list';
+    const alignment = alignItemsByScore(truthValue, outputValue, (truthItem, outputItem, truthIndex, outputIndex) => {
+      if (typeof truthItem !== 'string' || typeof outputItem !== 'string') {
+        return null;
+      }
+      const similarity = scoreTokenOverlap(truthItem, outputItem);
+      if (similarity < minimumSimilarity) {
+        return null;
+      }
+      return {
+        score: similarity * 1000 - Math.abs(truthIndex - outputIndex),
+        similarity
+      };
+    });
+
+    if (truthValue.length !== outputValue.length) {
+      pushFieldResult({
+        path: pathString,
+        status: 'fail',
+        rule: 'structural',
+        truthValue: { length: truthValue.length },
+        outputValue: { length: outputValue.length },
+        reason: `Array length mismatch: truth=${truthValue.length} output=${outputValue.length}`
+      });
+    }
+
+    alignments.push({
+      path: pathString,
+      strategy: rule,
+      minimumSimilarity,
+      matches: alignment.matches.map((entry) => ({
+        truthIndex: entry.truthIndex,
+        outputIndex: entry.outputIndex,
+        similarity: entry.similarity,
+        score: entry.score
+      })),
+      unmatchedTruth: alignment.unmatchedTruthIndexes.map((truthIndex) => ({ truthIndex, value: truthValue[truthIndex] })),
+      unmatchedOutput: alignment.unmatchedOutputIndexes.map((outputIndex) => ({ outputIndex, value: outputValue[outputIndex] }))
+    });
+
+    for (const entry of alignment.matches) {
+      pushFieldResult({
+        path: `${pathString}[truth=${entry.truthIndex},output=${entry.outputIndex}]`,
+        status: 'pass',
+        rule,
+        truthValue: truthValue[entry.truthIndex],
+        outputValue: outputValue[entry.outputIndex],
+        metrics: { similarity: entry.similarity, minimumSimilarity }
+      });
+    }
+
+    for (const truthIndex of alignment.unmatchedTruthIndexes) {
+      pushFieldResult({
+        path: `${pathString}[truth=${truthIndex}]`,
+        status: 'fail',
+        rule,
+        truthValue: truthValue[truthIndex],
+        outputValue: undefined,
+        reason: 'Missing supported item in output list'
+      });
+    }
+
+    for (const outputIndex of alignment.unmatchedOutputIndexes) {
+      pushFieldResult({
+        path: `${pathString}[output=${outputIndex}]`,
+        status: 'fail',
+        rule,
+        truthValue: undefined,
+        outputValue: outputValue[outputIndex],
+        reason: 'Extra unsupported item in output list'
+      });
+    }
+  }
+
+  function compareLooseStructured(pathString, truthValue, outputValue, options = {}) {
+    const currentPath = pathString || '$';
+    const ignoreFields = options.ignoreFields || new Set();
+
+    if (Array.isArray(truthValue)) {
+      if (!Array.isArray(outputValue)) {
+        pushFieldResult({
+          path: currentPath,
+          status: 'fail',
+          rule: 'structural',
+          truthValue,
+          outputValue,
+          reason: 'Output shape mismatch: expected array'
+        });
+        return;
+      }
+
+      if (currentPath.endsWith('.linked_segment_indexes')) {
+        compareLinkedSegmentIndexArray(currentPath, truthValue, outputValue);
+        return;
+      }
+
+      if (truthValue.length !== outputValue.length) {
+        pushFieldResult({
+          path: currentPath,
+          status: 'fail',
+          rule: 'structural',
+          truthValue: { length: truthValue.length },
+          outputValue: { length: outputValue.length },
+          reason: `Array length mismatch: truth=${truthValue.length} output=${outputValue.length}`
+        });
+      }
+
+      const maxLength = Math.max(truthValue.length, outputValue.length);
+      for (let index = 0; index < maxLength; index += 1) {
+        const childPath = `${currentPath}[${index}]`;
+        if (index >= truthValue.length) {
+          pushFieldResult({
+            path: childPath,
+            status: 'fail',
+            rule: 'structural',
+            truthValue: undefined,
+            outputValue: outputValue[index],
+            reason: 'Truth array missing item present in output'
+          });
+          continue;
+        }
+        if (index >= outputValue.length) {
+          pushFieldResult({
+            path: childPath,
+            status: 'fail',
+            rule: 'structural',
+            truthValue: truthValue[index],
+            outputValue: undefined,
+            reason: 'Output array missing item present in truth'
+          });
+          continue;
+        }
+        compareLooseStructured(childPath, truthValue[index], outputValue[index], options);
+      }
+      return;
+    }
+
+    if (isPlainObject(truthValue)) {
+      if (!isPlainObject(outputValue)) {
+        pushFieldResult({
+          path: currentPath,
+          status: 'fail',
+          rule: 'structural',
+          truthValue,
+          outputValue,
+          reason: 'Output shape mismatch: expected object'
+        });
+        return;
+      }
+
+      const truthKeys = Object.keys(truthValue).filter((key) => !ignoreFields.has(key));
+      const outputKeys = Object.keys(outputValue).filter((key) => !ignoreFields.has(key));
+      const truthKeySet = new Set(truthKeys);
+      const outputKeySet = new Set(outputKeys);
+
+      for (const key of outputKeys) {
+        if (!truthKeySet.has(key)) {
+          const childPath = currentPath === '$' ? key : `${currentPath}.${key}`;
+          pushFieldResult({
+            path: childPath,
+            status: 'fail',
+            rule: 'structural',
+            truthValue: undefined,
+            outputValue: outputValue[key],
+            reason: 'Truth object missing field present in output'
+          });
+        }
+      }
+
+      for (const key of truthKeys) {
+        const childPath = currentPath === '$' ? key : `${currentPath}.${key}`;
+        if (!outputKeySet.has(key)) {
+          pushFieldResult({
+            path: childPath,
+            status: 'fail',
+            rule: 'structural',
+            truthValue: truthValue[key],
+            outputValue: undefined,
+            reason: 'Output object missing field present in truth'
+          });
+          continue;
+        }
+        compareLooseStructured(childPath, truthValue[key], outputValue[key], options);
+      }
+      return;
+    }
+
+    compareLeaf(currentPath, truthValue, outputValue);
+  }
+
+  function compareSpeakerProfilesArray(pathString, truthValue, outputValue) {
+    const truthCoverage = truthValue.map((profile) => toComparableProfileCoverage(profile, 'truth'));
+    const outputCoverage = outputValue.map((profile) => toComparableProfileCoverage(profile, 'output'));
+    const alignment = alignItemsByScore(truthCoverage, outputCoverage, (truthRefs, outputRefs) => {
+      const truthSet = new Set(truthRefs);
+      const outputSet = new Set(outputRefs);
+      let overlapCount = 0;
+      for (const ref of truthSet) {
+        if (outputSet.has(ref)) {
+          overlapCount += 1;
+        }
+      }
+      if (overlapCount === 0) {
+        return null;
+      }
+      const unionCount = new Set([...truthSet, ...outputSet]).size;
+      return {
+        score: 1000 + (overlapCount * 100) + ((overlapCount / Math.max(unionCount, 1)) * 100),
+        overlapCount,
+        truthCoverageCount: truthSet.size,
+        outputCoverageCount: outputSet.size
+      };
+    });
+
+    if (truthValue.length !== outputValue.length) {
+      pushFieldResult({
+        path: pathString,
+        status: 'fail',
+        rule: 'structural',
+        truthValue: { length: truthValue.length },
+        outputValue: { length: outputValue.length },
+        reason: `Array length mismatch: truth=${truthValue.length} output=${outputValue.length}`
+      });
+    }
+
+    alignments.push({
+      path: pathString,
+      strategy: 'dialogue-speaker-profile-coverage',
+      matches: alignment.matches.map((entry) => ({
+        truthIndex: entry.truthIndex,
+        outputIndex: entry.outputIndex,
+        overlapCount: entry.overlapCount,
+        truthCoverageCount: entry.truthCoverageCount,
+        outputCoverageCount: entry.outputCoverageCount,
+        score: entry.score
+      })),
+      unmatchedTruth: alignment.unmatchedTruthIndexes.map((truthIndex) => ({
+        truthIndex,
+        coverage: truthCoverage[truthIndex],
+        profile: truthValue[truthIndex]
+      })),
+      unmatchedOutput: alignment.unmatchedOutputIndexes.map((outputIndex) => ({
+        outputIndex,
+        coverage: outputCoverage[outputIndex],
+        profile: outputValue[outputIndex]
+      }))
+    });
+
+    for (const entry of alignment.matches) {
+      compareLooseStructured(`${pathString}[truth=${entry.truthIndex},output=${entry.outputIndex}]`, truthValue[entry.truthIndex], outputValue[entry.outputIndex], {
+        ignoreFields: new Set(['speaker_id', 'label'])
+      });
+    }
+
+    for (const truthIndex of alignment.unmatchedTruthIndexes) {
+      pushFieldResult({
+        path: `${pathString}[truth=${truthIndex}]`,
+        status: 'fail',
+        rule: 'speaker-profile-alignment',
+        truthValue: truthValue[truthIndex],
+        outputValue: undefined,
+        reason: 'No output speaker profile covered this grounded dialogue evidence'
+      });
+    }
+
+    for (const outputIndex of alignment.unmatchedOutputIndexes) {
+      pushFieldResult({
+        path: `${pathString}[output=${outputIndex}]`,
+        status: 'fail',
+        rule: 'speaker-profile-alignment',
+        truthValue: undefined,
+        outputValue: outputValue[outputIndex],
+        reason: 'Output speaker profile claimed grounded dialogue evidence that did not match any truth profile'
+      });
+    }
+  }
+
+  function compareRecognizedSongObject(pathString, truthValue, outputValue) {
+    if (!isPlainObject(outputValue)) {
+      emitHardError(pathString, 'Output shape mismatch: expected object', truthValue, outputValue);
+      return;
+    }
+
+    compareLeaf(`${pathString}.status`, truthValue.status, outputValue.status);
+    compareLeaf(`${pathString}.confidence`, truthValue.confidence, outputValue.confidence);
+    compareLeaf(`${pathString}.primaryEvidence`, truthValue.primaryEvidence, outputValue.primaryEvidence);
+    compareLeaf(`${pathString}.multipleSongsDetected`, truthValue.multipleSongsDetected, outputValue.multipleSongsDetected);
+
+    const truthCandidates = Array.isArray(truthValue.candidates) ? truthValue.candidates : [];
+    const outputCandidates = Array.isArray(outputValue.candidates) ? outputValue.candidates : [];
+    const truthCandidateKeys = truthCandidates.map((candidate) => `${candidate?.title || ''}::${candidate?.artist || ''}`);
+    const outputCandidateKeys = outputCandidates.map((candidate) => `${candidate?.title || ''}::${candidate?.artist || ''}`);
+    const keyedTruth = new Map(truthCandidateKeys.map((key, index) => [key, index]));
+    const keyedOutput = new Map(outputCandidateKeys.map((key, index) => [key, index]));
+
+    if (truthCandidates.length !== outputCandidates.length) {
+      pushFieldResult({
+        path: `${pathString}.candidates`,
+        status: 'fail',
+        rule: 'structural',
+        truthValue: { length: truthCandidates.length },
+        outputValue: { length: outputCandidates.length },
+        reason: `Array length mismatch: truth=${truthCandidates.length} output=${outputCandidates.length}`
+      });
+    }
+
+    for (const [key, outputIndex] of keyedOutput.entries()) {
+      if (!keyedTruth.has(key)) {
+        pushFieldResult({
+          path: `${pathString}.candidates[output=${outputIndex}]`,
+          status: 'fail',
+          rule: 'recognized-song-candidate',
+          truthValue: undefined,
+          outputValue: outputCandidates[outputIndex],
+          reason: 'Output candidate song identity was not present in truth'
+        });
+      }
+    }
+
+    for (const [key, truthIndex] of keyedTruth.entries()) {
+      if (!keyedOutput.has(key)) {
+        pushFieldResult({
+          path: `${pathString}.candidates[truth=${truthIndex}]`,
+          status: 'fail',
+          rule: 'recognized-song-candidate',
+          truthValue: truthCandidates[truthIndex],
+          outputValue: undefined,
+          reason: 'Output omitted a truth candidate song identity'
+        });
+        continue;
+      }
+
+      const outputIndex = keyedOutput.get(key);
+      const truthCandidate = truthCandidates[truthIndex];
+      const outputCandidate = outputCandidates[outputIndex];
+      const candidatePath = `${pathString}.candidates[truth=${truthIndex},output=${outputIndex}]`;
+
+      compareLeaf(`${candidatePath}.title`, truthCandidate.title, outputCandidate.title);
+      compareLeaf(`${candidatePath}.artist`, truthCandidate.artist, outputCandidate.artist);
+      compareLeaf(`${candidatePath}.confidence`, truthCandidate.confidence, outputCandidate.confidence);
+      compareUnorderedFuzzySupportArray(`${candidatePath}.evidence`, Array.isArray(truthCandidate.evidence) ? truthCandidate.evidence : [], Array.isArray(outputCandidate.evidence) ? outputCandidate.evidence : [], {
+        minimumSimilarity: 0.4,
+        rule: 'recognized-song-support-evidence'
+      });
+      compareUnorderedFuzzySupportArray(`${candidatePath}.matchedLyrics`, Array.isArray(truthCandidate.matchedLyrics) ? truthCandidate.matchedLyrics : [], Array.isArray(outputCandidate.matchedLyrics) ? outputCandidate.matchedLyrics : [], {
+        minimumSimilarity: 0.5,
+        rule: 'recognized-song-support-lyrics'
+      });
+      compareTimeAwareSegmentArray(`${candidatePath}.timeRanges`, Array.isArray(truthCandidate.timeRanges) ? truthCandidate.timeRanges : [], Array.isArray(outputCandidate.timeRanges) ? outputCandidate.timeRanges : [], {
+        kind: 'time-aware-ranges',
+        label: 'recognizedSong.timeRanges'
+      });
+    }
+  }
+
   function walk(pathString, truthValue, outputValue) {
     const currentPath = pathString || '$';
 
@@ -947,6 +1447,11 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
     if (Array.isArray(truthValue)) {
       if (!Array.isArray(outputValue)) {
         emitHardError(currentPath, 'Output shape mismatch: expected array', truthValue, outputValue);
+        return;
+      }
+
+      if (comparator.profile === 'dialogue-default' && currentPath === 'speaker_profiles') {
+        compareSpeakerProfilesArray(currentPath, truthValue, outputValue);
         return;
       }
 
@@ -1029,6 +1534,11 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
     if (isPlainObject(truthValue)) {
       if (!isPlainObject(outputValue)) {
         emitHardError(currentPath, 'Output shape mismatch: expected object', truthValue, outputValue);
+        return;
+      }
+
+      if (comparator.profile === 'music-vocals-default' && currentPath === 'recognizedSong') {
+        compareRecognizedSongObject(currentPath, truthValue, outputValue);
         return;
       }
 

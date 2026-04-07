@@ -1,3 +1,12 @@
+---
+plan_id: plan-2026-03-31-mimo-tranche1-implementation
+bead_ids:
+  - ee-4pj3
+  - ee-8jpd
+  - ee-fhic
+  - ee-a04a
+  - ee-m6uf
+---
 # emotion-engine: MiMo tranche 1 implementation
 
 **Date:** 2026-03-31  

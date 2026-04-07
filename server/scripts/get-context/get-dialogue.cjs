@@ -1142,9 +1142,9 @@ async function run(input) {
                 'Identify speakers as Speaker 1, Speaker 2, etc. for human-readable labels, while reusing anonymous speaker_id values for same-speaker linkage.',
                 'Provide accurate timestamps in seconds and place each vocal line where it is actually heard in the timeline.',
                 'Keep grounded speaker identity separate from any inferred_traits guesswork.',
-                'Include audible spoken words only. Exclude sung lyrics, chant-like vocals, rap synchronized to music, melodic refrains, and purely instrumental or otherwise non-vocal sections.',
-                'If spoken delivery and music-led vocals alternate, keep only the spoken spans in dialogue_segments and let adjacent music-vocal spans live in the music lane.',
-                'If no audible spoken words are detected, return an empty dialogue_segments array.'
+                'Include intelligible dialogue and dialogue-like vocal material when it plausibly functions as dialogue. Exclude purely instrumental or otherwise non-vocal sections.',
+                'Keep the intelligible dialogue-like portion of mixed spoken/music-led vocal material when it is supportable from the audio.',
+                'If no intelligible dialogue or dialogue-like vocal material is detected, return an empty dialogue_segments array.'
               ]
             });
 
@@ -1442,9 +1442,9 @@ async function run(input) {
                 'Timestamps must be relative to this chunk and start at 0, with each vocal line placed where it is actually heard in the chunk.',
                 'Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.',
                 'Keep grounded speaker identity separate from any inferred_traits guesswork.',
-                'Include audible spoken words only in this chunk. Exclude sung lyrics, chant-like vocals, rap synchronized to music, melodic refrains, and purely instrumental or otherwise non-vocal sections.',
-                'If spoken delivery and music-led vocals alternate inside the chunk, keep only the spoken spans in dialogue_segments and let adjacent music-vocal spans live in the music lane.',
-                'If no audible spoken words are detected, return an empty dialogue_segments array.',
+                'Include intelligible dialogue and dialogue-like vocal material in this chunk when it plausibly functions as dialogue. Exclude purely instrumental or otherwise non-vocal sections.',
+                'Keep the intelligible dialogue-like portion of mixed spoken/music-led vocal material when it is supportable from the audio.',
+                'If no intelligible dialogue or dialogue-like vocal material is detected, return an empty dialogue_segments array.',
                 'handoffContext must stay brief and continuity-focused.'
               ]
             });
@@ -2156,25 +2156,38 @@ async function extractAudio(videoPath, outputDir, rawCapture = {}) {
  * @function buildTranscriptionPrompt
  * @returns {string} - Transcription prompt
  */
+function buildDialogueInferredTraitsRules() {
+  return [
+    '- inferred_traits must always be present as an object with a traits array.',
+    '- If you are unsure or have no supportable speculative traits, return exactly "inferred_traits": { "traits": [] }.',
+    '- Every inferred_traits.traits[*] entry must be an object with at least "trait" and "value" string fields. You may optionally add "confidence" and "note".',
+    '- Valid inferred trait example: { "trait": "accent", "value": "possibly Midwestern US", "confidence": 0.31, "note": "speculative" }.',
+    '- Do not return bare strings, descriptor-only objects, or grounded evidence inside inferred_traits.',
+    '- Keep inferred_traits clearly speculative and separate from grounded same-speaker evidence.'
+  ].join('\n');
+}
+
 function buildTranscriptionPrompt({ recoveryRuntime = null, measuredRuntimeSeconds = null } = {}) {
-  const runtimeAnchor = Number.isFinite(measuredRuntimeSeconds)
-    ? `- The attached media runtime was measured locally at ${Number(measuredRuntimeSeconds).toFixed(2)} seconds. Set totalDuration to the full attached runtime rather than estimating from dialogue coverage or the last spoken line.\n- Sparse or non-speech tails, silence, ambience, music-only sections, or intermittent end-of-file vocals do not mean the asset ended early. Keep spoken-dialogue coverage honest, but keep totalDuration anchored to the full attached runtime.\n`
-    : '';
+  const runtimeAnchorRules = Number.isFinite(measuredRuntimeSeconds)
+    ? [
+        `- The attached media runtime was measured locally at ${Number(measuredRuntimeSeconds).toFixed(2)} seconds. Set totalDuration to that full runtime.`,
+        '- Do not shorten totalDuration just because the audible dialogue ends early or the file has silence, ambience, music-only tails, or sparse end-of-file speech.'
+      ]
+    : [];
+  const inferredTraitsRules = buildDialogueInferredTraitsRules();
 
-  const prompt = `Transcribe the audio in this file. Identify different speakers and provide timestamps.
+  const prompt = `Transcribe the audible dialogue and dialogue-like vocal material in this audio.
 
-Respond with a JSON object in the following format:
-
-\`\`\`json
+Return JSON only with this shape:
 {
   "dialogue_segments": [
     {
       "start": 0.0,
-      "end": 5.2,
+      "end": 1.2,
       "speaker": "Speaker 1",
       "speaker_id": "spk_001",
-      "text": "Transcribed text here",
-      "confidence": 0.95
+      "text": "example line",
+      "confidence": 0.72
     }
   ],
   "speaker_profiles": [
@@ -2182,64 +2195,85 @@ Respond with a JSON object in the following format:
       "speaker_id": "spk_001",
       "label": "Speaker 1",
       "grounded": {
-        "confidence": 0.82,
+        "confidence": 0.68,
         "linked_segment_indexes": [0],
-        "acoustic_descriptors": [
-          { "label": "steady, conversational delivery", "confidence": 0.61 }
-        ]
+        "acoustic_descriptors": ["low raspy voice", "close-mic delivery"]
       },
       "inferred_traits": {
         "traits": [
           {
-            "trait": "accent",
-            "value": "possibly mid-Atlantic American English",
-            "confidence": 0.31,
-            "note": "speculative inference from delivery only"
+            "trait": "presentation",
+            "value": "adult masculine-coded voice",
+            "confidence": 0.45,
+            "note": "speculative impression from timbre only"
           }
         ]
       }
     }
   ],
-  "summary": "Brief summary of the dialogue content",
-  "totalDuration": 30.5
+  "summary": "brief summary of the dialogue content",
+  "totalDuration": 0.0
 }
-\`\`\`
 
-IMPORTANT:
-${runtimeAnchor}- Return JSON only. No markdown or explanation.
-- Identify speakers as "Speaker 1", "Speaker 2", etc. for display labels, but also reuse anonymous speaker_id values like "spk_001" when segments belong to the same acoustic voice.
-- Provide accurate timestamps in seconds.
-- Include confidence scores from 0.0 to 1.0.
+Rules:
+- Return JSON only. No markdown. No explanation.
+- Use seconds for all timestamps.
+- Set totalDuration to the full attached media runtime, not just the span covered by captured dialogue.
+- If no intelligible dialogue or dialogue-like vocal material is present, return an empty dialogue_segments array.
+${runtimeAnchorRules.join('\n')}
+
+Segmentation rules:
+- Preserve real utterance boundaries.
+- Do not merge adjacent beats just because they are semantically related, grammatically compatible, or close together in time.
+- Treat pauses, interruptions, overlap changes, delivery pivots, and speaker changes as evidence of separate segments.
+- If two phrases are separated by a noticeable pause, interruption, overlap change, or speaker change, keep them as separate dialogue_segments even if combining them would read more smoothly.
+- If words are part of one uninterrupted utterance from the same voice, keep them in one segment; do not split artificially.
+- Do not bridge across silence, music-only gaps, or non-vocal stretches to create a cleaner sentence.
+- Place each captured line where it actually occurs in the timeline; do not pull later lines earlier or compress dialogue into another part of the file.
+
+Damaged-speech rules:
+- When speech is partially masked, clipped, distant, distorted, or overlapped, prefer a short literal fragment of what is actually audible.
+- Preserve damaged speech as heard.
+- Do not smooth a damaged line into a cleaner full sentence.
+- Do not borrow missing words from neighboring beats, scene context, likely script memory, or semantic expectation.
+- If only part of a line is supported by the audio, return only that supported fragment.
+- Prefer a short literal fragment over a polished but weakly supported reconstruction.
+
+Speaker rules:
+- Speaker continuity is acoustic, not semantic.
+- Reuse a speaker_id only when the audible voice clearly matches.
+- A named character, repeated topic, scene continuity, or conversational adjacency is not proof that two lines came from the same speaker.
+- Before reusing a speaker_id, compare voice quality, timbre, delivery mode, recording texture, apparent age range, gender presentation, and accent/dialect impression.
+- If those cues do not clearly line up, create a new speaker_id.
+- Keep materially different delivery modes separated unless the voice itself clearly matches.
+- Do not collapse narration, public-address speech, expository/briefing delivery, radio/comms chatter, villain speech, promo voiceover, or overlap-heavy blends into one speaker bucket unless the acoustic match is genuinely strong.
+- If identity is uncertain, keep the bucket anonymous and preserve the uncertainty in grounded descriptors and speculative traits rather than promoting a guess to fact.
+
+Confidence rules:
+- Use conservative confidence values.
+- Confidence must reflect both transcription certainty and speaker-assignment certainty.
+- Lower confidence materially when speech is short, masked, clipped, overlapped, stylized, distant, noisy, or speaker attribution is ambiguous.
+- Do not use near-certain scores unless the words and the speaker match are both strongly supported by the audio.
+- Similar-sounding voices, damaged fragments, and overlap-heavy moments should often stay moderate-confidence rather than near-certain.
+- Do not signal certainty you did not earn from the audio.
+
+Speaker profile rules:
+- Use generic display labels such as "Speaker 1", "Speaker 2", etc., but preserve continuity with anonymous speaker_id values such as "spk_001".
 - Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0.
-- Keep grounded speaker identity separate from inferred_traits.
-- Grounded data should only include anonymous speaker IDs, same-speaker linkage, and cautious acoustic descriptors that are actually supported by the audio.
-- If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
-- inferred_traits must always be present as an object with a traits array. Keep it clearly speculative / non-authoritative and attempt reviewable traits for each speaker when the audio supports them; otherwise return an empty traits array.
-- speaker_id continuity is acoustic, not semantic. A speaker naming a person, character, organization, or title is not evidence that the speaker is that entity.
-- Before reusing a speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.
-- Do not merge clearly different voices just because the scene is continuous. Keep public-address / figurehead narration, antagonist threats, radio/comms chatter, gruff tactical responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.
-- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.
-- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.
-- If you create a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.
-- If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.
-- If a later line sounds like a different voice, do not reuse the old speaker_id just because the scene context mentions the same character.
-- Treat this as a spoken-dialogue extraction task. Include audible spoken words only.
-- Exclude sung lyrics, chant-like vocals, rap synchronized to music, melodic refrains, and other music-led vocal phrases from dialogue_segments.
-- When a voice rides over music or SFX, classify by delivery mode, not by foreground loudness.
-- Spoken narration or dialogue over a score still belongs in dialogue_segments.
-- Keep quiet or partially masked spoken words in dialogue_segments when they are still intelligible enough to transcribe at least partially.
-- Use short best-effort literal fragments for masked speech rather than discarding the spoken line entirely.
-- Preserve masked spoken fragments as-heard; do not smooth them into a fuller sentence or reconstruct missing lyric-like words from context.
-- If a phrase begins spoken and resolves into sung, chant-like, rap, or other music-led delivery, split immediately at the delivery pivot even if the spoken fragment is very short; do not keep the sung tail in dialogue.
-- Prefer a short literal spoken prefix over a polished but wrong full-line reconstruction.
-- If audible words are too melodic or rhythm-locked to be confidently treated as speech, exclude them from dialogue_segments and let the music-vocals lane claim them.
-- If delivery changes mode between spoken dialogue and music-led vocals, split them into adjacent segments instead of merging them.
-- Do not use continuity from neighboring spoken segments to pull a lyric phrase into dialogue.
-- Treat long non-vocal gaps, instrumental stretches, and silence/music-only spans as timeline evidence that later vocal lines belong later; keep those gaps instead of bridging across them.
-- Do not move a later lyric line earlier just because it appears to share the same singer, melody, hook, or section type as an earlier vocal phrase.
-- Exclude purely instrumental or otherwise non-vocal sections from dialogue_segments.
-- Do not compress the whole file's dialogue into the opening seconds or pull later spoken lines earlier to cover a larger region; place each spoken line where it actually occurs in the full timeline.
-- If no audible spoken words are detected, return an empty dialogue_segments array.`;
+- grounded should contain cautious same-speaker evidence: anonymous continuity, linked_segment_indexes, and acoustically supported descriptors.
+- When supportable, include practical acoustic_descriptors that would help a later reviewer distinguish or reunify speakers, such as pitch range, raspiness/smoothness, breathiness, intensity, cadence, pacing, mic distance, recording texture, accent impression, age impression, or delivery mode.
+- Do not leave acoustic_descriptors empty just because the description is imperfect; include concise grounded descriptors when the audio gives real support.
+${inferredTraitsRules}
+- Use inferred_traits for clearly speculative impressions that may still help review, such as age range, gender presentation, role impression, or demeanor.
+- If a trait is only weakly supported, include it with a low confidence and a short note that makes the uncertainty explicit.
+
+Scope rules:
+- Include intelligible spoken dialogue.
+- Exclude purely instrumental or non-vocal sections.
+- Exclude clearly lyric-led, melody-led, or predominantly musical vocal passages when they do not plausibly function as dialogue.
+- If a segment mixes spoken content with music-led vocalization, keep the intelligible dialogue-like portion that is supportable from the audio.
+- Do not use the summary to justify dropping ambiguous dialogue-like vocals early.
+- The summary is secondary; do not alter segmentation, wording, or speaker assignment to make the summary cleaner.`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }
@@ -2325,7 +2359,8 @@ async function executeDialogueTranscriptionToolLoop({
       })
     }),
     executeValidatorTool: (args) => executeDialogueTranscriptionValidatorTool(args, { requireHandoff }),
-    normalizeValidatedValue: (value) => JSON.stringify(value)
+    normalizeValidatedValue: (value) => JSON.stringify(value),
+    runtimeStyle: 'lean'
   });
 }
 
@@ -2380,26 +2415,27 @@ function buildChunkTranscriptionPrompt({ chunkIndex, startTime, endTime, priorHa
   const handoff = typeof priorHandoff === 'string' && priorHandoff.trim().length > 0
     ? priorHandoff.trim()
     : null;
+  const inferredTraitsRules = buildDialogueInferredTraitsRules();
   const openingArbitrationNote = openingArbitration && Number.isFinite(openingArbitration.coverageSeconds)
-    ? `\nOpening provenance mode: this chunk is inside the first ${Number(openingArbitration.coverageSeconds).toFixed(2)}s of the full audio, where rapid montage edits can place different voices very close together. Prioritize this chunk's local acoustic evidence over any semantic continuity assumptions.\n`
-    : '\n';
+    ? `Opening provenance mode: this chunk falls inside the first ${Number(openingArbitration.coverageSeconds).toFixed(2)} seconds of the full asset, where rapid montage edits can place different voices close together. Prioritize this chunk's local acoustic evidence over storyline continuity assumptions.`
+    : null;
 
   const prompt = `You are transcribing CHUNK ${chunkIndex} of a longer audio file.
 
-Chunk time window: ${Number(startTime).toFixed(2)}s to ${Number(endTime).toFixed(2)}s (global timeline).${openingArbitrationNote}
-${handoff ? `Context from previous chunk (handoff):\n${handoff}\n\n` : ''}Transcribe the audio in this chunk. Identify different speakers and provide timestamps.
+Chunk time window: ${Number(startTime).toFixed(2)}s to ${Number(endTime).toFixed(2)}s on the global timeline.
+${openingArbitrationNote ? `${openingArbitrationNote}\n` : ''}
+${handoff ? `Previous chunk handoff (reference only, not transcript continuation):\n${handoff}\n\n` : ''}Transcribe the audible dialogue and dialogue-like vocal material in this chunk.
 
-Return JSON only with this structure:
-
+Return JSON only with this shape:
 {
   "dialogue_segments": [
     {
       "start": 0.0,
-      "end": 5.2,
+      "end": 1.2,
       "speaker": "Speaker 1",
       "speaker_id": "spk_001",
-      "text": "Transcribed text here",
-      "confidence": 0.95
+      "text": "example line",
+      "confidence": 0.72
     }
   ],
   "speaker_profiles": [
@@ -2407,65 +2443,74 @@ Return JSON only with this structure:
       "speaker_id": "spk_001",
       "label": "Speaker 1",
       "grounded": {
-        "confidence": 0.82,
+        "confidence": 0.68,
         "linked_segment_indexes": [0],
-        "acoustic_descriptors": [
-          { "label": "steady, conversational delivery", "confidence": 0.61 }
-        ]
+        "acoustic_descriptors": ["low raspy voice", "close-mic delivery"]
       },
       "inferred_traits": {
         "traits": [
           {
-            "trait": "age_range",
-            "value": "likely adult",
-            "confidence": 0.28,
-            "note": "speculative inference from voice only"
+            "trait": "presentation",
+            "value": "adult masculine-coded voice",
+            "confidence": 0.45,
+            "note": "speculative impression from timbre only"
           }
         ]
       }
     }
   ],
-  "summary": "Brief summary for THIS chunk",
-  "handoffContext": "Short handoff to help the next chunk keep continuity (entities, speaker mapping, last lines)",
-  "totalDuration": 30.5
+  "summary": "brief summary for this chunk",
+  "handoffContext": "short continuity handoff for the next chunk",
+  "totalDuration": 0.0
 }
 
 Rules:
-- Return JSON only. No markdown.
-- Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.
-- Treat the handoff speaker registry as the continuity memory. Reuse a prior speaker_id only when the current voice still matches that prior acoustic profile.
+- Return JSON only. No markdown. No explanation.
+- Timestamps must be relative to this chunk and start at 0.
+- Set totalDuration to this chunk's runtime.
+- If no intelligible dialogue or dialogue-like vocal material is present, return an empty dialogue_segments array.
+- Keep handoffContext brief and continuity-focused.
+- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in this chunk.
+
+Segmentation rules:
+- Preserve real utterance boundaries inside this chunk.
+- Do not merge adjacent beats just because they are semantically related or close together in time.
+- Treat pauses, interruptions, overlap changes, delivery pivots, and speaker changes as evidence of separate segments.
+- If words are part of one uninterrupted utterance from the same voice, keep them in one segment; do not split artificially.
+- Do not bridge across silence, music-only gaps, or non-vocal stretches to create a cleaner sentence.
+- Spread timestamps across the actual chunk timeline where lines occur; do not compress late dialogue into the opening seconds.
+
+Damaged-speech rules:
+- When speech is masked, clipped, distant, distorted, or overlapped, prefer a short literal fragment of what is actually audible.
+- Preserve damaged speech as heard.
+- Do not smooth a damaged line into a cleaner full sentence.
+- Do not borrow missing words from neighboring chunks, scene context, or semantic expectation.
+
+Speaker rules:
+- Speaker continuity is acoustic, not semantic.
+- Treat the handoff speaker registry as continuity memory, but reuse a prior speaker_id only when the current voice clearly matches that prior acoustic profile.
 - If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.
+- Before reusing a prior speaker_id, compare voice quality, timbre, delivery mode, recording texture, apparent age range, gender presentation, and accent/dialect impression.
+- Do not merge narration, public-address speech, radio/comms chatter, villain speech, promo voiceover, or overlap-heavy blends unless the acoustic match is genuinely strong.
+- In opening montage conditions, prefer local chunk provenance over storyline continuity.
+
+Confidence and profile rules:
+- Use conservative confidence values.
+- Confidence must reflect both transcription certainty and speaker-assignment certainty.
 - Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0.
-- Keep grounded speaker identity separate from inferred_traits.
-- If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.
-- inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.
-- speaker_id continuity is acoustic, not semantic. A line that names a person, character, organization, or title may still be spoken by someone else.
-- Before reusing a prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.
-- Do not merge clearly different voices just because the chunk continues the same scene. Keep public-address / figurehead narration, antagonist threats, radio/comms chatter, gruff tactical responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.
-- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.
-- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.
-- In the opening montage, prefer local chunk provenance over storyline continuity. A named subject, recurring topic, or back-to-back cut is not enough to inherit the previous speaker_id.
-- If a threat line is followed by an official/public-address sounding line, treat that as a speaker change unless the exact same voice clearly continues.
-- If you create a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.
-- If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.
-- Treat this as a spoken-dialogue extraction task for this chunk. Include audible spoken words only.
-- Exclude sung lyrics, chant-like vocals, rap synchronized to music, melodic refrains, and other music-led vocal phrases from dialogue_segments.
-- When a voice rides over music or SFX, classify by delivery mode, not by foreground loudness.
-- Spoken narration or dialogue over a score still belongs in dialogue_segments.
-- Keep quiet or partially masked spoken words in dialogue_segments when they are still intelligible enough to transcribe at least partially.
-- Use short best-effort literal fragments for masked speech rather than discarding the spoken line entirely.
-- Preserve masked spoken fragments as-heard; do not smooth them into a fuller sentence or reconstruct missing lyric-like words from context.
-- If a phrase begins spoken and resolves into sung, chant-like, rap, or other music-led delivery, split immediately at the delivery pivot even if the spoken fragment is very short; do not keep the sung tail in dialogue.
-- Prefer a short literal spoken prefix over a polished but wrong full-line reconstruction.
-- If audible words are too melodic or rhythm-locked to be confidently treated as speech, exclude them from dialogue_segments and let the music-vocals lane claim them.
-- If delivery changes mode between spoken dialogue and music-led vocals, split them into adjacent segments instead of merging them.
-- Do not use continuity from neighboring spoken segments to pull a lyric phrase into dialogue.
-- Treat long non-vocal gaps, instrumental stretches, and silence/music-only spans as timeline evidence that later vocal lines belong later; keep those gaps instead of bridging across them.
-- Do not move a later lyric line earlier just because it appears to share the same singer, melody, hook, or section type as an earlier vocal phrase.
-- Exclude purely instrumental or otherwise non-vocal sections from dialogue_segments.
-- Do not compress the whole chunk's dialogue into the opening seconds or pull later spoken lines earlier to cover a larger region; spread timestamps across the actual chunk timeline where lines occur.
-- If no audible spoken words are detected, return an empty dialogue_segments array.
-- Keep handoffContext brief (<= ~10 lines).`;
+- grounded should contain cautious same-speaker evidence: anonymous continuity, linked_segment_indexes, and acoustically supported descriptors.
+- When supportable, include practical acoustic_descriptors that would help a later reviewer distinguish or reunify speakers, such as pitch range, raspiness/smoothness, breathiness, intensity, cadence, pacing, mic distance, recording texture, accent impression, age impression, or delivery mode.
+- Do not leave acoustic_descriptors empty just because the description is imperfect; include concise grounded descriptors when the audio gives real support.
+${inferredTraitsRules}
+- Use inferred_traits for clearly speculative impressions that may still help review, such as age range, gender presentation, role impression, or demeanor.
+- If a trait is only weakly supported, include it with a low confidence and a short note that makes the uncertainty explicit.
+
+Scope rules:
+- Include intelligible spoken dialogue and dialogue-like vocal material.
+- Exclude purely instrumental or non-vocal sections.
+- Exclude clearly lyric-led, melody-led, or predominantly musical vocal passages when they do not plausibly function as dialogue.
+- If a segment mixes spoken content with music-led vocalization, keep the intelligible dialogue-like portion that is supportable from the audio.
+- Do not use adjacent spoken context or the handoff summary to pull unsupported words into this chunk.`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;
 }

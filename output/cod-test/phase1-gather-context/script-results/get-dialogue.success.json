@@ -6,9 +6,9 @@
   "run": {
     "configName": "COD Test Pipeline",
     "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-    "startedAt": "2026-03-20T19:59:49.179Z",
-    "completedAt": "2026-03-20T19:59:57.594Z",
-    "durationMs": 8415,
+    "startedAt": "2026-04-07T21:51:54.500Z",
+    "completedAt": "2026-04-07T21:53:51.580Z",
+    "durationMs": 117080,
     "attempt": 1
   },
   "payload": {
@@ -17,134 +17,566 @@
       "dialogue_segments": [
         {
           "start": 0,
-          "end": 6,
+          "end": 1.2,
           "speaker": "Speaker 1",
-          "text": "They want you afraid. Fear makes you easier to control.",
-          "confidence": 0.98
+          "speaker_id": "spk_001",
+          "text": "They want you afraid.",
+          "confidence": 0.9,
+          "index": 0
         },
         {
-          "start": 8.5,
-          "end": 10,
+          "start": 1.2,
+          "end": 3.5,
           "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
+          "text": "Fear makes you easier to control.",
+          "confidence": 0.9,
+          "index": 1
+        },
+        {
+          "start": 3.5,
+          "end": 5,
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
           "text": "It's time to wake up.",
-          "confidence": 0.95
+          "confidence": 0.9,
+          "index": 2
         },
         {
-          "start": 12,
-          "end": 16.5,
+          "start": 5,
+          "end": 9,
           "speaker": "Speaker 2",
-          "text": "Your streets, so once again run red with your blood.",
-          "confidence": 0.96
+          "speaker_id": "spk_002",
+          "text": "Your streets shall once again run red with your blood.",
+          "confidence": 0.95,
+          "index": 3
         },
         {
-          "start": 16.5,
-          "end": 20.5,
+          "start": 9,
+          "end": 13,
           "speaker": "Speaker 3",
+          "speaker_id": "spk_003",
           "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
-          "confidence": 0.97
+          "confidence": 0.95,
+          "index": 4
         },
         {
-          "start": 22,
-          "end": 24,
-          "speaker": "Speaker 1",
-          "text": "Menendez is a terrorist.",
-          "confidence": 0.98
-        },
-        {
-          "start": 24,
-          "end": 27,
-          "speaker": "Speaker 1",
-          "text": "We're bringing peace and security to the world.",
-          "confidence": 0.95
-        },
-        {
-          "start": 27.5,
-          "end": 29.5,
+          "start": 13,
+          "end": 15,
           "speaker": "Speaker 4",
+          "speaker_id": "spk_004",
+          "text": "Menendez is a terrorist.",
+          "confidence": 0.9,
+          "index": 5
+        },
+        {
+          "start": 15,
+          "end": 18,
+          "speaker": "Speaker 4",
+          "speaker_id": "spk_004",
+          "text": "We're bringing peace and security to the world.",
+          "confidence": 0.9,
+          "index": 6
+        },
+        {
+          "start": 18,
+          "end": 20,
+          "speaker": "Speaker 5",
+          "speaker_id": "spk_005",
           "text": "He refuses to let me go.",
-          "confidence": 0.94
+          "confidence": 0.85,
+          "index": 7
         },
         {
-          "start": 30,
-          "end": 33.5,
-          "speaker": "Speaker 5",
-          "text": "Stop looking backwards, David, but what matters is what we do next.",
-          "confidence": 0.96
-        },
-        {
-          "start": 35,
-          "end": 37,
-          "speaker": "Speaker 5",
-          "text": "A lot of people counting on us, Francis.",
-          "confidence": 0.95
-        },
-        {
-          "start": 51,
-          "end": 52.5,
+          "start": 20,
+          "end": 23,
           "speaker": "Speaker 6",
-          "text": "Specter, one report.",
-          "confidence": 0.92
+          "speaker_id": "spk_006",
+          "text": "Stop looking backwards, David. What matters is what we do next.",
+          "confidence": 0.9,
+          "index": 8
         },
         {
-          "start": 54,
-          "end": 55,
-          "speaker": "Speaker 6",
-          "text": "Need a sitrep.",
-          "confidence": 0.93
+          "start": 23,
+          "end": 25,
+          "speaker": "Speaker 5",
+          "speaker_id": "spk_005",
+          "text": "A lot of people counting on us for answers.",
+          "confidence": 0.85,
+          "index": 9
         },
         {
-          "start": 101,
-          "end": 102,
+          "start": 90,
+          "end": 92,
           "speaker": "Speaker 7",
-          "text": "This isn't real.",
-          "confidence": 0.95
+          "speaker_id": "spk_007",
+          "text": "Spectre One report.",
+          "confidence": 0.8,
+          "index": 10
         },
         {
-          "start": 102.5,
-          "end": 104,
-          "speaker": "Speaker 2",
+          "start": 92,
+          "end": 94,
+          "speaker": "Speaker 7",
+          "speaker_id": "spk_007",
+          "text": "Need a sitrep.",
+          "confidence": 0.8,
+          "index": 11
+        },
+        {
+          "start": 94,
+          "end": 96,
+          "speaker": "Speaker 5",
+          "speaker_id": "spk_005",
+          "text": "This isn't real.",
+          "confidence": 0.85,
+          "index": 12
+        },
+        {
+          "start": 96,
+          "end": 97,
+          "speaker": "Speaker 8",
+          "speaker_id": "spk_008",
           "text": "The hell it ain't!",
-          "confidence": 0.96
+          "confidence": 0.85,
+          "index": 13
+        },
+        {
+          "start": 130,
+          "end": 132,
+          "speaker": "Speaker 8",
+          "speaker_id": "spk_008",
+          "text": "Pull it together, man!",
+          "confidence": 0.85,
+          "index": 14
+        },
+        {
+          "start": 132,
+          "end": 134,
+          "speaker": "Speaker 9",
+          "speaker_id": "spk_009",
+          "text": "So eager to leave, David.",
+          "confidence": 0.9,
+          "index": 15
+        },
+        {
+          "start": 134,
+          "end": 138,
+          "speaker": "Speaker 9",
+          "speaker_id": "spk_009",
+          "text": "Killing a man is a hell of a lot easier than killing an idea.",
+          "confidence": 0.9,
+          "index": 16
         },
         {
           "start": 138,
-          "end": 139.5,
-          "speaker": "Speaker 5",
-          "text": "Pull it together, man!",
-          "confidence": 0.97
-        },
-        {
-          "start": 140.5,
-          "end": 143,
-          "speaker": "Speaker 5",
-          "text": "So eager to leave, David.",
-          "confidence": 0.94
-        },
-        {
-          "start": 143,
-          "end": 146.5,
-          "speaker": "Speaker 5",
-          "text": "Killing the man is a hell of a lot easier than killing the idea.",
-          "confidence": 0.96
-        },
-        {
-          "start": 148,
-          "end": 150.5,
-          "speaker": "Speaker 1",
+          "end": 140,
+          "speaker": "Speaker 4",
+          "speaker_id": "spk_004",
           "text": "You were never cut out to be a Mason.",
-          "confidence": 0.95
+          "confidence": 0.9,
+          "index": 17
         },
         {
-          "start": 152.5,
-          "end": 155,
+          "start": 140,
+          "end": 140.04,
           "speaker": "Speaker 5",
+          "speaker_id": "spk_005",
           "text": "No more games. This ends now.",
-          "confidence": 0.97
+          "confidence": 0.85,
+          "index": 18
         }
       ],
-      "summary": "A montage of intense dialogue featuring various characters discussing conflict, terrorism, and personal stakes, likely from a Call of Duty game trailer.",
-      "totalDuration": 220,
-      "handoffContext": null
+      "speaker_profiles": [
+        {
+          "speaker_id": "spk_001",
+          "label": "Speaker 1",
+          "grounded": {
+            "confidence": 0.85,
+            "linked_segment_indexes": [
+              0,
+              1,
+              2
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "female voice",
+                "confidence": null
+              },
+              {
+                "label": "clear articulation",
+                "confidence": null
+              },
+              {
+                "label": "moderate pitch",
+                "confidence": null
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "gender_presentation",
+                "value": "female",
+                "confidence": 0.9,
+                "note": "based on vocal timbre"
+              },
+              {
+                "trait": "role",
+                "value": "narrator or motivator",
+                "confidence": 0.6,
+                "note": "speculative from context"
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_002",
+          "label": "Speaker 2",
+          "grounded": {
+            "confidence": 0.9,
+            "linked_segment_indexes": [
+              3
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "deep male voice",
+                "confidence": null
+              },
+              {
+                "label": "menacing tone",
+                "confidence": null
+              },
+              {
+                "label": "slow delivery",
+                "confidence": null
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "gender_presentation",
+                "value": "male",
+                "confidence": 0.95,
+                "note": "based on vocal timbre"
+              },
+              {
+                "trait": "demeanor",
+                "value": "threatening",
+                "confidence": 0.8,
+                "note": "from delivery style"
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_003",
+          "label": "Speaker 3",
+          "grounded": {
+            "confidence": 0.9,
+            "linked_segment_indexes": [
+              4
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "male voice",
+                "confidence": null
+              },
+              {
+                "label": "news anchor style",
+                "confidence": null
+              },
+              {
+                "label": "formal tone",
+                "confidence": null
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "gender_presentation",
+                "value": "male",
+                "confidence": 0.9,
+                "note": "based on vocal timbre"
+              },
+              {
+                "trait": "role",
+                "value": "reporter or official",
+                "confidence": 0.7,
+                "note": "speculative from delivery"
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_004",
+          "label": "Speaker 4",
+          "grounded": {
+            "confidence": 0.85,
+            "linked_segment_indexes": [
+              5,
+              6,
+              17
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "female voice",
+                "confidence": null
+              },
+              {
+                "label": "authoritative tone",
+                "confidence": null
+              },
+              {
+                "label": "clear and firm delivery",
+                "confidence": null
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "gender_presentation",
+                "value": "female",
+                "confidence": 0.9,
+                "note": "based on vocal timbre"
+              },
+              {
+                "trait": "demeanor",
+                "value": "confident and commanding",
+                "confidence": 0.75,
+                "note": "from speech patterns"
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_005",
+          "label": "Speaker 5",
+          "grounded": {
+            "confidence": 0.8,
+            "linked_segment_indexes": [
+              7,
+              9,
+              12,
+              18
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "male voice",
+                "confidence": null
+              },
+              {
+                "label": "emotional tone",
+                "confidence": null
+              },
+              {
+                "label": "varied pitch",
+                "confidence": null
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "gender_presentation",
+                "value": "male",
+                "confidence": 0.9,
+                "note": "based on vocal timbre"
+              },
+              {
+                "trait": "role",
+                "value": "protagonist or key character",
+                "confidence": 0.65,
+                "note": "speculative from dialogue context"
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_006",
+          "label": "Speaker 6",
+          "grounded": {
+            "confidence": 0.85,
+            "linked_segment_indexes": [
+              8
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "male voice",
+                "confidence": null
+              },
+              {
+                "label": "calm and instructive",
+                "confidence": null
+              },
+              {
+                "label": "steady pace",
+                "confidence": null
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "gender_presentation",
+                "value": "male",
+                "confidence": 0.9,
+                "note": "based on vocal timbre"
+              },
+              {
+                "trait": "demeanor",
+                "value": "mentoring or guiding",
+                "confidence": 0.6,
+                "note": "speculative from content"
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_007",
+          "label": "Speaker 7",
+          "grounded": {
+            "confidence": 0.75,
+            "linked_segment_indexes": [
+              10,
+              11
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "male voice",
+                "confidence": null
+              },
+              {
+                "label": "comms filter effect",
+                "confidence": null
+              },
+              {
+                "label": "military-style delivery",
+                "confidence": null
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "gender_presentation",
+                "value": "male",
+                "confidence": 0.85,
+                "note": "based on vocal timbre"
+              },
+              {
+                "trait": "role",
+                "value": "soldier or operative",
+                "confidence": 0.7,
+                "note": "from communication style"
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_008",
+          "label": "Speaker 8",
+          "grounded": {
+            "confidence": 0.8,
+            "linked_segment_indexes": [
+              13,
+              14
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "male voice",
+                "confidence": null
+              },
+              {
+                "label": "aggressive tone",
+                "confidence": null
+              },
+              {
+                "label": "loud and forceful",
+                "confidence": null
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "gender_presentation",
+                "value": "male",
+                "confidence": 0.9,
+                "note": "based on vocal timbre"
+              },
+              {
+                "trait": "demeanor",
+                "value": "intense and confrontational",
+                "confidence": 0.75,
+                "note": "from delivery"
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_009",
+          "label": "Speaker 9",
+          "grounded": {
+            "confidence": 0.85,
+            "linked_segment_indexes": [
+              15,
+              16
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "male voice",
+                "confidence": null
+              },
+              {
+                "label": "villainous tone",
+                "confidence": null
+              },
+              {
+                "label": "sinister cadence",
+                "confidence": null
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "gender_presentation",
+                "value": "male",
+                "confidence": 0.9,
+                "note": "based on vocal timbre"
+              },
+              {
+                "trait": "role",
+                "value": "antagonist",
+                "confidence": 0.8,
+                "note": "from menacing delivery"
+              }
+            ]
+          }
+        }
+      ],
+      "summary": "A dramatic dialogue featuring multiple characters discussing themes of fear, control, terrorism, and personal conflict, with references to global unrest and individual stakes.",
+      "totalDuration": 140.04,
+      "handoffContext": null,
+      "analysisMode": "whole_asset",
+      "timingMode": "full_timeline",
+      "sourceStrategy": "base64",
+      "coverage": {
+        "start": 0,
+        "end": 140.04,
+        "duration": 140.04,
+        "complete": false
+      },
+      "provenance": {
+        "transportMode": "inline",
+        "usedChunking": false,
+        "chunkCount": 0,
+        "fallbackApplied": false
+      }
     }
   },
   "artifacts": {

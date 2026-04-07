@@ -1,0 +1,1604 @@
+{
+  "artifactKey": "musicVocalsData",
+  "label": "Phase 1 music vocals",
+  "phase": "phase1-gather-context",
+  "script": "get-music-vocals",
+  "status": "error",
+  "truth": {
+    "path": "benchmarks/fixtures/cod-test/truth/music-vocals-data.json"
+  },
+  "output": {
+    "path": "output/cod-test/phase1-gather-context/music-vocals-data.reconciled.json"
+  },
+  "comparator": {
+    "kind": "json-structured",
+    "profile": "music-vocals-default",
+    "resolvedOptions": {
+      "timingToleranceSeconds": 2,
+      "numericTolerance": 0.1,
+      "unknownSentinels": [
+        "unknown",
+        "ambiguous"
+      ],
+      "ignorePaths": []
+    },
+    "directives": {
+      "comparatorIgnorePaths": [],
+      "truthIgnorePaths": [],
+      "effectiveIgnorePaths": []
+    }
+  },
+  "counts": {
+    "totalTruthFields": 108,
+    "scoreableFields": 96,
+    "skippedFields": 0,
+    "passedFields": 44,
+    "failedFields": 52,
+    "erroredFields": 12,
+    "ignoredDifferenceFields": 0
+  },
+  "accuracy": {
+    "passed": 44,
+    "failed": 52,
+    "rate": 0.4583333333333333
+  },
+  "coverage": {
+    "scoreable": 96,
+    "skipped": 0,
+    "totalTruthFields": 108,
+    "rate": 0.8888888888888888
+  },
+  "failures": [
+    {
+      "path": "vocal_segments",
+      "rule": "structural",
+      "truthValue": {
+        "length": 12
+      },
+      "outputValue": {
+        "length": 10
+      },
+      "reason": "Array length mismatch: truth=12 output=10"
+    },
+    {
+      "path": "vocal_segments[0].start",
+      "rule": "tolerant-time",
+      "truthValue": 64,
+      "outputValue": 76,
+      "reason": "Time delta 12 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[0].end",
+      "rule": "tolerant-time",
+      "truthValue": 65,
+      "outputValue": 78,
+      "reason": "Time delta 13 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[0].performer",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[0].delivery",
+      "rule": "exact",
+      "truthValue": "chant",
+      "outputValue": "sung",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[1].start",
+      "rule": "tolerant-time",
+      "truthValue": 68,
+      "outputValue": 78,
+      "reason": "Time delta 10 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[1].end",
+      "rule": "tolerant-time",
+      "truthValue": 70,
+      "outputValue": 80,
+      "reason": "Time delta 10 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[1].text",
+      "rule": "fuzzy-string",
+      "truthValue": "Your life burns faster",
+      "outputValue": "Come crawling faster",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "vocal_segments[1].performer",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[1].delivery",
+      "rule": "exact",
+      "truthValue": "chant",
+      "outputValue": "sung",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[2].start",
+      "rule": "tolerant-time",
+      "truthValue": 76,
+      "outputValue": 80,
+      "reason": "Time delta 4 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[2].end",
+      "rule": "tolerant-time",
+      "truthValue": 78,
+      "outputValue": 84,
+      "reason": "Time delta 6 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[2].performer",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[3].start",
+      "rule": "tolerant-time",
+      "truthValue": 80,
+      "outputValue": 84,
+      "reason": "Time delta 4 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[3].end",
+      "rule": "tolerant-time",
+      "truthValue": 83,
+      "outputValue": 88,
+      "reason": "Time delta 5 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[3].performer",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[4].start",
+      "rule": "tolerant-time",
+      "truthValue": 84,
+      "outputValue": 88,
+      "reason": "Time delta 4 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[4].end",
+      "rule": "tolerant-time",
+      "truthValue": 86,
+      "outputValue": 92,
+      "reason": "Time delta 6 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[4].performer",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[5].start",
+      "rule": "tolerant-time",
+      "truthValue": 87,
+      "outputValue": 92,
+      "reason": "Time delta 5 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[5].end",
+      "rule": "tolerant-time",
+      "truthValue": 88,
+      "outputValue": 96,
+      "reason": "Time delta 8 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[5].performer",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[6].start",
+      "rule": "tolerant-time",
+      "truthValue": 89,
+      "outputValue": 96,
+      "reason": "Time delta 7 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[6].end",
+      "rule": "tolerant-time",
+      "truthValue": 91,
+      "outputValue": 98,
+      "reason": "Time delta 7 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[6].performer",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[7].start",
+      "rule": "tolerant-time",
+      "truthValue": 91,
+      "outputValue": 98,
+      "reason": "Time delta 7 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[7].end",
+      "rule": "tolerant-time",
+      "truthValue": 94,
+      "outputValue": 102,
+      "reason": "Time delta 8 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[7].text",
+      "rule": "fuzzy-string",
+      "truthValue": "Where’s the dreams that I’ve been after?",
+      "outputValue": "Just call my name, 'cause I'll hear you scream",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "vocal_segments[7].performer",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[8].start",
+      "rule": "tolerant-time",
+      "truthValue": 94,
+      "outputValue": 102,
+      "reason": "Time delta 8 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[8].end",
+      "rule": "tolerant-time",
+      "truthValue": 95.5,
+      "outputValue": 104,
+      "reason": "Time delta 8.5 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[8].performer",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[9].start",
+      "rule": "tolerant-time",
+      "truthValue": 95.5,
+      "outputValue": 130,
+      "reason": "Time delta 34.5 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[9].end",
+      "rule": "tolerant-time",
+      "truthValue": 98,
+      "outputValue": 132,
+      "reason": "Time delta 34 exceeded tolerance 2"
+    },
+    {
+      "path": "vocal_segments[9].text",
+      "rule": "fuzzy-string",
+      "truthValue": "You promised only lies",
+      "outputValue": "Obey your master",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "vocal_segments[9].performer",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "summary",
+      "rule": "fuzzy-string",
+      "truthValue": "Metallica vocal refrains and lyric lines from “Master of Puppets” drive the trailer's sung music-vocals lane from the first \"Obey your master\" chant through the recurring \"Master, master\" refrain.",
+      "outputValue": "Sung lyrics from Metallica's 'Master of Puppets' are detected in two segments: a main sequence from approximately 76 to 104 seconds and a brief reprise at 130 seconds.",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "recognizedSong.candidates[0].evidence",
+      "rule": "structural",
+      "truthValue": {
+        "length": 2
+      },
+      "outputValue": {
+        "length": 1
+      },
+      "reason": "Array length mismatch: truth=2 output=1"
+    },
+    {
+      "path": "recognizedSong.candidates[0].evidence[0]",
+      "rule": "exact",
+      "truthValue": "Literal lyric fragments such as \"Master, master\" and \"Obey your master\" are clearly audible.",
+      "outputValue": "Literal lyric fragments match the heard refrain.",
+      "reason": "Values differed"
+    },
+    {
+      "path": "recognizedSong.candidates[0].matchedLyrics",
+      "rule": "structural",
+      "truthValue": {
+        "length": 3
+      },
+      "outputValue": {
+        "length": 4
+      },
+      "reason": "Array length mismatch: truth=3 output=4"
+    },
+    {
+      "path": "recognizedSong.candidates[0].matchedLyrics[1]",
+      "rule": "exact",
+      "truthValue": "Master, master, where’s the dreams that I’ve been after?",
+      "outputValue": "Master of puppets, I'm pulling your strings",
+      "reason": "Values differed"
+    },
+    {
+      "path": "recognizedSong.candidates[0].matchedLyrics[2]",
+      "rule": "exact",
+      "truthValue": "Master, master, you promised only lies!",
+      "outputValue": "Just call my name, 'cause I'll hear you scream",
+      "reason": "Values differed"
+    },
+    {
+      "path": "recognizedSong.candidates[0].timeRanges",
+      "rule": "structural",
+      "truthValue": {
+        "length": 3
+      },
+      "outputValue": {
+        "length": 2
+      },
+      "reason": "Array length mismatch: truth=3 output=2"
+    },
+    {
+      "path": "recognizedSong.candidates[0].timeRanges[0].start",
+      "rule": "tolerant-time",
+      "truthValue": 64,
+      "outputValue": 76,
+      "reason": "Time delta 12 exceeded tolerance 2"
+    },
+    {
+      "path": "recognizedSong.candidates[0].timeRanges[0].end",
+      "rule": "tolerant-time",
+      "truthValue": 98,
+      "outputValue": 104,
+      "reason": "Time delta 6 exceeded tolerance 2"
+    },
+    {
+      "path": "recognizedSong.candidates[0].timeRanges[1].start",
+      "rule": "tolerant-time",
+      "truthValue": 116,
+      "outputValue": 130,
+      "reason": "Time delta 14 exceeded tolerance 2"
+    },
+    {
+      "path": "recognizedSong.candidates[0].timeRanges[1].end",
+      "rule": "tolerant-time",
+      "truthValue": 118,
+      "outputValue": 132,
+      "reason": "Time delta 14 exceeded tolerance 2"
+    },
+    {
+      "path": "recognizedSong.primaryEvidence",
+      "rule": "exact",
+      "truthValue": "Repeated literal lyric fragments uniquely ground the vocal lane to one famous song.",
+      "outputValue": "Distinct lyric fragments and delivery strongly support one specific song.",
+      "reason": "Values differed"
+    },
+    {
+      "path": "recognitionNotes",
+      "rule": "structural",
+      "truthValue": {
+        "length": 2
+      },
+      "outputValue": {
+        "length": 1
+      },
+      "reason": "Array length mismatch: truth=2 output=1"
+    },
+    {
+      "path": "recognitionNotes[0]",
+      "rule": "exact",
+      "truthValue": "Spoken dialogue and promo VO elsewhere in the trailer are intentionally excluded from lyric evidence.",
+      "outputValue": "Lyrics are overlaid with action sounds and dialogue, but remain audible.",
+      "reason": "Values differed"
+    },
+    {
+      "path": "qualityNotes",
+      "rule": "structural",
+      "truthValue": {
+        "length": 1
+      },
+      "outputValue": {
+        "length": 2
+      },
+      "reason": "Array length mismatch: truth=1 output=2"
+    },
+    {
+      "path": "qualityNotes[0]",
+      "rule": "exact",
+      "truthValue": "Trailer SFX and dialogue overlap lightly mask some consonants, but the core lyric fragments remain clear enough to ground the song.",
+      "outputValue": "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
+      "reason": "Values differed"
+    }
+  ],
+  "skips": [],
+  "ignoredDifferences": [],
+  "errors": [
+    {
+      "path": "analysisMode",
+      "rule": "structural",
+      "outputValue": "whole_asset",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "timingMode",
+      "rule": "structural",
+      "outputValue": "full_timeline",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "sourceStrategy",
+      "rule": "structural",
+      "outputValue": "base64",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "coverage",
+      "rule": "structural",
+      "outputValue": {
+        "start": 0,
+        "end": 140.042449,
+        "duration": 140.042449,
+        "complete": true
+      },
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "provenance",
+      "rule": "structural",
+      "outputValue": {
+        "requestedMode": "auto",
+        "transportMode": "inline",
+        "usedChunking": false,
+        "chunkCount": 0,
+        "analysisWindowSeconds": null,
+        "fallbackApplied": false,
+        "fallbackReason": null,
+        "wholeAssetAttempted": true,
+        "wholeAssetSucceeded": true,
+        "preflightReason": "within_budget",
+        "estimatedBase64Bytes": 4482392,
+        "base64BudgetBytes": 9437184,
+        "musicContextAvailable": true
+      },
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "vocal_segments[10]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 116,
+        "end": 118,
+        "text": "Obey your master",
+        "confidence": 0.9,
+        "performer": "Metallica lead vocal",
+        "performer_id": "voc_001",
+        "delivery": "chant"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "vocal_segments[11]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 127,
+        "end": 130,
+        "text": "Master, master",
+        "confidence": 0.9,
+        "performer": "Metallica lead vocal",
+        "performer_id": "voc_001",
+        "delivery": "chant"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "recognizedSong.candidates[0].evidence[1]",
+      "rule": "structural",
+      "truthValue": "The surrounding sung lines align with the same famous metal song chorus/verse sequence.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "recognizedSong.candidates[0].matchedLyrics[3]",
+      "rule": "structural",
+      "outputValue": "Master, master",
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "recognizedSong.candidates[0].timeRanges[2]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 127,
+        "end": 130
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "recognitionNotes[1]",
+      "rule": "structural",
+      "truthValue": "The opening chant fragments are short, but later full lyric lines confirm the song identification.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "qualityNotes[1]",
+      "rule": "structural",
+      "outputValue": "Timing estimates are approximate based on audio flow.",
+      "reason": "Truth array missing item present in output"
+    }
+  ],
+  "fieldResults": [
+    {
+      "path": "analysisMode",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": "whole_asset",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "timingMode",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": "full_timeline",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "sourceStrategy",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": "base64",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "coverage",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": {
+        "start": 0,
+        "end": 140.042449,
+        "duration": 140.042449,
+        "complete": true
+      },
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "provenance",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": {
+        "requestedMode": "auto",
+        "transportMode": "inline",
+        "usedChunking": false,
+        "chunkCount": 0,
+        "analysisWindowSeconds": null,
+        "fallbackApplied": false,
+        "fallbackReason": null,
+        "wholeAssetAttempted": true,
+        "wholeAssetSucceeded": true,
+        "preflightReason": "within_budget",
+        "estimatedBase64Bytes": 4482392,
+        "base64BudgetBytes": 9437184,
+        "musicContextAvailable": true
+      },
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "vocal_segments",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 12
+      },
+      "outputValue": {
+        "length": 10
+      },
+      "reason": "Array length mismatch: truth=12 output=10"
+    },
+    {
+      "path": "vocal_segments[0].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 64,
+      "outputValue": 76,
+      "reason": "Time delta 12 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 12,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[0].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 65,
+      "outputValue": 78,
+      "reason": "Time delta 13 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 13,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[0].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Obey your master",
+      "outputValue": "Obey your master",
+      "normalizedTruthValue": "obey your master",
+      "normalizedOutputValue": "obey your master"
+    },
+    {
+      "path": "vocal_segments[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "vocal_segments[0].performer",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[0].performer_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "voc_001",
+      "outputValue": "voc_001"
+    },
+    {
+      "path": "vocal_segments[0].delivery",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "chant",
+      "outputValue": "sung",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[1].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 68,
+      "outputValue": 78,
+      "reason": "Time delta 10 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 10,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[1].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 70,
+      "outputValue": 80,
+      "reason": "Time delta 10 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 10,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[1].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Your life burns faster",
+      "outputValue": "Come crawling faster",
+      "normalizedTruthValue": "your life burns faster",
+      "normalizedOutputValue": "come crawling faster",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "vocal_segments[1].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "vocal_segments[1].performer",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[1].performer_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "voc_001",
+      "outputValue": "voc_001"
+    },
+    {
+      "path": "vocal_segments[1].delivery",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "chant",
+      "outputValue": "sung",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[2].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 76,
+      "outputValue": 80,
+      "reason": "Time delta 4 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 4,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[2].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 78,
+      "outputValue": 84,
+      "reason": "Time delta 6 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 6,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[2].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Master of puppets I’m pulling your strings",
+      "outputValue": "Master of puppets, I'm pulling your strings",
+      "normalizedTruthValue": "master of puppets i m pulling your strings",
+      "normalizedOutputValue": "master of puppets i m pulling your strings"
+    },
+    {
+      "path": "vocal_segments[2].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "vocal_segments[2].performer",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[2].performer_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "voc_001",
+      "outputValue": "voc_001"
+    },
+    {
+      "path": "vocal_segments[2].delivery",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "sung",
+      "outputValue": "sung"
+    },
+    {
+      "path": "vocal_segments[3].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 80,
+      "outputValue": 84,
+      "reason": "Time delta 4 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 4,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[3].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 83,
+      "outputValue": 88,
+      "reason": "Time delta 5 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 5,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[3].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Twisting your mind and smashing your dreams",
+      "outputValue": "Twisting your mind and smashing your dreams",
+      "normalizedTruthValue": "twisting your mind and smashing your dreams",
+      "normalizedOutputValue": "twisting your mind and smashing your dreams"
+    },
+    {
+      "path": "vocal_segments[3].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "vocal_segments[3].performer",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[3].performer_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "voc_001",
+      "outputValue": "voc_001"
+    },
+    {
+      "path": "vocal_segments[3].delivery",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "sung",
+      "outputValue": "sung"
+    },
+    {
+      "path": "vocal_segments[4].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 84,
+      "outputValue": 88,
+      "reason": "Time delta 4 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 4,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[4].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 86,
+      "outputValue": 92,
+      "reason": "Time delta 6 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 6,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[4].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Blinded by me, you can’t see a thing",
+      "outputValue": "Blinded by me, you can't see a thing",
+      "normalizedTruthValue": "blinded by me you can t see a thing",
+      "normalizedOutputValue": "blinded by me you can t see a thing"
+    },
+    {
+      "path": "vocal_segments[4].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "vocal_segments[4].performer",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[4].performer_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "voc_001",
+      "outputValue": "voc_001"
+    },
+    {
+      "path": "vocal_segments[4].delivery",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "sung",
+      "outputValue": "sung"
+    },
+    {
+      "path": "vocal_segments[5].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 87,
+      "outputValue": 92,
+      "reason": "Time delta 5 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 5,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[5].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 88,
+      "outputValue": 96,
+      "reason": "Time delta 8 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 8,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[5].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Just call my name, ‘cause I’ll hear you scream",
+      "outputValue": "Just call my name, 'cause I'll hear you scream",
+      "normalizedTruthValue": "just call my name cause i ll hear you scream",
+      "normalizedOutputValue": "just call my name cause i ll hear you scream"
+    },
+    {
+      "path": "vocal_segments[5].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "vocal_segments[5].performer",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[5].performer_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "voc_001",
+      "outputValue": "voc_001"
+    },
+    {
+      "path": "vocal_segments[5].delivery",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "sung",
+      "outputValue": "sung"
+    },
+    {
+      "path": "vocal_segments[6].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 89,
+      "outputValue": 96,
+      "reason": "Time delta 7 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 7,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[6].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 91,
+      "outputValue": 98,
+      "reason": "Time delta 7 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 7,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[6].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Master, master",
+      "outputValue": "Master, master",
+      "normalizedTruthValue": "master master",
+      "normalizedOutputValue": "master master"
+    },
+    {
+      "path": "vocal_segments[6].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "vocal_segments[6].performer",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[6].performer_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "voc_001",
+      "outputValue": "voc_001"
+    },
+    {
+      "path": "vocal_segments[6].delivery",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "sung",
+      "outputValue": "sung"
+    },
+    {
+      "path": "vocal_segments[7].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 91,
+      "outputValue": 98,
+      "reason": "Time delta 7 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 7,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[7].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 94,
+      "outputValue": 102,
+      "reason": "Time delta 8 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 8,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[7].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Where’s the dreams that I’ve been after?",
+      "outputValue": "Just call my name, 'cause I'll hear you scream",
+      "normalizedTruthValue": "where s the dreams that i ve been after",
+      "normalizedOutputValue": "just call my name cause i ll hear you scream",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "vocal_segments[7].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "vocal_segments[7].performer",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[7].performer_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "voc_001",
+      "outputValue": "voc_001"
+    },
+    {
+      "path": "vocal_segments[7].delivery",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "sung",
+      "outputValue": "sung"
+    },
+    {
+      "path": "vocal_segments[8].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 94,
+      "outputValue": 102,
+      "reason": "Time delta 8 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 8,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[8].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 95.5,
+      "outputValue": 104,
+      "reason": "Time delta 8.5 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 8.5,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[8].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Master, master",
+      "outputValue": "Master, master",
+      "normalizedTruthValue": "master master",
+      "normalizedOutputValue": "master master"
+    },
+    {
+      "path": "vocal_segments[8].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "vocal_segments[8].performer",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[8].performer_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "voc_001",
+      "outputValue": "voc_001"
+    },
+    {
+      "path": "vocal_segments[8].delivery",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "sung",
+      "outputValue": "sung"
+    },
+    {
+      "path": "vocal_segments[9].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 95.5,
+      "outputValue": 130,
+      "reason": "Time delta 34.5 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 34.5,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[9].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 98,
+      "outputValue": 132,
+      "reason": "Time delta 34 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 34,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "vocal_segments[9].text",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "You promised only lies",
+      "outputValue": "Obey your master",
+      "normalizedTruthValue": "you promised only lies",
+      "normalizedOutputValue": "obey your master",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "vocal_segments[9].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.04999999999999993,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "vocal_segments[9].performer",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Metallica lead vocal",
+      "outputValue": "Vocalist 1",
+      "reason": "Values differed"
+    },
+    {
+      "path": "vocal_segments[9].performer_id",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "voc_001",
+      "outputValue": "voc_001"
+    },
+    {
+      "path": "vocal_segments[9].delivery",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "sung",
+      "outputValue": "sung"
+    },
+    {
+      "path": "vocal_segments[10]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "start": 116,
+        "end": 118,
+        "text": "Obey your master",
+        "confidence": 0.9,
+        "performer": "Metallica lead vocal",
+        "performer_id": "voc_001",
+        "delivery": "chant"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "vocal_segments[11]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "start": 127,
+        "end": 130,
+        "text": "Master, master",
+        "confidence": 0.9,
+        "performer": "Metallica lead vocal",
+        "performer_id": "voc_001",
+        "delivery": "chant"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "summary",
+      "status": "fail",
+      "rule": "fuzzy-string",
+      "truthValue": "Metallica vocal refrains and lyric lines from “Master of Puppets” drive the trailer's sung music-vocals lane from the first \"Obey your master\" chant through the recurring \"Master, master\" refrain.",
+      "outputValue": "Sung lyrics from Metallica's 'Master of Puppets' are detected in two segments: a main sequence from approximately 76 to 104 seconds and a brief reprise at 130 seconds.",
+      "normalizedTruthValue": "metallica vocal refrains and lyric lines from master of puppets drive the trailer s sung music vocals lane from the first obey your master chant through the recurring master master refrain",
+      "normalizedOutputValue": "sung lyrics from metallica s master of puppets are detected in two segments a main sequence from approximately 76 to 104 seconds and a brief reprise at 130 seconds",
+      "reason": "Normalized strings differed"
+    },
+    {
+      "path": "hasVocals",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": true,
+      "outputValue": true
+    },
+    {
+      "path": "totalDuration",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 140.042449,
+      "outputValue": 140.042449,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "recognizedSong.status",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "recognized",
+      "outputValue": "recognized"
+    },
+    {
+      "path": "recognizedSong.confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.98,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.030000000000000027,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "recognizedSong.candidates[0].title",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Master of Puppets",
+      "outputValue": "Master of Puppets"
+    },
+    {
+      "path": "recognizedSong.candidates[0].artist",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Metallica",
+      "outputValue": "Metallica"
+    },
+    {
+      "path": "recognizedSong.candidates[0].confidence",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.98,
+      "outputValue": 0.95,
+      "metrics": {
+        "delta": 0.030000000000000027,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "recognizedSong.candidates[0].evidence",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 2
+      },
+      "outputValue": {
+        "length": 1
+      },
+      "reason": "Array length mismatch: truth=2 output=1"
+    },
+    {
+      "path": "recognizedSong.candidates[0].evidence[0]",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Literal lyric fragments such as \"Master, master\" and \"Obey your master\" are clearly audible.",
+      "outputValue": "Literal lyric fragments match the heard refrain.",
+      "reason": "Values differed"
+    },
+    {
+      "path": "recognizedSong.candidates[0].evidence[1]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": "The surrounding sung lines align with the same famous metal song chorus/verse sequence.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "recognizedSong.candidates[0].matchedLyrics",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 3
+      },
+      "outputValue": {
+        "length": 4
+      },
+      "reason": "Array length mismatch: truth=3 output=4"
+    },
+    {
+      "path": "recognizedSong.candidates[0].matchedLyrics[0]",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "Obey your master",
+      "outputValue": "Obey your master"
+    },
+    {
+      "path": "recognizedSong.candidates[0].matchedLyrics[1]",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Master, master, where’s the dreams that I’ve been after?",
+      "outputValue": "Master of puppets, I'm pulling your strings",
+      "reason": "Values differed"
+    },
+    {
+      "path": "recognizedSong.candidates[0].matchedLyrics[2]",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Master, master, you promised only lies!",
+      "outputValue": "Just call my name, 'cause I'll hear you scream",
+      "reason": "Values differed"
+    },
+    {
+      "path": "recognizedSong.candidates[0].matchedLyrics[3]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": "Master, master",
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "path": "recognizedSong.candidates[0].timeRanges",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 3
+      },
+      "outputValue": {
+        "length": 2
+      },
+      "reason": "Array length mismatch: truth=3 output=2"
+    },
+    {
+      "path": "recognizedSong.candidates[0].timeRanges[0].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 64,
+      "outputValue": 76,
+      "reason": "Time delta 12 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 12,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "recognizedSong.candidates[0].timeRanges[0].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 98,
+      "outputValue": 104,
+      "reason": "Time delta 6 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 6,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "recognizedSong.candidates[0].timeRanges[1].start",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 116,
+      "outputValue": 130,
+      "reason": "Time delta 14 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 14,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "recognizedSong.candidates[0].timeRanges[1].end",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 118,
+      "outputValue": 132,
+      "reason": "Time delta 14 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 14,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "recognizedSong.candidates[0].timeRanges[2]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "start": 127,
+        "end": 130
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "recognizedSong.primaryEvidence",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Repeated literal lyric fragments uniquely ground the vocal lane to one famous song.",
+      "outputValue": "Distinct lyric fragments and delivery strongly support one specific song.",
+      "reason": "Values differed"
+    },
+    {
+      "path": "recognizedSong.multipleSongsDetected",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": false,
+      "outputValue": false
+    },
+    {
+      "path": "recognitionNotes",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 2
+      },
+      "outputValue": {
+        "length": 1
+      },
+      "reason": "Array length mismatch: truth=2 output=1"
+    },
+    {
+      "path": "recognitionNotes[0]",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Spoken dialogue and promo VO elsewhere in the trailer are intentionally excluded from lyric evidence.",
+      "outputValue": "Lyrics are overlaid with action sounds and dialogue, but remain audible.",
+      "reason": "Values differed"
+    },
+    {
+      "path": "recognitionNotes[1]",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": "The opening chant fragments are short, but later full lyric lines confirm the song identification.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "qualityNotes",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 1
+      },
+      "outputValue": {
+        "length": 2
+      },
+      "reason": "Array length mismatch: truth=1 output=2"
+    },
+    {
+      "path": "qualityNotes[0]",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "Trailer SFX and dialogue overlap lightly mask some consonants, but the core lyric fragments remain clear enough to ground the song.",
+      "outputValue": "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
+      "reason": "Values differed"
+    },
+    {
+      "path": "qualityNotes[1]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": "Timing estimates are approximate based on audio flow.",
+      "reason": "Truth array missing item present in output"
+    }
+  ],
+  "summary": "musicVocalsData benchmark errored: Truth object missing field present in output",
+  "context": {
+    "fixtureId": "cod-test",
+    "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",
+    "truthPath": "benchmarks/fixtures/cod-test/truth/music-vocals-data.json",
+    "outputPath": "output/cod-test/phase1-gather-context/music-vocals-data.reconciled.json"
+  }
+}

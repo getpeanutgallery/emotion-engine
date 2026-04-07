@@ -1,3 +1,8 @@
+---
+plan_id: plan-2026-03-31-dialogue-model-swap-benchmark-lane
+bead_ids:
+  - Pending
+---
 # emotion-engine: dialogue model-swap benchmark lane
 
 **Date:** 2026-03-31  

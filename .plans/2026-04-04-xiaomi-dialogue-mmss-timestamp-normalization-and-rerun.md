@@ -1,3 +1,10 @@
+---
+plan_id: plan-2026-04-04-xiaomi-dialogue-mmss-timestamp-normalization-and-rerun
+bead_ids:
+  - ee-lf8q
+  - ee-wbdj
+  - ee-n4ew
+---
 # emotion-engine: Xiaomi dialogue m:ss timestamp normalization and rerun
 
 **Date:** 2026-04-04  

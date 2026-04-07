@@ -133,28 +133,88 @@ Caveats / scope intentionally not expanded in this task:
 - `.plans/`
 - `.logs/`
 - `output/`
-- `benchmarks/fixtures/cod-test/_reports/`
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-04-05-famous-song-reconciliation-pass.md`
-- fresh rerun artifacts/logs/reports
+- `.logs/cod-test-20260405-202844-ee-hk49-reconciliation-rerun.log`
+- `.logs/cod-test-20260405-202844-ee-hk49-reconciliation-rerun.time`
+- `output/_archives/cod-test-pre-ee-hk49-20260405-202844/`
+- `output/cod-test/phase1-gather-context/dialogue-data.json`
+- `output/cod-test/phase1-gather-context/dialogue-data.reconciled.json`
+- `output/cod-test/phase1-gather-context/music-data.json`
+- `output/cod-test/phase1-gather-context/music-vocals-data.json`
+- `output/cod-test/phase1-gather-context/music-vocals-data.reconciled.json`
+- `output/cod-test/phase1-gather-context/famous-song-reconciliation.json`
+- partial fresh Phase 2 raw captures under `output/cod-test/phase2-process/raw/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Attempted the fresh canonical rerun immediately after commit `65b1cfb` with the repo at that commit and no additional code changes.
+
+Exact command executed:
+- `node server/run-pipeline.cjs --config configs/cod-test.yaml --verbose`
+
+Run capture:
+- started via wrapper at `2026-04-05 20:28:44 EDT`
+- archived prior full raw-only output to `output/_archives/cod-test-pre-ee-hk49-20260405-202844/`
+- live log: `.logs/cod-test-20260405-202844-ee-hk49-reconciliation-rerun.log`
+- time file: `.logs/cod-test-20260405-202844-ee-hk49-reconciliation-rerun.time` (empty because the process had to be killed after stalling)
+- cassette used by the run: `../digital-twin-openrouter-emotion-engine/cassettes/cod-test-record-20260318-202023.json`
+- digital-twin mode came from `.env` and reused the existing cassette id instead of minting a fresh one
+
+Fresh artifact/report state:
+- new Phase 1 artifacts were produced successfully under `output/cod-test/phase1-gather-context/`, including the reconciled companions and ledger:
+  - `dialogue-data.reconciled.json`
+  - `music-vocals-data.reconciled.json`
+  - `famous-song-reconciliation.json`
+- Phase 2 started and produced partial raw captures for chunks 0-1 plus chunk-2 extraction metadata under `output/cod-test/phase2-process/raw/`
+- the canonical run stalled in Phase 2 on chunk 3 (`events.jsonl` last progress at `2026-04-05 20:32:59 EDT` / seq 178) and was manually killed at `~20:39 EDT`
+- because the run never reached benchmark/report completion, there are **no fresh completed benchmark reports or final report artifacts** from this rerun; `benchmarks/fixtures/cod-test/_reports/` therefore does not provide a new completed comparison snapshot for this task
+
+Comparison against the prior raw-only run archived at `output/_archives/cod-test-pre-ee-hk49-20260405-202844/`:
+
+- **Dialogue contamination:** improved.
+  - Prior raw-only dialogue contained a lyric contamination segment: `116.0-118.5 "Obey your master!"`.
+  - Fresh rerun dialogue/reconciled dialogue contain **no** `"Obey your master"` dialogue segment.
+  - Concrete delta: dialogue segment count changed from `18 -> 17`, with the lyric contamination gone and the late promo VO also split more cleanly from `"Get the Reznov challenge pack. And you pre-order now."` into separate promo segments.
+- **Music-vocals lyric corrections / truthfulness:** not improved enough.
+  - Prior raw-only music-vocals had a single wrong segment: `108.9-112.1 "Control your master"`.
+  - Fresh run improved that from a confidently wrong full phrase to smaller fragments (`"Master"`, `"Control"`, `"Master"`), which is less falsely specific, but the reconciliation pass still made **zero** lyric corrections.
+  - The ledger at `output/cod-test/phase1-gather-context/famous-song-reconciliation.json` shows `status: "applied"` but `removedDialogueSegments: []` and `lyricCorrections: []`, with all candidate lyric fixes skipped for `lyric_similarity_below_threshold`.
+  - Honest read: the pass successfully avoided unsafe overcorrection, but it did **not** deliver the hoped-for canonical lyric repair on this rerun.
+- **Benchmark/downstream consumer usage of reconciled artifacts:** wired, but not clearly proven end-to-end by this run.
+  - The reconciliation script succeeded and explicitly declared the reconciled baseline artifacts in both `famous-song-reconciliation.json` and `script-results/reconcile-famous-song-phase1.success.json`.
+  - However, the Phase 2 prompt/capture artifacts inspected during the stalled run did not surface an easy path-level proof of which baseline file set got hydrated into chunk context, and the stalled run never reached completed benchmark/report generation.
+  - So the code path is wired, but this specific rerun does **not** give a clean completed-runtime proof that benchmark/downstream consumers used the reconciled artifacts all the way through.
+
+Benchmark deltas:
+- No fresh completed benchmark summary was generated because the canonical rerun stalled in Phase 2 before benchmark/report completion.
+- The only trustworthy numeric deltas from this task are the direct artifact deltas above:
+  - dialogue lyric contamination segment: `1 -> 0`
+  - reconciliation ledger lyric corrections: `0`
+  - completed benchmark/report delta: **not available from this rerun**
+
+Verdict:
+- **Partial win.** The fresh rerun supports that the new lane helps with dialogue contamination by keeping the `"Obey your master"` lyric out of dialogue.
+- **Not yet a full validation.** The lyric-correction goal did not materially land on this rerun, and the stalled Phase 2 canonical run means there is still no fresh end-to-end benchmark proof that downstream consumers are benefitting from the reconciled baseline.
+- No commit was made in this task.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ⚠️ Partial
 
-**What We Built:** Pending.
+**What We Built:** A conservative famous-song reconciliation lane that now emits reconciled dialogue/music-vocals companions plus a decision ledger, and a fresh post-`65b1cfb` canonical rerun review showing one real gain (dialogue lyric contamination dropped out of dialogue) but no confirmed end-to-end benchmark win yet.
 
 **Commits:**
-- Pending.
+- `65b1cfb` - Implement famous-song reconciliation pass and route reconciliation-enabled runs to reconciled Phase 1 baselines
+- No additional commit from Task 3 (review/run artifact only)
 
-**Lessons Learned:** Pending.
+**Lessons Learned:**
+- The reconciliation pass is currently conservative enough to avoid unsafe lyric rewrites, but that same conservatism meant this rerun produced `0` actual lyric corrections.
+- The canonical record-mode rerun still hit the old Phase 2 stall, so a future validation pass should fix or bypass that runtime instability before claiming benchmark wins.
+- The code path to prefer reconciled artifacts is in place, but completed runtime evidence should be captured from a full successful run rather than inferred from wiring alone.
 
 ---
 

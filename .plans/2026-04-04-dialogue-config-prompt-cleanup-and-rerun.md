@@ -1,3 +1,10 @@
+---
+plan_id: plan-2026-04-04-dialogue-config-prompt-cleanup-and-rerun
+bead_ids:
+  - ee-yowl
+  - ee-cp7k
+  - ee-vohe
+---
 # emotion-engine: dialogue config, prompt cleanup, and Xiaomi rerun
 
 **Date:** 2026-04-04  

@@ -1602,3 +1602,264 @@ test('benchmark runner - music-vocals comparator uses time-aware alignment to re
   assert(artifact.fieldResults.some((field) => field.path === 'vocal_segments[truth=2,output=0].text' && field.status === 'pass'));
   assert(artifact.fieldResults.some((field) => field.path === 'vocal_segments[truth=3,output=1].text' && field.status === 'pass'));
 });
+
+test('benchmark runner - speaker_profiles comparator aligns by grounded segment evidence and downgrades clustering structure misses to failures', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-speaker-profiles-comparator');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempFixture(rootDir, {
+    truthPayload: {
+      dialogue_segments: [
+        { start: 0, end: 2, speaker: 'Speaker 1', text: 'Alpha.', confidence: 0.98 },
+        { start: 4, end: 6, speaker: 'Speaker 2', text: 'Bravo.', confidence: 0.98 },
+        { start: 8, end: 10, speaker: 'Speaker 1', text: 'Charlie.', confidence: 0.98 }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'spk_001',
+          label: 'Speaker 1',
+          grounded: {
+            confidence: 0.9,
+            linked_segment_indexes: [0, 2],
+            acoustic_descriptors: [
+              { label: 'calm leader', confidence: 0.8 }
+            ]
+          },
+          inferred_traits: {
+            traits: [
+              { trait: 'role', value: 'leader', confidence: 0.8, note: 'grounded by two segments' }
+            ]
+          }
+        },
+        {
+          speaker_id: 'spk_002',
+          label: 'Speaker 2',
+          grounded: {
+            confidence: 0.9,
+            linked_segment_indexes: [1],
+            acoustic_descriptors: [
+              { label: 'sharp response', confidence: 0.7 }
+            ]
+          },
+          inferred_traits: {
+            traits: [
+              { trait: 'role', value: 'responder', confidence: 0.7, note: 'single grounded segment' }
+            ]
+          }
+        }
+      ],
+      summary: 'Speaker profile comparator test.',
+      totalDuration: 12,
+      handoffContext: null
+    },
+    outputPayload: {
+      dialogue_segments: [
+        { start: 0, end: 2, speaker: 'Speaker A', text: 'Alpha.', confidence: 0.98 },
+        { start: 4, end: 6, speaker: 'Speaker B', text: 'Bravo.', confidence: 0.98 },
+        { start: 8, end: 10, speaker: 'Speaker A', text: 'Charlie.', confidence: 0.98 }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'synthetic_9',
+          label: 'Merged responder',
+          grounded: {
+            confidence: 0.88,
+            linked_segment_indexes: [1],
+            acoustic_descriptors: [
+              { label: 'sharp response', confidence: 0.72 }
+            ]
+          },
+          inferred_traits: {
+            traits: [
+              { trait: 'role', value: 'responder', confidence: 0.7, note: 'single grounded segment' }
+            ]
+          }
+        },
+        {
+          speaker_id: 'synthetic_4',
+          label: 'Main speaker cluster',
+          grounded: {
+            confidence: 0.88,
+            linked_segment_indexes: [0, 2, 1],
+            acoustic_descriptors: [
+              { label: 'calm leader', confidence: 0.82 },
+              { label: 'extra over-clustered descriptor', confidence: 0.4 }
+            ]
+          },
+          inferred_traits: {
+            traits: [
+              { trait: 'role', value: 'leader', confidence: 0.8, note: 'grounded by two segments' }
+            ]
+          }
+        }
+      ],
+      summary: 'Speaker profile comparator test.',
+      totalDuration: 12,
+      handoffContext: null
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark speaker profiles comparator',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(result.status, 'fail');
+  assert.strictEqual(artifact.status, 'fail');
+  assert.strictEqual(artifact.errors.length, 0);
+  assert(artifact.alignments.some((entry) => entry.path === 'speaker_profiles' && entry.matches.some((match) => match.truthIndex === 0 && match.outputIndex === 1)));
+  assert(!artifact.fieldResults.some((field) => field.path.includes('speaker_id') || field.path.includes('.label')));
+  assert(artifact.failures.some((failure) => failure.path.includes('speaker_profiles[truth=0,output=1].grounded.linked_segment_indexes')));
+  assert(artifact.failures.some((failure) => failure.path.includes('speaker_profiles[truth=0,output=1].grounded.acoustic_descriptors[1]')));
+});
+
+test('benchmark runner - recognizedSong support comparator treats support lists as unordered fuzzy evidence while preserving missing time-range failures', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-recognized-song-support-comparator');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const configDir = path.join(rootDir, 'configs');
+  const benchmarkDir = path.join(rootDir, 'benchmarks', 'fixtures', 'temp-recognized-song-support-fixture');
+  const outputDir = path.join(rootDir, 'output', 'temp-run');
+  const configPath = path.join(configDir, 'temp.yaml');
+  const fixturePath = path.join(benchmarkDir, 'fixture.json');
+  const benchmarkPath = path.join(benchmarkDir, 'benchmark.json');
+  const truthPath = path.join(benchmarkDir, 'truth', 'music-vocals-data.json');
+  const outputPath = path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.json');
+
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.writeFileSync(configPath, 'name: temp recognized song support benchmark config\n', 'utf8');
+
+  writeJson(fixturePath, {
+    contractVersion: FIXTURE_CONTRACT_VERSION,
+    fixtureId: 'temp-recognized-song-support-fixture',
+    asset: { repoPath: 'examples/videos/emotion-tests/cod.mp4' },
+    config: { repoPath: 'configs/temp.yaml' },
+    benchmark: { entryPath: 'benchmark.json' },
+    notes: ['temp recognized song support benchmark fixture']
+  });
+
+  writeJson(benchmarkPath, {
+    contractVersion: MANIFEST_CONTRACT_VERSION,
+    fixtureId: 'temp-recognized-song-support-fixture',
+    fixture: { path: 'fixture.json' },
+    reports: { outputDir: '_reports' },
+    artifacts: [
+      {
+        artifactKey: 'musicVocalsData',
+        label: 'Music vocals',
+        phase: 'phase1-gather-context',
+        script: 'get-music-vocals',
+        output: { path: 'phase1-gather-context/music-vocals-data.json' },
+        truth: { path: 'truth/music-vocals-data.json' },
+        comparator: {
+          kind: 'json-structured',
+          profile: 'music-vocals-default',
+          options: { timingToleranceSeconds: 2, unknownSentinels: ['unknown', 'ambiguous'] }
+        },
+        required: true
+      }
+    ]
+  });
+
+  writeJson(truthPath, {
+    vocal_segments: [
+      { start: 64, end: 65, text: 'Obey your master', confidence: 0.9, performer: 'Metallica lead vocal', performer_id: 'voc_001', delivery: 'chant' },
+      { start: 76, end: 98, text: 'Master of puppets section', confidence: 0.9, performer: 'Metallica lead vocal', performer_id: 'voc_001', delivery: 'sung' },
+      { start: 116, end: 118, text: 'Obey your master', confidence: 0.9, performer: 'Metallica lead vocal', performer_id: 'voc_001', delivery: 'chant' }
+    ],
+    summary: 'Recognized song support comparator test.',
+    hasVocals: true,
+    totalDuration: 140,
+    recognizedSong: {
+      status: 'recognized',
+      confidence: 0.98,
+      candidates: [
+        {
+          title: 'Master of Puppets',
+          artist: 'Metallica',
+          confidence: 0.98,
+          evidence: [
+            'Literal lyric fragments such as Master, master and Obey your master are audible.',
+            'The surrounding sung lines align with the song chorus sequence.'
+          ],
+          matchedLyrics: [
+            'Obey your master',
+            'Master, master, where\'s the dreams that I\'ve been after?'
+          ],
+          timeRanges: [
+            { start: 64, end: 98 },
+            { start: 116, end: 118 }
+          ]
+        }
+      ],
+      primaryEvidence: 'Repeated lyric fragments ground one specific song.',
+      multipleSongsDetected: false
+    },
+    recognitionNotes: ['Dialogue is excluded from lyric evidence.']
+  });
+
+  writeJson(outputPath, {
+    vocal_segments: [
+      { start: 64, end: 65, text: 'Obey your master', confidence: 0.92, performer: 'Metallica lead vocal', performer_id: 'voc_001', delivery: 'chant' },
+      { start: 76, end: 98, text: 'Master of puppets section', confidence: 0.92, performer: 'Metallica lead vocal', performer_id: 'voc_001', delivery: 'sung' }
+    ],
+    summary: 'Recognized song support comparator test.',
+    hasVocals: true,
+    totalDuration: 140,
+    recognizedSong: {
+      status: 'recognized',
+      confidence: 0.95,
+      candidates: [
+        {
+          title: 'Master of Puppets',
+          artist: 'Metallica',
+          confidence: 0.95,
+          evidence: [
+            'The sung lines line up with the same chorus sequence.',
+            'Master, master and obey your master are both clearly audible.'
+          ],
+          matchedLyrics: [
+            'Master, master',
+            'Obey your master'
+          ],
+          timeRanges: [
+            { start: 64, end: 98 }
+          ]
+        }
+      ],
+      primaryEvidence: 'Repeated lyric fragments ground one specific song.',
+      multipleSongsDetected: false
+    },
+    recognitionNotes: ['Dialogue is excluded from lyric evidence.']
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp recognized song support comparator',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-recognized-song-support-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(result.status, 'fail');
+  assert.strictEqual(artifact.status, 'fail');
+  assert.strictEqual(artifact.errors.length, 0);
+  assert(artifact.fieldResults.some((field) => field.path.includes('recognizedSong.candidates[truth=0,output=0].evidence[truth=0') && field.status === 'pass'));
+  assert(artifact.fieldResults.some((field) => field.path.includes('recognizedSong.candidates[truth=0,output=0].matchedLyrics[truth=0') && field.status === 'pass'));
+  assert(artifact.failures.some((failure) => failure.path === 'recognizedSong.candidates[truth=0,output=0].timeRanges[truth=1]'));
+});

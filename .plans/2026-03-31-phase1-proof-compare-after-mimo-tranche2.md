@@ -1,3 +1,11 @@
+---
+plan_id: plan-2026-03-31-phase1-proof-compare-after-mimo-tranche2
+bead_ids:
+  - ee-jk3t
+  - ee-exrj
+  - ee-kh15
+  - ee-h64p
+---
 # emotion-engine: Phase 1 proof/compare lane after MiMo tranche 2
 
 **Date:** 2026-03-31  

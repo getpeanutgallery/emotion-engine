@@ -1,3 +1,10 @@
+---
+plan_id: plan-2026-04-04-mid-late-dialogue-recovery-and-tail-bound-normalization
+bead_ids:
+  - ee-vl3u
+  - ee-a0x0
+  - ee-ezs3
+---
 # emotion-engine: mid/late dialogue recovery and tail-bound normalization
 
 **Date:** 2026-04-04  

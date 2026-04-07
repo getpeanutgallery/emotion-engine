@@ -1,3 +1,13 @@
+---
+plan_id: plan-2026-03-31-mimo-tranche2-xiaomi-and-phase1
+bead_ids:
+  - ee-gr0r
+  - ee-4k05
+  - ee-jdji
+  - ee-dond
+  - ee-s1jj
+  - ee-rig5
+---
 # emotion-engine: MiMo tranche 2 — Xiaomi direct + Phase 1 expansion
 
 **Date:** 2026-03-31  

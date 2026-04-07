@@ -1,3 +1,11 @@
+---
+plan_id: plan-2026-04-03-full-file-mimo-dialogue-benchmark-compare
+bead_ids:
+  - ee-0och
+  - ee-d8o2
+  - ee-c466
+  - ee-f853
+---
 # emotion-engine: full-file MiMo dialogue benchmark compare
 
 **Date:** 2026-04-03  

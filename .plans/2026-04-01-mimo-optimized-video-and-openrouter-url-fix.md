@@ -1,3 +1,13 @@
+---
+plan_id: plan-2026-04-01-mimo-optimized-video-and-openrouter-url-fix
+bead_ids:
+  - ee-3o0l
+  - ee-dmcs
+  - ee-ulmf
+  - ee-p8h8
+  - ee-j0qa
+  - ee-gwoh
+---
 # emotion-engine: optimize cod video + fix OpenRouter public-video URL lane
 
 **Date:** 2026-04-01  

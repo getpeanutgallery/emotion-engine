@@ -1,24 +1,24 @@
 {
   "metadata": {
-    "generatedAt": "2026-03-20T20:54:18.126Z",
+    "generatedAt": "2026-04-07T22:08:29.332Z",
     "pipelineVersion": "1.0",
     "videoDuration": 140.017,
     "chunksAnalyzed": 28,
     "failedChunks": 0,
     "totalSeconds": 140,
-    "totalTokens": 258173
+    "totalTokens": 1267791
   },
   "keyMetrics": {
     "averages": {
-      "patience": 0.6464285714285717,
-      "boredom": 0.44642857142857206,
-      "excitement": 0.7499999999999999
+      "patience": 0.5999999999999994,
+      "boredom": 0.3392857142857146,
+      "excitement": 0.6607142857142861
     },
     "peakMoments": {
       "patience": {
         "highest": {
-          "timestamp": 80,
-          "score": 1
+          "timestamp": 50,
+          "score": 0.8
         },
         "lowest": {
           "timestamp": 125,
@@ -27,56 +27,58 @@
       },
       "boredom": {
         "highest": {
-          "timestamp": 40,
-          "score": 1
+          "timestamp": 125,
+          "score": 0.8
         },
         "lowest": {
-          "timestamp": 5,
+          "timestamp": 0,
           "score": 0.2
         }
       },
       "excitement": {
         "highest": {
-          "timestamp": 40,
-          "score": 0.9
+          "timestamp": 125,
+          "score": 1
         },
         "lowest": {
-          "timestamp": 125,
-          "score": 0.3
+          "timestamp": 25,
+          "score": 0.2
         }
       }
     },
     "trends": {
       "patience": {
         "direction": "stable",
-        "change": -0.007142857142856673,
-        "firstHalfAverage": 0.6499999999999996,
-        "secondHalfAverage": 0.6428571428571429
+        "change": 0.04285714285714215,
+        "firstHalfAverage": 0.5785714285714291,
+        "secondHalfAverage": 0.6214285714285712
       },
       "boredom": {
         "direction": "stable",
-        "change": 0.03571428571428509,
-        "firstHalfAverage": 0.42857142857142877,
-        "secondHalfAverage": 0.46428571428571386
+        "change": -0.021428571428571297,
+        "firstHalfAverage": 0.34999999999999964,
+        "secondHalfAverage": 0.32857142857142835
       },
       "excitement": {
-        "direction": "stable",
-        "change": 0.028571428571427693,
-        "firstHalfAverage": 0.7357142857142853,
-        "secondHalfAverage": 0.764285714285713
+        "direction": "increasing",
+        "change": 0.19285714285714295,
+        "firstHalfAverage": 0.564285714285714,
+        "secondHalfAverage": 0.7571428571428569
       }
     },
     "frictionIndex": 100
   },
   "recommendation": {
-    "text": "The strongest retention gain will come from rebuilding the opening 5 seconds and removing the late static promo block. Start with the most distinctive gameplay/action imagery instead of glitch text and generic trailer language, then keep the mid-video montage energy as the model for the rest of the cut. End on a cleaner title/CTA beat rather than dense edition screens so the final emotional impression stays high.",
-    "reasoning": "The current hook is the weakest structural point: boredom is highest at the start chunk level, with the opening 0-5s dominated by boredom and specifically flagged as generic and corporate-feeling. By contrast, the video's best retention/emotion zone is the action-heavy middle, especially around 40s and 80-105s, where boredom drops to 0.1-0.2 and excitement rises to 0.9 while patience remains high. The metrics support this pattern: average excitement is strong at 0.75, but average boredom is still elevated at 0.45, indicating avoidable drag despite strong footage. The friction index of 100 suggests the edit contains too many anti-retention moments relative to the persona, especially branding, exposition, and info-dump screens. The late 120-130s section is the clearest drop risk, with patience bottoming at 0.2 and excitement at 0.3 when static Vault Edition and DLC details appear. Stable overall trends hide these localized failures, so the best edits are not broad tonal changes but precise restructuring of the hook, exposition beats, and CTA packaging.",
-    "confidence": 0.92
+    "text": "为提升针对急躁青少年观众的留存率，视频需重新剪辑中段（10-30秒）以注入更多视觉刺激，并平滑结尾过渡，防止高潮后的观众流失。核心策略是压缩纯对话铺垫，将动作高潮前置并分散，确保每5-8秒有一次‘模式中断’。",
+    "reasoning": "数据清晰显示，视频的兴奋感趋势整体上升，但在10-30秒区间出现显著低谷（兴奋度降至2-3，无聊感升至6-7），这与‘耐心’指标的下降和‘无聊’峰值（125秒）相吻合，表明叙事铺垫过长。相反，35秒后及75-125秒的高强度动作片段（兴奋度8-9）成功维持了高注意力。结尾（125秒后）从高潮战斗突然切至静态标题卡，导致兴奋度骤降至1，无聊感飙升至8，是典型的留存断点。",
+    "confidence": 0.85
   },
   "reportPaths": {
     "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
     "recommendation": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
     "emotionalAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json",
+    "finalReport": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md",
+    "analysisData": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json",
     "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json"
   }
 }
