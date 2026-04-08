@@ -125,6 +125,36 @@ function compactString(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
+function formatOrderedSegmentLabel(segment = {}) {
+  const start = Number(segment?.start);
+  const end = Number(segment?.end);
+  if (Number.isFinite(start) && Number.isFinite(end)) {
+    return `${start.toFixed(1)}s-${end.toFixed(1)}s`;
+  }
+
+  const index = Number(segment?.index);
+  return Number.isFinite(index) ? `index ${index}` : 'index ?';
+}
+
+function isLaneArtifactObject(candidate) {
+  return Boolean(candidate) && typeof candidate === 'object' && !Array.isArray(candidate);
+}
+
+function selectCanonicalLaneArtifact(artifacts = {}, laneKey, { fallback = {} } = {}) {
+  const candidates = [
+    artifacts?.[`${laneKey}Reconciled`],
+    artifacts?.[laneKey],
+    artifacts?.[`${laneKey}Final`]
+  ].filter(isLaneArtifactObject);
+
+  if (candidates.length === 0) {
+    return fallback;
+  }
+
+  // Keep exactly one canonical artifact per lane (reconciled preferred, then raw, then final).
+  return candidates[0];
+}
+
 function normalizePrimaryLenses(toolVariables = {}) {
   const configured = Array.isArray(toolVariables?.variables?.lenses)
     ? toolVariables.variables.lenses.map((value) => compactString(value)).filter(Boolean)
@@ -149,11 +179,7 @@ function formatDialogueContext(dialogueData = {}, { maxSegments = 40 } = {}) {
   if (segments.length > 0) {
     lines.push('- Notable dialogue moments:');
     for (const segment of segments) {
-      const start = Number(segment?.start);
-      const end = Number(segment?.end);
-      const timing = Number.isFinite(start) && Number.isFinite(end)
-        ? `${start.toFixed(1)}s-${end.toFixed(1)}s`
-        : `${segment?.start ?? '?'}s-${segment?.end ?? '?'}s`;
+      const timing = formatOrderedSegmentLabel(segment);
       const speaker = compactString(segment?.speaker) || 'Speaker';
       const text = compactString(segment?.text) || '[inaudible / unavailable]';
       lines.push(`  - ${timing}: ${speaker}: ${text}`);
@@ -178,11 +204,7 @@ function formatMusicContext(musicData = {}, { maxSegments = 30 } = {}) {
   if (segments.length > 0) {
     lines.push('- Notable music cues:');
     for (const segment of segments) {
-      const start = Number(segment?.start);
-      const end = Number(segment?.end);
-      const timing = Number.isFinite(start) && Number.isFinite(end)
-        ? `${start.toFixed(1)}s-${end.toFixed(1)}s`
-        : `${segment?.start ?? '?'}s-${segment?.end ?? '?'}s`;
+      const timing = formatOrderedSegmentLabel(segment);
       const description = compactString(segment?.description)
         || compactString(segment?.mood)
         || compactString(segment?.type)
@@ -209,11 +231,7 @@ function formatMusicVocalsContext(musicVocalsData = {}, { maxSegments = 30 } = {
   if (segments.length > 0) {
     lines.push('- Text-bearing music-led vocal moments:');
     for (const segment of segments) {
-      const start = Number(segment?.start);
-      const end = Number(segment?.end);
-      const timing = Number.isFinite(start) && Number.isFinite(end)
-        ? `${start.toFixed(1)}s-${end.toFixed(1)}s`
-        : `${segment?.start ?? '?'}s-${segment?.end ?? '?'}s`;
+      const timing = formatOrderedSegmentLabel(segment);
       const performer = compactString(segment?.performer) || 'Vocal';
       const text = compactString(segment?.text) || '[unavailable]';
       const delivery = compactString(segment?.delivery);
@@ -365,7 +383,8 @@ function buildWholeVideoPrompt({
   prompt += appendSections('# GOAL', personaConfig?.goal || {});
 
   prompt += '# WHOLE-VIDEO MIMO PHASE 2 TASK\n\n';
-  prompt += 'Analyze the attached FULL video as a single multimodal experience for persona-based ad evaluation. Ground your judgment in what the full video actually shows and sounds like. Use dialogue and music context as supporting hints, but prefer the attached video whenever there is tension between text context and the observed asset.\n\n';
+  prompt += 'Analyze the attached FULL video as a single multimodal experience for persona-based ad evaluation. Ground your judgment in what the full video actually shows and sounds like.\n\n';
+  prompt += 'Use the Phase 1 lane artifacts below as optional supporting context only. Prefer reconciled lane artifacts when they are available. Dialogue, music, and music-vocals entries are provided as full ordered lane datasets for global context.\n\n';
 
   prompt += '# PRIMARY WHOLE-VIDEO LENSES\n\n';
   for (const lens of primaryLenses) {
@@ -390,21 +409,32 @@ function buildWholeVideoPrompt({
   }
   prompt += '\n';
 
+  prompt += '# GLOBAL PHASE 1 CONTEXT\n\n';
+  prompt += 'The following dialogue, music, music-vocals, and visual-identity sections are support layers from earlier phases.\n';
+  prompt += '- Prefer reconciled artifacts when available.\n';
+  prompt += '- Treat dialogue, music, and music-vocals as full ordered lane context for the asset.\n';
+  prompt += '- Use them to understand narrative, musical, and lyrical continuity across the full video.\n';
+  prompt += '- If the attached video conflicts with prior structured context, trust the video.\n';
+  prompt += '- Do not claim a specific line, lyric, or music cue occurred at a precise moment unless that moment is supportable from the attached video itself.\n\n';
+
   const dialogueContext = formatDialogueContext(dialogueData);
   if (dialogueContext) {
     prompt += '# DIALOGUE CONTEXT\n\n';
+    prompt += 'Only use reconciled dialogue artifacts when available. This is a global ordered dialogue support layer for the full asset. Use it to understand spoken narrative continuity, speaker recurrence, and notable lines across the video, but ground any cited evidence moment in the attached video/audio itself.\n\n';
     prompt += `${dialogueContext}\n\n`;
   }
 
   const musicContext = formatMusicContext(musicData);
   if (musicContext) {
     prompt += '# MUSIC CONTEXT\n\n';
+    prompt += 'Prefer reconciled or final music artifacts when available. This is a global support layer describing the score/cue arc across the full asset. Treat any listed timing as non-authoritative support metadata unless the attached video itself clearly confirms the cue timing.\n\n';
     prompt += `${musicContext}\n\n`;
   }
 
   const musicVocalsContext = formatMusicVocalsContext(musicVocalsData);
   if (musicVocalsContext) {
     prompt += '# MUSIC VOCALS CONTEXT\n\n';
+    prompt += 'Prefer reconciled music-vocals artifacts when available. This is a global ordered lyrics/vocal support layer for the full asset. Use it to understand lyric-bearing continuity and repeated hooks across the video.\n\n';
     prompt += `${musicVocalsContext}\n\n`;
   }
 
@@ -641,10 +671,10 @@ async function run(input) {
 
   const retryConfig = getRetryConfig(config);
   const toolLoopConfig = getToolLoopConfig(config);
-  const dialogueData = artifacts.dialogueData || {};
-  const musicData = artifacts.musicData || {};
-  const musicVocalsData = artifacts.musicVocalsData || {};
-  const visualIdentityData = artifacts.visualIdentityData || {};
+  const dialogueData = selectCanonicalLaneArtifact(artifacts, 'dialogueData', { fallback: {} });
+  const musicData = selectCanonicalLaneArtifact(artifacts, 'musicData', { fallback: {} });
+  const musicVocalsData = selectCanonicalLaneArtifact(artifacts, 'musicVocalsData', { fallback: {} });
+  const visualIdentityData = selectCanonicalLaneArtifact(artifacts, 'visualIdentityData', { fallback: {} });
   const toolContract = buildWholeVideoAnalysisValidatorToolContract({ lenses: primaryLenses });
 
   try {

@@ -17,13 +17,20 @@ function clampMusicVocalTime(value, maxDuration) {
 function normalizeMusicVocalSegments(segments, { maxDuration = Number.POSITIVE_INFINITY } = {}) {
   if (!Array.isArray(segments)) return [];
 
-  return segments.map((segment) => {
+  const normalized = segments.map((segment, fallbackIndex) => {
     if (!segment || typeof segment !== 'object' || Array.isArray(segment)) return null;
+
+    const text = compactString(segment.text);
+    if (!text) return null;
+
+    const explicitIndex = Number(segment.index ?? segment.segment_index ?? segment.segmentIndex);
+    const chronologyIndex = Number.isFinite(explicitIndex) && explicitIndex >= 0
+      ? Math.trunc(explicitIndex)
+      : fallbackIndex;
 
     const start = clampMusicVocalTime(segment.start, maxDuration);
     const end = clampMusicVocalTime(segment.end, maxDuration);
-    const text = compactString(segment.text);
-    if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start || !text) return null;
+    const hasValidTimedRange = Number.isFinite(start) && Number.isFinite(end) && end > start;
 
     const performer = compactString(segment.performer || segment.singer || segment.voice) || null;
     const performerIdSource = compactString(segment.performer_id || segment.performerId || segment.singer_id || segment.singerId);
@@ -34,15 +41,28 @@ function normalizeMusicVocalSegments(segments, { maxDuration = Number.POSITIVE_I
     const delivery = compactString(segment.delivery).toLowerCase();
 
     return {
-      start,
-      end,
+      index: chronologyIndex,
+      ...(hasValidTimedRange ? { start, end } : {}),
       text,
       confidence: Number.isFinite(confidence) ? Math.max(0, Math.min(1, Number(confidence.toFixed(4)))) : null,
       performer,
       performer_id,
       delivery: MUSIC_VOCAL_DELIVERIES.has(delivery) ? delivery : null
     };
-  }).filter(Boolean).sort((left, right) => left.start - right.start || left.end - right.end);
+  }).filter(Boolean);
+
+  normalized.sort((left, right) => {
+    if (left.index !== right.index) return left.index - right.index;
+    const leftStart = Number.isFinite(left.start) ? left.start : Number.POSITIVE_INFINITY;
+    const rightStart = Number.isFinite(right.start) ? right.start : Number.POSITIVE_INFINITY;
+    if (leftStart !== rightStart) return leftStart - rightStart;
+    return 0;
+  });
+
+  return normalized.map((segment, index) => ({
+    ...segment,
+    index
+  }));
 }
 
 function generateMusicVocalsSummary(segments = []) {

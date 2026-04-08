@@ -85,11 +85,12 @@ function buildDialogueTranscriptionValidatorToolContract({ requireHandoff = fals
     argumentKey: 'transcription',
     description: 'Validate a Phase 1 spoken-dialogue transcription JSON candidate against the required local schema before final submission.',
     candidateDescription: requireHandoff
-      ? 'Candidate spoken-dialogue transcription JSON with dialogue_segments covering audible spoken words only, optional speaker_profiles, summary, handoffContext, totalDuration, and additive analysis/provenance metadata. Preserve short masked spoken fragments literally, split immediately at spoken-to-sung pivots, and never reconstruct lyric-like tails into polished dialogue text.'
-      : 'Candidate spoken-dialogue transcription JSON with dialogue_segments covering audible spoken words only, optional speaker_profiles, summary, totalDuration, and additive analysis/provenance metadata. Preserve short masked spoken fragments literally, split immediately at spoken-to-sung pivots, and never reconstruct lyric-like tails into polished dialogue text.',
+      ? 'Candidate spoken-dialogue transcription JSON with dialogue_segments covering audible spoken words only, optional speaker_profiles, summary, handoffContext, optional per-segment timestamps, and additive analysis/provenance metadata. Preserve short masked spoken fragments literally, preserve segment order via index chronology, split immediately at spoken-to-sung pivots, and never reconstruct lyric-like tails into polished dialogue text.'
+      : 'Candidate spoken-dialogue transcription JSON with dialogue_segments covering audible spoken words only, optional speaker_profiles, summary, optional per-segment timestamps, and additive analysis/provenance metadata. Preserve short masked spoken fragments literally, preserve segment order via index chronology, split immediately at spoken-to-sung pivots, and never reconstruct lyric-like tails into polished dialogue text.',
     example: {
       dialogue_segments: [
         {
+          index: 0,
           start: 0,
           end: 1.2,
           speaker: 'Speaker 1',
@@ -126,7 +127,6 @@ function buildDialogueTranscriptionValidatorToolContract({ requireHandoff = fals
       ],
       summary: 'Short summary of the dialogue.',
       ...(requireHandoff ? { handoffContext: 'Short continuity handoff for the next chunk.' } : {}),
-      totalDuration: 10.5,
       analysisMode: requireHandoff ? 'chunked' : 'whole_asset',
       timingMode: requireHandoff ? 'chunk_local' : 'full_timeline',
       sourceStrategy: 'base64',
@@ -277,14 +277,13 @@ function buildMusicVocalsValidatorToolContract() {
     name: MUSIC_VOCALS_TOOL_NAME,
     argumentKey: 'musicVocals',
     description: 'Validate a Phase 1 music-vocals JSON candidate against the required local schema before final submission.',
-    candidateDescription: 'Candidate music-vocals JSON with rollingSummary, vocalSummary, vocal_segments, optional famous-song grounding via recognizedSong + recognitionNotes, and optional qualityNotes. Aim for full lyric-bearing timeline coverage, use whole-asset context plus any high-confidence recognizedSong match as bounded recall scaffolding during chunk refinement, keep repeated hooks and reprises as distinct segments, prefer short literal fragments over polished wrong lyric variants when support is partial, reserve hybrid for truly inseparable mixed delivery, and remember that spoken dialogue over score is not lyric evidence.',
+    candidateDescription: 'Candidate music-vocals JSON with rollingSummary, vocalSummary, vocal_segments, optional famous-song grounding via recognizedSong + recognitionNotes, and optional qualityNotes. Preserve vocal_segments chronology by index/order first; array order/index is the truthful chronology signal for this lane. Use whole-asset context plus any high-confidence recognizedSong match as bounded recall scaffolding during chunk refinement, keep repeated hooks and reprises as distinct segments, prefer short literal fragments over polished wrong lyric variants when support is partial, reserve hybrid for truly inseparable mixed delivery, and remember that spoken dialogue over score is not lyric evidence.',
     example: {
       rollingSummary: 'A repeated sung hook dominates the music-led vocals so far.',
       vocalSummary: 'A repeated sung hook lands over the percussion.',
       vocal_segments: [
         {
-          start: 4.2,
-          end: 5.8,
+          index: 0,
           text: 'We rise tonight',
           confidence: 0.91,
           performer: 'Vocalist 1',
@@ -301,10 +300,7 @@ function buildMusicVocalsValidatorToolContract() {
             artist: 'Metallica',
             confidence: 0.93,
             evidence: ['Literal lyric fragments match the heard refrain.'],
-            matchedLyrics: ['Master, master', 'Obey your master'],
-            timeRanges: [
-              { start: 76, end: 98 }
-            ]
+            matchedLyrics: ['Master, master', 'Obey your master']
           }
         ],
         primaryEvidence: 'Distinct lyric fragments and delivery strongly support one specific song.',

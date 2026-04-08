@@ -73,6 +73,34 @@ test('Phase3 report scripts compute their timeline directly from chunkAnalysis',
     ok(Object.keys(saved.averages).length > 0);
   });
 
+  await t.test('metrics.cjs marks whole-video phase2 input as intentionally non-chunkable', async () => {
+    const result = await metricsScript.run({
+      outputDir: testOutputDir,
+      artifacts: {
+        wholeVideoAnalysis: {
+          input: {
+            durationSeconds: 42
+          }
+        }
+      },
+      config: { version: 'test' }
+    });
+
+    property(result.artifacts, 'metricsData');
+    const metricsData = result.artifacts.metricsData;
+
+    is(metricsData.implementationStatus.state, 'not_applicable');
+    is(metricsData.implementationStatus.dataSource, 'phase2.wholeVideoAnalysis');
+
+    const savedPath = path.join(testOutputDir, 'phase3-report', 'metrics', 'metrics.json');
+    ok(fs.existsSync(savedPath));
+    const saved = JSON.parse(fs.readFileSync(savedPath, 'utf8'));
+    is(saved.summary.videoDuration, 42);
+    is(saved.summary.totalChunks, 0);
+    is(saved.summary.totalSeconds, 0);
+    is(saved.implementationStatus.state, 'not_applicable');
+  });
+
   await t.test('emotional-analysis.cjs does not emit zero-second/null placeholder analysis', async () => {
     const result = await emotionalAnalysisScript.run({
       outputDir: testOutputDir,

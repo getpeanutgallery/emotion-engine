@@ -168,42 +168,55 @@ async function runParallelScripts(scriptItems, baseInput) {
  * @param {object} newArtifacts - New artifacts to merge
  * @returns {object} - Merged artifacts
  */
-function mergeArtifacts(base, newArtifacts) {
-  if (!base || typeof base !== 'object') {
-    return { ...newArtifacts };
+function isPlainObject(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function mergeArtifacts(base, newArtifacts, options = {}) {
+  const { arrayMode = 'concat' } = options;
+
+  if (!isPlainObject(base)) {
+    return isPlainObject(newArtifacts) ? { ...newArtifacts } : {};
   }
-  
-  if (!newArtifacts || typeof newArtifacts !== 'object') {
+
+  if (!isPlainObject(newArtifacts)) {
     return { ...base };
   }
-  
+
   const result = { ...base };
-  
+
   for (const key of Object.keys(newArtifacts)) {
     const newValue = newArtifacts[key];
-    
+    const currentValue = result[key];
+
     if (newValue === null || newValue === undefined) {
       result[key] = newValue;
       continue;
     }
-    
+
     if (Array.isArray(newValue)) {
-      if (Array.isArray(result[key])) {
-        result[key] = [...result[key], ...newValue];
+      if (Array.isArray(currentValue) && arrayMode === 'concat') {
+        result[key] = [...currentValue, ...newValue];
       } else {
-        result[key] = newValue;
+        result[key] = [...newValue];
       }
-    } else if (typeof newValue === 'object') {
-      if (typeof result[key] === 'object' && !Array.isArray(result[key])) {
-        result[key] = mergeArtifacts(result[key], newValue);
+      continue;
+    }
+
+    if (isPlainObject(newValue)) {
+      if (isPlainObject(currentValue)) {
+        // For overlapping artifact objects (e.g. reconciliation re-emitting musicData),
+        // replace nested arrays instead of concatenating them to prevent duplicate lane rows.
+        result[key] = mergeArtifacts(currentValue, newValue, { arrayMode: 'replace' });
       } else {
         result[key] = { ...newValue };
       }
-    } else {
-      result[key] = newValue;
+      continue;
     }
+
+    result[key] = newValue;
   }
-  
+
   return result;
 }
 
@@ -211,4 +224,5 @@ module.exports = {
   runGatherContext,
   runSingleScript,
   runParallelScripts,
+  mergeArtifacts,
 };

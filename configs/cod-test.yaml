@@ -30,7 +30,7 @@ gather_context:
 - server/scripts/get-context/get-music-vocals.cjs
 - server/scripts/get-context/reconcile-famous-song-phase1.cjs
 process:
-- server/scripts/process/video-chunks.cjs
+- server/scripts/process/whole-video-mimo.cjs
 report:
 - server/scripts/report/metrics.cjs
 - server/scripts/report/recommendation.cjs

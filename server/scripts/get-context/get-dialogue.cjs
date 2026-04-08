@@ -272,8 +272,21 @@ function normalizeDialogueDataToDuration(
     : repairLateSuffixDialogueSegmentOverrun(rawInputSegments, boundedDuration);
 
   const clampedSegments = inputSegments.map((segment) => {
-    const start = Number.isFinite(segment?.start) ? clampNumber(segment.start, 0, boundedDuration) : 0;
-    const end = Number.isFinite(segment?.end) ? clampNumber(segment.end, 0, boundedDuration) : start;
+    const hasStart = Number.isFinite(segment?.start);
+    const hasEnd = Number.isFinite(segment?.end);
+
+    // Preserve untimed-but-valid dialogue segments for the index/text contract.
+    if (!hasStart && !hasEnd) {
+      return {
+        ...segment
+      };
+    }
+
+    // Keep the existing behavior for partially timed segments: require both bounds.
+    if (!hasStart || !hasEnd) return null;
+
+    const start = clampNumber(segment.start, 0, boundedDuration);
+    const end = clampNumber(segment.end, 0, boundedDuration);
 
     if (end <= start) return null;
     if (shouldDropImplausiblyClippedDialogueSegment(segment, start, end, boundedDuration)) return null;
@@ -578,6 +591,25 @@ function buildDialogueAnalysisMetadata({
     coverage: deriveDialogueCoverage(normalizedDialogueData, normalizedDuration),
     provenance,
     ...(normalizedQualityNotes.length > 0 ? { qualityNotes: normalizedQualityNotes } : {})
+  };
+}
+
+function stripDialogueSegmentTiming(dialogueData) {
+  if (!dialogueData || typeof dialogueData !== 'object' || Array.isArray(dialogueData)) {
+    return dialogueData;
+  }
+
+  const dialogueSegments = Array.isArray(dialogueData.dialogue_segments)
+    ? dialogueData.dialogue_segments.map((segment) => {
+        if (!segment || typeof segment !== 'object' || Array.isArray(segment)) return segment;
+        const { start, end, ...rest } = segment;
+        return rest;
+      })
+    : [];
+
+  return {
+    ...dialogueData,
+    dialogue_segments: dialogueSegments
   };
 }
 
@@ -1140,10 +1172,12 @@ async function run(input) {
               requireHandoff: false,
               finalArtifactRules: [
                 'Identify speakers as Speaker 1, Speaker 2, etc. for human-readable labels, while reusing anonymous speaker_id values for same-speaker linkage.',
-                'Provide accurate timestamps in seconds and place each vocal line where it is actually heard in the timeline.',
+                'Preserve dialogue chronology using array order/index; include start/end timestamps only when directly supportable from the audio.',
                 'Keep grounded speaker identity separate from any inferred_traits guesswork.',
                 'Include intelligible dialogue and dialogue-like vocal material when it plausibly functions as dialogue. Exclude purely instrumental or otherwise non-vocal sections.',
-                'Keep the intelligible dialogue-like portion of mixed spoken/music-led vocal material when it is supportable from the audio.',
+                'Do not drop or trim intelligible words merely because musical score is present underneath, delivery has melodic contour, or a phrase might also resemble lyrics.',
+                'If classification is ambiguous, preserve the line and express uncertainty through conservative confidence rather than suppressing it.',
+                'Reconciliation happens later; do not act as the final filter for whether a retained speech-like phrase should be stripped as lyric-only material.',
                 'If no intelligible dialogue or dialogue-like vocal material is detected, return an empty dialogue_segments array.'
               ]
             });
@@ -1439,11 +1473,13 @@ async function run(input) {
               audioMimeType,
               requireHandoff: true,
               finalArtifactRules: [
-                'Timestamps must be relative to this chunk and start at 0, with each vocal line placed where it is actually heard in the chunk.',
+                'Preserve chunk-local dialogue chronology using array order/index; include chunk-local start/end timestamps only when directly supportable from the audio.',
                 'Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.',
                 'Keep grounded speaker identity separate from any inferred_traits guesswork.',
                 'Include intelligible dialogue and dialogue-like vocal material in this chunk when it plausibly functions as dialogue. Exclude purely instrumental or otherwise non-vocal sections.',
-                'Keep the intelligible dialogue-like portion of mixed spoken/music-led vocal material when it is supportable from the audio.',
+                'Do not drop or trim intelligible words merely because musical score is present underneath, delivery has melodic contour, or a phrase might also resemble lyrics.',
+                'If classification is ambiguous, preserve the line and express uncertainty through conservative confidence rather than suppressing it.',
+                'Reconciliation happens later; do not act as the final filter for whether a retained speech-like phrase should be stripped as lyric-only material.',
                 'If no intelligible dialogue or dialogue-like vocal material is detected, return an empty dialogue_segments array.',
                 'handoffContext must stay brief and continuity-focused.'
               ]
@@ -2015,6 +2051,8 @@ async function run(input) {
       });
     }
 
+    finalDialogueData = stripDialogueSegmentTiming(finalDialogueData);
+
     response = chunkedDialogueResult?.response || wholeAssetDialogueResult?.response || response;
     model = chunkedDialogueResult?.model || wholeAssetDialogueResult?.model || model;
 
@@ -2170,8 +2208,8 @@ function buildDialogueInferredTraitsRules() {
 function buildTranscriptionPrompt({ recoveryRuntime = null, measuredRuntimeSeconds = null } = {}) {
   const runtimeAnchorRules = Number.isFinite(measuredRuntimeSeconds)
     ? [
-        `- The attached media runtime was measured locally at ${Number(measuredRuntimeSeconds).toFixed(2)} seconds. Set totalDuration to that full runtime.`,
-        '- Do not shorten totalDuration just because the audible dialogue ends early or the file has silence, ambience, music-only tails, or sparse end-of-file speech.'
+        `- The attached media runtime was measured locally at ${Number(measuredRuntimeSeconds).toFixed(2)} seconds and may include non-dialogue spans.`,
+        '- Preserve dialogue segment order via array order/index chronology. Include start/end timestamps only when they are directly supportable from the audio.'
       ]
     : [];
   const inferredTraitsRules = buildDialogueInferredTraitsRules();
@@ -2182,6 +2220,7 @@ Return JSON only with this shape:
 {
   "dialogue_segments": [
     {
+      "index": 0,
       "start": 0.0,
       "end": 1.2,
       "speaker": "Speaker 1",
@@ -2211,14 +2250,13 @@ Return JSON only with this shape:
       }
     }
   ],
-  "summary": "brief summary of the dialogue content",
-  "totalDuration": 0.0
+  "summary": "brief summary of the dialogue content"
 }
 
 Rules:
 - Return JSON only. No markdown. No explanation.
-- Use seconds for all timestamps.
-- Set totalDuration to the full attached media runtime, not just the span covered by captured dialogue.
+- Preserve dialogue segment chronology via array order/index values.
+- start/end timestamps are optional and should be included only when directly supportable from the audio.
 - If no intelligible dialogue or dialogue-like vocal material is present, return an empty dialogue_segments array.
 ${runtimeAnchorRules.join('\n')}
 
@@ -2229,7 +2267,7 @@ Segmentation rules:
 - If two phrases are separated by a noticeable pause, interruption, overlap change, or speaker change, keep them as separate dialogue_segments even if combining them would read more smoothly.
 - If words are part of one uninterrupted utterance from the same voice, keep them in one segment; do not split artificially.
 - Do not bridge across silence, music-only gaps, or non-vocal stretches to create a cleaner sentence.
-- Place each captured line where it actually occurs in the timeline; do not pull later lines earlier or compress dialogue into another part of the file.
+- Preserve utterance ordering from the source audio; do not pull later lines earlier or compress dialogue into earlier entries.
 
 Damaged-speech rules:
 - When speech is partially masked, clipped, distant, distorted, or overlapped, prefer a short literal fragment of what is actually audible.
@@ -2270,8 +2308,9 @@ ${inferredTraitsRules}
 Scope rules:
 - Include intelligible spoken dialogue.
 - Exclude purely instrumental or non-vocal sections.
-- Exclude clearly lyric-led, melody-led, or predominantly musical vocal passages when they do not plausibly function as dialogue.
-- If a segment mixes spoken content with music-led vocalization, keep the intelligible dialogue-like portion that is supportable from the audio.
+- Do not drop or trim intelligible words merely because musical score is present underneath, the delivery has melodic contour, or the phrase might also resemble lyrics.
+- If classification is ambiguous, preserve the line and express uncertainty through conservative confidence rather than suppressing it.
+- Reconciliation happens later; do not act as the final filter for whether a retained speech-like phrase should be stripped as lyric-only material.
 - Do not use the summary to justify dropping ambiguous dialogue-like vocals early.
 - The summary is secondary; do not alter segmentation, wording, or speaker assignment to make the summary cleaner.`;
 
@@ -2430,6 +2469,7 @@ Return JSON only with this shape:
 {
   "dialogue_segments": [
     {
+      "index": 0,
       "start": 0.0,
       "end": 1.2,
       "speaker": "Speaker 1",
@@ -2460,14 +2500,13 @@ Return JSON only with this shape:
     }
   ],
   "summary": "brief summary for this chunk",
-  "handoffContext": "short continuity handoff for the next chunk",
-  "totalDuration": 0.0
+  "handoffContext": "short continuity handoff for the next chunk"
 }
 
 Rules:
 - Return JSON only. No markdown. No explanation.
-- Timestamps must be relative to this chunk and start at 0.
-- Set totalDuration to this chunk's runtime.
+- Preserve dialogue segment chronology via array order/index values.
+- start/end timestamps are optional and should be chunk-local only when directly supportable from the audio.
 - If no intelligible dialogue or dialogue-like vocal material is present, return an empty dialogue_segments array.
 - Keep handoffContext brief and continuity-focused.
 - The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in this chunk.
@@ -2478,7 +2517,7 @@ Segmentation rules:
 - Treat pauses, interruptions, overlap changes, delivery pivots, and speaker changes as evidence of separate segments.
 - If words are part of one uninterrupted utterance from the same voice, keep them in one segment; do not split artificially.
 - Do not bridge across silence, music-only gaps, or non-vocal stretches to create a cleaner sentence.
-- Spread timestamps across the actual chunk timeline where lines occur; do not compress late dialogue into the opening seconds.
+- Preserve utterance ordering faithfully; do not compress late dialogue into early entries or reshuffle chronology.
 
 Damaged-speech rules:
 - When speech is masked, clipped, distant, distorted, or overlapped, prefer a short literal fragment of what is actually audible.
@@ -2508,8 +2547,9 @@ ${inferredTraitsRules}
 Scope rules:
 - Include intelligible spoken dialogue and dialogue-like vocal material.
 - Exclude purely instrumental or non-vocal sections.
-- Exclude clearly lyric-led, melody-led, or predominantly musical vocal passages when they do not plausibly function as dialogue.
-- If a segment mixes spoken content with music-led vocalization, keep the intelligible dialogue-like portion that is supportable from the audio.
+- Do not drop or trim intelligible words merely because musical score is present underneath, the delivery has melodic contour, or the phrase might also resemble lyrics.
+- If classification is ambiguous, preserve the line and express uncertainty through conservative confidence rather than suppressing it.
+- Reconciliation happens later; do not act as the final filter for whether a retained speech-like phrase should be stripped as lyric-only material.
 - Do not use adjacent spoken context or the handoff summary to pull unsupported words into this chunk.`;
 
   return `${prompt}${buildRecoveryPromptAddendum(recoveryRuntime)}`;

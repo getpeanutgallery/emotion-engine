@@ -158,6 +158,13 @@ test('whole-video-mimo script', async (t) => {
             { start: 40, end: 52, description: 'High-energy action swell' }
           ]
         },
+        musicVocalsData: {
+          summary: 'A short repeated vocal hook carries through the midpoint.',
+          vocal_segments: [
+            { index: 0, performer: 'Vocal Lead', text: 'Rise up now' },
+            { index: 1, performer: 'Vocal Lead', text: 'Rise up now' }
+          ]
+        },
         visualIdentityData: {
           summary: 'The ad repeats a bright energy motif from the opener through the midpoint and then slows on the end slate.',
           identityRegistry: {
@@ -252,9 +259,95 @@ test('whole-video-mimo script', async (t) => {
     assert.equal(providerCalls[0].attachments[0].url, 'https://gambit-games-tests.s3.us-east-1.amazonaws.com/peanut-gallery/cod.mp4');
     assert.equal(providerCalls[0].apiKey, process.env.OPENROUTER_API_KEY || 'test-api-key');
     assert.match(providerCalls[0].prompt, /FULL video as a single multimodal experience/);
+    assert.match(providerCalls[0].prompt, /Use the Phase 1 lane artifacts below as optional supporting context only/);
+    assert.match(providerCalls[0].prompt, /GLOBAL PHASE 1 CONTEXT/);
     assert.match(providerCalls[0].prompt, /DIALOGUE CONTEXT/);
     assert.match(providerCalls[0].prompt, /MUSIC CONTEXT/);
+    assert.match(providerCalls[0].prompt, /MUSIC VOCALS CONTEXT/);
     assert.match(providerCalls[0].prompt, /VISUAL IDENTITY CONTEXT/);
+  });
+
+  await t.test('injects one canonical lane dataset per section (reconciled preferred, raw/final fallback)', async () => {
+    await wholeVideoMiMo.run({
+      assetPath: videoPath,
+      outputDir,
+      artifacts: {
+        dialogueDataReconciled: {
+          summary: 'RECONCILED dialogue summary',
+          dialogue_segments: [{ index: 0, speaker: 'Recon', text: 'reconciled line' }]
+        },
+        dialogueData: {
+          summary: 'RAW dialogue summary',
+          dialogue_segments: [{ index: 0, speaker: 'Raw', text: 'raw line' }]
+        },
+        dialogueDataFinal: {
+          summary: 'FINAL dialogue summary',
+          dialogue_segments: [{ index: 0, speaker: 'Final', text: 'final line' }]
+        },
+        musicDataFinal: {
+          summary: 'FINAL music summary',
+          segments: [{ index: 0, description: 'final music cue' }]
+        },
+        musicVocalsDataFinal: {
+          summary: 'FINAL vocals summary',
+          vocal_segments: [{ index: 0, performer: 'Vocal Lead', text: 'final vocals line' }]
+        }
+      },
+      toolVariables: {
+        soulPath,
+        goalPath,
+        variables: {
+          lenses: ['patience', 'boredom', 'excitement']
+        }
+      },
+      config: {
+        asset: {
+          media: {
+            refs: {
+              source_video: {
+                kind: 'video',
+                role: 'primary',
+                source: { path: videoPath },
+                staged: {
+                  url: 'https://gambit-games-tests.s3.us-east-1.amazonaws.com/peanut-gallery/cod.mp4',
+                  urlType: 'public'
+                },
+                delivery: {
+                  preferredMode: 'url',
+                  allowedModes: ['url', 'inline'],
+                  allowFallback: false
+                },
+                metadata: {
+                  filename: 'cod.mp4',
+                  mimeType: 'video/mp4',
+                  durationSeconds: 140.017
+                }
+              }
+            }
+          }
+        },
+        ai: {
+          video: {
+            targets: [
+              {
+                adapter: {
+                  name: 'openrouter',
+                  model: 'xiaomi/mimo-v2-omni'
+                }
+              }
+            ]
+          }
+        }
+      }
+    });
+
+    assert.equal(providerCalls.length, 1);
+    const prompt = providerCalls[0].prompt;
+    assert.match(prompt, /RECONCILED dialogue summary/);
+    assert.doesNotMatch(prompt, /RAW dialogue summary/);
+    assert.doesNotMatch(prompt, /FINAL dialogue summary/);
+    assert.match(prompt, /FINAL music summary/);
+    assert.match(prompt, /FINAL vocals summary/);
   });
 
   await t.test('accepts provider-specific Xiaomi auth envs for direct Xiaomi targets', async () => {

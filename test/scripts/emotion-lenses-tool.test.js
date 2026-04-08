@@ -115,23 +115,32 @@ test('Emotion Lenses Tool', async (t) => {
             intensity: 6
           }]
         },
+        musicVocalsContext: {
+          summary: 'Lyrics cycle through a repeated chant motif.',
+          segments: [{ index: 0, performer: 'Vocal Lead', text: 'Obey your master' }]
+        },
         previousState: { summary: 'Earlier chunk was measured.' }
       });
 
       ok(prompt.includes('Return JSON only.'));
-      ok(prompt.includes('Ground your judgment in the attached video chunk first'));
+      ok(prompt.includes('Ground your judgment in the attached video chunk first.'));
+      ok(prompt.includes('Use previous summary only for continuity. Use dialogue, music, and music-vocals context as global support layers from earlier phases.'));
       ok(prompt.includes('Attached video chunk: video/mp4 (base64)'));
       ok(prompt.includes('dominant_emotion must match one of the configured lens names'));
       ok(prompt.includes('"patience"'));
       ok(prompt.includes('"boredom"'));
       ok(prompt.includes('Previous Summary'));
+      ok(prompt.includes('Global Dialogue Context (ordered support only)'));
       ok(prompt.includes('Speaker 1'));
+      ok(prompt.includes('Global Music Context (support only)'));
       ok(prompt.includes('Trailer-wide context: Trailer-wide music stays tense and cinematic.'));
-      ok(prompt.includes('- Active chunk cues:'));
+      ok(prompt.includes('- Relevant global support entries:'));
+      ok(prompt.includes('Global Music-Vocals Context (ordered support only)'));
+      ok(prompt.includes('index 0: Vocal Lead: Obey your master'));
       ok(prompt.includes('detail: Aggressive percussion hits under the opening threat.'));
     });
 
-    await tNested.test('clips overlapping Phase 1 context to the active chunk window in the built prompt', () => {
+    await tNested.test('keeps full global Phase 1 context ranges in the built prompt (no chunk-local clipping)', () => {
       const prompt = emotionLensesTool.buildBasePromptFromInput({
         toolVariables: {
           soulPath,
@@ -161,11 +170,11 @@ test('Emotion Lenses Tool', async (t) => {
         previousState: { summary: '' }
       });
 
-      ok(prompt.includes('- 5.0s-6.0s: Speaker 1: They want you afraid.'));
+      ok(prompt.includes('- 0.0s-6.0s: Speaker 1: They want you afraid.'));
       ok(prompt.includes('Trailer-wide context: The trailer stays high-intensity and tense overall.'));
-      ok(prompt.includes('- 5.0s-10.0s: music, detail: Sustained tense orchestral pulse with pounding percussion., mood: tense, intensity: 8'));
-      ok(!prompt.includes('0.0s-6.0s: Speaker 1'));
-      ok(!prompt.includes('0.0s-140.0s: music'));
+      ok(prompt.includes('- 0.0s-140.0s: music, detail: Sustained tense orchestral pulse with pounding percussion., mood: tense, intensity: 8'));
+      ok(!prompt.includes('- 5.0s-6.0s: Speaker 1'));
+      ok(!prompt.includes('- 5.0s-10.0s: music'));
     });
 
     await tNested.test('preserves full music summary and description text in the built prompt', () => {

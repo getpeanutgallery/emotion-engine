@@ -12,8 +12,6 @@ const {
 const SCRIPT_ID = 'reconcile-famous-song-phase1';
 const PHASE_DIR = 'phase1-gather-context';
 const RECOGNITION_CONFIDENCE_GATE = 0.92;
-const MIN_DIALOGUE_OVERLAP_SECONDS = 0.75;
-const MIN_DIALOGUE_OVERLAP_RATIO = 0.5;
 const MIN_CORRECTION_SIMILARITY = 0.66;
 const MIN_NEAR_MISS_CORRECTION_SIMILARITY = 0.57;
 const MIN_DIALOGUE_LYRIC_SIMILARITY = 0.72;
@@ -21,6 +19,8 @@ const MIN_CORRECTION_CONFIDENCE = 0.85;
 const MIN_NEAR_MISS_SHARED_TOKENS = 2;
 const MIN_NEAR_MISS_SHARED_TARGET_RATIO = 0.6;
 const MIN_TARGET_TO_SOURCE_TOKEN_RATIO = 0.75;
+const MIN_GATE_LYRIC_TEXT_SIMILARITY = 0.66;
+const MIN_DIALOGUE_INDEX_PROXIMITY = 2;
 
 function cloneJson(value) {
   return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
@@ -28,6 +28,20 @@ function cloneJson(value) {
 
 function compactString(value) {
   return typeof value === 'string' ? value.trim() : '';
+}
+
+function stripLaneTiming(data, laneKey) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return data;
+  const segments = Array.isArray(data?.[laneKey]) ? data[laneKey] : [];
+
+  return {
+    ...data,
+    [laneKey]: segments.map((segment) => {
+      if (!segment || typeof segment !== 'object' || Array.isArray(segment)) return segment;
+      const { start, end, ...rest } = segment;
+      return rest;
+    })
+  };
 }
 
 function ensureDir(dirPath) {
@@ -108,36 +122,10 @@ function parseFiniteNumber(value) {
   return Number.isFinite(numeric) ? numeric : null;
 }
 
-function segmentDuration(segment) {
-  const start = parseFiniteNumber(segment?.start);
-  const end = parseFiniteNumber(segment?.end);
-  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return 0;
-  return end - start;
-}
-
-function computeOverlap(segmentA, segmentB) {
-  const startA = parseFiniteNumber(segmentA?.start);
-  const endA = parseFiniteNumber(segmentA?.end);
-  const startB = parseFiniteNumber(segmentB?.start);
-  const endB = parseFiniteNumber(segmentB?.end);
-
-  if (![startA, endA, startB, endB].every(Number.isFinite)) {
-    return { seconds: 0, ratio: 0 };
-  }
-
-  const seconds = Math.max(0, Math.min(endA, endB) - Math.max(startA, startB));
-  const duration = Math.max(0.001, endA - startA);
-  return {
-    seconds,
-    ratio: seconds / duration
-  };
-}
-
-function overlapsStrongly(segment, candidates = []) {
-  return candidates.some((candidateRange) => {
-    const overlap = computeOverlap(segment, candidateRange);
-    return overlap.seconds >= MIN_DIALOGUE_OVERLAP_SECONDS || overlap.ratio >= MIN_DIALOGUE_OVERLAP_RATIO;
-  });
+function getSegmentOrderIndex(segment, fallbackIndex = 0) {
+  const explicitIndex = parseFiniteNumber(segment?.index);
+  if (Number.isFinite(explicitIndex)) return explicitIndex;
+  return fallbackIndex;
 }
 
 function chooseBestLyricMatch(text, lyricFragments = []) {
@@ -161,25 +149,26 @@ function isShortOrRefrainLike(segment) {
   const text = compactString(segment?.text);
   const words = tokenize(text);
   const uniqueWordCount = new Set(words).size;
-  const duration = segmentDuration(segment);
-  return words.length <= 6 || duration <= 4.5 || (words.length > 0 && uniqueWordCount / words.length < 0.7);
+  return words.length <= 6 || (words.length > 0 && uniqueWordCount / words.length < 0.7);
 }
 
 function hasStrongSpokenSignal(dialogueSegments, index) {
   const segment = dialogueSegments[index] || {};
   const speaker = compactString(segment.speaker || segment.speaker_id);
-  const neighbors = [dialogueSegments[index - 1], dialogueSegments[index + 1]].filter(Boolean);
+  const segmentOrderIndex = getSegmentOrderIndex(segment, index);
+  const neighbors = [
+    { segment: dialogueSegments[index - 1], fallbackIndex: index - 1 },
+    { segment: dialogueSegments[index + 1], fallbackIndex: index + 1 }
+  ].filter(({ segment: neighbor }) => Boolean(neighbor));
 
-  return neighbors.some((neighbor) => {
+  return neighbors.some(({ segment: neighbor, fallbackIndex }) => {
     const neighborSpeaker = compactString(neighbor.speaker || neighbor.speaker_id);
     if (!speaker || !neighborSpeaker || speaker !== neighborSpeaker) return false;
 
-    const gap = Math.min(
-      Math.abs((parseFiniteNumber(segment.start) || 0) - (parseFiniteNumber(neighbor.end) || 0)),
-      Math.abs((parseFiniteNumber(neighbor.start) || 0) - (parseFiniteNumber(segment.end) || 0))
-    );
+    const neighborOrderIndex = getSegmentOrderIndex(neighbor, fallbackIndex);
+    const proximity = Math.abs(segmentOrderIndex - neighborOrderIndex);
 
-    return gap <= 1.25 && tokenize(neighbor.text).length >= 4 && !isShortOrRefrainLike(neighbor);
+    return proximity <= 1 && tokenize(neighbor.text).length >= 4 && !isShortOrRefrainLike(neighbor);
   });
 }
 
@@ -381,18 +370,105 @@ function classifyLyricCorrection(sourceText, targetText, similarity) {
   };
 }
 
-function buildRecognitionGate(musicVocalsData, musicData) {
+function buildLyricEvidence(segments = [], matchedLyrics = [], minSimilarity = MIN_GATE_LYRIC_TEXT_SIMILARITY) {
+  const hits = [];
+  for (let segmentOffset = 0; segmentOffset < segments.length; segmentOffset += 1) {
+    const segment = segments[segmentOffset];
+    const sourceText = compactString(segment?.text);
+    if (!sourceText) continue;
+
+    let bestLyricIndex = -1;
+    let bestSimilarity = 0;
+    let bestLyric = '';
+
+    for (let lyricIndex = 0; lyricIndex < matchedLyrics.length; lyricIndex += 1) {
+      const lyric = matchedLyrics[lyricIndex];
+      const similarity = lexicalSimilarity(sourceText, lyric);
+      if (similarity > bestSimilarity) {
+        bestSimilarity = similarity;
+        bestLyricIndex = lyricIndex;
+        bestLyric = lyric;
+      }
+    }
+
+    if (bestLyricIndex < 0 || bestSimilarity < minSimilarity) continue;
+
+    hits.push({
+      segmentOffset,
+      segmentOrderIndex: getSegmentOrderIndex(segment, segmentOffset),
+      lyricIndex: bestLyricIndex,
+      lyric: bestLyric,
+      similarity: Number(bestSimilarity.toFixed(4))
+    });
+  }
+
+  const firstOccurrenceHits = [];
+  const seenLyricIndexes = new Set();
+  for (const hit of hits) {
+    if (seenLyricIndexes.has(hit.lyricIndex)) continue;
+    seenLyricIndexes.add(hit.lyricIndex);
+    firstOccurrenceHits.push(hit);
+  }
+
+  const firstOccurrenceIndexes = firstOccurrenceHits.map((hit) => hit.lyricIndex);
+
+  const longestNonDecreasingSubsequenceLength = (() => {
+    if (firstOccurrenceIndexes.length === 0) return 0;
+    const dp = new Array(firstOccurrenceIndexes.length).fill(1);
+    let best = 1;
+    for (let i = 1; i < firstOccurrenceIndexes.length; i += 1) {
+      for (let j = 0; j < i; j += 1) {
+        if (firstOccurrenceIndexes[i] >= firstOccurrenceIndexes[j]) {
+          dp[i] = Math.max(dp[i], dp[j] + 1);
+        }
+      }
+      best = Math.max(best, dp[i]);
+    }
+    return best;
+  })();
+
+  const minimumStrongSubsequenceLength = Math.max(2, firstOccurrenceIndexes.length - 1);
+  const hasStrongSubsequenceOrder =
+    firstOccurrenceIndexes.length < 2 ||
+    longestNonDecreasingSubsequenceLength >= minimumStrongSubsequenceLength;
+
+  return {
+    hits,
+    firstOccurrenceHits,
+    hasLyricTextEvidence: hits.length >= 1,
+    hasIndexOrderEvidence: hasStrongSubsequenceOrder,
+    hitOrderIndexes: hits.map((hit) => hit.segmentOrderIndex)
+  };
+}
+
+function buildRecognitionGate(musicVocalsData, musicData, dialogueData) {
   const recognizedSong = musicVocalsData?.recognizedSong;
   const candidates = Array.isArray(recognizedSong?.candidates) ? recognizedSong.candidates : [];
   const primaryCandidate = candidates.length === 1 ? candidates[0] : null;
   const matchedLyrics = Array.isArray(primaryCandidate?.matchedLyrics)
     ? primaryCandidate.matchedLyrics.map((entry) => compactString(entry)).filter(Boolean)
     : [];
-  const timeRanges = Array.isArray(primaryCandidate?.timeRanges)
-    ? primaryCandidate.timeRanges.filter((range) => Number.isFinite(parseFiniteNumber(range?.start)) && Number.isFinite(parseFiniteNumber(range?.end)))
-    : [];
   const vocalSegments = Array.isArray(musicVocalsData?.vocal_segments) ? musicVocalsData.vocal_segments : [];
+  const dialogueSegments = Array.isArray(dialogueData?.dialogue_segments) ? dialogueData.dialogue_segments : [];
   const supportingMusicRecognizedSong = musicData?.recognizedSong || null;
+
+  const vocalLyricEvidence = buildLyricEvidence(vocalSegments, matchedLyrics, MIN_GATE_LYRIC_TEXT_SIMILARITY);
+  const dialogueLyricEvidence = buildLyricEvidence(dialogueSegments, matchedLyrics, MIN_DIALOGUE_LYRIC_SIMILARITY);
+
+  const hasSupportingMusicConsensus = (() => {
+    if (!supportingMusicRecognizedSong) return true;
+    if (supportingMusicRecognizedSong.status !== 'recognized') return false;
+    const supportConfidence = Number(supportingMusicRecognizedSong.confidence);
+    return Number.isFinite(supportConfidence) ? supportConfidence >= 0.7 : true;
+  })();
+
+  const hasStrongDialogueVocalsEvidence =
+    vocalLyricEvidence.hasLyricTextEvidence &&
+    vocalLyricEvidence.hasIndexOrderEvidence &&
+    dialogueLyricEvidence.hasLyricTextEvidence &&
+    dialogueLyricEvidence.hasIndexOrderEvidence;
+
+  const requiresSupportingMusicConsensus = !hasStrongDialogueVocalsEvidence;
 
   const gateChecks = {
     statusRecognized: recognizedSong?.status === 'recognized',
@@ -400,8 +476,7 @@ function buildRecognitionGate(musicVocalsData, musicData) {
     singlePrimaryCandidate: candidates.length === 1,
     multipleSongsAbsent: recognizedSong?.multipleSongsDetected !== true,
     sufficientMatchedLyrics: matchedLyrics.length >= 2,
-    hasTimeRanges: timeRanges.length >= 1,
-    overlapsVocalSegments: timeRanges.some((range) => overlapsStrongly(range, vocalSegments))
+    hasSupportingMusicConsensus: !requiresSupportingMusicConsensus || hasSupportingMusicConsensus
   };
 
   const reasons = Object.entries(gateChecks)
@@ -414,20 +489,24 @@ function buildRecognitionGate(musicVocalsData, musicData) {
     recognizedSong: recognizedSong || null,
     primaryCandidate,
     matchedLyrics,
-    timeRanges,
-    supportingMusicRecognizedSong
+    supportingMusicRecognizedSong,
+    evidence: {
+      vocalLyricEvidence,
+      dialogueLyricEvidence,
+      hasStrongDialogueVocalsEvidence,
+      requiresSupportingMusicConsensus,
+      hasSupportingMusicConsensus
+    }
   };
 }
 
 function reconcileDialogue(dialogueData, gate, musicVocalsData) {
   const dialogueSegments = Array.isArray(dialogueData?.dialogue_segments) ? dialogueData.dialogue_segments : [];
   const vocalSegments = Array.isArray(musicVocalsData?.vocal_segments) ? musicVocalsData.vocal_segments : [];
-  const overlapTargets = [...gate.timeRanges, ...vocalSegments];
+  const vocalEvidenceIndexes = new Set(gate?.evidence?.vocalLyricEvidence?.hitOrderIndexes || []);
   const removedSegments = [];
 
   const reconciledSegments = dialogueSegments.filter((segment, index) => {
-    if (!overlapsStrongly(segment, overlapTargets)) return true;
-
     const bestMatch = chooseBestLyricMatch(segment?.text, gate.matchedLyrics);
     if (!bestMatch || bestMatch.similarity < MIN_DIALOGUE_LYRIC_SIMILARITY) return true;
 
@@ -436,14 +515,32 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
     if (!lowConfidence && !isShortOrRefrainLike(segment)) return true;
     if (hasStrongSpokenSignal(dialogueSegments, index)) return true;
 
+    const dialogueOrderIndex = getSegmentOrderIndex(segment, index);
+    const hasNearbyVocalIndexEvidence = Array.from(vocalEvidenceIndexes).some(
+      (orderIndex) => Math.abs(orderIndex - dialogueOrderIndex) <= MIN_DIALOGUE_INDEX_PROXIMITY
+    );
+
+    const bestVocalMatch = chooseBestLyricMatch(
+      segment?.text,
+      vocalSegments.map((entry) => compactString(entry?.text)).filter(Boolean)
+    );
+    const hasDirectVocalTextSupport = bestVocalMatch && bestVocalMatch.similarity >= MIN_GATE_LYRIC_TEXT_SIMILARITY;
+
+    if (!hasNearbyVocalIndexEvidence && !hasDirectVocalTextSupport && vocalEvidenceIndexes.size > 0) {
+      return true;
+    }
+
     removedSegments.push({
       index,
-      start: segment?.start ?? null,
-      end: segment?.end ?? null,
+      indexOrder: dialogueOrderIndex,
       text: compactString(segment?.text),
       confidence: Number.isFinite(confidence) ? confidence : null,
       matchedLyric: bestMatch.lyric,
       similarity: Number(bestMatch.similarity.toFixed(4)),
+      evidence: {
+        nearbyVocalIndexEvidence: hasNearbyVocalIndexEvidence,
+        directVocalTextSupport: Boolean(hasDirectVocalTextSupport)
+      },
       reason: 'likely_lyric_contamination'
     });
     return false;
@@ -466,10 +563,6 @@ function reconcileMusicVocals(musicVocalsData, gate) {
 
   for (let index = 0; index < vocalSegments.length; index += 1) {
     const segment = vocalSegments[index];
-    if (!overlapsStrongly(segment, gate.timeRanges)) {
-      skippedCorrections.push({ index, reason: 'outside_recognized_song_range' });
-      continue;
-    }
 
     const confidence = Number(segment?.confidence);
     if (!Number.isFinite(confidence) || confidence < MIN_CORRECTION_CONFIDENCE) {
@@ -581,7 +674,7 @@ async function run(input) {
     throw new Error('reconcile-famous-song-phase1 requires dialogueData, musicData, and musicVocalsData artifacts.');
   }
 
-  const gate = buildRecognitionGate(musicVocalsData, musicData);
+  const gate = buildRecognitionGate(musicVocalsData, musicData, dialogueData);
   const dialogueResult = gate.passed
     ? reconcileDialogue(dialogueData, gate, musicVocalsData)
     : { reconciledData: cloneJson(dialogueData), removedSegments: [] };
@@ -589,27 +682,36 @@ async function run(input) {
     ? reconcileMusicVocals(musicVocalsData, gate)
     : { reconciledData: cloneJson(musicVocalsData), corrections: [], skippedCorrections: gate.reasons.map((reason) => ({ reason })) };
 
+  const strippedDialogueData = stripLaneTiming(dialogueResult.reconciledData, 'dialogue_segments');
+  const strippedMusicVocalsData = stripLaneTiming(musicVocalsResult.reconciledData, 'vocal_segments');
+
   const ledger = buildLedger({
     outputDir,
     gate,
-    dialogueResult,
-    musicVocalsResult
+    dialogueResult: {
+      ...dialogueResult,
+      reconciledData: strippedDialogueData
+    },
+    musicVocalsResult: {
+      ...musicVocalsResult,
+      reconciledData: strippedMusicVocalsData
+    }
   });
 
   const dialogueReconciledPath = getReconciledArtifactPath(outputDir, 'dialogueData');
   const musicVocalsReconciledPath = getReconciledArtifactPath(outputDir, 'musicVocalsData');
   const ledgerPath = getReconciledArtifactPath(outputDir, 'famousSongReconciliation');
 
-  fs.writeFileSync(dialogueReconciledPath, JSON.stringify(dialogueResult.reconciledData, null, 2), 'utf8');
-  fs.writeFileSync(musicVocalsReconciledPath, JSON.stringify(musicVocalsResult.reconciledData, null, 2), 'utf8');
+  fs.writeFileSync(dialogueReconciledPath, JSON.stringify(strippedDialogueData, null, 2), 'utf8');
+  fs.writeFileSync(musicVocalsReconciledPath, JSON.stringify(strippedMusicVocalsData, null, 2), 'utf8');
   fs.writeFileSync(ledgerPath, JSON.stringify(ledger, null, 2), 'utf8');
 
   return {
     primaryArtifactKey: 'famousSongReconciliation',
     artifacts: {
-      dialogueData: dialogueResult.reconciledData,
+      dialogueData: strippedDialogueData,
       musicData,
-      musicVocalsData: musicVocalsResult.reconciledData,
+      musicVocalsData: strippedMusicVocalsData,
       famousSongReconciliation: ledger
     }
   };
@@ -625,7 +727,8 @@ module.exports = {
     reconcileDialogue,
     reconcileMusicVocals,
     chooseBestLyricMatch,
-    overlapsStrongly,
+    buildLyricEvidence,
+    getSegmentOrderIndex,
     hasStrongPhraseAnchor,
     withinNearMissTokenDelta,
     assessTruncationRisk,

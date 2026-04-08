@@ -546,7 +546,7 @@ test('Video Chunks Script', async (t) => {
       is(analyzeCalls[0].videoContext.chunkPath.endsWith('chunk-0.mp4'), true);
     });
 
-    await tNested.test('passes trailer-wide music summary plus chunk-overlapping music segments into the emotion lane', async () => {
+    await tNested.test('passes full global music context (not overlap-filtered chunk cues) into the emotion lane', async () => {
       await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
@@ -577,8 +577,115 @@ test('Video Chunks Script', async (t) => {
 
       is(analyzeCalls.length > 0, true);
       ok(String(analyzeCalls[0].basePrompt).includes('Music summary: Trailer-wide music stays tense and cinematic.'));
-      ok(String(analyzeCalls[0].basePrompt).includes('Music details: Opening pulse'));
-      ok(!String(analyzeCalls[0].basePrompt).includes('Escalates into pounding percussion'));
+      ok(String(analyzeCalls[0].basePrompt).includes('Music details: Opening pulse | Escalates into pounding percussion'));
+    });
+
+    await tNested.test('passes global music-vocals context into the emotion lane', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {
+          musicVocalsData: {
+            summary: 'Lyric-bearing cues recur in a chant pattern.',
+            vocal_segments: [
+              { index: 0, performer: 'Vocal Lead', text: 'Obey your master' },
+              { index: 1, performer: 'Vocal Lead', text: 'Master, master' }
+            ]
+          }
+        },
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+          },
+          settings: { max_chunks: 1 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          }
+        }
+      });
+
+      is(promptBuildInputs.length > 0, true);
+      is(promptBuildInputs[0].musicVocalsContext.summary, 'Lyric-bearing cues recur in a chant pattern.');
+      is(Array.isArray(promptBuildInputs[0].musicVocalsContext.segments), true);
+      is(promptBuildInputs[0].musicVocalsContext.segments.length, 2);
+      is(promptBuildInputs[0].musicVocalsContext.segments[0].text, 'Obey your master');
+    });
+
+    await tNested.test('uses one canonical lane artifact (reconciled preferred over raw/final) for chunk prompt context', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {
+          musicDataReconciled: {
+            summary: 'RECONCILED summary',
+            segments: [{ description: 'RECONCILED segment' }]
+          },
+          musicData: {
+            summary: 'RAW summary',
+            segments: [{ description: 'RAW segment' }]
+          },
+          musicDataFinal: {
+            summary: 'FINAL summary',
+            segments: [{ description: 'FINAL segment' }]
+          }
+        },
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+          },
+          settings: { max_chunks: 1 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          }
+        }
+      });
+
+      is(promptBuildInputs.length > 0, true);
+      is(promptBuildInputs[0].musicContext.summary, 'RECONCILED summary');
+      is(promptBuildInputs[0].musicContext.segments.length, 1);
+      is(promptBuildInputs[0].musicContext.segments[0].description, 'RECONCILED segment');
+    });
+
+    await tNested.test('falls back to lane final artifact when reconciled/raw are unavailable', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {
+          musicVocalsDataFinal: {
+            summary: 'FINAL vocals summary',
+            vocal_segments: [{ index: 0, performer: 'Vocal Lead', text: 'FINAL vocal segment' }]
+          }
+        },
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+          },
+          settings: { max_chunks: 1 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          }
+        }
+      });
+
+      is(promptBuildInputs.length > 0, true);
+      is(promptBuildInputs[0].musicVocalsContext.summary, 'FINAL vocals summary');
+      is(promptBuildInputs[0].musicVocalsContext.segments.length, 1);
+      is(promptBuildInputs[0].musicVocalsContext.segments[0].text, 'FINAL vocal segment');
     });
 
     await tNested.test('passes grounded speaker profiles into the emotion lane alongside dialogue segments', async () => {

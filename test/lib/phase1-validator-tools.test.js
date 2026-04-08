@@ -75,12 +75,14 @@ test('music vocals validator accepts optional famous-song grounding with lyric e
   const contract = buildMusicVocalsValidatorToolContract();
   assert.match(contract.description, /music-vocals JSON candidate/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /recognizedSong/i);
-  assert.match(contract.inputSchema.properties.musicVocals.description, /full lyric-bearing timeline coverage/i);
+  assert.match(contract.inputSchema.properties.musicVocals.description, /chronology by index\/order first/i);
+  assert.match(contract.inputSchema.properties.musicVocals.description, /array order\/index is the truthful chronology signal for this lane/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /whole-asset context plus any high-confidence recognizedSong match as bounded recall scaffolding during chunk refinement/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /repeated hooks and reprises as distinct segments/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /prefer short literal fragments over polished wrong lyric variants when support is partial/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /hybrid for truly inseparable mixed delivery/i);
   assert.match(contract.inputSchema.properties.musicVocals.description, /Spoken dialogue over score is not lyric evidence/i);
+  assert.doesNotMatch(contract.inputSchema.properties.musicVocals.description, /timestamps optional/i);
 
   const result = executeMusicVocalsValidatorTool({
     musicVocals: {
@@ -122,6 +124,28 @@ test('music vocals validator accepts optional famous-song grounding with lyric e
   assert.equal(result.normalizedValue.vocal_segments[0].delivery, 'sung');
 });
 
+test('music vocals validator accepts index-only chronology without per-segment timing', () => {
+  const result = executeMusicVocalsValidatorTool({
+    musicVocals: {
+      rollingSummary: 'A repeated lyric refrain dominates the cue.',
+      vocalSummary: 'A repeated refrain is audible.',
+      vocal_segments: [
+        {
+          index: 0,
+          text: 'Master of puppets',
+          confidence: 0.92,
+          delivery: 'sung'
+        }
+      ]
+    }
+  });
+
+  assert.equal(result.valid, true);
+  assert.equal(result.normalizedValue.vocal_segments[0].index, 0);
+  assert.equal(Object.prototype.hasOwnProperty.call(result.normalizedValue.vocal_segments[0], 'start'), false);
+  assert.equal(Object.prototype.hasOwnProperty.call(result.normalizedValue.vocal_segments[0], 'end'), false);
+});
+
 test('dialogue transcription validator tool enforces required handoff fields', () => {
   const result = executeDialogueTranscriptionValidatorTool({
     transcription: {
@@ -135,6 +159,23 @@ test('dialogue transcription validator tool enforces required handoff fields', (
 
   assert.equal(result.valid, false);
   assert.match(result.summary, /handoffContext/i);
+});
+
+test('dialogue transcription validator accepts index-only chronology without totalDuration', () => {
+  const result = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { index: 0, speaker: 'Speaker 1', text: 'Hello', confidence: 0.9 },
+        { index: 1, speaker: 'Speaker 1', text: 'Again', confidence: 0.88 }
+      ],
+      summary: 'Chunk summary'
+    }
+  });
+
+  assert.equal(result.valid, true);
+  assert.equal(result.normalizedValue.dialogue_segments[0].index, 0);
+  assert.equal(result.normalizedValue.dialogue_segments[1].index, 1);
+  assert.equal(Object.prototype.hasOwnProperty.call(result.normalizedValue, 'totalDuration'), false);
 });
 
 test('dialogue transcription validator normalizes grounded speaker linkage and inferred traits shape', () => {

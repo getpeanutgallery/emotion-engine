@@ -117,6 +117,27 @@ test('Config Loader - loadConfig', async (t) => {
     assert(config.asset?.inputPath, 'config.asset.inputPath should exist');
     assert(config.asset?.outputDir, 'config.asset.outputDir should exist');
   });
+
+  await t.test('should keep cod-test process lane on whole-video-mimo', async () => {
+    const repoRoot = path.resolve(__dirname, '..', '..');
+    const configPath = path.join(repoRoot, 'configs', 'cod-test.yaml');
+    const config = await loadConfig(configPath);
+
+    assert.deepStrictEqual(config.process, ['server/scripts/process/whole-video-mimo.cjs']);
+  });
+
+  await t.test('should keep cod-test benchmark manifest aligned to whole-video process lane', async () => {
+    const repoRoot = path.resolve(__dirname, '..', '..');
+    const configPath = path.join(repoRoot, 'configs', 'cod-test.yaml');
+    const config = await loadConfig(configPath);
+    const benchmarkPath = path.resolve(path.dirname(configPath), config.benchmark.path);
+    const benchmark = JSON.parse(fs.readFileSync(benchmarkPath, 'utf8'));
+    const artifactKeys = benchmark.artifacts.map((artifact) => artifact.artifactKey);
+
+    assert(!artifactKeys.includes('chunkAnalysis'));
+    assert(artifactKeys.includes('metricsData'));
+    assert(artifactKeys.includes('emotionalAnalysisData'));
+  });
   
   await t.test('should load JSON config file', async () => {
     const configPath = path.join(__dirname, 'fixtures', 'valid-config.json');

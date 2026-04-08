@@ -322,6 +322,76 @@ test('Get Dialogue Script', async (t) => {
       });
     });
 
+    tNested.test('preserves untimed whole-asset dialogue segments through final artifacts', async () => {
+      completeImplementation = async (options) => {
+        const prompt = String(options?.prompt || '');
+        completionPrompts.push(prompt);
+        completionOptions.push(options || {});
+
+        return {
+          content: JSON.stringify({
+            dialogue_segments: [
+              {
+                speaker: 'Speaker 1',
+                speaker_id: 'spk_001',
+                text: 'They want you afraid.',
+                confidence: 0.93
+              },
+              {
+                speaker: 'Speaker 2',
+                speaker_id: 'spk_002',
+                text: "Fear makes you easier to control.",
+                confidence: 0.9
+              }
+            ],
+            speaker_profiles: [
+              {
+                speaker_id: 'spk_001',
+                label: 'Speaker 1',
+                grounded: {
+                  confidence: 0.84,
+                  linked_segment_indexes: [0],
+                  acoustic_descriptors: []
+                },
+                inferred_traits: { traits: [] }
+              },
+              {
+                speaker_id: 'spk_002',
+                label: 'Speaker 2',
+                grounded: {
+                  confidence: 0.79,
+                  linked_segment_indexes: [1],
+                  acoustic_descriptors: []
+                },
+                inferred_traits: { traits: [] }
+              }
+            ],
+            summary: 'Untimed transcript survived.',
+            totalDuration: 10.0
+          }),
+          usage: { input: 100, output: 150 }
+        };
+      };
+
+      const result = await getDialogueScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        config: makeDialogueConfig()
+      });
+
+      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ index, speaker_id, text }) => ({ index, speaker_id, text })), [
+        { index: 0, speaker_id: 'spk_001', text: 'They want you afraid.' },
+        { index: 1, speaker_id: 'spk_002', text: 'Fear makes you easier to control.' }
+      ]);
+      assert.deepEqual(result.artifacts.dialogueData.coverage, {
+        start: 0,
+        end: 0,
+        duration: 0,
+        complete: false
+      });
+      ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => !Object.prototype.hasOwnProperty.call(segment, 'start') && !Object.prototype.hasOwnProperty.call(segment, 'end')));
+    });
+
     tNested.test('keeps shorter model-reported whole-asset duration instead of inflating it to the source runtime', async () => {
       completeImplementation = async (options) => {
         const prompt = String(options?.prompt || '');
@@ -881,15 +951,15 @@ test('Get Dialogue Script', async (t) => {
       });
 
       is(result.artifacts.dialogueData.totalDuration, 10);
-      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ speaker_id, start, end, text }) => ({
+      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ index, speaker_id, text }) => ({
+        index,
         speaker_id,
-        start: Number(start.toFixed(4)),
-        end: Number(end.toFixed(4)),
         text
       })), [
-        { speaker_id: 'spk_001', start: 8.3, end: 8.9, text: 'Mid-late line' },
-        { speaker_id: 'spk_002', start: 9.2, end: 10, text: 'Recovered tail line' }
+        { index: 0, speaker_id: 'spk_001', text: 'Mid-late line' },
+        { index: 1, speaker_id: 'spk_002', text: 'Recovered tail line' }
       ]);
+      ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => !Object.prototype.hasOwnProperty.call(segment, 'start') && !Object.prototype.hasOwnProperty.call(segment, 'end')));
       assert.deepEqual(result.artifacts.dialogueData.speaker_profiles.map((profile) => ({
         speaker_id: profile.speaker_id,
         linked_segment_indexes: profile.grounded.linked_segment_indexes
@@ -955,11 +1025,11 @@ test('Get Dialogue Script', async (t) => {
 
       const result = await getDialogueScript.run(input);
       is(result.artifacts.dialogueData.totalDuration, 10);
-      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ start, end, text }) => ({ start, end, text })), [
-        { start: 8.5, end: 10, text: 'Late line' }
+      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ index, text }) => ({ index, text })), [
+        { index: 0, text: 'Late line' }
       ]);
       assert.deepEqual(result.artifacts.dialogueData.speaker_profiles[0].grounded.linked_segment_indexes, [0]);
-      ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => segment.start >= 0 && segment.end <= 10 && segment.end > segment.start));
+      ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => !Object.prototype.hasOwnProperty.call(segment, 'start') && !Object.prototype.hasOwnProperty.call(segment, 'end')));
     });
 
     tNested.test('drops a tail segment when clamping would leave an implausibly tiny spoken window', async () => {
@@ -1027,14 +1097,14 @@ test('Get Dialogue Script', async (t) => {
       });
 
       is(result.artifacts.dialogueData.totalDuration, 10);
-      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ speaker_id, start, end, text }) => ({ speaker_id, start, end, text })), [
+      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ index, speaker_id, text }) => ({ index, speaker_id, text })), [
         {
+          index: 0,
           speaker_id: 'spk_001',
-          start: 8,
-          end: 9.5,
           text: 'Pull it together, man!'
         }
       ]);
+      ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => !Object.prototype.hasOwnProperty.call(segment, 'start') && !Object.prototype.hasOwnProperty.call(segment, 'end')));
       assert.deepEqual(result.artifacts.dialogueData.speaker_profiles.map((profile) => ({
         speaker_id: profile.speaker_id,
         linked_segment_indexes: profile.grounded.linked_segment_indexes
@@ -1152,7 +1222,7 @@ test('Get Dialogue Script', async (t) => {
       const result = await getDialogueScript.run(input);
       is(result.artifacts.dialogueData.totalDuration, 10);
       ok(result.artifacts.dialogueData.dialogue_segments.length >= 1);
-      ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => segment.start >= 0 && segment.end <= 10 && segment.end > segment.start));
+      ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => !Object.prototype.hasOwnProperty.call(segment, 'start') && !Object.prototype.hasOwnProperty.call(segment, 'end')));
       ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => segment.text !== 'Chunk impossible overrun'));
       ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.text === 'Chunk tail'));
       is(result.artifacts.dialogueData.speaker_profiles[0].grounded.acoustic_descriptors[0].label, 'steady, resolute delivery');
@@ -1280,14 +1350,14 @@ test('Get Dialogue Script', async (t) => {
         }
       });
 
-      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ speaker_id, start, end, text }) => ({ speaker_id, start, end, text })), [
+      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ index, speaker_id, text }) => ({ index, speaker_id, text })), [
         {
+          index: 0,
           speaker_id: 'spk_003',
-          start: 1.2,
-          end: 6.3,
           text: 'Raul Menendez ignited global unrest on an unprecedented scale.'
         }
       ]);
+      ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => !Object.prototype.hasOwnProperty.call(segment, 'start') && !Object.prototype.hasOwnProperty.call(segment, 'end')));
       assert.deepEqual(result.artifacts.dialogueData.speaker_profiles.map((profile) => ({
         speaker_id: profile.speaker_id,
         linked_segment_indexes: profile.grounded.linked_segment_indexes
@@ -1417,14 +1487,14 @@ test('Get Dialogue Script', async (t) => {
         }
       });
 
-      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ speaker_id, start, end, text }) => ({ speaker_id, start, end, text })), [
+      assert.deepEqual(result.artifacts.dialogueData.dialogue_segments.map(({ index, speaker_id, text }) => ({ index, speaker_id, text })), [
         {
+          index: 0,
           speaker_id: 'spk_003',
-          start: 1.2,
-          end: 6.3,
           text: 'Raul Menendez ignited global unrest and on an unprecedented scale.'
         }
       ]);
+      ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => !Object.prototype.hasOwnProperty.call(segment, 'start') && !Object.prototype.hasOwnProperty.call(segment, 'end')));
     });
 
     tNested.test('forces chunking for long within-budget dialogue to stabilize timing', async () => {
@@ -1510,7 +1580,7 @@ test('Get Dialogue Script', async (t) => {
       ok(chunkCallCount >= 2);
       ok(completionPrompts.some((prompt) => prompt.includes('You are transcribing CHUNK 0')));
       ok(completionPrompts.some((prompt) => prompt.includes('Opening provenance mode: this chunk falls inside the first')));
-      ok(completionPrompts.some((prompt) => prompt.includes('Spread timestamps across the actual chunk timeline where lines occur')));
+      ok(completionPrompts.some((prompt) => prompt.includes('Preserve utterance ordering faithfully; do not compress late dialogue into early entries or reshuffle chronology.')));
       ok(completionPrompts.some((prompt) => prompt.includes('Previous chunk handoff (reference only, not transcript continuation):')));
       ok(completionPrompts.some((prompt) => prompt.includes('create a new speaker_id instead of forcing continuity')));
       ok(completionPrompts.some((prompt) => prompt.includes('Speaker continuity is acoustic, not semantic')));
@@ -1518,9 +1588,11 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts.some((prompt) => prompt.includes('Do not merge narration, public-address speech, radio/comms chatter, villain speech, promo voiceover, or overlap-heavy blends unless the acoustic match is genuinely strong')));
       ok(completionPrompts.some((prompt) => prompt.includes('In opening montage conditions, prefer local chunk provenance over storyline continuity')));
       ok(completionPrompts.some((prompt) => prompt.includes('Include intelligible spoken dialogue and dialogue-like vocal material.')));
-      ok(completionPrompts.some((prompt) => prompt.includes('If a segment mixes spoken content with music-led vocalization, keep the intelligible dialogue-like portion that is supportable from the audio.')));
+      ok(completionPrompts.some((prompt) => prompt.includes('Do not drop or trim intelligible words merely because musical score is present underneath, the delivery has melodic contour, or the phrase might also resemble lyrics.')));
+      ok(completionPrompts.some((prompt) => prompt.includes('If classification is ambiguous, preserve the line and express uncertainty through conservative confidence rather than suppressing it.')));
       is(result.artifacts.dialogueData.totalDuration, 10);
-      ok(result.artifacts.dialogueData.dialogue_segments.some((segment) => segment.start >= 4));
+      ok(result.artifacts.dialogueData.dialogue_segments.every((segment, index) => segment.index === index));
+      ok(result.artifacts.dialogueData.dialogue_segments.every((segment) => !Object.prototype.hasOwnProperty.call(segment, 'start') && !Object.prototype.hasOwnProperty.call(segment, 'end')));
     });
 
   });
@@ -1546,7 +1618,7 @@ test('Get Dialogue Script', async (t) => {
   });
 
   t.test('output structure', (tNested) => {
-    tNested.test('dialogue segment has required fields', async () => {
+    tNested.test('dialogue segment preserves index chronology and core fields', async () => {
       const input = {
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
@@ -1554,27 +1626,15 @@ test('Get Dialogue Script', async (t) => {
       };
       const result = await getDialogueScript.run(input);
       const segment = result.artifacts.dialogueData.dialogue_segments[0];
-      property(segment, 'start');
-      property(segment, 'end');
       property(segment, 'speaker');
       property(segment, 'speaker_id');
       property(segment, 'index');
       property(segment, 'text');
       property(segment, 'confidence');
-    });
-
-    tNested.test('segment timestamps are numbers', async () => {
-      const input = {
-        assetPath: '/path/to/test-video.mp4',
-        outputDir: testOutputDir,
-        config: makeDialogueConfig()
-      };
-      const result = await getDialogueScript.run(input);
-      const segment = result.artifacts.dialogueData.dialogue_segments[0];
-      is(typeof segment.start, 'number');
-      is(typeof segment.end, 'number');
       is(typeof segment.index, 'number');
       is(segment.index, 0);
+      ok(!Object.prototype.hasOwnProperty.call(segment, 'start'));
+      ok(!Object.prototype.hasOwnProperty.call(segment, 'end'));
     });
 
     tNested.test('confidence is between 0 and 1', async () => {
@@ -1631,16 +1691,17 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts[0].includes('Before reusing a speaker_id, compare voice quality, timbre, delivery mode, recording texture, apparent age range, gender presentation, and accent/dialect impression'));
       ok(completionPrompts[0].includes('Do not collapse narration, public-address speech, expository/briefing delivery, radio/comms chatter, villain speech, promo voiceover, or overlap-heavy blends into one speaker bucket unless the acoustic match is genuinely strong'));
       ok(completionPrompts[0].includes('Include intelligible spoken dialogue'));
-      ok(completionPrompts[0].includes('Exclude clearly lyric-led, melody-led, or predominantly musical vocal passages when they do not plausibly function as dialogue.'));
-      ok(completionPrompts[0].includes('If a segment mixes spoken content with music-led vocalization, keep the intelligible dialogue-like portion that is supportable from the audio.'));
+      ok(completionPrompts[0].includes('Do not drop or trim intelligible words merely because musical score is present underneath, the delivery has melodic contour, or the phrase might also resemble lyrics.'));
+      ok(completionPrompts[0].includes('If classification is ambiguous, preserve the line and express uncertainty through conservative confidence rather than suppressing it.'));
+      ok(completionPrompts[0].includes('Reconciliation happens later; do not act as the final filter for whether a retained speech-like phrase should be stripped as lyric-only material.'));
       ok(completionPrompts[0].includes('Do not use the summary to justify dropping ambiguous dialogue-like vocals early.'));
       ok(completionPrompts[0].includes('When speech is partially masked, clipped, distant, distorted, or overlapped, prefer a short literal fragment of what is actually audible'));
       ok(completionPrompts[0].includes('Do not smooth a damaged line into a cleaner full sentence'));
       ok(completionPrompts[0].includes('Do not bridge across silence, music-only gaps, or non-vocal stretches to create a cleaner sentence'));
-      ok(completionPrompts[0].includes('Place each captured line where it actually occurs in the timeline; do not pull later lines earlier or compress dialogue into another part of the file'));
+      ok(completionPrompts[0].includes('Preserve utterance ordering from the source audio; do not pull later lines earlier or compress dialogue into earlier entries.'));
       ok(completionPrompts[0].includes('The attached media runtime was measured locally at 10.00 seconds'));
-      ok(completionPrompts[0].includes('Set totalDuration to that full runtime'));
-      ok(completionPrompts[0].includes('Do not shorten totalDuration just because the audible dialogue ends early'));
+      ok(completionPrompts[0].includes('and may include non-dialogue spans'));
+      ok(completionPrompts[0].includes('Preserve dialogue segment order via array order/index chronology. Include start/end timestamps only when they are directly supportable from the audio.'));
       ok(!completionPrompts[0].includes('Raul Menendez or David'));
       ok(!completionPrompts[0].includes('set abstained=true'));
     });

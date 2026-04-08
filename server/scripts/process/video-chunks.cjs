@@ -72,6 +72,25 @@ function isReplayMode() {
   return (process.env.DIGITAL_TWIN_MODE || '').trim().toLowerCase() === 'replay';
 }
 
+function isLaneArtifactObject(candidate) {
+  return Boolean(candidate) && typeof candidate === 'object' && !Array.isArray(candidate);
+}
+
+function selectCanonicalLaneArtifact(artifacts = {}, laneKey, { fallback = {} } = {}) {
+  const candidates = [
+    artifacts?.[`${laneKey}Reconciled`],
+    artifacts?.[laneKey],
+    artifacts?.[`${laneKey}Final`]
+  ].filter(isLaneArtifactObject);
+
+  if (candidates.length === 0) {
+    return fallback;
+  }
+
+  // Keep exactly one canonical artifact per lane (reconciled preferred, then raw, then final).
+  return candidates[0];
+}
+
 function getRetryConfig(config = {}) {
   const retry = config?.ai?.video?.retry || {};
 
@@ -450,9 +469,10 @@ async function run(input) {
   console.log(`      - calculated chunks: ${chunkBoundaries.length}`);
   console.log(`      - processing: ${numChunks} chunks`);
 
-  // Get context from previous phases
-  const dialogueData = artifacts.dialogueData || { dialogue_segments: [], summary: '' };
-  const musicData = artifacts.musicData || { segments: [] };
+  // Get context from previous phases (single canonical artifact per lane: reconciled preferred, raw/final fallback)
+  const dialogueData = selectCanonicalLaneArtifact(artifacts, 'dialogueData', { fallback: { dialogue_segments: [], summary: '' } });
+  const musicData = selectCanonicalLaneArtifact(artifacts, 'musicData', { fallback: { segments: [], summary: '' } });
+  const musicVocalsData = selectCanonicalLaneArtifact(artifacts, 'musicVocalsData', { fallback: { vocal_segments: [], summary: '' } });
 
   const primaryAdapter = getPrimaryVideoAdapter(config);
   const videoModel = primaryAdapter?.model;
@@ -644,11 +664,10 @@ async function run(input) {
           continue;
         }
 
-        // Get relevant dialogue for this chunk
-        const dialogueContext = getRelevantDialogue(dialogueData, splitStartTime, splitEndTime);
-
-        // Get relevant music for this chunk
-        const musicContext = getRelevantMusic(musicData, splitStartTime, splitEndTime);
+        // Use full global lane datasets as support context (chunk media remains authoritative evidence)
+        const dialogueContext = getGlobalDialogueContext(dialogueData);
+        const musicContext = getGlobalMusicContext(musicData);
+        const musicVocalsContext = getGlobalMusicVocalsContext(musicVocalsData);
 
         const chunkLabel = `Chunk ${chunkIndex + 1}${splitIndex > 0 ? `.${splitIndex + 1}` : ''}`;
 
@@ -664,13 +683,20 @@ async function run(input) {
             mimeType: videoTransferConfig.mimeType
           },
           dialogueContext: {
+            summary: typeof dialogueData?.summary === 'string' ? dialogueData.summary : '',
             segments: dialogueContext,
+            totalSegments: Array.isArray(dialogueData?.dialogue_segments) ? dialogueData.dialogue_segments.length : 0,
             speakers: Array.isArray(dialogueData?.speaker_profiles) ? dialogueData.speaker_profiles : []
           },
           musicContext: {
             summary: typeof musicData?.summary === 'string' ? musicData.summary : '',
             segments: musicContext,
             totalSegments: Array.isArray(musicData?.segments) ? musicData.segments.length : 0
+          },
+          musicVocalsContext: {
+            summary: typeof musicVocalsData?.summary === 'string' ? musicVocalsData.summary : '',
+            segments: musicVocalsContext,
+            totalSegments: Array.isArray(musicVocalsData?.vocal_segments) ? musicVocalsData.vocal_segments.length : 0
           },
           previousState: {
             summary: trimPreviousSummary(previousSummary),
@@ -1114,43 +1140,42 @@ async function getVideoDuration(videoPath, rawLogger) {
 }
 
 /**
- * Get relevant dialogue segments for time range
- * 
- * @function getRelevantDialogue
+ * Get global dialogue support context (ordered lane dataset).
+ *
+ * @function getGlobalDialogueContext
  * @param {Object} dialogueData - Dialogue data from get-dialogue.cjs
- * @param {number} startTime - Start time in seconds
- * @param {number} endTime - End time in seconds
- * @returns {Array} - Relevant dialogue segments
+ * @returns {Array}
  */
-function getRelevantDialogue(dialogueData, startTime, endTime) {
-  if (!dialogueData?.dialogue_segments) {
-    return [];
-  }
-
-  return dialogueData.dialogue_segments.filter(seg => {
-    // Check if segment overlaps with chunk time range
-    return seg.start < endTime && seg.end > startTime;
-  });
+function getGlobalDialogueContext(dialogueData) {
+  return Array.isArray(dialogueData?.dialogue_segments)
+    ? dialogueData.dialogue_segments
+    : [];
 }
 
 /**
- * Get relevant music segments for time range
- * 
- * @function getRelevantMusic
+ * Get global music support context (ordered lane dataset).
+ *
+ * @function getGlobalMusicContext
  * @param {Object} musicData - Music data from get-music.cjs
- * @param {number} startTime - Start time in seconds
- * @param {number} endTime - End time in seconds
- * @returns {Array} - Relevant music segments
+ * @returns {Array}
  */
-function getRelevantMusic(musicData, startTime, endTime) {
-  if (!musicData?.segments) {
-    return [];
-  }
+function getGlobalMusicContext(musicData) {
+  return Array.isArray(musicData?.segments)
+    ? musicData.segments
+    : [];
+}
 
-  return musicData.segments.filter(seg => {
-    // Check if segment overlaps with chunk time range
-    return seg.start < endTime && seg.end > startTime;
-  });
+/**
+ * Get global music-vocals support context (ordered lane dataset).
+ *
+ * @function getGlobalMusicVocalsContext
+ * @param {Object} musicVocalsData - Music-vocals data from get-music-vocals.cjs
+ * @returns {Array}
+ */
+function getGlobalMusicVocalsContext(musicVocalsData) {
+  return Array.isArray(musicVocalsData?.vocal_segments)
+    ? musicVocalsData.vocal_segments
+    : [];
 }
 
 module.exports = {

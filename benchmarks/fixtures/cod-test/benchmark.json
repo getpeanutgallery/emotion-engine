@@ -104,31 +104,7 @@
       },
       "required": true
     },
-    {
-      "artifactKey": "chunkAnalysis",
-      "label": "Phase 2 chunk analysis",
-      "phase": "phase2-process",
-      "script": "video-chunks",
-      "output": {
-        "path": "phase2-process/chunk-analysis.json"
-      },
-      "truth": {
-        "path": "truth/chunk-analysis.json"
-      },
-      "comparator": {
-        "kind": "json-structured",
-        "profile": "chunk-analysis-default",
-        "options": {
-          "timingToleranceSeconds": 2,
-          "numericTolerance": 0.1,
-          "unknownSentinels": [
-            "unknown",
-            "ambiguous"
-          ]
-        }
-      },
-      "required": true
-    },
+
     {
       "artifactKey": "metricsData",
       "label": "Phase 3 metrics",

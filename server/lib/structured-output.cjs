@@ -60,6 +60,11 @@ function validateDialogueTimestamp(value, path, label, errors, range = {}) {
   return validateFiniteNumber(value, path, label, errors, range);
 }
 
+function validateOptionalDialogueTimestamp(value, path, label, errors, range = {}) {
+  if (value === undefined || value === null || value === '') return null;
+  return validateDialogueTimestamp(value, path, label, errors, range);
+}
+
 function validateBoolean(value, path, label, errors) {
   if (typeof value !== 'boolean') {
     pushError(errors, path, 'required_boolean', `${label} must be a boolean.`);
@@ -262,9 +267,16 @@ function validateDialogueSegments(segments, errors, path = '$.dialogue_segments'
       validateFiniteNumber(providedIndex, `${itemPath}.index`, 'dialogue segment index', errors, { min: 0 });
     }
 
+    const start = validateOptionalDialogueTimestamp(segment.start, `${itemPath}.start`, 'dialogue segment start', errors, { min: 0 });
+    const end = validateOptionalDialogueTimestamp(segment.end, `${itemPath}.end`, 'dialogue segment end', errors, { min: 0 });
+
+    if (start !== null && end !== null && end <= start) {
+      pushError(errors, itemPath, 'invalid_range', 'dialogue segment end must be greater than start when both timestamps are provided.');
+    }
+
     return {
-      start: validateDialogueTimestamp(segment.start, `${itemPath}.start`, 'dialogue segment start', errors, { min: 0 }) ?? 0,
-      end: validateDialogueTimestamp(segment.end, `${itemPath}.end`, 'dialogue segment end', errors, { min: 0 }) ?? 0,
+      ...(start !== null ? { start } : {}),
+      ...(end !== null ? { end } : {}),
       speaker,
       speaker_id: speaker_id || null,
       text: validateNonEmptyString(segment.text, `${itemPath}.text`, 'dialogue segment text', errors) ?? '',
@@ -621,7 +633,7 @@ function validateDialogueTranscriptionObject(input, { requireHandoff = false } =
   const dialogue_segments = validateDialogueSegments(input.dialogue_segments, errors);
   const speaker_profiles = validateSpeakerProfiles(input.speaker_profiles ?? input.speakerProfiles, errors);
   const summary = validateNonEmptyString(input.summary, '$.summary', 'summary', errors);
-  const totalDuration = validateFiniteNumber(input.totalDuration, '$.totalDuration', 'totalDuration', errors, { min: 0 });
+  const totalDuration = validateOptionalFiniteNumber(input.totalDuration, '$.totalDuration', 'totalDuration', errors, { min: 0 });
   const analysisMode = validateOptionalEnumString(input.analysisMode, DIALOGUE_ANALYSIS_MODES, '$.analysisMode', 'analysisMode', errors);
   const timingMode = validateOptionalEnumString(input.timingMode, DIALOGUE_TIMING_MODES, '$.timingMode', 'timingMode', errors);
   const sourceStrategy = validateOptionalEnumString(input.sourceStrategy, DIALOGUE_SOURCE_STRATEGIES, '$.sourceStrategy', 'sourceStrategy', errors);
@@ -653,7 +665,7 @@ function validateDialogueTranscriptionObject(input, { requireHandoff = false } =
     dialogue_segments: normalizedSpeakerContract.dialogue_segments,
     speaker_profiles: normalizedSpeakerContract.speaker_profiles,
     summary,
-    totalDuration,
+    ...(totalDuration !== null ? { totalDuration } : {}),
     handoffContext: handoffContext || null,
     ...(analysisMode ? { analysisMode } : {}),
     ...(timingMode ? { timingMode } : {}),
@@ -765,9 +777,20 @@ function validateMusicVocalSegments(segments, errors, path = '$.vocal_segments')
       errors
     );
 
+    const providedIndex = segment.index ?? segment.segment_index ?? segment.segmentIndex;
+    if (providedIndex !== undefined && providedIndex !== null) {
+      validateFiniteNumber(providedIndex, `${itemPath}.index`, 'music vocal segment index', errors, { min: 0 });
+    }
+
+    const start = validateOptionalDialogueTimestamp(segment.start, `${itemPath}.start`, 'music vocal segment start', errors, { min: 0 });
+    const end = validateOptionalDialogueTimestamp(segment.end, `${itemPath}.end`, 'music vocal segment end', errors, { min: 0 });
+    if (start !== null && end !== null && end <= start) {
+      pushError(errors, itemPath, 'invalid_range', 'music vocal segment end must be greater than start when both timestamps are provided.');
+    }
+
     return {
-      start: validateDialogueTimestamp(segment.start, `${itemPath}.start`, 'music vocal segment start', errors, { min: 0 }) ?? 0,
-      end: validateDialogueTimestamp(segment.end, `${itemPath}.end`, 'music vocal segment end', errors, { min: 0 }) ?? 0,
+      ...(start !== null ? { start } : {}),
+      ...(end !== null ? { end } : {}),
       text: validateNonEmptyString(segment.text, `${itemPath}.text`, 'music vocal segment text', errors) ?? '',
       confidence: validateFiniteNumber(segment.confidence, `${itemPath}.confidence`, 'music vocal segment confidence', errors, { min: 0, max: 1 }) ?? 0,
       performer: performer || null,
@@ -992,7 +1015,10 @@ function validateMusicVocalsAnalysisObject(input) {
     value: errors.length === 0 ? {
       rollingSummary: rollingSummary || null,
       vocalSummary: vocalSummary || null,
-      vocal_segments,
+      vocal_segments: vocal_segments.map((segment, index) => ({
+        ...segment,
+        index
+      })),
       ...(recognizedSong ? { recognizedSong } : {}),
       ...(recognitionNotes.length > 0 ? { recognitionNotes } : {}),
       qualityNotes

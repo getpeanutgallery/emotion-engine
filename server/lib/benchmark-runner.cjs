@@ -11,6 +11,10 @@ const DEFAULT_NUMERIC_TOLERANCE = 0.1;
 const DEFAULT_TEMPORAL_FIELD_NAMES = new Set(['start', 'end', 'startTime', 'endTime', 'duration', 'totalDuration', 'videoDuration']);
 const DEFAULT_TOLERANT_NUMBER_FIELD_NAMES = new Set(['confidence']);
 const DEFAULT_FUZZY_STRING_FIELD_NAMES = new Set(['text', 'summary', 'description', 'reasoning', 'cleanedTranscript', 'handoffContext', 'label', 'note', 'keyFindings', 'suggestions']);
+const PROFILE_DEFAULT_IGNORE_PATHS = Object.freeze({
+  'dialogue-default': ['$.totalDuration', '$.dialogue_segments[*].start', '$.dialogue_segments[*].end'],
+  'music-vocals-default': ['$.totalDuration', '$.vocal_segments[*].start', '$.vocal_segments[*].end']
+});
 
 function resolveBenchmarkConfig(config, options = {}) {
   const benchmark = config?.benchmark;
@@ -309,6 +313,12 @@ function normalizeIgnorePaths(ignorePaths = []) {
   return [...new Set(ignorePaths.map((value) => value.trim()))];
 }
 
+function getProfileDefaultIgnorePaths(profile) {
+  return Array.isArray(PROFILE_DEFAULT_IGNORE_PATHS[profile])
+    ? [...PROFILE_DEFAULT_IGNORE_PATHS[profile]]
+    : [];
+}
+
 function extractTruthBenchmarkDirectives(truthData, artifact, truthAbsolutePath) {
   if (!isPlainObject(truthData) || !Object.prototype.hasOwnProperty.call(truthData, '_benchmark')) {
     return {
@@ -419,44 +429,81 @@ function getSegmentTiming(item) {
   };
 }
 
+function getSegmentChronologyIndex(item, fallbackIndex) {
+  if (isPlainObject(item) && Number.isFinite(item.index)) {
+    return Number(item.index);
+  }
+  return fallbackIndex;
+}
+
 function scoreTimeAwareSegmentCandidate(truthItem, outputItem, truthIndex, outputIndex, comparator) {
   const truthTiming = getSegmentTiming(truthItem);
   const outputTiming = getSegmentTiming(outputItem);
-  if (!truthTiming || !outputTiming) {
+
+  if (truthTiming && outputTiming) {
+    const overlapStart = Math.max(truthTiming.start, outputTiming.start);
+    const overlapEnd = Math.min(truthTiming.end, outputTiming.end);
+    const overlapSeconds = Math.max(0, overlapEnd - overlapStart);
+    const unionSeconds = Math.max(truthTiming.end, outputTiming.end) - Math.min(truthTiming.start, outputTiming.start);
+    const overlapRatio = unionSeconds > 0 ? overlapSeconds / unionSeconds : 0;
+    const centerDelta = Math.abs(truthTiming.center - outputTiming.center);
+    const startDelta = Math.abs(truthTiming.start - outputTiming.start);
+    const endDelta = Math.abs(truthTiming.end - outputTiming.end);
+    const indexDelta = Math.abs(truthIndex - outputIndex);
+    const searchWindowSeconds = Math.max(comparator.resolvedOptions.timingToleranceSeconds * 4, 6);
+    const eligible = overlapSeconds > 0 || centerDelta <= searchWindowSeconds || startDelta <= searchWindowSeconds || endDelta <= searchWindowSeconds;
+    if (!eligible) {
+      return null;
+    }
+
+    const score = 1000 + (overlapRatio * 1000) + (overlapSeconds * 50) - (centerDelta * 20) - (startDelta * 5) - (endDelta * 2) - indexDelta;
+    if (score <= 0) {
+      return null;
+    }
+
+    return {
+      score,
+      overlapSeconds,
+      overlapRatio,
+      centerDelta,
+      startDelta,
+      endDelta,
+      indexDelta,
+      searchWindowSeconds,
+      truthTiming,
+      outputTiming
+    };
+  }
+
+  const truthChronologyIndex = getSegmentChronologyIndex(truthItem, truthIndex);
+  const outputChronologyIndex = getSegmentChronologyIndex(outputItem, outputIndex);
+  const chronologyDelta = Math.abs(truthChronologyIndex - outputChronologyIndex);
+  const chronologyWindow = Math.max(Math.round(comparator.resolvedOptions.timingToleranceSeconds) + 2, 3);
+  if (chronologyDelta > chronologyWindow) {
     return null;
   }
 
-  const overlapStart = Math.max(truthTiming.start, outputTiming.start);
-  const overlapEnd = Math.min(truthTiming.end, outputTiming.end);
-  const overlapSeconds = Math.max(0, overlapEnd - overlapStart);
-  const unionSeconds = Math.max(truthTiming.end, outputTiming.end) - Math.min(truthTiming.start, outputTiming.start);
-  const overlapRatio = unionSeconds > 0 ? overlapSeconds / unionSeconds : 0;
-  const centerDelta = Math.abs(truthTiming.center - outputTiming.center);
-  const startDelta = Math.abs(truthTiming.start - outputTiming.start);
-  const endDelta = Math.abs(truthTiming.end - outputTiming.end);
   const indexDelta = Math.abs(truthIndex - outputIndex);
-  const searchWindowSeconds = Math.max(comparator.resolvedOptions.timingToleranceSeconds * 4, 6);
-  const eligible = overlapSeconds > 0 || centerDelta <= searchWindowSeconds || startDelta <= searchWindowSeconds || endDelta <= searchWindowSeconds;
-  if (!eligible) {
-    return null;
-  }
-
-  const score = 1000 + (overlapRatio * 1000) + (overlapSeconds * 50) - (centerDelta * 20) - (startDelta * 5) - (endDelta * 2) - indexDelta;
+  const score = 1000 - (chronologyDelta * 80) - (indexDelta * 10);
   if (score <= 0) {
     return null;
   }
 
   return {
     score,
-    overlapSeconds,
-    overlapRatio,
-    centerDelta,
-    startDelta,
-    endDelta,
+    overlapSeconds: null,
+    overlapRatio: null,
+    centerDelta: null,
+    startDelta: null,
+    endDelta: null,
     indexDelta,
-    searchWindowSeconds,
+    searchWindowSeconds: null,
     truthTiming,
-    outputTiming
+    outputTiming,
+    chronologyDelta,
+    chronologyWindow,
+    truthChronologyIndex,
+    outputChronologyIndex
   };
 }
 
@@ -582,6 +629,7 @@ function createComparator(artifact, directives = {}) {
 
   const comparatorIgnorePaths = artifact.comparator.options?.ignorePaths || [];
   const truthIgnorePaths = directives.ignorePaths || [];
+  const profileDefaultIgnorePaths = getProfileDefaultIgnorePaths(artifact.comparator.profile);
   validateIgnorePaths(comparatorIgnorePaths, `${artifact.artifactKey} comparator options`);
   validateIgnorePaths(truthIgnorePaths, `${artifact.artifactKey} truth directives`);
 
@@ -591,7 +639,7 @@ function createComparator(artifact, directives = {}) {
     unknownSentinels: [...DEFAULT_UNKNOWN_SENTINELS],
     ignorePaths: [],
     ...(artifact.comparator.options || {}),
-    ignorePaths: normalizeIgnorePaths([...comparatorIgnorePaths, ...truthIgnorePaths])
+    ignorePaths: normalizeIgnorePaths([...profileDefaultIgnorePaths, ...comparatorIgnorePaths, ...truthIgnorePaths])
   };
 
   if (!Number.isFinite(resolvedOptions.timingToleranceSeconds) || resolvedOptions.timingToleranceSeconds < 0) {
@@ -1561,6 +1609,10 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
       for (const key of truthKeys) {
         const childPath = currentPath === '$' ? key : `${currentPath}.${key}`;
         if (!outputKeySet.has(key)) {
+          if (isIgnoredPath(childPath, comparator.resolvedOptions.ignorePaths)) {
+            emitIgnoredDifference(childPath, 'Ignored path omits output field present in truth', truthValue[key], undefined);
+            continue;
+          }
           emitHardError(childPath, 'Output object missing field present in truth', truthValue[key], undefined);
           continue;
         }

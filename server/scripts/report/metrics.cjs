@@ -33,12 +33,18 @@ async function run(input) {
   fs.mkdirSync(outputDir, { recursive: true });
 
   const {
-    chunkAnalysis = { chunks: [], totalTokens: 0, videoDuration: 0 }
+    chunkAnalysis = { chunks: [], totalTokens: 0, videoDuration: 0 },
+    wholeVideoAnalysis = null
   } = artifacts;
+
+  const hasWholeVideoAnalysis = Boolean(wholeVideoAnalysis && typeof wholeVideoAnalysis === 'object' && !Array.isArray(wholeVideoAnalysis));
+  const chunkVideoDuration = Number.isFinite(chunkAnalysis.videoDuration) ? chunkAnalysis.videoDuration : 0;
+  const wholeVideoDuration = Number.isFinite(wholeVideoAnalysis?.input?.durationSeconds) ? wholeVideoAnalysis.input.durationSeconds : 0;
+  const resolvedVideoDuration = chunkVideoDuration || wholeVideoDuration || 0;
 
   const chunks = chunkAnalysis.chunks || [];
   const { successfulChunks, failedChunks } = splitChunksByStatus(chunks);
-  const computedTimeline = buildTimelineFromChunks(successfulChunks, chunkAnalysis.videoDuration || 0);
+  const computedTimeline = buildTimelineFromChunks(successfulChunks, resolvedVideoDuration);
 
   console.log('   📈 Computing averages per emotion lens...');
   const averages = calculateAverageScores(computedTimeline);
@@ -57,10 +63,16 @@ async function run(input) {
         state: 'computed',
         dataSource: 'derived-from-phase2.chunkAnalysis',
       }
-    : {
-        state: 'not_implemented',
-        reason: 'No usable phase2 chunkAnalysis emotion timeseries was found.'
-      };
+    : hasWholeVideoAnalysis
+      ? {
+          state: 'not_applicable',
+          dataSource: 'phase2.wholeVideoAnalysis',
+          reason: 'Chunk-derived timeline metrics were skipped because this run produced wholeVideoAnalysis without chunkAnalysis timeseries data.'
+        }
+      : {
+          state: 'not_implemented',
+          reason: 'No usable phase2 chunkAnalysis emotion timeseries was found.'
+        };
 
   const metrics = {
     generatedAt: new Date().toISOString(),
@@ -69,7 +81,7 @@ async function run(input) {
       totalChunks: successfulChunks.length,
       failedChunks: failedChunks.length,
       totalSeconds: computedTimeline.length,
-      videoDuration: chunkAnalysis.videoDuration || 0
+      videoDuration: resolvedVideoDuration
     },
     implementationStatus: status,
     averages,
@@ -91,7 +103,11 @@ async function run(input) {
     warnings.push(`Excluded ${failedChunks.length} failed chunk(s) from metrics aggregation.`);
   }
   if (computedTimeline.length === 0) {
-    warnings.push('No usable phase2 emotion timeseries was available; emitted schema-valid placeholder metrics for downstream continuity.');
+    if (hasWholeVideoAnalysis) {
+      warnings.push('Whole-video Phase 2 output detected; chunk-derived timeline metrics were intentionally skipped for this run.');
+    } else {
+      warnings.push('No usable phase2 emotion timeseries was available; emitted schema-valid placeholder metrics for downstream continuity.');
+    }
   }
 
   return {

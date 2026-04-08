@@ -1603,6 +1603,139 @@ test('benchmark runner - music-vocals comparator uses time-aware alignment to re
   assert(artifact.fieldResults.some((field) => field.path === 'vocal_segments[truth=3,output=1].text' && field.status === 'pass'));
 });
 
+test('benchmark runner - dialogue comparator tolerates index-only outputs by ignoring non-authoritative timing and totalDuration fields', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-dialogue-index-only-chronology');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempFixture(rootDir, {
+    truthPayload: {
+      dialogue_segments: [
+        { index: 0, start: 0, end: 1.2, speaker: 'Speaker 1', text: 'Wake up.', confidence: 0.98 },
+        { index: 1, start: 1.3, end: 2.4, speaker: 'Speaker 2', text: 'Move now.', confidence: 0.95 }
+      ],
+      summary: 'Dialogue index-only chronology benchmark test.',
+      totalDuration: 20,
+      handoffContext: null
+    },
+    outputPayload: {
+      dialogue_segments: [
+        { index: 0, speaker: 'Speaker 1', text: 'Wake up.', confidence: 0.98 },
+        { index: 1, speaker: 'Speaker 2', text: 'Move now.', confidence: 0.95 }
+      ],
+      summary: 'Dialogue index-only chronology benchmark test.',
+      handoffContext: null
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark dialogue index-only chronology',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(result.status, 'pass');
+  assert.strictEqual(artifact.status, 'pass');
+  assert(artifact.fieldResults.some((field) => field.path === 'dialogue_segments[truth=0,output=0].text' && field.status === 'pass'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path.endsWith('.start')));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path.endsWith('.end')));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'totalDuration'));
+});
+
+test('benchmark runner - music-vocals comparator tolerates index-only outputs by ignoring non-authoritative timing and totalDuration fields', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-music-vocals-index-only-chronology');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const configDir = path.join(rootDir, 'configs');
+  const benchmarkDir = path.join(rootDir, 'benchmarks', 'fixtures', 'temp-music-vocals-index-only-fixture');
+  const outputDir = path.join(rootDir, 'output', 'temp-run');
+  const configPath = path.join(configDir, 'temp.yaml');
+  const fixturePath = path.join(benchmarkDir, 'fixture.json');
+  const benchmarkPath = path.join(benchmarkDir, 'benchmark.json');
+  const truthPath = path.join(benchmarkDir, 'truth', 'music-vocals-data.json');
+  const outputPath = path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.json');
+
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.writeFileSync(configPath, 'name: temp music vocals index-only benchmark config\n', 'utf8');
+
+  writeJson(fixturePath, {
+    contractVersion: FIXTURE_CONTRACT_VERSION,
+    fixtureId: 'temp-music-vocals-index-only-fixture',
+    asset: { repoPath: 'examples/videos/emotion-tests/cod.mp4' },
+    config: { repoPath: 'configs/temp.yaml' },
+    benchmark: { entryPath: 'benchmark.json' },
+    notes: ['temp music vocals index-only fixture']
+  });
+
+  writeJson(benchmarkPath, {
+    contractVersion: MANIFEST_CONTRACT_VERSION,
+    fixtureId: 'temp-music-vocals-index-only-fixture',
+    fixture: { path: 'fixture.json' },
+    reports: { outputDir: '_reports' },
+    artifacts: [
+      {
+        artifactKey: 'musicVocalsData',
+        label: 'Music vocals',
+        phase: 'phase1-gather-context',
+        script: 'get-music-vocals',
+        output: { path: 'phase1-gather-context/music-vocals-data.json' },
+        truth: { path: 'truth/music-vocals-data.json' },
+        comparator: {
+          kind: 'json-structured',
+          profile: 'music-vocals-default',
+          options: { timingToleranceSeconds: 2, unknownSentinels: ['unknown', 'ambiguous'] }
+        },
+        required: true
+      }
+    ]
+  });
+
+  writeJson(truthPath, {
+    vocal_segments: [
+      { index: 0, start: 10, end: 12, text: 'Master, master', confidence: 0.95, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'chant' },
+      { index: 1, start: 12.2, end: 15, text: 'Obey your master', confidence: 0.95, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung' }
+    ],
+    summary: 'Music vocals index-only chronology benchmark test.',
+    totalDuration: 40
+  });
+
+  writeJson(outputPath, {
+    vocal_segments: [
+      { index: 0, text: 'Master, master', confidence: 0.95, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'chant' },
+      { index: 1, text: 'Obey your master', confidence: 0.95, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung' }
+    ],
+    summary: 'Music vocals index-only chronology benchmark test.'
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark music vocals index-only chronology',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-music-vocals-index-only-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(result.status, 'pass');
+  assert.strictEqual(artifact.status, 'pass');
+  assert(artifact.fieldResults.some((field) => field.path === 'vocal_segments[truth=0,output=0].text' && field.status === 'pass'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path.endsWith('.start')));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path.endsWith('.end')));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'totalDuration'));
+});
+
 test('benchmark runner - speaker_profiles comparator aligns by grounded segment evidence and downgrades clustering structure misses to failures', async (t) => {
   const rootDir = path.join(__dirname, 'tmp-benchmark-speaker-profiles-comparator');
   fs.rmSync(rootDir, { recursive: true, force: true });

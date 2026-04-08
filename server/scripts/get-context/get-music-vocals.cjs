@@ -204,6 +204,25 @@ function buildFallbackNote(reason) {
   return normalized ? `Whole-asset music-vocals analysis fell back to chunked mode: ${normalized}` : null;
 }
 
+function stripMusicVocalSegmentTiming(musicVocalsData) {
+  if (!musicVocalsData || typeof musicVocalsData !== 'object' || Array.isArray(musicVocalsData)) {
+    return musicVocalsData;
+  }
+
+  const vocalSegments = Array.isArray(musicVocalsData.vocal_segments)
+    ? musicVocalsData.vocal_segments.map((segment) => {
+        if (!segment || typeof segment !== 'object' || Array.isArray(segment)) return segment;
+        const { start, end, ...rest } = segment;
+        return rest;
+      })
+    : [];
+
+  return {
+    ...musicVocalsData,
+    vocal_segments: vocalSegments
+  };
+}
+
 function buildMusicAnalysisChunkPlan(preflight, config = {}) {
   const transportChunks = Array.isArray(preflight?.chunkPlan) ? preflight.chunkPlan : [];
   if (transportChunks.length === 0) {
@@ -900,19 +919,21 @@ async function run(input) {
       recognitionNotes: finalRecognitionNotes
     });
 
+    const finalMusicVocalsData = stripMusicVocalSegmentTiming(musicVocalsData);
+
     const artifactPath = path.join(phaseDir, 'music-vocals-data.json');
-    fs.writeFileSync(artifactPath, JSON.stringify(musicVocalsData, null, 2));
+    fs.writeFileSync(artifactPath, JSON.stringify(finalMusicVocalsData, null, 2));
     events.artifactWrite({ absolutePath: artifactPath, role: 'artifact', phase: PHASE_KEY, script: SCRIPT_ID });
 
     console.log('   ✅ Music-vocals analysis complete');
     console.log(`      Output: ${artifactPath}`);
-    console.log(`      Vocals detected: ${musicVocalsData.hasVocals ? 'Yes' : 'No'}`);
-    console.log(`      Found ${musicVocalsData.vocal_segments.length} vocal segment(s)`);
+    console.log(`      Vocals detected: ${finalMusicVocalsData.hasVocals ? 'Yes' : 'No'}`);
+    console.log(`      Found ${finalMusicVocalsData.vocal_segments.length} vocal segment(s)`);
 
     return {
       primaryArtifactKey: 'musicVocalsData',
       artifacts: {
-        musicVocalsData
+        musicVocalsData: finalMusicVocalsData
       }
     };
   } catch (error) {
@@ -1414,8 +1435,7 @@ Return JSON only in this format:
   "vocalSummary": "Concise summary of any sung/chanted/rapped lexical vocals across the asset, or say no text-bearing music-led vocals were detected.",
   "vocal_segments": [
     {
-      "start": 58.0,
-      "end": 61.2,
+      "index": 0,
       "text": "We rise tonight",
       "confidence": 0.91,
       "performer": "Vocalist 1",
@@ -1432,8 +1452,7 @@ Return JSON only in this format:
         "artist": "Metallica",
         "confidence": 0.93,
         "evidence": ["Literal lyric fragments match the heard refrain."],
-        "matchedLyrics": ["Master, master", "Obey your master"],
-        "timeRanges": [{ "start": 76.0, "end": 98.0 }]
+        "matchedLyrics": ["Master, master", "Obey your master"]
       }
     ],
     "primaryEvidence": "Distinct lyric fragments and delivery strongly support one specific song.",
@@ -1443,15 +1462,16 @@ Return JSON only in this format:
     "Optional lane-level caution about overlap, masking, short duration, or multiple songs."
   ],
   "qualityNotes": [
-    "Optional note about confidence, timing precision, or ambiguity."
+    "Optional note about confidence, timing support, or ambiguity."
   ]
 }
 
 Rules:
-- Use the original full timeline in seconds for every vocal segment.
+- Preserve vocal segment chronology via array order and index values. Array order/index is the truthful chronology signal for this lane.
+- If timing is uncertain but the lyric-bearing event is clearly present, still emit the segment in the correct order/index position.
 - Aim for full-trailer lyric coverage, not just representative examples.
-- Capture each distinct lyric-bearing entry, reprise, or short return at the point it occurs on the global timeline.
-- Do not skip a lyric segment merely because the phrase already appeared earlier; repeated hooks later in the trailer still need their own vocal_segments.
+- Capture each distinct lyric-bearing entry, reprise, or short return at the point it occurs in sequence.
+- Do not skip a lyric segment merely because the phrase already appeared earlier; repeated hooks need their own vocal_segments.
 - Keep spoken narration, spoken dialogue over score, and non-lexical vocalizations out of vocal_segments.
 - Use vocal_segments only for audible sung lyrics, chant-like hooks, rap, melodic refrains, or truly inseparable hybrid music-led delivery.
 - If speech and song overlap, keep only the clearly music-led lexical content in vocal_segments; spoken overlay remains outside this lane.
@@ -1460,8 +1480,8 @@ Rules:
 - When masking reduces certainty, prefer a shorter lower-confidence literal fragment plus a qualityNotes caution over omitting the segment.
 - Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.
 - Do not merge multiple lyric lines into one segment.
+- Delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.
 - Use hybrid only when the same continuous utterance is truly inseparable as both speech-led and music-led; otherwise split adjacent spoken and sung spans and keep only the sung side here.
-- Use the whole-asset context as a checklist so chunk refinement revisits late and brief lyric windows instead of forgetting them.
 - After at least one literal lyric fragment grounds a likely song, you may use a high-confidence recognizedSong hypothesis as bounded recall scaffolding for nearby lines in the same cue.
 - Treat whole-asset lyric phrases and recognizedSong matches as recall scaffolding only: confirm, shorten, correct, or reject them based on the chunk audio rather than copying them blindly.
 - If an expected canonical line is only partly supported by the audio, emit only the shortest audibly supported fragment instead of a polished full-line rewrite.
@@ -1471,7 +1491,6 @@ Rules:
 - Every recognizedSong candidate must cite audio-grounded evidence; literal matchedLyrics are stronger than vibe-only guesses.
 - Spoken dialogue, narration, radio chatter, or promo VO over music are never lyric evidence. If overlap weakens confidence, mention that in recognitionNotes.
 - If multiple songs or cues are plausibly present, set multipleSongsDetected to true and prefer multiple_possible unless one clearly dominates.
-- delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.
 - If no text-bearing music-led vocals are present, return vocal_segments as [] and say so in vocalSummary.
 - JSON only. No markdown, no explanation.`;
 
@@ -1507,8 +1526,7 @@ Return JSON only in this format:
   "vocalSummary": "Concise chunk-local vocals summary, or say none were detected in this chunk.",
   "vocal_segments": [
     {
-      "start": ${startTime.toFixed(1)},
-      "end": ${endTime.toFixed(1)},
+      "index": 0,
       "text": "We rise tonight",
       "confidence": 0.91,
       "performer": "Vocalist 1",
@@ -1526,7 +1544,6 @@ Return JSON only in this format:
         "confidence": 0.78,
         "evidence": ["Literal lyric fragment and delivery align with one specific song."],
         "matchedLyrics": ["Master, master"],
-        "timeRanges": [{ "start": ${startTime.toFixed(1)}, "end": ${endTime.toFixed(1)} }],
         "ambiguity": "Only a short refrain is audible in this chunk."
       }
     ],
@@ -1538,11 +1555,13 @@ Return JSON only in this format:
     "Optional lane-level caution about overlap, masking, short duration, or multiple songs."
   ],
   "qualityNotes": [
-    "Optional note about ambiguity or masking in this chunk."
+    "Optional note about ambiguity, masking, or timing support in this chunk."
   ]
 }
 
 Rules:
+- Preserve vocal segment chronology via array order and index values. Array order/index is the truthful chronology signal for this chunk output.
+- If timing is uncertain but a lyric-bearing moment is clearly present, still emit the segment in the correct order/index position.
 - Keep spoken narration, spoken dialogue over score, and non-lexical vocalizations out of vocal_segments.
 - Use vocal_segments only for audible sung lyrics, chant-like hooks, rap, melodic refrains, or truly inseparable hybrid music-led delivery.
 - If speech and song overlap, keep only the clearly music-led lexical content in vocal_segments; spoken overlay remains outside this lane.
@@ -1552,6 +1571,7 @@ Rules:
 - Break vocal_segments when lyric wording changes, when a refrain repeats after a gap, or when a new vocal phrase is audibly distinct.
 - Do not skip a lyric segment merely because the phrase already appeared earlier; repeated hooks later in the trailer still need their own vocal_segments.
 - Do not merge multiple lyric lines into one segment.
+- Delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.
 - Use hybrid only when the same continuous utterance is truly inseparable as both speech-led and music-led; otherwise split adjacent spoken and sung spans and keep only the sung side here.
 - Use rollingSummary, whole-asset context, and any high-confidence recognizedSong match as a checklist so late and brief lyric windows are revisited instead of forgotten.
 - Treat whole-asset lyric phrases and recognizedSong matches as bounded recall scaffolding only: confirm, shorten, correct, or reject them based on this chunk rather than copying them blindly.
@@ -1561,7 +1581,6 @@ Rules:
 - Prefer recognizedSong.status = unknown, possible, or multiple_possible over inventing certainty.
 - Every recognizedSong candidate must cite audio-grounded evidence; literal matchedLyrics are stronger than vibe-only guesses.
 - Spoken dialogue, narration, radio chatter, or promo VO over music are never lyric evidence. If overlap weakens confidence, mention that in recognitionNotes.
-- delivery must be one of: sung, chant, rap, melodic_refrain, hybrid.
 - If no text-bearing music-led vocals are present in this chunk, return vocal_segments as [] and say so in vocalSummary.
 - JSON only. No markdown, no explanation.`;
 
