@@ -1,0 +1,33 @@
+{
+  "contractVersion": "ee.benchmark-manifest/v1",
+  "fixtureId": "cod-test",
+  "fixture": {
+    "path": "../../benchmarks/fixtures/cod-test/fixture.json"
+  },
+  "reports": {
+    "outputDir": "reports"
+  },
+  "artifacts": [
+    {
+      "artifactKey": "dialogueData",
+      "label": "Phase 1 dialogue",
+      "phase": "phase1-gather-context",
+      "script": "get-dialogue",
+      "output": {
+        "path": "output/cod-test-mimo-openrouter-compare/phase1-gather-context/dialogue-data.json"
+      },
+      "truth": {
+        "path": "../../benchmarks/fixtures/cod-test/truth/dialogue-data.json"
+      },
+      "comparator": {
+        "kind": "json-structured",
+        "profile": "dialogue-default",
+        "options": {
+          "timingToleranceSeconds": 2,
+          "unknownSentinels": ["unknown", "ambiguous"]
+        }
+      },
+      "required": true
+    }
+  ]
+}

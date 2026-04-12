@@ -1,72 +1,19 @@
 {
-  "generatedAt": "2026-04-07T22:08:07.297Z",
+  "generatedAt": "2026-04-09T16:38:02.850Z",
   "pipelineVersion": "1.0",
   "summary": {
-    "totalChunks": 28,
+    "totalChunks": 0,
     "failedChunks": 0,
-    "totalSeconds": 140,
+    "totalSeconds": 0,
     "videoDuration": 140.017
   },
   "implementationStatus": {
-    "state": "computed",
-    "dataSource": "derived-from-phase2.chunkAnalysis"
+    "state": "not_applicable",
+    "dataSource": "phase2.wholeVideoAnalysis",
+    "reason": "Chunk-derived timeline metrics were skipped because this run produced wholeVideoAnalysis without chunkAnalysis timeseries data."
   },
-  "averages": {
-    "patience": 0.5999999999999994,
-    "boredom": 0.3392857142857146,
-    "excitement": 0.6607142857142861
-  },
-  "peakMoments": {
-    "patience": {
-      "highest": {
-        "timestamp": 50,
-        "score": 0.8
-      },
-      "lowest": {
-        "timestamp": 125,
-        "score": 0.2
-      }
-    },
-    "boredom": {
-      "highest": {
-        "timestamp": 125,
-        "score": 0.8
-      },
-      "lowest": {
-        "timestamp": 0,
-        "score": 0.2
-      }
-    },
-    "excitement": {
-      "highest": {
-        "timestamp": 125,
-        "score": 1
-      },
-      "lowest": {
-        "timestamp": 25,
-        "score": 0.2
-      }
-    }
-  },
-  "trends": {
-    "patience": {
-      "direction": "stable",
-      "change": 0.04285714285714215,
-      "firstHalfAverage": 0.5785714285714291,
-      "secondHalfAverage": 0.6214285714285712
-    },
-    "boredom": {
-      "direction": "stable",
-      "change": -0.021428571428571297,
-      "firstHalfAverage": 0.34999999999999964,
-      "secondHalfAverage": 0.32857142857142835
-    },
-    "excitement": {
-      "direction": "increasing",
-      "change": 0.19285714285714295,
-      "firstHalfAverage": 0.564285714285714,
-      "secondHalfAverage": 0.7571428571428569
-    }
-  },
-  "frictionIndex": 100
+  "averages": {},
+  "peakMoments": {},
+  "trends": {},
+  "frictionIndex": 0
 }

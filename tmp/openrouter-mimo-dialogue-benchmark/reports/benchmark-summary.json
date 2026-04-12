@@ -1,0 +1,581 @@
+{
+  "contractVersion": "ee.benchmark-report/v1",
+  "fixtureId": "cod-test",
+  "benchmark": {
+    "path": "tmp/openrouter-mimo-dialogue-benchmark/benchmark.json"
+  },
+  "fixture": {
+    "path": "benchmarks/fixtures/cod-test/fixture.json"
+  },
+  "run": {
+    "configName": "COD Test MiMo OpenRouter Dialogue Benchmark Compare",
+    "outputDir": "output/cod-test-mimo-openrouter-compare"
+  },
+  "status": "error",
+  "artifacts": [
+    {
+      "artifactKey": "dialogueData",
+      "status": "error",
+      "accuracyRate": 0.3724696356275304,
+      "coverageRate": 0.8458904109589042
+    }
+  ],
+  "totals": {
+    "artifactsTotal": 1,
+    "artifactsPassed": 0,
+    "artifactsFailed": 0,
+    "artifactsErrored": 1,
+    "totalTruthFields": 292,
+    "scoreableFields": 247,
+    "skippedFields": 0,
+    "passedFields": 92,
+    "failedFields": 155,
+    "erroredFields": 45
+  },
+  "accuracy": {
+    "passed": 92,
+    "failed": 155,
+    "rate": 0.3724696356275304
+  },
+  "coverage": {
+    "scoreable": 247,
+    "skipped": 0,
+    "totalTruthFields": 292,
+    "rate": 0.8458904109589042
+  },
+  "errors": [
+    {
+      "artifactKey": "dialogueData",
+      "path": "analysisMode",
+      "rule": "structural",
+      "outputValue": "chunked",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "timingMode",
+      "rule": "structural",
+      "outputValue": "chunk_local",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "sourceStrategy",
+      "rule": "structural",
+      "outputValue": "base64",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "coverage",
+      "rule": "structural",
+      "outputValue": {
+        "start": 0,
+        "end": 140.042,
+        "duration": 140.042,
+        "complete": true
+      },
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "provenance",
+      "rule": "structural",
+      "outputValue": {
+        "transportMode": "inline",
+        "usedChunking": true,
+        "chunkCount": 9,
+        "fallbackApplied": false,
+        "chunkPlan": {
+          "reason": "dialogue_timing_force_chunking",
+          "recommendedChunkDurationSeconds": 20,
+          "openingArbitration": {
+            "coverageSeconds": 24,
+            "chunkDurationSeconds": 8
+          }
+        }
+      },
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "dialogue_segments[20]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 89,
+        "end": 94,
+        "speaker": "Speaker 11",
+        "speaker_id": "spk_011",
+        "text": "Master, master, where’s the dreams that I’ve been after?",
+        "confidence": 0.9,
+        "index": 20
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "dialogue_segments[21]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 94,
+        "end": 98,
+        "speaker": "Speaker 11",
+        "speaker_id": "spk_011",
+        "text": "Master, master, you promised only lies!",
+        "confidence": 0.9,
+        "index": 21
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "dialogue_segments[22]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 98,
+        "end": 99,
+        "speaker": "Speaker 12",
+        "speaker_id": "spk_012",
+        "text": "Pull it together, man!",
+        "confidence": 0.95,
+        "index": 22
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "dialogue_segments[23]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 100,
+        "end": 102,
+        "speaker": "Speaker 2",
+        "speaker_id": "spk_002",
+        "text": "So eager to leave daddy.",
+        "confidence": 0.9,
+        "index": 23
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "dialogue_segments[24]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 103,
+        "end": 105,
+        "speaker": "Speaker 13",
+        "speaker_id": "spk_013",
+        "text": "Killing the man is a hell of a lot easier than killing the idea.",
+        "confidence": 0.8,
+        "index": 24
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "dialogue_segments[25]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 108,
+        "end": 110,
+        "speaker": "Speaker 15",
+        "speaker_id": "spk_015",
+        "text": "You were never cut out to be a Mason.",
+        "confidence": 0.6,
+        "index": 25
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "dialogue_segments[26]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 112,
+        "end": 114,
+        "speaker": "Speaker 6",
+        "speaker_id": "spk_006",
+        "text": "No more games! This ends now.",
+        "confidence": 0.95,
+        "index": 26
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "dialogue_segments[27]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 116,
+        "end": 118,
+        "speaker": "Speaker 11",
+        "speaker_id": "spk_011",
+        "text": "Obey your master!",
+        "confidence": 0.9,
+        "index": 27
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "dialogue_segments[28]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 122,
+        "end": 124,
+        "speaker": "Speaker 16",
+        "speaker_id": "spk_016",
+        "text": "Get the Reznov challenge pack when you preorder now!",
+        "confidence": 0.95,
+        "index": 28
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "dialogue_segments[29]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 127,
+        "end": 130,
+        "speaker": "Speaker 11",
+        "speaker_id": "spk_011",
+        "text": "Master, master",
+        "confidence": 0.9,
+        "index": 29
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[1]",
+      "rule": "structural",
+      "outputValue": {
+        "label": "professional, clear, news-anchor delivery",
+        "confidence": 0.92
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[2]",
+      "rule": "structural",
+      "outputValue": {
+        "label": "clear, professional delivery",
+        "confidence": 0.9
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[2]",
+      "rule": "structural",
+      "outputValue": 5,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[3]",
+      "rule": "structural",
+      "outputValue": 14,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[4]",
+      "rule": "structural",
+      "outputValue": 16,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[2].grounded.acoustic_descriptors[1]",
+      "rule": "structural",
+      "outputValue": {
+        "label": "authoritative, military-style radio voice",
+        "confidence": 0.85
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[3].grounded.linked_segment_indexes[1]",
+      "rule": "structural",
+      "truthValue": 8,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[3].grounded.linked_segment_indexes[2]",
+      "rule": "structural",
+      "truthValue": 26,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[3].inferred_traits.traits[0]",
+      "rule": "structural",
+      "truthValue": {
+        "trait": "gender",
+        "value": "male",
+        "confidence": 0.86,
+        "note": "human-reviewed as David on these segments"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[4].inferred_traits.traits[0]",
+      "rule": "structural",
+      "truthValue": {
+        "trait": "gender",
+        "value": "male",
+        "confidence": 0.9,
+        "note": "human-reviewed older general/leader read"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[5].grounded.linked_segment_indexes[1]",
+      "rule": "structural",
+      "truthValue": 11,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[5].inferred_traits.traits[0]",
+      "rule": "structural",
+      "truthValue": {
+        "trait": "gender",
+        "value": "male",
+        "confidence": 0.76,
+        "note": "human review now effectively confirms the same younger male comms speaker across both lines; an African-American read is supported by the audible \"rahport\" pronunciation cue on \"report\", but that remains a read rather than hard fact"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[6].grounded.linked_segment_indexes[1]",
+      "rule": "structural",
+      "outputValue": 11,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[6].inferred_traits.traits[0]",
+      "rule": "structural",
+      "truthValue": {
+        "trait": "gender",
+        "value": "male",
+        "confidence": 0.88,
+        "note": "human review read this as a deeper African-American male squadmate voice"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[8].grounded.linked_segment_indexes[1]",
+      "rule": "structural",
+      "truthValue": 15,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[8].grounded.linked_segment_indexes[2]",
+      "rule": "structural",
+      "truthValue": 16,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[8].grounded.linked_segment_indexes[3]",
+      "rule": "structural",
+      "truthValue": 17,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[8].grounded.linked_segment_indexes[4]",
+      "rule": "structural",
+      "truthValue": 18,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[8].grounded.linked_segment_indexes[5]",
+      "rule": "structural",
+      "truthValue": 19,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[8].grounded.linked_segment_indexes[6]",
+      "rule": "structural",
+      "truthValue": 20,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[8].grounded.linked_segment_indexes[7]",
+      "rule": "structural",
+      "truthValue": 21,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[8].grounded.linked_segment_indexes[8]",
+      "rule": "structural",
+      "truthValue": 27,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[8].grounded.linked_segment_indexes[9]",
+      "rule": "structural",
+      "truthValue": 29,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[8].inferred_traits.traits[0]",
+      "rule": "structural",
+      "truthValue": {
+        "trait": "gender",
+        "value": "male",
+        "confidence": 0.88,
+        "note": "Master of Puppets vocalist / music lyric, not in-scene dialogue"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[9].inferred_traits.traits[0]",
+      "rule": "structural",
+      "truthValue": {
+        "trait": "gender",
+        "value": "female",
+        "confidence": 0.82,
+        "note": "human review read an African-American female squadmate with tattoos"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[10].grounded.linked_segment_indexes[1]",
+      "rule": "structural",
+      "outputValue": 19,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[10].inferred_traits.traits[0]",
+      "rule": "structural",
+      "truthValue": {
+        "trait": "gender",
+        "value": "male",
+        "confidence": 0.86,
+        "note": "identity remains uncertain; do not collapse into Raul or David"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[11]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_014",
+        "label": "Speaker 14",
+        "grounded": {
+          "confidence": 0.85,
+          "linked_segment_indexes": [
+            9
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "older male voice with robotic/processed filter",
+              "confidence": 0.86
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.84,
+              "note": "antagonist-coded; possibly Raul Menendez but identity intentionally left uncertain"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[12]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_015",
+        "label": "Speaker 15",
+        "grounded": {
+          "confidence": 0.8,
+          "linked_segment_indexes": [
+            25
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "mixed overlapping voices with female-primary layer",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "ambiguous",
+              "confidence": 0.6,
+              "note": "male and female layers overlap; primary audible layer resembles Speaker 1"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[13]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_016",
+        "label": "Speaker 16",
+        "grounded": {
+          "confidence": 0.88,
+          "linked_segment_indexes": [
+            28
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "white adult male sales/promo voiceover",
+              "confidence": 0.88
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.9,
+              "note": "promo VO, distinct from scene dialogue and lyrics"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    }
+  ],
+  "summary": "0/1 artifacts passed. 92/247 scoreable fields passed. Truth coverage was 247/292 fields."
+}

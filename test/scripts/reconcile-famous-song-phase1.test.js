@@ -264,6 +264,74 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     assert.equal(gate.evidence.requiresSupportingMusicConsensus, false);
   });
 
+  await t.test('accepts supporting music consensus from a same-song possible match at the confidence floor', async () => {
+    const artifacts = makeArtifacts({
+      dialogueData: {
+        dialogue_segments: [
+          { index: 14, speaker: 'VO', text: 'Obey your master', confidence: 0.91 },
+          { index: 20, speaker: 'VO', text: 'Master, master', confidence: 0.91 },
+          { index: 30, speaker: 'Captain', text: 'Move now, squad up.', confidence: 0.99 }
+        ],
+        summary: 'Dialogue includes lyric contamination with reversed first-appearance ordering.'
+      },
+      musicData: {
+        summary: 'Music lane is fairly sure of the same song but does not claim full recognition certainty.',
+        totalDuration: 60,
+        recognizedSong: {
+          status: 'possible',
+          confidence: 0.7,
+          multipleSongsDetected: false,
+          candidates: [
+            {
+              title: 'Master of Puppets',
+              artist: 'Metallica',
+              confidence: 0.7
+            }
+          ]
+        }
+      },
+      musicVocalsData: {
+        vocal_segments: [
+          { index: 14, text: 'Obey your master', confidence: 0.93, performer: 'Lead', delivery: 'sung' },
+          { index: 20, text: 'Master, master', confidence: 0.93, performer: 'Lead', delivery: 'sung' }
+        ],
+        summary: 'Vocal lane catches the hook fragments in observed order.',
+        recognizedSong: {
+          status: 'recognized',
+          confidence: 0.93,
+          multipleSongsDetected: false,
+          candidates: [
+            {
+              title: 'Master of Puppets',
+              artist: 'Metallica',
+              confidence: 0.93,
+              evidence: ['Matched lyric fragments'],
+              matchedLyrics: ['Master, master', 'Obey your master']
+            }
+          ]
+        }
+      }
+    });
+
+    await reconcileScript.run({ outputDir, artifacts });
+
+    const reconciledDialogue = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.reconciled.json'), 'utf8'));
+    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
+    const gate = reconcileScript._private.buildRecognitionGate(
+      artifacts.musicVocalsData,
+      artifacts.musicData,
+      artifacts.dialogueData
+    );
+
+    assert.equal(gate.evidence.hasStrongDialogueVocalsEvidence, false);
+    assert.equal(gate.evidence.requiresSupportingMusicConsensus, true);
+    assert.equal(gate.evidence.hasSupportingMusicConsensus, true);
+    assert.equal(reconciledDialogue.dialogue_segments.length, 1);
+    assert.equal(reconciledDialogue.dialogue_segments[0].text, 'Move now, squad up.');
+    assert.equal(ledger.status, 'applied');
+    assert.deepEqual(ledger.trigger.reasons, []);
+  });
+
   await t.test('still requires supporting music consensus when dialogue/music-vocals evidence is not strong enough', async () => {
     const artifacts = makeArtifacts({
       dialogueData: {

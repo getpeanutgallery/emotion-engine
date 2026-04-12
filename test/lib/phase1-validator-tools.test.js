@@ -240,6 +240,219 @@ test('dialogue transcription validator preserves inferred traits separately from
   assert.deepEqual(Object.keys(result.normalizedValue.speaker_profiles[0].grounded).sort(), ['acoustic_descriptors', 'confidence', 'linked_segment_indexes']);
 });
 
+test('dialogue transcription validator accepts canonical acoustic_descriptors object entries', () => {
+  const result = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hold position.', confidence: 0.91 }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'spk_001',
+          label: 'Speaker 1',
+          grounded: {
+            confidence: 0.84,
+            linked_segment_indexes: [0],
+            acoustic_descriptors: [
+              { label: 'steady, clipped military cadence', confidence: 0.67 },
+              { label: 'close-mic delivery' }
+            ]
+          },
+          inferred_traits: { traits: [] }
+        }
+      ],
+      summary: 'Chunk summary',
+      totalDuration: 1
+    }
+  });
+
+  assert.equal(result.valid, true);
+  assert.deepEqual(result.normalizedValue.speaker_profiles[0].grounded.acoustic_descriptors, [
+    { label: 'steady, clipped military cadence', confidence: 0.67 },
+    { label: 'close-mic delivery', confidence: null }
+  ]);
+});
+
+test('dialogue transcription validator rejects plain-string acoustic_descriptors entries', () => {
+  const result = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Status report.', confidence: 0.9 }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'spk_001',
+          label: 'Speaker 1',
+          grounded: {
+            confidence: 0.81,
+            linked_segment_indexes: [0],
+            acoustic_descriptors: ['low raspy voice']
+          },
+          inferred_traits: { traits: [] }
+        }
+      ],
+      summary: 'Chunk summary',
+      totalDuration: 1
+    }
+  });
+
+  assert.equal(result.valid, false);
+  assert.match(result.summary, /acoustic_descriptors entries must be objects/i);
+  assert.ok(result.errors.some((error) => (
+    error.path === '$.speaker_profiles[0].grounded.acoustic_descriptors[0]'
+      && error.code === 'invalid_type'
+  )));
+});
+
+test('dialogue transcription validator rejects disallowed acoustic descriptor alias keys', () => {
+  const valueAlias = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Status report.', confidence: 0.9 }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'spk_001',
+          label: 'Speaker 1',
+          grounded: {
+            confidence: 0.81,
+            linked_segment_indexes: [0],
+            acoustic_descriptors: [{ value: 'close-mic delivery', confidence: 0.58 }]
+          },
+          inferred_traits: { traits: [] }
+        }
+      ],
+      summary: 'Chunk summary',
+      totalDuration: 1
+    }
+  });
+
+  assert.equal(valueAlias.valid, false);
+  assert.ok(valueAlias.errors.some((error) => (
+    error.path === '$.speaker_profiles[0].grounded.acoustic_descriptors[0].value'
+      && error.code === 'invalid_key'
+  )));
+
+  const descriptorAlias = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Status report.', confidence: 0.9 }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'spk_001',
+          label: 'Speaker 1',
+          grounded: {
+            confidence: 0.81,
+            linked_segment_indexes: [0],
+            acoustic_descriptors: [{ descriptor: 'close-mic delivery', confidence: 0.58 }]
+          },
+          inferred_traits: { traits: [] }
+        }
+      ],
+      summary: 'Chunk summary',
+      totalDuration: 1
+    }
+  });
+
+  assert.equal(descriptorAlias.valid, false);
+  assert.ok(descriptorAlias.errors.some((error) => (
+    error.path === '$.speaker_profiles[0].grounded.acoustic_descriptors[0].descriptor'
+      && error.code === 'invalid_key'
+  )));
+
+  const camelAlias = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Status report.', confidence: 0.9 }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'spk_001',
+          label: 'Speaker 1',
+          grounded: {
+            confidence: 0.81,
+            linked_segment_indexes: [0],
+            acousticDescriptors: [{ label: 'close-mic delivery', confidence: 0.58 }]
+          },
+          inferred_traits: { traits: [] }
+        }
+      ],
+      summary: 'Chunk summary',
+      totalDuration: 1
+    }
+  });
+
+  assert.equal(camelAlias.valid, false);
+  assert.ok(camelAlias.errors.some((error) => (
+    error.path === '$.speaker_profiles[0].grounded.acousticDescriptors'
+      && error.code === 'invalid_key'
+  )));
+});
+
+test('dialogue transcription validator covers Gemini acoustic_descriptors failure-family oscillation', () => {
+  const stringAttempt = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'You can’t kill me!', confidence: 0.94 }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'spk_001',
+          label: 'Raul Menendez',
+          grounded: {
+            confidence: 0.86,
+            linked_segment_indexes: [0],
+            acoustic_descriptors: ['low raspy voice', 'close-mic delivery']
+          },
+          inferred_traits: {
+            traits: [{ trait: 'role', value: 'authority figure', confidence: 0.82, note: null }]
+          }
+        }
+      ],
+      summary: 'Menacing one-liner.',
+      totalDuration: 1
+    }
+  });
+
+  assert.equal(stringAttempt.valid, false);
+  assert.ok(stringAttempt.errors.some((error) => error.path === '$.speaker_profiles[0].grounded.acoustic_descriptors[0]' && error.code === 'invalid_type'));
+  assert.ok(stringAttempt.errors.some((error) => error.path === '$.speaker_profiles[0].grounded.acoustic_descriptors[1]' && error.code === 'invalid_type'));
+
+  const valueAttempt = executeDialogueTranscriptionValidatorTool({
+    transcription: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'You can’t kill me!', confidence: 0.94 }
+      ],
+      speaker_profiles: [
+        {
+          speaker_id: 'spk_001',
+          label: 'Raul Menendez',
+          grounded: {
+            confidence: 0.86,
+            linked_segment_indexes: [0],
+            acoustic_descriptors: [
+              { value: 'low raspy voice', confidence: 0.62 },
+              { value: 'close-mic delivery', confidence: 0.58 }
+            ]
+          },
+          inferred_traits: {
+            traits: [{ trait: 'role', value: 'authority figure', confidence: 0.82, note: null }]
+          }
+        }
+      ],
+      summary: 'Menacing one-liner.',
+      totalDuration: 1
+    }
+  });
+
+  assert.equal(valueAttempt.valid, false);
+  assert.ok(valueAttempt.errors.some((error) => error.path === '$.speaker_profiles[0].grounded.acoustic_descriptors[0].value' && error.code === 'invalid_key'));
+  assert.ok(valueAttempt.errors.some((error) => error.path === '$.speaker_profiles[0].grounded.acoustic_descriptors[1].value' && error.code === 'invalid_key'));
+  assert.ok(valueAttempt.errors.some((error) => error.path === '$.speaker_profiles[0].grounded.acoustic_descriptors[0].label' && error.code === 'required_string'));
+  assert.ok(valueAttempt.errors.some((error) => error.path === '$.speaker_profiles[0].grounded.acoustic_descriptors[1].label' && error.code === 'required_string'));
+});
+
 test('dialogue transcription validator preserves additive analysis metadata', () => {
   const result = executeDialogueTranscriptionValidatorTool({
     transcription: {

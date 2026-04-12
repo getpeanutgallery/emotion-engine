@@ -1,0 +1,106 @@
+name: COD Dialogue Compare - MiMo Baseline
+description: Dialogue-only COD compare config using MiMo as the Phase 1 dialogue lane baseline.
+version: '1.0'
+asset:
+  inputPath: examples/videos/emotion-tests/cod.mp4
+  outputDir: output/cod-dialogue-compare-mimo
+  media:
+    refs:
+      source_video:
+        kind: video
+        source:
+          path: examples/videos/emotion-tests/cod.mp4
+        staged:
+          url: https://gambit-games-tests.s3.us-east-1.amazonaws.com/peanut-gallery/cod.mp4
+          urlType: public
+        delivery:
+          preferredMode: url
+          allowedModes:
+          - url
+          allowFallback: false
+        metadata:
+          mimeType: video/mp4
+benchmark:
+  enabled: true
+  path: ../benchmarks/fixtures/cod-test/dialogue-only/benchmark.json
+gather_context:
+- server/scripts/get-context/get-dialogue.cjs
+settings:
+  chunk_duration: 8
+  max_chunks: 100
+  api_request_delay: 500
+  phase1:
+    dialogue:
+      mode: whole_asset
+      timing_refinement: disabled
+      max_whole_asset_duration_seconds: 180
+      fallback_to_chunked: false
+      preserve_chunk_plan_metadata: true
+  retry_strategy:
+    type: exponential-backoff
+    config:
+      maxRetries: 4
+      initialDelayMs: 1000
+      maxDelayMs: 10000
+      exponentialBase: 2
+      jitter: true
+  ffmpeg:
+    audio:
+      loglevel: error
+      codec: libmp3lame
+      bitrate: 192k
+      sample_rate_hz: 44100
+      channels: 2
+      container: mp3
+    video:
+      compress:
+        vcodec: libx264
+        preset: fast
+        max_width: 1280
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 128k
+        size_headroom_ratio: 0.9
+      compress_aggressive:
+        vcodec: libx264
+        preset: slow
+        fps: 24
+        audio_codec: aac
+        audio_bitrate: 96k
+        vf: scale='min(1280,iw)':-1:force_original_aspect_ratio=decrease
+        maxrate_multiplier: 1.2
+        bufsize_multiplier: 2
+        size_headroom_ratio: 0.95
+debug:
+  captureRaw: true
+recovery:
+  deterministic:
+    maxAttemptsPerFailure: 2
+    maxRepeatedStrategyUsesPerFailure: 1
+  ai:
+    enabled: true
+    lane: structured-output-repair
+    adapter: openrouter
+    model: google/gemini-3.1-pro-preview
+    temperature: 0
+    timeoutMs: 987654
+    attempts:
+      maxPerFailure: 1
+      maxPerScriptRun: 1
+      maxPerPipelineRun: 3
+    budgets:
+      maxInputTokens: 131072
+      maxOutputTokens: 131072
+      maxTotalTokens: 262144
+      maxCostUsd: 2.0
+ai:
+  dialogue:
+    targets:
+    - adapter:
+        name: openrouter
+        model: xiaomi/mimo-v2-omni
+        params:
+          max_tokens: 232144
+          timeoutMs: 987654
+          thinking:
+            level: high

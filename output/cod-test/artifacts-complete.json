@@ -1,348 +1,160 @@
 {
-  "assetsDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/assets/input",
+  "assetsDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/assets/input",
   "dialogueData": {
     "dialogue_segments": [
       {
-        "start": 0,
-        "end": 1.2,
         "speaker": "Speaker 1",
         "speaker_id": "spk_001",
         "text": "They want you afraid.",
-        "confidence": 0.9,
+        "confidence": 0.7,
         "index": 0
       },
       {
-        "start": 1.2,
-        "end": 3.5,
         "speaker": "Speaker 1",
         "speaker_id": "spk_001",
         "text": "Fear makes you easier to control.",
-        "confidence": 0.9,
+        "confidence": 0.7,
         "index": 1
       },
       {
-        "start": 3.5,
-        "end": 5,
         "speaker": "Speaker 1",
         "speaker_id": "spk_001",
         "text": "It's time to wake up.",
-        "confidence": 0.9,
+        "confidence": 0.7,
         "index": 2
       },
       {
-        "start": 5,
-        "end": 9,
         "speaker": "Speaker 2",
         "speaker_id": "spk_002",
         "text": "Your streets shall once again run red with your blood.",
-        "confidence": 0.95,
+        "confidence": 0.7,
         "index": 3
       },
       {
-        "start": 9,
-        "end": 13,
         "speaker": "Speaker 3",
         "speaker_id": "spk_003",
         "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
-        "confidence": 0.95,
+        "confidence": 0.7,
         "index": 4
       },
       {
-        "start": 13,
-        "end": 15,
         "speaker": "Speaker 4",
         "speaker_id": "spk_004",
         "text": "Menendez is a terrorist.",
-        "confidence": 0.9,
+        "confidence": 0.7,
         "index": 5
       },
       {
-        "start": 15,
-        "end": 18,
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
+        "speaker": "Speaker 5",
+        "speaker_id": "spk_005",
         "text": "We're bringing peace and security to the world.",
-        "confidence": 0.9,
+        "confidence": 0.7,
         "index": 6
       },
       {
-        "start": 18,
-        "end": 20,
-        "speaker": "Speaker 5",
-        "speaker_id": "spk_005",
+        "speaker": "Speaker 6",
+        "speaker_id": "spk_006",
         "text": "He refuses to let me go.",
-        "confidence": 0.85,
+        "confidence": 0.7,
         "index": 7
       },
       {
-        "start": 20,
-        "end": 23,
-        "speaker": "Speaker 6",
-        "speaker_id": "spk_006",
-        "text": "Stop looking backwards, David. What matters is what we do next.",
-        "confidence": 0.9,
+        "speaker": "Speaker 7",
+        "speaker_id": "spk_007",
+        "text": "Stop looking backwards, David, but matters is what we do next.",
+        "confidence": 0.7,
         "index": 8
       },
       {
-        "start": 23,
-        "end": 25,
-        "speaker": "Speaker 5",
-        "speaker_id": "spk_005",
+        "speaker": "Speaker 7",
+        "speaker_id": "spk_007",
         "text": "A lot of people counting on us for answers.",
-        "confidence": 0.85,
+        "confidence": 0.7,
         "index": 9
       },
       {
-        "start": 90,
-        "end": 92,
-        "speaker": "Speaker 7",
-        "speaker_id": "spk_007",
-        "text": "Spectre One report.",
-        "confidence": 0.8,
+        "speaker": "Speaker 8",
+        "speaker_id": "spk_008",
+        "text": "Spectre Wolf report.",
+        "confidence": 0.7,
         "index": 10
       },
       {
-        "start": 92,
-        "end": 94,
-        "speaker": "Speaker 7",
-        "speaker_id": "spk_007",
+        "speaker": "Speaker 8",
+        "speaker_id": "spk_008",
         "text": "Need a sitrep.",
-        "confidence": 0.8,
+        "confidence": 0.7,
         "index": 11
       },
       {
-        "start": 94,
-        "end": 96,
-        "speaker": "Speaker 5",
-        "speaker_id": "spk_005",
+        "speaker": "Speaker 9",
+        "speaker_id": "spk_009",
         "text": "This isn't real.",
-        "confidence": 0.85,
+        "confidence": 0.7,
         "index": 12
       },
       {
-        "start": 96,
-        "end": 97,
-        "speaker": "Speaker 8",
-        "speaker_id": "spk_008",
+        "speaker": "Speaker 10",
+        "speaker_id": "spk_010",
         "text": "The hell it ain't!",
-        "confidence": 0.85,
+        "confidence": 0.7,
         "index": 13
       },
       {
-        "start": 130,
-        "end": 132,
-        "speaker": "Speaker 8",
-        "speaker_id": "spk_008",
-        "text": "Pull it together, man!",
-        "confidence": 0.85,
-        "index": 14
-      },
-      {
-        "start": 132,
-        "end": 134,
-        "speaker": "Speaker 9",
-        "speaker_id": "spk_009",
-        "text": "So eager to leave, David.",
-        "confidence": 0.9,
-        "index": 15
-      },
-      {
-        "start": 134,
-        "end": 138,
-        "speaker": "Speaker 9",
-        "speaker_id": "spk_009",
-        "text": "Killing a man is a hell of a lot easier than killing an idea.",
-        "confidence": 0.9,
+        "speaker": "Speaker 11",
+        "speaker_id": "spk_011",
+        "text": "Master, master.",
+        "confidence": 0.7,
         "index": 16
       },
       {
-        "start": 138,
-        "end": 140,
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "You were never cut out to be a Mason.",
-        "confidence": 0.9,
-        "index": 17
-      },
-      {
-        "start": 140,
-        "end": 140.04,
-        "speaker": "Speaker 5",
-        "speaker_id": "spk_005",
-        "text": "No more games. This ends now.",
-        "confidence": 0.85,
+        "speaker": "Speaker 11",
+        "speaker_id": "spk_011",
+        "text": "Master, master.",
+        "confidence": 0.7,
         "index": 18
       },
       {
-        "start": 0,
-        "end": 1.2,
-        "speaker": "Speaker 1",
-        "speaker_id": "spk_001",
-        "text": "They want you afraid.",
-        "confidence": 0.9,
-        "index": 0
+        "speaker": "Speaker 7",
+        "speaker_id": "spk_007",
+        "text": "Pull it together, man.",
+        "confidence": 0.7,
+        "index": 19
       },
       {
-        "start": 1.2,
-        "end": 3.5,
-        "speaker": "Speaker 1",
-        "speaker_id": "spk_001",
-        "text": "Fear makes you easier to control.",
-        "confidence": 0.9,
-        "index": 1
+        "speaker": "Speaker 12",
+        "speaker_id": "spk_012",
+        "text": "So eager to leave, David.",
+        "confidence": 0.7,
+        "index": 20
       },
       {
-        "start": 3.5,
-        "end": 5,
-        "speaker": "Speaker 1",
-        "speaker_id": "spk_001",
-        "text": "It's time to wake up.",
-        "confidence": 0.9,
-        "index": 2
+        "speaker": "Speaker 12",
+        "speaker_id": "spk_012",
+        "text": "Killing a man is a hell of a lot easier than killing an idea.",
+        "confidence": 0.7,
+        "index": 21
       },
       {
-        "start": 5,
-        "end": 9,
-        "speaker": "Speaker 2",
-        "speaker_id": "spk_002",
-        "text": "Your streets shall once again run red with your blood.",
-        "confidence": 0.95,
-        "index": 3
+        "speaker": "Speaker 12",
+        "speaker_id": "spk_012",
+        "text": "You were never cut out to be a Mason.",
+        "confidence": 0.7,
+        "index": 22
       },
       {
-        "start": 9,
-        "end": 13,
-        "speaker": "Speaker 3",
-        "speaker_id": "spk_003",
-        "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
-        "confidence": 0.95,
-        "index": 4
-      },
-      {
-        "start": 13,
-        "end": 15,
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "Menendez is a terrorist.",
-        "confidence": 0.9,
-        "index": 5
-      },
-      {
-        "start": 15,
-        "end": 18,
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "We're bringing peace and security to the world.",
-        "confidence": 0.9,
-        "index": 6
-      },
-      {
-        "start": 18,
-        "end": 20,
-        "speaker": "Speaker 5",
-        "speaker_id": "spk_005",
-        "text": "He refuses to let me go.",
-        "confidence": 0.85,
-        "index": 7
-      },
-      {
-        "start": 20,
-        "end": 23,
         "speaker": "Speaker 6",
         "speaker_id": "spk_006",
-        "text": "Stop looking backwards, David. What matters is what we do next.",
-        "confidence": 0.9,
-        "index": 8
-      },
-      {
-        "start": 23,
-        "end": 25,
-        "speaker": "Speaker 5",
-        "speaker_id": "spk_005",
-        "text": "A lot of people counting on us for answers.",
-        "confidence": 0.85,
-        "index": 9
-      },
-      {
-        "start": 90,
-        "end": 92,
-        "speaker": "Speaker 7",
-        "speaker_id": "spk_007",
-        "text": "Spectre One report.",
-        "confidence": 0.8,
-        "index": 10
-      },
-      {
-        "start": 92,
-        "end": 94,
-        "speaker": "Speaker 7",
-        "speaker_id": "spk_007",
-        "text": "Need a sitrep.",
-        "confidence": 0.8,
-        "index": 11
-      },
-      {
-        "start": 94,
-        "end": 96,
-        "speaker": "Speaker 5",
-        "speaker_id": "spk_005",
-        "text": "This isn't real.",
-        "confidence": 0.85,
-        "index": 12
-      },
-      {
-        "start": 96,
-        "end": 97,
-        "speaker": "Speaker 8",
-        "speaker_id": "spk_008",
-        "text": "The hell it ain't!",
-        "confidence": 0.85,
-        "index": 13
-      },
-      {
-        "start": 130,
-        "end": 132,
-        "speaker": "Speaker 8",
-        "speaker_id": "spk_008",
-        "text": "Pull it together, man!",
-        "confidence": 0.85,
-        "index": 14
-      },
-      {
-        "start": 132,
-        "end": 134,
-        "speaker": "Speaker 9",
-        "speaker_id": "spk_009",
-        "text": "So eager to leave, David.",
-        "confidence": 0.9,
-        "index": 15
-      },
-      {
-        "start": 134,
-        "end": 138,
-        "speaker": "Speaker 9",
-        "speaker_id": "spk_009",
-        "text": "Killing a man is a hell of a lot easier than killing an idea.",
-        "confidence": 0.9,
-        "index": 16
-      },
-      {
-        "start": 138,
-        "end": 140,
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "You were never cut out to be a Mason.",
-        "confidence": 0.9,
-        "index": 17
-      },
-      {
-        "start": 140,
-        "end": 140.04,
-        "speaker": "Speaker 5",
-        "speaker_id": "spk_005",
         "text": "No more games. This ends now.",
-        "confidence": 0.85,
-        "index": 18
+        "confidence": 0.7,
+        "index": 23
+      },
+      {
+        "speaker": "Speaker 13",
+        "speaker_id": "spk_013",
+        "text": "Get the Reznov challenge pack when you pre-order now.",
+        "confidence": 0.7,
+        "index": 25
       }
     ],
     "speaker_profiles": [
@@ -350,7 +162,7 @@
         "speaker_id": "spk_001",
         "label": "Speaker 1",
         "grounded": {
-          "confidence": 0.85,
+          "confidence": 0.5,
           "linked_segment_indexes": [
             0,
             1,
@@ -358,15 +170,11 @@
           ],
           "acoustic_descriptors": [
             {
-              "label": "female voice",
+              "label": "clear voice with authoritative tone",
               "confidence": null
             },
             {
-              "label": "clear articulation",
-              "confidence": null
-            },
-            {
-              "label": "moderate pitch",
+              "label": "close-mic delivery",
               "confidence": null
             }
           ]
@@ -376,14 +184,14 @@
             {
               "trait": "gender_presentation",
               "value": "female",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
+              "confidence": 0.6,
+              "note": "speculative from context"
             },
             {
               "trait": "role",
-              "value": "narrator or motivator",
-              "confidence": 0.6,
-              "note": "speculative from context"
+              "value": "narrator or hero",
+              "confidence": 0.5,
+              "note": "speculative"
             }
           ]
         }
@@ -392,21 +200,17 @@
         "speaker_id": "spk_002",
         "label": "Speaker 2",
         "grounded": {
-          "confidence": 0.9,
+          "confidence": 0.5,
           "linked_segment_indexes": [
             3
           ],
           "acoustic_descriptors": [
             {
-              "label": "deep male voice",
+              "label": "deep, menacing voice",
               "confidence": null
             },
             {
-              "label": "menacing tone",
-              "confidence": null
-            },
-            {
-              "label": "slow delivery",
+              "label": "dramatic delivery",
               "confidence": null
             }
           ]
@@ -416,14 +220,14 @@
             {
               "trait": "gender_presentation",
               "value": "male",
-              "confidence": 0.95,
-              "note": "based on vocal timbre"
+              "confidence": 0.7,
+              "note": "speculative from timbre"
             },
             {
-              "trait": "demeanor",
-              "value": "threatening",
-              "confidence": 0.8,
-              "note": "from delivery style"
+              "trait": "role",
+              "value": "villain or antagonist",
+              "confidence": 0.6,
+              "note": "speculative"
             }
           ]
         }
@@ -432,21 +236,17 @@
         "speaker_id": "spk_003",
         "label": "Speaker 3",
         "grounded": {
-          "confidence": 0.9,
+          "confidence": 0.5,
           "linked_segment_indexes": [
             4
           ],
           "acoustic_descriptors": [
             {
-              "label": "male voice",
+              "label": "neutral, reportorial tone",
               "confidence": null
             },
             {
-              "label": "news anchor style",
-              "confidence": null
-            },
-            {
-              "label": "formal tone",
+              "label": "clear enunciation",
               "confidence": null
             }
           ]
@@ -454,16 +254,10 @@
         "inferred_traits": {
           "traits": [
             {
-              "trait": "gender_presentation",
-              "value": "male",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
-            },
-            {
               "trait": "role",
-              "value": "reporter or official",
-              "confidence": 0.7,
-              "note": "speculative from delivery"
+              "value": "news anchor or narrator",
+              "confidence": 0.6,
+              "note": "speculative"
             }
           ]
         }
@@ -472,23 +266,17 @@
         "speaker_id": "spk_004",
         "label": "Speaker 4",
         "grounded": {
-          "confidence": 0.85,
+          "confidence": 0.5,
           "linked_segment_indexes": [
-            5,
-            6,
-            17
+            5
           ],
           "acoustic_descriptors": [
             {
-              "label": "female voice",
+              "label": "assertive voice",
               "confidence": null
             },
             {
-              "label": "authoritative tone",
-              "confidence": null
-            },
-            {
-              "label": "clear and firm delivery",
+              "label": "direct delivery",
               "confidence": null
             }
           ]
@@ -496,16 +284,10 @@
         "inferred_traits": {
           "traits": [
             {
-              "trait": "gender_presentation",
-              "value": "female",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
-            },
-            {
-              "trait": "demeanor",
-              "value": "confident and commanding",
-              "confidence": 0.75,
-              "note": "from speech patterns"
+              "trait": "role",
+              "value": "official or commentator",
+              "confidence": 0.5,
+              "note": "speculative"
             }
           ]
         }
@@ -514,24 +296,17 @@
         "speaker_id": "spk_005",
         "label": "Speaker 5",
         "grounded": {
-          "confidence": 0.8,
+          "confidence": 0.5,
           "linked_segment_indexes": [
-            7,
-            9,
-            12,
-            18
+            6
           ],
           "acoustic_descriptors": [
             {
-              "label": "male voice",
+              "label": "confident, persuasive tone",
               "confidence": null
             },
             {
-              "label": "emotional tone",
-              "confidence": null
-            },
-            {
-              "label": "varied pitch",
+              "label": "public-speaking style",
               "confidence": null
             }
           ]
@@ -539,16 +314,10 @@
         "inferred_traits": {
           "traits": [
             {
-              "trait": "gender_presentation",
-              "value": "male",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
-            },
-            {
               "trait": "role",
-              "value": "protagonist or key character",
-              "confidence": 0.65,
-              "note": "speculative from dialogue context"
+              "value": "government or military leader",
+              "confidence": 0.5,
+              "note": "speculative"
             }
           ]
         }
@@ -557,201 +326,27 @@
         "speaker_id": "spk_006",
         "label": "Speaker 6",
         "grounded": {
-          "confidence": 0.85,
+          "confidence": 0.5,
           "linked_segment_indexes": [
-            8
+            7,
+            23
           ],
           "acoustic_descriptors": [
             {
-              "label": "male voice",
+              "label": "younger male voice",
               "confidence": null
             },
             {
-              "label": "calm and instructive",
-              "confidence": null
-            },
-            {
-              "label": "steady pace",
+              "label": "emotional delivery",
               "confidence": null
             }
           ]
         },
         "inferred_traits": {
           "traits": [
-            {
-              "trait": "gender_presentation",
-              "value": "male",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
-            },
-            {
-              "trait": "demeanor",
-              "value": "mentoring or guiding",
-              "confidence": 0.6,
-              "note": "speculative from content"
-            }
-          ]
-        }
-      },
-      {
-        "speaker_id": "spk_007",
-        "label": "Speaker 7",
-        "grounded": {
-          "confidence": 0.75,
-          "linked_segment_indexes": [
-            10,
-            11
-          ],
-          "acoustic_descriptors": [
-            {
-              "label": "male voice",
-              "confidence": null
-            },
-            {
-              "label": "comms filter effect",
-              "confidence": null
-            },
-            {
-              "label": "military-style delivery",
-              "confidence": null
-            }
-          ]
-        },
-        "inferred_traits": {
-          "traits": [
-            {
-              "trait": "gender_presentation",
-              "value": "male",
-              "confidence": 0.85,
-              "note": "based on vocal timbre"
-            },
             {
               "trait": "role",
-              "value": "soldier or operative",
-              "confidence": 0.7,
-              "note": "from communication style"
-            }
-          ]
-        }
-      },
-      {
-        "speaker_id": "spk_008",
-        "label": "Speaker 8",
-        "grounded": {
-          "confidence": 0.8,
-          "linked_segment_indexes": [
-            13,
-            14
-          ],
-          "acoustic_descriptors": [
-            {
-              "label": "male voice",
-              "confidence": null
-            },
-            {
-              "label": "aggressive tone",
-              "confidence": null
-            },
-            {
-              "label": "loud and forceful",
-              "confidence": null
-            }
-          ]
-        },
-        "inferred_traits": {
-          "traits": [
-            {
-              "trait": "gender_presentation",
-              "value": "male",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
-            },
-            {
-              "trait": "demeanor",
-              "value": "intense and confrontational",
-              "confidence": 0.75,
-              "note": "from delivery"
-            }
-          ]
-        }
-      },
-      {
-        "speaker_id": "spk_009",
-        "label": "Speaker 9",
-        "grounded": {
-          "confidence": 0.85,
-          "linked_segment_indexes": [
-            15,
-            16
-          ],
-          "acoustic_descriptors": [
-            {
-              "label": "male voice",
-              "confidence": null
-            },
-            {
-              "label": "villainous tone",
-              "confidence": null
-            },
-            {
-              "label": "sinister cadence",
-              "confidence": null
-            }
-          ]
-        },
-        "inferred_traits": {
-          "traits": [
-            {
-              "trait": "gender_presentation",
-              "value": "male",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
-            },
-            {
-              "trait": "role",
-              "value": "antagonist",
-              "confidence": 0.8,
-              "note": "from menacing delivery"
-            }
-          ]
-        }
-      },
-      {
-        "speaker_id": "spk_001",
-        "label": "Speaker 1",
-        "grounded": {
-          "confidence": 0.85,
-          "linked_segment_indexes": [
-            0,
-            1,
-            2
-          ],
-          "acoustic_descriptors": [
-            {
-              "label": "female voice",
-              "confidence": null
-            },
-            {
-              "label": "clear articulation",
-              "confidence": null
-            },
-            {
-              "label": "moderate pitch",
-              "confidence": null
-            }
-          ]
-        },
-        "inferred_traits": {
-          "traits": [
-            {
-              "trait": "gender_presentation",
-              "value": "female",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
-            },
-            {
-              "trait": "role",
-              "value": "narrator or motivator",
+              "value": "protagonist or David",
               "confidence": 0.6,
               "note": "speculative from context"
             }
@@ -759,230 +354,22 @@
         }
       },
       {
-        "speaker_id": "spk_002",
-        "label": "Speaker 2",
-        "grounded": {
-          "confidence": 0.9,
-          "linked_segment_indexes": [
-            3
-          ],
-          "acoustic_descriptors": [
-            {
-              "label": "deep male voice",
-              "confidence": null
-            },
-            {
-              "label": "menacing tone",
-              "confidence": null
-            },
-            {
-              "label": "slow delivery",
-              "confidence": null
-            }
-          ]
-        },
-        "inferred_traits": {
-          "traits": [
-            {
-              "trait": "gender_presentation",
-              "value": "male",
-              "confidence": 0.95,
-              "note": "based on vocal timbre"
-            },
-            {
-              "trait": "demeanor",
-              "value": "threatening",
-              "confidence": 0.8,
-              "note": "from delivery style"
-            }
-          ]
-        }
-      },
-      {
-        "speaker_id": "spk_003",
-        "label": "Speaker 3",
-        "grounded": {
-          "confidence": 0.9,
-          "linked_segment_indexes": [
-            4
-          ],
-          "acoustic_descriptors": [
-            {
-              "label": "male voice",
-              "confidence": null
-            },
-            {
-              "label": "news anchor style",
-              "confidence": null
-            },
-            {
-              "label": "formal tone",
-              "confidence": null
-            }
-          ]
-        },
-        "inferred_traits": {
-          "traits": [
-            {
-              "trait": "gender_presentation",
-              "value": "male",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
-            },
-            {
-              "trait": "role",
-              "value": "reporter or official",
-              "confidence": 0.7,
-              "note": "speculative from delivery"
-            }
-          ]
-        }
-      },
-      {
-        "speaker_id": "spk_004",
-        "label": "Speaker 4",
-        "grounded": {
-          "confidence": 0.85,
-          "linked_segment_indexes": [
-            5,
-            6,
-            17
-          ],
-          "acoustic_descriptors": [
-            {
-              "label": "female voice",
-              "confidence": null
-            },
-            {
-              "label": "authoritative tone",
-              "confidence": null
-            },
-            {
-              "label": "clear and firm delivery",
-              "confidence": null
-            }
-          ]
-        },
-        "inferred_traits": {
-          "traits": [
-            {
-              "trait": "gender_presentation",
-              "value": "female",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
-            },
-            {
-              "trait": "demeanor",
-              "value": "confident and commanding",
-              "confidence": 0.75,
-              "note": "from speech patterns"
-            }
-          ]
-        }
-      },
-      {
-        "speaker_id": "spk_005",
-        "label": "Speaker 5",
-        "grounded": {
-          "confidence": 0.8,
-          "linked_segment_indexes": [
-            7,
-            9,
-            12,
-            18
-          ],
-          "acoustic_descriptors": [
-            {
-              "label": "male voice",
-              "confidence": null
-            },
-            {
-              "label": "emotional tone",
-              "confidence": null
-            },
-            {
-              "label": "varied pitch",
-              "confidence": null
-            }
-          ]
-        },
-        "inferred_traits": {
-          "traits": [
-            {
-              "trait": "gender_presentation",
-              "value": "male",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
-            },
-            {
-              "trait": "role",
-              "value": "protagonist or key character",
-              "confidence": 0.65,
-              "note": "speculative from dialogue context"
-            }
-          ]
-        }
-      },
-      {
-        "speaker_id": "spk_006",
-        "label": "Speaker 6",
-        "grounded": {
-          "confidence": 0.85,
-          "linked_segment_indexes": [
-            8
-          ],
-          "acoustic_descriptors": [
-            {
-              "label": "male voice",
-              "confidence": null
-            },
-            {
-              "label": "calm and instructive",
-              "confidence": null
-            },
-            {
-              "label": "steady pace",
-              "confidence": null
-            }
-          ]
-        },
-        "inferred_traits": {
-          "traits": [
-            {
-              "trait": "gender_presentation",
-              "value": "male",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
-            },
-            {
-              "trait": "demeanor",
-              "value": "mentoring or guiding",
-              "confidence": 0.6,
-              "note": "speculative from content"
-            }
-          ]
-        }
-      },
-      {
         "speaker_id": "spk_007",
         "label": "Speaker 7",
         "grounded": {
-          "confidence": 0.75,
+          "confidence": 0.5,
           "linked_segment_indexes": [
-            10,
-            11
+            8,
+            9,
+            19
           ],
           "acoustic_descriptors": [
             {
-              "label": "male voice",
+              "label": "mature, guiding voice",
               "confidence": null
             },
             {
-              "label": "comms filter effect",
-              "confidence": null
-            },
-            {
-              "label": "military-style delivery",
+              "label": "calm but firm tone",
               "confidence": null
             }
           ]
@@ -990,16 +377,10 @@
         "inferred_traits": {
           "traits": [
             {
-              "trait": "gender_presentation",
-              "value": "male",
-              "confidence": 0.85,
-              "note": "based on vocal timbre"
-            },
-            {
               "trait": "role",
-              "value": "soldier or operative",
-              "confidence": 0.7,
-              "note": "from communication style"
+              "value": "mentor or commander",
+              "confidence": 0.6,
+              "note": "speculative"
             }
           ]
         }
@@ -1008,22 +389,18 @@
         "speaker_id": "spk_008",
         "label": "Speaker 8",
         "grounded": {
-          "confidence": 0.8,
+          "confidence": 0.5,
           "linked_segment_indexes": [
-            13,
-            14
+            10,
+            11
           ],
           "acoustic_descriptors": [
             {
-              "label": "male voice",
+              "label": "military-style communication",
               "confidence": null
             },
             {
-              "label": "aggressive tone",
-              "confidence": null
-            },
-            {
-              "label": "loud and forceful",
+              "label": "clipped, efficient speech",
               "confidence": null
             }
           ]
@@ -1031,16 +408,10 @@
         "inferred_traits": {
           "traits": [
             {
-              "trait": "gender_presentation",
-              "value": "male",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
-            },
-            {
-              "trait": "demeanor",
-              "value": "intense and confrontational",
-              "confidence": 0.75,
-              "note": "from delivery"
+              "trait": "role",
+              "value": "soldier or operator",
+              "confidence": 0.5,
+              "note": "speculative"
             }
           ]
         }
@@ -1049,22 +420,68 @@
         "speaker_id": "spk_009",
         "label": "Speaker 9",
         "grounded": {
-          "confidence": 0.85,
+          "confidence": 0.5,
           "linked_segment_indexes": [
-            15,
-            16
+            12
           ],
           "acoustic_descriptors": [
             {
-              "label": "male voice",
+              "label": "disoriented or confused tone",
               "confidence": null
             },
             {
-              "label": "villainous tone",
+              "label": "softer delivery",
+              "confidence": null
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": []
+        }
+      },
+      {
+        "speaker_id": "spk_010",
+        "label": "Speaker 10",
+        "grounded": {
+          "confidence": 0.5,
+          "linked_segment_indexes": [
+            13
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "aggressive,反驳 tone",
               "confidence": null
             },
             {
-              "label": "sinister cadence",
+              "label": "loud delivery",
+              "confidence": null
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": []
+        }
+      },
+      {
+        "speaker_id": "spk_011",
+        "label": "Speaker 11",
+        "grounded": {
+          "confidence": 0.5,
+          "linked_segment_indexes": [
+            14,
+            15,
+            16,
+            17,
+            18,
+            24
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "sung vocals with melodic contour",
+              "confidence": null
+            },
+            {
+              "label": "energetic performance",
               "confidence": null
             }
           ]
@@ -1072,31 +489,87 @@
         "inferred_traits": {
           "traits": [
             {
-              "trait": "gender_presentation",
-              "value": "male",
-              "confidence": 0.9,
-              "note": "based on vocal timbre"
+              "trait": "role",
+              "value": "singer or musical element",
+              "confidence": 0.7,
+              "note": "speculative from delivery"
+            }
+          ]
+        }
+      },
+      {
+        "speaker_id": "spk_012",
+        "label": "Speaker 12",
+        "grounded": {
+          "confidence": 0.5,
+          "linked_segment_indexes": [
+            20,
+            21,
+            22
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "cynical, world-weary voice",
+              "confidence": null
             },
             {
+              "label": "deliberate pacing",
+              "confidence": null
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
               "trait": "role",
-              "value": "antagonist",
-              "confidence": 0.8,
-              "note": "from menacing delivery"
+              "value": "antagonist or rival",
+              "confidence": 0.6,
+              "note": "speculative"
+            }
+          ]
+        }
+      },
+      {
+        "speaker_id": "spk_013",
+        "label": "Speaker 13",
+        "grounded": {
+          "confidence": 0.5,
+          "linked_segment_indexes": [
+            25
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "promotional voiceover style",
+              "confidence": null
+            },
+            {
+              "label": "enthusiastic tone",
+              "confidence": null
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "role",
+              "value": "announcer or advertiser",
+              "confidence": 0.7,
+              "note": "speculative"
             }
           ]
         }
       }
     ],
-    "summary": "A dramatic dialogue featuring multiple characters discussing themes of fear, control, terrorism, and personal conflict, with references to global unrest and individual stakes.",
-    "totalDuration": 140.04,
+    "summary": "A trailer-style dialogue featuring multiple characters discussing themes of fear, control, terrorism, and personal conflict, interspersed with song lyrics and ending with a promotional message for a game challenge pack.",
+    "totalDuration": 140.042449,
     "handoffContext": null,
     "analysisMode": "whole_asset",
     "timingMode": "full_timeline",
     "sourceStrategy": "base64",
     "coverage": {
       "start": 0,
-      "end": 140.04,
-      "duration": 140.04,
+      "end": 52,
+      "duration": 52,
       "complete": false
     },
     "provenance": {
@@ -1110,11 +583,11 @@
     "get-dialogue": {
       "status": "success",
       "run": {
-        "configName": "COD Test Pipeline",
-        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-07T21:51:54.500Z",
-        "completedAt": "2026-04-07T21:53:51.580Z",
-        "durationMs": 117080,
+        "configName": "COD Test Original MP4 Source Experiment",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source",
+        "startedAt": "2026-04-09T16:29:17.931Z",
+        "completedAt": "2026-04-09T16:32:42.640Z",
+        "durationMs": 204709,
         "attempt": 1
       },
       "lineage": {
@@ -1139,11 +612,11 @@
     "get-music": {
       "status": "success",
       "run": {
-        "configName": "COD Test Pipeline",
-        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-07T21:53:51.581Z",
-        "completedAt": "2026-04-07T21:54:20.051Z",
-        "durationMs": 28470,
+        "configName": "COD Test Original MP4 Source Experiment",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source",
+        "startedAt": "2026-04-09T16:32:42.641Z",
+        "completedAt": "2026-04-09T16:33:21.208Z",
+        "durationMs": 38567,
         "attempt": 1
       },
       "lineage": {
@@ -1168,11 +641,11 @@
     "get-music-vocals": {
       "status": "success",
       "run": {
-        "configName": "COD Test Pipeline",
-        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-07T21:54:20.052Z",
-        "completedAt": "2026-04-07T21:54:54.358Z",
-        "durationMs": 34306,
+        "configName": "COD Test Original MP4 Source Experiment",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source",
+        "startedAt": "2026-04-09T16:33:21.208Z",
+        "completedAt": "2026-04-09T16:37:09.249Z",
+        "durationMs": 228041,
         "attempt": 1
       },
       "lineage": {
@@ -1197,11 +670,11 @@
     "reconcile-famous-song-phase1": {
       "status": "success",
       "run": {
-        "configName": "COD Test Pipeline",
-        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-07T21:54:54.358Z",
-        "completedAt": "2026-04-07T21:54:54.361Z",
-        "durationMs": 3,
+        "configName": "COD Test Original MP4 Source Experiment",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source",
+        "startedAt": "2026-04-09T16:37:09.250Z",
+        "completedAt": "2026-04-09T16:37:09.258Z",
+        "durationMs": 8,
         "attempt": 1
       },
       "lineage": {
@@ -1223,21 +696,21 @@
         "nextAction": null
       }
     },
-    "video-chunks": {
+    "whole-video-mimo": {
       "status": "success",
       "run": {
-        "configName": "COD Test Pipeline",
-        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-07T21:54:54.364Z",
-        "completedAt": "2026-04-07T22:08:07.293Z",
-        "durationMs": 792929,
+        "configName": "COD Test Original MP4 Source Experiment",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source",
+        "startedAt": "2026-04-09T16:37:09.259Z",
+        "completedAt": "2026-04-09T16:38:02.848Z",
+        "durationMs": 53589,
         "attempt": 1
       },
       "lineage": {
-        "failureId": "video-chunks:phase2-process:attempt-1",
+        "failureId": "whole-video-mimo:phase2-process:attempt-1",
         "parentFailureId": null,
         "phase": "phase2-process",
-        "script": "video-chunks",
+        "script": "whole-video-mimo",
         "scriptRunAttempt": 1,
         "deterministicAttemptsUsed": 0,
         "aiRecoveryAttemptsUsed": 0,
@@ -1247,19 +720,19 @@
       "failureCountsByCategory": {},
       "recoveryPolicy": null,
       "refs": {
-        "result": "phase2-process/script-results/video-chunks.success.json",
-        "lineage": "phase2-process/recovery/video-chunks/lineage.json",
+        "result": "phase2-process/script-results/whole-video-mimo.success.json",
+        "lineage": "phase2-process/recovery/whole-video-mimo/lineage.json",
         "nextAction": null
       }
     },
     "metrics": {
       "status": "success",
       "run": {
-        "configName": "COD Test Pipeline",
-        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-07T22:08:07.295Z",
-        "completedAt": "2026-04-07T22:08:07.297Z",
-        "durationMs": 2,
+        "configName": "COD Test Original MP4 Source Experiment",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source",
+        "startedAt": "2026-04-09T16:38:02.849Z",
+        "completedAt": "2026-04-09T16:38:02.850Z",
+        "durationMs": 1,
         "attempt": 1
       },
       "lineage": {
@@ -1284,11 +757,11 @@
     "recommendation": {
       "status": "success",
       "run": {
-        "configName": "COD Test Pipeline",
-        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-07T22:08:07.297Z",
-        "completedAt": "2026-04-07T22:08:29.326Z",
-        "durationMs": 22029,
+        "configName": "COD Test Original MP4 Source Experiment",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source",
+        "startedAt": "2026-04-09T16:38:02.850Z",
+        "completedAt": "2026-04-09T16:38:34.546Z",
+        "durationMs": 31696,
         "attempt": 1
       },
       "lineage": {
@@ -1313,11 +786,11 @@
     "emotional-analysis": {
       "status": "success",
       "run": {
-        "configName": "COD Test Pipeline",
-        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-07T22:08:29.326Z",
-        "completedAt": "2026-04-07T22:08:29.331Z",
-        "durationMs": 5,
+        "configName": "COD Test Original MP4 Source Experiment",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source",
+        "startedAt": "2026-04-09T16:38:34.547Z",
+        "completedAt": "2026-04-09T16:38:34.548Z",
+        "durationMs": 1,
         "attempt": 1
       },
       "lineage": {
@@ -1342,10 +815,10 @@
     "summary": {
       "status": "success",
       "run": {
-        "configName": "COD Test Pipeline",
-        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-07T22:08:29.331Z",
-        "completedAt": "2026-04-07T22:08:29.332Z",
+        "configName": "COD Test Original MP4 Source Experiment",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source",
+        "startedAt": "2026-04-09T16:38:34.548Z",
+        "completedAt": "2026-04-09T16:38:34.549Z",
         "durationMs": 1,
         "attempt": 1
       },
@@ -1371,11 +844,11 @@
     "final-report": {
       "status": "success",
       "run": {
-        "configName": "COD Test Pipeline",
-        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-07T22:08:29.332Z",
-        "completedAt": "2026-04-07T22:08:29.338Z",
-        "durationMs": 6,
+        "configName": "COD Test Original MP4 Source Experiment",
+        "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source",
+        "startedAt": "2026-04-09T16:38:34.549Z",
+        "completedAt": "2026-04-09T16:38:34.554Z",
+        "durationMs": 5,
         "attempt": 1
       },
       "lineage": {
@@ -1404,100 +877,60 @@
         "start": 0,
         "end": 35,
         "type": "music",
-        "description": "Opening with restrained percussion and tense score bed, spoken dialogue overlay present",
+        "description": "Opening with tense dialogue over a restrained score bed, building anticipation",
         "mood": "tense",
-        "intensity": 5
+        "intensity": 6
       },
       {
         "start": 35,
         "end": 58,
         "type": "music",
-        "description": "Score builds with rising intensity and continued dialogue overlay, action SFX emerging",
+        "description": "Music intensifies with rising percussion and guitar riffs, supporting spoken overlays",
         "mood": "building",
-        "intensity": 6
-      },
-      {
-        "start": 58,
-        "end": 86,
-        "type": "music",
-        "description": "Heavier instrumental score with increased percussion and dialogue, leading to vocal cue",
-        "mood": "intense",
         "intensity": 7
       },
       {
-        "start": 86,
-        "end": 110,
+        "start": 58,
+        "end": 65,
         "type": "music",
-        "description": "Music with audible vocal cues and lyrical hook, spoken overlay continues, high-energy action",
+        "description": "Rock vocal entry with aggressive undertones, marking a shift in energy",
         "mood": "aggressive",
         "intensity": 8
       },
       {
-        "start": 110,
-        "end": 126,
+        "start": 65,
+        "end": 76,
         "type": "music",
-        "description": "Climactic music with vocals and dense action SFX, score remains dominant bed",
-        "mood": "climactic",
-        "intensity": 9
-      },
-      {
-        "start": 126,
-        "end": 140,
-        "type": "music",
-        "description": "Final vocal phrase and music fade with trailer call to action, intensity drops",
-        "mood": "resolved",
-        "intensity": 7
-      },
-      {
-        "start": 0,
-        "end": 35,
-        "type": "music",
-        "description": "Opening with restrained percussion and tense score bed, spoken dialogue overlay present",
+        "description": "Continued score with dialogue overlay, maintaining tension and momentum",
         "mood": "tense",
-        "intensity": 5
-      },
-      {
-        "start": 35,
-        "end": 58,
-        "type": "music",
-        "description": "Score builds with rising intensity and continued dialogue overlay, action SFX emerging",
-        "mood": "building",
-        "intensity": 6
-      },
-      {
-        "start": 58,
-        "end": 86,
-        "type": "music",
-        "description": "Heavier instrumental score with increased percussion and dialogue, leading to vocal cue",
-        "mood": "intense",
         "intensity": 7
       },
       {
-        "start": 86,
-        "end": 110,
+        "start": 76,
+        "end": 98,
         "type": "music",
-        "description": "Music with audible vocal cues and lyrical hook, spoken overlay continues, high-energy action",
-        "mood": "aggressive",
-        "intensity": 8
-      },
-      {
-        "start": 110,
-        "end": 126,
-        "type": "music",
-        "description": "Climactic music with vocals and dense action SFX, score remains dominant bed",
-        "mood": "climactic",
+        "description": "Prominent heavy metal section with text-bearing vocal cues and driving rhythm",
+        "mood": "high-energy",
         "intensity": 9
       },
       {
-        "start": 126,
+        "start": 98,
+        "end": 120,
+        "type": "music",
+        "description": "Action sequence with music and sound effects blend, creating a chaotic atmosphere",
+        "mood": "chaotic",
+        "intensity": 8
+      },
+      {
+        "start": 120,
         "end": 140,
         "type": "music",
-        "description": "Final vocal phrase and music fade with trailer call to action, intensity drops",
-        "mood": "resolved",
-        "intensity": 7
+        "description": "Concluding music with promotional elements, fading out with a sense of resolution",
+        "mood": "conclusive",
+        "intensity": 5
       }
     ],
-    "summary": "A high-energy trailer combining intense dialogue, action sound effects, and heavy metal music, building from a tense opening to a climactic peak with vocal cues from a recognizable song.",
+    "summary": "An intense trailer featuring tense dialogue, building to heavy metal music with prominent vocal hooks, action-packed sequences, and a promotional ending, spanning 140 seconds with a dynamic audio arc.",
     "hasMusic": true,
     "analysisMode": "whole_asset",
     "timingMode": "full_timeline",
@@ -1509,28 +942,13 @@
       "complete": true
     },
     "globalArc": {
-      "dominantMood": "intense",
-      "energyCurve": "rising_then_peak_then_fall",
+      "dominantMood": "energetic",
+      "energyCurve": "rising_then_plateau_then_drop",
       "notableTransitions": [
         {
-          "start": 86,
-          "end": 90,
-          "label": "vocal entry with lyrical hook"
-        },
-        {
-          "start": 126,
-          "end": 130,
-          "label": "final vocal phrase and music fade"
-        },
-        {
-          "start": 86,
-          "end": 90,
-          "label": "vocal entry with lyrical hook"
-        },
-        {
-          "start": 126,
-          "end": 130,
-          "label": "final vocal phrase and music fade"
+          "start": 58,
+          "end": 65,
+          "label": "rock vocal entry"
         }
       ]
     },
@@ -1550,71 +968,51 @@
     },
     "recognizedSong": {
       "status": "possible",
-      "confidence": 0.7,
+      "confidence": 0.64,
       "candidates": [
         {
           "title": "Master of Puppets",
           "artist": "Metallica",
-          "confidence": 0.7,
+          "confidence": 0.64,
           "evidence": [
-            "Distinctive thrash-metal instrumental hook and repeated vocal phrases audible in the music lane."
+            "Distinctive thrash-metal hook and repeated master chant in the music lane."
           ],
           "matchedLyrics": [
-            "Master, master",
-            "I'll paint your master"
+            "Master, master"
           ],
           "timeRanges": [
             {
-              "start": 86,
-              "end": 126
+              "start": 76,
+              "end": 98
             }
           ],
-          "ambiguity": "Trailer dialogue and action SFX partially mask the cue, reducing full lyrical clarity."
-        },
-        {
-          "title": "Master of Puppets",
-          "artist": "Metallica",
-          "confidence": 0.7,
-          "evidence": [
-            "Distinctive thrash-metal instrumental hook and repeated vocal phrases audible in the music lane."
-          ],
-          "matchedLyrics": [
-            "Master, master",
-            "I'll paint your master"
-          ],
-          "timeRanges": [
-            {
-              "start": 86,
-              "end": 126
-            }
-          ],
-          "ambiguity": "Trailer dialogue and action SFX partially mask the cue, reducing full lyrical clarity."
+          "ambiguity": "Trailer dialogue and SFX partially mask the cue."
         }
       ],
-      "primaryEvidence": "A likely famous-song hook with recognizable lyrics and musical style is present, but recognition remains evidence-gated due to masking.",
-      "ambiguity": "Partial masking by spoken dialogue and sound effects reduces certainty.",
+      "primaryEvidence": "A likely famous-song hook is present, but recognition remains evidence-gated.",
+      "ambiguity": "Partial masking reduces certainty.",
       "multipleSongsDetected": false
     },
     "recognitionNotes": [
-      "Vocal cues are intermittent and overlaid with dialogue; instrumental resemblance supports possible identification.",
-      "No clear evidence of multiple distinct songs; focus on one dominant musical theme.",
-      "Vocal cues are intermittent and overlaid with dialogue; instrumental resemblance supports possible identification.",
-      "No clear evidence of multiple distinct songs; focus on one dominant musical theme."
+      "Music is interwoven with dialogue and sound effects, affecting clarity and recognition confidence."
     ],
     "qualityNotes": [
       "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-      "Confidence is moderate due to audio masking; timing precision is approximate based on transcript cues.",
-      "Continuity is maintained with a consistent score bed throughout, despite spoken overlays.",
-      "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-      "Confidence is moderate due to audio masking; timing precision is approximate based on transcript cues.",
-      "Continuity is maintained with a consistent score bed throughout, despite spoken overlays."
+      "Segment boundaries are estimated based on audio cues; intensity ratings are subjective and coarse."
     ]
   },
   "musicVocalsData": {
     "vocal_segments": [
       {
-        "start": 86,
-        "end": 90,
+        "index": 0,
+        "text": "Obey your master",
+        "confidence": 0.9,
+        "performer": "Vocalist 1",
+        "performer_id": "voc_001",
+        "delivery": "sung"
+      },
+      {
+        "index": 1,
         "text": "Obey your master",
         "confidence": 0.95,
         "performer": "Vocalist 1",
@@ -1622,188 +1020,111 @@
         "delivery": "sung"
       },
       {
-        "start": 90,
-        "end": 93,
+        "index": 2,
+        "text": "Master! Master!",
+        "confidence": 0.95,
+        "performer": "Vocalist 1",
+        "performer_id": "voc_001",
+        "delivery": "sung"
+      },
+      {
+        "index": 3,
+        "text": "Master, master",
+        "confidence": 0.9,
+        "performer": "Vocalist 1",
+        "performer_id": "voc_001",
+        "delivery": "sung"
+      },
+      {
+        "index": 4,
         "text": "Come crawling faster",
-        "confidence": 0.92,
+        "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
         "delivery": "sung"
       },
       {
-        "start": 93,
-        "end": 97,
-        "text": "Master of puppets, I pull your strings",
-        "confidence": 0.93,
+        "index": 5,
+        "text": "Faster dreams and I'll be faster",
+        "confidence": 0.7,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
         "delivery": "sung"
       },
       {
-        "start": 97,
-        "end": 101,
+        "index": 6,
+        "text": "Master of puppets I pull your strings",
+        "confidence": 0.95,
+        "performer": "Vocalist 1",
+        "performer_id": "voc_001",
+        "delivery": "sung"
+      },
+      {
+        "index": 7,
+        "text": "Master! Master!",
+        "confidence": 0.95,
+        "performer": "Vocalist 1",
+        "performer_id": "voc_001",
+        "delivery": "sung"
+      },
+      {
+        "index": 8,
         "text": "Twisting your mind and smashing your dreams",
-        "confidence": 0.91,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "start": 101,
-        "end": 105,
-        "text": "Blinded by me, you can't see a thing",
-        "confidence": 0.9,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "start": 105,
-        "end": 109,
-        "text": "Just call my name, 'cause I'll hear you scream",
-        "confidence": 0.92,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "start": 109,
-        "end": 111,
-        "text": "Master, master",
-        "confidence": 0.94,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "start": 111,
-        "end": 115,
-        "text": "Just call my name, 'cause I'll hear you scream",
-        "confidence": 0.91,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "start": 115,
-        "end": 117,
-        "text": "Master, master",
-        "confidence": 0.93,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "start": 117,
-        "end": 120,
-        "text": "Come crawling faster",
-        "confidence": 0.9,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "start": 126,
-        "end": 130,
-        "text": "Obey your master",
         "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
         "delivery": "sung"
       },
       {
-        "start": 86,
-        "end": 90,
-        "text": "Obey your master",
+        "index": 9,
+        "text": "You see me cry",
+        "confidence": 0.8,
+        "performer": "Vocalist 1",
+        "performer_id": "voc_001",
+        "delivery": "sung"
+      },
+      {
+        "index": 10,
+        "text": "Blinded by me you can't see a thing",
         "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
         "delivery": "sung"
       },
       {
-        "start": 90,
-        "end": 93,
-        "text": "Come crawling faster",
-        "confidence": 0.92,
+        "index": 11,
+        "text": "Obey your master!",
+        "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
         "delivery": "sung"
       },
       {
-        "start": 93,
-        "end": 97,
-        "text": "Master of puppets, I pull your strings",
-        "confidence": 0.93,
+        "index": 12,
+        "text": "Just call my name 'cause I'll hear you scream",
+        "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
         "delivery": "sung"
       },
       {
-        "start": 97,
-        "end": 101,
-        "text": "Twisting your mind and smashing your dreams",
-        "confidence": 0.91,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "start": 101,
-        "end": 105,
-        "text": "Blinded by me, you can't see a thing",
-        "confidence": 0.9,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "start": 105,
-        "end": 109,
-        "text": "Just call my name, 'cause I'll hear you scream",
-        "confidence": 0.92,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "start": 109,
-        "end": 111,
+        "index": 13,
         "text": "Master, master",
-        "confidence": 0.94,
+        "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
         "delivery": "sung"
       },
       {
-        "start": 111,
-        "end": 115,
-        "text": "Just call my name, 'cause I'll hear you scream",
-        "confidence": 0.91,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "start": 115,
-        "end": 117,
+        "index": 14,
         "text": "Master, master",
-        "confidence": 0.93,
+        "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
         "delivery": "sung"
       },
       {
-        "start": 117,
-        "end": 120,
-        "text": "Come crawling faster",
-        "confidence": 0.9,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "start": 126,
-        "end": 130,
+        "index": 15,
         "text": "Obey your master",
         "confidence": 0.95,
         "performer": "Vocalist 1",
@@ -1811,10 +1132,10 @@
         "delivery": "sung"
       }
     ],
-    "summary": "Sung lyrics from the heavy metal song 'Master of Puppets' by Metallica are present, featuring repeated hooks and verses such as 'Obey your master' and 'Master, master'.",
+    "summary": "Repeated sung hooks of 'Master, master' are audible over the heavy metal music.",
     "hasVocals": true,
     "totalDuration": 140.042449,
-    "analysisMode": "whole_asset",
+    "analysisMode": "hybrid",
     "timingMode": "full_timeline",
     "sourceStrategy": "base64",
     "coverage": {
@@ -1826,9 +1147,9 @@
     "provenance": {
       "requestedMode": "auto",
       "transportMode": "inline",
-      "usedChunking": false,
-      "chunkCount": 0,
-      "analysisWindowSeconds": null,
+      "usedChunking": true,
+      "chunkCount": 5,
+      "analysisWindowSeconds": 30,
       "fallbackApplied": false,
       "fallbackReason": null,
       "wholeAssetAttempted": true,
@@ -1836,74 +1157,28 @@
       "preflightReason": "within_budget",
       "estimatedBase64Bytes": 4482392,
       "base64BudgetBytes": 9437184,
-      "musicContextAvailable": true
+      "musicContextAvailable": true,
+      "autoSelectedHybridForLyricCueCoverage": true
     },
     "recognizedSong": {
       "status": "recognized",
-      "confidence": 0.95,
+      "confidence": 0.98,
       "candidates": [
         {
           "title": "Master of Puppets",
           "artist": "Metallica",
-          "confidence": 0.95,
+          "confidence": 0.98,
           "evidence": [
-            "Literal lyric fragments such as 'Obey your master', 'Master, master', and 'Master of puppets, I pull your strings' match the heard refrain."
+            "Literal lyric fragments match the heard refrain, including 'Obey your master' and 'Master of puppets'."
           ],
           "matchedLyrics": [
             "Obey your master",
-            "Master, master",
+            "Come crawling faster",
             "Master of puppets, I pull your strings",
-            "Come crawling faster"
-          ],
-          "timeRanges": [
-            {
-              "start": 86,
-              "end": 90
-            },
-            {
-              "start": 109,
-              "end": 111
-            },
-            {
-              "start": 93,
-              "end": 97
-            },
-            {
-              "start": 90,
-              "end": 93
-            }
-          ]
-        },
-        {
-          "title": "Master of Puppets",
-          "artist": "Metallica",
-          "confidence": 0.95,
-          "evidence": [
-            "Literal lyric fragments such as 'Obey your master', 'Master, master', and 'Master of puppets, I pull your strings' match the heard refrain."
-          ],
-          "matchedLyrics": [
-            "Obey your master",
-            "Master, master",
-            "Master of puppets, I pull your strings",
-            "Come crawling faster"
-          ],
-          "timeRanges": [
-            {
-              "start": 86,
-              "end": 90
-            },
-            {
-              "start": 109,
-              "end": 111
-            },
-            {
-              "start": 93,
-              "end": 97
-            },
-            {
-              "start": 90,
-              "end": 93
-            }
+            "Twisting your mind and smashing your dreams",
+            "Blinded by me, you can't see a thing",
+            "Just call my name, 'cause I'll hear you scream",
+            "Master, master"
           ]
         }
       ],
@@ -1911,68 +1186,60 @@
       "multipleSongsDetected": false
     },
     "recognitionNotes": [
-      "Some lyrics are partially masked by action sound effects, but key phrases remain audible and identifiable.",
-      "Some lyrics are partially masked by action sound effects, but key phrases remain audible and identifiable."
+      "Expected lyrics from 'Master of Puppets' are not present in this chunk as they occur after 58 seconds per whole-asset context.",
+      "Spoken dialogue is excluded from lyric evidence.",
+      "Spoken dialogue overlaps with music but is excluded from lyric evidence.",
+      "Spoken dialogue over music excluded from lyric evidence.",
+      "Spoken dialogue from the trailer is excluded from lyric evidence.",
+      "Vocals are interspersed with dialogue and action sounds, but lyrics remain discernible throughout the segments."
     ],
     "qualityNotes": [
-      "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-      "Timing estimates are inferred from context; actual precision may vary slightly due to audio overlap.",
-      "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-      "Timing estimates are inferred from context; actual precision may vary slightly due to audio overlap."
+      "Whole-asset music analysis supplied global arc context before chunk-level timing refinement.",
+      "Audio consists of clear spoken dialogue with background score; no masking or ambiguity affecting vocal detection.",
+      "Vocals are present only in the last few seconds of the chunk.",
+      "Action sounds may partially mask some lyrics, but sung phrases remain intelligible.",
+      "Some lyric fragments are partial or ambiguous, e.g., 'Faster dreams and I'll be faster' may not be exact.",
+      "Audio is clear with minimal masking in this segment.",
+      "High confidence due to clear lyrical matches; some segments may have slight masking from sound effects, but literal fragments are supported."
     ]
   },
   "famousSongReconciliation": {
     "contractVersion": "ee.famous-song-reconciliation/v1",
     "script": "reconcile-famous-song-phase1",
-    "generatedAt": "2026-04-07T21:54:54.360Z",
+    "generatedAt": "2026-04-09T16:37:09.258Z",
     "status": "applied",
     "sourceArtifacts": {
-      "dialogueData": "output/cod-test/phase1-gather-context/dialogue-data.json",
-      "musicData": "output/cod-test/phase1-gather-context/music-data.json",
-      "musicVocalsData": "output/cod-test/phase1-gather-context/music-vocals-data.json"
+      "dialogueData": "output/cod-test-original-mp4-source/phase1-gather-context/dialogue-data.json",
+      "musicData": "output/cod-test-original-mp4-source/phase1-gather-context/music-data.json",
+      "musicVocalsData": "output/cod-test-original-mp4-source/phase1-gather-context/music-vocals-data.json"
     },
     "reconciledArtifacts": {
-      "dialogueData": "output/cod-test/phase1-gather-context/dialogue-data.reconciled.json",
-      "musicVocalsData": "output/cod-test/phase1-gather-context/music-vocals-data.reconciled.json",
-      "ledger": "output/cod-test/phase1-gather-context/famous-song-reconciliation.json"
+      "dialogueData": "output/cod-test-original-mp4-source/phase1-gather-context/dialogue-data.reconciled.json",
+      "musicVocalsData": "output/cod-test-original-mp4-source/phase1-gather-context/music-vocals-data.reconciled.json",
+      "ledger": "output/cod-test-original-mp4-source/phase1-gather-context/famous-song-reconciliation.json"
     },
     "trigger": {
       "passed": true,
       "reasons": [],
       "recognizedSong": {
         "status": "recognized",
-        "confidence": 0.95,
+        "confidence": 0.98,
         "candidates": [
           {
             "title": "Master of Puppets",
             "artist": "Metallica",
-            "confidence": 0.95,
+            "confidence": 0.98,
             "evidence": [
-              "Literal lyric fragments such as 'Obey your master', 'Master, master', and 'Master of puppets, I pull your strings' match the heard refrain."
+              "Literal lyric fragments match the heard refrain, including 'Obey your master' and 'Master of puppets'."
             ],
             "matchedLyrics": [
               "Obey your master",
-              "Master, master",
+              "Come crawling faster",
               "Master of puppets, I pull your strings",
-              "Come crawling faster"
-            ],
-            "timeRanges": [
-              {
-                "start": 86,
-                "end": 90
-              },
-              {
-                "start": 109,
-                "end": 111
-              },
-              {
-                "start": 93,
-                "end": 97
-              },
-              {
-                "start": 90,
-                "end": 93
-              }
+              "Twisting your mind and smashing your dreams",
+              "Blinded by me, you can't see a thing",
+              "Just call my name, 'cause I'll hear you scream",
+              "Master, master"
             ]
           }
         ],
@@ -1982,2972 +1249,378 @@
       "primaryCandidate": {
         "title": "Master of Puppets",
         "artist": "Metallica",
-        "confidence": 0.95,
+        "confidence": 0.98,
         "evidence": [
-          "Literal lyric fragments such as 'Obey your master', 'Master, master', and 'Master of puppets, I pull your strings' match the heard refrain."
+          "Literal lyric fragments match the heard refrain, including 'Obey your master' and 'Master of puppets'."
         ],
         "matchedLyrics": [
           "Obey your master",
-          "Master, master",
+          "Come crawling faster",
           "Master of puppets, I pull your strings",
-          "Come crawling faster"
-        ],
-        "timeRanges": [
-          {
-            "start": 86,
-            "end": 90
-          },
-          {
-            "start": 109,
-            "end": 111
-          },
-          {
-            "start": 93,
-            "end": 97
-          },
-          {
-            "start": 90,
-            "end": 93
-          }
+          "Twisting your mind and smashing your dreams",
+          "Blinded by me, you can't see a thing",
+          "Just call my name, 'cause I'll hear you scream",
+          "Master, master"
         ]
       },
       "supportingMusicRecognizedSong": {
         "status": "possible",
-        "confidence": 0.7,
+        "confidence": 0.64,
         "candidates": [
           {
             "title": "Master of Puppets",
             "artist": "Metallica",
-            "confidence": 0.7,
+            "confidence": 0.64,
             "evidence": [
-              "Distinctive thrash-metal instrumental hook and repeated vocal phrases audible in the music lane."
+              "Distinctive thrash-metal hook and repeated master chant in the music lane."
             ],
             "matchedLyrics": [
-              "Master, master",
-              "I'll paint your master"
+              "Master, master"
             ],
             "timeRanges": [
               {
-                "start": 86,
-                "end": 126
+                "start": 76,
+                "end": 98
               }
             ],
-            "ambiguity": "Trailer dialogue and action SFX partially mask the cue, reducing full lyrical clarity."
+            "ambiguity": "Trailer dialogue and SFX partially mask the cue."
           }
         ],
-        "primaryEvidence": "A likely famous-song hook with recognizable lyrics and musical style is present, but recognition remains evidence-gated due to masking.",
-        "ambiguity": "Partial masking by spoken dialogue and sound effects reduces certainty.",
+        "primaryEvidence": "A likely famous-song hook is present, but recognition remains evidence-gated.",
+        "ambiguity": "Partial masking reduces certainty.",
         "multipleSongsDetected": false
       }
     },
     "decisions": {
-      "removedDialogueSegments": [],
+      "removedDialogueSegments": [
+        {
+          "index": 14,
+          "indexOrder": 14,
+          "text": "Obey your master.",
+          "confidence": 0.7,
+          "matchedLyric": "Obey your master",
+          "similarity": 1,
+          "evidence": {
+            "nearbyVocalIndexEvidence": true,
+            "directVocalTextSupport": true
+          },
+          "reason": "likely_lyric_contamination"
+        },
+        {
+          "index": 15,
+          "indexOrder": 15,
+          "text": "Come crawling faster.",
+          "confidence": 0.7,
+          "matchedLyric": "Come crawling faster",
+          "similarity": 1,
+          "evidence": {
+            "nearbyVocalIndexEvidence": true,
+            "directVocalTextSupport": true
+          },
+          "reason": "likely_lyric_contamination"
+        },
+        {
+          "index": 17,
+          "indexOrder": 17,
+          "text": "Just call my name, 'cause I'll hear you scream.",
+          "confidence": 0.7,
+          "matchedLyric": "Just call my name, 'cause I'll hear you scream",
+          "similarity": 1,
+          "evidence": {
+            "nearbyVocalIndexEvidence": true,
+            "directVocalTextSupport": true
+          },
+          "reason": "likely_lyric_contamination"
+        },
+        {
+          "index": 24,
+          "indexOrder": 24,
+          "text": "Obey your master.",
+          "confidence": 0.7,
+          "matchedLyric": "Obey your master",
+          "similarity": 1,
+          "evidence": {
+            "nearbyVocalIndexEvidence": false,
+            "directVocalTextSupport": true
+          },
+          "reason": "likely_lyric_contamination"
+        }
+      ],
       "lyricCorrections": [],
       "skippedCorrections": [
         {
-          "index": 3,
-          "reason": "outside_recognized_song_range"
-        },
-        {
-          "index": 4,
-          "reason": "outside_recognized_song_range"
-        },
-        {
           "index": 5,
-          "reason": "outside_recognized_song_range"
-        },
-        {
-          "index": 7,
-          "reason": "outside_recognized_song_range"
-        },
-        {
-          "index": 8,
-          "reason": "outside_recognized_song_range"
+          "reason": "segment_confidence_below_threshold"
         },
         {
           "index": 9,
-          "reason": "outside_recognized_song_range"
-        },
-        {
-          "index": 10,
-          "reason": "outside_recognized_song_range"
+          "reason": "segment_confidence_below_threshold"
         }
       ]
     }
   },
-  "chunkAnalysis": {
-    "chunks": [
-      {
-        "chunkIndex": 0,
-        "splitIndex": 0,
-        "startTime": 0,
-        "endTime": 5,
-        "status": "success",
-        "summary": "快速剪辑的军事科幻画面，配合直接有力的对话，立即建立紧张感和悬念。",
-        "emotions": {
-          "patience": {
-            "score": 7,
-            "reasoning": "开场视觉冲击强（眼睛特写、隧道），节奏快，没有拖沓的logo或介绍。对话直接切入主题（'他们想让你害怕'），符合3秒内建立钩子的要求。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "画面切换迅速（士兵、城市废墟、爆炸、飞行汽车），信息密度高。没有静态镜头或无意义的填充内容。"
-          },
-          "excitement": {
-            "score": 6,
-            "reasoning": "紧张的音乐和快速的动作剪辑营造出高能量氛围。对话暗示了宏大的冲突和阴谋，能引发好奇。但作为极短的开场片段，情绪仍在积累阶段。"
-          }
-        },
-        "dominant_emotion": "patience",
-        "confidence": 0.85,
-        "tokens": 45258,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 1,
-        "splitIndex": 0,
-        "startTime": 5,
-        "endTime": 10,
-        "status": "success",
-        "summary": "威胁性对话配合快速剪辑的全球冲突画面，维持了紧张感。",
-        "emotions": {
-          "patience": {
-            "score": 7,
-            "reasoning": "紧张的对话和快速变化的全球冲突画面维持了注意力，但作为系列预告片的一部分，可能缺乏全新的、瞬间抓住眼球的钩子。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "内容紧凑，对话有冲击力，视觉上快速切换不同冲突场景，没有拖沓或令人分心的元素。"
-          },
-          "excitement": {
-            "score": 6,
-            "reasoning": "威胁性的台词（‘鲜血染红街道’）和展示全球规模的冲突画面提升了紧张感和 stakes，但尚未进入纯粹的动作高潮。"
-          }
-        },
-        "dominant_emotion": "patience",
-        "confidence": 0.85,
-        "tokens": 45288,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 2,
-        "splitIndex": 0,
-        "startTime": 10,
-        "endTime": 15,
-        "status": "success",
-        "summary": "视频片段通过对话快速交代了反派Raul Menendez的威胁性，配以紧张的音乐，但缺乏强烈的即时视觉冲击来抓住一个习惯短视频的观众。",
-        "emotions": {
-          "patience": {
-            "score": 4,
-            "reasoning": "作为被短视频训练的观众，我习惯在3秒内被抓住。这个片段主要是对话交代背景，如果画面只是人物特写或静态场景，我的耐心会迅速下降，因为这不是我期待的‘视觉钩子’。"
-          },
-          "boredom": {
-            "score": 6,
-            "reasoning": "纯粹的背景信息对话，如果没有快速剪辑、强烈的动作或意想不到的视觉元素配合，很容易让我感到无聊。我可能会开始分心，拇指悬在滑动键上。"
-          },
-          "excitement": {
-            "score": 3,
-            "reasoning": "对话内容（‘点燃全球动荡’、‘恐怖分子’）本身有一定张力，但除非画面同步呈现极具冲击力的冲突或灾难场景，否则这种兴奋感很微弱，不足以让我保持投入。"
-          }
-        },
-        "dominant_emotion": "boredom",
-        "confidence": 0.75,
-        "tokens": 45279,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 3,
-        "splitIndex": 0,
-        "startTime": 15,
-        "endTime": 20,
-        "status": "success",
-        "summary": "该片段以对话为主，展示了机器人列队和角色交谈，缺乏强烈的即时视觉冲击，主要依靠对话推进剧情。",
-        "emotions": {
-          "patience": {
-            "score": 4,
-            "reasoning": "画面相对静态，以对话和角色特写为主，缺乏快速剪辑或动作场面，对于习惯短视频节奏的观众来说，耐心值会逐渐下降。"
-          },
-          "boredom": {
-            "score": 6,
-            "reasoning": "对话内容虽然涉及剧情，但视觉上缺乏变化和刺激，容易让追求感官刺激的观众感到无聊，无聊感有上升趋势。"
-          },
-          "excitement": {
-            "score": 3,
-            "reasoning": "没有爆炸、追逐或高能动作场面，音乐也相对克制，整体氛围偏向叙事和铺垫，难以激发强烈的兴奋感。"
-          }
-        },
-        "dominant_emotion": "boredom",
-        "confidence": 0.85,
-        "tokens": 44989,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 4,
-        "splitIndex": 0,
-        "startTime": 20,
-        "endTime": 25,
-        "status": "success",
-        "summary": "片段以士兵在运输机内的静态对话为主，交代任务背景和压力，缺乏强烈的视觉动作或节奏变化。",
-        "emotions": {
-          "patience": {
-            "score": 4,
-            "reasoning": "纯对话场景，没有视觉上的变化或推进，对于追求即时刺激的我来说，耐心会迅速下降。"
-          },
-          "boredom": {
-            "score": 6,
-            "reasoning": "静态的机舱内对话，节奏缓慢，与之前快速剪辑的蒙太奇形成对比，容易让人感到沉闷和走神。"
-          },
-          "excitement": {
-            "score": 3,
-            "reasoning": "没有动作、爆炸或视觉奇观，对话内容虽然关乎任务，但呈现方式平淡，无法激发兴奋感。"
-          }
-        },
-        "dominant_emotion": "boredom",
-        "confidence": 0.85,
-        "tokens": 45078,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 5,
-        "splitIndex": 0,
-        "startTime": 25,
-        "endTime": 30,
-        "status": "success",
-        "summary": "片段以相对静态的对话和紧张的背景音乐为主，视觉上缺乏强烈的动作或快速剪辑，主要依靠角色对话和音乐氛围推进。",
-        "emotions": {
-          "patience": {
-            "score": 3,
-            "reasoning": "作为急躁的青少年，在视频已进行到25秒后，如果片段仍以对话和氛围铺垫为主，缺乏立即的视觉刺激或情节推进，我的耐心会迅速下降。这不符合我对‘3秒内抓住注意力’的期望。"
-          },
-          "boredom": {
-            "score": 7,
-            "reasoning": "静态的对话场景、缺乏快速剪辑或视觉奇观，极易引发我的无聊感。即使音乐试图营造紧张氛围，但若画面本身不够‘炸’，我就会开始感到不耐烦，无聊感达到阈值（7/10），滑动离开的风险很高。"
-          },
-          "excitement": {
-            "score": 2,
-            "reasoning": "片段中没有出现我期待的‘视觉冲击’、‘模式中断’或‘前所未见’的元素。紧张的音乐和对话不足以激发我的兴奋感，整体感觉平淡，无法让我产生继续观看的强烈欲望。"
-          }
-        },
-        "dominant_emotion": "boredom",
-        "confidence": 0.6,
-        "tokens": 45251,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 6,
-        "splitIndex": 0,
-        "startTime": 30,
-        "endTime": 35,
-        "status": "success",
-        "summary": "片段以相对静态的对话和紧张的背景音乐为主，视觉上缺乏强烈的动作或快速剪辑，主要依靠角色对话和音乐氛围推进。",
-        "emotions": {
-          "patience": {
-            "score": 6,
-            "reasoning": "对话在推进情节，建立紧张感，观众可能愿意等待后续发展，但视觉刺激有限，耐心处于中等水平。"
-          },
-          "boredom": {
-            "score": 5,
-            "reasoning": "紧张的音乐和对话内容维持了一定注意力，但相对静态的视觉和缺乏动作场面可能开始让追求刺激的观众感到些许无聊。"
-          },
-          "excitement": {
-            "score": 3,
-            "reasoning": "片段主要依靠对话和音乐营造紧张氛围，而非直接的动作或视觉冲击，兴奋感较低。"
-          }
-        },
-        "dominant_emotion": "patience",
-        "confidence": 0.8,
-        "tokens": 45002,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 7,
-        "splitIndex": 0,
-        "startTime": 35,
-        "endTime": 40,
-        "status": "success",
-        "summary": "片段以快速剪辑的动作场面、爆炸和激烈对话为主，配合高强度重金属音乐，营造出紧张刺激的氛围，视觉和听觉冲击力强。",
-        "emotions": {
-          "patience": {
-            "score": 7,
-            "reasoning": "快节奏的剪辑和持续的动作场面能维持注意力，对话被整合在动作中，没有明显拖沓，对于追求刺激的观众来说耐心值较高。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "视频几乎没有静态或缓慢的时刻，视觉和听觉元素持续高强度输出，无聊感极低。"
-          },
-          "excitement": {
-            "score": 9,
-            "reasoning": "密集的动作、爆炸、未来科技展示和激昂的音乐共同作用，创造出极高的兴奋感和期待感。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.9,
-        "tokens": 47430,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 8,
-        "splitIndex": 0,
-        "startTime": 40,
-        "endTime": 45,
-        "status": "success",
-        "summary": "片段在红色警报灯光下展示士兵快速移动，随后切换至高科技实验室场景，伴有机器人和屏幕，音乐强度持续上升，对话叠加，整体节奏保持紧张。",
-        "emotions": {
-          "patience": {
-            "score": 7,
-            "reasoning": "作为一段长预告片的中段，动作和音乐仍在推进，没有明显的停顿或拖沓，因此我愿意继续观看，但已开始期待更强烈的转折或高潮。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "视觉上持续有动态元素（快速剪辑、警报灯光、机器人），音乐也在增强，没有出现静止或重复的镜头，因此几乎没有无聊感。"
-          },
-          "excitement": {
-            "score": 6,
-            "reasoning": "紧张的氛围和快节奏的剪辑维持了一定的兴奋度，但缺乏全新的、极具冲击力的视觉奇观或情节转折，兴奋感更多是延续而非提升。"
-          }
-        },
-        "dominant_emotion": "patience",
-        "confidence": 0.85,
-        "tokens": 45248,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 9,
-        "splitIndex": 0,
-        "startTime": 45,
-        "endTime": 50,
-        "status": "success",
-        "summary": "片段在红色警报灯光下展示士兵快速移动，随后切换至高科技实验室场景，伴有机器人和屏幕，音乐强度持续上升，对话叠加，整体节奏保持紧张。",
-        "emotions": {
-          "patience": {
-            "score": 6,
-            "reasoning": "快速剪辑和紧张节奏维持了注意力，但作为青少年，他可能仍感到些许不耐烦。"
-          },
-          "boredom": {
-            "score": 3,
-            "reasoning": "持续的动作和场景变化防止了无聊感。"
-          },
-          "excitement": {
-            "score": 7,
-            "reasoning": "快速剪辑、高科技元素和紧张音乐激发了兴奋感。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.85,
-        "tokens": 45237,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 10,
-        "splitIndex": 0,
-        "startTime": 50,
-        "endTime": 55,
-        "status": "success",
-        "summary": "视频片段在红色警报灯光下展示士兵快速移动，随后切换至高科技实验室场景，伴有机器人和屏幕，音乐强度持续上升，对话叠加，整体节奏保持紧张。",
-        "emotions": {
-          "patience": {
-            "score": 8,
-            "reasoning": "快速剪辑、紧张的动作和不断上升的音乐强度维持了注意力，没有明显的停顿或模糊时刻。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "高强度视觉和听觉刺激持续，没有无聊或拖沓的迹象。"
-          },
-          "excitement": {
-            "score": 7,
-            "reasoning": "紧张的音乐、快速的动作和高科技元素营造出兴奋感，但尚未达到高潮。"
-          }
-        },
-        "dominant_emotion": "patience",
-        "confidence": 0.85,
-        "tokens": 45053,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 11,
-        "splitIndex": 0,
-        "startTime": 55,
-        "endTime": 60,
-        "status": "success",
-        "summary": "视频片段在快速剪辑中展示爆炸、角色对话和紧张的音乐推进，节奏紧凑，视觉冲击力强。",
-        "emotions": {
-          "patience": {
-            "score": 4,
-            "reasoning": "快速剪辑和持续的动作场面让耐心维持在较低水平，但信息密集可能稍需时间消化。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "高强度的视觉和听觉刺激（爆炸、追逐、紧张音乐）有效抑制了无聊感。"
-          },
-          "excitement": {
-            "score": 8,
-            "reasoning": "激烈的动作场面、不断升级的音乐和紧张的对话共同营造出强烈的兴奋感。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.85,
-        "tokens": 45186,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 12,
-        "splitIndex": 0,
-        "startTime": 60,
-        "endTime": 65,
-        "status": "success",
-        "summary": "视频片段在快速剪辑中展示爆炸、角色对话和紧张的音乐推进，节奏紧凑，视觉冲击力强。",
-        "emotions": {
-          "patience": {
-            "score": 7,
-            "reasoning": "视频节奏极快，几乎没有停顿，持续的视觉和听觉刺激维持了观看的意愿，符合 impatient teen 对快速内容的需求。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "密集的动作场面、快速的镜头切换和激烈的音乐有效防止了无聊感的产生，没有出现静态或拖沓的镜头。"
-          },
-          "excitement": {
-            "score": 8,
-            "reasoning": "高强度的视觉冲击（爆炸、战斗）、紧张的音乐和快速的叙事推进共同营造出强烈的兴奋感和紧迫感。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.85,
-        "tokens": 45086,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 13,
-        "splitIndex": 0,
-        "startTime": 65,
-        "endTime": 70,
-        "status": "success",
-        "summary": "快速剪辑展示爆炸、角色对话和紧张的音乐推进，节奏紧凑，视觉冲击力强。",
-        "emotions": {
-          "patience": {
-            "score": 7,
-            "reasoning": "节奏快，视觉冲击强，符合我喜欢的模式，能保持耐心。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "高强度动作和音乐，没有无聊的时刻。"
-          },
-          "excitement": {
-            "score": 8,
-            "reasoning": "激烈的音乐和视觉冲击，让我兴奋。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.85,
-        "tokens": 45085,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 14,
-        "splitIndex": 0,
-        "startTime": 70,
-        "endTime": 75,
-        "status": "success",
-        "summary": "快速剪辑展示爆炸、角色对话和紧张的音乐推进，节奏紧凑，视觉冲击力强。",
-        "emotions": {
-          "patience": {
-            "score": 4,
-            "reasoning": "作为最难搞的观众，我已经看了70秒的预告片。这5秒是更多快速剪辑的动作场面，没有提供新的、能立即抓住我的信息或转折。我的耐心已经快耗尽了。"
-          },
-          "boredom": {
-            "score": 6,
-            "reasoning": "虽然画面很炸，但感觉有点重复了。又是爆炸、又是枪战、又是快速切换的地点标题。如果接下来没有更酷的东西，我可能要划走了。"
-          },
-          "excitement": {
-            "score": 5,
-            "reasoning": "音乐很燃，动作场面也还行，但说实话，类似的预告片我看太多了。没有那种‘卧槽，这是什么？’的瞬间。"
-          }
-        },
-        "dominant_emotion": "boredom",
-        "confidence": 0.8,
-        "tokens": 45394,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 15,
-        "splitIndex": 0,
-        "startTime": 75,
-        "endTime": 80,
-        "status": "success",
-        "summary": "片段以快速剪辑展示红色机械结构、士兵奔跑、爆炸和混乱的战斗场景，配合激烈的重金属音乐和人声呐喊，节奏极快，视觉冲击力强。",
-        "emotions": {
-          "patience": {
-            "score": 8,
-            "reasoning": "节奏极快，信息密集，无任何拖沓或静态镜头，完全符合‘3秒定生死’的观看习惯，能维持观看耐心。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "高强度动作场面、快速切换和激烈音乐持续提供刺激，几乎没有给无聊感留下空间。"
-          },
-          "excitement": {
-            "score": 9,
-            "reasoning": "爆炸、奔跑、混乱战斗、重金属音乐和人声呐喊共同营造出极高的能量和紧张感，视觉和听觉冲击力强，极易引发兴奋。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.85,
-        "tokens": 45272,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 16,
-        "splitIndex": 0,
-        "startTime": 80,
-        "endTime": 85,
-        "status": "success",
-        "summary": "片段以快速剪辑展示红色机械结构、士兵奔跑、爆炸和混乱的战斗场景，配合激烈的重金属音乐和人声呐喊，节奏极快，视觉冲击力强。",
-        "emotions": {
-          "patience": {
-            "score": 8,
-            "reasoning": "视觉节奏极快，场景在红色机械结构、士兵奔跑、爆炸和混乱战斗间快速切换，没有静态或拖沓的镜头，符合‘每5-8秒模式中断’的要求，能维持一个没耐心的观众的注意力。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "高强度的动作场面、密集的视觉信息和激烈的音乐完全排除了无聊的可能性。没有任何时刻让观众有理由感到脱离或厌倦。"
-          },
-          "excitement": {
-            "score": 9,
-            "reasoning": "这是典型的‘多巴胺爆发’内容：快速剪辑、爆炸、未来科技感、激烈的重金属音乐和人声呐喊。完全符合一个追求即时刺激的青少年观众的偏好，极易引发兴奋感。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.9,
-        "tokens": 45185,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 17,
-        "splitIndex": 0,
-        "startTime": 85,
-        "endTime": 90,
-        "status": "success",
-        "summary": "片段展示了激烈的战斗动作场面，配合高强度的重金属音乐和人声呐喊，视觉节奏极快，充满冲击力。",
-        "emotions": {
-          "patience": {
-            "score": 7,
-            "reasoning": "作为最难取悦的观众，快速剪辑和持续的动作场面勉强维持了我的耐心，没有给我想划走的空隙。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "几乎感觉不到无聊。音乐和画面的强度一直在线，没有静态或拖沓的镜头让我分心。"
-          },
-          "excitement": {
-            "score": 8,
-            "reasoning": "重金属音乐的riff和人声hook很带感，加上爆炸和动作场面，确实让我有点上头，想看看接下来会发生什么。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.85,
-        "tokens": 45239,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 18,
-        "splitIndex": 0,
-        "startTime": 90,
-        "endTime": 95,
-        "status": "success",
-        "summary": "片段展示了士兵在红色警报灯光下的紧张走廊中行动，伴随着重复的无线电呼叫和高强度的侵略性音乐，营造出紧迫的战斗氛围。",
-        "emotions": {
-          "patience": {
-            "score": 6,
-            "reasoning": "视觉上持续的动态（士兵移动、闪烁的红灯）和紧张的对话（无线电呼叫）维持了基本的观看意愿，但重复的台词可能略微降低耐心。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "高强度的音乐、快速的剪辑和明确的威胁感（红色警报）几乎没有给无聊留下空间，场景充满张力。"
-          },
-          "excitement": {
-            "score": 8,
-            "reasoning": "侵略性的音乐、视觉上的紧迫感（红色灯光、战术行动）以及“This isn't real”的台词共同创造了高度的兴奋和投入感。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.88,
-        "tokens": 45256,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 19,
-        "splitIndex": 0,
-        "startTime": 95,
-        "endTime": 100,
-        "status": "success",
-        "summary": "士兵在红色警报灯光下的紧张走廊中行动，伴随着重复的无线电呼叫和高强度的侵略性音乐，营造出紧迫的战斗氛围。",
-        "emotions": {
-          "patience": {
-            "score": 8,
-            "reasoning": "视频直接切入紧张的行动场景，节奏紧凑，没有拖沓的铺垫或无聊的介绍，符合我对快速内容的偏好，因此耐心水平较高。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "高强度的动作、侵略性的音乐和冲突性对话（'This isn't real.' 'The hell it ain't!'）持续提供刺激，几乎没有让人分心的静态或缓慢时刻，无聊感很低。"
-          },
-          "excitement": {
-            "score": 9,
-            "reasoning": "快节奏的战斗场景、红色警报灯光、激烈的无线电呼叫以及强度为8的侵略性音乐共同营造出高能量氛围，这正是我喜欢的类型，兴奋感很强。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.9,
-        "tokens": 45236,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 20,
-        "splitIndex": 0,
-        "startTime": 100,
-        "endTime": 105,
-        "status": "success",
-        "summary": "快速剪辑的蒙太奇展示了多个高强度的战斗场景，包括水下、城市、雪地和未来主义环境，伴随着激进的音乐和音效。",
-        "emotions": {
-          "patience": {
-            "score": 8,
-            "reasoning": "快速剪辑和不断变化的场景提供了持续的视觉刺激，没有单一镜头停留过久，符合对快速节奏内容的偏好，能有效维持观看耐心。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "场景切换频繁，内容始终是高强度的动作场面，配合激进的音乐，几乎没有提供产生无聊感的静态或低信息量时刻。"
-          },
-          "excitement": {
-            "score": 9,
-            "reasoning": "多样化的战斗环境（水下、城市巷战、雪地、未来建筑）、快速的动作剪辑、爆炸和特效，配合激昂的音乐，共同营造出极高的兴奋感和视觉冲击力。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.9,
-        "tokens": 45119,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 21,
-        "splitIndex": 0,
-        "startTime": 105,
-        "endTime": 110,
-        "status": "success",
-        "summary": "快节奏的蒙太奇继续，展示全球各地（洛杉矶、安哥拉、东京、阿拉斯加、阿瓦隆）的激烈战斗、未来科技、机器人部队和爆炸场面，伴随着激进的重金属音乐和人声演唱。",
-        "emotions": {
-          "patience": {
-            "score": 8,
-            "reasoning": "作为目标受众，这种高强度、快剪辑的动作场面完全符合我的口味。画面持续变化，没有拖沓的对话或静态镜头，让我愿意继续观看。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "几乎没有无聊的时刻。音乐节奏强烈，视觉刺激不断（爆炸、枪战、场景切换），完全抓住了我的注意力。"
-          },
-          "excitement": {
-            "score": 9,
-            "reasoning": "极度兴奋。这是我最爱的部分——纯粹的动作、全球尺度的冲突、炫酷的未来装备，配上‘Master of Puppets’这种经典激昂的音乐，肾上腺素直接拉满。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.9,
-        "tokens": 45193,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 22,
-        "splitIndex": 0,
-        "startTime": 110,
-        "endTime": 115,
-        "status": "success",
-        "summary": "快节奏的动作蒙太奇，展示全球战斗场面，伴随高强度重金属音乐和人声演唱。",
-        "emotions": {
-          "patience": {
-            "score": 8,
-            "reasoning": "快速剪辑和激烈动作场面持续吸引注意力，没有缓慢铺垫，符合Alex对即时内容的需求。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "内容紧张刺激，视觉冲击力强，没有静态镜头或无聊元素，远低于无聊阈值。"
-          },
-          "excitement": {
-            "score": 9,
-            "reasoning": "高潮音乐、爆炸场面和全球战斗蒙太奇激发强烈兴奋感，超过Alex的兴奋阈值。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.9,
-        "tokens": 45327,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 23,
-        "splitIndex": 0,
-        "startTime": 115,
-        "endTime": 120,
-        "status": "success",
-        "summary": "视频片段展示了高强度的战斗蒙太奇，士兵在爆炸和未来主义武器中作战，伴随着高潮部分的音乐和密集音效。",
-        "emotions": {
-          "patience": {
-            "score": 8,
-            "reasoning": "作为Alex，我被立即抓住了。视频没有缓慢的铺垫或标志动画，直接进入动作场面。快节奏的剪辑和持续的视觉变化让我保持投入，没有理由失去耐心。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "几乎没有无聊的时刻。每一秒都有新的动作、爆炸或视觉特效。音乐和音效的强度也保持在高位，防止了任何注意力下降。"
-          },
-          "excitement": {
-            "score": 9,
-            "reasoning": "这正是我喜欢的类型。激烈的战斗、未来科技、爆炸场面，加上高潮部分的音乐，创造了强烈的兴奋感。视觉冲击力强，节奏快，完全符合我对‘立即视觉冲击’的期待。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.95,
-        "tokens": 45139,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 24,
-        "splitIndex": 0,
-        "startTime": 120,
-        "endTime": 125,
-        "status": "success",
-        "summary": "高强度的战斗蒙太奇，士兵在爆炸和未来主义武器中作战，伴随着高潮部分的音乐和密集音效。",
-        "emotions": {
-          "patience": {
-            "score": 6,
-            "reasoning": "作为不耐烦的青少年，我通常对长内容没耐心，但这个片段节奏极快，视觉冲击不断，没有拖沓的对话或静止画面，让我愿意继续看下去。"
-          },
-          "boredom": {
-            "score": 2,
-            "reasoning": "爆炸、射击、快速剪辑和激昂的音乐完全抓住了我的注意力，没有任何让我想划走的无聊时刻。"
-          },
-          "excitement": {
-            "score": 8,
-            "reasoning": "这完全是我的菜！激烈的战斗、炫酷的未来武器、震撼的爆炸效果，加上高潮音乐，让我肾上腺素飙升，迫不及待想看到更多。"
-          }
-        },
-        "dominant_emotion": "excitement",
-        "confidence": 0.9,
-        "tokens": 45148,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 25,
-        "splitIndex": 0,
-        "startTime": 125,
-        "endTime": 130,
-        "status": "success",
-        "summary": "视频从高强度的战斗蒙太奇突然切换到静态的标题卡和预购信息，音乐从高潮淡出，视觉和听觉刺激急剧下降。",
-        "emotions": {
-          "patience": {
-            "score": 2,
-            "reasoning": "高潮部分被生硬切断，转为静态商业信息，耐心瞬间耗尽，准备滑走。"
-          },
-          "boredom": {
-            "score": 8,
-            "reasoning": "画面静止，信息重复（标题、预购），音乐淡出，缺乏任何新的刺激或叙事推进，无聊感急剧上升。"
-          },
-          "excitement": {
-            "score": 1,
-            "reasoning": "之前的战斗兴奋感被完全打断，结尾没有提供情感释放或新的悬念，兴奋度跌至谷底。"
-          }
-        },
-        "dominant_emotion": "boredom",
-        "confidence": 0.95,
-        "tokens": 45245,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 26,
-        "splitIndex": 0,
-        "startTime": 130,
-        "endTime": 135,
-        "status": "success",
-        "summary": "视频结尾，音乐淡出，对话内容深刻但节奏缓慢，与之前高强度的动作场面形成对比。",
-        "emotions": {
-          "patience": {
-            "score": 3,
-            "reasoning": "作为没耐心的青少年，看到音乐淡出和节奏变慢的对话，会感到不耐烦，想要快速结束。"
-          },
-          "boredom": {
-            "score": 5,
-            "reasoning": "音乐淡出和深刻对话可能让习惯快节奏的Alex觉得有点无聊，尤其是如果期待更多动作场面。"
-          },
-          "excitement": {
-            "score": 2,
-            "reasoning": "音乐在淡出，对话内容虽然深刻但不是动作导向，兴奋度较低。"
-          }
-        },
-        "dominant_emotion": "patience",
-        "confidence": 0.8,
-        "tokens": 45297,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      },
-      {
-        "chunkIndex": 27,
-        "splitIndex": 0,
-        "startTime": 135,
-        "endTime": 140,
-        "status": "success",
-        "summary": "视频结尾，音乐淡出，对话内容深刻但节奏缓慢，与之前高强度的动作场面形成对比。",
-        "emotions": {
-          "patience": {
-            "score": 3,
-            "reasoning": "作为注意力短暂的青少年，我习惯于快节奏和即时刺激。这个片段节奏缓慢，对话虽然深刻但缺乏视觉上的快速变化，我的耐心正在迅速耗尽，感觉像是在等待结束。"
-          },
-          "boredom": {
-            "score": 7,
-            "reasoning": "音乐强度下降，画面可能缺乏动态元素（基于描述），对话节奏慢。这与我习惯的15-60秒多巴胺刺激完全不符。我已经开始感到无聊，拇指悬停在划走按钮上。"
-          },
-          "excitement": {
-            "score": 2,
-            "reasoning": "之前的动作场面可能还有点意思，但这个结尾部分没有任何能激发我兴奋的元素。没有视觉冲击，没有快速剪辑，没有令人惊讶的转折。我的兴奋度几乎为零。"
-          }
-        },
-        "dominant_emotion": "boredom",
-        "confidence": 0.9,
-        "tokens": 45271,
-        "persona": {
-          "soulPath": "../cast/impatient-teenager/SOUL.md",
-          "goalPath": "../goals/video-ad-evaluation.md",
-          "lenses": [
-            "patience",
-            "boredom",
-            "excitement"
-          ]
-        }
-      }
-    ],
-    "totalTokens": 1267791,
-    "statusSummary": {
-      "total": 28,
-      "successful": 28,
-      "failed": 0,
-      "failedChunkIndexes": []
+  "wholeVideoAnalysis": {
+    "schemaVersion": "ee.phase2.whole-video/v1",
+    "analysisMode": "whole_video_mimo",
+    "provider": {
+      "adapter": "openrouter",
+      "model": "xiaomi/mimo-v2-omni",
+      "transport": "public_url"
+    },
+    "input": {
+      "mediaRef": "source_video",
+      "sourcePath": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/examples/videos/emotion-tests/cod.mp4",
+      "videoUrl": "https://gambit-games-tests.s3.us-east-1.amazonaws.com/peanut-gallery/cod.mp4",
+      "mimeType": "video/mp4",
+      "durationSeconds": 140.017
     },
     "persona": {
       "soulPath": "../cast/impatient-teenager/SOUL.md",
       "goalPath": "../goals/video-ad-evaluation.md",
-      "config": {
-        "chunkDuration": 8,
-        "numChunks": 29
+      "primaryLenses": [
+        "patience",
+        "boredom",
+        "excitement"
+      ]
+    },
+    "wholeVideoScores": {
+      "patience": {
+        "score": 4,
+        "reasoning": "As an impatient teen, the 2+ minute runtime is a major hurdle. The opening 10 seconds, while visually dense, rely on slow-burn dialogue and exposition ('They want you afraid...') that feels like a traditional movie trailer setup. My thumb would be hovering. The middle section sustains action, but the narrative interludes (graveyard scene, dialogue-heavy moments) risk boredom spikes. The final 30 seconds shift to a promotional montage, which feels like an ad within an ad, testing my patience further."
+      },
+      "boredom": {
+        "score": 5,
+        "reasoning": "Boredom is kept at bay primarily by the relentless visual cuts and the aggressive 'Master of Puppets' soundtrack once it kicks in. However, the video has clear lulls. The initial exposition (0-10s) and the slower character moments (e.g., the conversation at the gravesite around 0:28-0:32) are high-risk zones where my attention could drift. The extended pre-order/Vault Edition showcase at the end (2:01-2:06) is pure informational content, which is a major boredom trigger for me unless I'm already sold."
+      },
+      "excitement": {
+        "score": 7,
+        "reasoning": "When it hits, it hits hard. The synchronization of the heavy metal track with the rapid-fire action montage (starting around 0:58) creates a potent dopamine rush. The visual spectacle—floating islands, mech suits, neon-drenched Tokyo, brutal melee takedowns—is exactly the kind of 'never seen before' content I crave. The sheer density of action beats in the middle section (Nicaragua, LA, Angola, Tokyo, Alaska) is designed to overwhelm and excite."
       }
     },
-    "videoDuration": 140.017
+    "wholeVideoCategories": {
+      "hookEffectiveness": {
+        "score": 5,
+        "reasoning": "The hook is a mixed bag. The very first frame is a glitchy, high-tech eye—visually punchy. But it immediately cuts to a slow, ominous voiceover and a series of establishing shots that feel more like a cinematic prologue than an immediate grab. For me, a hook needs to establish clear stakes or a 'wow' moment within 3 seconds. This takes closer to 10 seconds to build to the title reveal, which is too slow."
+      },
+      "valueClarity": {
+        "score": 8,
+        "reasoning": "Extremely clear. This is a trailer for the next big Call of Duty: Black Ops game. It communicates the core fantasy: high-stakes, globe-trotting, near-future military action with a psychological twist. The value is 'epic, cinematic FPS action.' The specific pre-order incentives (Reznov Pack, Vault Edition) are also spelled out clearly at the end."
+      },
+      "dialogueAuthenticity": {
+        "score": 6,
+        "reasoning": "The dialogue is classic, over-the-top military thriller fare. Lines like 'Fear makes you easier to control' and 'Your streets shall once again run red with your blood' are dramatic and fit the genre, but they don't feel 'real' or authentic in a Gen Z sense. They're performative. The internal monologues and character conflicts (David vs. Reznov/Menendez) are intriguing for fans but may come across as cheesy or overly serious to a casual viewer like me."
+      },
+      "musicEnergyAlignment": {
+        "score": 9,
+        "reasoning": "This is the video's strongest asset. The use of Metallica's 'Master of Puppets' is a masterstroke for my demographic. The song's aggressive, driving rhythm perfectly matches the chaotic, high-octane action montage. The lyrics ('Obey your master,' 'Twisting your mind') thematically align with the game's mind-control narrative. The music doesn't just accompany the visuals; it *drives* them, creating a cohesive, adrenaline-fueled experience."
+      },
+      "visualMomentum": {
+        "score": 8,
+        "reasoning": "Visual momentum is high, especially in the second half. The editing is rapid, with cuts often landing on musical beats. The variety of locations (snowy Alaska, neon Tokyo, dusty Nicaragua) and set pieces (mech battles, free-falling, underwater sequences) prevents visual fatigue. The 'pattern interrupt' rule is largely followed, with a new spectacle or camera angle every few seconds during the action sequences."
+      },
+      "ctaPackaging": {
+        "score": 4,
+        "reasoning": "The CTA ('Pre-Order Now') is clear but poorly packaged for my attention span. It appears after a long, intense trailer, and then the video continues with a 30-second montage of multiplayer/Zombies content. This feels like a bait-and-switch. The actual pre-order details (dates, packs, editions) are presented in static, text-heavy screens that are the antithesis of the dynamic content that preceded them. It's a jarring shift from entertainment to sales pitch."
+      },
+      "trust": {
+        "score": 7,
+        "reasoning": "Trust is high in terms of production quality—this is clearly a AAA blockbuster. The visuals are polished, the effects are convincing, and the actors deliver their lines with conviction. However, the 'authenticity' score is lower because the entire presentation is highly stylized and cinematic, not 'real.' It feels like a meticulously crafted advertisement, which I can smell from miles away. The inclusion of 'Contains in-game, cinematic, and additional footage' disclaimer adds a layer of transparency."
+      }
+    },
+    "overallSummary": "This is a high-production-value, music-driven action trailer that excels at creating excitement through sensory overload. Its core strength is the perfect marriage of a iconic metal track with a rapid-fire montage of spectacular gameplay and cinematic moments. However, it suffers from a slow, exposition-heavy opening and a clunky, promotional ending that breaks immersion. For me, the impatient scroller, it's a rollercoaster: a slow climb at the start, a thrilling peak in the middle, and a disappointing, salesy deceleration at the end.",
+    "retentionVerdict": {
+      "wouldComplete": "maybe",
+      "confidence": 0.7,
+      "reasoning": "I might stick around because the middle section is so strong and the music is a banger. The promise of seeing more insane action beats could pull me through the slower narrative parts. However, if the opening 15 seconds don't hook me instantly, or if I hit the pre-order screens and feel the ad is over, I'm gone. It's a coin flip that leans slightly towards completion due to the sheer quality of the action montage."
+    },
+    "evidenceMoments": [
+      {
+        "timestamp": 0,
+        "timeRange": {
+          "start": 0,
+          "end": 3
+        },
+        "type": "friction",
+        "driver": "cross_modal",
+        "category": "hookEffectiveness",
+        "impact": "high",
+        "summary": "Opens with a glitchy eye and ominous score, but the immediate cut to a slow, dialogue-driven montage ('They want you afraid...') feels like a traditional movie trailer setup, not an instant hook for a scroller."
+      },
+      {
+        "timestamp": 58,
+        "timeRange": {
+          "start": 58,
+          "end": 98
+        },
+        "type": "positive",
+        "driver": "cross_modal",
+        "category": "excitement",
+        "impact": "high",
+        "summary": "The 'Master of Puppets' vocal entry coincides with the start of the rapid-fire global action montage. This is the peak excitement zone, where music, editing, and visual spectacle are perfectly aligned to create a dopamine rush."
+      },
+      {
+        "timestamp": 140,
+        "timeRange": {
+          "start": 140,
+          "end": 160
+        },
+        "type": "friction",
+        "driver": "visual",
+        "category": "ctaPackaging",
+        "impact": "high",
+        "summary": "The trailer's energy crashes as it transitions to static screens detailing the 'Reznov Challenge Pack' and 'Vault Edition.' This is a pure informational ad segment that feels disconnected from the preceding experience and is a major abandonment risk."
+      }
+    ],
+    "strongestMoments": [
+      "The synchronization of the 'Master of Puppets' chorus with the montage of global combat locations (Nicaragua, LA, Tokyo, etc.).",
+      "The visually striking and unique set pieces: floating islands, neon-drenched Tokyo rooftop combat, and the brutal mech vs. soldier fight.",
+      "The clear, high-stakes narrative tease of psychological warfare and iconic villain return (Menendez)."
+    ],
+    "biggestRisks": [
+      "The slow, exposition-heavy opening that relies on traditional trailer tropes instead of an immediate visual or action hook.",
+      "The jarring shift from high-octane trailer to a static, text-heavy pre-order advertisement in the final 30 seconds.",
+      "The 2+ minute runtime, which is long for a platform optimized for 15-60 second bursts, requiring sustained engagement."
+    ],
+    "recommendationSeeds": [
+      "Create a 15-second cut that starts directly with the 'Master of Puppets' montage for platforms like TikTok/Shorts.",
+      "Integrate the pre-order CTA more dynamically into the action finale, perhaps as a quick graphic overlay, rather than a separate, static segment.",
+      "Tighten the opening 10 seconds by intercutting the ominous dialogue with faster, more intriguing visual flashes to establish the hook faster."
+    ],
+    "comparisonHints": {
+      "safeForChunkEquivalence": false,
+      "safeForPhase3Metrics": false,
+      "reason": "Whole-video output is sparse, evidence-based, and not a benchmark-equivalent per-chunk timeseries."
+    },
+    "ai": {
+      "usage": {
+        "input": 47441,
+        "output": 2425,
+        "total": 49866
+      },
+      "requestCount": 1
+    },
+    "path": "phase2-process/whole-video-analysis.json"
   },
   "metricsData": {
-    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
-    "generatedAt": "2026-04-07T22:08:07.297Z",
-    "averages": {
-      "patience": 0.5999999999999994,
-      "boredom": 0.3392857142857146,
-      "excitement": 0.6607142857142861
-    },
-    "peakMoments": {
-      "patience": {
-        "highest": {
-          "timestamp": 50,
-          "score": 0.8
-        },
-        "lowest": {
-          "timestamp": 125,
-          "score": 0.2
-        }
-      },
-      "boredom": {
-        "highest": {
-          "timestamp": 125,
-          "score": 0.8
-        },
-        "lowest": {
-          "timestamp": 0,
-          "score": 0.2
-        }
-      },
-      "excitement": {
-        "highest": {
-          "timestamp": 125,
-          "score": 1
-        },
-        "lowest": {
-          "timestamp": 25,
-          "score": 0.2
-        }
-      }
-    },
-    "trends": {
-      "patience": {
-        "direction": "stable",
-        "change": 0.04285714285714215,
-        "firstHalfAverage": 0.5785714285714291,
-        "secondHalfAverage": 0.6214285714285712
-      },
-      "boredom": {
-        "direction": "stable",
-        "change": -0.021428571428571297,
-        "firstHalfAverage": 0.34999999999999964,
-        "secondHalfAverage": 0.32857142857142835
-      },
-      "excitement": {
-        "direction": "increasing",
-        "change": 0.19285714285714295,
-        "firstHalfAverage": 0.564285714285714,
-        "secondHalfAverage": 0.7571428571428569
-      }
-    },
-    "frictionIndex": 100,
+    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/metrics/metrics.json",
+    "generatedAt": "2026-04-09T16:38:02.850Z",
+    "averages": {},
+    "peakMoments": {},
+    "trends": {},
+    "frictionIndex": 0,
     "implementationStatus": {
-      "state": "computed",
-      "dataSource": "derived-from-phase2.chunkAnalysis"
+      "state": "not_applicable",
+      "dataSource": "phase2.wholeVideoAnalysis",
+      "reason": "Chunk-derived timeline metrics were skipped because this run produced wholeVideoAnalysis without chunkAnalysis timeseries data."
     },
     "summary": {
-      "averages": 3,
-      "peakMoments": 3,
-      "trends": 3,
-      "frictionIndex": 100
+      "averages": 0,
+      "peakMoments": 0,
+      "trends": 0,
+      "frictionIndex": 0
     }
   },
   "recommendationData": {
-    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
-    "generatedAt": "2026-04-07T22:08:29.325Z",
-    "text": "为提升针对急躁青少年观众的留存率，视频需重新剪辑中段（10-30秒）以注入更多视觉刺激，并平滑结尾过渡，防止高潮后的观众流失。核心策略是压缩纯对话铺垫，将动作高潮前置并分散，确保每5-8秒有一次‘模式中断’。",
-    "reasoning": "数据清晰显示，视频的兴奋感趋势整体上升，但在10-30秒区间出现显著低谷（兴奋度降至2-3，无聊感升至6-7），这与‘耐心’指标的下降和‘无聊’峰值（125秒）相吻合，表明叙事铺垫过长。相反，35秒后及75-125秒的高强度动作片段（兴奋度8-9）成功维持了高注意力。结尾（125秒后）从高潮战斗突然切至静态标题卡，导致兴奋度骤降至1，无聊感飙升至8，是典型的留存断点。",
-    "confidence": 0.85,
+    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/recommendation/recommendation.json",
+    "generatedAt": "2026-04-09T16:38:34.546Z",
+    "text": "Due to insufficient data in the provided metrics and chunk summaries, no actionable recommendations can be made for improving viewer retention or emotional impact. Next steps should involve running the emotion analysis pipeline to generate actual data for analysis.",
+    "reasoning": "The input data shows empty metrics summaries with no averages, trends, or peak moments, and the friction index is 0, indicating no data or no analysis performed. Chunk summaries are absent, preventing any assessment of emotional beats or pacing. Without this data, it is impossible to reference specific evidence for retention or emotional impact, so recommendations must focus on data collection.",
+    "confidence": 0.1,
     "keyFindings": [
-      "开场（0-5秒）成功：快速剪辑和直接对话建立了高‘耐心’（7）和‘兴奋’（6），符合3秒钩子原则。",
-      "中段疲软（10-30秒）：连续多个片段以静态对话为主，‘兴奋’降至2-3，‘无聊’升至6-7，是主要的留存风险区。",
-      "高潮有效（35-125秒）：密集的动作蒙太奇将‘兴奋’推至8-9，并维持了高‘耐心’，证明视觉冲击对目标观众有效。",
-      "结尾断崖（125秒后）：从‘兴奋’9的战斗直接切至静态标题卡，导致‘兴奋’跌至1，‘无聊’达8，观众极易在此划走。",
-      "整体情绪趋势：‘兴奋’呈上升趋势（+0.19），但被中段低谷和结尾断崖抵消，表明结构问题大于内容问题。"
+      "Metrics summary is completely empty, with no computed averages or trends.",
+      "Friction index is 0, which may indicate missing data or no viewer friction detected.",
+      "Chunk summaries are absent, so no emotional analysis or peak moments are available."
     ],
     "suggestions": [
-      "重新剪辑10-30秒：将部分后续的高能动作镜头（如35秒后的爆炸场面）前置插入此段，或加入快速闪回的视觉奇观，打破纯对话节奏。",
-      "压缩对话铺垫：将反派背景（10-15秒）和任务说明（20-25秒）的对话精简，或将其画外音覆盖在更动态的视觉画面上。",
-      "创建‘模式中断’：在15秒、25秒等无聊感上升节点，插入一个意想不到的视觉元素（如突然的慢动作、特效转场、角色特写反应镜头）。",
-      "平滑结尾过渡：避免从战斗高潮直接切黑屏或静态标题。可考虑让最后一个动作镜头（如爆炸）的余波自然过渡到标题，或保留激昂音乐的尾奏。",
-      "优化结尾信息呈现：将‘预购’等商业信息以动态图形（如快速闪现的文字、LOGO动画）叠加在最后一个动作镜头的余画面上，而非静态展示。",
-      "检查音乐衔接：确保125秒处音乐不是突然淡出，而是有一个明确的收尾或与画面同步的重音，以维持情绪连贯性。",
-      "利用‘耐心’峰值：在50秒（‘耐心’最高点0.8）附近，可考虑插入一个关键的剧情转折或角色高光时刻，以加深投入感。",
-      "微调节奏：确保没有任何单个镜头（尤其是对话特写）持续超过3-4秒，以匹配目标观众的注意力跨度。"
+      "Run the emotion analysis pipeline on the video source to generate chunk-level data.",
+      "Compute metrics such as averages, trends, and peak moments from the processed data.",
+      "Calculate a meaningful friction index based on viewer engagement metrics.",
+      "Analyze emotional peaks and valleys to identify key retention points.",
+      "Once data is available, evaluate the hook effectiveness in the first few seconds.",
+      "Assess pacing by reviewing transitions between emotional beats.",
+      "Identify specific timestamps where viewer drop-off occurs for targeted edits.",
+      "Re-run the analysis after implementing changes to measure impact."
     ],
     "summary": {
       "hasRecommendation": true,
-      "confidence": 0.85
+      "confidence": 0.1
     }
   },
   "emotionalAnalysis": {
-    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json",
-    "generatedAt": "2026-04-07T22:08:29.330Z",
+    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/emotional-analysis/emotional-data.json",
+    "generatedAt": "2026-04-09T16:38:34.548Z",
     "summary": {
-      "totalChunks": 28,
+      "totalChunks": 0,
       "failedChunks": 0,
-      "totalSeconds": 140,
-      "videoDuration": 140.017,
-      "criticalMomentsCount": 10,
-      "averageScrollRisk": 0.43750000000000117
+      "totalSeconds": 0,
+      "videoDuration": 0,
+      "criticalMomentsCount": 0,
+      "averageScrollRisk": 0
     },
     "implementationStatus": {
-      "state": "computed",
-      "dataSource": "derived-from-phase2.chunkAnalysis"
+      "state": "not_implemented",
+      "reason": "No usable phase2 chunkAnalysis emotion timeseries was found."
     },
-    "chunkAnalysis": [
-      {
-        "chunkIndex": 0,
-        "startTime": 0,
-        "endTime": 5,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.7,
-          "boredom": 0.2,
-          "excitement": 0.6
-        },
-        "emotionalVelocity": {
-          "patience": 0.7,
-          "boredom": 0.2,
-          "excitement": 0.6
-        },
-        "scrollRisk": 0.4,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "patience",
-          "score": 0.7
-        },
-        "emotionalSignature": "high-patience-low-boredom-moderate-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 1,
-        "startTime": 5,
-        "endTime": 10,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.7,
-          "boredom": 0.2,
-          "excitement": 0.6
-        },
-        "emotionalVelocity": {
-          "patience": 0.13999999999999999,
-          "boredom": 0.04,
-          "excitement": 0.12
-        },
-        "scrollRisk": 0.4,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "patience",
-          "score": 0.7
-        },
-        "emotionalSignature": "high-patience-low-boredom-moderate-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 2,
-        "startTime": 10,
-        "endTime": 15,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.4,
-          "boredom": 0.6,
-          "excitement": 0.3
-        },
-        "emotionalVelocity": {
-          "patience": 0.04,
-          "boredom": 0.06,
-          "excitement": 0.03
-        },
-        "scrollRisk": 0.65,
-        "scrollRiskLevel": "high",
-        "dominantEmotion": {
-          "emotion": "boredom",
-          "score": 0.6
-        },
-        "emotionalSignature": "moderate-patience-moderate-boredom-low-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 3,
-        "startTime": 15,
-        "endTime": 20,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.4,
-          "boredom": 0.6,
-          "excitement": 0.3
-        },
-        "emotionalVelocity": {
-          "patience": -0.029999999999999992,
-          "boredom": 0.039999999999999994,
-          "excitement": -0.03
-        },
-        "scrollRisk": 0.65,
-        "scrollRiskLevel": "high",
-        "dominantEmotion": {
-          "emotion": "boredom",
-          "score": 0.6
-        },
-        "emotionalSignature": "moderate-patience-moderate-boredom-low-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 4,
-        "startTime": 20,
-        "endTime": 25,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.4,
-          "boredom": 0.6,
-          "excitement": 0.3
-        },
-        "emotionalVelocity": {
-          "patience": -0.030000000000000006,
-          "boredom": 0.04,
-          "excitement": -0.02999999999999999
-        },
-        "scrollRisk": 0.65,
-        "scrollRiskLevel": "high",
-        "dominantEmotion": {
-          "emotion": "boredom",
-          "score": 0.6
-        },
-        "emotionalSignature": "moderate-patience-moderate-boredom-low-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 5,
-        "startTime": 25,
-        "endTime": 30,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.3,
-          "boredom": 0.7,
-          "excitement": 0.2
-        },
-        "emotionalVelocity": {
-          "patience": -0.025000000000000005,
-          "boredom": 0.029999999999999992,
-          "excitement": -0.024999999999999988
-        },
-        "scrollRisk": 0.72,
-        "scrollRiskLevel": "high",
-        "dominantEmotion": {
-          "emotion": "boredom",
-          "score": 0.7
-        },
-        "emotionalSignature": "low-patience-high-boredom-low-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 6,
-        "startTime": 30,
-        "endTime": 35,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.6,
-          "boredom": 0.5,
-          "excitement": 0.3
-        },
-        "emotionalVelocity": {
-          "patience": 0.02,
-          "boredom": -0.009999999999999986,
-          "excitement": 5.551115123125783e-18
-        },
-        "scrollRisk": 0.61,
-        "scrollRiskLevel": "high",
-        "dominantEmotion": {
-          "emotion": "patience",
-          "score": 0.6
-        },
-        "emotionalSignature": "moderate-patience-moderate-boredom-low-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 7,
-        "startTime": 35,
-        "endTime": 40,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.7,
-          "boredom": 0.2,
-          "excitement": 0.9
-        },
-        "emotionalVelocity": {
-          "patience": 0.03,
-          "boredom": -0.03999999999999999,
-          "excitement": 0.06000000000000001
-        },
-        "scrollRisk": 0.31,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.9
-        },
-        "emotionalSignature": "high-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 8,
-        "startTime": 40,
-        "endTime": 45,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.7,
-          "boredom": 0.2,
-          "excitement": 0.6
-        },
-        "emotionalVelocity": {
-          "patience": 0.035,
-          "boredom": -0.04500000000000001,
-          "excitement": 0.03499999999999999
-        },
-        "scrollRisk": 0.4,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "patience",
-          "score": 0.7
-        },
-        "emotionalSignature": "high-patience-low-boredom-moderate-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 9,
-        "startTime": 45,
-        "endTime": 50,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.6,
-          "boredom": 0.3,
-          "excitement": 0.7
-        },
-        "emotionalVelocity": {
-          "patience": 0.014999999999999996,
-          "boredom": -0.03,
-          "excitement": 0.045
-        },
-        "scrollRisk": 0.41000000000000003,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.7
-        },
-        "emotionalSignature": "moderate-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 10,
-        "startTime": 50,
-        "endTime": 55,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.8,
-          "boredom": 0.2,
-          "excitement": 0.7
-        },
-        "emotionalVelocity": {
-          "patience": 0.01499999999999999,
-          "boredom": -0.015000000000000008,
-          "excitement": 0.009999999999999986
-        },
-        "scrollRisk": 0.37,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "patience",
-          "score": 0.8
-        },
-        "emotionalSignature": "high-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 11,
-        "startTime": 55,
-        "endTime": 60,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.4,
-          "boredom": 0.2,
-          "excitement": 0.8
-        },
-        "emotionalVelocity": {
-          "patience": -0.030000000000000006,
-          "boredom": 2.7755575615628915e-18,
-          "excitement": 0.005000000000000027
-        },
-        "scrollRisk": 0.34,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.8
-        },
-        "emotionalSignature": "moderate-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 12,
-        "startTime": 60,
-        "endTime": 65,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.7,
-          "boredom": 0.2,
-          "excitement": 0.8
-        },
-        "emotionalVelocity": {
-          "patience": 0.005000000000000016,
-          "boredom": -0.004999999999999999,
-          "excitement": 0.01499999999999999
-        },
-        "scrollRisk": 0.34,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.8
-        },
-        "emotionalSignature": "high-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 13,
-        "startTime": 65,
-        "endTime": 70,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.7,
-          "boredom": 0.2,
-          "excitement": 0.8
-        },
-        "emotionalVelocity": {
-          "patience": 0,
-          "boredom": -0.0050000000000000044,
-          "excitement": 0.009999999999999998
-        },
-        "scrollRisk": 0.34,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.8
-        },
-        "emotionalSignature": "high-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 14,
-        "startTime": 70,
-        "endTime": 75,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.4,
-          "boredom": 0.6,
-          "excitement": 0.5
-        },
-        "emotionalVelocity": {
-          "patience": -0.020000000000000018,
-          "boredom": 0.04,
-          "excitement": -0.024999999999999988
-        },
-        "scrollRisk": 0.59,
-        "scrollRiskLevel": "high",
-        "dominantEmotion": {
-          "emotion": "boredom",
-          "score": 0.6
-        },
-        "emotionalSignature": "moderate-patience-moderate-boredom-moderate-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 15,
-        "startTime": 75,
-        "endTime": 80,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.8,
-          "boredom": 0.2,
-          "excitement": 0.9
-        },
-        "emotionalVelocity": {
-          "patience": 0.025,
-          "boredom": 2.7755575615628915e-18,
-          "excitement": 0.010000000000000009
-        },
-        "scrollRisk": 0.31,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.9
-        },
-        "emotionalSignature": "high-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 16,
-        "startTime": 80,
-        "endTime": 85,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.8,
-          "boredom": 0.2,
-          "excitement": 0.9
-        },
-        "emotionalVelocity": {
-          "patience": 0.009999999999999998,
-          "boredom": 2.7755575615628915e-18,
-          "excitement": 0.010000000000000009
-        },
-        "scrollRisk": 0.31,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.9
-        },
-        "emotionalSignature": "high-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 17,
-        "startTime": 85,
-        "endTime": 90,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.7,
-          "boredom": 0.2,
-          "excitement": 0.8
-        },
-        "emotionalVelocity": {
-          "patience": 0.01499999999999999,
-          "boredom": -0.02,
-          "excitement": 0.015000000000000003
-        },
-        "scrollRisk": 0.34,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.8
-        },
-        "emotionalSignature": "high-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 18,
-        "startTime": 90,
-        "endTime": 95,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.6,
-          "boredom": 0.2,
-          "excitement": 0.8
-        },
-        "emotionalVelocity": {
-          "patience": 1.1102230246251566e-17,
-          "boredom": -0.020000000000000007,
-          "excitement": 0.009999999999999998
-        },
-        "scrollRisk": 0.34,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.8
-        },
-        "emotionalSignature": "moderate-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 19,
-        "startTime": 95,
-        "endTime": 100,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.8,
-          "boredom": 0.2,
-          "excitement": 0.9
-        },
-        "emotionalVelocity": {
-          "patience": 1.1102230246251566e-17,
-          "boredom": 2.7755575615628915e-18,
-          "excitement": -1.1102230246251566e-17
-        },
-        "scrollRisk": 0.31,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.9
-        },
-        "emotionalSignature": "high-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 20,
-        "startTime": 100,
-        "endTime": 105,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.8,
-          "boredom": 0.2,
-          "excitement": 0.9
-        },
-        "emotionalVelocity": {
-          "patience": 0.004999999999999993,
-          "boredom": 2.7755575615628915e-18,
-          "excitement": 0.0050000000000000044
-        },
-        "scrollRisk": 0.31,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.9
-        },
-        "emotionalSignature": "high-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 21,
-        "startTime": 105,
-        "endTime": 110,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.8,
-          "boredom": 0.2,
-          "excitement": 0.9
-        },
-        "emotionalVelocity": {
-          "patience": 0.015000000000000024,
-          "boredom": 2.7755575615628915e-18,
-          "excitement": 0.010000000000000009
-        },
-        "scrollRisk": 0.31,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.9
-        },
-        "emotionalSignature": "high-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 22,
-        "startTime": 110,
-        "endTime": 115,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.8,
-          "boredom": 0.2,
-          "excitement": 0.9
-        },
-        "emotionalVelocity": {
-          "patience": 0.010000000000000009,
-          "boredom": 2.7755575615628915e-18,
-          "excitement": 0.004999999999999982
-        },
-        "scrollRisk": 0.31,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.9
-        },
-        "emotionalSignature": "high-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 23,
-        "startTime": 115,
-        "endTime": 120,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.8,
-          "boredom": 0.2,
-          "excitement": 0.9
-        },
-        "emotionalVelocity": {
-          "patience": 1.1102230246251566e-17,
-          "boredom": 2.7755575615628915e-18,
-          "excitement": -1.1102230246251566e-17
-        },
-        "scrollRisk": 0.31,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.9
-        },
-        "emotionalSignature": "high-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 24,
-        "startTime": 120,
-        "endTime": 125,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.6,
-          "boredom": 0.2,
-          "excitement": 0.8
-        },
-        "emotionalVelocity": {
-          "patience": -0.019999999999999997,
-          "boredom": 2.7755575615628915e-18,
-          "excitement": -0.010000000000000009
-        },
-        "scrollRisk": 0.34,
-        "scrollRiskLevel": "medium",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 0.8
-        },
-        "emotionalSignature": "moderate-patience-low-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 25,
-        "startTime": 125,
-        "endTime": 130,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.2,
-          "boredom": 0.8,
-          "excitement": 1
-        },
-        "emotionalVelocity": {
-          "patience": -0.059999999999999984,
-          "boredom": 0.06000000000000001,
-          "excitement": 0.009999999999999986
-        },
-        "scrollRisk": 0.52,
-        "scrollRiskLevel": "high",
-        "dominantEmotion": {
-          "emotion": "excitement",
-          "score": 1
-        },
-        "emotionalSignature": "low-patience-high-boredom-high-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 26,
-        "startTime": 130,
-        "endTime": 135,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.3,
-          "boredom": 0.5,
-          "excitement": 0.2
-        },
-        "emotionalVelocity": {
-          "patience": -0.049999999999999996,
-          "boredom": 0.030000000000000006,
-          "excitement": -0.07000000000000002
-        },
-        "scrollRisk": 0.64,
-        "scrollRiskLevel": "high",
-        "dominantEmotion": {
-          "emotion": "boredom",
-          "score": 0.5
-        },
-        "emotionalSignature": "low-patience-moderate-boredom-low-excitement",
-        "dataPoints": 5
-      },
-      {
-        "chunkIndex": 27,
-        "startTime": 135,
-        "endTime": 140,
-        "duration": 5,
-        "emotions": {
-          "patience": 0.3,
-          "boredom": 0.7,
-          "excitement": 0.2
-        },
-        "emotionalVelocity": {
-          "patience": -0.03999999999999999,
-          "boredom": 0.05,
-          "excitement": -0.06499999999999999
-        },
-        "scrollRisk": 0.72,
-        "scrollRiskLevel": "high",
-        "dominantEmotion": {
-          "emotion": "boredom",
-          "score": 0.7
-        },
-        "emotionalSignature": "low-patience-high-boredom-low-excitement",
-        "dataPoints": 5
-      }
-    ],
+    "chunkAnalysis": [],
     "emotionalArc": {
-      "timestamps": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20,
-        21,
-        22,
-        23,
-        24,
-        25,
-        26,
-        27,
-        28,
-        29,
-        30,
-        31,
-        32,
-        33,
-        34,
-        35,
-        36,
-        37,
-        38,
-        39,
-        40,
-        41,
-        42,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        50,
-        51,
-        52,
-        53,
-        54,
-        55,
-        56,
-        57,
-        58,
-        59,
-        60,
-        61,
-        62,
-        63,
-        64,
-        65,
-        66,
-        67,
-        68,
-        69,
-        70,
-        71,
-        72,
-        73,
-        74,
-        75,
-        76,
-        77,
-        78,
-        79,
-        80,
-        81,
-        82,
-        83,
-        84,
-        85,
-        86,
-        87,
-        88,
-        89,
-        90,
-        91,
-        92,
-        93,
-        94,
-        95,
-        96,
-        97,
-        98,
-        99,
-        100,
-        101,
-        102,
-        103,
-        104,
-        105,
-        106,
-        107,
-        108,
-        109,
-        110,
-        111,
-        112,
-        113,
-        114,
-        115,
-        116,
-        117,
-        118,
-        119,
-        120,
-        121,
-        122,
-        123,
-        124,
-        125,
-        126,
-        127,
-        128,
-        129,
-        130,
-        131,
-        132,
-        133,
-        134,
-        135,
-        136,
-        137,
-        138,
-        139
-      ],
-      "emotions": {
-        "patience": [
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3
-        ],
-        "boredom": [
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.5,
-          0.5,
-          0.5,
-          0.5,
-          0.5,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.5,
-          0.5,
-          0.5,
-          0.5,
-          0.5,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7
-        ],
-        "excitement": [
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.5,
-          0.5,
-          0.5,
-          0.5,
-          0.5,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          1,
-          1,
-          1,
-          1,
-          1,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2
-        ]
-      },
-      "smoothedEmotions": {
-        "patience": [
-          0.6999999999999998,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.6399999999999999,
-          0.5799999999999998,
-          0.5199999999999999,
-          0.45999999999999996,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.4,
-          0.38,
-          0.36000000000000004,
-          0.34,
-          0.32,
-          0.3,
-          0.36,
-          0.42000000000000004,
-          0.48,
-          0.54,
-          0.6,
-          0.6199999999999999,
-          0.64,
-          0.6599999999999999,
-          0.6799999999999999,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.6799999999999999,
-          0.6599999999999999,
-          0.64,
-          0.62,
-          0.6,
-          0.64,
-          0.6799999999999999,
-          0.72,
-          0.76,
-          0.8,
-          0.72,
-          0.64,
-          0.5599999999999999,
-          0.48,
-          0.4,
-          0.45999999999999996,
-          0.52,
-          0.5800000000000001,
-          0.64,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.6399999999999999,
-          0.5799999999999998,
-          0.5199999999999999,
-          0.45999999999999996,
-          0.4,
-          0.4800000000000001,
-          0.5599999999999999,
-          0.64,
-          0.72,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.78,
-          0.7600000000000001,
-          0.74,
-          0.7200000000000001,
-          0.7,
-          0.6799999999999999,
-          0.6599999999999999,
-          0.64,
-          0.62,
-          0.6,
-          0.64,
-          0.6799999999999999,
-          0.72,
-          0.76,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.76,
-          0.7200000000000001,
-          0.68,
-          0.64,
-          0.6,
-          0.52,
-          0.43999999999999995,
-          0.36,
-          0.27999999999999997,
-          0.2,
-          0.22000000000000003,
-          0.24000000000000005,
-          0.26,
-          0.28,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3
-        ],
-        "boredom": [
-          0.20000000000000004,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.27999999999999997,
-          0.36000000000000004,
-          0.44000000000000006,
-          0.52,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6199999999999999,
-          0.64,
-          0.6599999999999999,
-          0.6799999999999999,
-          0.7,
-          0.6599999999999999,
-          0.6199999999999999,
-          0.58,
-          0.54,
-          0.5,
-          0.44000000000000006,
-          0.38,
-          0.31999999999999995,
-          0.25999999999999995,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.22000000000000003,
-          0.24000000000000005,
-          0.26,
-          0.28,
-          0.3,
-          0.27999999999999997,
-          0.25999999999999995,
-          0.24,
-          0.21999999999999997,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.27999999999999997,
-          0.36000000000000004,
-          0.44000000000000006,
-          0.52,
-          0.6,
-          0.52,
-          0.43999999999999995,
-          0.36,
-          0.27999999999999997,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.32,
-          0.44000000000000006,
-          0.5599999999999999,
-          0.68,
-          0.8,
-          0.74,
-          0.68,
-          0.62,
-          0.5599999999999999,
-          0.5,
-          0.54,
-          0.5800000000000001,
-          0.6199999999999999,
-          0.6599999999999999,
-          0.7,
-          0.7,
-          0.6999999999999998
-        ],
-        "excitement": [
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.6,
-          0.5399999999999999,
-          0.47999999999999987,
-          0.42000000000000004,
-          0.36,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.3,
-          0.27999999999999997,
-          0.25999999999999995,
-          0.24,
-          0.21999999999999997,
-          0.2,
-          0.22000000000000003,
-          0.24000000000000005,
-          0.26,
-          0.28,
-          0.3,
-          0.42000000000000004,
-          0.5399999999999999,
-          0.6599999999999999,
-          0.78,
-          0.9,
-          0.8400000000000001,
-          0.78,
-          0.72,
-          0.66,
-          0.6,
-          0.6199999999999999,
-          0.64,
-          0.6599999999999999,
-          0.6799999999999999,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.7,
-          0.72,
-          0.7399999999999999,
-          0.76,
-          0.7799999999999999,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.74,
-          0.68,
-          0.62,
-          0.5599999999999999,
-          0.5,
-          0.58,
-          0.6599999999999999,
-          0.74,
-          0.82,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.8800000000000001,
-          0.86,
-          0.8400000000000001,
-          0.82,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8,
-          0.8200000000000001,
-          0.8400000000000001,
-          0.86,
-          0.8800000000000001,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.9,
-          0.8800000000000001,
-          0.86,
-          0.8400000000000001,
-          0.82,
-          0.8,
-          0.8400000000000001,
-          0.8800000000000001,
-          0.9199999999999999,
-          0.96,
-          1,
-          0.8400000000000001,
-          0.68,
-          0.5200000000000001,
-          0.36,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.2,
-          0.20000000000000004
-        ]
-      },
-      "windowSize": 5
+      "timestamps": [],
+      "emotions": {}
     }
   },
   "summary": {
     "metadata": {
-      "generatedAt": "2026-04-07T22:08:29.332Z",
+      "generatedAt": "2026-04-09T16:38:34.548Z",
       "pipelineVersion": "1.0",
-      "videoDuration": 140.017,
-      "chunksAnalyzed": 28,
+      "videoDuration": 0,
+      "chunksAnalyzed": 0,
       "failedChunks": 0,
-      "totalSeconds": 140,
-      "totalTokens": 1267791
+      "totalSeconds": 0,
+      "totalTokens": 0
     },
     "keyMetrics": {
-      "averages": {
-        "patience": 0.5999999999999994,
-        "boredom": 0.3392857142857146,
-        "excitement": 0.6607142857142861
-      },
-      "peakMoments": {
-        "patience": {
-          "highest": {
-            "timestamp": 50,
-            "score": 0.8
-          },
-          "lowest": {
-            "timestamp": 125,
-            "score": 0.2
-          }
-        },
-        "boredom": {
-          "highest": {
-            "timestamp": 125,
-            "score": 0.8
-          },
-          "lowest": {
-            "timestamp": 0,
-            "score": 0.2
-          }
-        },
-        "excitement": {
-          "highest": {
-            "timestamp": 125,
-            "score": 1
-          },
-          "lowest": {
-            "timestamp": 25,
-            "score": 0.2
-          }
-        }
-      },
-      "trends": {
-        "patience": {
-          "direction": "stable",
-          "change": 0.04285714285714215,
-          "firstHalfAverage": 0.5785714285714291,
-          "secondHalfAverage": 0.6214285714285712
-        },
-        "boredom": {
-          "direction": "stable",
-          "change": -0.021428571428571297,
-          "firstHalfAverage": 0.34999999999999964,
-          "secondHalfAverage": 0.32857142857142835
-        },
-        "excitement": {
-          "direction": "increasing",
-          "change": 0.19285714285714295,
-          "firstHalfAverage": 0.564285714285714,
-          "secondHalfAverage": 0.7571428571428569
-        }
-      },
-      "frictionIndex": 100
+      "averages": {},
+      "peakMoments": {},
+      "trends": {},
+      "frictionIndex": 0
     },
     "recommendation": {
-      "text": "为提升针对急躁青少年观众的留存率，视频需重新剪辑中段（10-30秒）以注入更多视觉刺激，并平滑结尾过渡，防止高潮后的观众流失。核心策略是压缩纯对话铺垫，将动作高潮前置并分散，确保每5-8秒有一次‘模式中断’。",
-      "reasoning": "数据清晰显示，视频的兴奋感趋势整体上升，但在10-30秒区间出现显著低谷（兴奋度降至2-3，无聊感升至6-7），这与‘耐心’指标的下降和‘无聊’峰值（125秒）相吻合，表明叙事铺垫过长。相反，35秒后及75-125秒的高强度动作片段（兴奋度8-9）成功维持了高注意力。结尾（125秒后）从高潮战斗突然切至静态标题卡，导致兴奋度骤降至1，无聊感飙升至8，是典型的留存断点。",
-      "confidence": 0.85
+      "text": "Due to insufficient data in the provided metrics and chunk summaries, no actionable recommendations can be made for improving viewer retention or emotional impact. Next steps should involve running the emotion analysis pipeline to generate actual data for analysis.",
+      "reasoning": "The input data shows empty metrics summaries with no averages, trends, or peak moments, and the friction index is 0, indicating no data or no analysis performed. Chunk summaries are absent, preventing any assessment of emotional beats or pacing. Without this data, it is impossible to reference specific evidence for retention or emotional impact, so recommendations must focus on data collection.",
+      "confidence": 0.1
     },
     "reportPaths": {
-      "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
-      "recommendation": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
-      "emotionalAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json",
-      "finalReport": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md",
-      "analysisData": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json",
-      "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json"
+      "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/metrics/metrics.json",
+      "recommendation": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/recommendation/recommendation.json",
+      "emotionalAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/emotional-analysis/emotional-data.json",
+      "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/summary/summary.json"
     },
-    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json",
-    "generatedAt": "2026-04-07T22:08:29.332Z"
+    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/summary/summary.json",
+    "generatedAt": "2026-04-09T16:38:34.548Z"
   },
   "summaryData": {
-    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json",
-    "generatedAt": "2026-04-07T22:08:29.332Z",
+    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/summary/summary.json",
+    "generatedAt": "2026-04-09T16:38:34.548Z",
     "metadata": {
-      "generatedAt": "2026-04-07T22:08:29.332Z",
+      "generatedAt": "2026-04-09T16:38:34.548Z",
       "pipelineVersion": "1.0",
-      "videoDuration": 140.017,
-      "chunksAnalyzed": 28,
+      "videoDuration": 0,
+      "chunksAnalyzed": 0,
       "failedChunks": 0,
-      "totalSeconds": 140,
-      "totalTokens": 1267791
+      "totalSeconds": 0,
+      "totalTokens": 0
     },
     "keyMetricsCount": 4,
     "hasRecommendation": true
   },
   "finalReport": {
-    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md",
-    "analysisDataPath": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json",
-    "generatedAt": "2026-04-07T22:08:29.338Z",
+    "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/summary/FINAL-REPORT.md",
+    "analysisDataPath": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/summary/analysis-data.json",
+    "generatedAt": "2026-04-09T16:38:34.554Z",
     "summary": {
-      "duration": 140.017,
-      "totalTokens": 1267791,
-      "chunksAnalyzed": 28,
-      "reportSize": 18110
+      "duration": 0,
+      "totalTokens": 0,
+      "chunksAnalyzed": 0,
+      "reportSize": 1934
     }
   }
 }

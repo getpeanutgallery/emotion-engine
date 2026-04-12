@@ -1,0 +1,181 @@
+{
+  "commonPaths": 236,
+  "improvedCount": 15,
+  "regressedCount": 8,
+  "samePass": 70,
+  "sameFail": 120,
+  "sameError": 23,
+  "improvedBuckets": {
+    "dialogue_segments": 12,
+    "speaker_profiles": 3
+  },
+  "regressedBuckets": {
+    "dialogue_segments": 4,
+    "speaker_profiles": 4
+  },
+  "improvedExamples": [
+    {
+      "path": "dialogue_segments[0].end",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Time delta 2.5 exceeded tolerance 2",
+      "freshReason": null
+    },
+    {
+      "path": "dialogue_segments[0].text",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Normalized strings differed",
+      "freshReason": null
+    },
+    {
+      "path": "dialogue_segments[1].start",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Time delta 5 exceeded tolerance 2",
+      "freshReason": null
+    },
+    {
+      "path": "dialogue_segments[1].end",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Time delta 3 exceeded tolerance 2",
+      "freshReason": null
+    },
+    {
+      "path": "dialogue_segments[1].text",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Normalized strings differed",
+      "freshReason": null
+    },
+    {
+      "path": "dialogue_segments[2].start",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Time delta 4 exceeded tolerance 2",
+      "freshReason": null
+    },
+    {
+      "path": "dialogue_segments[2].end",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Time delta 5.5 exceeded tolerance 2",
+      "freshReason": null
+    },
+    {
+      "path": "dialogue_segments[3].start",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Time delta 5.4 exceeded tolerance 2",
+      "freshReason": null
+    },
+    {
+      "path": "dialogue_segments[18].speaker",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Values differed",
+      "freshReason": null
+    },
+    {
+      "path": "dialogue_segments[18].speaker_id",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Values differed",
+      "freshReason": null
+    },
+    {
+      "path": "dialogue_segments[19].speaker",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Values differed",
+      "freshReason": null
+    },
+    {
+      "path": "dialogue_segments[19].speaker_id",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Values differed",
+      "freshReason": null
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].trait",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Values differed",
+      "freshReason": null
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].value",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Values differed",
+      "freshReason": null
+    },
+    {
+      "path": "speaker_profiles[1].inferred_traits.traits[0].confidence",
+      "baseline": "fail",
+      "fresh": "pass",
+      "baselineReason": "Numeric delta 0.27 exceeded tolerance 0.1",
+      "freshReason": null
+    }
+  ],
+  "regressedExamples": [
+    {
+      "path": "dialogue_segments[3].confidence",
+      "baseline": "pass",
+      "fresh": "fail",
+      "baselineReason": null,
+      "freshReason": "Numeric delta 0.13 exceeded tolerance 0.1"
+    },
+    {
+      "path": "dialogue_segments[8].end",
+      "baseline": "pass",
+      "fresh": "fail",
+      "baselineReason": null,
+      "freshReason": "Time delta 27 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[12].end",
+      "baseline": "pass",
+      "fresh": "fail",
+      "baselineReason": null,
+      "freshReason": "Time delta 37.5 exceeded tolerance 2"
+    },
+    {
+      "path": "dialogue_segments[13].start",
+      "baseline": "pass",
+      "fresh": "fail",
+      "baselineReason": null,
+      "freshReason": "Time delta 37.5 exceeded tolerance 2"
+    },
+    {
+      "path": "speaker_profiles[2].inferred_traits.traits[0].trait",
+      "baseline": "pass",
+      "fresh": "fail",
+      "baselineReason": null,
+      "freshReason": "Values differed"
+    },
+    {
+      "path": "speaker_profiles[4].grounded.acoustic_descriptors[0].confidence",
+      "baseline": "pass",
+      "fresh": "fail",
+      "baselineReason": null,
+      "freshReason": "Numeric delta 0.15000000000000002 exceeded tolerance 0.1"
+    },
+    {
+      "path": "speaker_profiles[5].grounded.linked_segment_indexes[1]",
+      "baseline": "fail",
+      "fresh": "error",
+      "baselineReason": "Values differed",
+      "freshReason": "Output array missing item present in truth"
+    },
+    {
+      "path": "speaker_profiles[6].grounded.acoustic_descriptors[0].confidence",
+      "baseline": "pass",
+      "fresh": "fail",
+      "baselineReason": null,
+      "freshReason": "Numeric delta 0.10999999999999999 exceeded tolerance 0.1"
+    }
+  ]
+}

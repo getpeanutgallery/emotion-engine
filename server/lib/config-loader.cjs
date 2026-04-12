@@ -88,9 +88,12 @@ function parseConfig(configString, format = 'yaml') {
  *   - Forbids: config.ai.provider (provider selected via adapter.name per target)
  *   - Forbids: config.ai.model (top-level model)
  *   - Forbids: config.ai.<op>.model (use adapter.model)
- *   - Requires: ai.dialogue.targets[*].adapter.{name,model,params?}
- *   - Requires: ai.music.targets[*].adapter.{name,model,params?}
- *   - Requires: ai.video.targets[*].adapter.{name,model,params?}
+ *   - Requires ai.<op>.targets[*].adapter.{name,model,params?} only when the
+ *     pipeline actually uses that operation, or when that ai.<op> block is
+ *     explicitly configured and must therefore validate its shape
+ *   - Dialogue usage: server/scripts/get-context/get-dialogue.cjs
+ *   - Music usage: server/scripts/get-context/get-music.cjs
+ *   - Video usage: server/scripts/process/video-chunks.cjs or whole-video-mimo.cjs
  *   - Conditional: ai.recommendation.targets[*].adapter.{name,model,params?} is required when using server/scripts/report/recommendation.cjs
  *   - Optional per operation: ai.<op>.retry.{maxAttempts,backoffMs}
  * - debug keep flags must be booleans when provided
@@ -157,8 +160,9 @@ function validateConfig(config, options = {}) {
       }
     }
 
-    function validateTargets(opName) {
+    function validateTargets(opName, options = {}) {
       const op = config.ai?.[opName];
+      const { required = false } = options;
 
       // Forbid legacy per-op model key
       if (op?.model !== undefined) {
@@ -167,7 +171,9 @@ function validateConfig(config, options = {}) {
 
       const targets = op?.targets;
       if (!Array.isArray(targets) || targets.length < 1) {
-        errors.push(`Missing required "ai.${opName}.targets" (must be a non-empty array)`);
+        if (required || op !== undefined) {
+          errors.push(`Missing required "ai.${opName}.targets" (must be a non-empty array)`);
+        }
         return;
       }
 
@@ -207,18 +213,36 @@ function validateConfig(config, options = {}) {
       validateRetry(op?.retry, `ai.${opName}.retry`);
     }
 
-    validateTargets('dialogue');
-    validateTargets('music');
-    validateTargets('video');
-
     const gatherScripts = getScriptsFromPhase(config.gather_context);
-    const usesMusicVocalsScript = gatherScripts.some((s) => {
-      const p = (s && typeof s.script === 'string') ? s.script : '';
-      return p.endsWith('/get-music-vocals.cjs') || p === 'server/scripts/get-context/get-music-vocals.cjs' || p.includes('scripts/get-context/get-music-vocals.cjs');
-    });
+    const processScripts = getScriptsFromPhase(config.process);
+    const reportScripts = getScriptsFromPhase(config.report);
+    const allScripts = [...gatherScripts, ...processScripts, ...reportScripts];
 
-    if (usesMusicVocalsScript || config.ai?.music_vocals !== undefined) {
-      validateTargets('music_vocals');
+    function usesScriptPath(matchers) {
+      const normalizedMatchers = Array.isArray(matchers) ? matchers : [matchers];
+
+      return allScripts.some((s) => {
+        const p = (s && typeof s.script === 'string') ? s.script.replace(/\\/g, '/') : '';
+        return normalizedMatchers.some((matcher) => p === matcher || p.endsWith(`/${matcher}`) || p.includes(matcher));
+      });
+    }
+
+    const requiresDialogueTargets = usesScriptPath('scripts/get-context/get-dialogue.cjs');
+    const requiresMusicTargets = usesScriptPath('scripts/get-context/get-music.cjs');
+    const requiresVideoTargets = usesScriptPath([
+      'scripts/process/video-chunks.cjs',
+      'scripts/process/whole-video-mimo.cjs'
+    ]);
+    const requiresMusicVocalsTargets = usesScriptPath('scripts/get-context/get-music-vocals.cjs');
+    const requiresRecommendationTargets = usesScriptPath('scripts/report/recommendation.cjs');
+    const requiresVideoIdentityTargets = usesScriptPath('scripts/get-context/get-visual-identity.cjs');
+
+    validateTargets('dialogue', { required: requiresDialogueTargets });
+    validateTargets('music', { required: requiresMusicTargets });
+    validateTargets('video', { required: requiresVideoTargets });
+
+    if (requiresMusicVocalsTargets || config.ai?.music_vocals !== undefined) {
+      validateTargets('music_vocals', { required: requiresMusicVocalsTargets });
     }
 
     // Optional: dialogue stitcher is phase1-only and used when dialogue chunking is triggered.
@@ -227,19 +251,13 @@ function validateConfig(config, options = {}) {
       validateTargets('dialogue_stitch');
     }
 
-    if (config.ai?.video_identity !== undefined) {
-      validateTargets('video_identity');
+    if (requiresVideoIdentityTargets || config.ai?.video_identity !== undefined) {
+      validateTargets('video_identity', { required: requiresVideoIdentityTargets });
     }
 
     // Recommendation is phase3-only. If the recommendation report script is present, require explicit ai.recommendation.targets.
-    const reportScripts = getScriptsFromPhase(config.report);
-    const usesRecommendationScript = reportScripts.some((s) => {
-      const p = (s && typeof s.script === 'string') ? s.script : '';
-      return p.endsWith('/recommendation.cjs') || p === 'server/scripts/report/recommendation.cjs' || p.includes('scripts/report/recommendation.cjs');
-    });
-
-    if (usesRecommendationScript) {
-      validateTargets('recommendation');
+    if (requiresRecommendationTargets) {
+      validateTargets('recommendation', { required: true });
     } else if (config.ai?.recommendation !== undefined) {
       // If configured but unused, still validate its shape.
       validateTargets('recommendation');

@@ -40,7 +40,7 @@ Return JSON only with this shape:
       "grounded": {
         "confidence": 0.68,
         "linked_segment_indexes": [0],
-        "acoustic_descriptors": ["low raspy voice", "close-mic delivery"]
+        "acoustic_descriptors": [{ "label": "low raspy voice", "confidence": 0.62 }, { "label": "close-mic delivery", "confidence": 0.58 }]
       },
       "inferred_traits": {
         "traits": [
@@ -81,13 +81,14 @@ Damaged-speech rules:
 
 Speaker rules:
 - Speaker continuity is acoustic, not semantic.
-- Reuse a speaker_id only when the audible voice clearly matches.
+- For adjacent or near-adjacent lines, default to reusing the current speaker_id when the audible voice plausibly matches.
 - A named character, repeated topic, scene continuity, or conversational adjacency is not proof that two lines came from the same speaker.
-- Before reusing a speaker_id, compare voice quality, timbre, delivery mode, recording texture, apparent age range, gender presentation, and accent/dialect impression.
-- If those cues do not clearly line up, create a new speaker_id.
-- Keep materially different delivery modes separated unless the voice itself clearly matches.
-- Do not collapse narration, public-address speech, expository/briefing delivery, radio/comms chatter, villain speech, promo voiceover, or overlap-heavy blends into one speaker bucket unless the acoustic match is genuinely strong.
-- If identity is uncertain, keep the bucket anonymous and preserve the uncertainty in grounded descriptors and speculative traits rather than promoting a guess to fact.
+- Before introducing a new speaker_id, compare voice quality, timbre, delivery mode, recording texture, apparent age range, gender presentation, and accent/dialect impression.
+- Create a new speaker_id only when multiple acoustic cues provide strong positive evidence of a different voice.
+- Do not split speakers solely because narration/public-address/expository/radio-comms/villain/promo role labels shift if the same voice plausibly continues.
+- Minor intensity, pacing, or channel-texture variation alone is not enough to mint a new speaker_id.
+- Minimize speaker-id proliferation: over-fragmenting the cast is a failure mode.
+- If identity is uncertain, keep the bucket anonymous, preserve uncertainty in grounded descriptors/speculative traits, and prefer continuity over speculative splitting.
 
 Confidence rules:
 - Use conservative confidence values.
@@ -103,6 +104,12 @@ Speaker profile rules:
 - grounded should contain cautious same-speaker evidence: anonymous continuity, linked_segment_indexes, and acoustically supported descriptors.
 - Include practical acoustic_descriptors that would help a later reviewer distinguish or reunify speakers, such as pitch range, raspiness/smoothness, breathiness, intensity, cadence, pacing, mic distance, recording texture, accent impression, age impression, gender impression, or delivery mode.
 - Do not leave acoustic_descriptors empty just because the description is imperfect; include concise grounded descriptors when the audio gives real support.
+- acoustic_descriptors must be an array of objects.
+- Every acoustic_descriptors[*] entry must include a non-empty string label.
+- acoustic_descriptors[*].confidence is optional; when present it must be a number from 0.0 to 1.0.
+- Do not return plain strings in acoustic_descriptors.
+- Do not use alternate keys such as value, descriptor, or acousticDescriptors for grounded descriptors; use acoustic_descriptors entries with label only.
+- If no grounded descriptor is supportable, return exactly "acoustic_descriptors": [].
 - inferred_traits must always be present as an object with a traits array.
 - Use inferred_traits for clearly speculative impressions that may still help review, such as age range, gender presentation, role impression, or demeanor.
 - Keep inferred_traits clearly speculative and separate from grounded same-speaker evidence.

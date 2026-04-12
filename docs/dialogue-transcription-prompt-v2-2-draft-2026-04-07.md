@@ -40,7 +40,7 @@ Return JSON only with this shape:
       "grounded": {
         "confidence": 0.68,
         "linked_segment_indexes": [0],
-        "acoustic_descriptors": ["low raspy voice", "close-mic delivery"]
+        "acoustic_descriptors": [{ "label": "low raspy voice", "confidence": 0.62 }, { "label": "close-mic delivery", "confidence": 0.58 }]
       },
       "inferred_traits": {
         "traits": [
@@ -105,6 +105,12 @@ Speaker profile rules:
 - grounded should contain cautious same-speaker evidence: anonymous continuity, linked_segment_indexes, and acoustically supported descriptors.
 - When supportable, include practical acoustic_descriptors that would help a later reviewer distinguish or reunify speakers, such as pitch range, raspiness/smoothness, breathiness, intensity, cadence, pacing, mic distance, recording texture, accent impression, age impression, or delivery mode.
 - Do not leave acoustic_descriptors empty just because the description is imperfect; include concise grounded descriptors when the audio gives real support.
+- acoustic_descriptors must be an array of objects.
+- Every acoustic_descriptors[*] entry must include a non-empty string label.
+- acoustic_descriptors[*].confidence is optional; when present it must be a number from 0.0 to 1.0.
+- Do not return plain strings in acoustic_descriptors.
+- Do not use alternate keys such as value, descriptor, or acousticDescriptors for grounded descriptors; use acoustic_descriptors entries with label only.
+- If no grounded descriptor is supportable, return exactly "acoustic_descriptors": [].
 - inferred_traits must always be present as an object with a traits array.
 - Use inferred_traits for clearly speculative impressions that may still help review, such as age range, gender presentation, role impression, or demeanor.
 - Keep inferred_traits clearly speculative and separate from grounded same-speaker evidence.

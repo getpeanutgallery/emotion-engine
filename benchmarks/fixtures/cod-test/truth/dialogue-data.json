@@ -149,7 +149,7 @@
       "end": 102,
       "speaker": "Speaker 2",
       "speaker_id": "spk_002",
-      "text": "So eager to leave daddy.",
+      "text": "So eager to leave David.",
       "confidence": 0.9,
       "index": 15
     },
@@ -158,7 +158,7 @@
       "end": 105,
       "speaker": "Speaker 13",
       "speaker_id": "spk_013",
-      "text": "Killing the man is a hell of a lot easier than killing the idea.",
+      "text": "Killing a man is a hell of a lot easier than killing the idea.",
       "confidence": 0.8,
       "index": 16
     },
@@ -540,5 +540,5 @@
   "summary": "The trailer\u2019s spoken dialogue frames Raul Menendez as the force behind fear, unrest, and psychological manipulation, while David and his squad are dragged through propaganda, military urgency, confusion, taunts, and hallucination-heavy combat setup before the trailer pivots into a preorder promo.",
   "totalDuration": 140.042449,
   "handoffContext": "Spoken-dialogue truth only. Sung heavy-metal lyrics were intentionally split into truth/music-vocals-data.json and must not be scored in dialogueData.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic.\n- Do not collapse scene dialogue, comms, promo VO, and overlapping hallucination blends into one speaker unless the voice clearly matches.\n- If identity is uncertain, preserve the uncertainty in notes/descriptors instead of promoting a guess to fact.\n- The mixed \"You were never cut out to be a Mason\" line is intentionally represented as an overlap-heavy speaker bucket rather than a falsely precise identity claim.",
-  "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets, shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 6: A lot of people counting on us for answers.\nSpeaker 14: You shall know fear.\nSpeaker 8: Specter one, report.\nSpeaker 8: Need a sitrep.\nSpeaker 9: This isn't real.\nSpeaker 10: The hell it ain't!\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave daddy.\nSpeaker 13: Killing the man is a hell of a lot easier than killing the idea.\nSpeaker 15: You were never cut out to be a Mason.\nSpeaker 6: No more games! This ends now.\nSpeaker 16: Get the Reznov challenge pack when you preorder now!"
+  "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets, shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 6: A lot of people counting on us for answers.\nSpeaker 14: You shall know fear.\nSpeaker 8: Specter one, report.\nSpeaker 8: Need a sitrep.\nSpeaker 9: This isn't real.\nSpeaker 10: The hell it ain't!\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave David.\nSpeaker 13: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 15: You were never cut out to be a Mason.\nSpeaker 6: No more games! This ends now.\nSpeaker 16: Get the Reznov challenge pack when you preorder now!"
 }

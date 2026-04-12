@@ -39,38 +39,45 @@
   },
   "counts": {
     "totalTruthFields": 36,
-    "scoreableFields": 20,
+    "scoreableFields": 18,
     "skippedFields": 12,
-    "passedFields": 3,
-    "failedFields": 17,
-    "erroredFields": 4,
+    "passedFields": 2,
+    "failedFields": 16,
+    "erroredFields": 6,
     "ignoredDifferenceFields": 4
   },
   "accuracy": {
-    "passed": 3,
-    "failed": 17,
-    "rate": 0.15
+    "passed": 2,
+    "failed": 16,
+    "rate": 0.1111111111111111
   },
   "coverage": {
-    "scoreable": 20,
+    "scoreable": 18,
     "skipped": 12,
     "totalTruthFields": 36,
-    "rate": 0.5555555555555556
+    "rate": 0.5
   },
   "failures": [
     {
       "path": "text",
       "rule": "fuzzy-string",
       "truthValue": "Front-load the strongest surreal/action imagery and strip out the generic trailer setup, because the biggest retention leak is the opening and any later exposition/title-card stretches. The edit already proves it can hold attention when it delivers rapid visual novelty, so the goal is to re-cut around those peaks and compress the corporate CTA material at the end. Keep the emotional profile as high-intensity, but create clearer spike-and-release pacing so the second half feels escalatory instead of long.",
-      "outputValue": "为提升针对急躁青少年观众的留存率，视频需重新剪辑中段（10-30秒）以注入更多视觉刺激，并平滑结尾过渡，防止高潮后的观众流失。核心策略是压缩纯对话铺垫，将动作高潮前置并分散，确保每5-8秒有一次‘模式中断’。",
+      "outputValue": "Due to insufficient data in the provided metrics and chunk summaries, no specific recommendations can be made. It is essential to collect and analyze viewer emotion data to improve retention and emotional impact.",
       "reason": "Normalized strings differed"
     },
     {
       "path": "reasoning",
       "rule": "fuzzy-string",
       "truthValue": "The weakest point is the first 0-5 seconds: patience is at its lowest there (0.2) while boredom is high (0.8), driven by the glitchy 'RISING TENSIONS' style setup that reads as generic. Retention improves immediately at 5-10 seconds, where excitement hits its peak (0.9) and boredom drops to its minimum (0.2), showing the audience responds to the city-bending, reality-breaking spectacle much more than exposition. Across the full piece, excitement stays strong on average (0.782) and remains stable, but boredom rises materially in the second half from 0.307 to 0.55, which suggests fatigue from repeated title cards, dialogue beats, and end-slate information. Specific mid/late dips align with title/exposition moments like 25-35 seconds and 85-95 seconds, where talking-head or location-card structure softens momentum. The final CTA section also hurts emotional finish: excitement bottoms out at 120 seconds (0.3) and boredom jumps again on the pre-order screens. With a friction index of 100, the cut is asking viewers to work too hard through promo structure despite having many genuinely high-performing action beats.",
-      "outputValue": "数据清晰显示，视频的兴奋感趋势整体上升，但在10-30秒区间出现显著低谷（兴奋度降至2-3，无聊感升至6-7），这与‘耐心’指标的下降和‘无聊’峰值（125秒）相吻合，表明叙事铺垫过长。相反，35秒后及75-125秒的高强度动作片段（兴奋度8-9）成功维持了高注意力。结尾（125秒后）从高潮战斗突然切至静态标题卡，导致兴奋度骤降至1，无聊感飙升至8，是典型的留存断点。",
+      "outputValue": "The input data contains empty metrics summaries and no chunk-level emotion analysis, making it impossible to identify patterns, peaks, or friction points. Without averages, trends, or peak moments, evidence-based recommendations cannot be formulated. The friction index is zero, but this may not reflect reality without data. To proceed, detailed emotion analysis from video chunks is required.",
       "reason": "Normalized strings differed"
+    },
+    {
+      "path": "confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.92,
+      "outputValue": 0.1,
+      "reason": "Numeric delta 0.8200000000000001 exceeded tolerance 0.1"
     },
     {
       "path": "keyFindings",
@@ -79,43 +86,29 @@
         "length": 6
       },
       "outputValue": {
-        "length": 5
+        "length": 3
       },
-      "reason": "Array length mismatch: truth=6 output=5"
+      "reason": "Array length mismatch: truth=6 output=3"
     },
     {
       "path": "keyFindings[0]",
       "rule": "fuzzy-string",
       "truthValue": "The opening 0-5s is the biggest retention risk: lowest patience and high boredom despite expensive visuals.",
-      "outputValue": "开场（0-5秒）成功：快速剪辑和直接对话建立了高‘耐心’（7）和‘兴奋’（6），符合3秒钩子原则。",
+      "outputValue": "No emotion data available for analysis.",
       "reason": "Normalized strings differed"
     },
     {
       "path": "keyFindings[1]",
       "rule": "fuzzy-string",
       "truthValue": "The 5-10s segment is the clearest hook model, with peak excitement and minimal boredom.",
-      "outputValue": "中段疲软（10-30秒）：连续多个片段以静态对话为主，‘兴奋’降至2-3，‘无聊’升至6-7，是主要的留存风险区。",
+      "outputValue": "Metrics summaries are empty, providing no insights.",
       "reason": "Normalized strings differed"
     },
     {
       "path": "keyFindings[2]",
       "rule": "fuzzy-string",
       "truthValue": "Excitement is consistently high overall, so the core creative works when it prioritizes spectacle over exposition.",
-      "outputValue": "高潮有效（35-125秒）：密集的动作蒙太奇将‘兴奋’推至8-9，并维持了高‘耐心’，证明视觉冲击对目标观众有效。",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "keyFindings[3]",
-      "rule": "fuzzy-string",
-      "truthValue": "Boredom increases significantly in the second half, indicating pacing fatigue rather than lack of action quality.",
-      "outputValue": "结尾断崖（125秒后）：从‘兴奋’9的战斗直接切至静态标题卡，导致‘兴奋’跌至1，‘无聊’达8，观众极易在此划走。",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "keyFindings[4]",
-      "rule": "fuzzy-string",
-      "truthValue": "Title cards, talking-head dialogue, and location reveals repeatedly correlate with softer engagement.",
-      "outputValue": "整体情绪趋势：‘兴奋’呈上升趋势（+0.19），但被中段低谷和结尾断崖抵消，表明结构问题大于内容问题。",
+      "outputValue": "Chunk summaries array is empty, indicating no processed video segments.",
       "reason": "Normalized strings differed"
     },
     {
@@ -133,56 +126,56 @@
       "path": "suggestions[0]",
       "rule": "fuzzy-string",
       "truthValue": "Replace the current first frame/text-led intro with one of the strongest surreal action shots now appearing later, especially the reality-breaking or impossible-environment imagery.",
-      "outputValue": "重新剪辑10-30秒：将部分后续的高能动作镜头（如35秒后的爆炸场面）前置插入此段，或加入快速闪回的视觉奇观，打破纯对话节奏。",
+      "outputValue": "Collect chunk-level emotion analysis data from the video.",
       "reason": "Normalized strings differed"
     },
     {
       "path": "suggestions[1]",
       "rule": "fuzzy-string",
       "truthValue": "Cut or heavily shorten the 'RISING TENSIONS' style opening text so the video starts on immediate spectacle rather than trailer language.",
-      "outputValue": "压缩对话铺垫：将反派背景（10-15秒）和任务说明（20-25秒）的对话精简，或将其画外音覆盖在更动态的视觉画面上。",
+      "outputValue": "Compute averages and trends for viewer emotions.",
       "reason": "Normalized strings differed"
     },
     {
       "path": "suggestions[2]",
       "rule": "fuzzy-string",
       "truthValue": "Move one of the standout 'wtf' visuals from the 60-85s run into the first 3-5 seconds to create instant curiosity.",
-      "outputValue": "创建‘模式中断’：在15秒、25秒等无聊感上升节点，插入一个意想不到的视觉元素（如突然的慢动作、特效转场、角色特写反应镜头）。",
+      "outputValue": "Identify peak moments and friction points in the timeline.",
       "reason": "Normalized strings differed"
     },
     {
       "path": "suggestions[3]",
       "rule": "fuzzy-string",
       "truthValue": "Reduce title cards and location cards throughout, or overlay them on active gameplay/action instead of letting them become standalone beats.",
-      "outputValue": "平滑结尾过渡：避免从战斗高潮直接切黑屏或静态标题。可考虑让最后一个动作镜头（如爆炸）的余波自然过渡到标题，或保留激昂音乐的尾奏。",
+      "outputValue": "Analyze the start/hook for initial engagement.",
       "reason": "Normalized strings differed"
     },
     {
       "path": "suggestions[4]",
       "rule": "fuzzy-string",
       "truthValue": "Trim the 25-35s exposition stretch by minimizing static conversation shots and keeping only dialogue that adds immediate stakes.",
-      "outputValue": "优化结尾信息呈现：将‘预购’等商业信息以动态图形（如快速闪现的文字、LOGO动画）叠加在最后一个动作镜头的余画面上，而非静态展示。",
+      "outputValue": "Review pacing based on emotional beats.",
       "reason": "Normalized strings differed"
     },
     {
       "path": "suggestions[5]",
       "rule": "fuzzy-string",
       "truthValue": "At the 85-95s section, compress the Alaska/Hawaii transition so the audience gets to playable action faster.",
-      "outputValue": "检查音乐衔接：确保125秒处音乐不是突然淡出，而是有一个明确的收尾或与画面同步的重音，以维持情绪连贯性。",
+      "outputValue": "Gather data on viewer retention rates.",
       "reason": "Normalized strings differed"
     },
     {
       "path": "suggestions[6]",
       "rule": "fuzzy-string",
       "truthValue": "Use more pattern interrupts in the back half: alternate combat scale, color palette, or perspective to offset boredom growth.",
-      "outputValue": "利用‘耐心’峰值：在50秒（‘耐心’最高点0.8）附近，可考虑插入一个关键的剧情转折或角色高光时刻，以加深投入感。",
+      "outputValue": "Use tools to track emotional responses over time.",
       "reason": "Normalized strings differed"
     },
     {
       "path": "suggestions[7]",
       "rule": "fuzzy-string",
       "truthValue": "Preserve the strongest high-retention run from roughly 40-80s as the pacing template: fast cuts, visual novelty, and clear escalation.",
-      "outputValue": "微调节奏：确保没有任何单个镜头（尤其是对话特写）持续超过3-4秒，以匹配目标观众的注意力跨度。",
+      "outputValue": "Ensure data includes timestamps for precise editing.",
       "reason": "Normalized strings differed"
     }
   ],
@@ -252,7 +245,7 @@
     {
       "path": "generatedAt",
       "truthValue": "2026-03-26T13:35:50.598Z",
-      "outputValue": "2026-04-07T22:08:29.325Z",
+      "outputValue": "2026-04-09T20:44:32.933Z",
       "reason": "Ignored path values differed"
     },
     {
@@ -264,18 +257,30 @@
     {
       "path": "ai.usage.input",
       "truthValue": 11416,
-      "outputValue": 12196,
+      "outputValue": 2301,
       "reason": "Ignored path values differed"
     },
     {
       "path": "ai.usage.output",
       "truthValue": 841,
-      "outputValue": 1152,
+      "outputValue": 1221,
       "reason": "Ignored path values differed"
     }
   ],
   "alignments": [],
   "errors": [
+    {
+      "path": "keyFindings[3]",
+      "rule": "structural",
+      "truthValue": "Boredom increases significantly in the second half, indicating pacing fatigue rather than lack of action quality.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "keyFindings[4]",
+      "rule": "structural",
+      "truthValue": "Title cards, talking-head dialogue, and location reveals repeatedly correlate with softer engagement.",
+      "reason": "Output array missing item present in truth"
+    },
     {
       "path": "keyFindings[5]",
       "rule": "structural",
@@ -307,7 +312,7 @@
       "status": "skip",
       "rule": "structural",
       "truthValue": "2026-03-26T13:35:50.598Z",
-      "outputValue": "2026-04-07T22:08:29.325Z",
+      "outputValue": "2026-04-09T20:44:32.933Z",
       "reason": "Comparator ignored benchmark path"
     },
     {
@@ -322,9 +327,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Front-load the strongest surreal/action imagery and strip out the generic trailer setup, because the biggest retention leak is the opening and any later exposition/title-card stretches. The edit already proves it can hold attention when it delivers rapid visual novelty, so the goal is to re-cut around those peaks and compress the corporate CTA material at the end. Keep the emotional profile as high-intensity, but create clearer spike-and-release pacing so the second half feels escalatory instead of long.",
-      "outputValue": "为提升针对急躁青少年观众的留存率，视频需重新剪辑中段（10-30秒）以注入更多视觉刺激，并平滑结尾过渡，防止高潮后的观众流失。核心策略是压缩纯对话铺垫，将动作高潮前置并分散，确保每5-8秒有一次‘模式中断’。",
+      "outputValue": "Due to insufficient data in the provided metrics and chunk summaries, no specific recommendations can be made. It is essential to collect and analyze viewer emotion data to improve retention and emotional impact.",
       "normalizedTruthValue": "front load the strongest surreal action imagery and strip out the generic trailer setup because the biggest retention leak is the opening and any later exposition title card stretches the edit already proves it can hold attention when it delivers rapid visual novelty so the goal is to re cut around those peaks and compress the corporate cta material at the end keep the emotional profile as high intensity but create clearer spike and release pacing so the second half feels escalatory instead of long",
-      "normalizedOutputValue": "为提升针对急躁青少年观众的留存率 视频需重新剪辑中段 10 30秒 以注入更多视觉刺激 并平滑结尾过渡 防止高潮后的观众流失 核心策略是压缩纯对话铺垫 将动作高潮前置并分散 确保每5 8秒有一次 模式中断",
+      "normalizedOutputValue": "due to insufficient data in the provided metrics and chunk summaries no specific recommendations can be made it is essential to collect and analyze viewer emotion data to improve retention and emotional impact",
       "reason": "Normalized strings differed"
     },
     {
@@ -332,19 +337,20 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "The weakest point is the first 0-5 seconds: patience is at its lowest there (0.2) while boredom is high (0.8), driven by the glitchy 'RISING TENSIONS' style setup that reads as generic. Retention improves immediately at 5-10 seconds, where excitement hits its peak (0.9) and boredom drops to its minimum (0.2), showing the audience responds to the city-bending, reality-breaking spectacle much more than exposition. Across the full piece, excitement stays strong on average (0.782) and remains stable, but boredom rises materially in the second half from 0.307 to 0.55, which suggests fatigue from repeated title cards, dialogue beats, and end-slate information. Specific mid/late dips align with title/exposition moments like 25-35 seconds and 85-95 seconds, where talking-head or location-card structure softens momentum. The final CTA section also hurts emotional finish: excitement bottoms out at 120 seconds (0.3) and boredom jumps again on the pre-order screens. With a friction index of 100, the cut is asking viewers to work too hard through promo structure despite having many genuinely high-performing action beats.",
-      "outputValue": "数据清晰显示，视频的兴奋感趋势整体上升，但在10-30秒区间出现显著低谷（兴奋度降至2-3，无聊感升至6-7），这与‘耐心’指标的下降和‘无聊’峰值（125秒）相吻合，表明叙事铺垫过长。相反，35秒后及75-125秒的高强度动作片段（兴奋度8-9）成功维持了高注意力。结尾（125秒后）从高潮战斗突然切至静态标题卡，导致兴奋度骤降至1，无聊感飙升至8，是典型的留存断点。",
+      "outputValue": "The input data contains empty metrics summaries and no chunk-level emotion analysis, making it impossible to identify patterns, peaks, or friction points. Without averages, trends, or peak moments, evidence-based recommendations cannot be formulated. The friction index is zero, but this may not reflect reality without data. To proceed, detailed emotion analysis from video chunks is required.",
       "normalizedTruthValue": "the weakest point is the first 0 5 seconds patience is at its lowest there 0 2 while boredom is high 0 8 driven by the glitchy rising tensions style setup that reads as generic retention improves immediately at 5 10 seconds where excitement hits its peak 0 9 and boredom drops to its minimum 0 2 showing the audience responds to the city bending reality breaking spectacle much more than exposition across the full piece excitement stays strong on average 0 782 and remains stable but boredom rises materially in the second half from 0 307 to 0 55 which suggests fatigue from repeated title cards dialogue beats and end slate information specific mid late dips align with title exposition moments like 25 35 seconds and 85 95 seconds where talking head or location card structure softens momentum the final cta section also hurts emotional finish excitement bottoms out at 120 seconds 0 3 and boredom jumps again on the pre order screens with a friction index of 100 the cut is asking viewers to work too hard through promo structure despite having many genuinely high performing action beats",
-      "normalizedOutputValue": "数据清晰显示 视频的兴奋感趋势整体上升 但在10 30秒区间出现显著低谷 兴奋度降至2 3 无聊感升至6 7 这与 耐心 指标的下降和 无聊 峰值 125秒 相吻合 表明叙事铺垫过长 相反 35秒后及75 125秒的高强度动作片段 兴奋度8 9 成功维持了高注意力 结尾 125秒后 从高潮战斗突然切至静态标题卡 导致兴奋度骤降至1 无聊感飙升至8 是典型的留存断点",
+      "normalizedOutputValue": "the input data contains empty metrics summaries and no chunk level emotion analysis making it impossible to identify patterns peaks or friction points without averages trends or peak moments evidence based recommendations cannot be formulated the friction index is zero but this may not reflect reality without data to proceed detailed emotion analysis from video chunks is required",
       "reason": "Normalized strings differed"
     },
     {
       "path": "confidence",
-      "status": "pass",
+      "status": "fail",
       "rule": "tolerant-number",
       "truthValue": 0.92,
-      "outputValue": 0.85,
+      "outputValue": 0.1,
+      "reason": "Numeric delta 0.8200000000000001 exceeded tolerance 0.1",
       "metrics": {
-        "delta": 0.07000000000000006,
+        "delta": 0.8200000000000001,
         "tolerance": 0.1
       }
     },
@@ -356,18 +362,18 @@
         "length": 6
       },
       "outputValue": {
-        "length": 5
+        "length": 3
       },
-      "reason": "Array length mismatch: truth=6 output=5"
+      "reason": "Array length mismatch: truth=6 output=3"
     },
     {
       "path": "keyFindings[0]",
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "The opening 0-5s is the biggest retention risk: lowest patience and high boredom despite expensive visuals.",
-      "outputValue": "开场（0-5秒）成功：快速剪辑和直接对话建立了高‘耐心’（7）和‘兴奋’（6），符合3秒钩子原则。",
+      "outputValue": "No emotion data available for analysis.",
       "normalizedTruthValue": "the opening 0 5s is the biggest retention risk lowest patience and high boredom despite expensive visuals",
-      "normalizedOutputValue": "开场 0 5秒 成功 快速剪辑和直接对话建立了高 耐心 7 和 兴奋 6 符合3秒钩子原则",
+      "normalizedOutputValue": "no emotion data available for analysis",
       "reason": "Normalized strings differed"
     },
     {
@@ -375,9 +381,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "The 5-10s segment is the clearest hook model, with peak excitement and minimal boredom.",
-      "outputValue": "中段疲软（10-30秒）：连续多个片段以静态对话为主，‘兴奋’降至2-3，‘无聊’升至6-7，是主要的留存风险区。",
+      "outputValue": "Metrics summaries are empty, providing no insights.",
       "normalizedTruthValue": "the 5 10s segment is the clearest hook model with peak excitement and minimal boredom",
-      "normalizedOutputValue": "中段疲软 10 30秒 连续多个片段以静态对话为主 兴奋 降至2 3 无聊 升至6 7 是主要的留存风险区",
+      "normalizedOutputValue": "metrics summaries are empty providing no insights",
       "reason": "Normalized strings differed"
     },
     {
@@ -385,30 +391,24 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Excitement is consistently high overall, so the core creative works when it prioritizes spectacle over exposition.",
-      "outputValue": "高潮有效（35-125秒）：密集的动作蒙太奇将‘兴奋’推至8-9，并维持了高‘耐心’，证明视觉冲击对目标观众有效。",
+      "outputValue": "Chunk summaries array is empty, indicating no processed video segments.",
       "normalizedTruthValue": "excitement is consistently high overall so the core creative works when it prioritizes spectacle over exposition",
-      "normalizedOutputValue": "高潮有效 35 125秒 密集的动作蒙太奇将 兴奋 推至8 9 并维持了高 耐心 证明视觉冲击对目标观众有效",
+      "normalizedOutputValue": "chunk summaries array is empty indicating no processed video segments",
       "reason": "Normalized strings differed"
     },
     {
       "path": "keyFindings[3]",
-      "status": "fail",
-      "rule": "fuzzy-string",
+      "status": "error",
+      "rule": "structural",
       "truthValue": "Boredom increases significantly in the second half, indicating pacing fatigue rather than lack of action quality.",
-      "outputValue": "结尾断崖（125秒后）：从‘兴奋’9的战斗直接切至静态标题卡，导致‘兴奋’跌至1，‘无聊’达8，观众极易在此划走。",
-      "normalizedTruthValue": "boredom increases significantly in the second half indicating pacing fatigue rather than lack of action quality",
-      "normalizedOutputValue": "结尾断崖 125秒后 从 兴奋 9的战斗直接切至静态标题卡 导致 兴奋 跌至1 无聊 达8 观众极易在此划走",
-      "reason": "Normalized strings differed"
+      "reason": "Output array missing item present in truth"
     },
     {
       "path": "keyFindings[4]",
-      "status": "fail",
-      "rule": "fuzzy-string",
+      "status": "error",
+      "rule": "structural",
       "truthValue": "Title cards, talking-head dialogue, and location reveals repeatedly correlate with softer engagement.",
-      "outputValue": "整体情绪趋势：‘兴奋’呈上升趋势（+0.19），但被中段低谷和结尾断崖抵消，表明结构问题大于内容问题。",
-      "normalizedTruthValue": "title cards talking head dialogue and location reveals repeatedly correlate with softer engagement",
-      "normalizedOutputValue": "整体情绪趋势 兴奋 呈上升趋势 0 19 但被中段低谷和结尾断崖抵消 表明结构问题大于内容问题",
-      "reason": "Normalized strings differed"
+      "reason": "Output array missing item present in truth"
     },
     {
       "path": "keyFindings[5]",
@@ -434,9 +434,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Replace the current first frame/text-led intro with one of the strongest surreal action shots now appearing later, especially the reality-breaking or impossible-environment imagery.",
-      "outputValue": "重新剪辑10-30秒：将部分后续的高能动作镜头（如35秒后的爆炸场面）前置插入此段，或加入快速闪回的视觉奇观，打破纯对话节奏。",
+      "outputValue": "Collect chunk-level emotion analysis data from the video.",
       "normalizedTruthValue": "replace the current first frame text led intro with one of the strongest surreal action shots now appearing later especially the reality breaking or impossible environment imagery",
-      "normalizedOutputValue": "重新剪辑10 30秒 将部分后续的高能动作镜头 如35秒后的爆炸场面 前置插入此段 或加入快速闪回的视觉奇观 打破纯对话节奏",
+      "normalizedOutputValue": "collect chunk level emotion analysis data from the video",
       "reason": "Normalized strings differed"
     },
     {
@@ -444,9 +444,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Cut or heavily shorten the 'RISING TENSIONS' style opening text so the video starts on immediate spectacle rather than trailer language.",
-      "outputValue": "压缩对话铺垫：将反派背景（10-15秒）和任务说明（20-25秒）的对话精简，或将其画外音覆盖在更动态的视觉画面上。",
+      "outputValue": "Compute averages and trends for viewer emotions.",
       "normalizedTruthValue": "cut or heavily shorten the rising tensions style opening text so the video starts on immediate spectacle rather than trailer language",
-      "normalizedOutputValue": "压缩对话铺垫 将反派背景 10 15秒 和任务说明 20 25秒 的对话精简 或将其画外音覆盖在更动态的视觉画面上",
+      "normalizedOutputValue": "compute averages and trends for viewer emotions",
       "reason": "Normalized strings differed"
     },
     {
@@ -454,9 +454,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Move one of the standout 'wtf' visuals from the 60-85s run into the first 3-5 seconds to create instant curiosity.",
-      "outputValue": "创建‘模式中断’：在15秒、25秒等无聊感上升节点，插入一个意想不到的视觉元素（如突然的慢动作、特效转场、角色特写反应镜头）。",
+      "outputValue": "Identify peak moments and friction points in the timeline.",
       "normalizedTruthValue": "move one of the standout wtf visuals from the 60 85s run into the first 3 5 seconds to create instant curiosity",
-      "normalizedOutputValue": "创建 模式中断 在15秒 25秒等无聊感上升节点 插入一个意想不到的视觉元素 如突然的慢动作 特效转场 角色特写反应镜头",
+      "normalizedOutputValue": "identify peak moments and friction points in the timeline",
       "reason": "Normalized strings differed"
     },
     {
@@ -464,9 +464,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Reduce title cards and location cards throughout, or overlay them on active gameplay/action instead of letting them become standalone beats.",
-      "outputValue": "平滑结尾过渡：避免从战斗高潮直接切黑屏或静态标题。可考虑让最后一个动作镜头（如爆炸）的余波自然过渡到标题，或保留激昂音乐的尾奏。",
+      "outputValue": "Analyze the start/hook for initial engagement.",
       "normalizedTruthValue": "reduce title cards and location cards throughout or overlay them on active gameplay action instead of letting them become standalone beats",
-      "normalizedOutputValue": "平滑结尾过渡 避免从战斗高潮直接切黑屏或静态标题 可考虑让最后一个动作镜头 如爆炸 的余波自然过渡到标题 或保留激昂音乐的尾奏",
+      "normalizedOutputValue": "analyze the start hook for initial engagement",
       "reason": "Normalized strings differed"
     },
     {
@@ -474,9 +474,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Trim the 25-35s exposition stretch by minimizing static conversation shots and keeping only dialogue that adds immediate stakes.",
-      "outputValue": "优化结尾信息呈现：将‘预购’等商业信息以动态图形（如快速闪现的文字、LOGO动画）叠加在最后一个动作镜头的余画面上，而非静态展示。",
+      "outputValue": "Review pacing based on emotional beats.",
       "normalizedTruthValue": "trim the 25 35s exposition stretch by minimizing static conversation shots and keeping only dialogue that adds immediate stakes",
-      "normalizedOutputValue": "优化结尾信息呈现 将 预购 等商业信息以动态图形 如快速闪现的文字 logo动画 叠加在最后一个动作镜头的余画面上 而非静态展示",
+      "normalizedOutputValue": "review pacing based on emotional beats",
       "reason": "Normalized strings differed"
     },
     {
@@ -484,9 +484,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "At the 85-95s section, compress the Alaska/Hawaii transition so the audience gets to playable action faster.",
-      "outputValue": "检查音乐衔接：确保125秒处音乐不是突然淡出，而是有一个明确的收尾或与画面同步的重音，以维持情绪连贯性。",
+      "outputValue": "Gather data on viewer retention rates.",
       "normalizedTruthValue": "at the 85 95s section compress the alaska hawaii transition so the audience gets to playable action faster",
-      "normalizedOutputValue": "检查音乐衔接 确保125秒处音乐不是突然淡出 而是有一个明确的收尾或与画面同步的重音 以维持情绪连贯性",
+      "normalizedOutputValue": "gather data on viewer retention rates",
       "reason": "Normalized strings differed"
     },
     {
@@ -494,9 +494,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Use more pattern interrupts in the back half: alternate combat scale, color palette, or perspective to offset boredom growth.",
-      "outputValue": "利用‘耐心’峰值：在50秒（‘耐心’最高点0.8）附近，可考虑插入一个关键的剧情转折或角色高光时刻，以加深投入感。",
+      "outputValue": "Use tools to track emotional responses over time.",
       "normalizedTruthValue": "use more pattern interrupts in the back half alternate combat scale color palette or perspective to offset boredom growth",
-      "normalizedOutputValue": "利用 耐心 峰值 在50秒 耐心 最高点0 8 附近 可考虑插入一个关键的剧情转折或角色高光时刻 以加深投入感",
+      "normalizedOutputValue": "use tools to track emotional responses over time",
       "reason": "Normalized strings differed"
     },
     {
@@ -504,9 +504,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Preserve the strongest high-retention run from roughly 40-80s as the pacing template: fast cuts, visual novelty, and clear escalation.",
-      "outputValue": "微调节奏：确保没有任何单个镜头（尤其是对话特写）持续超过3-4秒，以匹配目标观众的注意力跨度。",
+      "outputValue": "Ensure data includes timestamps for precise editing.",
       "normalizedTruthValue": "preserve the strongest high retention run from roughly 40 80s as the pacing template fast cuts visual novelty and clear escalation",
-      "normalizedOutputValue": "微调节奏 确保没有任何单个镜头 尤其是对话特写 持续超过3 4秒 以匹配目标观众的注意力跨度",
+      "normalizedOutputValue": "ensure data includes timestamps for precise editing",
       "reason": "Normalized strings differed"
     },
     {
@@ -614,7 +614,7 @@
       "status": "skip",
       "rule": "structural",
       "truthValue": 11416,
-      "outputValue": 12196,
+      "outputValue": 2301,
       "reason": "Comparator ignored benchmark path"
     },
     {
@@ -622,7 +622,7 @@
       "status": "skip",
       "rule": "structural",
       "truthValue": 841,
-      "outputValue": 1152,
+      "outputValue": 1221,
       "reason": "Comparator ignored benchmark path"
     }
   ],

@@ -168,17 +168,46 @@ function resolveMusicAnalysisWindowSeconds(config = {}) {
   return DEFAULT_MUSIC_ANALYSIS_WINDOW_SECONDS;
 }
 
-function resolveMusicAnalysisStrategy(preflight, config = {}) {
+function shouldPreferHybridMusicVocalsAnalysis(musicData = null) {
+  if (!musicData || typeof musicData !== 'object' || Array.isArray(musicData)) {
+    return false;
+  }
+
+  if (musicData.recognizedSong && typeof musicData.recognizedSong === 'object') {
+    const status = compactString(musicData.recognizedSong.status).toLowerCase();
+    if (status && status !== 'unknown') {
+      return true;
+    }
+  }
+
+  const lyricCuePattern = /\b(vocal|vocals|lyric|lyrics|chant|chanted|sung|song entry|song return|refrain|hook|rap)\b/i;
+  const summary = compactString(musicData.summary);
+  if (summary && lyricCuePattern.test(summary)) {
+    return true;
+  }
+
+  const transitions = Array.isArray(musicData?.globalArc?.notableTransitions)
+    ? musicData.globalArc.notableTransitions
+    : [];
+  return transitions.some((transition) => lyricCuePattern.test(compactString(transition?.label)));
+}
+
+function resolveMusicAnalysisStrategy(preflight, config = {}, musicData = null) {
   const requestedMode = resolveRequestedPhase1MusicMode(config);
   const maxWholeAssetDurationSeconds = resolveMaxWholeAssetMusicDurationSeconds(config);
   const durationSeconds = Number(preflight?.durationSeconds) || 0;
   const inlineWholeAssetSafe = preflight?.needsChunking !== true;
   const durationEligible = durationSeconds <= maxWholeAssetDurationSeconds;
   const wholeAssetEligible = inlineWholeAssetSafe && durationEligible;
+  const preferHybrid = shouldPreferHybridMusicVocalsAnalysis(musicData);
 
   let actualMode = requestedMode;
   if (requestedMode === 'auto') {
-    actualMode = wholeAssetEligible ? 'whole_asset' : 'chunked';
+    if (wholeAssetEligible) {
+      actualMode = preferHybrid ? 'hybrid' : 'whole_asset';
+    } else {
+      actualMode = 'chunked';
+    }
   }
 
   let wholeAssetUnavailableReason = null;
@@ -195,7 +224,8 @@ function resolveMusicAnalysisStrategy(preflight, config = {}) {
     wholeAssetUnavailableReason,
     durationSeconds,
     maxWholeAssetDurationSeconds,
-    fallbackToChunked: shouldFallbackWholeAssetMusicToChunked(config)
+    fallbackToChunked: shouldFallbackWholeAssetMusicToChunked(config),
+    preferHybrid
   };
 }
 
@@ -489,7 +519,7 @@ async function run(input) {
     }
 
     const duration = preflight.durationSeconds;
-    const strategy = resolveMusicAnalysisStrategy(preflight, config);
+    const strategy = resolveMusicAnalysisStrategy(preflight, config, input?.artifacts?.musicData || null);
 
     console.log(`   📊 Audio duration: ${duration.toFixed(1)}s (${analysisChunkPlan.length} analysis chunk(s) from ${preflight.chunkPlan.length} transport chunk(s))`);
     console.log(`   🎼 Music-vocals analysis mode: requested=${strategy.requestedMode}, selected=${strategy.actualMode}`);
@@ -898,7 +928,8 @@ async function run(input) {
       preflightReason: preflight?.trace?.reason || null,
       estimatedBase64Bytes: Number(preflight?.estimatedBase64Bytes) || null,
       base64BudgetBytes: Number(preflight?.budgetBytes) || null,
-      musicContextAvailable: !!input?.artifacts?.musicData
+      musicContextAvailable: !!input?.artifacts?.musicData,
+      autoSelectedHybridForLyricCueCoverage: strategy.requestedMode === 'auto' && strategy.actualMode === 'hybrid' && strategy.preferHybrid === true
     };
 
     // Write intermediate artifacts to phase directory

@@ -573,14 +573,14 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
     assert(result.errors.some(e => e.includes('Forbidden "ai.provider"')));
   });
 
-  await t.test('should fail validation with missing ai.dialogue.targets', () => {
+  await t.test('should fail validation with missing ai.dialogue.targets when dialogue lane is used', () => {
     const ai = makeAiConfig();
     delete ai.dialogue;
 
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai,
-      gather_context: ['script1.cjs']
+      gather_context: ['server/scripts/get-context/get-dialogue.cjs']
     };
 
     const result = validateConfig(config);
@@ -603,14 +603,24 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
     assert(result.errors.some(e => e.includes('Forbidden "ai.dialogue.model"')));
   });
 
-  await t.test('should fail validation with missing ai.music.targets', () => {
+  await t.test('should allow dialogue-only config without ai.music.targets or ai.video.targets when those lanes are unused', () => {
+    const repoRoot = path.resolve(__dirname, '..', '..');
+    const configPath = path.join(repoRoot, 'configs', 'cod-dialogue-compare-mimo.yaml');
+    const config = fs.existsSync(configPath) ? parseConfig(fs.readFileSync(configPath, 'utf8'), 'yaml') : null;
+
+    const result = validateConfig(config, { configPath });
+    assert.strictEqual(result.valid, true, result.errors.join('\n'));
+  });
+
+  await t.test('should fail validation with missing ai.music.targets when music lane is used', () => {
     const ai = makeAiConfig();
     delete ai.music;
 
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai,
-      gather_context: ['script1.cjs']
+      settings: makeFfmpegSettings(),
+      gather_context: ['server/scripts/get-context/get-music.cjs']
     };
 
     const result = validateConfig(config);
@@ -618,14 +628,15 @@ test('Config Loader - validateConfig AI requirements', async (t) => {
     assert(result.errors.some(e => e.includes('Missing required "ai.music.targets"')));
   });
 
-  await t.test('should fail validation with missing ai.video.targets', () => {
+  await t.test('should fail validation with missing ai.video.targets when video lane is used', () => {
     const ai = makeAiConfig();
     delete ai.video;
 
     const config = {
       asset: { inputPath: 'test.mp4', outputDir: 'output' },
       ai,
-      gather_context: ['script1.cjs']
+      settings: makeFfmpegSettings(),
+      process: ['server/scripts/process/video-chunks.cjs']
     };
 
     const result = validateConfig(config);

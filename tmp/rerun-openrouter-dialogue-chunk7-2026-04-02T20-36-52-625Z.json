@@ -1,0 +1,492 @@
+{
+  "startedAt": "2026-04-02T20:36:41.272Z",
+  "configPath": "configs/cod-test-mimo-openrouter-compare.yaml",
+  "promptPath": "output/cod-test-mimo-openrouter-compare/_meta/ai/_prompts/ed9b0e17bc1692a6cb330a4562c6bf06d7a2227e9769dda58ebad2a78ebb86f4.json",
+  "audioPath": "output/cod-test-mimo-openrouter-compare/phase1-gather-context/raw/ffmpeg/dialogue/chunks/chunk_007.mp3",
+  "adapter": {
+    "name": "openrouter",
+    "model": "google/gemini-3.1-flash-lite-preview",
+    "params": {
+      "max_tokens": 25000,
+      "thinking": {
+        "level": "low"
+      }
+    }
+  },
+  "runtimeConfig": {
+    "provider": "openrouter",
+    "apiKeySource": "OPENROUTER_API_KEY",
+    "baseUrl": "https://openrouter.ai/api/v1",
+    "timeoutMs": null,
+    "authMode": null
+  },
+  "ok": true,
+  "result": {
+    "completion": {
+      "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 2.0,\n      \"speaker\": \"Speaker 6\",\n      \"speaker_id\": \"spk_006\",\n      \"text\": \"is a hell of a lot easier than killing the idea.\",\n      \"confidence\": 0.92\n    },\n    {\n      \"start\": 4.0,\n      \"end\": 6.5,\n      \"speaker\": \"Speaker 13\",\n      \"speaker_id\": \"spk_013\",\n      \"text\": \"You were never cut out to be a Mason.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 9.0,\n      \"end\": 11.0,\n      \"speaker\": \"Speaker 10\",\n      \"speaker_id\": \"spk_010\",\n      \"text\": \"No more games. This ends now.\",\n      \"confidence\": 0.94\n    },\n    {\n      \"start\": 12.5,\n      \"end\": 15.0,\n      \"speaker\": \"Speaker 11\",\n      \"speaker_id\": \"spk_011\",\n      \"text\": \"Obey your master!\",\n      \"confidence\": 0.90\n    },\n    {\n      \"start\": 18.0,\n      \"end\": 20.0,\n      \"speaker\": \"Speaker 14\",\n      \"speaker_id\": \"spk_014\",\n      \"text\": \"Get the Reznov challenge pack.\",\n      \"confidence\": 0.96\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_006\",\n      \"label\": \"Speaker 6\",\n      \"grounded\": {\n        \"confidence\": 0.88,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"gruff, tactical delivery\", \"confidence\": 0.85 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    },\n    {\n      \"speaker_id\": \"spk_013\",\n      \"label\": \"Speaker 13\",\n      \"grounded\": {\n        \"confidence\": 0.92,\n        \"linked_segment_indexes\": [1],\n        \"acoustic_descriptors\": [\n          { \"label\": \"cold, authoritative female voice\", \"confidence\": 0.90 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          { \"trait\": \"gender\", \"value\": \"female\", \"confidence\": 0.90, \"note\": \"based on vocal pitch and timbre\" }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_010\",\n      \"label\": \"Speaker 10\",\n      \"grounded\": {\n        \"confidence\": 0.90,\n        \"linked_segment_indexes\": [2],\n        \"acoustic_descriptors\": [\n          { \"label\": \"gruff, intense delivery\", \"confidence\": 0.88 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    },\n    {\n      \"speaker_id\": \"spk_011\",\n      \"label\": \"Speaker 11\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [3],\n        \"acoustic_descriptors\": [\n          { \"label\": \"aggressive, distorted, musical vocal delivery\", \"confidence\": 0.85 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    },\n    {\n      \"speaker_id\": \"spk_014\",\n      \"label\": \"Speaker 14\",\n      \"grounded\": {\n        \"confidence\": 0.95,\n        \"linked_segment_indexes\": [4],\n        \"acoustic_descriptors\": [\n          { \"label\": \"clear, promotional announcer style\", \"confidence\": 0.92 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    }\n  ],\n  \"summary\": \"The dialogue continues with a tactical discussion followed by a confrontation involving Mason, ending with a promotional announcement for the Reznov challenge pack.\",\n  \"handoffContext\": \"The scene has shifted from tactical dialogue to a confrontation and then to a promotional announcement. Last speaker was spk_014 (promotional announcer).\",\n  \"totalDuration\": 20.0\n}",
+      "usage": {
+        "input": 4277,
+        "output": 2012,
+        "total": 6289
+      },
+      "providerRequest": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "headers": {
+          "Authorization": "[REDACTED]",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "model": "google/gemini-3.1-flash-lite-preview",
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are transcribing CHUNK 7 of a longer audio file.\n\nChunk time window: 104.00s to 124.00s (global timeline).\n\nContext from previous chunk (handoff):\nSpeaker registry (reuse speaker_id only for the same acoustic voice):\n- spk_001 => Speaker 1 | grounded confidence: 0.92 | acoustic cues: dramatic, cinematic narration style | inferred traits: gender: female | recent lines: They want you afraid. Fear makes you easier to control. / Your streets shall once again run red. with your blood.\n- spk_002 => Speaker 2 | grounded confidence: 0.95 | acoustic cues: authoritative, news-anchor style | inferred traits: gender: male | recent lines: Raul Menendez ignited global unrest on an unprecedented scale. / terrorist.\n- spk_003 => Speaker 3 | grounded confidence: 0.88 | acoustic cues: clear, reportorial delivery | inferred traits: gender: female | recent lines: Menendez is a terrorist.\n- spk_004 => Speaker 4 | grounded confidence: 0.90 | acoustic cues: polished, propaganda-style delivery | inferred traits: gender: female | recent lines: We're bringing peace and security to the world.\n- spk_005 => Speaker 5 | grounded confidence: 0.88 | acoustic cues: distressed, intimate delivery | inferred traits: gender: male | recent lines: He refuses to let me go.\n- spk_006 => Speaker 6 | grounded confidence: 0.85 | acoustic cues: gruff, tactical, commanding | inferred traits: gender: male | recent lines: A lot of people counting on us for answers. / So we got to leave that... Killing men is...\n- spk_007 => Speaker 7 | grounded confidence: 0.90 | acoustic cues: authoritative, radio-filtered | inferred traits: role: commander/handler | recent lines: Specter one, report.\n- spk_008 => Speaker 8 | grounded confidence: 0.88 | acoustic cues: urgent, radio-filtered | inferred traits: role: field operative | recent lines: Need a sitrep.\n- spk_009 => Speaker 9 | grounded confidence: 0.92 | acoustic cues: distressed, clear | inferred traits: emotional_state: disbelief | recent lines: This isn't real.\n- spk_010 => Speaker 10 | grounded confidence: 0.92 | acoustic cues: gruff, intense | inferred traits: emotional_state: aggressive | recent lines: The hell it is.\n- spk_011 => Speaker 11 | grounded confidence: 0.85 | acoustic cues: aggressive, distorted, musical vocal delivery | inferred traits: vocal_style: industrial/metal vocalization | recent lines: Control... Master... Control... Master... Control... Master... Control... Master Control... Master... Control... Master... Control... Master... Control... Master...\n- spk_012 => Speaker 12 | grounded confidence: 0.92 | acoustic cues: gruff, tactical, commanding | inferred traits: gender: male | recent lines: Pull it together, man.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.\n- Before reusing any prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.\n- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.\n- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- If this chunk creates a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.\n- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.\n- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.\n\nRecent dialogue tail (reference only, not transcript continuation):\n- Speaker 12 (spk_012): Pull it together, man.\n- Speaker 6 (spk_006): So we got to leave that... Killing men is...\n\nTranscribe the audio in this chunk. Identify different speakers and provide timestamps.\n\nReturn JSON only with this structure:\n\n{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 5.2,\n      \"speaker\": \"Speaker 1\",\n      \"speaker_id\": \"spk_001\",\n      \"text\": \"Transcribed text here\",\n      \"confidence\": 0.95\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_001\",\n      \"label\": \"Speaker 1\",\n      \"grounded\": {\n        \"confidence\": 0.82,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"steady, conversational delivery\", \"confidence\": 0.61 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          {\n            \"trait\": \"age_range\",\n            \"value\": \"likely adult\",\n            \"confidence\": 0.28,\n            \"note\": \"speculative inference from voice only\"\n          }\n        ]\n      }\n    }\n  ],\n  \"summary\": \"Brief summary for THIS chunk\",\n  \"handoffContext\": \"Short handoff to help the next chunk keep continuity (entities, speaker mapping, last lines)\",\n  \"totalDuration\": 30.5\n}\n\nRules:\n- Return JSON only. No markdown.\n- Timestamps (start/end) MUST be relative to this CHUNK, starting at 0.\n- Treat the handoff speaker registry as the continuity memory. Reuse a prior speaker_id only when the current voice still matches that prior acoustic profile.\n- If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.\n- Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0. Do not use grounded.confidence_abstained.\n- Keep grounded speaker identity separate from inferred_traits.\n- Do not persist acoustic_descriptors_abstained. If you cannot support any acoustic descriptor, return an empty acoustic_descriptors array.\n- inferred_traits must always be present as an object with a traits array. Keep it speculative, and attempt reviewable traits for each speaker when the chunk supports them; otherwise leave traits as an empty array.\n- speaker_id continuity is acoustic, not semantic. A line that names a person, character, organization, or title may still be spoken by someone else.\n- Before reusing a prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.\n- Do not merge clearly different voices just because the chunk continues the same scene. Keep public-address / figurehead narration, antagonist threats, radio/comms chatter, gruff tactical responses, and promo-announcer copy as separate speaker_ids unless the voice itself clearly matches.\n- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.\n- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.\n- In the opening montage, prefer local chunk provenance over storyline continuity. A named subject, recurring topic, or back-to-back cut is not enough to inherit the previous speaker_id.\n- If a threat line is followed by an official/public-address sounding line, treat that as a speaker change unless the exact same voice clearly continues.\n- If you create a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.\n- If adjacent words are one uninterrupted utterance from the same voice, keep them in one dialogue segment instead of splitting them into artificial fragments.\n- Do not compress the whole chunk's dialogue into the opening seconds; spread timestamps across the actual chunk timeline where lines occur.\n- If no speech is detected, return an empty dialogue_segments array.\n- Keep handoffContext brief (<= ~10 lines).\n\nLOCAL TOOL LOOP:\nYou have access to one local validation tool. You may respond with exactly one JSON object in one of these forms:\n1) Canonical minimal tool call envelope:\n{\n  \"tool\": \"validate_dialogue_transcription_json\",\n  \"transcription\": {\n    \"dialogue_segments\": [\n      {\n        \"start\": 0,\n        \"end\": 1.2,\n        \"speaker\": \"Speaker 1\",\n        \"speaker_id\": \"spk_001\",\n        \"text\": \"Hello there\",\n        \"confidence\": 0.95\n      }\n    ],\n    \"speaker_profiles\": [\n      {\n        \"speaker_id\": \"spk_001\",\n        \"label\": \"Speaker 1\",\n        \"grounded\": {\n          \"confidence\": 0.82,\n          \"linked_segment_indexes\": [\n            0\n          ],\n          \"acoustic_descriptors\": [\n            {\n              \"label\": \"steady, conversational delivery\",\n              \"confidence\": 0.61\n            }\n          ]\n        },\n        \"inferred_traits\": {\n          \"traits\": [\n            {\n              \"trait\": \"accent\",\n              \"value\": \"possibly mid-Atlantic American English\",\n              \"confidence\": 0.31,\n              \"note\": \"speculative inference from delivery only\"\n            }\n          ]\n        }\n      }\n    ],\n    \"summary\": \"Short summary of the dialogue.\",\n    \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n    \"totalDuration\": 10.5,\n    \"analysisMode\": \"chunked\",\n    \"timingMode\": \"chunk_local\",\n    \"sourceStrategy\": \"base64\",\n    \"coverage\": {\n      \"start\": 0,\n      \"end\": 10.5,\n      \"duration\": 10.5,\n      \"complete\": true\n    },\n    \"provenance\": {\n      \"transportMode\": \"inline\",\n      \"usedChunking\": true,\n      \"chunkCount\": 1,\n      \"fallbackApplied\": false\n    },\n    \"qualityNotes\": [\n      \"Chunk-local timing was preserved for downstream stitching.\"\n    ]\n  }\n}\n2) Final dialogue transcription chunk JSON matching the schema above.\n\nAcceptance rules:\n- The final dialogue transcription chunk JSON is accepted only after validate_dialogue_transcription_json returns {\"valid\": true}.\n- If you call the tool, use exactly this canonical minimal envelope: {\"tool\":\"validate_dialogue_transcription_json\",\"transcription\":{\"dialogue_segments\":[{\"start\":0,\"end\":1.2,\"speaker\":\"Speaker 1\",\"speaker_id\":\"spk_001\",\"text\":\"Hello there\",\"confidence\":0.95}],\"speaker_profiles\":[{\"speaker_id\":\"spk_001\",\"label\":\"Speaker 1\",\"grounded\":{\"confidence\":0.82,\"linked_segment_indexes\":[0],\"acoustic_descriptors\":[{\"label\":\"steady, conversational delivery\",\"confidence\":0.61}]},\"inferred_traits\":{\"traits\":[{\"trait\":\"accent\",\"value\":\"possibly mid-Atlantic American English\",\"confidence\":0.31,\"note\":\"speculative inference from delivery only\"}]}}],\"summary\":\"Short summary of the dialogue.\",\"handoffContext\":\"Short continuity handoff for the next chunk.\",\"totalDuration\":10.5,\"analysisMode\":\"chunked\",\"timingMode\":\"chunk_local\",\"sourceStrategy\":\"base64\",\"coverage\":{\"start\":0,\"end\":10.5,\"duration\":10.5,\"complete\":true},\"provenance\":{\"transportMode\":\"inline\",\"usedChunking\":true,\"chunkCount\":1,\"fallbackApplied\":false},\"qualityNotes\":[\"Chunk-local timing was preserved for downstream stitching.\"]}}.\n- Do not add type/toolName/arguments/args/input wrappers around the tool call. Wrapper aliases are forbidden.\n- If the validator reports problems, revise and either call the tool again or return a revised dialogue transcription chunk JSON candidate.\n- After the validator returns valid=true, return ONLY the final dialogue transcription chunk JSON object with no wrapper.\n- Do not emit markdown, prose, or multiple objects.\n\nThe final artifact must include handoffContext so the next chunk can preserve continuity.\n\nFinal artifact reminders:\n- Timestamps must be relative to this chunk and start at 0.\n- Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.\n- Keep grounded speaker identity separate from any inferred_traits guesswork.\n- handoffContext must stay brief and continuity-focused.\n\nTool contract:\n{\n  \"name\": \"validate_dialogue_transcription_json\",\n  \"argumentKey\": \"transcription\",\n  \"description\": \"Validate a Phase 1 dialogue transcription JSON candidate against the required local schema before final submission.\",\n  \"canonicalEnvelope\": {\n    \"tool\": \"validate_dialogue_transcription_json\",\n    \"transcription\": {\n      \"dialogue_segments\": [\n        {\n          \"start\": 0,\n          \"end\": 1.2,\n          \"speaker\": \"Speaker 1\",\n          \"speaker_id\": \"spk_001\",\n          \"text\": \"Hello there\",\n          \"confidence\": 0.95\n        }\n      ],\n      \"speaker_profiles\": [\n        {\n          \"speaker_id\": \"spk_001\",\n          \"label\": \"Speaker 1\",\n          \"grounded\": {\n            \"confidence\": 0.82,\n            \"linked_segment_indexes\": [\n              0\n            ],\n            \"acoustic_descriptors\": [\n              {\n                \"label\": \"steady, conversational delivery\",\n                \"confidence\": 0.61\n              }\n            ]\n          },\n          \"inferred_traits\": {\n            \"traits\": [\n              {\n                \"trait\": \"accent\",\n                \"value\": \"possibly mid-Atlantic American English\",\n                \"confidence\": 0.31,\n                \"note\": \"speculative inference from delivery only\"\n              }\n            ]\n          }\n        }\n      ],\n      \"summary\": \"Short summary of the dialogue.\",\n      \"handoffContext\": \"Short continuity handoff for the next chunk.\",\n      \"totalDuration\": 10.5,\n      \"analysisMode\": \"chunked\",\n      \"timingMode\": \"chunk_local\",\n      \"sourceStrategy\": \"base64\",\n      \"coverage\": {\n        \"start\": 0,\n        \"end\": 10.5,\n        \"duration\": 10.5,\n        \"complete\": true\n      },\n      \"provenance\": {\n        \"transportMode\": \"inline\",\n        \"usedChunking\": true,\n        \"chunkCount\": 1,\n        \"fallbackApplied\": false\n      },\n      \"qualityNotes\": [\n        \"Chunk-local timing was preserved for downstream stitching.\"\n      ]\n    }\n  },\n  \"inputSchema\": {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"required\": [\n      \"transcription\"\n    ],\n    \"properties\": {\n      \"transcription\": {\n        \"type\": \"object\",\n        \"description\": \"Candidate dialogue transcription JSON with dialogue_segments, optional speaker_profiles, summary, handoffContext, totalDuration, and additive analysis/provenance metadata.\"\n      }\n    }\n  }\n}\n\nCurrent turn budget:\n{\n  \"remainingTurns\": 4,\n  \"remainingValidatorCalls\": 3\n}\n\nConversation state:\n[]"
+                },
+                {
+                  "type": "input_audio",
+                  "input_audio": {
+                    "data": "[Truncated data length=642184]",
+                    "format": "mpeg"
+                  }
+                }
+              ]
+            }
+          ],
+          "temperature": 0.3,
+          "max_tokens": 25000,
+          "reasoning": {
+            "effort": "low",
+            "enabled": true
+          }
+        }
+      },
+      "providerResponse": {
+        "status": 200,
+        "headers": {
+          "date": "Thu, 02 Apr 2026 20:36:45 GMT",
+          "content-type": "application/json",
+          "transfer-encoding": "chunked",
+          "connection": "keep-alive",
+          "access-control-allow-origin": "*",
+          "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\")",
+          "referrer-policy": "no-referrer, strict-origin-when-cross-origin",
+          "x-content-type-options": "nosniff",
+          "server": "cloudflare",
+          "cf-ray": "9e62a08e8d87afd7-MIA"
+        },
+        "body": {
+          "id": "gen-1775162201-5PZeLrByOsqitRQOzyVj",
+          "object": "chat.completion",
+          "created": 1775162201,
+          "model": "google/gemini-3.1-flash-lite-preview-20260303",
+          "provider": "Google AI Studio",
+          "system_fingerprint": null,
+          "choices": [
+            {
+              "index": 0,
+              "logprobs": null,
+              "finish_reason": "stop",
+              "native_finish_reason": "STOP",
+              "message": {
+                "role": "assistant",
+                "content": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 2.0,\n      \"speaker\": \"Speaker 6\",\n      \"speaker_id\": \"spk_006\",\n      \"text\": \"is a hell of a lot easier than killing the idea.\",\n      \"confidence\": 0.92\n    },\n    {\n      \"start\": 4.0,\n      \"end\": 6.5,\n      \"speaker\": \"Speaker 13\",\n      \"speaker_id\": \"spk_013\",\n      \"text\": \"You were never cut out to be a Mason.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 9.0,\n      \"end\": 11.0,\n      \"speaker\": \"Speaker 10\",\n      \"speaker_id\": \"spk_010\",\n      \"text\": \"No more games. This ends now.\",\n      \"confidence\": 0.94\n    },\n    {\n      \"start\": 12.5,\n      \"end\": 15.0,\n      \"speaker\": \"Speaker 11\",\n      \"speaker_id\": \"spk_011\",\n      \"text\": \"Obey your master!\",\n      \"confidence\": 0.90\n    },\n    {\n      \"start\": 18.0,\n      \"end\": 20.0,\n      \"speaker\": \"Speaker 14\",\n      \"speaker_id\": \"spk_014\",\n      \"text\": \"Get the Reznov challenge pack.\",\n      \"confidence\": 0.96\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_006\",\n      \"label\": \"Speaker 6\",\n      \"grounded\": {\n        \"confidence\": 0.88,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"gruff, tactical delivery\", \"confidence\": 0.85 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    },\n    {\n      \"speaker_id\": \"spk_013\",\n      \"label\": \"Speaker 13\",\n      \"grounded\": {\n        \"confidence\": 0.92,\n        \"linked_segment_indexes\": [1],\n        \"acoustic_descriptors\": [\n          { \"label\": \"cold, authoritative female voice\", \"confidence\": 0.90 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          { \"trait\": \"gender\", \"value\": \"female\", \"confidence\": 0.90, \"note\": \"based on vocal pitch and timbre\" }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_010\",\n      \"label\": \"Speaker 10\",\n      \"grounded\": {\n        \"confidence\": 0.90,\n        \"linked_segment_indexes\": [2],\n        \"acoustic_descriptors\": [\n          { \"label\": \"gruff, intense delivery\", \"confidence\": 0.88 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    },\n    {\n      \"speaker_id\": \"spk_011\",\n      \"label\": \"Speaker 11\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [3],\n        \"acoustic_descriptors\": [\n          { \"label\": \"aggressive, distorted, musical vocal delivery\", \"confidence\": 0.85 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    },\n    {\n      \"speaker_id\": \"spk_014\",\n      \"label\": \"Speaker 14\",\n      \"grounded\": {\n        \"confidence\": 0.95,\n        \"linked_segment_indexes\": [4],\n        \"acoustic_descriptors\": [\n          { \"label\": \"clear, promotional announcer style\", \"confidence\": 0.92 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    }\n  ],\n  \"summary\": \"The dialogue continues with a tactical discussion followed by a confrontation involving Mason, ending with a promotional announcement for the Reznov challenge pack.\",\n  \"handoffContext\": \"The scene has shifted from tactical dialogue to a confrontation and then to a promotional announcement. Last speaker was spk_014 (promotional announcer).\",\n  \"totalDuration\": 20.0\n}",
+                "refusal": null,
+                "reasoning": "**Initiating transcription process**\n\nOkay, I'm starting by zeroing in on the specified time frame, from 104.00 to 124.00 seconds. Initial analysis suggests the segment contains a continuation of a thought. I've noted the first few words at the very beginning of the relevant audio snippet. I'm prioritizing accurate transcription of this time period.\n\n\n**Analyzing Speaker Attributes**\n\nOkay, I've just identified and cataloged several new speakers within the segment's timeframe. I've noted the vocal characteristics of each new speaker, including spk_013's cold authority, spk_010's gruff intensity, spk_011's aggressive distortion, and the clear promotional tone of spk_014. My focus now is on confirming these speaker assignments and linking them to their respective utterances.\n\n\n",
+                "reasoning_details": [
+                  {
+                    "type": "reasoning.text",
+                    "text": "**Initiating transcription process**\n\nOkay, I'm starting by zeroing in on the specified time frame, from 104.00 to 124.00 seconds. Initial analysis suggests the segment contains a continuation of a thought. I've noted the first few words at the very beginning of the relevant audio snippet. I'm prioritizing accurate transcription of this time period.\n\n\n**Analyzing Speaker Attributes**\n\nOkay, I've just identified and cataloged several new speakers within the segment's timeframe. I've noted the vocal characteristics of each new speaker, including spk_013's cold authority, spk_010's gruff intensity, spk_011's aggressive distortion, and the clear promotional tone of spk_014. My focus now is on confirming these speaker assignments and linking them to their respective utterances.\n\n\n",
+                    "format": "google-gemini-v1",
+                    "index": 0
+                  },
+                  {
+                    "type": "reasoning.encrypted",
+                    "data": "[Truncated data length=4048]",
+                    "format": "google-gemini-v1",
+                    "index": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 4277,
+            "completion_tokens": 2012,
+            "total_tokens": 6289,
+            "cost": 0.00421225,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 500,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.00421225,
+              "upstream_inference_prompt_cost": 0.00119425,
+              "upstream_inference_completions_cost": 0.003018
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 897,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          }
+        }
+      }
+    },
+    "parsed": {
+      "dialogue_segments": [
+        {
+          "start": 0,
+          "end": 2,
+          "speaker": "Speaker 6",
+          "speaker_id": "spk_006",
+          "text": "is a hell of a lot easier than killing the idea.",
+          "confidence": 0.92,
+          "index": 0
+        },
+        {
+          "start": 4,
+          "end": 6.5,
+          "speaker": "Speaker 13",
+          "speaker_id": "spk_013",
+          "text": "You were never cut out to be a Mason.",
+          "confidence": 0.95,
+          "index": 1
+        },
+        {
+          "start": 9,
+          "end": 11,
+          "speaker": "Speaker 10",
+          "speaker_id": "spk_010",
+          "text": "No more games. This ends now.",
+          "confidence": 0.94,
+          "index": 2
+        },
+        {
+          "start": 12.5,
+          "end": 15,
+          "speaker": "Speaker 11",
+          "speaker_id": "spk_011",
+          "text": "Obey your master!",
+          "confidence": 0.9,
+          "index": 3
+        },
+        {
+          "start": 18,
+          "end": 20,
+          "speaker": "Speaker 14",
+          "speaker_id": "spk_014",
+          "text": "Get the Reznov challenge pack.",
+          "confidence": 0.96,
+          "index": 4
+        }
+      ],
+      "speaker_profiles": [
+        {
+          "speaker_id": "spk_006",
+          "label": "Speaker 6",
+          "grounded": {
+            "confidence": 0.88,
+            "linked_segment_indexes": [
+              0
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "gruff, tactical delivery",
+                "confidence": 0.85
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": []
+          }
+        },
+        {
+          "speaker_id": "spk_010",
+          "label": "Speaker 10",
+          "grounded": {
+            "confidence": 0.9,
+            "linked_segment_indexes": [
+              2
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "gruff, intense delivery",
+                "confidence": 0.88
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": []
+          }
+        },
+        {
+          "speaker_id": "spk_011",
+          "label": "Speaker 11",
+          "grounded": {
+            "confidence": 0.85,
+            "linked_segment_indexes": [
+              3
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "aggressive, distorted, musical vocal delivery",
+                "confidence": 0.85
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": []
+          }
+        },
+        {
+          "speaker_id": "spk_013",
+          "label": "Speaker 13",
+          "grounded": {
+            "confidence": 0.92,
+            "linked_segment_indexes": [
+              1
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "cold, authoritative female voice",
+                "confidence": 0.9
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": [
+              {
+                "trait": "gender",
+                "value": "female",
+                "confidence": 0.9,
+                "note": "based on vocal pitch and timbre"
+              }
+            ]
+          }
+        },
+        {
+          "speaker_id": "spk_014",
+          "label": "Speaker 14",
+          "grounded": {
+            "confidence": 0.95,
+            "linked_segment_indexes": [
+              4
+            ],
+            "acoustic_descriptors": [
+              {
+                "label": "clear, promotional announcer style",
+                "confidence": 0.92
+              }
+            ]
+          },
+          "inferred_traits": {
+            "traits": []
+          }
+        }
+      ],
+      "summary": "The dialogue continues with a tactical discussion followed by a confrontation involving Mason, ending with a promotional announcement for the Reznov challenge pack.",
+      "totalDuration": 20,
+      "handoffContext": "The scene has shifted from tactical dialogue to a confrontation and then to a promotional announcement. Last speaker was spk_014 (promotional announcer)."
+    },
+    "requestPrompt": {
+      "mode": "tool_loop",
+      "repairSummary": null
+    },
+    "toolLoop": {
+      "toolName": "validate_dialogue_transcription_json",
+      "maxTurns": 4,
+      "maxValidatorCalls": 3,
+      "turns": 1,
+      "validatorCalls": 1,
+      "history": [
+        {
+          "role": "assistant",
+          "turn": 1,
+          "kind": "model_output",
+          "raw": "{\n  \"dialogue_segments\": [\n    {\n      \"start\": 0.0,\n      \"end\": 2.0,\n      \"speaker\": \"Speaker 6\",\n      \"speaker_id\": \"spk_006\",\n      \"text\": \"is a hell of a lot easier than killing the idea.\",\n      \"confidence\": 0.92\n    },\n    {\n      \"start\": 4.0,\n      \"end\": 6.5,\n      \"speaker\": \"Speaker 13\",\n      \"speaker_id\": \"spk_013\",\n      \"text\": \"You were never cut out to be a Mason.\",\n      \"confidence\": 0.95\n    },\n    {\n      \"start\": 9.0,\n      \"end\": 11.0,\n      \"speaker\": \"Speaker 10\",\n      \"speaker_id\": \"spk_010\",\n      \"text\": \"No more games. This ends now.\",\n      \"confidence\": 0.94\n    },\n    {\n      \"start\": 12.5,\n      \"end\": 15.0,\n      \"speaker\": \"Speaker 11\",\n      \"speaker_id\": \"spk_011\",\n      \"text\": \"Obey your master!\",\n      \"confidence\": 0.90\n    },\n    {\n      \"start\": 18.0,\n      \"end\": 20.0,\n      \"speaker\": \"Speaker 14\",\n      \"speaker_id\": \"spk_014\",\n      \"text\": \"Get the Reznov challenge pack.\",\n      \"confidence\": 0.96\n    }\n  ],\n  \"speaker_profiles\": [\n    {\n      \"speaker_id\": \"spk_006\",\n      \"label\": \"Speaker 6\",\n      \"grounded\": {\n        \"confidence\": 0.88,\n        \"linked_segment_indexes\": [0],\n        \"acoustic_descriptors\": [\n          { \"label\": \"gruff, tactical delivery\", \"confidence\": 0.85 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    },\n    {\n      \"speaker_id\": \"spk_013\",\n      \"label\": \"Speaker 13\",\n      \"grounded\": {\n        \"confidence\": 0.92,\n        \"linked_segment_indexes\": [1],\n        \"acoustic_descriptors\": [\n          { \"label\": \"cold, authoritative female voice\", \"confidence\": 0.90 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": [\n          { \"trait\": \"gender\", \"value\": \"female\", \"confidence\": 0.90, \"note\": \"based on vocal pitch and timbre\" }\n        ]\n      }\n    },\n    {\n      \"speaker_id\": \"spk_010\",\n      \"label\": \"Speaker 10\",\n      \"grounded\": {\n        \"confidence\": 0.90,\n        \"linked_segment_indexes\": [2],\n        \"acoustic_descriptors\": [\n          { \"label\": \"gruff, intense delivery\", \"confidence\": 0.88 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    },\n    {\n      \"speaker_id\": \"spk_011\",\n      \"label\": \"Speaker 11\",\n      \"grounded\": {\n        \"confidence\": 0.85,\n        \"linked_segment_indexes\": [3],\n        \"acoustic_descriptors\": [\n          { \"label\": \"aggressive, distorted, musical vocal delivery\", \"confidence\": 0.85 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    },\n    {\n      \"speaker_id\": \"spk_014\",\n      \"label\": \"Speaker 14\",\n      \"grounded\": {\n        \"confidence\": 0.95,\n        \"linked_segment_indexes\": [4],\n        \"acoustic_descriptors\": [\n          { \"label\": \"clear, promotional announcer style\", \"confidence\": 0.92 }\n        ]\n      },\n      \"inferred_traits\": {\n        \"traits\": []\n      }\n    }\n  ],\n  \"summary\": \"The dialogue continues with a tactical discussion followed by a confrontation involving Mason, ending with a promotional announcement for the Reznov challenge pack.\",\n  \"handoffContext\": \"The scene has shifted from tactical dialogue to a confrontation and then to a promotional announcement. Last speaker was spk_014 (promotional announcer).\",\n  \"totalDuration\": 20.0\n}"
+        },
+        {
+          "role": "tool",
+          "turn": 1,
+          "kind": "tool_result_auto_validation",
+          "toolName": "validate_dialogue_transcription_json",
+          "source": "auto_validate_candidate_json",
+          "toolCall": {
+            "tool": "validate_dialogue_transcription_json",
+            "transcription": {
+              "dialogue_segments": [
+                {
+                  "start": 0,
+                  "end": 2,
+                  "speaker": "Speaker 6",
+                  "speaker_id": "spk_006",
+                  "text": "is a hell of a lot easier than killing the idea.",
+                  "confidence": 0.92
+                },
+                {
+                  "start": 4,
+                  "end": 6.5,
+                  "speaker": "Speaker 13",
+                  "speaker_id": "spk_013",
+                  "text": "You were never cut out to be a Mason.",
+                  "confidence": 0.95
+                },
+                {
+                  "start": 9,
+                  "end": 11,
+                  "speaker": "Speaker 10",
+                  "speaker_id": "spk_010",
+                  "text": "No more games. This ends now.",
+                  "confidence": 0.94
+                },
+                {
+                  "start": 12.5,
+                  "end": 15,
+                  "speaker": "Speaker 11",
+                  "speaker_id": "spk_011",
+                  "text": "Obey your master!",
+                  "confidence": 0.9
+                },
+                {
+                  "start": 18,
+                  "end": 20,
+                  "speaker": "Speaker 14",
+                  "speaker_id": "spk_014",
+                  "text": "Get the Reznov challenge pack.",
+                  "confidence": 0.96
+                }
+              ],
+              "speaker_profiles": [
+                {
+                  "speaker_id": "spk_006",
+                  "label": "Speaker 6",
+                  "grounded": {
+                    "confidence": 0.88,
+                    "linked_segment_indexes": [
+                      0
+                    ],
+                    "acoustic_descriptors": [
+                      {
+                        "label": "gruff, tactical delivery",
+                        "confidence": 0.85
+                      }
+                    ]
+                  },
+                  "inferred_traits": {
+                    "traits": []
+                  }
+                },
+                {
+                  "speaker_id": "spk_013",
+                  "label": "Speaker 13",
+                  "grounded": {
+                    "confidence": 0.92,
+                    "linked_segment_indexes": [
+                      1
+                    ],
+                    "acoustic_descriptors": [
+                      {
+                        "label": "cold, authoritative female voice",
+                        "confidence": 0.9
+                      }
+                    ]
+                  },
+                  "inferred_traits": {
+                    "traits": [
+                      {
+                        "trait": "gender",
+                        "value": "female",
+                        "confidence": 0.9,
+                        "note": "based on vocal pitch and timbre"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "speaker_id": "spk_010",
+                  "label": "Speaker 10",
+                  "grounded": {
+                    "confidence": 0.9,
+                    "linked_segment_indexes": [
+                      2
+                    ],
+                    "acoustic_descriptors": [
+                      {
+                        "label": "gruff, intense delivery",
+                        "confidence": 0.88
+                      }
+                    ]
+                  },
+                  "inferred_traits": {
+                    "traits": []
+                  }
+                },
+                {
+                  "speaker_id": "spk_011",
+                  "label": "Speaker 11",
+                  "grounded": {
+                    "confidence": 0.85,
+                    "linked_segment_indexes": [
+                      3
+                    ],
+                    "acoustic_descriptors": [
+                      {
+                        "label": "aggressive, distorted, musical vocal delivery",
+                        "confidence": 0.85
+                      }
+                    ]
+                  },
+                  "inferred_traits": {
+                    "traits": []
+                  }
+                },
+                {
+                  "speaker_id": "spk_014",
+                  "label": "Speaker 14",
+                  "grounded": {
+                    "confidence": 0.95,
+                    "linked_segment_indexes": [
+                      4
+                    ],
+                    "acoustic_descriptors": [
+                      {
+                        "label": "clear, promotional announcer style",
+                        "confidence": 0.92
+                      }
+                    ]
+                  },
+                  "inferred_traits": {
+                    "traits": []
+                  }
+                }
+              ],
+              "summary": "The dialogue continues with a tactical discussion followed by a confrontation involving Mason, ending with a promotional announcement for the Reznov challenge pack.",
+              "handoffContext": "The scene has shifted from tactical dialogue to a confrontation and then to a promotional announcement. Last speaker was spk_014 (promotional announcer).",
+              "totalDuration": 20
+            },
+            "arguments": {
+              "transcription": "[Circular]"
+            }
+          },
+          "result": {
+            "ok": true,
+            "valid": true,
+            "toolName": "validate_dialogue_transcription_json",
+            "summary": "JSON is valid. The validator returned valid=true. Return the final JSON artifact with no wrapper.",
+            "errors": [],
+            "normalizedValue": "[Circular]"
+          }
+        }
+      ],
+      "finalArtifact": "[Circular]"
+    }
+  },
+  "finishedAt": "2026-04-02T20:36:52.625Z"
+}

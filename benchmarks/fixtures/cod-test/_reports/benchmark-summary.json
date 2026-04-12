@@ -16,79 +16,152 @@
     {
       "artifactKey": "dialogueData",
       "status": "error",
-      "accuracyRate": 0.21468926553672316,
-      "coverageRate": 0.9672131147540983,
-      "ignoredDifferenceCount": 5
+      "accuracyRate": 0.18468468468468469,
+      "coverageRate": 0.9367088607594937,
+      "ignoredDifferenceCount": 43
     },
     {
       "artifactKey": "musicData",
       "status": "error",
-      "accuracyRate": 0.3137254901960784,
-      "coverageRate": 0.8793103448275862,
+      "accuracyRate": 0.3111111111111111,
+      "coverageRate": 0.8490566037735849,
       "ignoredDifferenceCount": 5
     },
     {
       "artifactKey": "musicVocalsData",
       "status": "error",
-      "accuracyRate": 0.43023255813953487,
-      "coverageRate": 0.9772727272727273,
-      "ignoredDifferenceCount": 5
+      "accuracyRate": 0.4421052631578947,
+      "coverageRate": 0.8050847457627118,
+      "ignoredDifferenceCount": 29
     },
     {
       "artifactKey": "recommendationData",
       "status": "error",
-      "accuracyRate": 0.15,
-      "coverageRate": 0.5555555555555556,
+      "accuracyRate": 0.1111111111111111,
+      "coverageRate": 0.5,
       "ignoredDifferenceCount": 4
     },
     {
-      "artifactKey": "chunkAnalysis",
-      "status": "fail",
-      "accuracyRate": 0.6444444444444445,
-      "coverageRate": 0.9490333919156415,
-      "ignoredDifferenceCount": 29
-    },
-    {
       "artifactKey": "metricsData",
-      "status": "fail",
-      "accuracyRate": 0.5714285714285714,
-      "coverageRate": 0.9722222222222222,
+      "status": "error",
+      "accuracyRate": 0.375,
+      "coverageRate": 0.42105263157894735,
       "ignoredDifferenceCount": 1
     },
     {
       "artifactKey": "emotionalAnalysisData",
       "status": "error",
-      "accuracyRate": 0.6028898854010961,
-      "coverageRate": 0.9886699507389163,
-      "ignoredDifferenceCount": 2
+      "accuracyRate": 0.16666666666666666,
+      "coverageRate": 0.03519061583577713,
+      "ignoredDifferenceCount": 1
     }
   ],
   "totals": {
-    "artifactsTotal": 7,
+    "artifactsTotal": 6,
     "artifactsPassed": 0,
-    "artifactsFailed": 2,
-    "artifactsErrored": 5,
-    "totalTruthFields": 3000,
-    "scoreableFields": 2916,
-    "skippedFields": 44,
-    "passedFields": 1672,
-    "failedFields": 1244,
-    "erroredFields": 40,
-    "ignoredDifferenceFields": 51
+    "artifactsFailed": 0,
+    "artifactsErrored": 6,
+    "totalTruthFields": 804,
+    "scoreableFields": 400,
+    "skippedFields": 17,
+    "passedFields": 104,
+    "failedFields": 296,
+    "erroredFields": 387,
+    "ignoredDifferenceFields": 83
   },
   "accuracy": {
-    "passed": 1672,
-    "failed": 1244,
-    "rate": 0.5733882030178327
+    "passed": 104,
+    "failed": 296,
+    "rate": 0.26
   },
   "coverage": {
-    "scoreable": 2916,
-    "skipped": 44,
-    "ignoredDifferences": 51,
-    "totalTruthFields": 3000,
-    "rate": 0.972
+    "scoreable": 400,
+    "skipped": 17,
+    "ignoredDifferences": 83,
+    "totalTruthFields": 804,
+    "rate": 0.4975124378109453
   },
   "errors": [
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[truth=0,output=0].grounded.acoustic_descriptors[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": null,
+      "reason": "Numeric field comparison expected numeric truth/output values"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[truth=2,output=1].grounded.acoustic_descriptors[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.86,
+      "outputValue": null,
+      "reason": "Numeric field comparison expected numeric truth/output values"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[truth=4,output=5].grounded.acoustic_descriptors[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": null,
+      "reason": "Numeric field comparison expected numeric truth/output values"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[truth=7,output=11].grounded.acoustic_descriptors[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.84,
+      "outputValue": null,
+      "reason": "Numeric field comparison expected numeric truth/output values"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[truth=9,output=13].grounded.acoustic_descriptors[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.8,
+      "outputValue": null,
+      "reason": "Numeric field comparison expected numeric truth/output values"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[truth=10,output=7].grounded.acoustic_descriptors[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.86,
+      "outputValue": null,
+      "reason": "Numeric field comparison expected numeric truth/output values"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[truth=11,output=14].grounded.acoustic_descriptors[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.8,
+      "outputValue": null,
+      "reason": "Numeric field comparison expected numeric truth/output values"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[truth=1,output=12].grounded.acoustic_descriptors[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.95,
+      "outputValue": null,
+      "reason": "Numeric field comparison expected numeric truth/output values"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[truth=5,output=8].grounded.acoustic_descriptors[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.86,
+      "outputValue": null,
+      "reason": "Numeric field comparison expected numeric truth/output values"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[truth=6,output=10].grounded.acoustic_descriptors[0].confidence",
+      "rule": "tolerant-number",
+      "truthValue": 0.84,
+      "outputValue": null,
+      "reason": "Numeric field comparison expected numeric truth/output values"
+    },
     {
       "artifactKey": "dialogueData",
       "path": "speaker_profiles[truth=8,output=6].grounded.acoustic_descriptors[0].confidence",
@@ -99,33 +172,9 @@
     },
     {
       "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=9,output=7].grounded.acoustic_descriptors[0].confidence",
+      "path": "speaker_profiles[truth=3,output=4].grounded.acoustic_descriptors[0].confidence",
       "rule": "tolerant-number",
-      "truthValue": 0.8,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=0,output=2].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.9,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=1,output=3].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.95,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=2,output=4].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.86,
+      "truthValue": 0.84,
       "outputValue": null,
       "reason": "Numeric field comparison expected numeric truth/output values"
     },
@@ -133,7 +182,7 @@
       "artifactKey": "dialogueData",
       "path": "cleanedTranscript",
       "rule": "structural",
-      "truthValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets, shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 6: A lot of people counting on us for answers.\nSpeaker 14: You shall know fear.\nSpeaker 8: Specter one, report.\nSpeaker 8: Need a sitrep.\nSpeaker 9: This isn't real.\nSpeaker 10: The hell it ain't!\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave daddy.\nSpeaker 13: Killing the man is a hell of a lot easier than killing the idea.\nSpeaker 15: You were never cut out to be a Mason.\nSpeaker 6: No more games! This ends now.\nSpeaker 16: Get the Reznov challenge pack when you preorder now!",
+      "truthValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets, shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 6: A lot of people counting on us for answers.\nSpeaker 14: You shall know fear.\nSpeaker 8: Specter one, report.\nSpeaker 8: Need a sitrep.\nSpeaker 9: This isn't real.\nSpeaker 10: The hell it ain't!\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave David.\nSpeaker 13: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 15: You were never cut out to be a Mason.\nSpeaker 6: No more games! This ends now.\nSpeaker 16: Get the Reznov challenge pack when you preorder now!",
       "reason": "Output object missing field present in truth"
     },
     {
@@ -141,18 +190,13 @@
       "path": "globalArc",
       "rule": "structural",
       "outputValue": {
-        "dominantMood": "intense",
-        "energyCurve": "rising_then_peak_then_fall",
+        "dominantMood": "energetic",
+        "energyCurve": "rising_then_peak_then_drop",
         "notableTransitions": [
           {
-            "start": 86,
-            "end": 90,
-            "label": "vocal entry with lyrical hook"
-          },
-          {
-            "start": 126,
-            "end": 130,
-            "label": "final vocal phrase and music fade"
+            "start": 76,
+            "end": 78,
+            "label": "heavy metal music entry with vocals"
           }
         ]
       },
@@ -164,24 +208,23 @@
       "rule": "structural",
       "outputValue": [
         "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-        "Confidence is moderate due to audio masking; timing precision is approximate based on transcript cues.",
-        "Continuity is maintained with a consistent score bed throughout, despite spoken overlays."
+        "Segment timings and intensity are approximate based on coarse audio analysis; continuity may vary with overlays."
       ],
       "reason": "Truth object missing field present in output"
     },
     {
       "artifactKey": "musicData",
-      "path": "segments[5]",
+      "path": "segments[4]",
       "rule": "structural",
-      "outputValue": {
-        "start": 126,
-        "end": 140,
+      "truthValue": {
+        "start": 120,
+        "end": 140.042449,
         "type": "music",
-        "description": "Final vocal phrase and music fade with trailer call to action, intensity drops",
-        "mood": "resolved",
-        "intensity": 7
+        "description": "High-energy, cinematic action trailer music with intense sound effects and a promotional voiceover.",
+        "mood": "energetic",
+        "intensity": 9
       },
-      "reason": "Truth array missing item present in output"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "musicData",
@@ -194,7 +237,7 @@
       "artifactKey": "musicData",
       "path": "recognizedSong.candidates[0].matchedLyrics[1]",
       "rule": "structural",
-      "outputValue": "I'll paint your master",
+      "outputValue": "Come crawling faster",
       "reason": "Truth array missing item present in output"
     },
     {
@@ -218,18 +261,179 @@
       "reason": "Output array missing item present in truth"
     },
     {
-      "artifactKey": "musicVocalsData",
+      "artifactKey": "musicData",
       "path": "recognitionNotes[1]",
       "rule": "structural",
-      "truthValue": "The opening chant fragments are short, but later full lyric lines confirm the song identification.",
+      "truthValue": "Spoken dialogue over score must not be treated as lyric evidence for song recognition.",
       "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[truth=0,output=0].index",
+      "rule": "structural",
+      "outputValue": 0,
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[truth=1,output=1].index",
+      "rule": "structural",
+      "outputValue": 1,
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[truth=2,output=2].index",
+      "rule": "structural",
+      "outputValue": 2,
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[truth=3,output=3].index",
+      "rule": "structural",
+      "outputValue": 3,
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[truth=4,output=4].index",
+      "rule": "structural",
+      "outputValue": 4,
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[truth=5,output=5].index",
+      "rule": "structural",
+      "outputValue": 5,
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[truth=6,output=6].index",
+      "rule": "structural",
+      "outputValue": 6,
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[truth=7,output=7].index",
+      "rule": "structural",
+      "outputValue": 7,
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[truth=8,output=8].index",
+      "rule": "structural",
+      "outputValue": 8,
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[truth=9,output=9].index",
+      "rule": "structural",
+      "outputValue": 9,
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[truth=10,output=10].index",
+      "rule": "structural",
+      "outputValue": 10,
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "vocal_segments[truth=11,output=11].index",
+      "rule": "structural",
+      "outputValue": 11,
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "recognitionNotes[2]",
+      "rule": "structural",
+      "outputValue": "Spoken dialogue at the beginning of the chunk was excluded as it is not music-led vocals.",
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "recognitionNotes[3]",
+      "rule": "structural",
+      "outputValue": "Spoken dialogue in the chunk was excluded from lyric evidence.",
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "recognitionNotes[4]",
+      "rule": "structural",
+      "outputValue": "Spoken dialogue or other non-lyric audio is excluded from this analysis.",
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "recognitionNotes[5]",
+      "rule": "structural",
+      "outputValue": "Heavy metal vocals are clear and dominant in the segment from approximately 76.0s to 140.0s, with some overlap from dialogue but lyrics remain intelligible.",
+      "reason": "Truth array missing item present in output"
     },
     {
       "artifactKey": "musicVocalsData",
       "path": "qualityNotes[1]",
       "rule": "structural",
-      "outputValue": "Timing estimates are inferred from context; actual precision may vary slightly due to audio overlap.",
+      "outputValue": "Chunk features tense dialogue with background score; no music-led vocals detected.",
       "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "qualityNotes[2]",
+      "rule": "structural",
+      "outputValue": "Audio consists primarily of spoken dialogue and action sound effects.",
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "qualityNotes[3]",
+      "rule": "structural",
+      "outputValue": "The sung lyrics are clear and prominent, with no significant masking or ambiguity.",
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "qualityNotes[4]",
+      "rule": "structural",
+      "outputValue": "Sung lyrics are clear with minimal masking.",
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "qualityNotes[5]",
+      "rule": "structural",
+      "outputValue": "Audio clarity is good, with no significant masking.",
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "qualityNotes[6]",
+      "rule": "structural",
+      "outputValue": "High confidence due to clear enunciation and well-known song match; timing aligns with the heavy metal entry transition.",
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "recommendationData",
+      "path": "keyFindings[3]",
+      "rule": "structural",
+      "truthValue": "Boredom increases significantly in the second half, indicating pacing fatigue rather than lack of action quality.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "recommendationData",
+      "path": "keyFindings[4]",
+      "rule": "structural",
+      "truthValue": "Title cards, talking-head dialogue, and location reveals repeatedly correlate with softer engagement.",
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "recommendationData",
@@ -260,161 +464,4519 @@
       "reason": "Output array missing item present in truth"
     },
     {
-      "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=125,emotion=boredom,type=threshold-high,chunkIndex=25]",
+      "artifactKey": "metricsData",
+      "path": "implementationStatus.reason",
       "rule": "structural",
-      "outputValue": {
-        "timestamp": 125,
-        "emotion": "boredom",
-        "type": "threshold-high",
-        "score": 0.8,
-        "previousScore": 0.2,
-        "threshold": 0.7,
-        "chunkIndex": 25,
-        "severity": 0.75,
-        "context": "boredom threshold crossed. Emotional state: patience: 20%, boredom: 80%, excitement: 100%"
+      "outputValue": "Chunk-derived timeline metrics were skipped because this run produced wholeVideoAnalysis without chunkAnalysis timeseries data.",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "metricsData",
+      "path": "averages.patience",
+      "rule": "structural",
+      "truthValue": 0.6428571428571428,
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "artifactKey": "metricsData",
+      "path": "averages.boredom",
+      "rule": "structural",
+      "truthValue": 0.42857142857142855,
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "artifactKey": "metricsData",
+      "path": "averages.excitement",
+      "rule": "structural",
+      "truthValue": 0.7821428571428576,
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "artifactKey": "metricsData",
+      "path": "peakMoments.patience",
+      "rule": "structural",
+      "truthValue": {
+        "highest": {
+          "timestamp": 75,
+          "score": 0.9
+        },
+        "lowest": {
+          "timestamp": 0,
+          "score": 0.2
+        }
       },
-      "reason": "Truth array missing keyed item present in output"
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "artifactKey": "metricsData",
+      "path": "peakMoments.boredom",
+      "rule": "structural",
+      "truthValue": {
+        "highest": {
+          "timestamp": 75,
+          "score": 1
+        },
+        "lowest": {
+          "timestamp": 5,
+          "score": 0.2
+        }
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "artifactKey": "metricsData",
+      "path": "peakMoments.excitement",
+      "rule": "structural",
+      "truthValue": {
+        "highest": {
+          "timestamp": 5,
+          "score": 0.9
+        },
+        "lowest": {
+          "timestamp": 120,
+          "score": 0.3
+        }
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "artifactKey": "metricsData",
+      "path": "trends.patience",
+      "rule": "structural",
+      "truthValue": {
+        "direction": "increasing",
+        "change": 0.05714285714285705,
+        "firstHalfAverage": 0.6142857142857141,
+        "secondHalfAverage": 0.6714285714285712
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "artifactKey": "metricsData",
+      "path": "trends.boredom",
+      "rule": "structural",
+      "truthValue": {
+        "direction": "increasing",
+        "change": 0.24285714285714283,
+        "firstHalfAverage": 0.3071428571428571,
+        "secondHalfAverage": 0.5499999999999999
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "artifactKey": "metricsData",
+      "path": "trends.excitement",
+      "rule": "structural",
+      "truthValue": {
+        "direction": "stable",
+        "change": -0.007142857142856562,
+        "firstHalfAverage": 0.7857142857142851,
+        "secondHalfAverage": 0.7785714285714286
+      },
+      "reason": "Output object missing field present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=35,emotion=excitement,type=threshold-high,chunkIndex=7]",
+      "path": "implementationStatus.reason",
       "rule": "structural",
-      "outputValue": {
-        "timestamp": 35,
-        "emotion": "excitement",
-        "type": "threshold-high",
-        "score": 0.9,
-        "previousScore": 0.3,
-        "threshold": 0.7,
-        "chunkIndex": 7,
-        "severity": 0.7,
-        "context": "excitement threshold crossed. Emotional state: patience: 70%, boredom: 20%, excitement: 90%"
-      },
-      "reason": "Truth array missing keyed item present in output"
+      "outputValue": "No usable phase2 chunkAnalysis emotion timeseries was found.",
+      "reason": "Truth object missing field present in output"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=130,emotion=excitement,type=threshold-low,chunkIndex=26]",
+      "path": "implementationStatus.dataSource",
       "rule": "structural",
-      "outputValue": {
-        "timestamp": 130,
-        "emotion": "excitement",
-        "type": "threshold-low",
-        "score": 0.2,
-        "previousScore": 1,
-        "threshold": 0.3,
-        "chunkIndex": 26,
-        "severity": 0.65,
-        "context": "excitement threshold crossed. Emotional state: patience: 30%, boredom: 50%, excitement: 20%"
-      },
-      "reason": "Truth array missing keyed item present in output"
+      "truthValue": "derived-from-phase2.chunkAnalysis",
+      "reason": "Output object missing field present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=75,emotion=excitement,type=threshold-high,chunkIndex=15]",
+      "path": "chunkAnalysis[0]",
       "rule": "structural",
-      "outputValue": {
-        "timestamp": 75,
-        "emotion": "excitement",
-        "type": "threshold-high",
-        "score": 0.9,
-        "previousScore": 0.5,
-        "threshold": 0.7,
-        "chunkIndex": 15,
-        "severity": 0.6,
-        "context": "excitement threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
+      "truthValue": {
+        "chunkIndex": 0,
+        "startTime": 0,
+        "endTime": 5,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.2,
+          "boredom": 0.8,
+          "excitement": 0.4
+        },
+        "emotionalVelocity": {
+          "patience": 0.2,
+          "boredom": 0.8,
+          "excitement": 0.4
+        },
+        "scrollRisk": 0.7000000000000001,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 0.8
+        },
+        "emotionalSignature": "low-patience-high-boredom-moderate-excitement",
+        "dataPoints": 5
       },
-      "reason": "Truth array missing keyed item present in output"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=25,emotion=boredom,type=threshold-high,chunkIndex=5]",
+      "path": "chunkAnalysis[1]",
       "rule": "structural",
-      "outputValue": {
-        "timestamp": 25,
-        "emotion": "boredom",
-        "type": "threshold-high",
-        "score": 0.7,
-        "previousScore": 0.6,
-        "threshold": 0.7,
-        "chunkIndex": 5,
-        "severity": 0.55,
-        "context": "boredom threshold crossed. Emotional state: patience: 30%, boredom: 70%, excitement: 20%"
+      "truthValue": {
+        "chunkIndex": 1,
+        "startTime": 5,
+        "endTime": 10,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.16,
+          "boredom": 0.04,
+          "excitement": 0.18
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
       },
-      "reason": "Truth array missing keyed item present in output"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=45,emotion=excitement,type=threshold-high,chunkIndex=9]",
+      "path": "chunkAnalysis[2]",
       "rule": "structural",
-      "outputValue": {
-        "timestamp": 45,
-        "emotion": "excitement",
-        "type": "threshold-high",
-        "score": 0.7,
-        "previousScore": 0.6,
-        "threshold": 0.7,
-        "chunkIndex": 9,
-        "severity": 0.55,
-        "context": "excitement threshold crossed. Emotional state: patience: 60%, boredom: 30%, excitement: 70%"
-      },
-      "reason": "Truth array missing keyed item present in output"
-    },
-    {
-      "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=10,emotion=excitement,type=threshold-low,chunkIndex=2]",
-      "rule": "structural",
-      "outputValue": {
-        "timestamp": 10,
-        "emotion": "excitement",
-        "type": "threshold-low",
-        "score": 0.3,
-        "previousScore": 0.6,
-        "threshold": 0.3,
+      "truthValue": {
         "chunkIndex": 2,
-        "severity": 0.45000000000000007,
-        "context": "excitement threshold crossed. Emotional state: patience: 40%, boredom: 60%, excitement: 30%"
+        "startTime": 10,
+        "endTime": 15,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.4,
+          "boredom": 0.3,
+          "excitement": 0.8
+        },
+        "emotionalVelocity": {
+          "patience": 0.04,
+          "boredom": 0.03,
+          "excitement": 0.08
+        },
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.8
+        },
+        "emotionalSignature": "moderate-patience-low-boredom-high-excitement",
+        "dataPoints": 5
       },
-      "reason": "Truth array missing keyed item present in output"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=75,emotion=boredom,type=threshold-low,chunkIndex=15]",
+      "path": "chunkAnalysis[3]",
       "rule": "structural",
-      "outputValue": {
-        "timestamp": 75,
-        "emotion": "boredom",
-        "type": "threshold-low",
-        "score": 0.2,
-        "previousScore": 0.6,
-        "threshold": 0.3,
-        "chunkIndex": 15,
-        "severity": 0.44999999999999996,
-        "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
+      "truthValue": {
+        "chunkIndex": 3,
+        "startTime": 15,
+        "endTime": 20,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.7,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.049999999999999996,
+          "boredom": -0.06000000000000001,
+          "excitement": 0.05
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
       },
-      "reason": "Truth array missing keyed item present in output"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=35,emotion=boredom,type=threshold-low,chunkIndex=7]",
+      "path": "chunkAnalysis[4]",
       "rule": "structural",
-      "outputValue": {
-        "timestamp": 35,
-        "emotion": "boredom",
-        "type": "threshold-low",
-        "score": 0.2,
-        "previousScore": 0.5,
-        "threshold": 0.3,
+      "truthValue": {
+        "chunkIndex": 4,
+        "startTime": 20,
+        "endTime": 25,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.6,
+          "boredom": 0.4,
+          "excitement": 0.7
+        },
+        "emotionalVelocity": {
+          "patience": 0.009999999999999998,
+          "boredom": -0.010000000000000009,
+          "excitement": 0.004999999999999982
+        },
+        "scrollRisk": 0.45000000000000007,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.7
+        },
+        "emotionalSignature": "moderate-patience-moderate-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[5]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 5,
+        "startTime": 25,
+        "endTime": 30,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.4,
+          "boredom": 0.5,
+          "excitement": 0.6
+        },
+        "emotionalVelocity": {
+          "patience": -0.020000000000000018,
+          "boredom": 0.025,
+          "excitement": -0.025
+        },
+        "scrollRisk": 0.52,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.6
+        },
+        "emotionalSignature": "moderate-patience-moderate-boredom-moderate-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[6]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 6,
+        "startTime": 30,
+        "endTime": 35,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.4,
+          "boredom": 0.3,
+          "excitement": 0.7
+        },
+        "emotionalVelocity": {
+          "patience": -0.015000000000000003,
+          "boredom": 0.004999999999999993,
+          "excitement": -0.015000000000000024
+        },
+        "scrollRisk": 0.41000000000000003,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.7
+        },
+        "emotionalSignature": "moderate-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[7]",
+      "rule": "structural",
+      "truthValue": {
         "chunkIndex": 7,
-        "severity": 0.4,
-        "context": "boredom threshold crossed. Emotional state: patience: 70%, boredom: 20%, excitement: 90%"
+        "startTime": 35,
+        "endTime": 40,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.7,
+          "boredom": 0.3,
+          "excitement": 0.8
+        },
+        "emotionalVelocity": {
+          "patience": 0.005000000000000016,
+          "boredom": 5.551115123125783e-18,
+          "excitement": 0
+        },
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.8
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
       },
-      "reason": "Truth array missing keyed item present in output"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=75,emotion=boredom,type=threshold-high,chunkIndex=15]",
+      "path": "chunkAnalysis[8]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 8,
+        "startTime": 40,
+        "endTime": 45,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.029999999999999992,
+          "boredom": -0.025,
+          "excitement": 0.025000000000000022
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[9]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 9,
+        "startTime": 45,
+        "endTime": 50,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.6,
+          "boredom": 0.2,
+          "excitement": 0.8
+        },
+        "emotionalVelocity": {
+          "patience": 0.02,
+          "boredom": -0.01999999999999999,
+          "excitement": 0.01499999999999999
+        },
+        "scrollRisk": 0.34,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.8
+        },
+        "emotionalSignature": "moderate-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[10]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 10,
+        "startTime": 50,
+        "endTime": 55,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.025,
+          "boredom": -0.009999999999999992,
+          "excitement": 0.015000000000000013
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[11]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 11,
+        "startTime": 55,
+        "endTime": 60,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.005000000000000016,
+          "boredom": -0.0050000000000000044,
+          "excitement": 0.004999999999999982
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[12]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 12,
+        "startTime": 60,
+        "endTime": 65,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.01000000000000002,
+          "boredom": 2.7755575615628915e-18,
+          "excitement": 0.0050000000000000044
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[13]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 13,
+        "startTime": 65,
+        "endTime": 70,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.6,
+          "boredom": 0.3,
+          "excitement": 0.8
+        },
+        "emotionalVelocity": {
+          "patience": -0.009999999999999998,
+          "boredom": 0.01,
+          "excitement": -0.005000000000000016
+        },
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.8
+        },
+        "emotionalSignature": "moderate-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[14]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 14,
+        "startTime": 70,
+        "endTime": 75,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 1.1102230246251566e-17,
+          "boredom": 2.7755575615628915e-18,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[15]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 15,
+        "startTime": 75,
+        "endTime": 80,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.9,
+          "boredom": 1,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.010000000000000009,
+          "boredom": 0.08,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 1
+        },
+        "emotionalSignature": "high-patience-high-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[16]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 16,
+        "startTime": 80,
+        "endTime": 85,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.01000000000000002,
+          "boredom": -0.004999999999999999,
+          "excitement": 0.0050000000000000044
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[17]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 17,
+        "startTime": 85,
+        "endTime": 90,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.6,
+          "boredom": 0.3,
+          "excitement": 0.8
+        },
+        "emotionalVelocity": {
+          "patience": -0.009999999999999998,
+          "boredom": 0.004999999999999993,
+          "excitement": -0.005000000000000016
+        },
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.8
+        },
+        "emotionalSignature": "moderate-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[18]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 18,
+        "startTime": 90,
+        "endTime": 95,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.5,
+          "boredom": 0.6,
+          "excitement": 0.5
+        },
+        "emotionalVelocity": {
+          "patience": -0.03500000000000002,
+          "boredom": 0,
+          "excitement": -0.040000000000000015
+        },
+        "scrollRisk": 0.59,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 0.6
+        },
+        "emotionalSignature": "moderate-patience-moderate-boredom-moderate-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[19]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 19,
+        "startTime": 95,
+        "endTime": 100,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.9,
+          "boredom": 1,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.0050000000000000044,
+          "boredom": 0.039999999999999994,
+          "excitement": -1.1102230246251566e-17
+        },
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 1
+        },
+        "emotionalSignature": "high-patience-high-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[20]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 20,
+        "startTime": 100,
+        "endTime": 105,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 0.2,
+          "excitement": 0.8
+        },
+        "emotionalVelocity": {
+          "patience": 0.01000000000000002,
+          "boredom": -0.004999999999999999,
+          "excitement": -0.004999999999999993
+        },
+        "scrollRisk": 0.34,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "patience",
+          "score": 0.8
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[21]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 21,
+        "startTime": 105,
+        "endTime": 110,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.7,
+          "boredom": 0.3,
+          "excitement": 0.8
+        },
+        "emotionalVelocity": {
+          "patience": 0.01499999999999999,
+          "boredom": -0.015000000000000003,
+          "excitement": 0.015000000000000003
+        },
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.8
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[22]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 22,
+        "startTime": 110,
+        "endTime": 115,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.7,
+          "boredom": 0.2,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": -1.1102230246251566e-17,
+          "boredom": -0.06000000000000001,
+          "excitement": 0.019999999999999997
+        },
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.9
+        },
+        "emotionalSignature": "high-patience-low-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[23]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 23,
+        "startTime": 115,
+        "endTime": 120,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.9,
+          "boredom": 1,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.0050000000000000044,
+          "boredom": 0.039999999999999994,
+          "excitement": 0.0050000000000000044
+        },
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 1
+        },
+        "emotionalSignature": "high-patience-high-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[24]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 24,
+        "startTime": 120,
+        "endTime": 125,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.2,
+          "boredom": 0.8,
+          "excitement": 0.3
+        },
+        "emotionalVelocity": {
+          "patience": -0.05500000000000001,
+          "boredom": 0.05500000000000001,
+          "excitement": -0.049999999999999996
+        },
+        "scrollRisk": 0.7300000000000001,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 0.8
+        },
+        "emotionalSignature": "low-patience-high-boredom-low-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[25]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 25,
+        "startTime": 125,
+        "endTime": 130,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.5,
+          "boredom": 0.5,
+          "excitement": 0.7
+        },
+        "emotionalVelocity": {
+          "patience": -0.020000000000000007,
+          "boredom": 0.024999999999999994,
+          "excitement": -0.015000000000000024
+        },
+        "scrollRisk": 0.49,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.7
+        },
+        "emotionalSignature": "moderate-patience-moderate-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[26]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 26,
+        "startTime": 130,
+        "endTime": 135,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.3,
+          "boredom": 0.4,
+          "excitement": 0.7
+        },
+        "emotionalVelocity": {
+          "patience": -0.050000000000000024,
+          "boredom": -0.019999999999999997,
+          "excitement": -0.020000000000000018
+        },
+        "scrollRisk": 0.45000000000000007,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": {
+          "emotion": "excitement",
+          "score": 0.7
+        },
+        "emotionalSignature": "low-patience-moderate-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "chunkAnalysis[27]",
+      "rule": "structural",
+      "truthValue": {
+        "chunkIndex": 27,
+        "startTime": 135,
+        "endTime": 140,
+        "duration": 5,
+        "emotions": {
+          "patience": 0.8,
+          "boredom": 1,
+          "excitement": 0.9
+        },
+        "emotionalVelocity": {
+          "patience": 0.025,
+          "boredom": 0.009999999999999998,
+          "excitement": 0.030000000000000016
+        },
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": {
+          "emotion": "boredom",
+          "score": 1
+        },
+        "emotionalSignature": "high-patience-high-boredom-high-excitement",
+        "dataPoints": 5
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[0]",
+      "rule": "structural",
+      "truthValue": 0,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[1]",
+      "rule": "structural",
+      "truthValue": 1,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[2]",
+      "rule": "structural",
+      "truthValue": 2,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[3]",
+      "rule": "structural",
+      "truthValue": 3,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[4]",
+      "rule": "structural",
+      "truthValue": 4,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[5]",
+      "rule": "structural",
+      "truthValue": 5,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[6]",
+      "rule": "structural",
+      "truthValue": 6,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[7]",
+      "rule": "structural",
+      "truthValue": 7,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[8]",
+      "rule": "structural",
+      "truthValue": 8,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[9]",
+      "rule": "structural",
+      "truthValue": 9,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[10]",
+      "rule": "structural",
+      "truthValue": 10,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[11]",
+      "rule": "structural",
+      "truthValue": 11,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[12]",
+      "rule": "structural",
+      "truthValue": 12,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[13]",
+      "rule": "structural",
+      "truthValue": 13,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[14]",
+      "rule": "structural",
+      "truthValue": 14,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[15]",
+      "rule": "structural",
+      "truthValue": 15,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[16]",
+      "rule": "structural",
+      "truthValue": 16,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[17]",
+      "rule": "structural",
+      "truthValue": 17,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[18]",
+      "rule": "structural",
+      "truthValue": 18,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[19]",
+      "rule": "structural",
+      "truthValue": 19,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[20]",
+      "rule": "structural",
+      "truthValue": 20,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[21]",
+      "rule": "structural",
+      "truthValue": 21,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[22]",
+      "rule": "structural",
+      "truthValue": 22,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[23]",
+      "rule": "structural",
+      "truthValue": 23,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[24]",
+      "rule": "structural",
+      "truthValue": 24,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[25]",
+      "rule": "structural",
+      "truthValue": 25,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[26]",
+      "rule": "structural",
+      "truthValue": 26,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[27]",
+      "rule": "structural",
+      "truthValue": 27,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[28]",
+      "rule": "structural",
+      "truthValue": 28,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[29]",
+      "rule": "structural",
+      "truthValue": 29,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[30]",
+      "rule": "structural",
+      "truthValue": 30,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[31]",
+      "rule": "structural",
+      "truthValue": 31,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[32]",
+      "rule": "structural",
+      "truthValue": 32,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[33]",
+      "rule": "structural",
+      "truthValue": 33,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[34]",
+      "rule": "structural",
+      "truthValue": 34,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[35]",
+      "rule": "structural",
+      "truthValue": 35,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[36]",
+      "rule": "structural",
+      "truthValue": 36,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[37]",
+      "rule": "structural",
+      "truthValue": 37,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[38]",
+      "rule": "structural",
+      "truthValue": 38,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[39]",
+      "rule": "structural",
+      "truthValue": 39,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[40]",
+      "rule": "structural",
+      "truthValue": 40,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[41]",
+      "rule": "structural",
+      "truthValue": 41,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[42]",
+      "rule": "structural",
+      "truthValue": 42,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[43]",
+      "rule": "structural",
+      "truthValue": 43,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[44]",
+      "rule": "structural",
+      "truthValue": 44,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[45]",
+      "rule": "structural",
+      "truthValue": 45,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[46]",
+      "rule": "structural",
+      "truthValue": 46,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[47]",
+      "rule": "structural",
+      "truthValue": 47,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[48]",
+      "rule": "structural",
+      "truthValue": 48,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[49]",
+      "rule": "structural",
+      "truthValue": 49,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[50]",
+      "rule": "structural",
+      "truthValue": 50,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[51]",
+      "rule": "structural",
+      "truthValue": 51,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[52]",
+      "rule": "structural",
+      "truthValue": 52,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[53]",
+      "rule": "structural",
+      "truthValue": 53,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[54]",
+      "rule": "structural",
+      "truthValue": 54,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[55]",
+      "rule": "structural",
+      "truthValue": 55,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[56]",
+      "rule": "structural",
+      "truthValue": 56,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[57]",
+      "rule": "structural",
+      "truthValue": 57,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[58]",
+      "rule": "structural",
+      "truthValue": 58,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[59]",
+      "rule": "structural",
+      "truthValue": 59,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[60]",
+      "rule": "structural",
+      "truthValue": 60,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[61]",
+      "rule": "structural",
+      "truthValue": 61,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[62]",
+      "rule": "structural",
+      "truthValue": 62,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[63]",
+      "rule": "structural",
+      "truthValue": 63,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[64]",
+      "rule": "structural",
+      "truthValue": 64,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[65]",
+      "rule": "structural",
+      "truthValue": 65,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[66]",
+      "rule": "structural",
+      "truthValue": 66,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[67]",
+      "rule": "structural",
+      "truthValue": 67,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[68]",
+      "rule": "structural",
+      "truthValue": 68,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[69]",
+      "rule": "structural",
+      "truthValue": 69,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[70]",
+      "rule": "structural",
+      "truthValue": 70,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[71]",
+      "rule": "structural",
+      "truthValue": 71,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[72]",
+      "rule": "structural",
+      "truthValue": 72,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[73]",
+      "rule": "structural",
+      "truthValue": 73,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[74]",
+      "rule": "structural",
+      "truthValue": 74,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[75]",
+      "rule": "structural",
+      "truthValue": 75,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[76]",
+      "rule": "structural",
+      "truthValue": 76,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[77]",
+      "rule": "structural",
+      "truthValue": 77,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[78]",
+      "rule": "structural",
+      "truthValue": 78,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[79]",
+      "rule": "structural",
+      "truthValue": 79,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[80]",
+      "rule": "structural",
+      "truthValue": 80,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[81]",
+      "rule": "structural",
+      "truthValue": 81,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[82]",
+      "rule": "structural",
+      "truthValue": 82,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[83]",
+      "rule": "structural",
+      "truthValue": 83,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[84]",
+      "rule": "structural",
+      "truthValue": 84,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[85]",
+      "rule": "structural",
+      "truthValue": 85,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[86]",
+      "rule": "structural",
+      "truthValue": 86,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[87]",
+      "rule": "structural",
+      "truthValue": 87,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[88]",
+      "rule": "structural",
+      "truthValue": 88,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[89]",
+      "rule": "structural",
+      "truthValue": 89,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[90]",
+      "rule": "structural",
+      "truthValue": 90,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[91]",
+      "rule": "structural",
+      "truthValue": 91,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[92]",
+      "rule": "structural",
+      "truthValue": 92,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[93]",
+      "rule": "structural",
+      "truthValue": 93,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[94]",
+      "rule": "structural",
+      "truthValue": 94,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[95]",
+      "rule": "structural",
+      "truthValue": 95,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[96]",
+      "rule": "structural",
+      "truthValue": 96,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[97]",
+      "rule": "structural",
+      "truthValue": 97,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[98]",
+      "rule": "structural",
+      "truthValue": 98,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[99]",
+      "rule": "structural",
+      "truthValue": 99,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[100]",
+      "rule": "structural",
+      "truthValue": 100,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[101]",
+      "rule": "structural",
+      "truthValue": 101,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[102]",
+      "rule": "structural",
+      "truthValue": 102,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[103]",
+      "rule": "structural",
+      "truthValue": 103,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[104]",
+      "rule": "structural",
+      "truthValue": 104,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[105]",
+      "rule": "structural",
+      "truthValue": 105,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[106]",
+      "rule": "structural",
+      "truthValue": 106,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[107]",
+      "rule": "structural",
+      "truthValue": 107,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[108]",
+      "rule": "structural",
+      "truthValue": 108,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[109]",
+      "rule": "structural",
+      "truthValue": 109,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[110]",
+      "rule": "structural",
+      "truthValue": 110,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[111]",
+      "rule": "structural",
+      "truthValue": 111,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[112]",
+      "rule": "structural",
+      "truthValue": 112,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[113]",
+      "rule": "structural",
+      "truthValue": 113,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[114]",
+      "rule": "structural",
+      "truthValue": 114,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[115]",
+      "rule": "structural",
+      "truthValue": 115,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[116]",
+      "rule": "structural",
+      "truthValue": 116,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[117]",
+      "rule": "structural",
+      "truthValue": 117,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[118]",
+      "rule": "structural",
+      "truthValue": 118,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[119]",
+      "rule": "structural",
+      "truthValue": 119,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[120]",
+      "rule": "structural",
+      "truthValue": 120,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[121]",
+      "rule": "structural",
+      "truthValue": 121,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[122]",
+      "rule": "structural",
+      "truthValue": 122,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[123]",
+      "rule": "structural",
+      "truthValue": 123,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[124]",
+      "rule": "structural",
+      "truthValue": 124,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[125]",
+      "rule": "structural",
+      "truthValue": 125,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[126]",
+      "rule": "structural",
+      "truthValue": 126,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[127]",
+      "rule": "structural",
+      "truthValue": 127,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[128]",
+      "rule": "structural",
+      "truthValue": 128,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[129]",
+      "rule": "structural",
+      "truthValue": 129,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[130]",
+      "rule": "structural",
+      "truthValue": 130,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[131]",
+      "rule": "structural",
+      "truthValue": 131,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[132]",
+      "rule": "structural",
+      "truthValue": 132,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[133]",
+      "rule": "structural",
+      "truthValue": 133,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[134]",
+      "rule": "structural",
+      "truthValue": 134,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[135]",
+      "rule": "structural",
+      "truthValue": 135,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[136]",
+      "rule": "structural",
+      "truthValue": 136,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[137]",
+      "rule": "structural",
+      "truthValue": 137,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[138]",
+      "rule": "structural",
+      "truthValue": 138,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.timestamps[139]",
+      "rule": "structural",
+      "truthValue": 139,
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.emotions.patience",
+      "rule": "structural",
+      "truthValue": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ],
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.emotions.boredom",
+      "rule": "structural",
+      "truthValue": [
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.emotions.excitement",
+      "rule": "structural",
+      "truthValue": [
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.6,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.7,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9
+      ],
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.smoothedEmotions",
+      "rule": "structural",
+      "truthValue": {
+        "patience": [
+          0.20000000000000004,
+          0.2,
+          0.2,
+          0.32,
+          0.44000000000000006,
+          0.5599999999999999,
+          0.68,
+          0.8,
+          0.72,
+          0.64,
+          0.5599999999999999,
+          0.48,
+          0.4,
+          0.45999999999999996,
+          0.52,
+          0.5800000000000001,
+          0.64,
+          0.7,
+          0.6799999999999999,
+          0.6599999999999999,
+          0.64,
+          0.62,
+          0.6,
+          0.5599999999999999,
+          0.5199999999999999,
+          0.48,
+          0.43999999999999995,
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.45999999999999996,
+          0.52,
+          0.5800000000000001,
+          0.64,
+          0.7,
+          0.72,
+          0.7399999999999999,
+          0.76,
+          0.7799999999999999,
+          0.8,
+          0.76,
+          0.7200000000000001,
+          0.68,
+          0.64,
+          0.6,
+          0.64,
+          0.6799999999999999,
+          0.72,
+          0.76,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.76,
+          0.7200000000000001,
+          0.68,
+          0.64,
+          0.6,
+          0.64,
+          0.6799999999999999,
+          0.72,
+          0.76,
+          0.8,
+          0.8200000000000001,
+          0.8400000000000001,
+          0.86,
+          0.8800000000000001,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.76,
+          0.7200000000000001,
+          0.68,
+          0.64,
+          0.6,
+          0.58,
+          0.5599999999999999,
+          0.54,
+          0.52,
+          0.5,
+          0.58,
+          0.6599999999999999,
+          0.74,
+          0.82,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.78,
+          0.7600000000000001,
+          0.74,
+          0.7200000000000001,
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          0.74,
+          0.7799999999999999,
+          0.82,
+          0.86,
+          0.9,
+          0.76,
+          0.6200000000000001,
+          0.4800000000000001,
+          0.33999999999999997,
+          0.2,
+          0.26,
+          0.32,
+          0.38,
+          0.44000000000000006,
+          0.5,
+          0.45999999999999996,
+          0.42000000000000004,
+          0.38,
+          0.34,
+          0.3,
+          0.4,
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          0.8,
+          0.8000000000000002
+        ],
+        "boredom": [
+          0.8000000000000002,
+          0.8,
+          0.8,
+          0.68,
+          0.5600000000000002,
+          0.44000000000000006,
+          0.31999999999999995,
+          0.2,
+          0.22000000000000003,
+          0.24000000000000005,
+          0.26,
+          0.28,
+          0.3,
+          0.27999999999999997,
+          0.25999999999999995,
+          0.24,
+          0.21999999999999997,
+          0.2,
+          0.24000000000000005,
+          0.27999999999999997,
+          0.32,
+          0.36,
+          0.4,
+          0.42000000000000004,
+          0.44000000000000006,
+          0.45999999999999996,
+          0.48,
+          0.5,
+          0.45999999999999996,
+          0.42000000000000004,
+          0.38,
+          0.34,
+          0.3,
+          0.3,
+          0.3,
+          0.3,
+          0.3,
+          0.3,
+          0.27999999999999997,
+          0.25999999999999995,
+          0.24,
+          0.21999999999999997,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.2,
+          0.22000000000000003,
+          0.24000000000000005,
+          0.26,
+          0.28,
+          0.3,
+          0.27999999999999997,
+          0.25999999999999995,
+          0.24,
+          0.21999999999999997,
+          0.2,
+          0.36,
+          0.52,
+          0.6799999999999999,
+          0.8400000000000001,
+          1,
+          0.8400000000000001,
+          0.68,
+          0.5200000000000001,
+          0.36,
+          0.2,
+          0.22000000000000003,
+          0.24000000000000005,
+          0.26,
+          0.28,
+          0.3,
+          0.36,
+          0.42000000000000004,
+          0.48,
+          0.54,
+          0.6,
+          0.6799999999999999,
+          0.76,
+          0.8400000000000001,
+          0.9199999999999999,
+          1,
+          0.8400000000000001,
+          0.68,
+          0.5200000000000001,
+          0.36,
+          0.2,
+          0.22000000000000003,
+          0.24000000000000005,
+          0.26,
+          0.28,
+          0.3,
+          0.27999999999999997,
+          0.25999999999999995,
+          0.24,
+          0.21999999999999997,
+          0.2,
+          0.36,
+          0.52,
+          0.6799999999999999,
+          0.8400000000000001,
+          1,
+          0.96,
+          0.9199999999999999,
+          0.8799999999999999,
+          0.8400000000000001,
+          0.8,
+          0.74,
+          0.68,
+          0.62,
+          0.5599999999999999,
+          0.5,
+          0.48,
+          0.45999999999999996,
+          0.43999999999999995,
+          0.42000000000000004,
+          0.4,
+          0.52,
+          0.64,
+          0.76,
+          0.8800000000000001,
+          1,
+          1,
+          1
+        ],
+        "excitement": [
+          0.4000000000000001,
+          0.4,
+          0.4,
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.8200000000000001,
+          0.8400000000000001,
+          0.86,
+          0.8800000000000001,
+          0.9,
+          0.86,
+          0.8200000000000001,
+          0.78,
+          0.74,
+          0.7,
+          0.6799999999999999,
+          0.6599999999999999,
+          0.64,
+          0.62,
+          0.6,
+          0.6199999999999999,
+          0.64,
+          0.6599999999999999,
+          0.6799999999999999,
+          0.7,
+          0.72,
+          0.7399999999999999,
+          0.76,
+          0.7799999999999999,
+          0.8,
+          0.8200000000000001,
+          0.8400000000000001,
+          0.86,
+          0.8800000000000001,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.8200000000000001,
+          0.8400000000000001,
+          0.86,
+          0.8800000000000001,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.8200000000000001,
+          0.8400000000000001,
+          0.86,
+          0.8800000000000001,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.74,
+          0.68,
+          0.62,
+          0.5599999999999999,
+          0.5,
+          0.58,
+          0.6599999999999999,
+          0.74,
+          0.82,
+          0.9,
+          0.8800000000000001,
+          0.86,
+          0.8400000000000001,
+          0.82,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8200000000000001,
+          0.8400000000000001,
+          0.86,
+          0.8800000000000001,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.9,
+          0.78,
+          0.6599999999999999,
+          0.5399999999999999,
+          0.42000000000000004,
+          0.3,
+          0.38,
+          0.45999999999999996,
+          0.5399999999999999,
+          0.6199999999999999,
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          0.7,
+          0.74,
+          0.7799999999999999,
+          0.82,
+          0.86,
+          0.9,
+          0.9,
+          0.9
+        ]
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "emotionalArc.windowSize",
+      "rule": "structural",
+      "truthValue": 5,
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[0]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 0,
+        "scrollRisk": 0.7000000000000001,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[1]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 1,
+        "scrollRisk": 0.7000000000000001,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[2]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 2,
+        "scrollRisk": 0.7000000000000001,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[3]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 3,
+        "scrollRisk": 0.7000000000000001,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[4]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 4,
+        "scrollRisk": 0.7000000000000001,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[5]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 5,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[6]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 6,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[7]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 7,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[8]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 8,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[9]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 9,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[10]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 10,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[11]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 11,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[12]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 12,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[13]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 13,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[14]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 14,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[15]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 15,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[16]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 16,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[17]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 17,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[18]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 18,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[19]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 19,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[20]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 20,
+        "scrollRisk": 0.45000000000000007,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[21]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 21,
+        "scrollRisk": 0.45000000000000007,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[22]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 22,
+        "scrollRisk": 0.45000000000000007,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[23]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 23,
+        "scrollRisk": 0.45000000000000007,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[24]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 24,
+        "scrollRisk": 0.45000000000000007,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[25]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 25,
+        "scrollRisk": 0.52,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[26]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 26,
+        "scrollRisk": 0.52,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[27]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 27,
+        "scrollRisk": 0.52,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[28]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 28,
+        "scrollRisk": 0.52,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[29]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 29,
+        "scrollRisk": 0.52,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[30]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 30,
+        "scrollRisk": 0.41000000000000003,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[31]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 31,
+        "scrollRisk": 0.41000000000000003,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[32]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 32,
+        "scrollRisk": 0.41000000000000003,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[33]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 33,
+        "scrollRisk": 0.41000000000000003,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[34]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 34,
+        "scrollRisk": 0.41000000000000003,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[35]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 35,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[36]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 36,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[37]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 37,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[38]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 38,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[39]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 39,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[40]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 40,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[41]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 41,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[42]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 42,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[43]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 43,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[44]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 44,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[45]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 45,
+        "scrollRisk": 0.34,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[46]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 46,
+        "scrollRisk": 0.34,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[47]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 47,
+        "scrollRisk": 0.34,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[48]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 48,
+        "scrollRisk": 0.34,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[49]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 49,
+        "scrollRisk": 0.34,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[50]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 50,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[51]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 51,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[52]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 52,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[53]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 53,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[54]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 54,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[55]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 55,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[56]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 56,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[57]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 57,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[58]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 58,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[59]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 59,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[60]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 60,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[61]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 61,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[62]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 62,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[63]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 63,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[64]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 64,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[65]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 65,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[66]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 66,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[67]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 67,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[68]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 68,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[69]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 69,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[70]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 70,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[71]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 71,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[72]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 72,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[73]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 73,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[74]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 74,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[75]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 75,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[76]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 76,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[77]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 77,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[78]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 78,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[79]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 79,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[80]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 80,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[81]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 81,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[82]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 82,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[83]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 83,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[84]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 84,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[85]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 85,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[86]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 86,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[87]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 87,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[88]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 88,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[89]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 89,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[90]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 90,
+        "scrollRisk": 0.59,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[91]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 91,
+        "scrollRisk": 0.59,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[92]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 92,
+        "scrollRisk": 0.59,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[93]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 93,
+        "scrollRisk": 0.59,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[94]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 94,
+        "scrollRisk": 0.59,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[95]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 95,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[96]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 96,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[97]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 97,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[98]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 98,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[99]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 99,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[100]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 100,
+        "scrollRisk": 0.34,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "patience"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[101]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 101,
+        "scrollRisk": 0.34,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "patience"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[102]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 102,
+        "scrollRisk": 0.34,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "patience"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[103]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 103,
+        "scrollRisk": 0.34,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "patience"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[104]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 104,
+        "scrollRisk": 0.34,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "patience"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[105]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 105,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[106]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 106,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[107]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 107,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[108]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 108,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[109]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 109,
+        "scrollRisk": 0.38,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[110]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 110,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[111]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 111,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[112]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 112,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[113]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 113,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[114]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 114,
+        "scrollRisk": 0.31,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[115]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 115,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[116]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 116,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[117]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 117,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[118]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 118,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[119]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 119,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[120]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 120,
+        "scrollRisk": 0.7300000000000001,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[121]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 121,
+        "scrollRisk": 0.7300000000000001,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[122]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 122,
+        "scrollRisk": 0.7300000000000001,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[123]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 123,
+        "scrollRisk": 0.7300000000000001,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[124]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 124,
+        "scrollRisk": 0.7300000000000001,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[125]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 125,
+        "scrollRisk": 0.49,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[126]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 126,
+        "scrollRisk": 0.49,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[127]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 127,
+        "scrollRisk": 0.49,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[128]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 128,
+        "scrollRisk": 0.49,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[129]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 129,
+        "scrollRisk": 0.49,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[130]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 130,
+        "scrollRisk": 0.45000000000000007,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[131]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 131,
+        "scrollRisk": 0.45000000000000007,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[132]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 132,
+        "scrollRisk": 0.45000000000000007,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[133]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 133,
+        "scrollRisk": 0.45000000000000007,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[134]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 134,
+        "scrollRisk": 0.45000000000000007,
+        "scrollRiskLevel": "medium",
+        "dominantEmotion": "excitement"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[135]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 135,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[136]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 136,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[137]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 137,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[138]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 138,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "scrollRiskTimeline[139]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 139,
+        "scrollRisk": 0.63,
+        "scrollRiskLevel": "high",
+        "dominantEmotion": "boredom"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[0]",
       "rule": "structural",
       "truthValue": {
         "timestamp": 75,
@@ -427,11 +4989,11 @@
         "severity": 0.75,
         "context": "boredom threshold crossed. Emotional state: patience: 90%, boredom: 100%, excitement: 90%"
       },
-      "reason": "Output array missing keyed item present in truth"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=115,emotion=boredom,type=threshold-high,chunkIndex=23]",
+      "path": "criticalMoments[1]",
       "rule": "structural",
       "truthValue": {
         "timestamp": 115,
@@ -444,11 +5006,11 @@
         "severity": 0.75,
         "context": "boredom threshold crossed. Emotional state: patience: 90%, boredom: 100%, excitement: 90%"
       },
-      "reason": "Output array missing keyed item present in truth"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=125,emotion=excitement,type=threshold-high,chunkIndex=25]",
+      "path": "criticalMoments[2]",
       "rule": "structural",
       "truthValue": {
         "timestamp": 125,
@@ -461,11 +5023,11 @@
         "severity": 0.7,
         "context": "excitement threshold crossed. Emotional state: patience: 50%, boredom: 50%, excitement: 70%"
       },
-      "reason": "Output array missing keyed item present in truth"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=80,emotion=boredom,type=threshold-low,chunkIndex=16]",
+      "path": "criticalMoments[3]",
       "rule": "structural",
       "truthValue": {
         "timestamp": 80,
@@ -478,11 +5040,11 @@
         "severity": 0.65,
         "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
       },
-      "reason": "Output array missing keyed item present in truth"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=100,emotion=boredom,type=threshold-low,chunkIndex=20]",
+      "path": "criticalMoments[4]",
       "rule": "structural",
       "truthValue": {
         "timestamp": 100,
@@ -495,11 +5057,11 @@
         "severity": 0.65,
         "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 80%"
       },
-      "reason": "Output array missing keyed item present in truth"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=5,emotion=excitement,type=threshold-high,chunkIndex=1]",
+      "path": "criticalMoments[5]",
       "rule": "structural",
       "truthValue": {
         "timestamp": 5,
@@ -512,11 +5074,28 @@
         "severity": 0.6499999999999999,
         "context": "excitement threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
       },
-      "reason": "Output array missing keyed item present in truth"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=120,emotion=excitement,type=threshold-low,chunkIndex=24]",
+      "path": "criticalMoments[6]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 135,
+        "emotion": "boredom",
+        "type": "threshold-high",
+        "score": 1,
+        "previousScore": 0.4,
+        "threshold": 0.7,
+        "chunkIndex": 27,
+        "severity": 0.6499999999999999,
+        "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 100%, excitement: 90%"
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[7]",
       "rule": "structural",
       "truthValue": {
         "timestamp": 120,
@@ -529,11 +5108,11 @@
         "severity": 0.6000000000000001,
         "context": "excitement threshold crossed. Emotional state: patience: 20%, boredom: 80%, excitement: 30%"
       },
-      "reason": "Output array missing keyed item present in truth"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=95,emotion=excitement,type=threshold-high,chunkIndex=19]",
+      "path": "criticalMoments[8]",
       "rule": "structural",
       "truthValue": {
         "timestamp": 95,
@@ -546,11 +5125,11 @@
         "severity": 0.6,
         "context": "excitement threshold crossed. Emotional state: patience: 90%, boredom: 100%, excitement: 90%"
       },
-      "reason": "Output array missing keyed item present in truth"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=5,emotion=boredom,type=threshold-low,chunkIndex=1]",
+      "path": "criticalMoments[9]",
       "rule": "structural",
       "truthValue": {
         "timestamp": 5,
@@ -563,11 +5142,11 @@
         "severity": 0.55,
         "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
       },
-      "reason": "Output array missing keyed item present in truth"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=30,emotion=excitement,type=threshold-high,chunkIndex=6]",
+      "path": "criticalMoments[10]",
       "rule": "structural",
       "truthValue": {
         "timestamp": 30,
@@ -580,11 +5159,11 @@
         "severity": 0.55,
         "context": "excitement threshold crossed. Emotional state: patience: 40%, boredom: 30%, excitement: 70%"
       },
-      "reason": "Output array missing keyed item present in truth"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=95,emotion=boredom,type=threshold-high,chunkIndex=19]",
+      "path": "criticalMoments[11]",
       "rule": "structural",
       "truthValue": {
         "timestamp": 95,
@@ -597,11 +5176,11 @@
         "severity": 0.55,
         "context": "boredom threshold crossed. Emotional state: patience: 90%, boredom: 100%, excitement: 90%"
       },
-      "reason": "Output array missing keyed item present in truth"
+      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=30,emotion=boredom,type=threshold-low,chunkIndex=6]",
+      "path": "criticalMoments[12]",
       "rule": "structural",
       "truthValue": {
         "timestamp": 30,
@@ -614,8 +5193,8 @@
         "severity": 0.4,
         "context": "boredom threshold crossed. Emotional state: patience: 40%, boredom: 30%, excitement: 70%"
       },
-      "reason": "Output array missing keyed item present in truth"
+      "reason": "Output array missing item present in truth"
     }
   ],
-  "summary": "0/7 artifacts passed. 1672/2916 scoreable fields passed. Truth coverage was 2916/3000 fields."
+  "summary": "0/6 artifacts passed. 104/400 scoreable fields passed. Truth coverage was 400/804 fields."
 }

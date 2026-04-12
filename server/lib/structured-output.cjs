@@ -108,12 +108,20 @@ function validateAcousticDescriptors(input, errors, path) {
   return input.map((entry, index) => {
     const itemPath = `${path}[${index}]`;
     if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
-      pushError(errors, itemPath, 'invalid_type', 'acoustic_descriptors entries must be objects.');
+      pushError(errors, itemPath, 'invalid_type', 'acoustic_descriptors entries must be objects with a non-empty label.');
       return null;
     }
 
+    if (Object.prototype.hasOwnProperty.call(entry, 'descriptor')) {
+      pushError(errors, `${itemPath}.descriptor`, 'invalid_key', 'Use acoustic_descriptors[*].label; descriptor is not allowed.');
+    }
+
+    if (Object.prototype.hasOwnProperty.call(entry, 'value')) {
+      pushError(errors, `${itemPath}.value`, 'invalid_key', 'Use acoustic_descriptors[*].label; value is not allowed.');
+    }
+
     return {
-      label: validateNonEmptyString(entry.label ?? entry.descriptor, `${itemPath}.label`, 'acoustic descriptor label', errors),
+      label: validateNonEmptyString(entry.label, `${itemPath}.label`, 'acoustic descriptor label', errors),
       confidence: validateOptionalFiniteNumber(entry.confidence, `${itemPath}.confidence`, 'acoustic descriptor confidence', errors, { min: 0, max: 1 })
     };
   }).filter(Boolean);
@@ -188,8 +196,16 @@ function validateGroundedSpeakerProfile(input, errors, path = '$.grounded') {
     }).filter((value) => value !== null).map((value) => Math.trunc(value));
   }
 
+  const acousticDescriptorInput = Object.prototype.hasOwnProperty.call(input, 'acoustic_descriptors')
+    ? input.acoustic_descriptors
+    : undefined;
+
+  if (Object.prototype.hasOwnProperty.call(input, 'acousticDescriptors')) {
+    pushError(errors, `${path}.acousticDescriptors`, 'invalid_key', 'Use grounded.acoustic_descriptors (snake_case) only; acousticDescriptors is not allowed.');
+  }
+
   const acoustic_descriptors = validateAcousticDescriptors(
-    input.acoustic_descriptors ?? input.acousticDescriptors,
+    acousticDescriptorInput,
     errors,
     `${path}.acoustic_descriptors`
   );

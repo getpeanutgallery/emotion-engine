@@ -4,52 +4,60 @@
       "start": 0,
       "end": 35,
       "type": "music",
-      "description": "Opening with restrained percussion and tense score bed, spoken dialogue overlay present",
+      "description": "Opening with tense dialogue over a restrained score bed, building anticipation",
       "mood": "tense",
-      "intensity": 5
+      "intensity": 6
     },
     {
       "start": 35,
       "end": 58,
       "type": "music",
-      "description": "Score builds with rising intensity and continued dialogue overlay, action SFX emerging",
+      "description": "Music intensifies with rising percussion and guitar riffs, supporting spoken overlays",
       "mood": "building",
-      "intensity": 6
-    },
-    {
-      "start": 58,
-      "end": 86,
-      "type": "music",
-      "description": "Heavier instrumental score with increased percussion and dialogue, leading to vocal cue",
-      "mood": "intense",
       "intensity": 7
     },
     {
-      "start": 86,
-      "end": 110,
+      "start": 58,
+      "end": 65,
       "type": "music",
-      "description": "Music with audible vocal cues and lyrical hook, spoken overlay continues, high-energy action",
+      "description": "Rock vocal entry with aggressive undertones, marking a shift in energy",
       "mood": "aggressive",
       "intensity": 8
     },
     {
-      "start": 110,
-      "end": 126,
+      "start": 65,
+      "end": 76,
       "type": "music",
-      "description": "Climactic music with vocals and dense action SFX, score remains dominant bed",
-      "mood": "climactic",
+      "description": "Continued score with dialogue overlay, maintaining tension and momentum",
+      "mood": "tense",
+      "intensity": 7
+    },
+    {
+      "start": 76,
+      "end": 98,
+      "type": "music",
+      "description": "Prominent heavy metal section with text-bearing vocal cues and driving rhythm",
+      "mood": "high-energy",
       "intensity": 9
     },
     {
-      "start": 126,
+      "start": 98,
+      "end": 120,
+      "type": "music",
+      "description": "Action sequence with music and sound effects blend, creating a chaotic atmosphere",
+      "mood": "chaotic",
+      "intensity": 8
+    },
+    {
+      "start": 120,
       "end": 140,
       "type": "music",
-      "description": "Final vocal phrase and music fade with trailer call to action, intensity drops",
-      "mood": "resolved",
-      "intensity": 7
+      "description": "Concluding music with promotional elements, fading out with a sense of resolution",
+      "mood": "conclusive",
+      "intensity": 5
     }
   ],
-  "summary": "A high-energy trailer combining intense dialogue, action sound effects, and heavy metal music, building from a tense opening to a climactic peak with vocal cues from a recognizable song.",
+  "summary": "An intense trailer featuring tense dialogue, building to heavy metal music with prominent vocal hooks, action-packed sequences, and a promotional ending, spanning 140 seconds with a dynamic audio arc.",
   "hasMusic": true,
   "analysisMode": "whole_asset",
   "timingMode": "full_timeline",
@@ -61,18 +69,13 @@
     "complete": true
   },
   "globalArc": {
-    "dominantMood": "intense",
-    "energyCurve": "rising_then_peak_then_fall",
+    "dominantMood": "energetic",
+    "energyCurve": "rising_then_plateau_then_drop",
     "notableTransitions": [
       {
-        "start": 86,
-        "end": 90,
-        "label": "vocal entry with lyrical hook"
-      },
-      {
-        "start": 126,
-        "end": 130,
-        "label": "final vocal phrase and music fade"
+        "start": 58,
+        "end": 65,
+        "label": "rock vocal entry"
       }
     ]
   },
@@ -92,39 +95,36 @@
   },
   "recognizedSong": {
     "status": "possible",
-    "confidence": 0.7,
+    "confidence": 0.64,
     "candidates": [
       {
         "title": "Master of Puppets",
         "artist": "Metallica",
-        "confidence": 0.7,
+        "confidence": 0.64,
         "evidence": [
-          "Distinctive thrash-metal instrumental hook and repeated vocal phrases audible in the music lane."
+          "Distinctive thrash-metal hook and repeated master chant in the music lane."
         ],
         "matchedLyrics": [
-          "Master, master",
-          "I'll paint your master"
+          "Master, master"
         ],
         "timeRanges": [
           {
-            "start": 86,
-            "end": 126
+            "start": 76,
+            "end": 98
           }
         ],
-        "ambiguity": "Trailer dialogue and action SFX partially mask the cue, reducing full lyrical clarity."
+        "ambiguity": "Trailer dialogue and SFX partially mask the cue."
       }
     ],
-    "primaryEvidence": "A likely famous-song hook with recognizable lyrics and musical style is present, but recognition remains evidence-gated due to masking.",
-    "ambiguity": "Partial masking by spoken dialogue and sound effects reduces certainty.",
+    "primaryEvidence": "A likely famous-song hook is present, but recognition remains evidence-gated.",
+    "ambiguity": "Partial masking reduces certainty.",
     "multipleSongsDetected": false
   },
   "recognitionNotes": [
-    "Vocal cues are intermittent and overlaid with dialogue; instrumental resemblance supports possible identification.",
-    "No clear evidence of multiple distinct songs; focus on one dominant musical theme."
+    "Music is interwoven with dialogue and sound effects, affecting clarity and recognition confidence."
   ],
   "qualityNotes": [
     "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-    "Confidence is moderate due to audio masking; timing precision is approximate based on transcript cues.",
-    "Continuity is maintained with a consistent score bed throughout, despite spoken overlays."
+    "Segment boundaries are estimated based on audio cues; intensity ratings are subjective and coarse."
   ]
 }

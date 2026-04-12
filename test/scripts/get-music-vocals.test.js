@@ -304,6 +304,140 @@ test('Get Music Vocals Script', async (t) => {
     ok(completionPrompts[0].includes('recognizedSong is optional.'));
   });
 
+  await t.test('auto mode upgrades lyric-bearing music context to hybrid so chunk refinement backstops whole-asset recall', async () => {
+    completeImplementation = async (options) => {
+      const prompt = String(options?.prompt || '');
+      completionPrompts.push(prompt);
+      completionOptions.push(options || {});
+
+      if (prompt.includes('Analyze the complete extracted audio track')) {
+        return {
+          content: JSON.stringify({
+            vocalSummary: 'The hook enters and repeats later in the trailer.',
+            vocal_segments: [
+              {
+                start: 12,
+                end: 15,
+                text: 'Master, master',
+                confidence: 0.9,
+                performer: 'Metallica lead vocal',
+                performer_id: 'voc_001',
+                delivery: 'chant'
+              }
+            ],
+            recognizedSong: {
+              status: 'recognized',
+              confidence: 0.95,
+              candidates: [
+                {
+                  title: 'Master of Puppets',
+                  artist: 'Metallica',
+                  confidence: 0.95,
+                  evidence: ['Literal hook fragment is clearly audible.'],
+                  matchedLyrics: ['Master, master']
+                }
+              ],
+              primaryEvidence: 'A literal hook fragment strongly grounds the song identity.',
+              multipleSongsDetected: false
+            },
+            qualityNotes: ['Whole-asset pass found the early hook but may miss later brief reprises without chunk review.']
+          }),
+          usage: { input: 120, output: 80 }
+        };
+      }
+
+      return {
+        content: JSON.stringify({
+          rollingSummary: 'The chant hook appears and later returns in a brief reprise.',
+          vocalSummary: 'The chunk confirms the hook and a later brief return.',
+          vocal_segments: [
+            {
+              start: 2,
+              end: 5,
+              text: 'Master, master',
+              confidence: 0.92,
+              performer: 'Metallica lead vocal',
+              performer_id: 'voc_001',
+              delivery: 'chant'
+            },
+            {
+              start: 18,
+              end: 20,
+              text: 'Obey your master',
+              confidence: 0.88,
+              performer: 'Metallica lead vocal',
+              performer_id: 'voc_001',
+              delivery: 'chant'
+            }
+          ],
+          recognizedSong: {
+            status: 'recognized',
+            confidence: 0.95,
+            candidates: [
+              {
+                title: 'Master of Puppets',
+                artist: 'Metallica',
+                confidence: 0.95,
+                evidence: ['Chunk-local lyric fragments align with the known refrain.'],
+                matchedLyrics: ['Master, master', 'Obey your master']
+              }
+            ],
+            primaryEvidence: 'Chunk-local lyric fragments confirm the refrain.',
+            multipleSongsDetected: false
+          },
+          qualityNotes: ['Chunk refinement preserved a brief later reprise that a single whole-asset pass could under-report.']
+        }),
+        usage: { input: 120, output: 90 }
+      };
+    };
+
+    const result = await getMusicVocalsScript.run({
+      assetPath: '/path/to/test-video.mp4',
+      outputDir: testOutputDir,
+      artifacts: {
+        musicData: {
+          summary: 'Heavy metal song entry with audible lyrics and later chant returns.',
+          recognizedSong: {
+            status: 'possible',
+            confidence: 0.8,
+            candidates: [
+              {
+                title: 'Master of Puppets',
+                artist: 'Metallica',
+                confidence: 0.8,
+                evidence: ['The heard hook suggests one likely song.'],
+                matchedLyrics: ['Master, master']
+              }
+            ],
+            primaryEvidence: 'Short lyric fragments suggest one likely song.',
+            multipleSongsDetected: false
+          },
+          globalArc: {
+            dominantMood: 'aggressive',
+            notableTransitions: [
+              { start: 12, end: 20, label: 'song entry with audible lyrics' }
+            ]
+          }
+        }
+      },
+      config: makeMusicVocalsConfig({
+        phase1Music: {
+          mode: 'auto',
+          analysis_window_seconds: 30,
+          max_whole_asset_duration_seconds: 180
+        }
+      })
+    });
+
+    is(result.artifacts.musicVocalsData.analysisMode, 'hybrid');
+    is(result.artifacts.musicVocalsData.provenance.autoSelectedHybridForLyricCueCoverage, true);
+    is(result.artifacts.musicVocalsData.vocal_segments.length, 2);
+    is(completionPrompts.length, 2);
+    ok(completionPrompts[0].includes('Analyze the complete extracted audio track'));
+    ok(completionPrompts[1].includes('Whole-asset vocals continuity context:'));
+    ok(completionPrompts[1].includes('Expected lyric-bearing moments in or touching this chunk:'));
+  });
+
   await t.test('captures raw AI and ffmpeg artifacts with tool-loop parity', async () => {
     await getMusicVocalsScript.run({
       assetPath: '/path/to/test-video.mp4',

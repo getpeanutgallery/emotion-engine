@@ -122,6 +122,19 @@ function parseFiniteNumber(value) {
   return Number.isFinite(numeric) ? numeric : null;
 }
 
+function sameSongCandidate(left, right) {
+  if (!left || !right) return false;
+  const leftTitle = normalizeText(left.title);
+  const rightTitle = normalizeText(right.title);
+  if (!leftTitle || !rightTitle || leftTitle !== rightTitle) return false;
+
+  const leftArtist = normalizeText(left.artist);
+  const rightArtist = normalizeText(right.artist);
+  if (leftArtist && rightArtist) return leftArtist === rightArtist;
+
+  return true;
+}
+
 function getSegmentOrderIndex(segment, fallbackIndex = 0) {
   const explicitIndex = parseFiniteNumber(segment?.index);
   if (Number.isFinite(explicitIndex)) return explicitIndex;
@@ -457,9 +470,19 @@ function buildRecognitionGate(musicVocalsData, musicData, dialogueData) {
 
   const hasSupportingMusicConsensus = (() => {
     if (!supportingMusicRecognizedSong) return true;
-    if (supportingMusicRecognizedSong.status !== 'recognized') return false;
+
     const supportConfidence = Number(supportingMusicRecognizedSong.confidence);
-    return Number.isFinite(supportConfidence) ? supportConfidence >= 0.7 : true;
+    const supportConfidenceStrongEnough = Number.isFinite(supportConfidence) ? supportConfidence >= 0.7 : true;
+    if (!supportConfidenceStrongEnough) return false;
+
+    if (supportingMusicRecognizedSong.status === 'recognized') return true;
+
+    if (supportingMusicRecognizedSong.status !== 'possible') return false;
+
+    const supportCandidates = Array.isArray(supportingMusicRecognizedSong.candidates)
+      ? supportingMusicRecognizedSong.candidates
+      : [];
+    return supportCandidates.some((candidate) => sameSongCandidate(candidate, primaryCandidate));
   })();
 
   const hasStrongDialogueVocalsEvidence =
@@ -732,7 +755,8 @@ module.exports = {
     hasStrongPhraseAnchor,
     withinNearMissTokenDelta,
     assessTruncationRisk,
-    classifyLyricCorrection
+    classifyLyricCorrection,
+    sameSongCandidate
   }
 };
 

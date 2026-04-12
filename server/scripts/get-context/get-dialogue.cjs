@@ -1051,13 +1051,14 @@ async function run(input) {
       const tail = normalizedSegments.slice(Math.max(0, normalizedSegments.length - 2));
       if (lines.length > 0) {
         lines.push('');
-        lines.push('Voice separation reminders:');
-        lines.push('- speaker_id continuity is acoustic, not semantic. A speaker naming another person is not evidence they are that person.');
-        lines.push('- Before reusing any prior speaker_id, compare the audible match across vocal timbre, age impression, gender presentation, accent/dialect impression, delivery mode, and recording texture. If those cues do not clearly line up, create a new speaker_id.');
-        lines.push('- Do not merge narration/figurehead VO, antagonist taunts, female radio/comms, gruff soldier responses, and promo-announcer copy unless the voice itself clearly matches.');
-        lines.push('- Default official/public-address/newsreel/expository narration to a distinct speaker_id from villain threats unless the acoustic match is very strong.');
-        lines.push('- If delivery shifts from direct character/threat speech into official public-address, newsreel, briefing, or expository narration, prefer a new speaker_id unless the exact same voice clearly continues.');
-        lines.push('- If this chunk creates a new official/public-address/newsreel/expository speaker_id, keep the immediately adjacent follow-on official line on that same speaker_id unless strong acoustic evidence indicates another change.');
+        lines.push('Voice separation reminders (priority order):');
+        lines.push('- Default to continuity: speaker_id identity is acoustic, not semantic. Reuse the current speaker_id unless there is clear acoustic contradiction.');
+        lines.push('- A single cue is never enough to mint a new speaker_id.');
+        lines.push('- Create a new speaker_id only when at least TWO stable acoustic signals disagree with the current voice profile (core timbre/phonation quality, persistent accent/dialect impression, sustained delivery profile).');
+        lines.push('- Fragile cues are split-insufficient on their own: intensity/energy shifts, pacing changes, microphone distance changes, channel/FX texture, role/style label shifts, or uncertain age/gender impression changes.');
+        lines.push('- If evidence is mixed or weak, keep the existing speaker_id and lower confidence. Preserve uncertainty in grounded descriptors/inferred traits.');
+        lines.push('- Minimize speaker-id proliferation. One-line speaker IDs are discouraged unless there is strong explicit acoustic contradiction.');
+        lines.push('- Anti-over-merge guardrail: if two or more stable acoustic signals consistently conflict with the current speaker across adjacent lines, split to a new speaker_id.');
         lines.push('- If adjacent words are one uninterrupted utterance from the same voice, keep them together instead of splitting them into artificial fragments.');
         lines.push('- The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in THIS chunk.');
         lines.push('- If the current chunk only contains one audible promo/narration line, return only that line; do not invent follow-up tactical chatter from prior chunks.');
@@ -1474,7 +1475,7 @@ async function run(input) {
               requireHandoff: true,
               finalArtifactRules: [
                 'Preserve chunk-local dialogue chronology using array order/index; include chunk-local start/end timestamps only when directly supportable from the audio.',
-                'Keep speaker labels and anonymous speaker_id values consistent with the prior handoff when possible.',
+                'Preserve prior speaker_id continuity by default; introduce a new speaker_id only when this chunk provides clear acoustic contradiction.',
                 'Keep grounded speaker identity separate from any inferred_traits guesswork.',
                 'Include intelligible dialogue and dialogue-like vocal material in this chunk when it plausibly functions as dialogue. Exclude purely instrumental or otherwise non-vocal sections.',
                 'Do not drop or trim intelligible words merely because musical score is present underneath, delivery has melodic contour, or a phrase might also resemble lyrics.',
@@ -2236,7 +2237,7 @@ Return JSON only with this shape:
       "grounded": {
         "confidence": 0.68,
         "linked_segment_indexes": [0],
-        "acoustic_descriptors": ["low raspy voice", "close-mic delivery"]
+        "acoustic_descriptors": [{ "label": "low raspy voice", "confidence": 0.62 }, { "label": "close-mic delivery", "confidence": 0.58 }]
       },
       "inferred_traits": {
         "traits": [
@@ -2279,13 +2280,15 @@ Damaged-speech rules:
 
 Speaker rules:
 - Speaker continuity is acoustic, not semantic.
-- Reuse a speaker_id only when the audible voice clearly matches.
+- For adjacent or near-adjacent lines, default to reusing the current speaker_id unless there is clear acoustic contradiction.
 - A named character, repeated topic, scene continuity, or conversational adjacency is not proof that two lines came from the same speaker.
-- Before reusing a speaker_id, compare voice quality, timbre, delivery mode, recording texture, apparent age range, gender presentation, and accent/dialect impression.
-- If those cues do not clearly line up, create a new speaker_id.
-- Keep materially different delivery modes separated unless the voice itself clearly matches.
-- Do not collapse narration, public-address speech, expository/briefing delivery, radio/comms chatter, villain speech, promo voiceover, or overlap-heavy blends into one speaker bucket unless the acoustic match is genuinely strong.
-- If identity is uncertain, keep the bucket anonymous and preserve the uncertainty in grounded descriptors and speculative traits rather than promoting a guess to fact.
+- A single cue is never enough to mint a new speaker_id.
+- Create a new speaker_id only when at least TWO stable acoustic signals disagree with the current voice profile.
+- Stable signals: core timbre/phonation quality, persistent accent/dialect impression, and sustained delivery profile across more than a fleeting phrase.
+- Do not split solely on fragile cues: intensity/energy shifts, pacing changes, microphone distance changes, channel/FX texture, role/style label shifts, or uncertain age/gender impression changes.
+- If identity evidence is mixed or weak, keep the existing speaker_id, lower confidence, and preserve uncertainty in grounded descriptors/speculative traits.
+- Minimize speaker-id proliferation: one-line speaker IDs are discouraged unless the line has strong explicit acoustic contradiction against nearby continuity.
+- Anti-over-merge guardrail: if two or more stable acoustic signals consistently conflict with the current speaker across adjacent lines, split to a new speaker_id.
 
 Confidence rules:
 - Use conservative confidence values.
@@ -2301,6 +2304,13 @@ Speaker profile rules:
 - grounded should contain cautious same-speaker evidence: anonymous continuity, linked_segment_indexes, and acoustically supported descriptors.
 - When supportable, include practical acoustic_descriptors that would help a later reviewer distinguish or reunify speakers, such as pitch range, raspiness/smoothness, breathiness, intensity, cadence, pacing, mic distance, recording texture, accent impression, age impression, or delivery mode.
 - Do not leave acoustic_descriptors empty just because the description is imperfect; include concise grounded descriptors when the audio gives real support.
+- acoustic_descriptors must be an array of objects.
+- Every acoustic_descriptors[*] entry must include a non-empty string label.
+- acoustic_descriptors[*].confidence is optional; when present it must be a number from 0.0 to 1.0.
+- Do not return plain strings in acoustic_descriptors.
+- Do not use alternate keys such as value, descriptor, or acousticDescriptors for grounded descriptors; use acoustic_descriptors entries with label only.
+- If no grounded descriptor is supportable, return exactly "acoustic_descriptors": [].
+- If validation mentions acoustic_descriptors shape, rewrite descriptors to objects like [{"label":"...","confidence":0.6}] (or [] when unsupported).
 ${inferredTraitsRules}
 - Use inferred_traits for clearly speculative impressions that may still help review, such as age range, gender presentation, role impression, or demeanor.
 - If a trait is only weakly supported, include it with a low confidence and a short note that makes the uncertainty explicit.
@@ -2485,7 +2495,7 @@ Return JSON only with this shape:
       "grounded": {
         "confidence": 0.68,
         "linked_segment_indexes": [0],
-        "acoustic_descriptors": ["low raspy voice", "close-mic delivery"]
+        "acoustic_descriptors": [{ "label": "low raspy voice", "confidence": 0.62 }, { "label": "close-mic delivery", "confidence": 0.58 }]
       },
       "inferred_traits": {
         "traits": [
@@ -2527,10 +2537,14 @@ Damaged-speech rules:
 
 Speaker rules:
 - Speaker continuity is acoustic, not semantic.
-- Treat the handoff speaker registry as continuity memory, but reuse a prior speaker_id only when the current voice clearly matches that prior acoustic profile.
-- If the voice sounds different from the prior registry entry, create a new speaker_id instead of forcing continuity.
-- Before reusing a prior speaker_id, compare voice quality, timbre, delivery mode, recording texture, apparent age range, gender presentation, and accent/dialect impression.
-- Do not merge narration, public-address speech, radio/comms chatter, villain speech, promo voiceover, or overlap-heavy blends unless the acoustic match is genuinely strong.
+- Treat the handoff speaker registry as continuity memory and default to reusing a prior speaker_id unless there is clear acoustic contradiction.
+- A single cue is never enough to mint a new speaker_id.
+- Create a new speaker_id only when at least TWO stable acoustic signals disagree with the current voice profile.
+- Stable signals: core timbre/phonation quality, persistent accent/dialect impression, and sustained delivery profile across more than a fleeting phrase.
+- Do not split solely on fragile cues: intensity/energy shifts, pacing changes, microphone distance changes, channel/FX texture, role/style label shifts, or uncertain age/gender impression changes.
+- If identity evidence is mixed or weak, keep the existing speaker_id, lower confidence, and preserve uncertainty in grounded descriptors/speculative traits.
+- Minimize speaker-id proliferation across chunks: one-line speaker IDs are discouraged unless there is strong explicit acoustic contradiction.
+- Anti-over-merge guardrail: if two or more stable acoustic signals consistently conflict with the current speaker across adjacent lines, split to a new speaker_id.
 - In opening montage conditions, prefer local chunk provenance over storyline continuity.
 
 Confidence and profile rules:
@@ -2540,6 +2554,13 @@ Confidence and profile rules:
 - grounded should contain cautious same-speaker evidence: anonymous continuity, linked_segment_indexes, and acoustically supported descriptors.
 - When supportable, include practical acoustic_descriptors that would help a later reviewer distinguish or reunify speakers, such as pitch range, raspiness/smoothness, breathiness, intensity, cadence, pacing, mic distance, recording texture, accent impression, age impression, or delivery mode.
 - Do not leave acoustic_descriptors empty just because the description is imperfect; include concise grounded descriptors when the audio gives real support.
+- acoustic_descriptors must be an array of objects.
+- Every acoustic_descriptors[*] entry must include a non-empty string label.
+- acoustic_descriptors[*].confidence is optional; when present it must be a number from 0.0 to 1.0.
+- Do not return plain strings in acoustic_descriptors.
+- Do not use alternate keys such as value, descriptor, or acousticDescriptors for grounded descriptors; use acoustic_descriptors entries with label only.
+- If no grounded descriptor is supportable, return exactly "acoustic_descriptors": [].
+- If validation mentions acoustic_descriptors shape, rewrite descriptors to objects like [{"label":"...","confidence":0.6}] (or [] when unsupported).
 ${inferredTraitsRules}
 - Use inferred_traits for clearly speculative impressions that may still help review, such as age range, gender presentation, role impression, or demeanor.
 - If a trait is only weakly supported, include it with a low confidence and a short note that makes the uncertainty explicit.

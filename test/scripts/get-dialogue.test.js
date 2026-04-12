@@ -1685,6 +1685,11 @@ test('Get Dialogue Script', async (t) => {
       ok(completionPrompts[0].includes('Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0.'));
       ok(completionPrompts[0].includes('When supportable, include practical acoustic_descriptors that would help a later reviewer distinguish or reunify speakers'));
       ok(completionPrompts[0].includes('Do not leave acoustic_descriptors empty just because the description is imperfect; include concise grounded descriptors when the audio gives real support.'));
+      ok(completionPrompts[0].includes('acoustic_descriptors must be an array of objects.'));
+      ok(completionPrompts[0].includes('Every acoustic_descriptors[*] entry must include a non-empty string label.'));
+      ok(completionPrompts[0].includes('Do not return plain strings in acoustic_descriptors.'));
+      ok(completionPrompts[0].includes('Do not use alternate keys such as value, descriptor, or acousticDescriptors for grounded descriptors; use acoustic_descriptors entries with label only.'));
+      ok(completionPrompts[0].includes('If validation mentions acoustic_descriptors shape, rewrite descriptors to objects like [{"label":"...","confidence":0.6}] (or [] when unsupported).'));
       ok(completionPrompts[0].includes('Use inferred_traits for clearly speculative impressions that may still help review, such as age range, gender presentation, role impression, or demeanor.'));
       ok(completionPrompts[0].includes('If a trait is only weakly supported, include it with a low confidence and a short note that makes the uncertainty explicit.'));
       ok(completionPrompts[0].includes('Speaker continuity is acoustic, not semantic'));

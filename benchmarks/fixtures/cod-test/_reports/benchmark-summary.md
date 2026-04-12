@@ -8,21 +8,20 @@
 
 ## Totals
 
-- Artifacts: 0/7 passed, 2 failed, 5 errored
-- Accuracy: 1672/2916 scoreable fields passed (57.3%)
-- Coverage: 2916/3000 truth fields scoreable (97.2%)
-- Skipped truth fields: 44
-- Ignored differences surfaced outside score: 51
+- Artifacts: 0/6 passed, 0 failed, 6 errored
+- Accuracy: 104/400 scoreable fields passed (26.0%)
+- Coverage: 400/804 truth fields scoreable (49.8%)
+- Skipped truth fields: 17
+- Ignored differences surfaced outside score: 83
 
 ## Artifacts
 
-- **dialogueData** — error; accuracy=21.5%, coverage=96.7%, ignoredDiffs=5
-- **musicData** — error; accuracy=31.4%, coverage=87.9%, ignoredDiffs=5
-- **musicVocalsData** — error; accuracy=43.0%, coverage=97.7%, ignoredDiffs=5
-- **recommendationData** — error; accuracy=15.0%, coverage=55.6%, ignoredDiffs=4
-- **chunkAnalysis** — fail; accuracy=64.4%, coverage=94.9%, ignoredDiffs=29
-- **metricsData** — fail; accuracy=57.1%, coverage=97.2%, ignoredDiffs=1
-- **emotionalAnalysisData** — error; accuracy=60.3%, coverage=98.9%, ignoredDiffs=2
+- **dialogueData** — error; accuracy=18.5%, coverage=93.7%, ignoredDiffs=43
+- **musicData** — error; accuracy=31.1%, coverage=84.9%, ignoredDiffs=5
+- **musicVocalsData** — error; accuracy=44.2%, coverage=80.5%, ignoredDiffs=29
+- **recommendationData** — error; accuracy=11.1%, coverage=50.0%, ignoredDiffs=4
+- **metricsData** — error; accuracy=37.5%, coverage=42.1%, ignoredDiffs=1
+- **emotionalAnalysisData** — error; accuracy=16.7%, coverage=3.5%, ignoredDiffs=1
 
-0/7 artifacts passed. 1672/2916 scoreable fields passed. Truth coverage was 2916/3000 fields.
+0/6 artifacts passed. 104/400 scoreable fields passed. Truth coverage was 400/804 fields.
 

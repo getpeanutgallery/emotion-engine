@@ -1,0 +1,972 @@
+{
+  "contractVersion": "ee.benchmark-report/v1",
+  "fixtureId": "cod-test",
+  "benchmark": {
+    "path": "tmp/task3-comparator-validation/before-head-fixture/benchmark.json"
+  },
+  "fixture": {
+    "path": "benchmarks/fixtures/cod-test/fixture.json"
+  },
+  "run": {
+    "configName": "COD Test Pipeline",
+    "outputDir": "output/cod-test"
+  },
+  "status": "error",
+  "artifacts": [
+    {
+      "artifactKey": "dialogueData",
+      "status": "error",
+      "accuracyRate": 0.359375,
+      "coverageRate": 0.909952606635071,
+      "ignoredDifferenceCount": 5
+    },
+    {
+      "artifactKey": "musicData",
+      "status": "error",
+      "accuracyRate": 0.34,
+      "coverageRate": 0.8771929824561403,
+      "ignoredDifferenceCount": 5
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "status": "error",
+      "accuracyRate": 0.5060240963855421,
+      "coverageRate": 0.9431818181818182,
+      "ignoredDifferenceCount": 5
+    },
+    {
+      "artifactKey": "recommendationData",
+      "status": "error",
+      "accuracyRate": 0.15789473684210525,
+      "coverageRate": 0.5277777777777778,
+      "ignoredDifferenceCount": 4
+    },
+    {
+      "artifactKey": "chunkAnalysis",
+      "status": "fail",
+      "accuracyRate": 0.6185185185185185,
+      "coverageRate": 0.9490333919156415,
+      "ignoredDifferenceCount": 29
+    },
+    {
+      "artifactKey": "metricsData",
+      "status": "fail",
+      "accuracyRate": 0.4857142857142857,
+      "coverageRate": 0.9722222222222222,
+      "ignoredDifferenceCount": 1
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "status": "error",
+      "accuracyRate": 0.5106277805239743,
+      "coverageRate": 0.9868292682926829,
+      "ignoredDifferenceCount": 4
+    }
+  ],
+  "totals": {
+    "artifactsTotal": 7,
+    "artifactsPassed": 0,
+    "artifactsFailed": 2,
+    "artifactsErrored": 5,
+    "totalTruthFields": 3047,
+    "scoreableFields": 2942,
+    "skippedFields": 46,
+    "passedFields": 1515,
+    "failedFields": 1427,
+    "erroredFields": 59,
+    "ignoredDifferenceFields": 53
+  },
+  "accuracy": {
+    "passed": 1515,
+    "failed": 1427,
+    "rate": 0.5149558123725357
+  },
+  "coverage": {
+    "scoreable": 2942,
+    "skipped": 46,
+    "ignoredDifferences": 53,
+    "totalTruthFields": 3047,
+    "rate": 0.9655398752871677
+  },
+  "errors": [
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[0].grounded.linked_segment_indexes[4]",
+      "rule": "structural",
+      "outputValue": 14,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[1]",
+      "rule": "structural",
+      "outputValue": {
+        "label": "threatening, authoritative delivery",
+        "confidence": 0.7
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[2]",
+      "rule": "structural",
+      "outputValue": {
+        "label": "threatening, forceful delivery",
+        "confidence": 0.85
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[0].grounded.acoustic_descriptors[3]",
+      "rule": "structural",
+      "outputValue": {
+        "label": "threatening delivery",
+        "confidence": 0.7
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[2]",
+      "rule": "structural",
+      "outputValue": 16,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[1].grounded.linked_segment_indexes[3]",
+      "rule": "structural",
+      "outputValue": 17,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[2].grounded.linked_segment_indexes[1]",
+      "rule": "structural",
+      "outputValue": 10,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[2].grounded.acoustic_descriptors[1]",
+      "rule": "structural",
+      "outputValue": {
+        "label": "emotional, distressed delivery",
+        "confidence": 0.8
+      },
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[3].grounded.linked_segment_indexes[3]",
+      "rule": "structural",
+      "outputValue": 13,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[4].grounded.linked_segment_indexes[1]",
+      "rule": "structural",
+      "outputValue": 9,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[4].grounded.linked_segment_indexes[2]",
+      "rule": "structural",
+      "outputValue": 15,
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[5]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_008",
+        "label": "Speaker 8",
+        "grounded": {
+          "confidence": 0.88,
+          "linked_segment_indexes": [
+            10,
+            11
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "younger male comms/radio voice",
+              "confidence": 0.86
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.76,
+              "note": "human review now effectively confirms the same younger male comms speaker across both lines; an African-American read is supported by the audible \"rahport\" pronunciation cue on \"report\", but that remains a read rather than hard fact"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[6]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_009",
+        "label": "Speaker 9",
+        "grounded": {
+          "confidence": 0.86,
+          "linked_segment_indexes": [
+            12
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "deeper squadmate voice, grounded in-scene delivery",
+              "confidence": 0.84
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.88,
+              "note": "human review read this as a deeper African-American male squadmate voice"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[7]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_010",
+        "label": "Speaker 10",
+        "grounded": {
+          "confidence": 0.86,
+          "linked_segment_indexes": [
+            13
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "angry, frustrated white male squadmate delivery",
+              "confidence": 0.84
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.88,
+              "note": "human review explicitly ruled out David"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[8]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_012",
+        "label": "Speaker 12",
+        "grounded": {
+          "confidence": 0.88,
+          "linked_segment_indexes": [
+            14
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "urgent adult squadmate command",
+              "confidence": 0.86
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "female",
+              "confidence": 0.82,
+              "note": "human review read an African-American female squadmate with tattoos"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[9]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_013",
+        "label": "Speaker 13",
+        "grounded": {
+          "confidence": 0.85,
+          "linked_segment_indexes": [
+            16
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "white male-sounding montage voice tied to Frank Woods visual imagery",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.86,
+              "note": "identity remains uncertain; do not collapse into Raul or David"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[10]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_014",
+        "label": "Speaker 14",
+        "grounded": {
+          "confidence": 0.85,
+          "linked_segment_indexes": [
+            9
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "older male voice with robotic/processed filter",
+              "confidence": 0.86
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.84,
+              "note": "antagonist-coded; possibly Raul Menendez but identity intentionally left uncertain"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[11]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_015",
+        "label": "Speaker 15",
+        "grounded": {
+          "confidence": 0.8,
+          "linked_segment_indexes": [
+            17
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "mixed overlapping voices with female-primary layer",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "ambiguous",
+              "confidence": 0.6,
+              "note": "male and female layers overlap; primary audible layer resembles Speaker 1"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "dialogueData",
+      "path": "speaker_profiles[12]",
+      "rule": "structural",
+      "truthValue": {
+        "speaker_id": "spk_016",
+        "label": "Speaker 16",
+        "grounded": {
+          "confidence": 0.88,
+          "linked_segment_indexes": [
+            19
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "white adult male sales/promo voiceover",
+              "confidence": 0.88
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "gender",
+              "value": "male",
+              "confidence": 0.9,
+              "note": "promo VO, distinct from scene dialogue and lyrics"
+            }
+          ]
+        }
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "musicData",
+      "path": "globalArc",
+      "rule": "structural",
+      "outputValue": {
+        "dominantMood": "energetic",
+        "energyCurve": "rising_then_plateau_then_drop",
+        "notableTransitions": [
+          {
+            "start": 76,
+            "end": 80,
+            "label": "thrash metal music entry"
+          }
+        ]
+      },
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicData",
+      "path": "qualityNotes",
+      "rule": "structural",
+      "outputValue": [
+        "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
+        "Timing estimates are approximate based on transcript flow; segments are coarse and non-lexical."
+      ],
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "artifactKey": "musicData",
+      "path": "recognizedSong.candidates[0].evidence[1]",
+      "rule": "structural",
+      "truthValue": "The later sung refrain strongly aligns with the same well-known song.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "musicData",
+      "path": "recognizedSong.candidates[0].matchedLyrics[1]",
+      "rule": "structural",
+      "outputValue": "Master",
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "musicData",
+      "path": "recognizedSong.candidates[0].timeRanges[1]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 116,
+        "end": 118
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "musicData",
+      "path": "recognizedSong.candidates[0].timeRanges[2]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 127,
+        "end": 130
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "musicData",
+      "path": "recognitionNotes[1]",
+      "rule": "structural",
+      "truthValue": "Spoken dialogue over score must not be treated as lyric evidence for song recognition.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "recognizedSong.candidates[0].evidence[1]",
+      "rule": "structural",
+      "truthValue": "The surrounding sung lines align with the same famous metal song chorus/verse sequence.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "recognizedSong.candidates[0].matchedLyrics[3]",
+      "rule": "structural",
+      "outputValue": "Master, master",
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "recognizedSong.candidates[0].timeRanges[2]",
+      "rule": "structural",
+      "truthValue": {
+        "start": 127,
+        "end": 130
+      },
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "recognitionNotes[1]",
+      "rule": "structural",
+      "truthValue": "The opening chant fragments are short, but later full lyric lines confirm the song identification.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "path": "qualityNotes[1]",
+      "rule": "structural",
+      "outputValue": "Timing estimates are approximate based on audio flow.",
+      "reason": "Truth array missing item present in output"
+    },
+    {
+      "artifactKey": "recommendationData",
+      "path": "keyFindings[5]",
+      "rule": "structural",
+      "truthValue": "The end-slate/pre-order stretch weakens the final emotional payoff and likely causes scroll-off before the CTA lands.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "recommendationData",
+      "path": "suggestions[7]",
+      "rule": "structural",
+      "truthValue": "Preserve the strongest high-retention run from roughly 40-80s as the pacing template: fast cuts, visual novelty, and clear escalation.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "recommendationData",
+      "path": "suggestions[8]",
+      "rule": "structural",
+      "truthValue": "Shorten the static pre-order/end-slate sequence and move key offer text over ongoing action if platform rules allow.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "recommendationData",
+      "path": "suggestions[9]",
+      "rule": "structural",
+      "truthValue": "End on a final high-adrenaline gameplay beat before the logo/CTA so the viewer exits on excitement, not fine print.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "recommendationData",
+      "path": "suggestions[10]",
+      "rule": "structural",
+      "truthValue": "If a CTA must remain, make it the shortest possible closing card after the franchise/title reveal rather than a prolonged information block.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=45,emotion=excitement,type=threshold-high,chunkIndex=9]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 45,
+        "emotion": "excitement",
+        "type": "threshold-high",
+        "score": 0.7,
+        "previousScore": 0.2,
+        "threshold": 0.7,
+        "chunkIndex": 9,
+        "severity": 0.75,
+        "context": "excitement threshold crossed. Emotional state: patience: 50%, boredom: 60%, excitement: 70%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=20,emotion=excitement,type=threshold-high,chunkIndex=4]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 20,
+        "emotion": "excitement",
+        "type": "threshold-high",
+        "score": 1,
+        "previousScore": 0.3,
+        "threshold": 0.7,
+        "chunkIndex": 4,
+        "severity": 0.7,
+        "context": "excitement threshold crossed. Emotional state: patience: 20%, boredom: 80%, excitement: 100%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=25,emotion=excitement,type=threshold-low,chunkIndex=5]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 25,
+        "emotion": "excitement",
+        "type": "threshold-low",
+        "score": 0.3,
+        "previousScore": 1,
+        "threshold": 0.3,
+        "chunkIndex": 5,
+        "severity": 0.65,
+        "context": "excitement threshold crossed. Emotional state: patience: 40%, boredom: 60%, excitement: 30%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=120,emotion=boredom,type=threshold-high,chunkIndex=24]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 120,
+        "emotion": "boredom",
+        "type": "threshold-high",
+        "score": 0.7,
+        "previousScore": 0.4,
+        "threshold": 0.7,
+        "chunkIndex": 24,
+        "severity": 0.6499999999999999,
+        "context": "boredom threshold crossed. Emotional state: patience: 40%, boredom: 70%, excitement: 20%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=20,emotion=boredom,type=threshold-high,chunkIndex=4]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 20,
+        "emotion": "boredom",
+        "type": "threshold-high",
+        "score": 0.8,
+        "previousScore": 0.6,
+        "threshold": 0.7,
+        "chunkIndex": 4,
+        "severity": 0.55,
+        "context": "boredom threshold crossed. Emotional state: patience: 20%, boredom: 80%, excitement: 100%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=65,emotion=boredom,type=threshold-high,chunkIndex=13]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 65,
+        "emotion": "boredom",
+        "type": "threshold-high",
+        "score": 0.7,
+        "previousScore": 0.6,
+        "threshold": 0.7,
+        "chunkIndex": 13,
+        "severity": 0.55,
+        "context": "boredom threshold crossed. Emotional state: patience: 60%, boredom: 70%, excitement: 40%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=75,emotion=excitement,type=threshold-high,chunkIndex=15]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 75,
+        "emotion": "excitement",
+        "type": "threshold-high",
+        "score": 0.8,
+        "previousScore": 0.6,
+        "threshold": 0.7,
+        "chunkIndex": 15,
+        "severity": 0.55,
+        "context": "excitement threshold crossed. Emotional state: patience: 60%, boredom: 20%, excitement: 80%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=130,emotion=boredom,type=threshold-high,chunkIndex=26]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 130,
+        "emotion": "boredom",
+        "type": "threshold-high",
+        "score": 0.8,
+        "previousScore": 0.6,
+        "threshold": 0.7,
+        "chunkIndex": 26,
+        "severity": 0.55,
+        "context": "boredom threshold crossed. Emotional state: patience: 30%, boredom: 80%, excitement: 20%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=50,emotion=excitement,type=threshold-low,chunkIndex=10]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 50,
+        "emotion": "excitement",
+        "type": "threshold-low",
+        "score": 0.3,
+        "previousScore": 0.7,
+        "threshold": 0.3,
+        "chunkIndex": 10,
+        "severity": 0.5,
+        "context": "excitement threshold crossed. Emotional state: patience: 40%, boredom: 60%, excitement: 30%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=35,emotion=boredom,type=threshold-low,chunkIndex=7]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 35,
+        "emotion": "boredom",
+        "type": "threshold-low",
+        "score": 0.3,
+        "previousScore": 0.6,
+        "threshold": 0.3,
+        "chunkIndex": 7,
+        "severity": 0.45000000000000007,
+        "context": "boredom threshold crossed. Emotional state: patience: 60%, boredom: 30%, excitement: 40%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=15,emotion=excitement,type=threshold-low,chunkIndex=3]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 15,
+        "emotion": "excitement",
+        "type": "threshold-low",
+        "score": 0.3,
+        "previousScore": 0.5,
+        "threshold": 0.3,
+        "chunkIndex": 3,
+        "severity": 0.4,
+        "context": "excitement threshold crossed. Emotional state: patience: 40%, boredom: 60%, excitement: 30%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=75,emotion=boredom,type=threshold-low,chunkIndex=15]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 75,
+        "emotion": "boredom",
+        "type": "threshold-low",
+        "score": 0.2,
+        "previousScore": 0.5,
+        "threshold": 0.3,
+        "chunkIndex": 15,
+        "severity": 0.4,
+        "context": "boredom threshold crossed. Emotional state: patience: 60%, boredom: 20%, excitement: 80%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=40,emotion=excitement,type=threshold-low,chunkIndex=8]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 40,
+        "emotion": "excitement",
+        "type": "threshold-low",
+        "score": 0.2,
+        "previousScore": 0.4,
+        "threshold": 0.3,
+        "chunkIndex": 8,
+        "severity": 0.35,
+        "context": "excitement threshold crossed. Emotional state: patience: 30%, boredom: 40%, excitement: 20%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=75,emotion=boredom,type=threshold-high,chunkIndex=15]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 75,
+        "emotion": "boredom",
+        "type": "threshold-high",
+        "score": 1,
+        "previousScore": 0.2,
+        "threshold": 0.7,
+        "chunkIndex": 15,
+        "severity": 0.75,
+        "context": "boredom threshold crossed. Emotional state: patience: 90%, boredom: 100%, excitement: 90%"
+      },
+      "reason": "Output array missing keyed item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=115,emotion=boredom,type=threshold-high,chunkIndex=23]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 115,
+        "emotion": "boredom",
+        "type": "threshold-high",
+        "score": 1,
+        "previousScore": 0.2,
+        "threshold": 0.7,
+        "chunkIndex": 23,
+        "severity": 0.75,
+        "context": "boredom threshold crossed. Emotional state: patience: 90%, boredom: 100%, excitement: 90%"
+      },
+      "reason": "Output array missing keyed item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=125,emotion=excitement,type=threshold-high,chunkIndex=25]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 125,
+        "emotion": "excitement",
+        "type": "threshold-high",
+        "score": 0.7,
+        "previousScore": 0.3,
+        "threshold": 0.7,
+        "chunkIndex": 25,
+        "severity": 0.7,
+        "context": "excitement threshold crossed. Emotional state: patience: 50%, boredom: 50%, excitement: 70%"
+      },
+      "reason": "Output array missing keyed item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=80,emotion=boredom,type=threshold-low,chunkIndex=16]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 80,
+        "emotion": "boredom",
+        "type": "threshold-low",
+        "score": 0.2,
+        "previousScore": 1,
+        "threshold": 0.3,
+        "chunkIndex": 16,
+        "severity": 0.65,
+        "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
+      },
+      "reason": "Output array missing keyed item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=100,emotion=boredom,type=threshold-low,chunkIndex=20]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 100,
+        "emotion": "boredom",
+        "type": "threshold-low",
+        "score": 0.2,
+        "previousScore": 1,
+        "threshold": 0.3,
+        "chunkIndex": 20,
+        "severity": 0.65,
+        "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 80%"
+      },
+      "reason": "Output array missing keyed item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=135,emotion=boredom,type=threshold-high,chunkIndex=27]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 135,
+        "emotion": "boredom",
+        "type": "threshold-high",
+        "score": 1,
+        "previousScore": 0.4,
+        "threshold": 0.7,
+        "chunkIndex": 27,
+        "severity": 0.6499999999999999,
+        "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 100%, excitement: 90%"
+      },
+      "reason": "Output array missing keyed item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=95,emotion=excitement,type=threshold-high,chunkIndex=19]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 95,
+        "emotion": "excitement",
+        "type": "threshold-high",
+        "score": 0.9,
+        "previousScore": 0.5,
+        "threshold": 0.7,
+        "chunkIndex": 19,
+        "severity": 0.6,
+        "context": "excitement threshold crossed. Emotional state: patience: 90%, boredom: 100%, excitement: 90%"
+      },
+      "reason": "Output array missing keyed item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=30,emotion=excitement,type=threshold-high,chunkIndex=6]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 30,
+        "emotion": "excitement",
+        "type": "threshold-high",
+        "score": 0.7,
+        "previousScore": 0.6,
+        "threshold": 0.7,
+        "chunkIndex": 6,
+        "severity": 0.55,
+        "context": "excitement threshold crossed. Emotional state: patience: 40%, boredom: 30%, excitement: 70%"
+      },
+      "reason": "Output array missing keyed item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=95,emotion=boredom,type=threshold-high,chunkIndex=19]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 95,
+        "emotion": "boredom",
+        "type": "threshold-high",
+        "score": 1,
+        "previousScore": 0.6,
+        "threshold": 0.7,
+        "chunkIndex": 19,
+        "severity": 0.55,
+        "context": "boredom threshold crossed. Emotional state: patience: 90%, boredom: 100%, excitement: 90%"
+      },
+      "reason": "Output array missing keyed item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=30,emotion=boredom,type=threshold-low,chunkIndex=6]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 30,
+        "emotion": "boredom",
+        "type": "threshold-low",
+        "score": 0.3,
+        "previousScore": 0.5,
+        "threshold": 0.3,
+        "chunkIndex": 6,
+        "severity": 0.4,
+        "context": "boredom threshold crossed. Emotional state: patience: 40%, boredom: 30%, excitement: 70%"
+      },
+      "reason": "Output array missing keyed item present in truth"
+    }
+  ],
+  "summary": "0/7 artifacts passed. 1515/2942 scoreable fields passed. Truth coverage was 2942/3047 fields."
+}

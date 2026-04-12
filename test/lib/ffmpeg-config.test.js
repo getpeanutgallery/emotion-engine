@@ -132,6 +132,39 @@ test('ffmpeg-config requires explicit bitrate for MP3 extraction', () => {
   assert.ok(errors.some((error) => error.includes('settings.ffmpeg.audio.bitrate')));
 });
 
+test('ffmpeg-config supports FLAC extraction without explicit bitrate', () => {
+  const config = makeConfig();
+  config.settings.ffmpeg.audio = {
+    loglevel: 'error',
+    codec: 'flac',
+    sample_rate_hz: 44100,
+    channels: 2,
+    container: 'flac'
+  };
+
+  assert.deepEqual(validateFfmpegSettings(config), []);
+
+  const args = buildAudioExtractArgs({
+    inputPath: '/tmp/input.mp4',
+    outputPath: '/tmp/audio.flac',
+    config,
+    disableVideo: true
+  });
+
+  assert.deepEqual(args, [
+    '-v', 'error',
+    '-i', '/tmp/input.mp4',
+    '-vn',
+    '-acodec', 'flac',
+    '-ar', '44100',
+    '-ac', '2',
+    '-y',
+    '/tmp/audio.flac'
+  ]);
+  assert.equal(getAudioOutputExtension(config), 'flac');
+  assert.equal(getAudioMimeType(config), 'audio/flac');
+});
+
 test('ffmpeg-config builds video compression args from YAML settings', () => {
   const config = makeConfig();
   const standardArgs = buildVideoCompressArgs({

@@ -1,0 +1,153 @@
+{
+  "generatedAt": "2026-04-03T00:16:10.425Z",
+  "fresh": {
+    "summaryPath": "tmp/openrouter-mimo-dialogue-benchmark/reports/benchmark-summary.json",
+    "artifactPath": "tmp/openrouter-mimo-dialogue-benchmark/reports/artifact-results/dialogueData.json",
+    "status": "error",
+    "accuracyRate": 0.3724696356275304,
+    "coverageRate": 0.8458904109589042,
+    "counts": {
+      "artifactsTotal": 1,
+      "artifactsPassed": 0,
+      "artifactsFailed": 0,
+      "artifactsErrored": 1,
+      "totalTruthFields": 292,
+      "scoreableFields": 247,
+      "skippedFields": 0,
+      "passedFields": 92,
+      "failedFields": 155,
+      "erroredFields": 45
+    }
+  },
+  "baseline": {
+    "summaryPath": "benchmarks/fixtures/cod-test/dialogue-only/_reports/benchmark-summary.json",
+    "artifactPath": "benchmarks/fixtures/cod-test/dialogue-only/_reports/artifact-results/dialogueData.json",
+    "status": "error",
+    "accuracyRate": 0.3565217391304348,
+    "coverageRate": 0.8550185873605948,
+    "counts": {
+      "artifactsTotal": 1,
+      "artifactsPassed": 0,
+      "artifactsFailed": 0,
+      "artifactsErrored": 1,
+      "totalTruthFields": 269,
+      "scoreableFields": 230,
+      "skippedFields": 0,
+      "passedFields": 82,
+      "failedFields": 148,
+      "erroredFields": 39
+    }
+  },
+  "delta": {
+    "accuracyRate": 0.015947896497095604,
+    "coverageRate": -0.009128176401690613,
+    "passedFields": 10,
+    "failedFields": 7,
+    "erroredFields": 6,
+    "scoreableFields": 17,
+    "totalTruthFields": 23
+  },
+  "buckets": {
+    "fresh": {
+      "rule": {
+        "structural": 62,
+        "exact": 52,
+        "fuzzy-string": 44,
+        "tolerant-time": 33,
+        "tolerant-number": 9
+      },
+      "topPath": {
+        "speaker_profiles": 98,
+        "dialogue_segments": 94,
+        "other": 5,
+        "cleanedTranscript": 1,
+        "handoffContext": 1,
+        "summary": 1
+      },
+      "special": {
+        "speaker_profile_linkage": 35,
+        "segment_timing": 33,
+        "segment_speaker_identity": 30,
+        "speaker_profile_traits": 22,
+        "speaker_profile_descriptors": 20,
+        "segment_text": 18,
+        "speaker_profile_identity": 16,
+        "missing_or_extra_segments": 10,
+        "other": 8,
+        "missing_or_extra_speaker_profiles": 3,
+        "cleanedTranscript": 1,
+        "handoffContext": 1,
+        "segment_count": 1,
+        "speaker_profile_count": 1,
+        "summary": 1
+      }
+    },
+    "baseline": {
+      "rule": {
+        "structural": 55,
+        "exact": 52,
+        "fuzzy-string": 39,
+        "tolerant-time": 38,
+        "tolerant-number": 3
+      },
+      "topPath": {
+        "dialogue_segments": 106,
+        "speaker_profiles": 78,
+        "cleanedTranscript": 1,
+        "handoffContext": 1,
+        "summary": 1
+      },
+      "special": {
+        "segment_timing": 38,
+        "segment_speaker_identity": 36,
+        "speaker_profile_linkage": 25,
+        "segment_text": 21,
+        "speaker_profile_traits": 19,
+        "speaker_profile_descriptors": 18,
+        "missing_or_extra_segments": 9,
+        "speaker_profile_identity": 8,
+        "missing_or_extra_speaker_profiles": 7,
+        "cleanedTranscript": 1,
+        "handoffContext": 1,
+        "other": 1,
+        "segment_count": 1,
+        "speaker_profile_count": 1,
+        "summary": 1
+      }
+    },
+    "delta": {
+      "rule": {
+        "structural": 7,
+        "tolerant-number": 6,
+        "fuzzy-string": 5,
+        "exact": 0,
+        "tolerant-time": -5
+      },
+      "topPath": {
+        "speaker_profiles": 20,
+        "other": 5,
+        "cleanedTranscript": 0,
+        "handoffContext": 0,
+        "summary": 0,
+        "dialogue_segments": -12
+      },
+      "special": {
+        "speaker_profile_linkage": 10,
+        "speaker_profile_identity": 8,
+        "other": 7,
+        "speaker_profile_traits": 3,
+        "speaker_profile_descriptors": 2,
+        "missing_or_extra_segments": 1,
+        "cleanedTranscript": 0,
+        "handoffContext": 0,
+        "segment_count": 0,
+        "speaker_profile_count": 0,
+        "summary": 0,
+        "segment_text": -3,
+        "missing_or_extra_speaker_profiles": -4,
+        "segment_timing": -5,
+        "segment_speaker_identity": -6
+      }
+    }
+  }
+}

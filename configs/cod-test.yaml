@@ -12,7 +12,7 @@ asset:
         source:
           path: examples/videos/emotion-tests/cod.mp4
         staged:
-          url: https://gambit-games-tests.s3.us-east-1.amazonaws.com/peanut-gallery/cod-720p-h264-mp3-optimized.mp4
+          url: https://gambit-games-tests.s3.us-east-1.amazonaws.com/peanut-gallery/cod.mp4
           urlType: public
         delivery:
           preferredMode: url
