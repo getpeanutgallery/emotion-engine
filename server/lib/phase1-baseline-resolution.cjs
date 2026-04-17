@@ -7,6 +7,7 @@ const RECONCILIATION_SCRIPT_BASENAME = 'reconcile-famous-song-phase1.cjs';
 
 const RAW_PHASE1_PATHS = Object.freeze({
   dialogueData: ['phase1-gather-context', 'dialogue-data.json'],
+  dialogueV3SourceTruth: ['phase1-gather-context', 'dialogue-v3-source-truth.json'],
   musicData: ['phase1-gather-context', 'music-data.json'],
   musicVocalsData: ['phase1-gather-context', 'music-vocals-data.json'],
   visualIdentityData: ['phase1-gather-context', 'visual-identity-data.json'],
@@ -15,12 +16,14 @@ const RAW_PHASE1_PATHS = Object.freeze({
 
 const RECONCILED_PHASE1_PATHS = Object.freeze({
   dialogueData: ['phase1-gather-context', 'dialogue-data.reconciled.json'],
+  dialogueV3SourceTruth: ['phase1-gather-context', 'dialogue-v3-source-truth.reconciled.json'],
   musicVocalsData: ['phase1-gather-context', 'music-vocals-data.reconciled.json'],
   famousSongReconciliation: ['phase1-gather-context', 'famous-song-reconciliation.json']
 });
 
 const RECONCILED_PHASE1_RUNTIME_KEYS = Object.freeze({
   dialogueData: 'dialogueDataReconciled',
+  dialogueV3SourceTruth: 'dialogueV3SourceTruthReconciled',
   musicVocalsData: 'musicVocalsDataReconciled',
   famousSongReconciliation: 'famousSongReconciliation'
 });

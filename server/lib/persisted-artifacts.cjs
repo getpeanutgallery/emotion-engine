@@ -29,6 +29,7 @@ const {
 
 const DEFAULT_LOCATIONS = {
   dialogueData: ['phase1-gather-context', 'dialogue-data.json'],
+  dialogueV3SourceTruth: ['phase1-gather-context', 'dialogue-v3-source-truth.json'],
   musicData: ['phase1-gather-context', 'music-data.json'],
   musicVocalsData: ['phase1-gather-context', 'music-vocals-data.json'],
   visualIdentityData: ['phase1-gather-context', 'visual-identity-data.json'],

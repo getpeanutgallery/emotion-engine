@@ -270,6 +270,29 @@ Bead `ee-7i76` then made the benchmark/reporting surface honest about that provi
 
 ---
 
+### Task 8b: Emit native persisted v3 per-line traits in the real runtime dialogue lane
+
+**Bead ID:** `ee-ud61`  
+**SubAgent:** `coder`  
+**References:** `REF-05`, `REF-10`, `REF-12`  
+**Prompt:** Implement native persisted v3 per-line trait emission in the real runtime dialogue lane so the first real cod-test speaker-grouping harness can consume production artifacts directly instead of synthesizing a minimal v3 envelope with `unknown` substantive traits. Keep the current raw-vs-reconciled posture intact, avoid regenerating gold truth, and add focused validation that the persisted runtime artifact is validator-compatible and carries the real per-line traits needed for grouping reuse decisions.
+
+**Folders Created/Deleted/Modified:**
+- `server/`
+- `test/`
+- `.plans/`
+
+**Files Created/Deleted/Modified:**
+- runtime dialogue emission / persistence code at repo-appropriate paths
+- focused tests at repo-appropriate paths
+- `.plans/2026-04-16-ee-gqnc-v3-traits-execution-plan.md`
+
+**Status:** ✅ Complete
+
+**Results:** Added a native runtime `dialogue-v3-source-truth` emitter, persisted raw + reconciled v3 dialogue artifacts beside the existing dialogue lane, extended canonical phase1/persisted-artifact resolution for the new artifact key, and switched the Task 8 harness to validate + consume the persisted runtime v3 artifact directly instead of synthesizing an all-`unknown` envelope. Focused validation passed via new emitter/get-dialogue/reconciliation/persistence tests, and a real `output/cod-test` rerun now reads `output/cod-test/phase1-gather-context/dialogue-v3-source-truth.reconciled.json` directly.
+
+---
+
 ### Task 9: Independent audit of implementation, evidence quality, and miss-cluster interpretation
 
 **Bead ID:** `ee-ns9e`  

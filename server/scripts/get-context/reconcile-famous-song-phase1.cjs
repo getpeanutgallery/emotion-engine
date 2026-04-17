@@ -8,6 +8,7 @@ const {
   getReconciledArtifactPath,
   resolvePhase1ArtifactPath
 } = require('../../lib/phase1-baseline-resolution.cjs');
+const { buildDialogueV3SourceTruth } = require('../../lib/dialogue-v3-source-truth-emitter.cjs');
 
 const SCRIPT_ID = 'reconcile-famous-song-phase1';
 const PHASE_DIR = 'phase1-gather-context';
@@ -708,6 +709,10 @@ async function run(input) {
   const strippedDialogueData = stripLaneTiming(dialogueResult.reconciledData, 'dialogue_segments');
   const strippedMusicVocalsData = stripLaneTiming(musicVocalsResult.reconciledData, 'vocal_segments');
 
+  const dialogueV3SourceTruthReconciled = buildDialogueV3SourceTruth(strippedDialogueData, {
+    summary: strippedDialogueData.summary
+  });
+
   const ledger = buildLedger({
     outputDir,
     gate,
@@ -722,10 +727,12 @@ async function run(input) {
   });
 
   const dialogueReconciledPath = getReconciledArtifactPath(outputDir, 'dialogueData');
+  const dialogueV3ReconciledPath = getReconciledArtifactPath(outputDir, 'dialogueV3SourceTruth');
   const musicVocalsReconciledPath = getReconciledArtifactPath(outputDir, 'musicVocalsData');
   const ledgerPath = getReconciledArtifactPath(outputDir, 'famousSongReconciliation');
 
   fs.writeFileSync(dialogueReconciledPath, JSON.stringify(strippedDialogueData, null, 2), 'utf8');
+  fs.writeFileSync(dialogueV3ReconciledPath, JSON.stringify(dialogueV3SourceTruthReconciled, null, 2), 'utf8');
   fs.writeFileSync(musicVocalsReconciledPath, JSON.stringify(strippedMusicVocalsData, null, 2), 'utf8');
   fs.writeFileSync(ledgerPath, JSON.stringify(ledger, null, 2), 'utf8');
 
@@ -736,6 +743,7 @@ async function run(input) {
       musicData: cloneJson(musicData),
       musicVocalsData: cloneJson(musicVocalsData),
       dialogueDataReconciled: strippedDialogueData,
+      dialogueV3SourceTruthReconciled,
       musicVocalsDataReconciled: strippedMusicVocalsData,
       famousSongReconciliation: ledger
     }

@@ -20,6 +20,7 @@ const ROOT = path.resolve(__dirname, '..', '..');
 const CONFIG_PATH = path.join(ROOT, 'configs/cod-test.yaml');
 const RULESET_PATH = path.join(ROOT, 'docs/2026-04-16-dialogue-traits-v3-speaker-grouping-heuristics-ruleset.yaml');
 const RUNTIME_DIALOGUE_PATH = path.join(ROOT, 'output/cod-test/phase1-gather-context/dialogue-data.reconciled.json');
+const RUNTIME_DIALOGUE_V3_PATH = path.join(ROOT, 'output/cod-test/phase1-gather-context/dialogue-v3-source-truth.reconciled.json');
 const RUNTIME_RECONCILIATION_LEDGER_PATH = path.join(ROOT, 'output/cod-test/phase1-gather-context/famous-song-reconciliation.json');
 const TRUTH_GROUPING_PATH = path.join(ROOT, 'benchmarks/fixtures/cod-test/truth/speaker-grouping.json');
 const ARTIFACTS_COMPLETE_PATH = path.join(ROOT, 'output/cod-test/artifacts-complete.json');
@@ -54,43 +55,6 @@ function safeGit(command, fallback = null) {
   } catch {
     return fallback;
   }
-}
-
-function buildUnknownTraits() {
-  return {
-    audibility: 'unknown',
-    overlap: 'unknown',
-    gender_presentation: 'unknown',
-    age_impression: 'unknown',
-    pitch_band: 'unknown',
-    phonation: 'unknown',
-    pace: 'unknown',
-    energy: 'unknown',
-    transmission_medium: 'unknown',
-    spatial_texture: 'unknown',
-    accent_strength: 'unknown',
-    accent_family: 'unknown',
-    affect: 'unknown',
-    interpersonal_stance: 'unknown',
-    delivery_overlay: 'none_apparent'
-  };
-}
-
-function buildV3SourceTruth(dialogueData) {
-  return {
-    schema_version: 1,
-    contract: {
-      artifact: 'dialogue-data',
-      mode: 'traits',
-      traits_contract_version: '3.0.0'
-    },
-    summary: dialogueData.summary || 'Converted from runtime reconciled cod-test dialogue artifact for task 8 grouping QA.',
-    dialogue_segments: (dialogueData.dialogue_segments || []).map((segment, idx) => ({
-      index: Number.isInteger(segment.index) ? segment.index : idx,
-      text: String(segment.text || '').trim(),
-      traits: buildUnknownTraits()
-    }))
-  };
 }
 
 function classifyMismatches(comparator, truthGrouping) {
@@ -138,6 +102,7 @@ function classifyMismatches(comparator, truthGrouping) {
 
 function main() {
   const runtimeDialogue = readJson(RUNTIME_DIALOGUE_PATH);
+  const runtimeDialogueV3 = readJson(RUNTIME_DIALOGUE_V3_PATH);
   const truthGrouping = readJson(TRUTH_GROUPING_PATH);
   const rulesetResult = loadDialogueV3HeuristicsRulesetFromFile(RULESET_PATH);
   if (!rulesetResult.ok) {
@@ -152,10 +117,9 @@ function main() {
   const wholeVideoResult = readJson(WHOLE_VIDEO_RESULT_PATH);
   const reconciliationLedger = readJson(RUNTIME_RECONCILIATION_LEDGER_PATH);
 
-  const sourceTruthCandidate = buildV3SourceTruth(runtimeDialogue);
-  const validation = validateDialogueV3SourceTruthObject(sourceTruthCandidate);
+  const validation = validateDialogueV3SourceTruthObject(runtimeDialogueV3);
   if (!validation.ok) {
-    throw new Error(`Converted v3 source truth did not validate: ${validation.summary}`);
+    throw new Error(`Persisted runtime v3 source truth did not validate: ${validation.summary}`);
   }
 
   const build = {
@@ -165,7 +129,7 @@ function main() {
     generated_at: new Date().toISOString()
   };
 
-  const sourceTruthArtifactPath = path.join(OUTPUT_DIR, 'dialogue-v3-source-truth.json');
+  const sourceTruthArtifactPath = RUNTIME_DIALOGUE_V3_PATH;
   const groupingArtifactPath = path.join(OUTPUT_DIR, 'speaker-grouping.json');
   const decisionLedgerPath = path.join(OUTPUT_DIR, 'speaker-grouping.decision-ledger.json');
   const comparatorPath = path.join(REPORT_DIR, 'speakerGrouping.json');
@@ -176,8 +140,8 @@ function main() {
     compiledRuleset: rulesetResult.value,
     sourceRef: {
       path: rel(sourceTruthArtifactPath),
-      derived_from: rel(RUNTIME_DIALOGUE_PATH),
-      posture: 'reconciled_phase1_runtime_dialogue_surface'
+      derived_from: rel(RUNTIME_DIALOGUE_V3_PATH),
+      posture: 'reconciled_phase1_runtime_dialogue_v3_surface'
     },
     rulesetRef: {
       path: rel(RULESET_PATH),
@@ -198,16 +162,17 @@ function main() {
         ai_recovery_used: false
       },
       posture: {
-        phase1_dialogue_surface_used_for_grouping: 'dialogue-data.reconciled.json',
+        phase1_dialogue_surface_used_for_grouping: 'dialogue-v3-source-truth.reconciled.json',
         raw_dialogue_artifact: rel(path.join(ROOT, 'output/cod-test/phase1-gather-context/dialogue-data.json')),
         reconciled_dialogue_artifact: rel(RUNTIME_DIALOGUE_PATH),
+        reconciled_dialogue_v3_artifact: rel(RUNTIME_DIALOGUE_V3_PATH),
         reconciliation_status: reconciliationLedger.status,
         reconciliation_trigger_passed: reconciliationLedger?.trigger?.passed === true
       },
       source_conversion: {
-        strategy: 'qa-minimal-v3-envelope-from-runtime-reconciled-dialogue',
-        traits_population: 'all_unknown_defaults',
-        removed_runtime_only_fields: ['speaker', 'speaker_id', 'confidence', 'speaker_profiles', 'handoffContext', 'coverage', 'provenance']
+        strategy: 'runtime-native-persisted-v3-dialogue-artifact',
+        traits_population: 'native_runtime_emission_from_dialogue_lane',
+        removed_runtime_only_fields: []
       },
       artifacts_complete_path: rel(ARTIFACTS_COMPLETE_PATH)
     }
@@ -275,7 +240,9 @@ function main() {
     miss_clusters: classified.summaryByCategory
   };
 
-  writeJson(sourceTruthArtifactPath, validation.value);
+  if (!fs.existsSync(sourceTruthArtifactPath) || sha256(sourceTruthArtifactPath) !== crypto.createHash('sha256').update(JSON.stringify(validation.value, null, 2) + '\n').digest('hex')) {
+    writeJson(sourceTruthArtifactPath, validation.value);
+  }
   writeJson(groupingArtifactPath, groupingRun.artifact);
   writeJson(decisionLedgerPath, groupingRun.artifact.decision_ledger);
   writeJson(comparatorPath, {

@@ -99,12 +99,14 @@ test('deterministic persistence helpers emit structured artifact failures', asyn
     fs.writeFileSync(path.join(outputDir, 'artifacts-complete.json'), JSON.stringify({
       dialogueData: { summary: 'raw dialogue', dialogue_segments: [{ index: 0, text: 'raw line' }] },
       dialogueDataReconciled: { summary: 'reconciled dialogue', dialogue_segments: [{ index: 0, text: 'reconciled line' }] },
+      dialogueV3SourceTruth: { summary: 'raw dialogue v3', dialogue_segments: [{ index: 0, text: 'raw line', traits: { audibility: 'clear' } }] },
+      dialogueV3SourceTruthReconciled: { summary: 'reconciled dialogue v3', dialogue_segments: [{ index: 0, text: 'reconciled line', traits: { audibility: 'clear' } }] },
       musicVocalsData: { summary: 'raw vocals', vocal_segments: [{ index: 0, text: 'raw lyric' }] },
       musicVocalsDataReconciled: { summary: 'reconciled vocals', vocal_segments: [{ index: 0, text: 'reconciled lyric' }] }
     }, null, 2), 'utf8');
 
     const loaded = loadPersistedArtifacts(outputDir, {
-      keys: ['dialogueData', 'musicVocalsData'],
+      keys: ['dialogueData', 'dialogueV3SourceTruth', 'musicVocalsData'],
       config: {
         gather_context: ['server/scripts/get-context/reconcile-famous-song-phase1.cjs']
       }
@@ -112,6 +114,8 @@ test('deterministic persistence helpers emit structured artifact failures', asyn
 
     assert.equal(loaded.artifacts.dialogueData.summary, 'reconciled dialogue');
     assert.equal(loaded.artifacts.dialogueData.dialogue_segments[0].text, 'reconciled line');
+    assert.equal(loaded.artifacts.dialogueV3SourceTruth.summary, 'reconciled dialogue v3');
+    assert.equal(loaded.artifacts.dialogueV3SourceTruth.dialogue_segments[0].text, 'reconciled line');
     assert.equal(loaded.artifacts.musicVocalsData.summary, 'reconciled vocals');
     assert.equal(loaded.artifacts.musicVocalsData.vocal_segments[0].text, 'reconciled lyric');
   });

@@ -5,6 +5,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const reconcileScript = require('../../server/scripts/get-context/reconcile-famous-song-phase1.cjs');
+const { validateDialogueV3SourceTruthObject } = require('../../server/lib/dialogue-v3-source-truth-validator.cjs');
 
 function makeTempDir(prefix = 'ee-famous-song-reconcile-') {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
@@ -83,16 +84,19 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     const rawDialogueAfter = JSON.parse(fs.readFileSync(rawDialoguePath, 'utf8'));
     const rawMusicVocalsAfter = JSON.parse(fs.readFileSync(rawMusicVocalsPath, 'utf8'));
     const reconciledDialoguePath = path.join(outputDir, 'phase1-gather-context', 'dialogue-data.reconciled.json');
+    const reconciledDialogueV3Path = path.join(outputDir, 'phase1-gather-context', 'dialogue-v3-source-truth.reconciled.json');
     const reconciledMusicVocalsPath = path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.reconciled.json');
     const ledgerPath = path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json');
 
     assert.deepEqual(rawDialogueAfter, artifacts.dialogueData);
     assert.deepEqual(rawMusicVocalsAfter, artifacts.musicVocalsData);
     assert.equal(fs.existsSync(reconciledDialoguePath), true);
+    assert.equal(fs.existsSync(reconciledDialogueV3Path), true);
     assert.equal(fs.existsSync(reconciledMusicVocalsPath), true);
     assert.equal(fs.existsSync(ledgerPath), true);
 
     const reconciledDialogue = JSON.parse(fs.readFileSync(reconciledDialoguePath, 'utf8'));
+    const reconciledDialogueV3 = JSON.parse(fs.readFileSync(reconciledDialogueV3Path, 'utf8'));
     const reconciledMusicVocals = JSON.parse(fs.readFileSync(reconciledMusicVocalsPath, 'utf8'));
     const ledger = JSON.parse(fs.readFileSync(ledgerPath, 'utf8'));
 
@@ -100,6 +104,11 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     assert.equal(reconciledDialogue.dialogue_segments[0].text, 'Move now, squad up.');
     assert.equal(Object.prototype.hasOwnProperty.call(reconciledDialogue.dialogue_segments[0], 'start'), false);
     assert.equal(Object.prototype.hasOwnProperty.call(reconciledDialogue.dialogue_segments[0], 'end'), false);
+    assert.equal(validateDialogueV3SourceTruthObject(reconciledDialogueV3).ok, true);
+    assert.equal(reconciledDialogueV3.dialogue_segments.length, 1);
+    assert.equal(reconciledDialogueV3.dialogue_segments[0].text, 'Move now, squad up.');
+    assert.equal(reconciledDialogueV3.dialogue_segments[0].traits.interpersonal_stance, 'directive');
+    assert.equal(reconciledDialogueV3.dialogue_segments[0].traits.delivery_overlay, 'none_apparent');
     assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Obey your master');
     assert.equal(Object.prototype.hasOwnProperty.call(reconciledMusicVocals.vocal_segments[0], 'start'), false);
     assert.equal(Object.prototype.hasOwnProperty.call(reconciledMusicVocals.vocal_segments[0], 'end'), false);
@@ -107,6 +116,7 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     assert.deepEqual(result.artifacts.musicVocalsData, artifacts.musicVocalsData);
     assert.equal(result.artifacts.dialogueDataReconciled.dialogue_segments.length, 1);
     assert.equal(result.artifacts.dialogueDataReconciled.dialogue_segments[0].text, 'Move now, squad up.');
+    assert.equal(result.artifacts.dialogueV3SourceTruthReconciled.dialogue_segments[0].traits.interpersonal_stance, 'directive');
     assert.equal(result.artifacts.musicVocalsDataReconciled.vocal_segments[0].text, 'Obey your master');
     assert.equal(ledger.status, 'applied');
     assert.equal(ledger.decisions.removedDialogueSegments.length, 1);

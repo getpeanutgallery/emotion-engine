@@ -53,6 +53,7 @@ const {
   buildDialogueStitchValidatorToolContract,
   executeDialogueStitchValidatorTool
 } = require('../../lib/phase1-validator-tools.cjs');
+const { buildDialogueV3SourceTruth } = require('../../lib/dialogue-v3-source-truth-emitter.cjs');
 const { executeLocalValidatorToolLoop } = require('../../lib/local-validator-tool-loop.cjs');
 const { applyFailureMetadata } = require('../../lib/tool-wrapper-contract.cjs');
 const {
@@ -2057,9 +2058,17 @@ async function run(input) {
     response = chunkedDialogueResult?.response || wholeAssetDialogueResult?.response || response;
     model = chunkedDialogueResult?.model || wholeAssetDialogueResult?.model || model;
 
+    const dialogueV3SourceTruth = buildDialogueV3SourceTruth(finalDialogueData, {
+      summary: finalDialogueData.summary
+    });
+
     const artifactPath = path.join(phaseDir, 'dialogue-data.json');
     fs.writeFileSync(artifactPath, JSON.stringify(finalDialogueData, null, 2));
     events.artifactWrite({ absolutePath: artifactPath, role: 'artifact', phase: PHASE_KEY, script: SCRIPT_ID });
+
+    const dialogueV3ArtifactPath = path.join(phaseDir, 'dialogue-v3-source-truth.json');
+    fs.writeFileSync(dialogueV3ArtifactPath, JSON.stringify(dialogueV3SourceTruth, null, 2));
+    events.artifactWrite({ absolutePath: dialogueV3ArtifactPath, role: 'artifact', phase: PHASE_KEY, script: SCRIPT_ID });
 
     console.log(`   ✅ Dialogue extraction complete (${effectiveAnalysisMode})`);
     console.log(`      Output: ${artifactPath}`);
@@ -2068,7 +2077,8 @@ async function run(input) {
 
     return {
       artifacts: {
-        dialogueData: finalDialogueData
+        dialogueData: finalDialogueData,
+        dialogueV3SourceTruth
       }
     };
   } catch (error) {
