@@ -95,6 +95,85 @@ test('gather-context-runner merges overlapping artifact objects without duplicat
   assert.deepEqual(result.artifacts.phaseNotes, ['from-a', 'from-b']);
 });
 
+test('gather-context-runner preserves raw lane ownership while reconciliation emits explicit reconciled companions', async () => {
+  const scriptResults = {
+    'get-raw.cjs': {
+      artifacts: {
+        dialogueData: {
+          summary: 'raw dialogue',
+          dialogue_segments: [{ index: 0, text: 'raw spoken line' }]
+        },
+        musicData: {
+          summary: 'raw music',
+          segments: [{ index: 0, text: 'cue one' }]
+        },
+        musicVocalsData: {
+          summary: 'raw vocals',
+          vocal_segments: [{ index: 0, text: 'raw lyric line' }]
+        }
+      }
+    },
+    'reconcile.cjs': {
+      artifacts: {
+        dialogueData: {
+          summary: 'raw dialogue',
+          dialogue_segments: [{ index: 0, text: 'raw spoken line' }]
+        },
+        musicData: {
+          summary: 'raw music',
+          segments: [{ index: 0, text: 'cue one' }]
+        },
+        musicVocalsData: {
+          summary: 'raw vocals',
+          vocal_segments: [{ index: 0, text: 'raw lyric line' }]
+        },
+        dialogueDataReconciled: {
+          summary: 'reconciled dialogue',
+          dialogue_segments: [{ index: 0, text: 'clean spoken line' }]
+        },
+        musicVocalsDataReconciled: {
+          summary: 'reconciled vocals',
+          vocal_segments: [{ index: 0, text: 'canonical lyric line' }]
+        },
+        famousSongReconciliation: {
+          status: 'applied'
+        }
+      }
+    }
+  };
+
+  const { runGatherContext } = loadRunnerWithMocks({
+    executeScriptImpl: async ({ scriptPath }) => {
+      const entry = scriptResults[scriptPath];
+      if (!entry) {
+        throw new Error(`Unexpected scriptPath: ${scriptPath}`);
+      }
+      return entry;
+    }
+  });
+
+  const result = await runGatherContext({
+    assetPath: 'fixture.mp4',
+    outputDir: '/tmp/test-output',
+    config: {},
+    scripts: ['get-raw.cjs', 'reconcile.cjs'],
+    artifacts: {}
+  });
+
+  assert.equal(result.artifacts.dialogueData.summary, 'raw dialogue');
+  assert.equal(result.artifacts.dialogueData.dialogue_segments.length, 1);
+  assert.equal(result.artifacts.dialogueData.dialogue_segments[0].text, 'raw spoken line');
+  assert.equal(result.artifacts.dialogueDataReconciled.summary, 'reconciled dialogue');
+  assert.equal(result.artifacts.dialogueDataReconciled.dialogue_segments[0].text, 'clean spoken line');
+  assert.equal(result.artifacts.musicVocalsData.summary, 'raw vocals');
+  assert.equal(result.artifacts.musicVocalsData.vocal_segments[0].text, 'raw lyric line');
+  assert.equal(result.artifacts.musicVocalsDataReconciled.summary, 'reconciled vocals');
+  assert.equal(result.artifacts.musicVocalsDataReconciled.vocal_segments[0].text, 'canonical lyric line');
+  assert.equal(result.artifacts.musicData.summary, 'raw music');
+  assert.deepEqual(result.artifacts.musicData.segments, [{ index: 0, text: 'cue one' }]);
+  assert.deepEqual(result.artifacts.famousSongReconciliation, { status: 'applied' });
+});
+
 test('mergeArtifacts keeps nested object additions while replacing nested arrays for overlapping keys', () => {
   const { mergeArtifacts } = loadRunnerWithMocks({
     executeScriptImpl: async () => ({ artifacts: {} })

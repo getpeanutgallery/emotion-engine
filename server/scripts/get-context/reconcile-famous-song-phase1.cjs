@@ -732,9 +732,11 @@ async function run(input) {
   return {
     primaryArtifactKey: 'famousSongReconciliation',
     artifacts: {
-      dialogueData: strippedDialogueData,
-      musicData,
-      musicVocalsData: strippedMusicVocalsData,
+      dialogueData: cloneJson(dialogueData),
+      musicData: cloneJson(musicData),
+      musicVocalsData: cloneJson(musicVocalsData),
+      dialogueDataReconciled: strippedDialogueData,
+      musicVocalsDataReconciled: strippedMusicVocalsData,
       famousSongReconciliation: ledger
     }
   };

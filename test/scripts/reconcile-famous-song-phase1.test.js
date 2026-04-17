@@ -103,8 +103,11 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Obey your master');
     assert.equal(Object.prototype.hasOwnProperty.call(reconciledMusicVocals.vocal_segments[0], 'start'), false);
     assert.equal(Object.prototype.hasOwnProperty.call(reconciledMusicVocals.vocal_segments[0], 'end'), false);
-    assert.equal(result.artifacts.dialogueData.dialogue_segments.length, 1);
-    assert.equal(result.artifacts.musicVocalsData.vocal_segments[0].text, 'Obey your master');
+    assert.deepEqual(result.artifacts.dialogueData, artifacts.dialogueData);
+    assert.deepEqual(result.artifacts.musicVocalsData, artifacts.musicVocalsData);
+    assert.equal(result.artifacts.dialogueDataReconciled.dialogue_segments.length, 1);
+    assert.equal(result.artifacts.dialogueDataReconciled.dialogue_segments[0].text, 'Move now, squad up.');
+    assert.equal(result.artifacts.musicVocalsDataReconciled.vocal_segments[0].text, 'Obey your master');
     assert.equal(ledger.status, 'applied');
     assert.equal(ledger.decisions.removedDialogueSegments.length, 1);
     assert.equal(ledger.decisions.lyricCorrections.length, 1);

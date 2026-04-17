@@ -22,7 +22,10 @@ const {
   createInvalidOutputFailure,
   applyFailureMetadata
 } = require('./tool-wrapper-contract.cjs');
-const { resolvePhase1ArtifactPath } = require('./phase1-baseline-resolution.cjs');
+const {
+  resolvePhase1ArtifactPath,
+  selectCanonicalPhase1ArtifactFromBag
+} = require('./phase1-baseline-resolution.cjs');
 
 const DEFAULT_LOCATIONS = {
   dialogueData: ['phase1-gather-context', 'dialogue-data.json'],
@@ -49,17 +52,6 @@ function safeReadJson(filePath) {
     });
     throw applyFailureMetadata(new Error(failure.error), failure.failure);
   }
-}
-
-function pickKeys(source, keys) {
-  if (!Array.isArray(keys) || keys.length === 0) return { ...(source || {}) };
-  const out = {};
-  for (const key of keys) {
-    if (source && Object.prototype.hasOwnProperty.call(source, key)) {
-      out[key] = source[key];
-    }
-  }
-  return out;
 }
 
 /**
@@ -92,10 +84,23 @@ function loadPersistedArtifacts(outputDir, options = {}) {
   const completePath = path.join(absoluteDir, 'artifacts-complete.json');
   if (fs.existsSync(completePath)) {
     const all = safeReadJson(completePath);
-    const artifacts = pickKeys(all, keys);
-    for (const key of Object.keys(artifacts)) {
-      sources[key] = completePath;
+    const wantedKeys = Array.isArray(keys) && keys.length > 0 ? keys : Object.keys(DEFAULT_LOCATIONS);
+    const artifacts = {};
+
+    for (const key of wantedKeys) {
+      const resolution = selectCanonicalPhase1ArtifactFromBag(all, key, { config, strict });
+      if (resolution.resolvedArtifact !== undefined) {
+        artifacts[key] = resolution.resolvedArtifact;
+        sources[key] = completePath;
+        continue;
+      }
+
+      if (Object.prototype.hasOwnProperty.call(all, key)) {
+        artifacts[key] = all[key];
+        sources[key] = completePath;
+      }
     }
+
     return { artifacts, sources };
   }
 
