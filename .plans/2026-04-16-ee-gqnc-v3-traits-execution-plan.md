@@ -106,9 +106,9 @@ The execution order is strict. First lock the transition/runtime note and the be
 - loader/compiler code/tests at repo-appropriate paths
 - `.plans/2026-04-16-ee-gqnc-v3-traits-execution-plan.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Added `server/lib/dialogue-v3-heuristics-ruleset.cjs` plus `test/lib/dialogue-v3-heuristics-ruleset.test.js` as the bounded, fail-closed YAML ruleset loader/compiler seam for the locked v3 speaker-grouping heuristics contract. The implementation parses the review-ready YAML, validates it section-by-section with closed-key allowlists, and compiles only the currently required predicate vocabulary into typed runtime structures: scalar equality (`line_value`, `group_value`), membership/exclusion (`*_in`, `*_not_in`, `neither_value_in`), and the bounded boolean/numeric gate keys already present in the locked ruleset. It fails closed on unknown keys, unsupported predicate shapes, bad bucket/field/severity/level references, bad trait-enum references, and scalar-vs-array type mismatches, while explicitly avoiding a generalized rules engine. Validation run in this task: focused suites `node --test test/lib/dialogue-v3-heuristics-ruleset.test.js` and `node --test test/lib/dialogue-v3-source-truth-validator.test.js test/lib/dialogue-v3-heuristics-ruleset.test.js` passed. Broad repo suite `npm test` still reports pre-existing unrelated failures in benchmark-iteration-runner, report-package smoke, script-runner AI recovery, config-loader single-document YAML loading, and get-dialogue prompt/chunking tests that are outside this ruleset-loader change.
 
 ---
 
