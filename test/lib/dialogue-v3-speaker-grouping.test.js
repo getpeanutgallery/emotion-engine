@@ -12,7 +12,10 @@ const {
   GROUPING_OUTPUT_VERSION,
   GROUPING_CONTRACT_MODE,
   deriveCanonicalFieldValue,
-  createDialogueV3SpeakerGroupingReducer
+  evaluateFieldComparison,
+  resolveSegmentAssignment,
+  createDialogueV3SpeakerGroupingReducer,
+  runDialogueV3SpeakerGrouping
 } = require('../../server/lib/dialogue-v3-speaker-grouping.cjs');
 
 const RULESET_PATH = path.resolve(
@@ -20,7 +23,28 @@ const RULESET_PATH = path.resolve(
   '../../docs/2026-04-16-dialogue-traits-v3-speaker-grouping-heuristics-ruleset.yaml'
 );
 
-function buildValidDialogueData() {
+function buildBaseTraits(overrides = {}) {
+  return {
+    audibility: 'clear',
+    overlap: 'single_voice',
+    gender_presentation: 'masculine',
+    age_impression: 'adult',
+    pitch_band: 'mid',
+    phonation: 'clear',
+    pace: 'measured',
+    energy: 'steady',
+    transmission_medium: 'radio',
+    spatial_texture: 'room',
+    accent_strength: 'none_apparent',
+    accent_family: 'neutral_or_unmarked',
+    affect: 'serious',
+    interpersonal_stance: 'directive',
+    delivery_overlay: 'none_apparent',
+    ...overrides
+  };
+}
+
+function buildDialogueDataFromTraits(segmentTraits) {
   return {
     schema_version: 1,
     contract: {
@@ -28,73 +52,32 @@ function buildValidDialogueData() {
       mode: 'traits',
       traits_contract_version: '3.0.0'
     },
-    summary: 'Three voiced lines with conflicting and abstaining evidence.',
-    dialogue_segments: [
-      {
-        index: 0,
-        text: 'Hold your fire until I say so.',
-        traits: {
-          audibility: 'clear',
-          overlap: 'single_voice',
-          gender_presentation: 'masculine',
-          age_impression: 'adult',
-          pitch_band: 'mid',
-          phonation: 'clear',
-          pace: 'measured',
-          energy: 'steady',
-          transmission_medium: 'radio',
-          spatial_texture: 'room',
-          accent_strength: 'none_apparent',
-          accent_family: 'neutral_or_unmarked',
-          affect: 'serious',
-          interpersonal_stance: 'directive',
-          delivery_overlay: 'none_apparent'
-        }
-      },
-      {
-        index: 1,
-        text: 'Copy that.',
-        traits: {
-          audibility: 'unknown',
-          overlap: 'single_voice',
-          gender_presentation: 'masculine',
-          age_impression: 'adult',
-          pitch_band: 'mid',
-          phonation: 'clear',
-          pace: 'fast',
-          energy: 'steady',
-          transmission_medium: 'radio',
-          spatial_texture: 'room',
-          accent_strength: 'none_apparent',
-          accent_family: 'neutral_or_unmarked',
-          affect: 'determined',
-          interpersonal_stance: 'supportive',
-          delivery_overlay: 'none_apparent'
-        }
-      },
-      {
-        index: 2,
-        text: 'I said stand down.',
-        traits: {
-          audibility: 'clear',
-          overlap: 'single_voice',
-          gender_presentation: 'feminine',
-          age_impression: 'adult',
-          pitch_band: 'mid',
-          phonation: 'clear',
-          pace: 'measured',
-          energy: 'intense',
-          transmission_medium: 'radio',
-          spatial_texture: 'room',
-          accent_strength: 'clear_non_neutral',
-          accent_family: 'anglophone_non_neutral',
-          affect: 'angry',
-          interpersonal_stance: 'directive',
-          delivery_overlay: 'none_apparent'
-        }
-      }
-    ]
+    summary: 'Synthetic dialogue fixture for deterministic grouping tests.',
+    dialogue_segments: segmentTraits.map((traits, index) => ({
+      index,
+      text: `Line ${index}`,
+      traits: buildBaseTraits(traits)
+    }))
   };
+}
+
+function buildValidDialogueData() {
+  return buildDialogueDataFromTraits([
+    {},
+    {
+      audibility: 'unknown',
+      pace: 'fast',
+      affect: 'determined',
+      interpersonal_stance: 'supportive'
+    },
+    {
+      gender_presentation: 'feminine',
+      energy: 'intense',
+      accent_strength: 'clear_non_neutral',
+      accent_family: 'anglophone_non_neutral',
+      affect: 'angry'
+    }
+  ]);
 }
 
 function loadCompiledRuleset() {
@@ -103,12 +86,15 @@ function loadCompiledRuleset() {
   return result.value;
 }
 
-function buildReducer(dialogueData = buildValidDialogueData()) {
+function validateDialogueData(dialogueData) {
   const validation = validateDialogueV3SourceTruthObject(dialogueData);
   assert.equal(validation.ok, true);
+  return validation.value;
+}
 
+function buildReducer(dialogueData = buildValidDialogueData()) {
   return createDialogueV3SpeakerGroupingReducer({
-    dialogueData: validation.value,
+    dialogueData: validateDialogueData(dialogueData),
     compiledRuleset: loadCompiledRuleset(),
     sourceRef: {
       path: 'output/test-run/phase1-gather-context/dialogue-data.json'
@@ -250,6 +236,251 @@ test('speaker-grouping reducer updates canonical_traits and support state on the
   assert.equal(assignment.segment_index, 2);
   assert.equal(assignment.group_id, group.group_id);
   assert.equal(assignment.speaker_id, group.speaker_id);
+});
+
+test('evaluateFieldComparison keeps phonation as strong scoring evidence while treating unknown and mixed as non-concrete', () => {
+  const compiledRuleset = loadCompiledRuleset();
+
+  const exact = evaluateFieldComparison({
+    field: 'phonation',
+    lineValue: 'whispered',
+    groupValue: 'whispered',
+    compiledRuleset,
+    cleanReuseGate: true
+  });
+  assert.equal(exact.relation, 'exact_match');
+  assert.equal(exact.delta, 3);
+
+  const mismatch = evaluateFieldComparison({
+    field: 'phonation',
+    lineValue: 'whispered',
+    groupValue: 'clear',
+    compiledRuleset,
+    cleanReuseGate: true
+  });
+  assert.equal(mismatch.relation, 'mismatch');
+  assert.equal(mismatch.delta, -2.5);
+
+  const abstain = evaluateFieldComparison({
+    field: 'phonation',
+    lineValue: 'unknown',
+    groupValue: 'whispered',
+    compiledRuleset,
+    cleanReuseGate: true
+  });
+  assert.equal(abstain.relation, 'abstain');
+  assert.equal(abstain.delta, 0);
+
+  const ambiguous = evaluateFieldComparison({
+    field: 'phonation',
+    lineValue: 'mixed',
+    groupValue: 'clear',
+    compiledRuleset,
+    cleanReuseGate: true
+  });
+  assert.equal(ambiguous.relation, 'ambiguous');
+  assert.equal(ambiguous.delta, 0);
+});
+
+test('automatic scorer reuses a strong matching group and records a deterministic ledger entry', () => {
+  const reducer = buildReducer(buildDialogueDataFromTraits([
+    {},
+    {
+      affect: 'determined',
+      energy: 'steady'
+    }
+  ]));
+
+  const first = reducer.scoreAndApplySegment(0);
+  assert.equal(first.decision.chosen_action, 'create_group');
+
+  const second = reducer.scoreAndApplySegment(1);
+  assert.equal(second.decision.chosen_action, 'reuse_group');
+  assert.equal(second.assignment.group_id, first.assignment.group_id);
+  assert.equal(second.ledger_entry.chosen_action, 'reuse_group');
+  assert.equal(second.ledger_entry.candidate_groups_considered.length, 1);
+  assert.ok(second.ledger_entry.score_contributions_by_field_or_bucket.some((entry) => entry.field === 'gender_presentation'));
+  assert.deepEqual(second.ledger_entry.abstentions_from_unknown_mixed_variable, []);
+});
+
+test('automatic scorer creates a new group when a clean hard blocker fires', () => {
+  const reducer = buildReducer(buildDialogueDataFromTraits([
+    {},
+    {
+      gender_presentation: 'feminine',
+      pitch_band: 'high',
+      accent_strength: 'clear_non_neutral',
+      accent_family: 'anglophone_non_neutral'
+    }
+  ]));
+
+  const first = reducer.scoreAndApplySegment(0);
+  const second = reducer.scoreAndApplySegment(1);
+
+  assert.equal(first.decision.chosen_action, 'create_group');
+  assert.equal(second.decision.chosen_action, 'create_group');
+  assert.notEqual(second.assignment.group_id, first.assignment.group_id);
+  assert.ok(second.decision.candidate_groups_considered[0].hard_blocked);
+  assert.ok(second.ledger_entry.blockers_triggered.some((blocker) => blocker.rule_id === 'clean_binary_gender_conflict'));
+});
+
+test('automatic scorer uses only the normalized whispered-vs-nonwhispered soft-review blocker posture', () => {
+  const reducer = buildReducer(buildDialogueDataFromTraits([
+    {
+      phonation: 'clear'
+    },
+    {
+      phonation: 'whispered',
+      gender_presentation: 'feminine',
+      pitch_band: 'high'
+    }
+  ]));
+
+  reducer.scoreAndApplySegment(0);
+  const second = reducer.scoreAndApplySegment(1);
+
+  assert.equal(second.decision.chosen_action, 'create_group');
+  assert.ok(second.ledger_entry.blockers_triggered.some((blocker) => blocker.rule_id === 'whispered_line_vs_nonwhispered_group_guard'));
+  assert.ok(second.decision.abstention_reasons.includes('phonation'));
+});
+
+test('automatic scorer suppresses hard blockers under degraded gating and the resolver prefers ambiguity when close scores remain', () => {
+  const dialogueData = buildDialogueDataFromTraits([
+    {
+      gender_presentation: 'masculine',
+      pitch_band: 'mid',
+      phonation: 'clear',
+      accent_strength: 'none_apparent',
+      accent_family: 'neutral_or_unmarked',
+      affect: 'serious'
+    },
+    {
+      gender_presentation: 'feminine',
+      pitch_band: 'high',
+      phonation: 'clear',
+      accent_strength: 'clear_non_neutral',
+      accent_family: 'anglophone_non_neutral',
+      affect: 'angry'
+    },
+    {
+      audibility: 'partially_masked',
+      gender_presentation: 'feminine',
+      pitch_band: 'high',
+      phonation: 'clear',
+      accent_strength: 'clear_non_neutral',
+      accent_family: 'anglophone_non_neutral',
+      affect: 'serious'
+    }
+  ]);
+  const reducer = buildReducer(dialogueData);
+  const compiledRuleset = loadCompiledRuleset();
+
+  reducer.scoreAndApplySegment(0);
+  reducer.scoreAndApplySegment(1);
+  const candidateScores = reducer.scoreSegment(2);
+
+  assert.ok(candidateScores.some((candidate) => candidate.blockers_suppressed.length > 0));
+
+  const closeDecision = resolveSegmentAssignment({
+    segment: {
+      index: 2,
+      traits: buildBaseTraits({ audibility: 'partially_masked' })
+    },
+    candidateScores: candidateScores.map((candidate, index) => ({
+      ...candidate,
+      score: index === 0 ? 6.2 : 5.7,
+      hard_blocked: false,
+      soft_review_blocked: false,
+      clean_reuse_gate: false,
+      matched_concrete_stable_identity_fields: 4,
+      exact_stable_identity_match_count: 4,
+      stable_identity_mismatch_count: index,
+      previous_occurrence_distance: index + 1,
+      blockers_triggered: [],
+      blockers_suppressed: candidate.blockers_suppressed,
+      abstentions_from_unknown_mixed_variable: []
+    })),
+    compiledRuleset
+  });
+
+  assert.equal(closeDecision.chosen_action, 'ambiguous_reuse');
+  assert.equal(closeDecision.ambiguous, true);
+  assert.ok(closeDecision.score_margin < 1);
+});
+
+test('resolveSegmentAssignment deterministically falls back to create when evidence stays below assign threshold', () => {
+  const segment = {
+    index: 7,
+    traits: buildBaseTraits({
+      audibility: 'unknown',
+      overlap: 'background_overlap',
+      gender_presentation: 'unknown',
+      age_impression: 'unknown',
+      pitch_band: 'unknown',
+      phonation: 'unknown',
+      accent_strength: 'unknown',
+      accent_family: 'unknown'
+    })
+  };
+  const compiledRuleset = loadCompiledRuleset();
+  const decision = resolveSegmentAssignment({
+    segment,
+    candidateScores: [
+      {
+        group_id: 'grp_001',
+        speaker_id: 'spk_001',
+        score: 1.25,
+        hard_blocked: false,
+        soft_review_blocked: false,
+        clean_reuse_gate: false,
+        matched_concrete_stable_identity_fields: 0,
+        exact_stable_identity_match_count: 0,
+        stable_identity_mismatch_count: 0,
+        previous_occurrence_distance: 3,
+        short_contract_safe_reason: ['gating_cues'],
+        abstentions_from_unknown_mixed_variable: [
+          { field: 'gender_presentation', relation: 'abstain' },
+          { field: 'phonation', relation: 'abstain' }
+        ],
+        blockers_triggered: [],
+        blockers_suppressed: [],
+        score_contributions_by_field_or_bucket: []
+      }
+    ],
+    compiledRuleset
+  });
+
+  assert.equal(decision.chosen_action, 'create_group');
+  assert.equal(decision.chosen_group_id, null);
+  assert.ok(decision.abstention_reasons.includes('gender_presentation'));
+});
+
+test('runDialogueV3SpeakerGrouping processes segments in order and emits one ledger row per assignment', () => {
+  const dialogueData = validateDialogueData(buildDialogueDataFromTraits([
+    {},
+    {
+      affect: 'determined'
+    },
+    {
+      gender_presentation: 'feminine',
+      pitch_band: 'high',
+      accent_strength: 'clear_non_neutral',
+      accent_family: 'anglophone_non_neutral'
+    }
+  ]));
+
+  const result = runDialogueV3SpeakerGrouping({
+    dialogueData,
+    compiledRuleset: loadCompiledRuleset(),
+    sourceRef: { path: 'output/test-run/dialogue-data.json' },
+    rulesetRef: { path: RULESET_PATH },
+    runtimeMetadata: { run_id: 'full-run-test' }
+  });
+
+  assert.equal(result.steps.length, 3);
+  assert.equal(result.artifact.assignments.length, 3);
+  assert.equal(result.artifact.decision_ledger.length, 3);
+  assert.equal(result.artifact.metadata.cleanup.singleton_merge.executed, false);
 });
 
 test('speaker-grouping reducer lets scorer-side trace land in decision_ledger without mutating group records', () => {

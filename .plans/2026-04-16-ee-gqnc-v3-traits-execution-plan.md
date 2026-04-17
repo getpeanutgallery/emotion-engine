@@ -151,9 +151,9 @@ The execution order is strict. First lock the transition/runtime note and the be
 - scorer/action/ledger code/tests at repo-appropriate paths
 - `.plans/2026-04-16-ee-gqnc-v3-traits-execution-plan.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Expanded `server/lib/dialogue-v3-speaker-grouping.cjs` from a reducer-only seam into the first deterministic scorer implementation. The runtime now evaluates bounded per-field scoring against canonical group snapshots, applies explicit blocker evaluation with triggered-vs-suppressed tracking, resolves `create_group` vs `reuse_group` vs `ambiguous_reuse` deterministically, and writes first-class per-assignment decision-ledger rows alongside artifact assignments. The phonation posture stays normalized exactly as approved: phonation remains strong scoring evidence, the only explicit phonation blocker behavior is the whispered-vs-nonwhispered soft-review guard from the normalized ruleset, and no field-local phonation blocker path was revived. Singleton merge also remains explicitly unexecuted in the first slice even though the YAML exposes it. Updated `test/lib/dialogue-v3-speaker-grouping.test.js` to cover scorer reuse, clean hard-block create decisions, normalized phonation blocker behavior, degraded-gating blocker suppression, ambiguity resolution, deterministic fallback-to-create, ledger emission, and end-to-end ordered grouping runs. Validation run in this task: focused suites `node --test test/lib/dialogue-v3-speaker-grouping.test.js test/lib/dialogue-v3-source-truth-validator.test.js test/lib/dialogue-v3-heuristics-ruleset.test.js` passed. Broad repo suite `npm test` still reports pre-existing unrelated failures in benchmark-iteration-runner, report-package smoke, script-runner AI recovery, config-loader single-document YAML loading, and get-dialogue prompt/chunking tests that are outside this scorer/ledger change.
 
 ---
 
