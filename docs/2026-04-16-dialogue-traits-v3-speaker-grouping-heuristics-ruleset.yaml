@@ -1,0 +1,455 @@
+schema_version: 1
+ruleset:
+  id: default
+  version: 3.0.0
+  status: review-ready-design
+  description: >-
+    Baseline deterministic speaker-grouping heuristics contract for dialogue-data
+    artifacts that use the locked traits v3 source-truth envelope.
+  ownership:
+    source_truth_artifact: dialogue-data
+    source_truth_mode: traits
+    grouping_output_artifact: speaker-grouping
+    source_truth_owns:
+      - summary
+      - dialogue_segments.index
+      - dialogue_segments.text
+      - dialogue_segments.traits
+    grouping_owns:
+      - group creation
+      - group reuse
+      - ambiguity flags
+      - group_id
+      - speaker_id
+      - canonical_traits
+      - decision ledger
+    source_truth_forbidden:
+      top_level:
+        - handoffContext
+        - speaker_profiles
+        - speakerProfiles
+        - speaker_grouping
+        - grouping
+      per_segment:
+        - start
+        - end
+        - speaker
+        - speaker_id
+        - speaker_group_id
+        - group_id
+        - confidence
+        - notes
+        - weights
+compatibility:
+  dialogue_schema_version: 1.x
+  traits_contract_version: 3.x
+  grouping_output_version: 3.x
+  required_contract:
+    artifact: dialogue-data
+    mode: traits
+  required_top_level_fields:
+    - schema_version
+    - contract
+    - summary
+    - dialogue_segments
+  required_segment_fields:
+    - index
+    - text
+    - traits
+  required_traits_fields:
+    - audibility
+    - overlap
+    - gender_presentation
+    - age_impression
+    - pitch_band
+    - phonation
+    - pace
+    - energy
+    - transmission_medium
+    - spatial_texture
+    - accent_strength
+    - accent_family
+    - affect
+    - interpersonal_stance
+    - delivery_overlay
+  closed_traits_object: true
+supersession:
+  supersedes_reference: docs/2026-04-14-traits-mode-json-yaml-artifact-shapes.md
+  notes:
+    - Replace stored-v2 channel_texture with transmission_medium plus spatial_texture.
+    - Replace stored-v2 delivery_stance with interpersonal_stance plus delivery_overlay.
+    - The superseded names may appear only in migration notes or explicit compatibility adapters, never as normative v3 source fields.
+canonicalization:
+  buckets:
+    stable_identity_cues:
+      fields:
+        - gender_presentation
+        - age_impression
+        - pitch_band
+        - phonation
+        - accent_strength
+        - accent_family
+      authority: primary
+      role: positive_negative_evidence_and_limited_blockers
+    delivery_cues:
+      fields:
+        - pace
+        - energy
+        - affect
+        - interpersonal_stance
+        - delivery_overlay
+      authority: secondary
+      role: positive_negative_evidence_only
+    production_context_cues:
+      fields:
+        - transmission_medium
+        - spatial_texture
+      authority: secondary
+      role: soft_evidence_and_mismatch_guard
+    gating_cues:
+      fields:
+        - audibility
+        - overlap
+      authority: reliability_only
+      role: weighting_guard_reuse_guard_abstention_guard
+sentinel_policy:
+  unknown:
+    meaning: field_not_supported_by_the_retained_line
+    default_relation: abstain
+    positive_score: 0
+    negative_score: 0
+    blocker_eligible: false
+  mixed:
+    meaning: materially_multiple_values_present_simultaneously
+    default_relation: ambiguous
+    exact_match_allowed: false
+    default_positive_multiplier: 0.35
+    default_negative_multiplier: 0.35
+    blocker_eligible: false
+  variable:
+    meaning: one_line_traverses_multiple_values_over_time
+    default_relation: unstable
+    exact_match_allowed: false
+    default_positive_multiplier: 0.35
+    default_negative_multiplier: 0.35
+    blocker_eligible: false
+  none_apparent:
+    meaning: affirmative_absence_not_abstention
+    default_relation: concrete
+comparison_relations:
+  exact_match: identical concrete value
+  soft_match: nearby or partially supportive value under the field-specific policy
+  mismatch: concrete values differ without a blocker
+  abstain: at least one side is unknown
+  ambiguous: at least one side is mixed or variable where the field allows it
+field_policies:
+  gender_presentation:
+    exact_match_positive: 3.0
+    mismatch_negative: -3.0
+    blocker_when:
+      - line_value_in: [feminine, masculine]
+        group_value_in: [masculine, feminine]
+        require_clean_gating: true
+        action: hard_block
+  age_impression:
+    exact_match_positive: 1.5
+    adjacent_band_soft_match_positive: 0.75
+    distant_band_mismatch_negative: -1.5
+    blocker_when: []
+  pitch_band:
+    exact_match_positive: 2.5
+    mismatch_negative: -2.5
+    blocker_when:
+      - line_value_in: [low, high]
+        group_value_in: [high, low]
+        require_clean_gating: true
+        require_additional_clean_identity_mismatch: true
+        action: hard_block
+  phonation:
+    exact_match_positive: 3.0
+    mismatch_negative: -2.5
+    blocker_when: []
+  accent_strength:
+    exact_match_positive: 1.5
+    mismatch_negative: -1.25
+    blocker_when: []
+  accent_family:
+    exact_match_positive: 2.5
+    mismatch_negative: -2.5
+    blocker_when:
+      - line_value_not_in: [unknown, mixed, neutral_or_unmarked]
+        group_value_not_in: [unknown, mixed, neutral_or_unmarked]
+        values_must_differ: true
+        require_accent_strength_support: clear_non_neutral
+        require_clean_gating: true
+        action: hard_block
+  pace:
+    exact_match_positive: 1.0
+    mismatch_negative: -0.75
+    blocker_when: []
+  energy:
+    exact_match_positive: 1.0
+    mismatch_negative: -0.75
+    blocker_when: []
+  affect:
+    exact_match_positive: 1.25
+    mismatch_negative: -0.75
+    blocker_when: []
+  interpersonal_stance:
+    exact_match_positive: 1.25
+    mismatch_negative: -0.75
+    blocker_when: []
+  delivery_overlay:
+    exact_match_positive: 0.75
+    mismatch_negative: -0.5
+    blocker_when: []
+  transmission_medium:
+    exact_match_positive: 1.0
+    mismatch_negative: -1.0
+    blocker_when:
+      - line_value_in: [direct]
+        group_value_in: [phone, radio, pa_or_intercom, media_playback, processed_or_synthetic]
+        require_clean_gating: true
+        require_additional_clean_identity_mismatch: true
+        action: soft_blocker_review
+  spatial_texture:
+    exact_match_positive: 0.75
+    mismatch_negative: -0.5
+    blocker_when: []
+  audibility:
+    reliable_values: [clear]
+    degraded_values: [partially_masked, heavily_masked, unknown]
+  overlap:
+    reliable_values: [single_voice]
+    degraded_values: [background_overlap, competing_overlap, unknown]
+reliability_policy:
+  clean_reuse_gate:
+    audibility_must_be: clear
+    overlap_must_be: single_voice
+  degraded_penalties:
+    audibility:
+      partially_masked: -0.75
+      heavily_masked: -1.5
+      unknown: -0.75
+    overlap:
+      background_overlap: -0.5
+      competing_overlap: -1.5
+      unknown: -0.75
+  degraded_behavior:
+    suppress_hard_blockers_when_not_clean: true
+    downgrade_soft_matches_when_not_clean: true
+    prefer_new_group_or_ambiguous_assignment_when_scores_are_close: true
+positive_evidence_rules:
+  - id: stable_identity_exact_match
+    applies_to_bucket: stable_identity_cues
+    relation: exact_match
+    combine: additive
+  - id: delivery_exact_match
+    applies_to_bucket: delivery_cues
+    relation: exact_match
+    combine: additive
+  - id: production_context_exact_match
+    applies_to_bucket: production_context_cues
+    relation: exact_match
+    combine: additive
+  - id: recent_group_reuse_bonus
+    weight: 0.75
+    applies_when:
+      max_index_distance: 12
+      no_hard_blocker: true
+  - id: repeated_support_bonus
+    weight: 0.5
+    applies_when:
+      candidate_group_has_at_least: 2
+      matched_stable_identity_fields_at_least: 3
+negative_evidence_rules:
+  - id: stable_identity_mismatch
+    applies_to_bucket: stable_identity_cues
+    relation: mismatch
+    combine: additive
+  - id: delivery_mismatch
+    applies_to_bucket: delivery_cues
+    relation: mismatch
+    combine: additive
+  - id: production_context_mismatch
+    applies_to_bucket: production_context_cues
+    relation: mismatch
+    combine: additive
+  - id: singleton_creation_penalty
+    weight: -0.5
+    applies_when:
+      action_under_consideration: create_group
+  - id: degraded_line_penalty
+    source: reliability_policy.degraded_penalties
+blocker_policy:
+  philosophy: sparse_and_conservative
+  rules:
+    - id: clean_binary_gender_conflict
+      source_field: gender_presentation
+      severity: hard
+      only_when:
+        clean_reuse_gate: true
+        both_values_concrete: true
+        line_value_in: [feminine, masculine]
+        group_value_in: [feminine, masculine]
+        values_must_differ: true
+    - id: clean_supported_accent_family_conflict
+      source_field: accent_family
+      severity: hard
+      only_when:
+        clean_reuse_gate: true
+        both_values_concrete: true
+        neither_value_in: [neutral_or_unmarked, mixed, unknown]
+        values_must_differ: true
+        line_accent_strength_must_be: clear_non_neutral
+        group_accent_strength_must_be: clear_non_neutral
+    - id: stacked_identity_conflict
+      source_field: stable_identity_cues
+      severity: hard
+      only_when:
+        clean_reuse_gate: true
+        contradictory_exact_mismatches_at_least: 3
+        required_fields_among:
+          - gender_presentation
+          - pitch_band
+          - phonation
+          - accent_family
+    - id: medium_identity_guard
+      source_field: transmission_medium
+      severity: soft_review_block
+      only_when:
+        clean_reuse_gate: true
+        values_must_differ: true
+        additional_stable_identity_mismatches_at_least: 2
+    - id: whispered_line_vs_nonwhispered_group_guard
+      source_field: phonation
+      severity: soft_review_block
+      only_when:
+        clean_reuse_gate: true
+        line_value: whispered
+        group_value_not_in: [whispered, mixed, unknown]
+        additional_stable_identity_mismatches_at_least: 2
+    - id: nonwhispered_line_vs_whispered_group_guard
+      source_field: phonation
+      severity: soft_review_block
+      only_when:
+        clean_reuse_gate: true
+        line_value_not_in: [whispered, mixed, unknown]
+        group_value: whispered
+        additional_stable_identity_mismatches_at_least: 2
+ambiguity_policy:
+  ambiguous_assignment_allowed: true
+  create_new_group_when_no_candidate_clears_assign_threshold: true
+  mark_ambiguous_when:
+    top_score_clears_assign_threshold: true
+    top_margin_below: 1.0
+  force_abstention_review_when:
+    matched_concrete_stable_identity_fields_below: 2
+    and_top_score_below_reuse_threshold: true
+  ambiguity_outputs:
+    - ambiguous
+    - runner_up_group_id
+    - score_margin
+    - abstention_reasons
+thresholds:
+  assign_threshold: 4.0
+  reuse_threshold: 6.0
+  ambiguity_margin: 1.0
+  singleton_merge_threshold: 6.5
+  split_review_threshold: 8.0
+  minimum_clean_identity_matches_for_confident_reuse: 2
+tie_breakers:
+  - highest_score
+  - most_exact_matches_in_bucket: stable_identity_cues
+  - fewest_stable_identity_mismatches
+  - cleanest_gating_profile
+  - nearest_previous_occurrence
+  - earliest_group_creation
+cleanup_policy:
+  enable_singleton_merge_pass: true
+  enable_split_pass: false
+  singleton_merge_requirements:
+    clean_reuse_gate_preferred: true
+    score_must_clear: singleton_merge_threshold
+    no_hard_blocker: true
+    matched_concrete_stable_identity_fields_at_least: 2
+  split_policy:
+    posture: defer_to_future_review
+    note: >-
+      The v3 design allows split review triggers in logs, but does not lock an
+      automatic split pass until benchmark evidence justifies it.
+warning_level_guardrails:
+  cross_field_checks:
+    - id: accent_none_apparent_family_warning
+      when:
+        accent_strength: none_apparent
+        accent_family_not: neutral_or_unmarked
+      level: warning
+      reason: none_apparent should usually pair with neutral_or_unmarked.
+    - id: accent_family_unmarked_strength_warning
+      when:
+        accent_family: neutral_or_unmarked
+        accent_strength_not_in: [none_apparent, unknown]
+      level: warning
+      reason: neutral_or_unmarked should usually not pair with marked accent strength.
+    - id: overlay_not_affect_warning
+      when:
+        delivery_overlay_in: [laughing, crying]
+      level: warning
+      reason: overlay is audible surface evidence and must not be normalized into affect or stance.
+    - id: direct_does_not_imply_close_warning
+      when:
+        transmission_medium: direct
+      level: warning
+      reason: direct medium must not force spatial_texture close.
+    - id: unknown_is_not_guess_warning
+      when:
+        any_field: unknown
+      level: warning
+      reason: unknown is abstention and must not be treated as a hidden concrete value.
+forbidden_patterns:
+  - role_labels
+  - lore_labels
+  - biography_inference
+  - geography_prose
+  - open_text_traits
+  - source_truth_speaker_fields
+  - source_truth_grouping_outputs
+  - normalization_of_unknown_mixed_or_variable_to_concrete_values
+  - using_delivery_cues_alone_as_hard_blockers
+  - using_production_context_cues_alone_as_hard_blockers
+explainability_requirements:
+  per_assignment_must_record:
+    - segment_index
+    - candidate_groups_considered
+    - blockers_triggered
+    - score_contributions_by_field_or_bucket
+    - abstentions_from_unknown_mixed_variable
+    - chosen_action
+    - ambiguous
+    - short_contract_safe_reason
+  allowed_reason_vocabulary:
+    - audibility
+    - overlap
+    - gender_presentation
+    - age_impression
+    - pitch_band
+    - phonation
+    - pace
+    - energy
+    - transmission_medium
+    - spatial_texture
+    - accent_strength
+    - accent_family
+    - affect
+    - interpersonal_stance
+    - delivery_overlay
+    - stable_identity_cues
+    - delivery_cues
+    - production_context_cues
+    - gating_cues
+implementation_posture:
+  design_only: true
+  no_runtime_code_locked_here: true
+  benchmark_tuning_expected: true
+  initial_next_step: implement_ruleset_parser_and_decision_ledger_against_this_contract

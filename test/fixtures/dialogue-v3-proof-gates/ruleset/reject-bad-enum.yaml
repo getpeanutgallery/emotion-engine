@@ -1,0 +1,116 @@
+schema_version: 1
+ruleset:
+  id: dialogue-v3-speaker-grouping
+  version: 3.0.0
+  status: locked
+  description: proof-gate invalid ruleset enum fixture
+  ownership:
+    source_truth_artifact: dialogue-data
+    source_truth_mode: traits
+    grouping_output_artifact: speaker-grouping
+    source_truth_owns: [dialogue_segments]
+    grouping_owns: [speaker_groups, assignments, decision_ledger]
+    source_truth_forbidden:
+      top_level: [speaker_profiles]
+      per_segment: [speaker_id]
+compatibility:
+  dialogue_schema_version: 1
+  traits_contract_version: 3.0.0
+  grouping_output_version: 3.0.0
+  required_contract:
+    artifact: dialogue-data
+    mode: traits
+  required_top_level_fields: [schema_version, contract, summary, dialogue_segments]
+  required_segment_fields: [index, text, traits]
+  required_traits_fields:
+    - audibility
+    - overlap
+    - gender_presentation
+    - age_impression
+    - pitch_band
+    - phonation
+    - pace
+    - energy
+    - transmission_medium
+    - spatial_texture
+    - accent_strength
+    - accent_family
+    - affect
+    - interpersonal_stance
+    - delivery_overlay
+  closed_traits_object: true
+sentinel_policy:
+  unknown:
+    meaning: abstain
+    default_relation: abstain
+    positive_score: 0
+    negative_score: 0
+    blocker_eligible: false
+field_policies:
+  audibility:
+    exact_match_positive: 1
+    mismatch_negative: -1
+    reliable_values: [clear, loud]
+    degraded_values: [partially_masked]
+  gender_presentation:
+    exact_match_positive: 1
+    mismatch_negative: -1
+thresholds:
+  assign_threshold: 4
+  reuse_threshold: 5
+  ambiguity_margin: 1
+  singleton_merge_threshold: 5
+  split_review_threshold: 3
+  minimum_clean_identity_matches_for_confident_reuse: 2
+reliability_policy:
+  clean_reuse_gate:
+    audibility_must_be: loud
+    overlap_must_be: single_voice
+  degraded_penalties:
+    audibility: -1
+    overlap: -1
+  degraded_behavior:
+    suppress_hard_blockers_when_not_clean: true
+    downgrade_soft_matches_when_not_clean: true
+    prefer_new_group_or_ambiguous_assignment_when_scores_are_close: true
+positive_evidence_rules: []
+negative_evidence_rules: []
+blocker_policy:
+  philosophy: fail closed
+  rules:
+    - id: invalid-source-field
+      source_field: speaker_id
+      severity: hard
+      only_when:
+        line_value: feminine
+ambiguity_policy:
+  ambiguous_assignment_allowed: true
+  create_new_group_when_no_candidate_clears_assign_threshold: true
+  mark_ambiguous_when:
+    top_score_clears_assign_threshold: true
+    top_margin_below: 1
+  force_abstention_review_when:
+    matched_concrete_stable_identity_fields_below: 1
+    and_top_score_below_reuse_threshold: true
+  ambiguity_outputs: [abstention_reasons]
+tie_breakers: []
+cleanup_policy:
+  enable_singleton_merge_pass: false
+  enable_split_pass: false
+  singleton_merge_requirements:
+    clean_reuse_gate_preferred: true
+    score_must_clear: 5
+    no_hard_blocker: true
+    matched_concrete_stable_identity_fields_at_least: 2
+  split_policy:
+    posture: deferred_first_slice
+    note: task 6 proof gate fixture only
+warning_level_guardrails:
+  cross_field_checks:
+    - id: invalid-level
+      when: []
+      level: error
+      reason: invalid enum proof gate fixture
+forbidden_patterns: []
+explainability_requirements: []
+implementation_posture: []

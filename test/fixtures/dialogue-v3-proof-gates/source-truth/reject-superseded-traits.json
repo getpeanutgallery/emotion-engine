@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "contract": {
+    "artifact": "dialogue-data",
+    "mode": "traits",
+    "traits_contract_version": "3.0.0"
+  },
+  "summary": "Invalid proof-gate fixture with superseded v2 trait names and values.",
+  "dialogue_segments": [
+    {
+      "index": 0,
+      "text": "Hold your fire until I say so.",
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "adult",
+        "pitch_band": "mid",
+        "phonation": "distorted",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "radio",
+        "spatial_texture": "room",
+        "accent_strength": "mixed",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "serious",
+        "interpersonal_stance": "sexual",
+        "delivery_overlay": "none_apparent",
+        "channel_texture": "radio",
+        "delivery_stance": "directive"
+      }
+    }
+  ]
+}

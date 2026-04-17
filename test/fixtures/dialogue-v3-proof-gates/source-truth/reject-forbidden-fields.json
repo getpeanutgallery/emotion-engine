@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "contract": {
+    "artifact": "dialogue-data",
+    "mode": "traits",
+    "traits_contract_version": "3.0.0"
+  },
+  "summary": "Invalid proof-gate fixture with forbidden grouping leakage.",
+  "speaker_profiles": [],
+  "dialogue_segments": [
+    {
+      "index": 0,
+      "text": "Hold your fire until I say so.",
+      "speaker_id": "spk_001",
+      "start": 1.25,
+      "confidence": 0.98,
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "adult",
+        "pitch_band": "mid",
+        "phonation": "clear",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "radio",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "serious",
+        "interpersonal_stance": "directive",
+        "delivery_overlay": "none_apparent"
+      }
+    }
+  ]
+}

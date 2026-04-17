@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "contract": {
+    "artifact": "dialogue-data",
+    "mode": "traits",
+    "traits_contract_version": "3.0.0"
+  },
+  "summary": "Deterministic micro-fixture for reducer/scorer/ledger proof gate.",
+  "dialogue_segments": [
+    {
+      "index": 0,
+      "text": "Hold your fire until I say so.",
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "adult",
+        "pitch_band": "mid",
+        "phonation": "clear",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "radio",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "serious",
+        "interpersonal_stance": "directive",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 1,
+      "text": "Copy that.",
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "adult",
+        "pitch_band": "mid",
+        "phonation": "clear",
+        "pace": "fast",
+        "energy": "steady",
+        "transmission_medium": "radio",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "determined",
+        "interpersonal_stance": "supportive",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 2,
+      "text": "Say that again.",
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "feminine",
+        "age_impression": "adult",
+        "pitch_band": "high",
+        "phonation": "clear",
+        "pace": "measured",
+        "energy": "intense",
+        "transmission_medium": "radio",
+        "spatial_texture": "room",
+        "accent_strength": "clear_non_neutral",
+        "accent_family": "anglophone_non_neutral",
+        "affect": "angry",
+        "interpersonal_stance": "confrontational",
+        "delivery_overlay": "none_apparent"
+      }
+    }
+  ]
+}

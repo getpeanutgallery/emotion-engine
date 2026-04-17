@@ -166,18 +166,28 @@ The execution order is strict. First lock the transition/runtime note and the be
 
 **Folders Created/Deleted/Modified:**
 - `benchmarks/`
-- `tests/` or repo-appropriate fixture/test paths
+- `test/fixtures/dialogue-v3-proof-gates/`
+- `test/lib/`
+- `server/lib/`
 - `docs/`
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- golden truth/comparator fixtures/docs at repo-appropriate paths
-- deterministic gate tests/docs
+- `benchmarks/fixtures/cod-test/truth/speaker-grouping.json`
+- `server/lib/dialogue-v3-speaker-grouping-benchmark.cjs`
+- `test/lib/dialogue-v3-proof-gates.test.js`
+- `test/fixtures/dialogue-v3-proof-gates/source-truth/valid-dialogue-data.json`
+- `test/fixtures/dialogue-v3-proof-gates/source-truth/reject-forbidden-fields.json`
+- `test/fixtures/dialogue-v3-proof-gates/source-truth/reject-superseded-traits.json`
+- `test/fixtures/dialogue-v3-proof-gates/ruleset/reject-unknown-key.yaml`
+- `test/fixtures/dialogue-v3-proof-gates/ruleset/reject-bad-enum.yaml`
+- `test/fixtures/dialogue-v3-proof-gates/grouping/micro-clean-reuse-dialogue-data.json`
+- `docs/2026-04-17-dialogue-v3-proof-gates-evidence-bundle.md`
 - `.plans/2026-04-16-ee-gqnc-v3-traits-execution-plan.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Added a deterministic proof-gate lane for the first trusted `cod-test` interpretation. Checked in rejection fixtures for source-truth validation under `test/fixtures/dialogue-v3-proof-gates/source-truth/`, rejection fixtures for the ruleset loader/compiler under `test/fixtures/dialogue-v3-proof-gates/ruleset/`, and a bounded micro-fixture for reducer/scorer/ledger behavior under `test/fixtures/dialogue-v3-proof-gates/grouping/`. Added `test/lib/dialogue-v3-proof-gates.test.js` to prove those seams fail closed when invalid, stay deterministic when valid, and keep the reducer/scorer/ledger bundle coherent. Added `server/lib/dialogue-v3-speaker-grouping-benchmark.cjs` plus the checked-in `benchmarks/fixtures/cod-test/truth/speaker-grouping.json` projection so the golden first-slice grouping truth is explicit, reproducible from `truth/dialogue-data.json`, and comparator-ready without depending on runtime-generated group/speaker ids. Added `docs/2026-04-17-dialogue-v3-proof-gates-evidence-bundle.md` to lock the exact evidence bundle required before any first real run is trusted. Validation actually run for this task: focused proof-gate suites `node --test test/lib/dialogue-v3-source-truth-validator.test.js test/lib/dialogue-v3-heuristics-ruleset.test.js test/lib/dialogue-v3-speaker-grouping.test.js test/lib/dialogue-v3-proof-gates.test.js` passed cleanly (31/31). Broad repo suite `npm test` still reports pre-existing unrelated failures in benchmark-iteration-runner missing lane config, report-package smoke, script-runner AI recovery, config-loader missing `configs/video-analysis.yaml`, and `get-dialogue` prompt/chunking tests; those failures were present outside the new proof-gate files and do not come from this task’s additions.
 
 ---
 
