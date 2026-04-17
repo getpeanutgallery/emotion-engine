@@ -27,7 +27,15 @@
           "unknownSentinels": [
             "unknown",
             "ambiguous"
-          ]
+          ],
+          "posture": {
+            "kind": "phase1-dialogue-provisional",
+            "deferredContractPaths": [
+              "$.cleanedTranscript",
+              "$.speaker_profiles",
+              "$.handoffContext"
+            ]
+          }
         }
       },
       "required": true

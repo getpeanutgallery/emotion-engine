@@ -24,7 +24,15 @@
         "profile": "dialogue-default",
         "options": {
           "timingToleranceSeconds": 2,
-          "unknownSentinels": ["unknown", "ambiguous"]
+          "unknownSentinels": ["unknown", "ambiguous"],
+          "posture": {
+            "kind": "phase1-dialogue-provisional",
+            "deferredContractPaths": [
+              "$.cleanedTranscript",
+              "$.speaker_profiles",
+              "$.handoffContext"
+            ]
+          }
         }
       },
       "required": true

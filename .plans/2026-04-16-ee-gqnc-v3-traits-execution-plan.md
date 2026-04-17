@@ -243,6 +243,8 @@ The execution order is strict. First lock the transition/runtime note and the be
 
 Task 7b follow-through landed under bead `ee-baqh`: the runtime artifact bag now preserves raw `dialogueData` / `musicVocalsData` ownership, reconciliation emits explicit `dialogueDataReconciled` / `musicVocalsDataReconciled` companions in-memory, and persisted-artifact loading now resolves the canonical reconciled surface from `artifacts-complete.json` when reconciliation is configured. Focused regression coverage was added for the raw-vs-reconciled boundary and reconciliation-configured consumer behavior without regenerating golden benchmarks.
 
+Bead `ee-7i76` then made the benchmark/reporting surface honest about that provisional boundary without touching gold truth: `server/lib/benchmark-runner.cjs` now supports a minimal `phase1-dialogue-provisional` posture contract that classifies mismatches by boundary instead of collapsing them into product-bug headlines. For dialogue Phase 1 comparisons, raw-surface misses are reported as `provisional_raw_dialogue_drift`, stale contract-shape paths such as `cleanedTranscript`, `speaker_profiles`, and `handoffContext` are reported as `deferred_contract_drift`, and reconciliation-configured dialogue comparisons reclassify non-deferred misses as `reconciled_post_processing_contract_mismatch`. Focused benchmark-runner tests covered both raw and reconciled cases, and a repo-real rerun against `configs/cod-test-dialogue-structural-sanity.yaml` confirmed the current cod dialogue-only report now headlines the posture honestly (`provisional raw drift=75`, `deferred contract drift=85`) while still preserving the underlying fail/error counts until the contract settles.
+
 ---
 
 ### Task 8: Run the first real cod-test vertical slice and compare runtime `speaker-grouping` vs golden truth
@@ -264,7 +266,7 @@ Task 7b follow-through landed under bead `ee-baqh`: the runtime artifact bag now
 
 **Status:** ⏸️ Deferred
 
-**Results:** Deferred pending `ee-emj3` clarification of the raw-vs-reconciled Phase 1 contract and a later gold-truth refresh once Phase 1 script contracts stabilize.
+**Results:** Initially deferred pending `ee-emj3` clarification of the raw-vs-reconciled Phase 1 contract and a later gold-truth refresh once Phase 1 script contracts stabilize. Posture work under `ee-baqh` and `ee-7i76` is now complete, so the comparison/reporting surface is honest enough to resume Task 8 from a posture perspective without regenerating gold truth; remaining caution is semantic/product quality, not benchmark-boundary honesty.
 
 ---
 

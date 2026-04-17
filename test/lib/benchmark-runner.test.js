@@ -54,7 +54,8 @@ function makeTempFixture(rootDir, options = {}) {
           profile: 'dialogue-default',
           options: {
             timingToleranceSeconds: 2,
-            unknownSentinels: ['unknown', 'ambiguous']
+            unknownSentinels: ['unknown', 'ambiguous'],
+            ...(options.comparatorOptions || {})
           }
         },
         required: true
@@ -1995,4 +1996,123 @@ test('benchmark runner - recognizedSong support comparator treats support lists 
   assert(artifact.fieldResults.some((field) => field.path.includes('recognizedSong.candidates[truth=0,output=0].evidence[truth=0') && field.status === 'pass'));
   assert(artifact.fieldResults.some((field) => field.path.includes('recognizedSong.candidates[truth=0,output=0].matchedLyrics[truth=0') && field.status === 'pass'));
   assert(artifact.failures.some((failure) => failure.path === 'recognizedSong.candidates[truth=0,output=0].timeRanges[truth=1]'));
+});
+
+test('benchmark runner - provisional raw dialogue posture classifies raw drift separately from deferred contract drift', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-provisional-raw-dialogue');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempFixture(rootDir, {
+    comparatorOptions: {
+      posture: {
+        kind: 'phase1-dialogue-provisional',
+        deferredContractPaths: ['$.cleanedTranscript', '$.speaker_profiles', '$.handoffContext']
+      }
+    },
+    truthPayload: {
+      dialogue_segments: [
+        {
+          start: 1,
+          end: 3,
+          speaker: 'Speaker 1',
+          text: 'Wake up now.',
+          confidence: 0.98,
+          index: 0
+        }
+      ],
+      summary: 'Trailer dialogue sample.',
+      cleanedTranscript: 'Speaker 1: Wake up now.',
+      totalDuration: 20,
+      handoffContext: 'Truth handoff context.'
+    },
+    outputPayload: {
+      dialogue_segments: [
+        {
+          start: 1,
+          end: 3,
+          speaker: 'Speaker 1',
+          text: 'Raw leaked lyric line.',
+          confidence: 0.98,
+          index: 0
+        }
+      ],
+      summary: 'Trailer dialogue sample.',
+      totalDuration: 20,
+      handoffContext: null
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp provisional raw dialogue comparator',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(artifact.comparisonBoundary.outputSurface, 'raw');
+  assert.strictEqual(artifact.mismatchClassificationCounts.provisional_raw_dialogue_drift, 1);
+  assert.strictEqual(artifact.mismatchClassificationCounts.deferred_contract_drift, 2);
+  assert(artifact.failures.some((failure) => failure.path === 'dialogue_segments[truth=0,output=0].text' && failure.classification === 'provisional_raw_dialogue_drift'));
+  assert(artifact.errors.some((error) => error.path === 'cleanedTranscript' && error.classification === 'deferred_contract_drift'));
+  assert(artifact.failures.some((failure) => failure.path === 'handoffContext' && failure.classification === 'deferred_contract_drift'));
+  assert.match(artifact.summary, /posture=provisional raw-vs-reconciled/);
+});
+
+test('benchmark runner - provisional dialogue posture reclassifies reconciled output mismatches as post-processing contract mismatches', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-provisional-reconciled-dialogue');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempFixture(rootDir, {
+    comparatorOptions: {
+      posture: {
+        kind: 'phase1-dialogue-provisional',
+        deferredContractPaths: ['$.cleanedTranscript', '$.speaker_profiles', '$.handoffContext']
+      }
+    }
+  });
+
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.reconciled.json'), {
+    dialogue_segments: [
+      {
+        start: 1,
+        end: 3,
+        speaker: 'Speaker 1',
+        text: 'Reconciled but still different.',
+        confidence: 0.98
+      }
+    ],
+    summary: 'Trailer dialogue sample.',
+    totalDuration: 20,
+    handoffContext: null
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp provisional reconciled dialogue comparator',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-fixture/benchmark.json'
+      },
+      gather_context: [
+        'server/scripts/get-context/get-dialogue.cjs',
+        'server/scripts/get-context/reconcile-famous-song-phase1.cjs'
+      ]
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(artifact.comparisonBoundary.outputSurface, 'reconciled');
+  assert.strictEqual(artifact.mismatchClassificationCounts.reconciled_post_processing_contract_mismatch, 1);
+  assert(artifact.failures.some((failure) => failure.path === 'dialogue_segments[truth=0,output=0].text' && failure.classification === 'reconciled_post_processing_contract_mismatch'));
+  assert.match(artifact.summary, /posture=reconciled\/post-processing contract/);
 });

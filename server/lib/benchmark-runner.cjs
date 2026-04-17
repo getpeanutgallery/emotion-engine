@@ -313,6 +313,28 @@ function normalizeIgnorePaths(ignorePaths = []) {
   return [...new Set(ignorePaths.map((value) => value.trim()))];
 }
 
+function normalizePosturePaths(paths = []) {
+  return [...new Set(paths.map((value) => String(value || '').trim()).filter(Boolean))];
+}
+
+function normalizePostureComparablePath(pathString) {
+  return normalizeComparablePath(String(pathString || ''))
+    .replace(/\[[^\]]+\]/g, '[*]')
+    .replace(/\.\[\*\]/g, '[*]');
+}
+
+function posturePathMatches(pathString, candidatePath) {
+  const normalizedPath = normalizePostureComparablePath(pathString);
+  const normalizedCandidate = normalizePostureComparablePath(candidatePath);
+  if (!normalizedCandidate) {
+    return false;
+  }
+
+  return normalizedPath === normalizedCandidate
+    || normalizedPath.startsWith(`${normalizedCandidate}.`)
+    || normalizedPath.startsWith(`${normalizedCandidate}[*]`);
+}
+
 function getProfileDefaultIgnorePaths(profile) {
   return Array.isArray(PROFILE_DEFAULT_IGNORE_PATHS[profile])
     ? [...PROFILE_DEFAULT_IGNORE_PATHS[profile]]
@@ -633,13 +655,17 @@ function createComparator(artifact, directives = {}) {
   validateIgnorePaths(comparatorIgnorePaths, `${artifact.artifactKey} comparator options`);
   validateIgnorePaths(truthIgnorePaths, `${artifact.artifactKey} truth directives`);
 
+  const rawComparatorOptions = artifact.comparator.options || {};
+  const posture = rawComparatorOptions.posture === undefined ? null : rawComparatorOptions.posture;
   const resolvedOptions = {
     timingToleranceSeconds: DEFAULT_TIMING_TOLERANCE_SECONDS,
     numericTolerance: DEFAULT_NUMERIC_TOLERANCE,
     unknownSentinels: [...DEFAULT_UNKNOWN_SENTINELS],
     ignorePaths: [],
-    ...(artifact.comparator.options || {}),
-    ignorePaths: normalizeIgnorePaths([...profileDefaultIgnorePaths, ...comparatorIgnorePaths, ...truthIgnorePaths])
+    posture: null,
+    ...rawComparatorOptions,
+    ignorePaths: normalizeIgnorePaths([...profileDefaultIgnorePaths, ...comparatorIgnorePaths, ...truthIgnorePaths]),
+    posture
   };
 
   if (!Number.isFinite(resolvedOptions.timingToleranceSeconds) || resolvedOptions.timingToleranceSeconds < 0) {
@@ -656,6 +682,22 @@ function createComparator(artifact, directives = {}) {
 
   validateIgnorePaths(resolvedOptions.ignorePaths, artifact.artifactKey);
 
+  if (resolvedOptions.posture !== null) {
+    if (!isPlainObject(resolvedOptions.posture)) {
+      throw new Error(`Invalid posture for ${artifact.artifactKey}`);
+    }
+
+    if (resolvedOptions.posture.kind !== 'phase1-dialogue-provisional') {
+      throw new Error(`Unsupported posture kind for ${artifact.artifactKey}: ${resolvedOptions.posture.kind}`);
+    }
+
+    const deferredContractPaths = normalizePosturePaths(resolvedOptions.posture.deferredContractPaths || []);
+    resolvedOptions.posture = {
+      kind: resolvedOptions.posture.kind,
+      deferredContractPaths
+    };
+  }
+
   return {
     kind: artifact.comparator.kind,
     profile: artifact.comparator.profile,
@@ -668,7 +710,7 @@ function createComparator(artifact, directives = {}) {
   };
 }
 
-function compareArtifact({ artifact, comparator, truthData, outputData, truthPath, outputPath, fixtureId, benchmarkPath }) {
+function compareArtifact({ artifact, comparator, truthData, outputData, truthPath, outputPath, fixtureId, benchmarkPath, comparisonBoundary = null }) {
   const fieldResults = [];
   const failures = [];
   const skips = [];
@@ -682,29 +724,70 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
 
   let hardError = null;
 
+  function classifyMismatch(pathString) {
+    const posture = comparator.resolvedOptions.posture;
+    if (!posture) {
+      return null;
+    }
+
+    if (posture.kind === 'phase1-dialogue-provisional') {
+      const deferredPaths = posture.deferredContractPaths || [];
+      if (deferredPaths.some((candidatePath) => posturePathMatches(pathString, candidatePath))) {
+        return 'deferred_contract_drift';
+      }
+
+      if (comparisonBoundary?.outputSurface === 'raw') {
+        return 'provisional_raw_dialogue_drift';
+      }
+
+      if (comparisonBoundary?.outputSurface === 'reconciled') {
+        return 'reconciled_post_processing_contract_mismatch';
+      }
+    }
+
+    return null;
+  }
+
+  function summarizeMismatchClassifications(results) {
+    return results.reduce((acc, result) => {
+      const classification = result.classification;
+      if (!classification) {
+        return acc;
+      }
+      acc[classification] = (acc[classification] || 0) + 1;
+      return acc;
+    }, {});
+  }
+
   function pushFieldResult(result) {
-    fieldResults.push(result);
-    if (result.status === 'fail') {
+    const classification = result.status === 'fail' || result.status === 'error'
+      ? classifyMismatch(result.path)
+      : null;
+    const resultWithClassification = classification ? { ...result, classification } : result;
+    fieldResults.push(resultWithClassification);
+    if (resultWithClassification.status === 'fail') {
       failures.push({
-        path: result.path,
-        rule: result.rule,
-        truthValue: result.truthValue,
-        outputValue: result.outputValue,
-        reason: result.reason || null
+        path: resultWithClassification.path,
+        rule: resultWithClassification.rule,
+        truthValue: resultWithClassification.truthValue,
+        outputValue: resultWithClassification.outputValue,
+        reason: resultWithClassification.reason || null,
+        ...(classification ? { classification } : {})
       });
-    } else if (result.status === 'skip') {
+    } else if (resultWithClassification.status === 'skip') {
       skips.push({
-        path: result.path,
-        truthValue: result.truthValue,
-        reason: result.reason || 'Explicit truth sentinel'
+        path: resultWithClassification.path,
+        truthValue: resultWithClassification.truthValue,
+        reason: resultWithClassification.reason || 'Explicit truth sentinel'
       });
-    } else if (result.status === 'error') {
+    } else if (resultWithClassification.status === 'error') {
       errors.push({
-        path: result.path,
-        rule: result.rule,
-        truthValue: result.truthValue,
-        outputValue: result.outputValue,
-        reason: result.reason || 'Comparator error'
+        path: resultWithClassification.path,
+        rule: resultWithClassification.rule,
+        truthValue: resultWithClassification.truthValue,
+        outputValue: resultWithClassification.outputValue,
+        reason: resultWithClassification.reason || 'Comparator error',
+        ...(classification ? { classification } : {})
       });
     }
   }
@@ -1638,6 +1721,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
 
   const accuracyRate = counts.scoreableFields > 0 ? counts.passedFields / counts.scoreableFields : null;
   const coverageRate = counts.totalTruthFields > 0 ? counts.scoreableFields / counts.totalTruthFields : null;
+  const mismatchClassificationCounts = summarizeMismatchClassifications(fieldResults.filter((result) => result.status === 'fail' || result.status === 'error'));
 
   let status = 'pass';
   if (hardError || counts.erroredFields > 0) {
@@ -1646,9 +1730,28 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
     status = 'fail';
   }
 
+  const postureSummaryBits = [];
+  if (comparisonBoundary?.comparisonMode === 'phase1-dialogue-provisional') {
+    if (comparisonBoundary.outputSurface === 'raw') {
+      postureSummaryBits.push('posture=provisional raw-vs-reconciled');
+    } else if (comparisonBoundary.outputSurface === 'reconciled') {
+      postureSummaryBits.push('posture=reconciled/post-processing contract');
+    }
+  }
+  if (mismatchClassificationCounts.provisional_raw_dialogue_drift) {
+    postureSummaryBits.push(`provisionalRawDrift=${mismatchClassificationCounts.provisional_raw_dialogue_drift}`);
+  }
+  if (mismatchClassificationCounts.deferred_contract_drift) {
+    postureSummaryBits.push(`deferredContractDrift=${mismatchClassificationCounts.deferred_contract_drift}`);
+  }
+  if (mismatchClassificationCounts.reconciled_post_processing_contract_mismatch) {
+    postureSummaryBits.push(`reconciledContractMismatch=${mismatchClassificationCounts.reconciled_post_processing_contract_mismatch}`);
+  }
+
+  const summaryPrefix = postureSummaryBits.length > 0 ? `${postureSummaryBits.join('; ')}. ` : '';
   const summary = hardError
-    ? `${artifact.artifactKey} benchmark errored: ${hardError}`
-    : `${counts.passedFields}/${counts.scoreableFields} scoreable fields passed; ${counts.skippedFields}/${counts.totalTruthFields} truth fields were skipped.`;
+    ? `${summaryPrefix}${counts.passedFields}/${counts.scoreableFields} scoreable fields passed; ${counts.skippedFields}/${counts.totalTruthFields} truth fields were skipped.`
+    : `${summaryPrefix}${counts.passedFields}/${counts.scoreableFields} scoreable fields passed; ${counts.skippedFields}/${counts.totalTruthFields} truth fields were skipped.`;
 
   return {
     artifactKey: artifact.artifactKey,
@@ -1664,6 +1767,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
       resolvedOptions: comparator.resolvedOptions,
       directives: comparator.directives
     },
+    comparisonBoundary,
     counts,
     accuracy: {
       passed: counts.passedFields,
@@ -1676,6 +1780,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
       totalTruthFields: counts.totalTruthFields,
       rate: coverageRate
     },
+    mismatchClassificationCounts,
     failures,
     skips,
     ignoredDifferences,
@@ -1709,11 +1814,22 @@ function buildMarkdownSummary(summary) {
   lines.push(`- Coverage: ${summary.coverage.scoreable}/${summary.coverage.totalTruthFields} truth fields scoreable${summary.coverage.rate === null ? '' : ` (${(summary.coverage.rate * 100).toFixed(1)}%)`}`);
   lines.push(`- Skipped truth fields: ${summary.coverage.skipped}`);
   lines.push(`- Ignored differences surfaced outside score: ${summary.coverage.ignoredDifferences}`);
+  if (summary.mismatchClassificationCounts?.provisional_raw_dialogue_drift) lines.push(`- Provisional raw dialogue drift fields: ${summary.mismatchClassificationCounts.provisional_raw_dialogue_drift}`);
+  if (summary.mismatchClassificationCounts?.deferred_contract_drift) lines.push(`- Deferred contract drift fields: ${summary.mismatchClassificationCounts.deferred_contract_drift}`);
+  if (summary.mismatchClassificationCounts?.reconciled_post_processing_contract_mismatch) lines.push(`- Reconciled/post-processing contract mismatch fields: ${summary.mismatchClassificationCounts.reconciled_post_processing_contract_mismatch}`);
   lines.push('');
   lines.push('## Artifacts');
   lines.push('');
   for (const artifact of summary.artifacts) {
-    lines.push(`- **${artifact.artifactKey}** — ${artifact.status}; accuracy=${artifact.accuracyRate === null ? 'n/a' : (artifact.accuracyRate * 100).toFixed(1) + '%'}, coverage=${artifact.coverageRate === null ? 'n/a' : (artifact.coverageRate * 100).toFixed(1) + '%'}, ignoredDiffs=${artifact.ignoredDifferenceCount}`);
+    const classificationBits = [];
+    if (artifact.comparisonBoundary?.comparisonMode === 'phase1-dialogue-provisional') {
+      classificationBits.push(`posture=${artifact.comparisonBoundary.outputSurface === 'raw' ? 'provisional raw-vs-reconciled' : 'reconciled/post-processing contract'}`);
+    }
+    if (artifact.mismatchClassificationCounts?.provisional_raw_dialogue_drift) classificationBits.push(`provisionalRawDrift=${artifact.mismatchClassificationCounts.provisional_raw_dialogue_drift}`);
+    if (artifact.mismatchClassificationCounts?.deferred_contract_drift) classificationBits.push(`deferredContractDrift=${artifact.mismatchClassificationCounts.deferred_contract_drift}`);
+    if (artifact.mismatchClassificationCounts?.reconciled_post_processing_contract_mismatch) classificationBits.push(`reconciledContractMismatch=${artifact.mismatchClassificationCounts.reconciled_post_processing_contract_mismatch}`);
+    const classificationSuffix = classificationBits.length > 0 ? `, ${classificationBits.join(', ')}` : '';
+    lines.push(`- **${artifact.artifactKey}** — ${artifact.status}; accuracy=${artifact.accuracyRate === null ? 'n/a' : (artifact.accuracyRate * 100).toFixed(1) + '%'}, coverage=${artifact.coverageRate === null ? 'n/a' : (artifact.coverageRate * 100).toFixed(1) + '%'}, ignoredDiffs=${artifact.ignoredDifferenceCount}${classificationSuffix}`);
   }
   lines.push('');
   lines.push(summary.summary);
@@ -1768,6 +1884,14 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
     const comparator = createComparator(artifact, truthDirectives.directives);
     const truthData = truthDirectives.truthData;
     const outputData = readJsonFile(outputAbsolutePath, `produced artifact ${artifact.artifactKey}`);
+    const comparisonBoundary = comparator.resolvedOptions.posture?.kind === 'phase1-dialogue-provisional'
+      ? {
+          comparisonMode: 'phase1-dialogue-provisional',
+          outputSurface: outputResolution.shouldUseReconciled ? 'reconciled' : 'raw',
+          truthSurface: 'provisional-truth',
+          deferredContractPaths: comparator.resolvedOptions.posture.deferredContractPaths
+        }
+      : null;
 
     const result = compareArtifact({
       artifact,
@@ -1777,7 +1901,8 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
       truthPath: path.relative(process.cwd(), truthAbsolutePath).split(path.sep).join('/'),
       outputPath: path.relative(process.cwd(), outputAbsolutePath).split(path.sep).join('/'),
       fixtureId: manifest.fixtureId,
-      benchmarkPath: path.relative(process.cwd(), manifestPath).split(path.sep).join('/')
+      benchmarkPath: path.relative(process.cwd(), manifestPath).split(path.sep).join('/'),
+      comparisonBoundary
     });
 
     artifactResults.push(result);
@@ -1798,6 +1923,9 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
     acc.failedFields += result.counts.failedFields;
     acc.erroredFields += result.counts.erroredFields;
     acc.ignoredDifferenceFields += result.counts.ignoredDifferenceFields;
+    for (const [classification, count] of Object.entries(result.mismatchClassificationCounts || {})) {
+      acc.mismatchClassificationCounts[classification] = (acc.mismatchClassificationCounts[classification] || 0) + count;
+    }
     return acc;
   }, {
     artifactsTotal: 0,
@@ -1810,7 +1938,8 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
     passedFields: 0,
     failedFields: 0,
     erroredFields: 0,
-    ignoredDifferenceFields: 0
+    ignoredDifferenceFields: 0,
+    mismatchClassificationCounts: {}
   });
 
   const status = totals.artifactsErrored > 0
@@ -1838,7 +1967,9 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
       status: result.status,
       accuracyRate: result.accuracy.rate,
       coverageRate: result.coverage.rate,
-      ignoredDifferenceCount: result.counts.ignoredDifferenceFields
+      ignoredDifferenceCount: result.counts.ignoredDifferenceFields,
+      comparisonBoundary: result.comparisonBoundary,
+      mismatchClassificationCounts: result.mismatchClassificationCounts
     })),
     totals,
     accuracy: {
@@ -1853,8 +1984,9 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
       totalTruthFields: totals.totalTruthFields,
       rate: totals.totalTruthFields > 0 ? totals.scoreableFields / totals.totalTruthFields : null
     },
+    mismatchClassificationCounts: totals.mismatchClassificationCounts,
     errors: artifactResults.flatMap((result) => result.errors.map((error) => ({ artifactKey: result.artifactKey, ...error }))),
-    summary: `${totals.artifactsPassed}/${totals.artifactsTotal} artifacts passed. ${totals.passedFields}/${totals.scoreableFields} scoreable fields passed. Truth coverage was ${totals.scoreableFields}/${totals.totalTruthFields} fields.`
+    summary: `${totals.artifactsPassed}/${totals.artifactsTotal} artifacts passed. ${totals.passedFields}/${totals.scoreableFields} scoreable fields passed. Truth coverage was ${totals.scoreableFields}/${totals.totalTruthFields} fields.${totals.mismatchClassificationCounts.provisional_raw_dialogue_drift ? ` provisional raw drift=${totals.mismatchClassificationCounts.provisional_raw_dialogue_drift}.` : ''}${totals.mismatchClassificationCounts.deferred_contract_drift ? ` deferred contract drift=${totals.mismatchClassificationCounts.deferred_contract_drift}.` : ''}${totals.mismatchClassificationCounts.reconciled_post_processing_contract_mismatch ? ` reconciled contract mismatch=${totals.mismatchClassificationCounts.reconciled_post_processing_contract_mismatch}.` : ''}`
   };
 
   ensureParentDir(path.join(reportDir, 'benchmark-summary.json'));
