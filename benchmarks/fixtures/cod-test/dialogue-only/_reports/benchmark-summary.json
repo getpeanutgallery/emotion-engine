@@ -8,16 +8,16 @@
     "path": "benchmarks/fixtures/cod-test/fixture.json"
   },
   "run": {
-    "configName": "COD Dialogue Compare - MiMo Baseline",
-    "outputDir": "output/cod-dialogue-compare-mimo"
+    "configName": "COD Test Dialogue Structural Sanity",
+    "outputDir": "output/cod-test-dialogue-structural-sanity"
   },
   "status": "error",
   "artifacts": [
     {
       "artifactKey": "dialogueData",
       "status": "error",
-      "accuracyRate": 0.275,
-      "coverageRate": 0.9876543209876543,
+      "accuracyRate": 0.22815533980582525,
+      "coverageRate": 0.9903846153846154,
       "ignoredDifferenceCount": 45
     }
   ],
@@ -26,25 +26,25 @@
     "artifactsPassed": 0,
     "artifactsFailed": 0,
     "artifactsErrored": 1,
-    "totalTruthFields": 243,
-    "scoreableFields": 240,
-    "skippedFields": 2,
-    "passedFields": 66,
-    "failedFields": 174,
+    "totalTruthFields": 208,
+    "scoreableFields": 206,
+    "skippedFields": 1,
+    "passedFields": 47,
+    "failedFields": 159,
     "erroredFields": 1,
     "ignoredDifferenceFields": 45
   },
   "accuracy": {
-    "passed": 66,
-    "failed": 174,
-    "rate": 0.275
+    "passed": 47,
+    "failed": 159,
+    "rate": 0.22815533980582525
   },
   "coverage": {
-    "scoreable": 240,
-    "skipped": 2,
+    "scoreable": 206,
+    "skipped": 1,
     "ignoredDifferences": 45,
-    "totalTruthFields": 243,
-    "rate": 0.9876543209876543
+    "totalTruthFields": 208,
+    "rate": 0.9903846153846154
   },
   "errors": [
     {
@@ -55,5 +55,5 @@
       "reason": "Output object missing field present in truth"
     }
   ],
-  "summary": "0/1 artifacts passed. 66/240 scoreable fields passed. Truth coverage was 240/243 fields."
+  "summary": "0/1 artifacts passed. 47/206 scoreable fields passed. Truth coverage was 206/208 fields."
 }

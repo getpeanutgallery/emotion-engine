@@ -199,18 +199,23 @@ The execution order is strict. First lock the transition/runtime note and the be
 **Prompt:** Execute the deterministic gates once the validator/loader/reducer/scorer/ledger seams are implemented. Require green rejection fixtures, green micro-fixtures, targeted expressive evaluation reruns, and a dialogue-focused cod-test structural sanity run with no structural benchmark errors before the first semantic interpretation of the full slice.
 
 **Folders Created/Deleted/Modified:**
-- output/`
-- `.logs/`
+- `output/`
 - `docs/`
 - `.plans/`
+- `benchmarks/fixtures/cod-test/dialogue-only/_reports/`
 
 **Files Created/Deleted/Modified:**
-- gate results / notes / run artifacts at repo-appropriate paths
+- `configs/cod-test-dialogue-structural-sanity.yaml`
+- `docs/2026-04-17-dialogue-v3-task7-deterministic-gates-and-structural-sanity.md`
+- `output/cod-test-dialogue-structural-sanity/phase1-gather-context/dialogue-data.json`
+- `benchmarks/fixtures/cod-test/dialogue-only/_reports/benchmark-summary.json`
+- `benchmarks/fixtures/cod-test/dialogue-only/_reports/benchmark-summary.md`
+- `benchmarks/fixtures/cod-test/dialogue-only/_reports/artifact-results/dialogueData.json`
 - `.plans/2026-04-16-ee-gqnc-v3-traits-execution-plan.md`
 
-**Status:** ⏳ Pending
+**Status:** ❌ Failed
 
-**Results:** Pending.
+**Results:** Ran the locked deterministic proof-gate lane first via `node --test test/lib/dialogue-v3-source-truth-validator.test.js test/lib/dialogue-v3-heuristics-ruleset.test.js test/lib/dialogue-v3-speaker-grouping.test.js test/lib/dialogue-v3-proof-gates.test.js`; it passed cleanly at 31/31 and preserved the rejection fixtures, micro reducer/scorer/ledger bundle, golden truth projection, and comparator smoke required by `REF-08`. Then attempted the dialogue-only structural sanity pass. The archived baseline config at `configs/archive/cod-test-dialogue-benchmark-baseline.yaml` failed before execution because its `../benchmarks/...` path resolves incorrectly from `configs/archive/`. Created a repo-local QA config at `configs/cod-test-dialogue-structural-sanity.yaml` and reran `node server/run-pipeline.cjs --config configs/cod-test-dialogue-structural-sanity.yaml --verbose`. Phase 1 completed and wrote `output/cod-test-dialogue-structural-sanity/phase1-gather-context/dialogue-data.json`, but the benchmark surface still failed structurally: `benchmarks/fixtures/cod-test/dialogue-only/_reports/benchmark-summary.json` reported `status: error`, `47/206` scoreable fields passed, `29` output dialogue segments vs `20` truth segments, `9` output speaker profiles vs `13` truth profiles, lyric/non-truth leakage into `dialogueData`, and a hard structural error because `cleanedTranscript` was missing from output while present in truth. Also checked the targeted expressive rerun requirement against `REF-09`/`REF-10`; only design docs exist today, not a runnable asset package/reviewer sheet/3-run harness, so that gate remains unmet. Durable evidence was recorded in `docs/2026-04-17-dialogue-v3-task7-deterministic-gates-and-structural-sanity.md`. Follow-on beads created: `ee-m4eq` for the missing targeted expressive rerun surface and `ee-i4a1` for the dialogue-only structural blockers. The first semantic interpretation of the full slice remains blocked.
 
 ---
 
