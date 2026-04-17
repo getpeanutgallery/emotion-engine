@@ -42,6 +42,7 @@ The execution order is strict. First lock the transition/runtime note and the be
 | `REF-09` | calibration artifact | `docs/2026-04-15-dialogue-traits-v2-calibration-artifact.md` |
 | `REF-10` | cod-test config / benchmark truth anchor | `configs/*cod-test*.yaml`, `benchmarks/fixtures/cod-test/` |
 | `REF-11` | current-session approval to target golden `speaker-grouping` truth directly | current session |
+| `REF-12` | current-session clarification that raw dialogue may intentionally retain music-vocal leakage pre-reconciliation and that dialogue gold-truth refresh should be deferred until Phase 1 contracts stabilize | current session |
 
 ---
 
@@ -215,7 +216,30 @@ The execution order is strict. First lock the transition/runtime note and the be
 
 **Status:** ❌ Failed
 
-**Results:** Ran the locked deterministic proof-gate lane first via `node --test test/lib/dialogue-v3-source-truth-validator.test.js test/lib/dialogue-v3-heuristics-ruleset.test.js test/lib/dialogue-v3-speaker-grouping.test.js test/lib/dialogue-v3-proof-gates.test.js`; it passed cleanly at 31/31 and preserved the rejection fixtures, micro reducer/scorer/ledger bundle, golden truth projection, and comparator smoke required by `REF-08`. Then attempted the dialogue-only structural sanity pass. The archived baseline config at `configs/archive/cod-test-dialogue-benchmark-baseline.yaml` failed before execution because its `../benchmarks/...` path resolves incorrectly from `configs/archive/`. Created a repo-local QA config at `configs/cod-test-dialogue-structural-sanity.yaml` and reran `node server/run-pipeline.cjs --config configs/cod-test-dialogue-structural-sanity.yaml --verbose`. Phase 1 completed and wrote `output/cod-test-dialogue-structural-sanity/phase1-gather-context/dialogue-data.json`, but the benchmark surface still failed structurally: `benchmarks/fixtures/cod-test/dialogue-only/_reports/benchmark-summary.json` reported `status: error`, `47/206` scoreable fields passed, `29` output dialogue segments vs `20` truth segments, `9` output speaker profiles vs `13` truth profiles, lyric/non-truth leakage into `dialogueData`, and a hard structural error because `cleanedTranscript` was missing from output while present in truth. Also checked the targeted expressive rerun requirement against `REF-09`/`REF-10`; only design docs exist today, not a runnable asset package/reviewer sheet/3-run harness, so that gate remains unmet. Durable evidence was recorded in `docs/2026-04-17-dialogue-v3-task7-deterministic-gates-and-structural-sanity.md`. Follow-on beads created: `ee-m4eq` for the missing targeted expressive rerun surface and `ee-i4a1` for the dialogue-only structural blockers. The first semantic interpretation of the full slice remains blocked.
+**Results:** Ran the locked deterministic proof-gate lane first via `node --test test/lib/dialogue-v3-source-truth-validator.test.js test/lib/dialogue-v3-heuristics-ruleset.test.js test/lib/dialogue-v3-speaker-grouping.test.js test/lib/dialogue-v3-proof-gates.test.js`; it passed cleanly at 31/31 and preserved the rejection fixtures, micro reducer/scorer/ledger bundle, golden truth projection, and comparator smoke required by `REF-08`. Then attempted the dialogue-only structural sanity pass. The archived baseline config at `configs/archive/cod-test-dialogue-benchmark-baseline.yaml` failed before execution because its `../benchmarks/...` path resolves incorrectly from `configs/archive/`. Created a repo-local QA config at `configs/cod-test-dialogue-structural-sanity.yaml` and reran `node server/run-pipeline.cjs --config configs/cod-test-dialogue-structural-sanity.yaml --verbose`. Phase 1 completed and wrote `output/cod-test-dialogue-structural-sanity/phase1-gather-context/dialogue-data.json`, but the benchmark surface still failed structurally: `benchmarks/fixtures/cod-test/dialogue-only/_reports/benchmark-summary.json` reported `status: error`, `47/206` scoreable fields passed, `29` output dialogue segments vs `20` truth segments, `9` output speaker profiles vs `13` truth profiles, lyric/non-truth leakage into `dialogueData`, and a hard structural error because `cleanedTranscript` was missing from output while present in truth. Also checked the targeted expressive rerun requirement against `REF-09`/`REF-10`; only design docs exist today, not a runnable asset package/reviewer sheet/3-run harness, so that gate remains unmet. Durable evidence was recorded in `docs/2026-04-17-dialogue-v3-task7-deterministic-gates-and-structural-sanity.md`. Follow-on bead `ee-m4eq` was created for the missing targeted expressive rerun surface. Post-run product clarification under `REF-12` changed how these misses should be interpreted: raw dialogue may intentionally retain music-vocal leakage until the end-of-Phase-1 reconciliation/post-processing lane is finalized, and the current dialogue gold benchmark is provisional/stale in both boundary and shape. That means lyric leakage in this raw artifact is no longer treated as a product bug by itself, and the earlier blocker bead `ee-i4a1` was later closed as superseded. The remaining honest blockers before semantic interpretation are the stale benchmark surface, the missing reconciled/raw contract clarity, the `cleanedTranscript` shape mismatch, and the still-missing runnable targeted expressive rerun harness.
+
+---
+
+### Task 7b: Stabilize the end-of-Phase-1 reconciliation/post-processing contract before gold-truth refresh
+
+**Bead ID:** `ee-emj3`  
+**SubAgent:** `primary`  
+**References:** `REF-10`, `REF-12`  
+**Prompt:** In `projects/peanut-gallery/emotion-engine`, document and lock the provisional execution posture for the remainder of Phase 1: raw dialogue may intentionally retain music-vocal leakage until the end-of-Phase-1 reconciliation/post-processing lane is finalized; the current dialogue gold benchmark is provisional/stale in both boundary and shape; and honest comparator work should defer gold-truth refresh until the Phase 1 script contracts settle. Identify the concrete next implementation bead(s) needed to stabilize the reconciliation/post-processing contract and the raw-vs-reconciled artifact boundary.
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `docs/`
+- `.beads/`
+
+**Files Created/Deleted/Modified:**
+- `.plans/2026-04-16-ee-gqnc-v3-traits-execution-plan.md`
+- `docs/2026-04-17-phase1-reconciliation-contract-posture.md`
+- related bead records in repo-local Beads
+
+**Status:** ✅ Complete
+
+**Results:** Read the active plan plus the current reconciliation/runtime/docs to lock the clarified execution posture. Wrote `docs/2026-04-17-phase1-reconciliation-contract-posture.md` as the durable short note for this slice. Actual findings: the file-level Phase 1 contract is already split cleanly in `server/lib/phase1-baseline-resolution.cjs` (`dialogue-data.json` / `music-vocals-data.json` as raw, `dialogue-data.reconciled.json` / `music-vocals-data.reconciled.json` plus `famous-song-reconciliation.json` as post-processing outputs), and downstream loaders/comparators (`server/lib/persisted-artifacts.cjs`, `server/lib/benchmark-runner.cjs`) already resolve to the reconciled file when reconciliation is configured. But the runtime artifact bag is still not honest about ownership: `server/scripts/get-context/reconcile-famous-song-phase1.cjs` writes reconciled files to disk while also re-emitting reconciled dialogue/music-vocals back under the raw top-level keys, so raw-vs-reconciled ownership remains blurred in memory even after the earlier `gather-context-runner` merge tightening reduced the array-duplication failure mode documented in `docs/research/2026-04-08-whole-video-prompt-duplication-investigation.md`. Re-read Task 7 evidence in light of `REF-12`: raw dialogue lyric leakage is acceptable in this provisional slice, the current dialogue benchmark remains stale in both boundary and shape, and structural misses such as `cleanedTranscript` should be treated as deferred contract drift rather than proof of a product bug. Created two follow-on beads for the next execution slice: `ee-baqh` (**Split raw and reconciled Phase 1 lane artifacts in-memory and preserve post-processing ownership**) and `ee-7i76` (**Make Phase 1 dialogue comparison/reporting honest about provisional raw-vs-reconciled boundaries**). Added both as blockers for Task 8 bead `ee-x7l5`. Recommended next bead: `ee-baqh`, because it stabilizes the runtime artifact seam before comparator/reporting work and before any new cod-test semantic read.
 
 ---
 
@@ -223,8 +247,8 @@ The execution order is strict. First lock the transition/runtime note and the be
 
 **Bead ID:** `ee-x7l5`  
 **SubAgent:** `qa`  
-**References:** `REF-08`, `REF-09`, `REF-10`, `REF-11`  
-**Prompt:** Run the current cod-test YAML config only after the proof gates are green. Produce the validated v3 source-truth artifact, the runtime `speaker-grouping` artifact, the decision ledger, and the comparator outputs against golden `speaker-grouping` truth. Record evidence with exact config/model/ruleset/build identifiers and classify misses by source rather than collapsing them into one headline.
+**References:** `REF-08`, `REF-09`, `REF-10`, `REF-11`, `REF-12`  
+**Prompt:** Run the current cod-test YAML config only after the proof gates are green and after the provisional raw-vs-reconciled Phase 1 posture is honest. Produce the validated v3 source-truth artifact, the runtime `speaker-grouping` artifact, the decision ledger, and the comparator outputs against golden `speaker-grouping` truth. Record evidence with exact config/model/ruleset/build identifiers and classify misses by source rather than collapsing them into one headline.
 
 **Folders Created/Deleted/Modified:**
 - `output/`
@@ -236,9 +260,9 @@ The execution order is strict. First lock the transition/runtime note and the be
 - run artifacts/comparison notes at repo-appropriate paths
 - `.plans/2026-04-16-ee-gqnc-v3-traits-execution-plan.md`
 
-**Status:** ⏳ Pending
+**Status:** ⏸️ Deferred
 
-**Results:** Pending.
+**Results:** Deferred pending `ee-emj3` clarification of the raw-vs-reconciled Phase 1 contract and a later gold-truth refresh once Phase 1 script contracts stabilize.
 
 ---
 
