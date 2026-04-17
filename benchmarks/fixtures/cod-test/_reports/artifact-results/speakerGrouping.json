@@ -1,0 +1,402 @@
+{
+  "ok": false,
+  "truth_group_count": 13,
+  "runtime_group_count": 18,
+  "truth_assignment_count": 20,
+  "runtime_assignment_count": 18,
+  "mismatch_count": 8,
+  "mismatch_categories": {
+    "grouping_reuse_miss_after_source_truth_conversion": 6,
+    "runtime_missing_segment_for_truth_index": 2
+  },
+  "mismatches": [
+    {
+      "segment_index": 1,
+      "expected_speaker_group_key": "first_segment_000",
+      "actual_speaker_group_key": "first_segment_001",
+      "category": "grouping_reuse_miss_after_source_truth_conversion",
+      "rationale": "Golden truth expects this line to reuse an earlier speaker group, but runtime grouping left it as a singleton. With the current converted v3 source truth, this is a reuse miss at the grouping layer."
+    },
+    {
+      "segment_index": 4,
+      "expected_speaker_group_key": "first_segment_000",
+      "actual_speaker_group_key": "first_segment_004",
+      "category": "grouping_reuse_miss_after_source_truth_conversion",
+      "rationale": "Golden truth expects this line to reuse an earlier speaker group, but runtime grouping left it as a singleton. With the current converted v3 source truth, this is a reuse miss at the grouping layer."
+    },
+    {
+      "segment_index": 5,
+      "expected_speaker_group_key": "first_segment_000",
+      "actual_speaker_group_key": "first_segment_005",
+      "category": "grouping_reuse_miss_after_source_truth_conversion",
+      "rationale": "Golden truth expects this line to reuse an earlier speaker group, but runtime grouping left it as a singleton. With the current converted v3 source truth, this is a reuse miss at the grouping layer."
+    },
+    {
+      "segment_index": 8,
+      "expected_speaker_group_key": "first_segment_006",
+      "actual_speaker_group_key": "first_segment_008",
+      "category": "grouping_reuse_miss_after_source_truth_conversion",
+      "rationale": "Golden truth expects this line to reuse an earlier speaker group, but runtime grouping left it as a singleton. With the current converted v3 source truth, this is a reuse miss at the grouping layer."
+    },
+    {
+      "segment_index": 11,
+      "expected_speaker_group_key": "first_segment_010",
+      "actual_speaker_group_key": "first_segment_011",
+      "category": "grouping_reuse_miss_after_source_truth_conversion",
+      "rationale": "Golden truth expects this line to reuse an earlier speaker group, but runtime grouping left it as a singleton. With the current converted v3 source truth, this is a reuse miss at the grouping layer."
+    },
+    {
+      "segment_index": 15,
+      "expected_speaker_group_key": "first_segment_002",
+      "actual_speaker_group_key": "first_segment_015",
+      "category": "grouping_reuse_miss_after_source_truth_conversion",
+      "rationale": "Golden truth expects this line to reuse an earlier speaker group, but runtime grouping left it as a singleton. With the current converted v3 source truth, this is a reuse miss at the grouping layer."
+    },
+    {
+      "segment_index": 18,
+      "expected_speaker_group_key": "first_segment_006",
+      "actual_speaker_group_key": null,
+      "category": "runtime_missing_segment_for_truth_index",
+      "rationale": "Truth has a segment at this index but the runtime projection does not; this points to segmentation/boundary drift before grouping."
+    },
+    {
+      "segment_index": 19,
+      "expected_speaker_group_key": "first_segment_019",
+      "actual_speaker_group_key": null,
+      "category": "runtime_missing_segment_for_truth_index",
+      "rationale": "Truth has a segment at this index but the runtime projection does not; this points to segmentation/boundary drift before grouping."
+    }
+  ],
+  "runtime_projection": {
+    "schema_version": 1,
+    "contract": {
+      "artifact": "speaker-grouping-runtime-normalized",
+      "mode": "first-slice-comparator-projection"
+    },
+    "speaker_groups": [
+      {
+        "group_id": "grp_001",
+        "speaker_group_key": "first_segment_000",
+        "first_segment_index": 0,
+        "segment_indexes": [
+          0
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_002",
+        "speaker_group_key": "first_segment_001",
+        "first_segment_index": 1,
+        "segment_indexes": [
+          1
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_003",
+        "speaker_group_key": "first_segment_002",
+        "first_segment_index": 2,
+        "segment_indexes": [
+          2
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_004",
+        "speaker_group_key": "first_segment_003",
+        "first_segment_index": 3,
+        "segment_indexes": [
+          3
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_005",
+        "speaker_group_key": "first_segment_004",
+        "first_segment_index": 4,
+        "segment_indexes": [
+          4
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_006",
+        "speaker_group_key": "first_segment_005",
+        "first_segment_index": 5,
+        "segment_indexes": [
+          5
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_007",
+        "speaker_group_key": "first_segment_006",
+        "first_segment_index": 6,
+        "segment_indexes": [
+          6
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_008",
+        "speaker_group_key": "first_segment_007",
+        "first_segment_index": 7,
+        "segment_indexes": [
+          7
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_009",
+        "speaker_group_key": "first_segment_008",
+        "first_segment_index": 8,
+        "segment_indexes": [
+          8
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_010",
+        "speaker_group_key": "first_segment_009",
+        "first_segment_index": 9,
+        "segment_indexes": [
+          9
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_011",
+        "speaker_group_key": "first_segment_010",
+        "first_segment_index": 10,
+        "segment_indexes": [
+          10
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_012",
+        "speaker_group_key": "first_segment_011",
+        "first_segment_index": 11,
+        "segment_indexes": [
+          11
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_013",
+        "speaker_group_key": "first_segment_012",
+        "first_segment_index": 12,
+        "segment_indexes": [
+          12
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_014",
+        "speaker_group_key": "first_segment_013",
+        "first_segment_index": 13,
+        "segment_indexes": [
+          13
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_015",
+        "speaker_group_key": "first_segment_014",
+        "first_segment_index": 14,
+        "segment_indexes": [
+          14
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_016",
+        "speaker_group_key": "first_segment_015",
+        "first_segment_index": 15,
+        "segment_indexes": [
+          15
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_017",
+        "speaker_group_key": "first_segment_016",
+        "first_segment_index": 16,
+        "segment_indexes": [
+          16
+        ],
+        "segment_count": 1
+      },
+      {
+        "group_id": "grp_018",
+        "speaker_group_key": "first_segment_017",
+        "first_segment_index": 17,
+        "segment_indexes": [
+          17
+        ],
+        "segment_count": 1
+      }
+    ],
+    "assignments": [
+      {
+        "segment_index": 0,
+        "speaker_group_key": "first_segment_000",
+        "group_id": "grp_001"
+      },
+      {
+        "segment_index": 1,
+        "speaker_group_key": "first_segment_001",
+        "group_id": "grp_002"
+      },
+      {
+        "segment_index": 2,
+        "speaker_group_key": "first_segment_002",
+        "group_id": "grp_003"
+      },
+      {
+        "segment_index": 3,
+        "speaker_group_key": "first_segment_003",
+        "group_id": "grp_004"
+      },
+      {
+        "segment_index": 4,
+        "speaker_group_key": "first_segment_004",
+        "group_id": "grp_005"
+      },
+      {
+        "segment_index": 5,
+        "speaker_group_key": "first_segment_005",
+        "group_id": "grp_006"
+      },
+      {
+        "segment_index": 6,
+        "speaker_group_key": "first_segment_006",
+        "group_id": "grp_007"
+      },
+      {
+        "segment_index": 7,
+        "speaker_group_key": "first_segment_007",
+        "group_id": "grp_008"
+      },
+      {
+        "segment_index": 8,
+        "speaker_group_key": "first_segment_008",
+        "group_id": "grp_009"
+      },
+      {
+        "segment_index": 9,
+        "speaker_group_key": "first_segment_009",
+        "group_id": "grp_010"
+      },
+      {
+        "segment_index": 10,
+        "speaker_group_key": "first_segment_010",
+        "group_id": "grp_011"
+      },
+      {
+        "segment_index": 11,
+        "speaker_group_key": "first_segment_011",
+        "group_id": "grp_012"
+      },
+      {
+        "segment_index": 12,
+        "speaker_group_key": "first_segment_012",
+        "group_id": "grp_013"
+      },
+      {
+        "segment_index": 13,
+        "speaker_group_key": "first_segment_013",
+        "group_id": "grp_014"
+      },
+      {
+        "segment_index": 14,
+        "speaker_group_key": "first_segment_014",
+        "group_id": "grp_015"
+      },
+      {
+        "segment_index": 15,
+        "speaker_group_key": "first_segment_015",
+        "group_id": "grp_016"
+      },
+      {
+        "segment_index": 16,
+        "speaker_group_key": "first_segment_016",
+        "group_id": "grp_017"
+      },
+      {
+        "segment_index": 17,
+        "speaker_group_key": "first_segment_017",
+        "group_id": "grp_018"
+      }
+    ],
+    "summary": {
+      "group_count": 18,
+      "assignment_count": 18
+    }
+  },
+  "evidence": {
+    "run": {
+      "config_name": "COD Test Pipeline",
+      "output_dir": "output/cod-test/phase1-gather-context",
+      "started_at": "2026-04-17T21:36:40.864Z",
+      "completed_at": "2026-04-17T21:41:05.665Z"
+    },
+    "identifiers": {
+      "build": {
+        "git_commit": "72f614ad1c7dd11b744b921930e0c22662af0873",
+        "git_short": "72f614a",
+        "git_branch": "main",
+        "generated_at": "2026-04-17T21:44:35.226Z"
+      },
+      "config": {
+        "path": "configs/cod-test.yaml",
+        "sha256": "3919b9c4dca5580f0dc3a414a21519cfa8c158cae370c05346abeb817eba221a"
+      },
+      "ruleset": {
+        "id": "default",
+        "version": "3.0.0",
+        "path": "docs/2026-04-16-dialogue-traits-v3-speaker-grouping-heuristics-ruleset.yaml",
+        "sha256": "297dd42eb86e9bd3894044484dd3f54eb854f5014a45914f6fedfff04ca4259e"
+      },
+      "models": {
+        "phase1_dialogue": "openrouter/xiaomi/mimo-v2-omni",
+        "phase1_music": "openrouter/xiaomi/mimo-v2-omni",
+        "phase1_music_vocals": "openrouter/xiaomi/mimo-v2-omni",
+        "phase2_video": "openrouter/xiaomi/mimo-v2-omni",
+        "recovery_configured": "openrouter/google/gemini-3.1-pro-preview",
+        "recovery_used": false
+      }
+    },
+    "posture": {
+      "raw_dialogue_path": "output/cod-test/phase1-gather-context/dialogue-data.json",
+      "reconciled_dialogue_path": "output/cod-test/phase1-gather-context/dialogue-data.reconciled.json",
+      "grouping_input_surface": "output/cod-test/phase1-gather-context/dialogue-data.reconciled.json",
+      "reconciliation_ledger_path": "output/cod-test/phase1-gather-context/famous-song-reconciliation.json",
+      "reconciliation_status": "skipped",
+      "reconciliation_skip_reasons": [
+        "hasSupportingMusicConsensus"
+      ],
+      "interpretation_note": "Grouping was driven from the reconciled Phase 1 dialogue surface because reconciliation-configured consumers are supposed to resolve canonical post-processing outputs. In this run the reconciliation ledger was skipped, so raw and reconciled dialogue contents were effectively the same."
+    },
+    "artifacts": {
+      "source_truth_v3": "output/cod-test/phase1-gather-context/dialogue-v3-source-truth.json",
+      "runtime_grouping": "output/cod-test/phase1-gather-context/speaker-grouping.json",
+      "decision_ledger": "output/cod-test/phase1-gather-context/speaker-grouping.decision-ledger.json",
+      "comparator": "benchmarks/fixtures/cod-test/_reports/artifact-results/speakerGrouping.json",
+      "comparator_miss_clusters": "benchmarks/fixtures/cod-test/_reports/artifact-results/speakerGrouping.miss-clusters.json",
+      "truth_grouping": "benchmarks/fixtures/cod-test/truth/speaker-grouping.json"
+    },
+    "counts": {
+      "runtime_segment_count": 18,
+      "runtime_group_count": 18,
+      "runtime_assignment_count": 18,
+      "truth_group_count": 13,
+      "truth_assignment_count": 20,
+      "comparator_mismatch_count": 8
+    },
+    "miss_clusters": {
+      "grouping_reuse_miss_after_source_truth_conversion": 6,
+      "runtime_missing_segment_for_truth_index": 2
+    }
+  }
+}
