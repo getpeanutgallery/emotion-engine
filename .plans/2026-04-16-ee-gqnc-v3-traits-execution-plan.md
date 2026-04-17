@@ -121,18 +121,17 @@ The execution order is strict. First lock the transition/runtime note and the be
 
 **Folders Created/Deleted/Modified:**
 - `server/`
-- `tests/` or repo-appropriate fixture/test paths
-- `docs/` if artifact shape doc needs landing
+- `test/`
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- reducer/artifact code/tests at repo-appropriate paths
-- optional artifact-shape doc if needed
+- `server/lib/dialogue-v3-speaker-grouping.cjs`
+- `test/lib/dialogue-v3-speaker-grouping.test.js`
 - `.plans/2026-04-16-ee-gqnc-v3-traits-execution-plan.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Added `server/lib/dialogue-v3-speaker-grouping.cjs` plus `test/lib/dialogue-v3-speaker-grouping.test.js` as the bounded reducer/artifact seam for first-slice deterministic grouping. The reducer now owns per-group support state (`support.trait_value_counts`), derives stable `canonical_traits` deterministically from accumulated evidence, exposes immutable serializable `pre_update` candidate snapshots for scorer consumption, and writes all grouping-owned state to a separate `speaker-grouping` artifact skeleton with source/ruleset metadata, assignments, ambiguity fields, summary counts, and deferred cleanup posture. Singleton merge and split execution remain explicitly deferred in artifact metadata for the first slice, and source truth stays untouched. Validation run in this task: focused suites `node --test test/lib/dialogue-v3-speaker-grouping.test.js test/lib/dialogue-v3-source-truth-validator.test.js test/lib/dialogue-v3-heuristics-ruleset.test.js` passed; broad repo suite `npm test` still reports pre-existing unrelated failures in benchmark-iteration-runner, report-package smoke, script-runner AI recovery, config-loader single-document YAML loading, and get-dialogue prompt/chunking tests that are outside this reducer/artifact change.
 
 ---
 
