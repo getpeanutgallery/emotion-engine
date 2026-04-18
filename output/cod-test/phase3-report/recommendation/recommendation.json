@@ -1,23 +1,24 @@
 {
-  "generatedAt": "2026-04-09T16:38:34.546Z",
+  "generatedAt": "2026-04-17T21:41:30.140Z",
   "pipelineVersion": "1.0",
-  "text": "Due to insufficient data in the provided metrics and chunk summaries, no actionable recommendations can be made for improving viewer retention or emotional impact. Next steps should involve running the emotion analysis pipeline to generate actual data for analysis.",
-  "reasoning": "The input data shows empty metrics summaries with no averages, trends, or peak moments, and the friction index is 0, indicating no data or no analysis performed. Chunk summaries are absent, preventing any assessment of emotional beats or pacing. Without this data, it is impossible to reference specific evidence for retention or emotional impact, so recommendations must focus on data collection.",
+  "text": "Due to insufficient emotion analysis data, no specific retention improvements can be recommended. Next steps include collecting chunk-level emotion metrics and viewer engagement data to enable actionable insights.",
+  "reasoning": "The provided metrics summary has empty averages, trends, and peak moments, with a friction index of zero, indicating no analysis was performed. Chunk summaries are also empty, so there is no evidence of emotional beats or viewer friction points. Without data on hook effectiveness, pacing, or emotional peaks, it is impossible to identify retention issues or opportunities. This lack of data prevents any concrete recommendations for edits.",
   "confidence": 0.1,
   "keyFindings": [
-    "Metrics summary is completely empty, with no computed averages or trends.",
-    "Friction index is 0, which may indicate missing data or no viewer friction detected.",
-    "Chunk summaries are absent, so no emotional analysis or peak moments are available."
+    "No emotion analysis data available in chunk summaries",
+    "Metrics summary is completely empty with no averages or trends",
+    "Friction index is zero, suggesting no viewer engagement analysis",
+    "Peak moments are not identified, missing emotional high points"
   ],
   "suggestions": [
-    "Run the emotion analysis pipeline on the video source to generate chunk-level data.",
-    "Compute metrics such as averages, trends, and peak moments from the processed data.",
-    "Calculate a meaningful friction index based on viewer engagement metrics.",
-    "Analyze emotional peaks and valleys to identify key retention points.",
-    "Once data is available, evaluate the hook effectiveness in the first few seconds.",
-    "Assess pacing by reviewing transitions between emotional beats.",
-    "Identify specific timestamps where viewer drop-off occurs for targeted edits.",
-    "Re-run the analysis after implementing changes to measure impact."
+    "Run the emotion analysis pipeline to generate chunk-level data",
+    "Collect viewer retention metrics like drop-off rates and watch time",
+    "Analyze the video for emotional peaks and valleys using the data",
+    "Review the hook and pacing based on actual engagement trends",
+    "Conduct A/B testing with different edits to measure impact",
+    "Gather feedback on emotional beats from target audience",
+    "Use the data to identify friction points and smooth transitions",
+    "Optimize content length based on retention patterns"
   ],
   "failedChunks": 0,
   "ai": {
@@ -33,8 +34,8 @@
       "validatorCalls": 2
     },
     "usage": {
-      "input": 2537,
-      "output": 1459
+      "input": 2442,
+      "output": 1140
     }
   }
 }

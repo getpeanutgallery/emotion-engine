@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "kind": "pointer",
-  "updatedAt": "2026-04-09T16:32:42.639Z",
+  "updatedAt": "2026-04-17T21:37:30.115Z",
   "latestAttempt": 1,
   "target": {
     "dir": "dialogue-transcription/attempt-01",

@@ -22,7 +22,8 @@
       ],
       "ignorePaths": [
         "$.generatedAt"
-      ]
+      ],
+      "posture": null
     },
     "directives": {
       "comparatorIgnorePaths": [],
@@ -34,6 +35,7 @@
       ]
     }
   },
+  "comparisonBoundary": null,
   "counts": {
     "totalTruthFields": 19,
     "scoreableFields": 8,
@@ -54,6 +56,7 @@
     "totalTruthFields": 19,
     "rate": 0.42105263157894735
   },
+  "mismatchClassificationCounts": {},
   "failures": [
     {
       "path": "summary.totalChunks",
@@ -102,7 +105,7 @@
     {
       "path": "generatedAt",
       "truthValue": "2026-03-26T13:35:12.112Z",
-      "outputValue": "2026-04-09T20:44:07.628Z",
+      "outputValue": "2026-04-17T21:41:05.667Z",
       "reason": "Ignored path values differed"
     }
   ],
@@ -217,7 +220,7 @@
       "status": "skip",
       "rule": "structural",
       "truthValue": "2026-03-26T13:35:12.112Z",
-      "outputValue": "2026-04-09T20:44:07.628Z",
+      "outputValue": "2026-04-17T21:41:05.667Z",
       "reason": "Comparator ignored benchmark path"
     },
     {
@@ -402,7 +405,7 @@
       }
     }
   ],
-  "summary": "metricsData benchmark errored: Truth object missing field present in output",
+  "summary": "3/8 scoreable fields passed; 1/19 truth fields were skipped.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

@@ -48,7 +48,7 @@ Once the heuristics contract exists, this lane should cover contract/prompt/vali
 
 **Status:** ⏳ Pending
 
-**Results:** Pending.
+**Results:** Pending implementation, but the prerequisite phonation-normalization blocker seam was finalized on 2026-04-16 under `ee-vehu`. Exact handoff into `ee-gqnc`: implement the deterministic scorer/parser and decision ledger against the locked v3 heuristics package, treat `phonation` as a strong scoring field, treat whispered-vs-nonwhispered as the only explicit phonation blocker posture, and support the explicit blocker predicate vocabulary noted by audit (including scalar equality keys such as `line_value` / `group_value` alongside membership/exclusion predicates).
 
 ---
 

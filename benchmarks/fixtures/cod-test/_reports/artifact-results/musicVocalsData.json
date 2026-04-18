@@ -29,7 +29,8 @@
         "$.sourceStrategy",
         "$.coverage",
         "$.provenance"
-      ]
+      ],
+      "posture": null
     },
     "directives": {
       "comparatorIgnorePaths": [],
@@ -52,26 +53,28 @@
       ]
     }
   },
+  "comparisonBoundary": null,
   "counts": {
-    "totalTruthFields": 118,
-    "scoreableFields": 95,
+    "totalTruthFields": 110,
+    "scoreableFields": 89,
     "skippedFields": 1,
-    "passedFields": 42,
-    "failedFields": 53,
-    "erroredFields": 22,
+    "passedFields": 44,
+    "failedFields": 45,
+    "erroredFields": 20,
     "ignoredDifferenceFields": 29
   },
   "accuracy": {
-    "passed": 42,
-    "failed": 53,
-    "rate": 0.4421052631578947
+    "passed": 44,
+    "failed": 45,
+    "rate": 0.4943820224719101
   },
   "coverage": {
-    "scoreable": 95,
+    "scoreable": 89,
     "skipped": 1,
-    "totalTruthFields": 118,
-    "rate": 0.8050847457627118
+    "totalTruthFields": 110,
+    "rate": 0.8090909090909091
   },
+  "mismatchClassificationCounts": {},
   "failures": [
     {
       "path": "vocal_segments",
@@ -83,6 +86,13 @@
         "length": 14
       },
       "reason": "Array length mismatch: truth=12 output=14"
+    },
+    {
+      "path": "vocal_segments[truth=0,output=0].text",
+      "rule": "fuzzy-string",
+      "truthValue": "Obey your master",
+      "outputValue": "I'll be your master",
+      "reason": "Normalized strings differed"
     },
     {
       "path": "vocal_segments[truth=0,output=0].performer",
@@ -120,13 +130,6 @@
       "reason": "Values differed"
     },
     {
-      "path": "vocal_segments[truth=2,output=2].text",
-      "rule": "fuzzy-string",
-      "truthValue": "Master of puppets I’m pulling your strings",
-      "outputValue": "Master, master",
-      "reason": "Normalized strings differed"
-    },
-    {
       "path": "vocal_segments[truth=2,output=2].performer",
       "rule": "exact",
       "truthValue": "Metallica lead vocal",
@@ -137,7 +140,7 @@
       "path": "vocal_segments[truth=3,output=3].text",
       "rule": "fuzzy-string",
       "truthValue": "Twisting your mind and smashing your dreams",
-      "outputValue": "Master, master",
+      "outputValue": "Come crawling faster",
       "reason": "Normalized strings differed"
     },
     {
@@ -151,7 +154,7 @@
       "path": "vocal_segments[truth=4,output=4].text",
       "rule": "fuzzy-string",
       "truthValue": "Blinded by me, you can’t see a thing",
-      "outputValue": "Master! Master!",
+      "outputValue": "Obey your master!",
       "reason": "Normalized strings differed"
     },
     {
@@ -165,7 +168,7 @@
       "path": "vocal_segments[truth=5,output=5].text",
       "rule": "fuzzy-string",
       "truthValue": "Just call my name, ‘cause I’ll hear you scream",
-      "outputValue": "Come crawling faster",
+      "outputValue": "Twisting your mind and smashing your dreams",
       "reason": "Normalized strings differed"
     },
     {
@@ -174,13 +177,6 @@
       "truthValue": "Metallica lead vocal",
       "outputValue": "Vocalist 1",
       "reason": "Values differed"
-    },
-    {
-      "path": "vocal_segments[truth=6,output=6].text",
-      "rule": "fuzzy-string",
-      "truthValue": "Master, master",
-      "outputValue": "Obey your master!",
-      "reason": "Normalized strings differed"
     },
     {
       "path": "vocal_segments[truth=6,output=6].performer",
@@ -193,7 +189,7 @@
       "path": "vocal_segments[truth=7,output=7].text",
       "rule": "fuzzy-string",
       "truthValue": "Where’s the dreams that I’ve been after?",
-      "outputValue": "Master of puppets I'm pulling your strings",
+      "outputValue": "Master of puppets, I'm pulling your strings",
       "reason": "Normalized strings differed"
     },
     {
@@ -221,7 +217,7 @@
       "path": "vocal_segments[truth=9,output=9].text",
       "rule": "fuzzy-string",
       "truthValue": "You promised only lies",
-      "outputValue": "Blinded by me you can't see a thing",
+      "outputValue": "Blinded by me, you can't see a thing",
       "reason": "Normalized strings differed"
     },
     {
@@ -235,7 +231,7 @@
       "path": "vocal_segments[truth=10,output=10].text",
       "rule": "fuzzy-string",
       "truthValue": "Obey your master",
-      "outputValue": "Just call my name 'cause I'll hear you scream",
+      "outputValue": "Just call my name, 'cause I'll hear you scream",
       "reason": "Normalized strings differed"
     },
     {
@@ -271,7 +267,7 @@
       "rule": "structural",
       "outputValue": {
         "index": 12,
-        "text": "Master of puppets I'm pulling your strings",
+        "text": "Just call my name, 'cause I'll hear you scream",
         "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
@@ -284,7 +280,7 @@
       "rule": "structural",
       "outputValue": {
         "index": 13,
-        "text": "Obey your master",
+        "text": "Master, master",
         "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
@@ -296,14 +292,14 @@
       "path": "summary",
       "rule": "fuzzy-string",
       "truthValue": "Metallica vocal refrains and lyric lines from “Master of Puppets” drive the trailer's sung music-vocals lane from the first \"Obey your master\" chant through the recurring \"Master, master\" refrain.",
-      "outputValue": "The sung hook 'Master, master' is heard in this chunk.",
+      "outputValue": "Sung rock vocals continue with lyrical phrases from 'Master of Puppets'.",
       "reason": "Normalized strings differed"
     },
     {
       "path": "recognizedSong.primaryEvidence",
       "rule": "exact",
       "truthValue": "Repeated literal lyric fragments uniquely ground the vocal lane to one famous song.",
-      "outputValue": "Distinct lyric fragments and aggressive vocal delivery strongly support identification of 'Master of Puppets' by Metallica.",
+      "outputValue": "Distinct lyric fragments and delivery strongly support one specific song.",
       "reason": "Values differed"
     },
     {
@@ -318,33 +314,10 @@
       "reason": "Array length mismatch: truth=2 output=1"
     },
     {
-      "path": "recognizedSong.candidates[truth=0,output=0].evidence[truth=0]",
-      "rule": "recognized-song-support-evidence",
-      "truthValue": "Literal lyric fragments such as \"Master, master\" and \"Obey your master\" are clearly audible.",
-      "reason": "Missing supported item in output list"
-    },
-    {
       "path": "recognizedSong.candidates[truth=0,output=0].evidence[truth=1]",
       "rule": "recognized-song-support-evidence",
       "truthValue": "The surrounding sung lines align with the same famous metal song chorus/verse sequence.",
       "reason": "Missing supported item in output list"
-    },
-    {
-      "path": "recognizedSong.candidates[truth=0,output=0].evidence[output=0]",
-      "rule": "recognized-song-support-evidence",
-      "outputValue": "Literal lyric fragments match the heard refrain from the heavy metal segment.",
-      "reason": "Extra unsupported item in output list"
-    },
-    {
-      "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics",
-      "rule": "structural",
-      "truthValue": {
-        "length": 3
-      },
-      "outputValue": {
-        "length": 7
-      },
-      "reason": "Array length mismatch: truth=3 output=7"
     },
     {
       "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[truth=1]",
@@ -361,37 +334,13 @@
     {
       "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[output=1]",
       "rule": "recognized-song-support-lyrics",
-      "outputValue": "Master, master",
+      "outputValue": "I'll be your master",
       "reason": "Extra unsupported item in output list"
     },
     {
       "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[output=2]",
       "rule": "recognized-song-support-lyrics",
-      "outputValue": "Come crawling faster",
-      "reason": "Extra unsupported item in output list"
-    },
-    {
-      "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[output=3]",
-      "rule": "recognized-song-support-lyrics",
-      "outputValue": "Master of puppets I'm pulling your strings",
-      "reason": "Extra unsupported item in output list"
-    },
-    {
-      "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[output=4]",
-      "rule": "recognized-song-support-lyrics",
-      "outputValue": "Twisting your mind and smashing your dreams",
-      "reason": "Extra unsupported item in output list"
-    },
-    {
-      "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[output=5]",
-      "rule": "recognized-song-support-lyrics",
-      "outputValue": "Blinded by me you can't see a thing",
-      "reason": "Extra unsupported item in output list"
-    },
-    {
-      "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[output=6]",
-      "rule": "recognized-song-support-lyrics",
-      "outputValue": "Just call my name 'cause I'll hear you scream",
+      "outputValue": "Master of puppets, I'm pulling your strings",
       "reason": "Extra unsupported item in output list"
     },
     {
@@ -439,22 +388,22 @@
         "length": 2
       },
       "outputValue": {
-        "length": 6
+        "length": 5
       },
-      "reason": "Array length mismatch: truth=2 output=6"
+      "reason": "Array length mismatch: truth=2 output=5"
     },
     {
       "path": "recognitionNotes[0]",
       "rule": "exact",
       "truthValue": "Spoken dialogue and promo VO elsewhere in the trailer are intentionally excluded from lyric evidence.",
-      "outputValue": "Spoken dialogue is present but excluded from lyric evidence.",
+      "outputValue": "This chunk contains spoken dialogue over background music, but no sung lyrics.",
       "reason": "Values differed"
     },
     {
       "path": "recognitionNotes[1]",
       "rule": "exact",
       "truthValue": "The opening chant fragments are short, but later full lyric lines confirm the song identification.",
-      "outputValue": "Expected lyrics from 'Master of Puppets' are not present in this chunk, as heavy metal music starts later in the asset.",
+      "outputValue": "Spoken dialogue at the beginning of the chunk is excluded from lyric evidence.",
       "reason": "Values differed"
     },
     {
@@ -464,9 +413,9 @@
         "length": 1
       },
       "outputValue": {
-        "length": 7
+        "length": 6
       },
-      "reason": "Array length mismatch: truth=1 output=7"
+      "reason": "Array length mismatch: truth=1 output=6"
     },
     {
       "path": "qualityNotes[0]",
@@ -795,7 +744,7 @@
           "reason": "no plausible time-aware truth match",
           "segment": {
             "index": 12,
-            "text": "Master of puppets I'm pulling your strings",
+            "text": "Just call my name, 'cause I'll hear you scream",
             "confidence": 0.95,
             "performer": "Vocalist 1",
             "performer_id": "voc_001",
@@ -807,7 +756,7 @@
           "reason": "no plausible time-aware truth match",
           "segment": {
             "index": 13,
-            "text": "Obey your master",
+            "text": "Master, master",
             "confidence": 0.95,
             "performer": "Vocalist 1",
             "performer_id": "voc_001",
@@ -820,23 +769,21 @@
       "path": "recognizedSong.candidates[truth=0,output=0].evidence",
       "strategy": "recognized-song-support-evidence",
       "minimumSimilarity": 0.4,
-      "matches": [],
-      "unmatchedTruth": [
+      "matches": [
         {
           "truthIndex": 0,
-          "value": "Literal lyric fragments such as \"Master, master\" and \"Obey your master\" are clearly audible."
-        },
+          "outputIndex": 0,
+          "similarity": 0.46153846153846156,
+          "score": 461.53846153846155
+        }
+      ],
+      "unmatchedTruth": [
         {
           "truthIndex": 1,
           "value": "The surrounding sung lines align with the same famous metal song chorus/verse sequence."
         }
       ],
-      "unmatchedOutput": [
-        {
-          "outputIndex": 0,
-          "value": "Literal lyric fragments match the heard refrain from the heavy metal segment."
-        }
-      ]
+      "unmatchedOutput": []
     },
     {
       "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics",
@@ -846,8 +793,8 @@
         {
           "truthIndex": 0,
           "outputIndex": 0,
-          "similarity": 1,
-          "score": 1000
+          "similarity": 0.5,
+          "score": 500
         }
       ],
       "unmatchedTruth": [
@@ -863,27 +810,11 @@
       "unmatchedOutput": [
         {
           "outputIndex": 1,
-          "value": "Master, master"
+          "value": "I'll be your master"
         },
         {
           "outputIndex": 2,
-          "value": "Come crawling faster"
-        },
-        {
-          "outputIndex": 3,
-          "value": "Master of puppets I'm pulling your strings"
-        },
-        {
-          "outputIndex": 4,
-          "value": "Twisting your mind and smashing your dreams"
-        },
-        {
-          "outputIndex": 5,
-          "value": "Blinded by me you can't see a thing"
-        },
-        {
-          "outputIndex": 6,
-          "value": "Just call my name 'cause I'll hear you scream"
+          "value": "Master of puppets, I'm pulling your strings"
         }
       ]
     },
@@ -996,61 +927,49 @@
     {
       "path": "recognitionNotes[2]",
       "rule": "structural",
-      "outputValue": "Spoken dialogue at the beginning of the chunk was excluded as it is not music-led vocals.",
+      "outputValue": "Spoken dialogue over music is excluded from lyric evidence.",
       "reason": "Truth array missing item present in output"
     },
     {
       "path": "recognitionNotes[3]",
       "rule": "structural",
-      "outputValue": "Spoken dialogue in the chunk was excluded from lyric evidence.",
+      "outputValue": "Spoken dialogue or promotional voiceover may overlap but is excluded from lyric evidence.",
       "reason": "Truth array missing item present in output"
     },
     {
       "path": "recognitionNotes[4]",
       "rule": "structural",
-      "outputValue": "Spoken dialogue or other non-lyric audio is excluded from this analysis.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "recognitionNotes[5]",
-      "rule": "structural",
-      "outputValue": "Heavy metal vocals are clear and dominant in the segment from approximately 76.0s to 140.0s, with some overlap from dialogue but lyrics remain intelligible.",
+      "outputValue": "Vocals are interspersed with spoken dialogue, but music-led segments are clear and dominant in the rock song portion.",
       "reason": "Truth array missing item present in output"
     },
     {
       "path": "qualityNotes[1]",
       "rule": "structural",
-      "outputValue": "Chunk features tense dialogue with background score; no music-led vocals detected.",
+      "outputValue": "Audio is clear with no masking, but no vocal segments present.",
       "reason": "Truth array missing item present in output"
     },
     {
       "path": "qualityNotes[2]",
       "rule": "structural",
-      "outputValue": "Audio consists primarily of spoken dialogue and action sound effects.",
+      "outputValue": "Audio is clear with minimal background noise masking the vocals.",
       "reason": "Truth array missing item present in output"
     },
     {
       "path": "qualityNotes[3]",
       "rule": "structural",
-      "outputValue": "The sung lyrics are clear and prominent, with no significant masking or ambiguity.",
+      "outputValue": "Sung lyrics are clear with minimal masking.",
       "reason": "Truth array missing item present in output"
     },
     {
       "path": "qualityNotes[4]",
       "rule": "structural",
-      "outputValue": "Sung lyrics are clear with minimal masking.",
+      "outputValue": "Vocals are clear and prominent in the mix.",
       "reason": "Truth array missing item present in output"
     },
     {
       "path": "qualityNotes[5]",
       "rule": "structural",
-      "outputValue": "Audio clarity is good, with no significant masking.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "qualityNotes[6]",
-      "rule": "structural",
-      "outputValue": "High confidence due to clear enunciation and well-known song match; timing aligns with the heavy metal entry transition.",
+      "outputValue": "High confidence due to clear lyrical content and recognizable song structure; timing aligns with the noted rock song entry at 76.0-98.0s.",
       "reason": "Truth array missing item present in output"
     }
   ],
@@ -1076,12 +995,13 @@
     },
     {
       "path": "vocal_segments[truth=0,output=0].text",
-      "status": "pass",
+      "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Obey your master",
-      "outputValue": "Obey your master",
+      "outputValue": "I'll be your master",
       "normalizedTruthValue": "obey your master",
-      "normalizedOutputValue": "obey your master"
+      "normalizedOutputValue": "i ll be your master",
+      "reason": "Normalized strings differed"
     },
     {
       "path": "vocal_segments[truth=0,output=0].confidence",
@@ -1177,22 +1097,21 @@
     },
     {
       "path": "vocal_segments[truth=2,output=2].text",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
       "truthValue": "Master of puppets I’m pulling your strings",
-      "outputValue": "Master, master",
+      "outputValue": "Master of puppets, I'm pulling your strings",
       "normalizedTruthValue": "master of puppets i m pulling your strings",
-      "normalizedOutputValue": "master master",
-      "reason": "Normalized strings differed"
+      "normalizedOutputValue": "master of puppets i m pulling your strings"
     },
     {
       "path": "vocal_segments[truth=2,output=2].confidence",
       "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.9,
-      "outputValue": 0.92,
+      "outputValue": 0.85,
       "metrics": {
-        "delta": 0.020000000000000018,
+        "delta": 0.050000000000000044,
         "tolerance": 0.1
       }
     },
@@ -1230,9 +1149,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Twisting your mind and smashing your dreams",
-      "outputValue": "Master, master",
+      "outputValue": "Come crawling faster",
       "normalizedTruthValue": "twisting your mind and smashing your dreams",
-      "normalizedOutputValue": "master master",
+      "normalizedOutputValue": "come crawling faster",
       "reason": "Normalized strings differed"
     },
     {
@@ -1280,9 +1199,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Blinded by me, you can’t see a thing",
-      "outputValue": "Master! Master!",
+      "outputValue": "Obey your master!",
       "normalizedTruthValue": "blinded by me you can t see a thing",
-      "normalizedOutputValue": "master master",
+      "normalizedOutputValue": "obey your master",
       "reason": "Normalized strings differed"
     },
     {
@@ -1330,9 +1249,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Just call my name, ‘cause I’ll hear you scream",
-      "outputValue": "Come crawling faster",
+      "outputValue": "Twisting your mind and smashing your dreams",
       "normalizedTruthValue": "just call my name cause i ll hear you scream",
-      "normalizedOutputValue": "come crawling faster",
+      "normalizedOutputValue": "twisting your mind and smashing your dreams",
       "reason": "Normalized strings differed"
     },
     {
@@ -1340,9 +1259,9 @@
       "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.9,
-      "outputValue": 0.95,
+      "outputValue": 0.85,
       "metrics": {
-        "delta": 0.04999999999999993,
+        "delta": 0.050000000000000044,
         "tolerance": 0.1
       }
     },
@@ -1377,13 +1296,12 @@
     },
     {
       "path": "vocal_segments[truth=6,output=6].text",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
       "truthValue": "Master, master",
-      "outputValue": "Obey your master!",
+      "outputValue": "Master, master",
       "normalizedTruthValue": "master master",
-      "normalizedOutputValue": "obey your master",
-      "reason": "Normalized strings differed"
+      "normalizedOutputValue": "master master"
     },
     {
       "path": "vocal_segments[truth=6,output=6].confidence",
@@ -1430,7 +1348,7 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Where’s the dreams that I’ve been after?",
-      "outputValue": "Master of puppets I'm pulling your strings",
+      "outputValue": "Master of puppets, I'm pulling your strings",
       "normalizedTruthValue": "where s the dreams that i ve been after",
       "normalizedOutputValue": "master of puppets i m pulling your strings",
       "reason": "Normalized strings differed"
@@ -1530,7 +1448,7 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "You promised only lies",
-      "outputValue": "Blinded by me you can't see a thing",
+      "outputValue": "Blinded by me, you can't see a thing",
       "normalizedTruthValue": "you promised only lies",
       "normalizedOutputValue": "blinded by me you can t see a thing",
       "reason": "Normalized strings differed"
@@ -1580,7 +1498,7 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Obey your master",
-      "outputValue": "Just call my name 'cause I'll hear you scream",
+      "outputValue": "Just call my name, 'cause I'll hear you scream",
       "normalizedTruthValue": "obey your master",
       "normalizedOutputValue": "just call my name cause i ll hear you scream",
       "reason": "Normalized strings differed"
@@ -1675,7 +1593,7 @@
       "rule": "structural",
       "outputValue": {
         "index": 12,
-        "text": "Master of puppets I'm pulling your strings",
+        "text": "Just call my name, 'cause I'll hear you scream",
         "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
@@ -1689,7 +1607,7 @@
       "rule": "structural",
       "outputValue": {
         "index": 13,
-        "text": "Obey your master",
+        "text": "Master, master",
         "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
@@ -1702,9 +1620,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Metallica vocal refrains and lyric lines from “Master of Puppets” drive the trailer's sung music-vocals lane from the first \"Obey your master\" chant through the recurring \"Master, master\" refrain.",
-      "outputValue": "The sung hook 'Master, master' is heard in this chunk.",
+      "outputValue": "Sung rock vocals continue with lyrical phrases from 'Master of Puppets'.",
       "normalizedTruthValue": "metallica vocal refrains and lyric lines from master of puppets drive the trailer s sung music vocals lane from the first obey your master chant through the recurring master master refrain",
-      "normalizedOutputValue": "the sung hook master master is heard in this chunk",
+      "normalizedOutputValue": "sung rock vocals continue with lyrical phrases from master of puppets",
       "reason": "Normalized strings differed"
     },
     {
@@ -1745,7 +1663,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "Repeated literal lyric fragments uniquely ground the vocal lane to one famous song.",
-      "outputValue": "Distinct lyric fragments and aggressive vocal delivery strongly support identification of 'Master of Puppets' by Metallica.",
+      "outputValue": "Distinct lyric fragments and delivery strongly support one specific song.",
       "reason": "Values differed"
     },
     {
@@ -1793,11 +1711,15 @@
       "reason": "Array length mismatch: truth=2 output=1"
     },
     {
-      "path": "recognizedSong.candidates[truth=0,output=0].evidence[truth=0]",
-      "status": "fail",
+      "path": "recognizedSong.candidates[truth=0,output=0].evidence[truth=0,output=0]",
+      "status": "pass",
       "rule": "recognized-song-support-evidence",
       "truthValue": "Literal lyric fragments such as \"Master, master\" and \"Obey your master\" are clearly audible.",
-      "reason": "Missing supported item in output list"
+      "outputValue": "Literal lyric fragments match the heard refrain, including 'Master, master' and 'I'll be your master'.",
+      "metrics": {
+        "similarity": 0.46153846153846156,
+        "minimumSimilarity": 0.4
+      }
     },
     {
       "path": "recognizedSong.candidates[truth=0,output=0].evidence[truth=1]",
@@ -1807,32 +1729,13 @@
       "reason": "Missing supported item in output list"
     },
     {
-      "path": "recognizedSong.candidates[truth=0,output=0].evidence[output=0]",
-      "status": "fail",
-      "rule": "recognized-song-support-evidence",
-      "outputValue": "Literal lyric fragments match the heard refrain from the heavy metal segment.",
-      "reason": "Extra unsupported item in output list"
-    },
-    {
-      "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics",
-      "status": "fail",
-      "rule": "structural",
-      "truthValue": {
-        "length": 3
-      },
-      "outputValue": {
-        "length": 7
-      },
-      "reason": "Array length mismatch: truth=3 output=7"
-    },
-    {
       "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[truth=0,output=0]",
       "status": "pass",
       "rule": "recognized-song-support-lyrics",
       "truthValue": "Obey your master",
-      "outputValue": "Obey your master",
+      "outputValue": "Master, master",
       "metrics": {
-        "similarity": 1,
+        "similarity": 0.5,
         "minimumSimilarity": 0.5
       }
     },
@@ -1854,42 +1757,14 @@
       "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[output=1]",
       "status": "fail",
       "rule": "recognized-song-support-lyrics",
-      "outputValue": "Master, master",
+      "outputValue": "I'll be your master",
       "reason": "Extra unsupported item in output list"
     },
     {
       "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[output=2]",
       "status": "fail",
       "rule": "recognized-song-support-lyrics",
-      "outputValue": "Come crawling faster",
-      "reason": "Extra unsupported item in output list"
-    },
-    {
-      "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[output=3]",
-      "status": "fail",
-      "rule": "recognized-song-support-lyrics",
-      "outputValue": "Master of puppets I'm pulling your strings",
-      "reason": "Extra unsupported item in output list"
-    },
-    {
-      "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[output=4]",
-      "status": "fail",
-      "rule": "recognized-song-support-lyrics",
-      "outputValue": "Twisting your mind and smashing your dreams",
-      "reason": "Extra unsupported item in output list"
-    },
-    {
-      "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[output=5]",
-      "status": "fail",
-      "rule": "recognized-song-support-lyrics",
-      "outputValue": "Blinded by me you can't see a thing",
-      "reason": "Extra unsupported item in output list"
-    },
-    {
-      "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics[output=6]",
-      "status": "fail",
-      "rule": "recognized-song-support-lyrics",
-      "outputValue": "Just call my name 'cause I'll hear you scream",
+      "outputValue": "Master of puppets, I'm pulling your strings",
       "reason": "Extra unsupported item in output list"
     },
     {
@@ -1942,16 +1817,16 @@
         "length": 2
       },
       "outputValue": {
-        "length": 6
+        "length": 5
       },
-      "reason": "Array length mismatch: truth=2 output=6"
+      "reason": "Array length mismatch: truth=2 output=5"
     },
     {
       "path": "recognitionNotes[0]",
       "status": "fail",
       "rule": "exact",
       "truthValue": "Spoken dialogue and promo VO elsewhere in the trailer are intentionally excluded from lyric evidence.",
-      "outputValue": "Spoken dialogue is present but excluded from lyric evidence.",
+      "outputValue": "This chunk contains spoken dialogue over background music, but no sung lyrics.",
       "reason": "Values differed"
     },
     {
@@ -1959,35 +1834,28 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "The opening chant fragments are short, but later full lyric lines confirm the song identification.",
-      "outputValue": "Expected lyrics from 'Master of Puppets' are not present in this chunk, as heavy metal music starts later in the asset.",
+      "outputValue": "Spoken dialogue at the beginning of the chunk is excluded from lyric evidence.",
       "reason": "Values differed"
     },
     {
       "path": "recognitionNotes[2]",
       "status": "error",
       "rule": "structural",
-      "outputValue": "Spoken dialogue at the beginning of the chunk was excluded as it is not music-led vocals.",
+      "outputValue": "Spoken dialogue over music is excluded from lyric evidence.",
       "reason": "Truth array missing item present in output"
     },
     {
       "path": "recognitionNotes[3]",
       "status": "error",
       "rule": "structural",
-      "outputValue": "Spoken dialogue in the chunk was excluded from lyric evidence.",
+      "outputValue": "Spoken dialogue or promotional voiceover may overlap but is excluded from lyric evidence.",
       "reason": "Truth array missing item present in output"
     },
     {
       "path": "recognitionNotes[4]",
       "status": "error",
       "rule": "structural",
-      "outputValue": "Spoken dialogue or other non-lyric audio is excluded from this analysis.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "recognitionNotes[5]",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": "Heavy metal vocals are clear and dominant in the segment from approximately 76.0s to 140.0s, with some overlap from dialogue but lyrics remain intelligible.",
+      "outputValue": "Vocals are interspersed with spoken dialogue, but music-led segments are clear and dominant in the rock song portion.",
       "reason": "Truth array missing item present in output"
     },
     {
@@ -1998,9 +1866,9 @@
         "length": 1
       },
       "outputValue": {
-        "length": 7
+        "length": 6
       },
-      "reason": "Array length mismatch: truth=1 output=7"
+      "reason": "Array length mismatch: truth=1 output=6"
     },
     {
       "path": "qualityNotes[0]",
@@ -2014,46 +1882,39 @@
       "path": "qualityNotes[1]",
       "status": "error",
       "rule": "structural",
-      "outputValue": "Chunk features tense dialogue with background score; no music-led vocals detected.",
+      "outputValue": "Audio is clear with no masking, but no vocal segments present.",
       "reason": "Truth array missing item present in output"
     },
     {
       "path": "qualityNotes[2]",
       "status": "error",
       "rule": "structural",
-      "outputValue": "Audio consists primarily of spoken dialogue and action sound effects.",
+      "outputValue": "Audio is clear with minimal background noise masking the vocals.",
       "reason": "Truth array missing item present in output"
     },
     {
       "path": "qualityNotes[3]",
       "status": "error",
       "rule": "structural",
-      "outputValue": "The sung lyrics are clear and prominent, with no significant masking or ambiguity.",
+      "outputValue": "Sung lyrics are clear with minimal masking.",
       "reason": "Truth array missing item present in output"
     },
     {
       "path": "qualityNotes[4]",
       "status": "error",
       "rule": "structural",
-      "outputValue": "Sung lyrics are clear with minimal masking.",
+      "outputValue": "Vocals are clear and prominent in the mix.",
       "reason": "Truth array missing item present in output"
     },
     {
       "path": "qualityNotes[5]",
       "status": "error",
       "rule": "structural",
-      "outputValue": "Audio clarity is good, with no significant masking.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "qualityNotes[6]",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": "High confidence due to clear enunciation and well-known song match; timing aligns with the heavy metal entry transition.",
+      "outputValue": "High confidence due to clear lyrical content and recognizable song structure; timing aligns with the noted rock song entry at 76.0-98.0s.",
       "reason": "Truth array missing item present in output"
     }
   ],
-  "summary": "musicVocalsData benchmark errored: Truth object missing field present in output",
+  "summary": "44/89 scoreable fields passed; 1/110 truth fields were skipped.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

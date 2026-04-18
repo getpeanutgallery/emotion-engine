@@ -1,9 +1,10 @@
-name: COD Test Original MP4 Source Experiment
-description: Narrow experiment lane for cod.mp4 that preserves the repaired cod-test runtime behavior while swapping staged source delivery back to the original staged MP4 asset
+name: COD Test Pipeline
+description: Canonical full-run benchmark target for cod.mp4 with benchmark seeding
+  enabled
 version: '1.0'
 asset:
   inputPath: examples/videos/emotion-tests/cod.mp4
-  outputDir: output/cod-test-original-mp4-source
+  outputDir: output/cod-test
   media:
     refs:
       source_video:

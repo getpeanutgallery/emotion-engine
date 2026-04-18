@@ -23,7 +23,8 @@
       "ignorePaths": [
         "$.generatedAt",
         "$.criticalMoments[*].context"
-      ]
+      ],
+      "posture": null
     },
     "directives": {
       "comparatorIgnorePaths": [],
@@ -37,6 +38,7 @@
       ]
     }
   },
+  "comparisonBoundary": null,
   "counts": {
     "totalTruthFields": 341,
     "scoreableFields": 12,
@@ -57,6 +59,7 @@
     "totalTruthFields": 341,
     "rate": 0.03519061583577713
   },
+  "mismatchClassificationCounts": {},
   "failures": [
     {
       "path": "implementationStatus.state",
@@ -156,7 +159,7 @@
     {
       "path": "generatedAt",
       "truthValue": "2026-03-26T13:35:50.603Z",
-      "outputValue": "2026-04-09T20:44:32.935Z",
+      "outputValue": "2026-04-17T21:41:30.141Z",
       "reason": "Ignored path values differed"
     }
   ],
@@ -4461,7 +4464,7 @@
       "status": "skip",
       "rule": "structural",
       "truthValue": "2026-03-26T13:35:50.603Z",
-      "outputValue": "2026-04-09T20:44:32.935Z",
+      "outputValue": "2026-04-17T21:41:30.141Z",
       "reason": "Comparator ignored benchmark path"
     },
     {
@@ -9203,7 +9206,7 @@
       "reason": "Output array missing item present in truth"
     }
   ],
-  "summary": "emotionalAnalysisData benchmark errored: Truth object missing field present in output",
+  "summary": "2/12 scoreable fields passed; 1/341 truth fields were skipped.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

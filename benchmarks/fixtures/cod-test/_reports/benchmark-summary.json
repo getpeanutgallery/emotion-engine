@@ -16,44 +16,68 @@
     {
       "artifactKey": "dialogueData",
       "status": "error",
-      "accuracyRate": 0.18468468468468469,
-      "coverageRate": 0.9367088607594937,
-      "ignoredDifferenceCount": 43
+      "accuracyRate": 0.20245398773006135,
+      "coverageRate": 0.9878787878787879,
+      "ignoredDifferenceCount": 41,
+      "comparisonBoundary": {
+        "comparisonMode": "phase1-dialogue-provisional",
+        "outputSurface": "reconciled",
+        "truthSurface": "provisional-truth",
+        "deferredContractPaths": [
+          "$.cleanedTranscript",
+          "$.speaker_profiles",
+          "$.handoffContext"
+        ]
+      },
+      "mismatchClassificationCounts": {
+        "reconciled_post_processing_contract_mismatch": 69,
+        "deferred_contract_drift": 62
+      }
     },
     {
       "artifactKey": "musicData",
       "status": "error",
-      "accuracyRate": 0.3111111111111111,
-      "coverageRate": 0.8490566037735849,
-      "ignoredDifferenceCount": 5
+      "accuracyRate": 0.32,
+      "coverageRate": 0.8928571428571429,
+      "ignoredDifferenceCount": 5,
+      "comparisonBoundary": null,
+      "mismatchClassificationCounts": {}
     },
     {
       "artifactKey": "musicVocalsData",
       "status": "error",
-      "accuracyRate": 0.4421052631578947,
-      "coverageRate": 0.8050847457627118,
-      "ignoredDifferenceCount": 29
+      "accuracyRate": 0.4943820224719101,
+      "coverageRate": 0.8090909090909091,
+      "ignoredDifferenceCount": 29,
+      "comparisonBoundary": null,
+      "mismatchClassificationCounts": {}
     },
     {
       "artifactKey": "recommendationData",
       "status": "error",
-      "accuracyRate": 0.1111111111111111,
-      "coverageRate": 0.5,
-      "ignoredDifferenceCount": 4
+      "accuracyRate": 0.10526315789473684,
+      "coverageRate": 0.5277777777777778,
+      "ignoredDifferenceCount": 4,
+      "comparisonBoundary": null,
+      "mismatchClassificationCounts": {}
     },
     {
       "artifactKey": "metricsData",
       "status": "error",
       "accuracyRate": 0.375,
       "coverageRate": 0.42105263157894735,
-      "ignoredDifferenceCount": 1
+      "ignoredDifferenceCount": 1,
+      "comparisonBoundary": null,
+      "mismatchClassificationCounts": {}
     },
     {
       "artifactKey": "emotionalAnalysisData",
       "status": "error",
       "accuracyRate": 0.16666666666666666,
       "coverageRate": 0.03519061583577713,
-      "ignoredDifferenceCount": 1
+      "ignoredDifferenceCount": 1,
+      "comparisonBoundary": null,
+      "mismatchClassificationCounts": {}
     }
   ],
   "totals": {
@@ -61,129 +85,42 @@
     "artifactsPassed": 0,
     "artifactsFailed": 0,
     "artifactsErrored": 6,
-    "totalTruthFields": 804,
-    "scoreableFields": 400,
-    "skippedFields": 17,
-    "passedFields": 104,
-    "failedFields": 296,
-    "erroredFields": 387,
-    "ignoredDifferenceFields": 83
+    "totalTruthFields": 727,
+    "scoreableFields": 341,
+    "skippedFields": 16,
+    "passedFields": 100,
+    "failedFields": 241,
+    "erroredFields": 370,
+    "ignoredDifferenceFields": 81,
+    "mismatchClassificationCounts": {
+      "reconciled_post_processing_contract_mismatch": 69,
+      "deferred_contract_drift": 62
+    }
   },
   "accuracy": {
-    "passed": 104,
-    "failed": 296,
-    "rate": 0.26
+    "passed": 100,
+    "failed": 241,
+    "rate": 0.2932551319648094
   },
   "coverage": {
-    "scoreable": 400,
-    "skipped": 17,
-    "ignoredDifferences": 83,
-    "totalTruthFields": 804,
-    "rate": 0.4975124378109453
+    "scoreable": 341,
+    "skipped": 16,
+    "ignoredDifferences": 81,
+    "totalTruthFields": 727,
+    "rate": 0.469050894085282
+  },
+  "mismatchClassificationCounts": {
+    "reconciled_post_processing_contract_mismatch": 69,
+    "deferred_contract_drift": 62
   },
   "errors": [
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=0,output=0].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.9,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=2,output=1].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.86,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=4,output=5].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.9,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=7,output=11].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.84,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=9,output=13].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.8,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=10,output=7].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.86,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=11,output=14].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.8,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=1,output=12].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.95,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=5,output=8].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.86,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=6,output=10].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.84,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=8,output=6].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.86,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
-    {
-      "artifactKey": "dialogueData",
-      "path": "speaker_profiles[truth=3,output=4].grounded.acoustic_descriptors[0].confidence",
-      "rule": "tolerant-number",
-      "truthValue": 0.84,
-      "outputValue": null,
-      "reason": "Numeric field comparison expected numeric truth/output values"
-    },
     {
       "artifactKey": "dialogueData",
       "path": "cleanedTranscript",
       "rule": "structural",
       "truthValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets, shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 6: A lot of people counting on us for answers.\nSpeaker 14: You shall know fear.\nSpeaker 8: Specter one, report.\nSpeaker 8: Need a sitrep.\nSpeaker 9: This isn't real.\nSpeaker 10: The hell it ain't!\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave David.\nSpeaker 13: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 15: You were never cut out to be a Mason.\nSpeaker 6: No more games! This ends now.\nSpeaker 16: Get the Reznov challenge pack when you preorder now!",
-      "reason": "Output object missing field present in truth"
+      "reason": "Output object missing field present in truth",
+      "classification": "deferred_contract_drift"
     },
     {
       "artifactKey": "musicData",
@@ -195,8 +132,8 @@
         "notableTransitions": [
           {
             "start": 76,
-            "end": 78,
-            "label": "heavy metal music entry with vocals"
+            "end": 98,
+            "label": "rock song entry with vocals"
           }
         ]
       },
@@ -208,23 +145,24 @@
       "rule": "structural",
       "outputValue": [
         "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-        "Segment timings and intensity are approximate based on coarse audio analysis; continuity may vary with overlays."
+        "Segment timings are approximate based on narrative flow; exact boundaries may vary.",
+        "Confidence is moderate due to audio masking in key sections."
       ],
       "reason": "Truth object missing field present in output"
     },
     {
       "artifactKey": "musicData",
-      "path": "segments[4]",
+      "path": "segments[5]",
       "rule": "structural",
-      "truthValue": {
+      "outputValue": {
         "start": 120,
-        "end": 140.042449,
+        "end": 140,
         "type": "music",
-        "description": "High-energy, cinematic action trailer music with intense sound effects and a promotional voiceover.",
-        "mood": "energetic",
-        "intensity": 9
+        "description": "Final dialogue and promotional segment with music fade and SFX",
+        "mood": "conclusive",
+        "intensity": 6
       },
-      "reason": "Output array missing item present in truth"
+      "reason": "Truth array missing item present in output"
     },
     {
       "artifactKey": "musicData",
@@ -232,13 +170,6 @@
       "rule": "structural",
       "truthValue": "The later sung refrain strongly aligns with the same well-known song.",
       "reason": "Output array missing item present in truth"
-    },
-    {
-      "artifactKey": "musicData",
-      "path": "recognizedSong.candidates[0].matchedLyrics[1]",
-      "rule": "structural",
-      "outputValue": "Come crawling faster",
-      "reason": "Truth array missing item present in output"
     },
     {
       "artifactKey": "musicData",
@@ -258,13 +189,6 @@
         "start": 127,
         "end": 130
       },
-      "reason": "Output array missing item present in truth"
-    },
-    {
-      "artifactKey": "musicData",
-      "path": "recognitionNotes[1]",
-      "rule": "structural",
-      "truthValue": "Spoken dialogue over score must not be treated as lyric evidence for song recognition.",
       "reason": "Output array missing item present in truth"
     },
     {
@@ -355,78 +279,57 @@
       "artifactKey": "musicVocalsData",
       "path": "recognitionNotes[2]",
       "rule": "structural",
-      "outputValue": "Spoken dialogue at the beginning of the chunk was excluded as it is not music-led vocals.",
+      "outputValue": "Spoken dialogue over music is excluded from lyric evidence.",
       "reason": "Truth array missing item present in output"
     },
     {
       "artifactKey": "musicVocalsData",
       "path": "recognitionNotes[3]",
       "rule": "structural",
-      "outputValue": "Spoken dialogue in the chunk was excluded from lyric evidence.",
+      "outputValue": "Spoken dialogue or promotional voiceover may overlap but is excluded from lyric evidence.",
       "reason": "Truth array missing item present in output"
     },
     {
       "artifactKey": "musicVocalsData",
       "path": "recognitionNotes[4]",
       "rule": "structural",
-      "outputValue": "Spoken dialogue or other non-lyric audio is excluded from this analysis.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "recognitionNotes[5]",
-      "rule": "structural",
-      "outputValue": "Heavy metal vocals are clear and dominant in the segment from approximately 76.0s to 140.0s, with some overlap from dialogue but lyrics remain intelligible.",
+      "outputValue": "Vocals are interspersed with spoken dialogue, but music-led segments are clear and dominant in the rock song portion.",
       "reason": "Truth array missing item present in output"
     },
     {
       "artifactKey": "musicVocalsData",
       "path": "qualityNotes[1]",
       "rule": "structural",
-      "outputValue": "Chunk features tense dialogue with background score; no music-led vocals detected.",
+      "outputValue": "Audio is clear with no masking, but no vocal segments present.",
       "reason": "Truth array missing item present in output"
     },
     {
       "artifactKey": "musicVocalsData",
       "path": "qualityNotes[2]",
       "rule": "structural",
-      "outputValue": "Audio consists primarily of spoken dialogue and action sound effects.",
+      "outputValue": "Audio is clear with minimal background noise masking the vocals.",
       "reason": "Truth array missing item present in output"
     },
     {
       "artifactKey": "musicVocalsData",
       "path": "qualityNotes[3]",
       "rule": "structural",
-      "outputValue": "The sung lyrics are clear and prominent, with no significant masking or ambiguity.",
+      "outputValue": "Sung lyrics are clear with minimal masking.",
       "reason": "Truth array missing item present in output"
     },
     {
       "artifactKey": "musicVocalsData",
       "path": "qualityNotes[4]",
       "rule": "structural",
-      "outputValue": "Sung lyrics are clear with minimal masking.",
+      "outputValue": "Vocals are clear and prominent in the mix.",
       "reason": "Truth array missing item present in output"
     },
     {
       "artifactKey": "musicVocalsData",
       "path": "qualityNotes[5]",
       "rule": "structural",
-      "outputValue": "Audio clarity is good, with no significant masking.",
+      "outputValue": "High confidence due to clear lyrical content and recognizable song structure; timing aligns with the noted rock song entry at 76.0-98.0s.",
       "reason": "Truth array missing item present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "qualityNotes[6]",
-      "rule": "structural",
-      "outputValue": "High confidence due to clear enunciation and well-known song match; timing aligns with the heavy metal entry transition.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "artifactKey": "recommendationData",
-      "path": "keyFindings[3]",
-      "rule": "structural",
-      "truthValue": "Boredom increases significantly in the second half, indicating pacing fatigue rather than lack of action quality.",
-      "reason": "Output array missing item present in truth"
     },
     {
       "artifactKey": "recommendationData",
@@ -5196,5 +5099,5 @@
       "reason": "Output array missing item present in truth"
     }
   ],
-  "summary": "0/6 artifacts passed. 104/400 scoreable fields passed. Truth coverage was 400/804 fields."
+  "summary": "0/6 artifacts passed. 100/341 scoreable fields passed. Truth coverage was 341/727 fields. deferred contract drift=62. reconciled contract mismatch=69."
 }

@@ -1,8 +1,8 @@
 # Emotion Analysis - Final Report
 
-**Generated:** 2026-04-09T16:38:34.550Z
+**Generated:** 2026-04-17T21:41:30.143Z
 **Pipeline Version:** 1.0
-**Pipeline Name:** COD Test Original MP4 Source Experiment
+**Pipeline Name:** COD Test Pipeline
 
 ---
 
@@ -15,9 +15,9 @@
 
 ## AI Recommendation
 
-> Due to insufficient data in the provided metrics and chunk summaries, no actionable recommendations can be made for improving viewer retention or emotional impact. Next steps should involve running the emotion analysis pipeline to generate actual data for analysis.
+> Due to insufficient emotion analysis data, no specific retention improvements can be recommended. Next steps include collecting chunk-level emotion metrics and viewer engagement data to enable actionable insights.
 
-*The input data shows empty metrics summaries with no averages, trends, or peak moments, and the friction index is 0, indicating no data or no analysis performed. Chunk summaries are absent, preventing any assessment of emotional beats or pacing. Without this data, it is impossible to reference specific evidence for retention or emotional impact, so recommendations must focus on data collection.*
+*The provided metrics summary has empty averages, trends, and peak moments, with a friction index of zero, indicating no analysis was performed. Chunk summaries are also empty, so there is no evidence of emotional beats or viewer friction points. Without data on hook effectiveness, pacing, or emotional peaks, it is impossible to identify retention issues or opportunities. This lack of data prevents any concrete recommendations for edits.*
 
 ---
 
@@ -43,7 +43,7 @@ The emotional arc shows how emotions evolved throughout the video.
 ## Technical Details
 
 **Configuration:**
-- Pipeline: COD Test Original MP4 Source Experiment
+- Pipeline: COD Test Pipeline
 - Version: 1.0
 - Chunks: 0
 - Total Duration: 0.0 seconds

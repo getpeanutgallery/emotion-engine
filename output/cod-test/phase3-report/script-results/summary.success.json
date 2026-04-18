@@ -4,18 +4,18 @@
   "phase": "phase3-report",
   "script": "summary",
   "run": {
-    "configName": "COD Test Original MP4 Source Experiment",
-    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source",
-    "startedAt": "2026-04-09T16:38:34.548Z",
-    "completedAt": "2026-04-09T16:38:34.549Z",
-    "durationMs": 1,
+    "configName": "COD Test Pipeline",
+    "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
+    "startedAt": "2026-04-17T21:41:30.142Z",
+    "completedAt": "2026-04-17T21:41:30.142Z",
+    "durationMs": 0,
     "attempt": 1
   },
   "payload": {
     "artifactKey": "summary",
     "data": {
       "metadata": {
-        "generatedAt": "2026-04-09T16:38:34.548Z",
+        "generatedAt": "2026-04-17T21:41:30.142Z",
         "pipelineVersion": "1.0",
         "videoDuration": 0,
         "chunksAnalyzed": 0,
@@ -30,18 +30,20 @@
         "frictionIndex": 0
       },
       "recommendation": {
-        "text": "Due to insufficient data in the provided metrics and chunk summaries, no actionable recommendations can be made for improving viewer retention or emotional impact. Next steps should involve running the emotion analysis pipeline to generate actual data for analysis.",
-        "reasoning": "The input data shows empty metrics summaries with no averages, trends, or peak moments, and the friction index is 0, indicating no data or no analysis performed. Chunk summaries are absent, preventing any assessment of emotional beats or pacing. Without this data, it is impossible to reference specific evidence for retention or emotional impact, so recommendations must focus on data collection.",
+        "text": "Due to insufficient emotion analysis data, no specific retention improvements can be recommended. Next steps include collecting chunk-level emotion metrics and viewer engagement data to enable actionable insights.",
+        "reasoning": "The provided metrics summary has empty averages, trends, and peak moments, with a friction index of zero, indicating no analysis was performed. Chunk summaries are also empty, so there is no evidence of emotional beats or viewer friction points. Without data on hook effectiveness, pacing, or emotional peaks, it is impossible to identify retention issues or opportunities. This lack of data prevents any concrete recommendations for edits.",
         "confidence": 0.1
       },
       "reportPaths": {
-        "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/metrics/metrics.json",
-        "recommendation": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/recommendation/recommendation.json",
-        "emotionalAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/emotional-analysis/emotional-data.json",
-        "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/summary/summary.json"
+        "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
+        "recommendation": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
+        "emotionalAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json",
+        "finalReport": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md",
+        "analysisData": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json",
+        "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json"
       },
-      "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-original-mp4-source/phase3-report/summary/summary.json",
-      "generatedAt": "2026-04-09T16:38:34.548Z"
+      "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json",
+      "generatedAt": "2026-04-17T21:41:30.142Z"
     }
   },
   "artifacts": {
@@ -57,7 +59,7 @@
     "warningsCount": 1,
     "keyMetricsCount": 4,
     "hasRecommendation": true,
-    "reportPathCount": 4
+    "reportPathCount": 6
   },
   "diagnostics": {
     "warnings": [
