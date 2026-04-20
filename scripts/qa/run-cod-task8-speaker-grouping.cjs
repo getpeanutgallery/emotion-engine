@@ -22,7 +22,8 @@ const RULESET_PATH = path.join(ROOT, 'docs/2026-04-16-dialogue-traits-v3-speaker
 const RUNTIME_DIALOGUE_PATH = path.join(ROOT, 'output/cod-test/phase1-gather-context/dialogue-data.reconciled.json');
 const RUNTIME_DIALOGUE_V3_PATH = path.join(ROOT, 'output/cod-test/phase1-gather-context/dialogue-v3-source-truth.reconciled.json');
 const RUNTIME_RECONCILIATION_LEDGER_PATH = path.join(ROOT, 'output/cod-test/phase1-gather-context/famous-song-reconciliation.json');
-const TRUTH_GROUPING_PATH = path.join(ROOT, 'benchmarks/fixtures/cod-test/truth/speaker-grouping.json');
+const TRUTH_GROUPING_PATH = path.join(ROOT, 'benchmarks/fixtures/cod-test/truth/speaker-grouping.reconciled-runtime-aligned.json');
+const LEGACY_TRUTH_GROUPING_PATH = path.join(ROOT, 'benchmarks/fixtures/cod-test/truth/speaker-grouping.json');
 const ARTIFACTS_COMPLETE_PATH = path.join(ROOT, 'output/cod-test/artifacts-complete.json');
 const GET_DIALOGUE_RESULT_PATH = path.join(ROOT, 'output/cod-test/phase1-gather-context/script-results/get-dialogue.success.json');
 const GET_MUSIC_RESULT_PATH = path.join(ROOT, 'output/cod-test/phase1-gather-context/script-results/get-music.success.json');
@@ -215,11 +216,12 @@ function main() {
     posture: {
       raw_dialogue_path: rel(path.join(ROOT, 'output/cod-test/phase1-gather-context/dialogue-data.json')),
       reconciled_dialogue_path: rel(RUNTIME_DIALOGUE_PATH),
-      grouping_input_surface: rel(RUNTIME_DIALOGUE_PATH),
+      reconciled_dialogue_v3_path: rel(RUNTIME_DIALOGUE_V3_PATH),
+      grouping_input_surface: rel(RUNTIME_DIALOGUE_V3_PATH),
       reconciliation_ledger_path: rel(RUNTIME_RECONCILIATION_LEDGER_PATH),
       reconciliation_status: reconciliationLedger.status,
       reconciliation_skip_reasons: reconciliationLedger?.trigger?.reasons || [],
-      interpretation_note: 'Grouping was driven from the reconciled Phase 1 dialogue surface because reconciliation-configured consumers are supposed to resolve canonical post-processing outputs. In this run the reconciliation ledger was skipped, so raw and reconciled dialogue contents were effectively the same.'
+      interpretation_note: 'Grouping comparator refresh was driven from the reconciled persisted runtime dialogue-v3 surface projected against the active traits-only gold dialogue truth. The reconciliation ledger still documents the upstream raw-vs-reconciled dialogue posture; in this run it was skipped, so the raw and reconciled dialogue contents were effectively the same before v3 projection.'
     },
     artifacts: {
       source_truth_v3: rel(sourceTruthArtifactPath),
@@ -227,7 +229,8 @@ function main() {
       decision_ledger: rel(decisionLedgerPath),
       comparator: rel(comparatorPath),
       comparator_miss_clusters: rel(comparatorMissesPath),
-      truth_grouping: rel(TRUTH_GROUPING_PATH)
+      truth_grouping: rel(TRUTH_GROUPING_PATH),
+      legacy_truth_grouping: rel(LEGACY_TRUTH_GROUPING_PATH)
     },
     counts: {
       runtime_segment_count: validation.value.dialogue_segments.length,

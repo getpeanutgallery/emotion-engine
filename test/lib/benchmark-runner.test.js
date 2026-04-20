@@ -58,7 +58,8 @@ function makeTempFixture(rootDir, options = {}) {
             ...(options.comparatorOptions || {})
           }
         },
-        required: true
+        required: true,
+        ...(options.artifactOverrides || {})
       }
     ]
   });
@@ -184,6 +185,85 @@ test('benchmark runner - runBenchmarkStage uses reconciled phase1 baselines when
 
   assert.strictEqual(result.status, 'pass');
   assert(result.artifactResults[0].output.path.endsWith('dialogue-data.reconciled.json'));
+});
+
+test('benchmark runner - runtimeArtifactKey can route a dialogue benchmark entry onto the v3 artifact family', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-runtime-artifact-key');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const truthPayload = {
+    schema_version: 1,
+    contract: {
+      artifact: 'dialogue-data',
+      mode: 'traits',
+      traits_contract_version: '3.0.0'
+    },
+    summary: 'Spoken dialogue only.',
+    dialogue_segments: [
+      {
+        index: 0,
+        text: 'Wake up now.',
+        traits: {
+          audibility: 'partially_masked',
+          overlap: 'single_voice',
+          gender_presentation: 'unknown',
+          age_impression: 'unknown',
+          pitch_band: 'unknown',
+          phonation: 'unknown',
+          pace: 'unknown',
+          energy: 'unknown',
+          transmission_medium: 'direct',
+          spatial_texture: 'room',
+          accent_strength: 'none_apparent',
+          accent_family: 'neutral_or_unmarked',
+          affect: 'unknown',
+          interpersonal_stance: 'neutral',
+          delivery_overlay: 'none_apparent'
+        }
+      }
+    ]
+  };
+
+  const { configPath, outputDir } = makeTempFixture(rootDir, {
+    artifactOverrides: {
+      runtimeArtifactKey: 'dialogueV3SourceTruth',
+      output: { path: 'phase1-gather-context/dialogue-v3-source-truth.json' }
+    },
+    truthPayload,
+    outputPayload: {
+      dialogue_segments: [
+        {
+          start: 1,
+          end: 3,
+          speaker: 'Speaker 1',
+          text: 'legacy mismatch line',
+          confidence: 0.98
+        }
+      ],
+      summary: 'Legacy mismatch payload.',
+      totalDuration: 20,
+      handoffContext: null
+    }
+  });
+
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'dialogue-v3-source-truth.json'), truthPayload);
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark runtime artifact key',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  assert.strictEqual(result.status, 'pass');
+  assert.strictEqual(result.artifactResults[0].status, 'pass');
+  assert(result.artifactResults[0].output.path.endsWith('dialogue-v3-source-truth.json'));
 });
 
 test('benchmark runner - runBenchmarkStage fails fast when reconciliation is configured but reconciled artifact is missing', async (t) => {

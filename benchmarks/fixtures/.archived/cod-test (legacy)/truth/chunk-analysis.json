@@ -1,0 +1,978 @@
+{
+  "_benchmark": {
+    "ignorePaths": [
+      "$.chunks[*].tokens",
+      "$.totalTokens"
+    ]
+  },
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "splitIndex": 0,
+      "startTime": 0,
+      "endTime": 5,
+      "status": "success",
+      "summary": "The video opens with glitchy visuals and the text 'RISING TENSIONS', triggering immediate skepticism before transitioning to high-fidelity game cinematics of destruction and armored characters.",
+      "emotions": {
+        "patience": {
+          "score": 2,
+          "reasoning": "The phrase 'RISING TENSIONS' at 0.0s is a specific trigger for instant scrolling per persona profile; patience evaporates immediately despite visual chaos."
+        },
+        "boredom": {
+          "score": 8,
+          "reasoning": "Corporate trailer tropes feel generic and unauthentic, equating to high disengagement even if visuals are busy."
+        },
+        "excitement": {
+          "score": 4,
+          "reasoning": "High-production destruction scenes offer some visual punch, but the clich\u00e9 intro suppresses genuine excitement."
+        }
+      },
+      "dominant_emotion": "boredom",
+      "confidence": 0.9,
+      "tokens": 9962,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 1,
+      "splitIndex": 0,
+      "startTime": 5,
+      "endTime": 10,
+      "status": "success",
+      "summary": "The video showcases a chaotic, gravity-defying sequence where a city bends and cars fly through the air, accompanied by intense cinematic music and dramatic voiceover.",
+      "emotions": {
+        "patience": {
+          "score": 8,
+          "reasoning": "The rapid visual changes and mind-bending gravity effects easily hold attention, making me willing to keep watching."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "There is zero dead air here; the constant pattern interrupts and wild visuals completely eliminate boredom."
+        },
+        "excitement": {
+          "score": 9,
+          "reasoning": "The Inception-style city bending and high-octane action are exactly the kind of visual punch that gets me hooked."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.95,
+      "tokens": 5645,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 2,
+      "splitIndex": 0,
+      "startTime": 10,
+      "endTime": 15,
+      "status": "success",
+      "summary": "The video transitions from a futuristic city to a title card, then to a chaotic scene with fire and a face on a screen, accompanied by intense dialogue and music.",
+      "emotions": {
+        "patience": {
+          "score": 4,
+          "reasoning": "The title card is a bit of a stall, but the fast cuts and intense audio keep me from scrolling immediately."
+        },
+        "boredom": {
+          "score": 3,
+          "reasoning": "The high-intensity music and dramatic dialogue prevent boredom, even if the title card is a bit generic."
+        },
+        "excitement": {
+          "score": 8,
+          "reasoning": "The fast-paced visuals, intense music, and dramatic stakes ('streets shall once again run red') are highly engaging."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.9,
+      "tokens": 4558,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 3,
+      "splitIndex": 0,
+      "startTime": 15,
+      "endTime": 20,
+      "status": "success",
+      "summary": "Chaotic action scene with villain face on glitching screen, fire, and military vehicles. Dramatic dialogue about blood and global unrest with high-intensity cinematic music.",
+      "emotions": {
+        "patience": {
+          "score": 7,
+          "reasoning": "At 15-20s, the trailer is delivering on its action promise. Alex would stay because the stakes are clear and visuals are dynamic, but patience is dropping slightly as this is mid-content."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "High-intensity music, dramatic dialogue, and chaotic visuals keep boredom very low. No static shots or dead air in this chunk."
+        },
+        "excitement": {
+          "score": 9,
+          "reasoning": "Villain introduction, threatening dialogue ('run red with blood'), glitch effects, and intensity 9/10 music create peak excitement. This is the kind of punch Alex watches for."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.88,
+      "tokens": 8255,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 4,
+      "splitIndex": 0,
+      "startTime": 20,
+      "endTime": 25,
+      "status": "success",
+      "summary": "Rapid cuts of military destruction and a '2035' title card over fire, transitioning to a news-style interview and tactical squad deployment.",
+      "emotions": {
+        "patience": {
+          "score": 6,
+          "reasoning": "Visual pacing is fast enough to prevent scrolling, but the expository dialogue risks losing attention if it drags."
+        },
+        "boredom": {
+          "score": 4,
+          "reasoning": "Generic villain exposition ('unprecedented scale') feels like typical trailer filler, but explosions keep it from being dull."
+        },
+        "excitement": {
+          "score": 7,
+          "reasoning": "High-intensity visuals like building collapses and fire provide the dopamine hit I need to keep watching."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.85,
+      "tokens": 17736,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 5,
+      "splitIndex": 0,
+      "startTime": 25,
+      "endTime": 30,
+      "status": "success",
+      "summary": "Massive 'GUILD' robots activate in formation, cutting to a serious conversation between two men outdoors.",
+      "emotions": {
+        "patience": {
+          "score": 4,
+          "reasoning": "Dialogue about 'peace and security' feels like corporate propaganda, triggering immediate skepticism."
+        },
+        "boredom": {
+          "score": 5,
+          "reasoning": "Robot visuals are stimulating, but the static talking heads scene relies on overused trailer tropes."
+        },
+        "excitement": {
+          "score": 6,
+          "reasoning": "High-intensity music and detailed mech designs maintain engagement despite clich\u00e9 dialogue."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.85,
+      "tokens": 17157,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 6,
+      "splitIndex": 0,
+      "startTime": 30,
+      "endTime": 35,
+      "status": "success",
+      "summary": "The video cuts rapidly from soldiers on an airfield to a brief dialogue scene, then to a futuristic aircraft flying over a city, all driven by intense music.",
+      "emotions": {
+        "patience": {
+          "score": 4,
+          "reasoning": "The quick cuts keep me from scrolling immediately, but the clich\u00e9 'stop looking backwards' dialogue tests my limited patience."
+        },
+        "boredom": {
+          "score": 3,
+          "reasoning": "The visuals change fast enough and the music is intense enough that I don't have time to get bored."
+        },
+        "excitement": {
+          "score": 7,
+          "reasoning": "The shot of the futuristic aircraft flying over the city is visually punchy and keeps the energy high."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.9,
+      "tokens": 5413,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 7,
+      "splitIndex": 0,
+      "startTime": 35,
+      "endTime": 40,
+      "status": "success",
+      "summary": "Futuristic aircraft flies near a structure, cutting to soldiers prepping in a transport, then rapidly deploying into a firefight with muzzle flashes.",
+      "emotions": {
+        "patience": {
+          "score": 7,
+          "reasoning": "Visuals change every 1-2 seconds satisfying the 3-second hook rule, but the dialogue is a generic military clich\u00e9."
+        },
+        "boredom": {
+          "score": 3,
+          "reasoning": "High visual turnover with repelling and combat prevents disengagement or scrolling."
+        },
+        "excitement": {
+          "score": 8,
+          "reasoning": "Driving percussion and muzzle flashes create a strong adrenaline spike and visual punch."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.85,
+      "tokens": 9845,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 8,
+      "splitIndex": 0,
+      "startTime": 40,
+      "endTime": 45,
+      "status": "success",
+      "summary": "Soldiers engage in close-quarters combat with explosions and stylized red butterfly graphics overlaying the action.",
+      "emotions": {
+        "patience": {
+          "score": 8,
+          "reasoning": "Fast pacing and immediate action respect the 3-second hook rule, keeping my thumb from scrolling."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "Constant movement, explosions, and visual effects prevent any dead air or disengagement."
+        },
+        "excitement": {
+          "score": 9,
+          "reasoning": "High-intensity gunfire, fire effects, and stylized graphics match the energetic music for a dopamine hit."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.9,
+      "tokens": 10704,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 9,
+      "splitIndex": 0,
+      "startTime": 45,
+      "endTime": 50,
+      "status": "success",
+      "summary": "Soldiers move tactically through a futuristic facility with green screens before the scene floods with red emergency lighting and intense combat action.",
+      "emotions": {
+        "patience": {
+          "score": 6,
+          "reasoning": "Attention is held by constant movement and the promise of escalation, though late-video fatigue is a minor risk."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "High-intensity music and rapid visual shifts from green to red prevent any disengagement."
+        },
+        "excitement": {
+          "score": 8,
+          "reasoning": "The dramatic shift to red emergency lighting and tactical combat creates a strong arousal spike."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.85,
+      "tokens": 11754,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 10,
+      "splitIndex": 0,
+      "startTime": 50,
+      "endTime": 55,
+      "status": "success",
+      "summary": "Soldiers breach a red-lit corridor while a diagnostic glitch flashes on screen, escalating tension into active combat.",
+      "emotions": {
+        "patience": {
+          "score": 8,
+          "reasoning": "Late trailer payoff rewards attention; fast pacing prevents scroll urge despite length."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "Zero dead air; constant visual motion and lighting changes keep disengagement minimal."
+        },
+        "excitement": {
+          "score": 9,
+          "reasoning": "Red emergency lighting, tactical breach, and intensity 9 music create peak adrenaline moment."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.9,
+      "tokens": 11013,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 11,
+      "splitIndex": 0,
+      "startTime": 55,
+      "endTime": 60,
+      "status": "success",
+      "summary": "Soldiers breach through red-lit corridors in fast-paced action sequence, then cut to outdoor map reveal with 'NEW MAP' text overlay while dialogue states 'This isn't real.'",
+      "emotions": {
+        "patience": {
+          "score": 8,
+          "reasoning": "Fast cuts and clear action keep me watching\u2014no slow buildup or corporate intros. The visual punch in first frame grabs attention immediately."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "Zero dead air, constant motion, and pattern interrupts every few seconds. This is exactly the pace I need to not scroll."
+        },
+        "excitement": {
+          "score": 9,
+          "reasoning": "High-intensity music, tactical action, and map reveal hit the dopamine trigger. The stakes are clear and the energy matches what I'm looking for."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.88,
+      "tokens": 13910,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 12,
+      "splitIndex": 0,
+      "startTime": 60,
+      "endTime": 65,
+      "status": "success",
+      "summary": "Soldiers run through a surreal battlefield with giant falling knives and floating islands while dialogue questions reality.",
+      "emotions": {
+        "patience": {
+          "score": 8,
+          "reasoning": "Action starts immediately at 0.0s with no logo intro or slow buildup, keeping my thumb from scrolling."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "Constant movement, explosions, and surreal imagery like giant knives prevent any dead air or disengagement."
+        },
+        "excitement": {
+          "score": 9,
+          "reasoning": "The visual of massive blades falling from the sky is a genuine 'wtf' moment that spikes arousal and curiosity."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.95,
+      "tokens": 11010,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 13,
+      "splitIndex": 0,
+      "startTime": 65,
+      "endTime": 70,
+      "status": "success",
+      "summary": "Fast-paced, surreal action sequences featuring floating islands, a 'LOS ANGELES' title card, and a curved sky-road, accompanied by intense rock music and dramatic dialogue.",
+      "emotions": {
+        "patience": {
+          "score": 6,
+          "reasoning": "The dialogue is a bit clich\u00e9 ('brink of collapse'), but the constant visual pattern interrupts and surreal environments keep me from scrolling."
+        },
+        "boredom": {
+          "score": 3,
+          "reasoning": "There's way too much happening on screen to be bored. The fast cuts and crazy visuals hold my attention."
+        },
+        "excitement": {
+          "score": 8,
+          "reasoning": "The visuals are wild\u2014especially the curved road in the sky and the floating islands. It's visually striking and the high-energy music matches the chaos perfectly."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.9,
+      "tokens": 4743,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 14,
+      "splitIndex": 0,
+      "startTime": 70,
+      "endTime": 75,
+      "status": "success",
+      "summary": "Soldiers engage in urban combat before cutting to a lush floating island landscape, driven by aggressive rock music.",
+      "emotions": {
+        "patience": {
+          "score": 8,
+          "reasoning": "Fast cuts between distinct environments prevent attention drift."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "High intensity visuals and audio leave no room for disengagement."
+        },
+        "excitement": {
+          "score": 9,
+          "reasoning": "Action sequence combined with dramatic music triggers high arousal."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.85,
+      "tokens": 12438,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 15,
+      "splitIndex": 0,
+      "startTime": 75,
+      "endTime": 80,
+      "status": "success",
+      "summary": "Fast-paced jungle combat sequence with futuristic aircraft and a city transition, underscored by intense villain dialogue and rock music.",
+      "emotions": {
+        "patience": {
+          "score": 9,
+          "reasoning": "Immediate action with no intro fluff respects my 3-second rule; cuts happen fast enough to keep my thumb still."
+        },
+        "boredom": {
+          "score": 1,
+          "reasoning": "Constant motion and high-energy audio leave zero dead air for my attention to drift."
+        },
+        "excitement": {
+          "score": 9,
+          "reasoning": "High stakes dialogue ('The end is here') combined with aggressive rock and combat visuals hit my dopamine triggers."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.95,
+      "tokens": 10482,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 16,
+      "splitIndex": 0,
+      "startTime": 80,
+      "endTime": 85,
+      "status": "success",
+      "summary": "Rooftop parkour into pink smoke transitions instantly to futuristic aircraft combat over water, ending on a snowy location title card.",
+      "emotions": {
+        "patience": {
+          "score": 8,
+          "reasoning": "Fast cuts every 1-2 seconds prevent thumb from scrolling; visual novelty holds attention."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "Constant motion and explosions leave zero dead air for disengagement."
+        },
+        "excitement": {
+          "score": 9,
+          "reasoning": "High-stakes action sequence with parkour and jet combat delivers dopamine hits."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.95,
+      "tokens": 19244,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 17,
+      "splitIndex": 0,
+      "startTime": 85,
+      "endTime": 90,
+      "status": "success",
+      "summary": "Snowy Alaska combat scene with futuristic soldiers and explosions transitions abruptly to a Hawaii cityscape title card.",
+      "emotions": {
+        "patience": {
+          "score": 6,
+          "reasoning": "Title cards usually make me scroll, but the aurora backdrop keeps it visually interesting enough to stay for 2 seconds."
+        },
+        "boredom": {
+          "score": 3,
+          "reasoning": "Constant movement and explosions mean zero dead air. I don't have time to get bored."
+        },
+        "excitement": {
+          "score": 8,
+          "reasoning": "Futuristic gear + ice combat + sudden location switch to Hawaii? That's a solid pattern interrupt. Music matches the chaos."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.85,
+      "tokens": 12464,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 18,
+      "splitIndex": 0,
+      "startTime": 90,
+      "endTime": 95,
+      "status": "success",
+      "summary": "Hawaii location title card transitions from Alaska with futuristic cityscape and combat-ready soldiers on circular platform, maintaining trailer intensity.",
+      "emotions": {
+        "patience": {
+          "score": 5,
+          "reasoning": "Location transition cards are borderline boring for impatient scrollers. I'll give it 3-5 seconds to show actual Hawaii action before scrolling."
+        },
+        "boredom": {
+          "score": 6,
+          "reasoning": "Generic trailer location intro with text overlay. Visual interest from futuristic buildings but feels like standard promotional filler."
+        },
+        "excitement": {
+          "score": 5,
+          "reasoning": "High-intensity music keeps energy up, soldiers in combat gear suggest action coming. Not peak excitement but enough to hold briefly."
+        }
+      },
+      "dominant_emotion": "patience",
+      "confidence": 0.75,
+      "tokens": 11321,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 19,
+      "splitIndex": 0,
+      "startTime": 95,
+      "endTime": 100,
+      "status": "success",
+      "summary": "High-intensity action sequence with combat mechs and soldiers featuring rapid cuts and dramatic audio cues.",
+      "emotions": {
+        "patience": {
+          "score": 9,
+          "reasoning": "Rapid visual cuts and constant action prevent any urge to scroll; pacing matches short-form expectations."
+        },
+        "boredom": {
+          "score": 1,
+          "reasoning": "Zero dead air; every frame introduces new visual stimuli like robots or tactical combat."
+        },
+        "excitement": {
+          "score": 9,
+          "reasoning": "Giant mechs and tactical combat hit the dopamine button hard; music ramps the energy perfectly."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.9,
+      "tokens": 11446,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 20,
+      "splitIndex": 0,
+      "startTime": 100,
+      "endTime": 105,
+      "status": "success",
+      "summary": "Rapid cuts of soldiers breaching, a glowing sword, a strange robotic sphere, and a jungle soldier, accompanied by dramatic dialogue.",
+      "emotions": {
+        "patience": {
+          "score": 8,
+          "reasoning": "The fast cuts and high-action visuals keep me engaged, meaning I have no reason to scroll away."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "There is way too much happening too quickly for me to feel any boredom."
+        },
+        "excitement": {
+          "score": 8,
+          "reasoning": "The wild visuals like the giant axe and glowing sword, combined with the rapid pacing, hit my dopamine receptors perfectly."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.9,
+      "tokens": 5355,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 21,
+      "splitIndex": 0,
+      "startTime": 105,
+      "endTime": 110,
+      "status": "success",
+      "summary": "A tombstone for Frank Woods, a mysterious metallic sphere, and soldiers in tactical gear appear amidst high-intensity cinematic music.",
+      "emotions": {
+        "patience": {
+          "score": 7,
+          "reasoning": "The tombstone visual and specific names create a curiosity gap that holds attention beyond the 3-second threshold."
+        },
+        "boredom": {
+          "score": 3,
+          "reasoning": "High-intensity music and rapid visual changes prevent disengagement."
+        },
+        "excitement": {
+          "score": 8,
+          "reasoning": "Dramatic dialogue stakes combined with cinematic orchestral stabs drive high arousal."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.85,
+      "tokens": 10384,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 22,
+      "splitIndex": 0,
+      "startTime": 110,
+      "endTime": 115,
+      "status": "success",
+      "summary": "High-octane action sequence featuring soldiers, explosions, and a giant mech amidst intense dialogue about ending the conflict.",
+      "emotions": {
+        "patience": {
+          "score": 7,
+          "reasoning": "First frame is blurry mess, but then boom\u2014soldiers running and sparks. I'll stay because the action is non-stop."
+        },
+        "boredom": {
+          "score": 2,
+          "reasoning": "Zero chance I'm zoning out. There's a giant robot and explosions every second."
+        },
+        "excitement": {
+          "score": 9,
+          "reasoning": "This is the good part. The music is slamming, the mech looks sick. Actually hyped."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.9,
+      "tokens": 11247,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 23,
+      "splitIndex": 0,
+      "startTime": 115,
+      "endTime": 120,
+      "status": "success",
+      "summary": "High-intensity climax with soldiers battling amidst explosions, transitioning rapidly into the Black Ops 7 title card and pre-order CTA.",
+      "emotions": {
+        "patience": {
+          "score": 9,
+          "reasoning": "Fast pacing and clear payoff (title card) keep me from scrolling; no dead air."
+        },
+        "boredom": {
+          "score": 1,
+          "reasoning": "Constant motion, explosions, and loud audio leave zero room for disengagement."
+        },
+        "excitement": {
+          "score": 9,
+          "reasoning": "Visual chaos, dramatic music stabs, and the franchise reveal hit the dopamine need."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.95,
+      "tokens": 10537,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 24,
+      "splitIndex": 0,
+      "startTime": 120,
+      "endTime": 125,
+      "status": "success",
+      "summary": "The video displays the final call-to-action screens for Call of Duty Black Ops 7, detailing pre-order bonuses like the Reznov Challenge Pack.",
+      "emotions": {
+        "patience": {
+          "score": 2,
+          "reasoning": "Just a bunch of pre-order screens and fine print. I'm already scrolling."
+        },
+        "boredom": {
+          "score": 8,
+          "reasoning": "Standard corporate end-slate. Nothing visually interesting happening anymore."
+        },
+        "excitement": {
+          "score": 3,
+          "reasoning": "Maybe cool if I play CoD, but as a video, it's just an ad read now."
+        }
+      },
+      "dominant_emotion": "boredom",
+      "confidence": 0.9,
+      "tokens": 4644,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 25,
+      "splitIndex": 0,
+      "startTime": 125,
+      "endTime": 130,
+      "status": "success",
+      "summary": "The chunk displays the Vault Edition pre-order bonuses on a static screen before cutting to a brief action shot with dramatic voiceover.",
+      "emotions": {
+        "patience": {
+          "score": 5,
+          "reasoning": "Viewer is near the end but the static info screen risks attention; clear CTA helps maintain focus."
+        },
+        "boredom": {
+          "score": 5,
+          "reasoning": "Static text screen triggers the '2-second rule' dislike, and the voiceover uses clich\u00e9 buzzwords."
+        },
+        "excitement": {
+          "score": 7,
+          "reasoning": "High-intensity music (9/10) and the final action cut sustain energy despite the info screen."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.85,
+      "tokens": 10756,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 26,
+      "splitIndex": 0,
+      "startTime": 130,
+      "endTime": 135,
+      "status": "success",
+      "summary": "Fast-paced action montage featuring hand-to-hand combat, gunplay, and a vehicle driving through snow, accompanied by a clich\u00e9 dramatic voiceover.",
+      "emotions": {
+        "patience": {
+          "score": 3,
+          "reasoning": "The fast cuts cater to my lack of patience, but that generic 'the world is changing' voiceover is testing me."
+        },
+        "boredom": {
+          "score": 4,
+          "reasoning": "The visuals are moving fast enough to keep me from scrolling, even if the dialogue sounds like every other trailer ever made."
+        },
+        "excitement": {
+          "score": 7,
+          "reasoning": "The action is actually pretty sick. The rapid transitions and explosions hit the dopamine receptors just right."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.9,
+      "tokens": 4638,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    },
+    {
+      "chunkIndex": 27,
+      "splitIndex": 0,
+      "startTime": 135,
+      "endTime": 140,
+      "status": "success",
+      "summary": "Rapid-fire montage of diverse gameplay perspectives (TPS, top-down) ending with the Xbox logo.",
+      "emotions": {
+        "patience": {
+          "score": 8,
+          "reasoning": "It's the finale; the rapid cuts prevent boredom, and the logo signals closure, so I'm not scrolling away yet."
+        },
+        "boredom": {
+          "score": 1,
+          "reasoning": "Constant visual changes every second keep my thumb still; no dead air."
+        },
+        "excitement": {
+          "score": 9,
+          "reasoning": "Explosions, magic, snow, combat\u2014high sensory overload matches my dopamine needs."
+        }
+      },
+      "dominant_emotion": "excitement",
+      "confidence": 0.9,
+      "tokens": 11585,
+      "persona": {
+        "soulPath": "../cast/impatient-teenager/SOUL.md",
+        "goalPath": "../goals/video-ad-evaluation.md",
+        "lenses": [
+          "patience",
+          "boredom",
+          "excitement"
+        ]
+      }
+    }
+  ],
+  "totalTokens": 288246,
+  "statusSummary": {
+    "total": 28,
+    "successful": 28,
+    "failed": 0,
+    "failedChunkIndexes": []
+  },
+  "persona": {
+    "soulPath": "../cast/impatient-teenager/SOUL.md",
+    "goalPath": "../goals/video-ad-evaluation.md",
+    "config": {
+      "chunkDuration": 8,
+      "numChunks": 29
+    }
+  },
+  "videoDuration": 140.017
+}

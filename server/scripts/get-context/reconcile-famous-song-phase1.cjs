@@ -384,7 +384,82 @@ function classifyLyricCorrection(sourceText, targetText, similarity) {
   };
 }
 
-function buildLyricEvidence(segments = [], matchedLyrics = [], minSimilarity = MIN_GATE_LYRIC_TEXT_SIMILARITY) {
+function buildCompositeDialogueLyricHit(sourceText, matchedLyrics = [], supportPhrases = []) {
+  const normalizedMatchedLyrics = matchedLyrics.map((entry) => compactString(entry)).filter(Boolean);
+  const phraseEntries = [
+    ...normalizedMatchedLyrics.map((phrase, lyricIndex) => ({ phrase, lyricIndex, source: 'matchedLyric' })),
+    ...supportPhrases
+      .map((entry) => compactString(entry))
+      .filter(Boolean)
+      .map((phrase) => ({ phrase, lyricIndex: null, source: 'vocalSegment' }))
+  ];
+
+  const sourceTokens = tokenize(sourceText);
+  if (sourceTokens.length < 4 || phraseEntries.length === 0) return null;
+
+  const bestAnchorsByPhrase = new Map();
+  for (const entry of phraseEntries) {
+    const targetTokens = tokenize(entry.phrase);
+    if (targetTokens.length < 2) continue;
+
+    const contiguousRun = longestContiguousTokenRun(sourceTokens, targetTokens);
+    const sharedTokens = countSharedTokens(sourceTokens, targetTokens);
+    const sharedTargetRatio = targetTokens.length > 0 ? sharedTokens / targetTokens.length : 0;
+    const strongContiguousRun = contiguousRun >= Math.min(3, targetTokens.length);
+    const strongTokenOverlap = sharedTokens >= 3 && sharedTargetRatio >= MIN_NEAR_MISS_SHARED_TARGET_RATIO;
+
+    if (!strongContiguousRun && !strongTokenOverlap) continue;
+
+    const normalizedPhrase = normalizeText(entry.phrase);
+    const similarity = lexicalSimilarity(sourceText, entry.phrase);
+    const anchor = {
+      ...entry,
+      normalizedPhrase,
+      similarity: Number(similarity.toFixed(4)),
+      contiguousRun,
+      sharedTokens,
+      sharedTargetRatio: Number(sharedTargetRatio.toFixed(4))
+    };
+    const incumbent = bestAnchorsByPhrase.get(normalizedPhrase);
+    if (!incumbent || anchor.contiguousRun > incumbent.contiguousRun || (anchor.contiguousRun === incumbent.contiguousRun && anchor.sharedTokens > incumbent.sharedTokens)) {
+      bestAnchorsByPhrase.set(normalizedPhrase, anchor);
+    }
+  }
+
+  const anchorHits = Array.from(bestAnchorsByPhrase.values()).sort((left, right) => {
+    if (right.contiguousRun !== left.contiguousRun) return right.contiguousRun - left.contiguousRun;
+    if (right.sharedTokens !== left.sharedTokens) return right.sharedTokens - left.sharedTokens;
+    return right.similarity - left.similarity;
+  });
+  if (anchorHits.length < 2) return null;
+
+  const matchedLyricAnchors = anchorHits.filter((entry) => entry.source === 'matchedLyric');
+  if (matchedLyricAnchors.length === 0) return null;
+
+  const primaryAnchor = matchedLyricAnchors[0];
+  return {
+    lyricIndex: primaryAnchor.lyricIndex,
+    lyric: primaryAnchor.phrase,
+    similarity: primaryAnchor.similarity,
+    evidenceType: 'composite_anchor_bundle',
+    anchorHits: anchorHits.map((entry) => ({
+      source: entry.source,
+      phrase: entry.phrase,
+      similarity: entry.similarity,
+      contiguousRun: entry.contiguousRun,
+      sharedTokens: entry.sharedTokens,
+      sharedTargetRatio: entry.sharedTargetRatio
+    }))
+  };
+}
+
+function buildLyricEvidence(
+  segments = [],
+  matchedLyrics = [],
+  minSimilarity = MIN_GATE_LYRIC_TEXT_SIMILARITY,
+  options = {}
+) {
+  const { allowCompositeAnchors = false, supportPhrases = [] } = options;
   const hits = [];
   for (let segmentOffset = 0; segmentOffset < segments.length; segmentOffset += 1) {
     const segment = segments[segmentOffset];
@@ -405,14 +480,26 @@ function buildLyricEvidence(segments = [], matchedLyrics = [], minSimilarity = M
       }
     }
 
-    if (bestLyricIndex < 0 || bestSimilarity < minSimilarity) continue;
+    if (bestLyricIndex >= 0 && bestSimilarity >= minSimilarity) {
+      hits.push({
+        segmentOffset,
+        segmentOrderIndex: getSegmentOrderIndex(segment, segmentOffset),
+        lyricIndex: bestLyricIndex,
+        lyric: bestLyric,
+        similarity: Number(bestSimilarity.toFixed(4)),
+        evidenceType: 'direct'
+      });
+      continue;
+    }
+
+    if (!allowCompositeAnchors) continue;
+    const compositeHit = buildCompositeDialogueLyricHit(sourceText, matchedLyrics, supportPhrases);
+    if (!compositeHit) continue;
 
     hits.push({
       segmentOffset,
       segmentOrderIndex: getSegmentOrderIndex(segment, segmentOffset),
-      lyricIndex: bestLyricIndex,
-      lyric: bestLyric,
-      similarity: Number(bestSimilarity.toFixed(4))
+      ...compositeHit
     });
   }
 
@@ -467,7 +554,10 @@ function buildRecognitionGate(musicVocalsData, musicData, dialogueData) {
   const supportingMusicRecognizedSong = musicData?.recognizedSong || null;
 
   const vocalLyricEvidence = buildLyricEvidence(vocalSegments, matchedLyrics, MIN_GATE_LYRIC_TEXT_SIMILARITY);
-  const dialogueLyricEvidence = buildLyricEvidence(dialogueSegments, matchedLyrics, MIN_DIALOGUE_LYRIC_SIMILARITY);
+  const dialogueLyricEvidence = buildLyricEvidence(dialogueSegments, matchedLyrics, MIN_DIALOGUE_LYRIC_SIMILARITY, {
+    allowCompositeAnchors: true,
+    supportPhrases: vocalSegments.map((entry) => compactString(entry?.text)).filter(Boolean)
+  });
 
   const hasSupportingMusicConsensus = (() => {
     if (!supportingMusicRecognizedSong) return true;
@@ -528,18 +618,25 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
   const dialogueSegments = Array.isArray(dialogueData?.dialogue_segments) ? dialogueData.dialogue_segments : [];
   const vocalSegments = Array.isArray(musicVocalsData?.vocal_segments) ? musicVocalsData.vocal_segments : [];
   const vocalEvidenceIndexes = new Set(gate?.evidence?.vocalLyricEvidence?.hitOrderIndexes || []);
+  const dialogueEvidenceHitsByOrderIndex = new Map(
+    Array.isArray(gate?.evidence?.dialogueLyricEvidence?.hits)
+      ? gate.evidence.dialogueLyricEvidence.hits.map((hit) => [hit.segmentOrderIndex, hit])
+      : []
+  );
   const removedSegments = [];
 
   const reconciledSegments = dialogueSegments.filter((segment, index) => {
+    const dialogueOrderIndex = getSegmentOrderIndex(segment, index);
+    const evidenceHit = dialogueEvidenceHitsByOrderIndex.get(dialogueOrderIndex) || null;
     const bestMatch = chooseBestLyricMatch(segment?.text, gate.matchedLyrics);
-    if (!bestMatch || bestMatch.similarity < MIN_DIALOGUE_LYRIC_SIMILARITY) return true;
+    const hasStrictLyricMatch = Boolean(bestMatch && bestMatch.similarity >= MIN_DIALOGUE_LYRIC_SIMILARITY);
+    if (!hasStrictLyricMatch && !evidenceHit) return true;
 
     const confidence = Number(segment?.confidence);
     const lowConfidence = !Number.isFinite(confidence) || confidence <= 0.96;
     if (!lowConfidence && !isShortOrRefrainLike(segment)) return true;
     if (hasStrongSpokenSignal(dialogueSegments, index)) return true;
 
-    const dialogueOrderIndex = getSegmentOrderIndex(segment, index);
     const hasNearbyVocalIndexEvidence = Array.from(vocalEvidenceIndexes).some(
       (orderIndex) => Math.abs(orderIndex - dialogueOrderIndex) <= MIN_DIALOGUE_INDEX_PROXIMITY
     );
@@ -548,7 +645,11 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
       segment?.text,
       vocalSegments.map((entry) => compactString(entry?.text)).filter(Boolean)
     );
-    const hasDirectVocalTextSupport = bestVocalMatch && bestVocalMatch.similarity >= MIN_GATE_LYRIC_TEXT_SIMILARITY;
+    const hasAnchoredVocalBundleSupport = Array.isArray(evidenceHit?.anchorHits)
+      ? evidenceHit.anchorHits.some((entry) => entry.source === 'vocalSegment')
+      : false;
+    const hasDirectVocalTextSupport =
+      (bestVocalMatch && bestVocalMatch.similarity >= MIN_GATE_LYRIC_TEXT_SIMILARITY) || hasAnchoredVocalBundleSupport;
 
     if (!hasNearbyVocalIndexEvidence && !hasDirectVocalTextSupport && vocalEvidenceIndexes.size > 0) {
       return true;
@@ -559,11 +660,13 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
       indexOrder: dialogueOrderIndex,
       text: compactString(segment?.text),
       confidence: Number.isFinite(confidence) ? confidence : null,
-      matchedLyric: bestMatch.lyric,
-      similarity: Number(bestMatch.similarity.toFixed(4)),
+      matchedLyric: evidenceHit?.lyric || bestMatch?.lyric || '',
+      similarity: Number((evidenceHit?.similarity ?? bestMatch?.similarity ?? 0).toFixed(4)),
       evidence: {
         nearbyVocalIndexEvidence: hasNearbyVocalIndexEvidence,
-        directVocalTextSupport: Boolean(hasDirectVocalTextSupport)
+        directVocalTextSupport: Boolean(hasDirectVocalTextSupport),
+        evidenceType: evidenceHit?.evidenceType || 'direct',
+        anchorHits: Array.isArray(evidenceHit?.anchorHits) ? evidenceHit.anchorHits : []
       },
       reason: 'likely_lyric_contamination'
     });

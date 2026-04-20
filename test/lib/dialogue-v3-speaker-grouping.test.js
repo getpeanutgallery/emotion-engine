@@ -394,11 +394,22 @@ test('automatic scorer suppresses hard blockers under degraded gating and the re
       clean_reuse_gate: false,
       matched_concrete_stable_identity_fields: 4,
       exact_stable_identity_match_count: 4,
+      discriminative_stable_identity_exact_match_count: 4,
       stable_identity_mismatch_count: index,
       previous_occurrence_distance: index + 1,
       blockers_triggered: [],
       blockers_suppressed: candidate.blockers_suppressed,
-      abstentions_from_unknown_mixed_variable: []
+      abstentions_from_unknown_mixed_variable: [],
+      diagnostics: {
+        default_shared_only_reuse_pressure: false,
+        stable_identity_abstention_count: 0,
+        discriminative_stable_identity_exact_match_count: 4,
+        matched_concrete_stable_identity_fields: 4,
+        positive_bonus_rule_ids: [],
+        exact_default_shared_match_fields: [],
+        non_default_exact_match_fields: ['gender_presentation', 'pitch_band', 'phonation'],
+        selective_non_clean_reuse_support: true
+      }
     })),
     compiledRuleset
   });
@@ -406,6 +417,155 @@ test('automatic scorer suppresses hard blockers under degraded gating and the re
   assert.equal(closeDecision.chosen_action, 'ambiguous_reuse');
   assert.equal(closeDecision.ambiguous, true);
   assert.ok(closeDecision.score_margin < 1);
+});
+
+test('automatic scorer creates a new group under non-clean sparse-trait default-shared-only reuse pressure and records diagnostics', () => {
+  const reducer = buildReducer(buildDialogueDataFromTraits([
+    {
+      audibility: 'partially_masked',
+      gender_presentation: 'unknown',
+      age_impression: 'unknown',
+      pitch_band: 'unknown',
+      phonation: 'unknown',
+      pace: 'unknown',
+      energy: 'unknown',
+      transmission_medium: 'direct',
+      spatial_texture: 'room',
+      accent_strength: 'none_apparent',
+      accent_family: 'neutral_or_unmarked',
+      affect: 'unknown',
+      interpersonal_stance: 'neutral',
+      delivery_overlay: 'none_apparent'
+    },
+    {
+      audibility: 'partially_masked',
+      gender_presentation: 'unknown',
+      age_impression: 'unknown',
+      pitch_band: 'unknown',
+      phonation: 'unknown',
+      pace: 'unknown',
+      energy: 'unknown',
+      transmission_medium: 'direct',
+      spatial_texture: 'room',
+      accent_strength: 'none_apparent',
+      accent_family: 'neutral_or_unmarked',
+      affect: 'unknown',
+      interpersonal_stance: 'neutral',
+      delivery_overlay: 'none_apparent'
+    }
+  ]));
+
+  reducer.scoreAndApplySegment(0);
+  const second = reducer.scoreAndApplySegment(1);
+
+  assert.equal(second.decision.chosen_action, 'create_group');
+  assert.equal(second.candidate_scores[0].clean_reuse_gate, false);
+  assert.equal(second.candidate_scores[0].diagnostics.default_shared_only_reuse_pressure, true);
+  assert.ok(second.candidate_scores[0].score_contributions_by_field_or_bucket.some((entry) => entry.rule_id === 'default_shared_only_reuse_pressure_penalty'));
+  assert.equal(second.ledger_entry.diagnostics.default_shared_only_reuse_pressure, true);
+  assert.deepEqual(second.ledger_entry.diagnostics.exact_default_shared_match_fields.sort(), [
+    'accent_family',
+    'accent_strength',
+    'delivery_overlay',
+    'interpersonal_stance',
+    'spatial_texture',
+    'transmission_medium'
+  ]);
+});
+
+test('automatic scorer still allows non-clean reuse when discriminative stable identity evidence is concrete', () => {
+  const reducer = buildReducer(buildDialogueDataFromTraits([
+    {
+      audibility: 'partially_masked',
+      gender_presentation: 'masculine',
+      age_impression: 'unknown',
+      pitch_band: 'mid',
+      phonation: 'clear',
+      pace: 'unknown',
+      energy: 'unknown',
+      transmission_medium: 'direct',
+      spatial_texture: 'room',
+      accent_strength: 'none_apparent',
+      accent_family: 'neutral_or_unmarked',
+      affect: 'unknown',
+      interpersonal_stance: 'neutral',
+      delivery_overlay: 'none_apparent'
+    },
+    {
+      audibility: 'partially_masked',
+      gender_presentation: 'masculine',
+      age_impression: 'unknown',
+      pitch_band: 'mid',
+      phonation: 'clear',
+      pace: 'unknown',
+      energy: 'unknown',
+      transmission_medium: 'direct',
+      spatial_texture: 'room',
+      accent_strength: 'none_apparent',
+      accent_family: 'neutral_or_unmarked',
+      affect: 'unknown',
+      interpersonal_stance: 'neutral',
+      delivery_overlay: 'none_apparent'
+    }
+  ]));
+
+  const first = reducer.scoreAndApplySegment(0);
+  const second = reducer.scoreAndApplySegment(1);
+
+  assert.equal(first.decision.chosen_action, 'create_group');
+  assert.equal(second.decision.chosen_action, 'reuse_group');
+  assert.equal(second.assignment.group_id, first.assignment.group_id);
+  assert.equal(second.candidate_scores[0].diagnostics.default_shared_only_reuse_pressure, false);
+  assert.ok(second.candidate_scores[0].discriminative_stable_identity_exact_match_count >= 3);
+});
+
+test('automatic scorer recovers non-clean recent reuse when a non-default exact cue provides selective support', () => {
+  const reducer = buildReducer(buildDialogueDataFromTraits([
+    {
+      audibility: 'partially_masked',
+      gender_presentation: 'unknown',
+      age_impression: 'unknown',
+      pitch_band: 'unknown',
+      phonation: 'unknown',
+      pace: 'fast',
+      energy: 'unknown',
+      transmission_medium: 'direct',
+      spatial_texture: 'room',
+      accent_strength: 'none_apparent',
+      accent_family: 'neutral_or_unmarked',
+      affect: 'unknown',
+      interpersonal_stance: 'neutral',
+      delivery_overlay: 'none_apparent'
+    },
+    {
+      audibility: 'partially_masked',
+      gender_presentation: 'unknown',
+      age_impression: 'unknown',
+      pitch_band: 'unknown',
+      phonation: 'unknown',
+      pace: 'fast',
+      energy: 'unknown',
+      transmission_medium: 'direct',
+      spatial_texture: 'room',
+      accent_strength: 'none_apparent',
+      accent_family: 'neutral_or_unmarked',
+      affect: 'unknown',
+      interpersonal_stance: 'neutral',
+      delivery_overlay: 'none_apparent'
+    }
+  ]));
+
+  const first = reducer.scoreAndApplySegment(0);
+  const second = reducer.scoreAndApplySegment(1);
+
+  assert.equal(first.decision.chosen_action, 'create_group');
+  assert.equal(second.decision.chosen_action, 'reuse_group');
+  assert.equal(second.assignment.group_id, first.assignment.group_id);
+  assert.equal(second.candidate_scores[0].diagnostics.default_shared_only_reuse_pressure, false);
+  assert.deepEqual(second.candidate_scores[0].diagnostics.non_default_exact_match_fields, ['pace']);
+  assert.equal(second.candidate_scores[0].diagnostics.selective_non_clean_reuse_support, true);
+  assert.ok(second.candidate_scores[0].diagnostics.positive_bonus_rule_ids.includes('recent_group_reuse_bonus'));
+  assert.ok(second.ledger_entry.score_contributions_by_field_or_bucket.some((entry) => entry.detail === 'recent_group_reuse_bonus_from_non_default_exact_support'));
 });
 
 test('resolveSegmentAssignment deterministically falls back to create when evidence stays below assign threshold', () => {
@@ -435,6 +595,7 @@ test('resolveSegmentAssignment deterministically falls back to create when evide
         clean_reuse_gate: false,
         matched_concrete_stable_identity_fields: 0,
         exact_stable_identity_match_count: 0,
+        discriminative_stable_identity_exact_match_count: 0,
         stable_identity_mismatch_count: 0,
         previous_occurrence_distance: 3,
         short_contract_safe_reason: ['gating_cues'],
@@ -444,7 +605,17 @@ test('resolveSegmentAssignment deterministically falls back to create when evide
         ],
         blockers_triggered: [],
         blockers_suppressed: [],
-        score_contributions_by_field_or_bucket: []
+        score_contributions_by_field_or_bucket: [],
+        diagnostics: {
+          default_shared_only_reuse_pressure: false,
+          stable_identity_abstention_count: 6,
+          discriminative_stable_identity_exact_match_count: 0,
+          matched_concrete_stable_identity_fields: 0,
+          positive_bonus_rule_ids: [],
+          exact_default_shared_match_fields: [],
+          non_default_exact_match_fields: [],
+          selective_non_clean_reuse_support: false
+        }
       }
     ],
     compiledRuleset

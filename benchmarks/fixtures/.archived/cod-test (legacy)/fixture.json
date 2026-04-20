@@ -1,0 +1,44 @@
+{
+  "contractVersion": "ee.benchmark-fixture/v1",
+  "fixtureId": "cod-test",
+  "displayName": "Call of Duty trailer benchmark fixture",
+  "description": "Repo-local benchmark fixture for the canonical cod-test acceptance asset.",
+  "asset": {
+    "repoPath": "examples/videos/emotion-tests/cod.mp4"
+  },
+  "config": {
+    "repoPath": "configs/cod-test.yaml"
+  },
+  "benchmark": {
+    "entryPath": "benchmark.json"
+  },
+  "owners": [
+    "emotion-engine"
+  ],
+  "tags": [
+    "video",
+    "dialogue",
+    "music",
+    "recommendation",
+    "chunk-analysis",
+    "metrics",
+    "emotional-analysis",
+    "acceptance",
+    "benchmark"
+  ],
+  "notes": [
+    "This fixture is the MVP source-owned scaffold for the truth benchmark system.",
+    "Truth artifacts are JSON-only and must preserve schema parity with real pipeline outputs.",
+    "The initial dialogue/music truth files were bootstrapped from the current cod-test artifact set so the runner has durable source-controlled inputs before full editorial review.",
+    "Dialogue truth now includes a first human-reviewed pass captured directly in truth/dialogue-data.json, with provenance boundaries documented in docs/cod-test-dialogue-truth-provenance-2026-03-30.md instead of mixing reviewer notes into semantic transcript fields.",
+    "Comparator profiles/tolerances still live in benchmark.json + runner code, but truth files may now declare conservative top-level _benchmark.ignorePaths entries for output-only operational metadata.",
+    "Dialogue, music, and music-vocals truth now ignore only operational run metadata such as analysisMode, timingMode, sourceStrategy, coverage, and provenance where those fields describe how the artifact was produced rather than the semantic content itself.",
+    "Recommendation benchmarking is now included as bootstrap truth with truth-declared _benchmark.ignorePaths for volatile metadata (generatedAt and ai debug/usage payloads).",
+    "Chunk-analysis benchmarking is now included using bootstrap truth copied from output/cod-test/phase2-process/chunk-analysis.json; it is not yet a human-reviewed gold truth artifact.",
+    "Chunk-analysis truth ignores only volatile token-usage fields (chunks[*].tokens and totalTokens) via _benchmark.ignorePaths instead of pretending reviewed truth exists for those unstable values.",
+    "Metrics benchmarking is now included using bootstrap truth copied from output/cod-test/phase3-report/metrics/metrics.json; it is not yet a human-reviewed gold truth artifact.",
+    "Metrics truth ignores only generatedAt via _benchmark.ignorePaths because generation timestamp volatility is operational metadata rather than reviewed semantic truth.",
+    "Emotional-analysis benchmarking is now included using bootstrap truth copied from output/cod-test/phase3-report/emotional-analysis/emotional-data.json; it is not yet a human-reviewed gold truth artifact.",
+    "Emotional-analysis truth focuses on deterministic structural/category/numeric fields and ignores only generatedAt plus criticalMoments[*].context via _benchmark.ignorePaths, rather than pretending long-form explanatory prose is reviewed semantic truth."
+  ]
+}

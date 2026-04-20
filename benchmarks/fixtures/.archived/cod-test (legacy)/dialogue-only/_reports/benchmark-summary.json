@@ -1,0 +1,82 @@
+{
+  "contractVersion": "ee.benchmark-report/v1",
+  "fixtureId": "cod-test",
+  "benchmark": {
+    "path": "benchmarks/fixtures/cod-test/dialogue-only/benchmark.json"
+  },
+  "fixture": {
+    "path": "benchmarks/fixtures/cod-test/fixture.json"
+  },
+  "run": {
+    "configName": "COD Test Dialogue Structural Sanity",
+    "outputDir": "output/cod-test-dialogue-structural-sanity"
+  },
+  "status": "error",
+  "artifacts": [
+    {
+      "artifactKey": "dialogueData",
+      "status": "error",
+      "accuracyRate": 0.22815533980582525,
+      "coverageRate": 0.9903846153846154,
+      "ignoredDifferenceCount": 45,
+      "comparisonBoundary": {
+        "comparisonMode": "phase1-dialogue-provisional",
+        "outputSurface": "raw",
+        "truthSurface": "provisional-truth",
+        "deferredContractPaths": [
+          "$.cleanedTranscript",
+          "$.speaker_profiles",
+          "$.handoffContext"
+        ]
+      },
+      "mismatchClassificationCounts": {
+        "provisional_raw_dialogue_drift": 75,
+        "deferred_contract_drift": 85
+      }
+    }
+  ],
+  "totals": {
+    "artifactsTotal": 1,
+    "artifactsPassed": 0,
+    "artifactsFailed": 0,
+    "artifactsErrored": 1,
+    "totalTruthFields": 208,
+    "scoreableFields": 206,
+    "skippedFields": 1,
+    "passedFields": 47,
+    "failedFields": 159,
+    "erroredFields": 1,
+    "ignoredDifferenceFields": 45,
+    "mismatchClassificationCounts": {
+      "provisional_raw_dialogue_drift": 75,
+      "deferred_contract_drift": 85
+    }
+  },
+  "accuracy": {
+    "passed": 47,
+    "failed": 159,
+    "rate": 0.22815533980582525
+  },
+  "coverage": {
+    "scoreable": 206,
+    "skipped": 1,
+    "ignoredDifferences": 45,
+    "totalTruthFields": 208,
+    "rate": 0.9903846153846154
+  },
+  "mismatchClassificationCounts": {
+    "provisional_raw_dialogue_drift": 75,
+    "deferred_contract_drift": 85
+  },
+  "errors": [
+    {
+      "artifactKey": "dialogueData",
+      "path": "cleanedTranscript",
+      "rule": "structural",
+      "truthValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets, shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 6: A lot of people counting on us for answers.\nSpeaker 14: You shall know fear.\nSpeaker 8: Specter one, report.\nSpeaker 8: Need a sitrep.\nSpeaker 9: This isn't real.\nSpeaker 10: The hell it ain't!\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave David.\nSpeaker 13: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 15: You were never cut out to be a Mason.\nSpeaker 6: No more games! This ends now.\nSpeaker 16: Get the Reznov challenge pack when you preorder now!",
+      "reason": "Output object missing field present in truth",
+      "classification": "deferred_contract_drift"
+    }
+  ],
+  "summary": "0/1 artifacts passed. 47/206 scoreable fields passed. Truth coverage was 206/208 fields. provisional raw drift=75. deferred contract drift=85."
+}

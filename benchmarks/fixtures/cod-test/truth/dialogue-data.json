@@ -1,544 +1,431 @@
 {
-  "_benchmark": {
-    "ignorePaths": [
-      "$.analysisMode",
-      "$.timingMode",
-      "$.sourceStrategy",
-      "$.coverage",
-      "$.provenance"
-    ]
+  "schema_version": 1,
+  "contract": {
+    "artifact": "dialogue-data",
+    "mode": "traits",
+    "traits_contract_version": "3.0.0"
   },
+  "summary": "Human-reviewed spoken dialogue only for the cod-test trailer: tense trailer VO, antagonist taunts, squad chatter, filtered comms, and the closing promo read. Lyrics and chants remain in music-vocals-data.json.",
   "dialogue_segments": [
     {
-      "start": 0,
-      "end": 5,
-      "speaker": "Speaker 1",
-      "speaker_id": "spk_001",
+      "index": 0,
       "text": "They want you afraid. Fear makes you easier to control.",
-      "confidence": 0.95,
-      "index": 0
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "feminine",
+        "age_impression": "adult",
+        "pitch_band": "mid",
+        "phonation": "clear",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "direct",
+        "spatial_texture": "close",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "serious",
+        "interpersonal_stance": "confrontational",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 8,
-      "end": 10,
-      "speaker": "Speaker 1",
-      "speaker_id": "spk_001",
+      "index": 1,
       "text": "It's time to wake up.",
-      "confidence": 0.95,
-      "index": 1
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "feminine",
+        "age_impression": "adult",
+        "pitch_band": "mid",
+        "phonation": "clear",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "direct",
+        "spatial_texture": "close",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "determined",
+        "interpersonal_stance": "directive",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 12,
-      "end": 17,
-      "speaker": "Speaker 2",
-      "speaker_id": "spk_002",
+      "index": 2,
       "text": "Your streets, shall once again run red with your blood.",
-      "confidence": 0.98,
-      "index": 2
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "adult",
+        "pitch_band": "low",
+        "phonation": "raspy",
+        "pace": "measured",
+        "energy": "intense",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "clear_non_neutral",
+        "accent_family": "hispanic",
+        "affect": "angry",
+        "interpersonal_stance": "taunting",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 17,
-      "end": 21,
-      "speaker": "Speaker 3",
-      "speaker_id": "spk_003",
+      "index": 3,
       "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
-      "confidence": 0.85,
-      "index": 3
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "adult",
+        "pitch_band": "low",
+        "phonation": "clear",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "unknown",
+        "accent_family": "unknown",
+        "affect": "serious",
+        "interpersonal_stance": "performative",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 22,
-      "end": 24,
-      "speaker": "Speaker 1",
-      "speaker_id": "spk_001",
+      "index": 4,
       "text": "Menendez is a terrorist.",
-      "confidence": 0.9,
-      "index": 4
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "feminine",
+        "age_impression": "adult",
+        "pitch_band": "mid",
+        "phonation": "clear",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "direct",
+        "spatial_texture": "close",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "serious",
+        "interpersonal_stance": "confrontational",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 24,
-      "end": 26,
-      "speaker": "Speaker 1",
-      "speaker_id": "spk_001",
+      "index": 5,
       "text": "We're bringing peace and security to the world.",
-      "confidence": 0.9,
-      "index": 5
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "feminine",
+        "age_impression": "adult",
+        "pitch_band": "mid",
+        "phonation": "clear",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "direct",
+        "spatial_texture": "close",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "serious",
+        "interpersonal_stance": "confrontational",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 28,
-      "end": 29,
-      "speaker": "Speaker 6",
-      "speaker_id": "spk_006",
+      "index": 6,
       "text": "He refuses to let me go.",
-      "confidence": 0.9,
-      "index": 6
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "young_adult",
+        "pitch_band": "mid",
+        "phonation": "strained",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "direct",
+        "spatial_texture": "unknown",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "tense",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 30,
-      "end": 33,
-      "speaker": "Speaker 7",
-      "speaker_id": "spk_007",
+      "index": 7,
       "text": "Stop looking backwards, David. What matters is what we do next.",
-      "confidence": 0.95,
-      "index": 7
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "older_adult",
+        "pitch_band": "low",
+        "phonation": "raspy",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "serious",
+        "interpersonal_stance": "supportive",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 35,
-      "end": 36,
-      "speaker": "Speaker 6",
-      "speaker_id": "spk_006",
+      "index": 8,
       "text": "A lot of people counting on us for answers.",
-      "confidence": 0.88,
-      "index": 8
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "young_adult",
+        "pitch_band": "mid",
+        "phonation": "strained",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "direct",
+        "spatial_texture": "unknown",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "tense",
+        "interpersonal_stance": "supportive",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 45,
-      "end": 47,
-      "speaker": "Speaker 14",
-      "speaker_id": "spk_014",
+      "index": 9,
       "text": "You shall know fear.",
-      "confidence": 0.8,
-      "index": 9
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "older_adult",
+        "pitch_band": "low",
+        "phonation": "strained",
+        "pace": "measured",
+        "energy": "intense",
+        "transmission_medium": "processed_or_synthetic",
+        "spatial_texture": "reverberant",
+        "accent_strength": "unknown",
+        "accent_family": "unknown",
+        "affect": "angry",
+        "interpersonal_stance": "confrontational",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 51,
-      "end": 52,
-      "speaker": "Speaker 8",
-      "speaker_id": "spk_008",
+      "index": 10,
       "text": "Specter one, report.",
-      "confidence": 0.95,
-      "index": 10
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "young_adult",
+        "pitch_band": "mid",
+        "phonation": "clear",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "radio",
+        "spatial_texture": "close",
+        "accent_strength": "clear_non_neutral",
+        "accent_family": "anglophone_non_neutral",
+        "affect": "serious",
+        "interpersonal_stance": "directive",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 54,
-      "end": 55,
-      "speaker": "Speaker 8",
-      "speaker_id": "spk_008",
+      "index": 11,
       "text": "Need a sitrep.",
-      "confidence": 0.95,
-      "index": 11
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "young_adult",
+        "pitch_band": "mid",
+        "phonation": "clear",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "radio",
+        "spatial_texture": "close",
+        "accent_strength": "clear_non_neutral",
+        "accent_family": "anglophone_non_neutral",
+        "affect": "serious",
+        "interpersonal_stance": "directive",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 61,
-      "end": 62,
-      "speaker": "Speaker 9",
-      "speaker_id": "spk_009",
+      "index": 12,
       "text": "This isn't real.",
-      "confidence": 0.9,
-      "index": 12
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "adult",
+        "pitch_band": "low",
+        "phonation": "clear",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "fearful",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 63,
-      "end": 64,
-      "speaker": "Speaker 10",
-      "speaker_id": "spk_010",
+      "index": 13,
       "text": "The hell it ain't!",
-      "confidence": 0.9,
-      "index": 13
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "adult",
+        "pitch_band": "mid",
+        "phonation": "raspy",
+        "pace": "fast",
+        "energy": "intense",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "angry",
+        "interpersonal_stance": "confrontational",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 98,
-      "end": 99,
-      "speaker": "Speaker 12",
-      "speaker_id": "spk_012",
+      "index": 14,
       "text": "Pull it together, man!",
-      "confidence": 0.95,
-      "index": 14
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "feminine",
+        "age_impression": "adult",
+        "pitch_band": "high",
+        "phonation": "clear",
+        "pace": "fast",
+        "energy": "intense",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "unknown",
+        "accent_family": "unknown",
+        "affect": "determined",
+        "interpersonal_stance": "directive",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 100,
-      "end": 102,
-      "speaker": "Speaker 2",
-      "speaker_id": "spk_002",
+      "index": 15,
       "text": "So eager to leave David.",
-      "confidence": 0.9,
-      "index": 15
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "adult",
+        "pitch_band": "low",
+        "phonation": "raspy",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "unknown",
+        "accent_family": "unknown",
+        "affect": "amused",
+        "interpersonal_stance": "taunting",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 103,
-      "end": 105,
-      "speaker": "Speaker 13",
-      "speaker_id": "spk_013",
+      "index": 16,
       "text": "Killing a man is a hell of a lot easier than killing the idea.",
-      "confidence": 0.8,
-      "index": 16
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "older_adult",
+        "pitch_band": "low",
+        "phonation": "raspy",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "serious",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 108,
-      "end": 110,
-      "speaker": "Speaker 15",
-      "speaker_id": "spk_015",
+      "index": 17,
       "text": "You were never cut out to be a Mason.",
-      "confidence": 0.6,
-      "index": 17
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "competing_overlap",
+        "gender_presentation": "mixed",
+        "age_impression": "unknown",
+        "pitch_band": "variable",
+        "phonation": "mixed",
+        "pace": "measured",
+        "energy": "steady",
+        "transmission_medium": "processed_or_synthetic",
+        "spatial_texture": "unknown",
+        "accent_strength": "unknown",
+        "accent_family": "unknown",
+        "affect": "tense",
+        "interpersonal_stance": "confrontational",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 112,
-      "end": 114,
-      "speaker": "Speaker 6",
-      "speaker_id": "spk_006",
+      "index": 18,
       "text": "No more games! This ends now.",
-      "confidence": 0.95,
-      "index": 18
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "young_adult",
+        "pitch_band": "mid",
+        "phonation": "strained",
+        "pace": "fast",
+        "energy": "intense",
+        "transmission_medium": "direct",
+        "spatial_texture": "unknown",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "angry",
+        "interpersonal_stance": "confrontational",
+        "delivery_overlay": "none_apparent"
+      }
     },
     {
-      "start": 122,
-      "end": 124,
-      "speaker": "Speaker 16",
-      "speaker_id": "spk_016",
+      "index": 19,
       "text": "Get the Reznov challenge pack when you preorder now!",
-      "confidence": 0.95,
-      "index": 19
-    }
-  ],
-  "speaker_profiles": [
-    {
-      "speaker_id": "spk_001",
-      "label": "Speaker 1",
-      "grounded": {
-        "confidence": 0.92,
-        "linked_segment_indexes": [
-          0,
-          1,
-          4,
-          5
-        ],
-        "acoustic_descriptors": [
-          {
-            "label": "urgent female office/corporate delivery",
-            "confidence": 0.9
-          }
-        ]
-      },
-      "inferred_traits": {
-        "traits": [
-          {
-            "trait": "gender",
-            "value": "female",
-            "confidence": 0.9,
-            "note": "human-reviewed opening speaker read"
-          }
-        ]
-      }
-    },
-    {
-      "speaker_id": "spk_002",
-      "label": "Speaker 2",
-      "grounded": {
-        "confidence": 0.9,
-        "linked_segment_indexes": [
-          2,
-          15
-        ],
-        "acoustic_descriptors": [
-          {
-            "label": "menacing, deep, gravelly antagonist delivery",
-            "confidence": 0.95
-          }
-        ]
-      },
-      "inferred_traits": {
-        "traits": [
-          {
-            "trait": "gender",
-            "value": "male",
-            "confidence": 0.92,
-            "note": "human-reviewed Raul Menendez read on reviewed segments"
-          }
-        ]
-      }
-    },
-    {
-      "speaker_id": "spk_003",
-      "label": "Speaker 3",
-      "grounded": {
-        "confidence": 0.9,
-        "linked_segment_indexes": [
-          3
-        ],
-        "acoustic_descriptors": [
-          {
-            "label": "authoritative male expository/briefing delivery",
-            "confidence": 0.86
-          }
-        ]
-      },
-      "inferred_traits": {
-        "traits": [
-          {
-            "trait": "gender",
-            "value": "male",
-            "confidence": 0.72,
-            "note": "human review supports an authoritative male delivery, but identity remains uncertain: could be the older African-American general/leader or a separate one-off expository speaker, with not enough confidence to merge yet"
-          }
-        ]
-      }
-    },
-    {
-      "speaker_id": "spk_006",
-      "label": "Speaker 6",
-      "grounded": {
-        "confidence": 0.88,
-        "linked_segment_indexes": [
-          6,
-          8,
-          18
-        ],
-        "acoustic_descriptors": [
-          {
-            "label": "distressed younger male character voice",
-            "confidence": 0.84
-          }
-        ]
-      },
-      "inferred_traits": {
-        "traits": [
-          {
-            "trait": "gender",
-            "value": "male",
-            "confidence": 0.86,
-            "note": "human-reviewed as David on these segments"
-          }
-        ]
-      }
-    },
-    {
-      "speaker_id": "spk_007",
-      "label": "Speaker 7",
-      "grounded": {
-        "confidence": 0.9,
-        "linked_segment_indexes": [
-          7
-        ],
-        "acoustic_descriptors": [
-          {
-            "label": "authoritative, gravelly, older military-leader cadence",
-            "confidence": 0.9
-          }
-        ]
-      },
-      "inferred_traits": {
-        "traits": [
-          {
-            "trait": "gender",
-            "value": "male",
-            "confidence": 0.9,
-            "note": "human-reviewed older general/leader read"
-          }
-        ]
-      }
-    },
-    {
-      "speaker_id": "spk_008",
-      "label": "Speaker 8",
-      "grounded": {
-        "confidence": 0.88,
-        "linked_segment_indexes": [
-          10,
-          11
-        ],
-        "acoustic_descriptors": [
-          {
-            "label": "younger male comms/radio voice",
-            "confidence": 0.86
-          }
-        ]
-      },
-      "inferred_traits": {
-        "traits": [
-          {
-            "trait": "gender",
-            "value": "male",
-            "confidence": 0.76,
-            "note": "human review now effectively confirms the same younger male comms speaker across both lines; an African-American read is supported by the audible \"rahport\" pronunciation cue on \"report\", but that remains a read rather than hard fact"
-          }
-        ]
-      }
-    },
-    {
-      "speaker_id": "spk_009",
-      "label": "Speaker 9",
-      "grounded": {
-        "confidence": 0.86,
-        "linked_segment_indexes": [
-          12
-        ],
-        "acoustic_descriptors": [
-          {
-            "label": "deeper squadmate voice, grounded in-scene delivery",
-            "confidence": 0.84
-          }
-        ]
-      },
-      "inferred_traits": {
-        "traits": [
-          {
-            "trait": "gender",
-            "value": "male",
-            "confidence": 0.88,
-            "note": "human review read this as a deeper African-American male squadmate voice"
-          }
-        ]
-      }
-    },
-    {
-      "speaker_id": "spk_010",
-      "label": "Speaker 10",
-      "grounded": {
-        "confidence": 0.86,
-        "linked_segment_indexes": [
-          13
-        ],
-        "acoustic_descriptors": [
-          {
-            "label": "angry, frustrated white male squadmate delivery",
-            "confidence": 0.84
-          }
-        ]
-      },
-      "inferred_traits": {
-        "traits": [
-          {
-            "trait": "gender",
-            "value": "male",
-            "confidence": 0.88,
-            "note": "human review explicitly ruled out David"
-          }
-        ]
-      }
-    },
-    {
-      "speaker_id": "spk_012",
-      "label": "Speaker 12",
-      "grounded": {
-        "confidence": 0.88,
-        "linked_segment_indexes": [
-          14
-        ],
-        "acoustic_descriptors": [
-          {
-            "label": "urgent adult squadmate command",
-            "confidence": 0.86
-          }
-        ]
-      },
-      "inferred_traits": {
-        "traits": [
-          {
-            "trait": "gender",
-            "value": "female",
-            "confidence": 0.82,
-            "note": "human review read an African-American female squadmate with tattoos"
-          }
-        ]
-      }
-    },
-    {
-      "speaker_id": "spk_013",
-      "label": "Speaker 13",
-      "grounded": {
-        "confidence": 0.85,
-        "linked_segment_indexes": [
-          16
-        ],
-        "acoustic_descriptors": [
-          {
-            "label": "white male-sounding montage voice tied to Frank Woods visual imagery",
-            "confidence": 0.8
-          }
-        ]
-      },
-      "inferred_traits": {
-        "traits": [
-          {
-            "trait": "gender",
-            "value": "male",
-            "confidence": 0.86,
-            "note": "identity remains uncertain; do not collapse into Raul or David"
-          }
-        ]
-      }
-    },
-    {
-      "speaker_id": "spk_014",
-      "label": "Speaker 14",
-      "grounded": {
-        "confidence": 0.85,
-        "linked_segment_indexes": [
-          9
-        ],
-        "acoustic_descriptors": [
-          {
-            "label": "older male voice with robotic/processed filter",
-            "confidence": 0.86
-          }
-        ]
-      },
-      "inferred_traits": {
-        "traits": [
-          {
-            "trait": "gender",
-            "value": "male",
-            "confidence": 0.84,
-            "note": "antagonist-coded; possibly Raul Menendez but identity intentionally left uncertain"
-          }
-        ]
-      }
-    },
-    {
-      "speaker_id": "spk_015",
-      "label": "Speaker 15",
-      "grounded": {
-        "confidence": 0.8,
-        "linked_segment_indexes": [
-          17
-        ],
-        "acoustic_descriptors": [
-          {
-            "label": "mixed overlapping voices with female-primary layer",
-            "confidence": 0.8
-          }
-        ]
-      },
-      "inferred_traits": {
-        "traits": [
-          {
-            "trait": "gender",
-            "value": "ambiguous",
-            "confidence": 0.6,
-            "note": "male and female layers overlap; primary audible layer resembles Speaker 1"
-          }
-        ]
-      }
-    },
-    {
-      "speaker_id": "spk_016",
-      "label": "Speaker 16",
-      "grounded": {
-        "confidence": 0.88,
-        "linked_segment_indexes": [
-          19
-        ],
-        "acoustic_descriptors": [
-          {
-            "label": "white adult male sales/promo voiceover",
-            "confidence": 0.88
-          }
-        ]
-      },
-      "inferred_traits": {
-        "traits": [
-          {
-            "trait": "gender",
-            "value": "male",
-            "confidence": 0.9,
-            "note": "promo VO, distinct from scene dialogue and lyrics"
-          }
-        ]
+      "traits": {
+        "audibility": "clear",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "adult",
+        "pitch_band": "mid",
+        "phonation": "clear",
+        "pace": "fast",
+        "energy": "intense",
+        "transmission_medium": "direct",
+        "spatial_texture": "close",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "determined",
+        "interpersonal_stance": "performative",
+        "delivery_overlay": "none_apparent"
       }
     }
-  ],
-  "summary": "The trailer\u2019s spoken dialogue frames Raul Menendez as the force behind fear, unrest, and psychological manipulation, while David and his squad are dragged through propaganda, military urgency, confusion, taunts, and hallucination-heavy combat setup before the trailer pivots into a preorder promo.",
-  "totalDuration": 140.042449,
-  "handoffContext": "Spoken-dialogue truth only. Sung heavy-metal lyrics were intentionally split into truth/music-vocals-data.json and must not be scored in dialogueData.\n\nVoice separation reminders:\n- speaker_id continuity is acoustic, not semantic.\n- Do not collapse scene dialogue, comms, promo VO, and overlapping hallucination blends into one speaker unless the voice clearly matches.\n- If identity is uncertain, preserve the uncertainty in notes/descriptors instead of promoting a guess to fact.\n- The mixed \"You were never cut out to be a Mason\" line is intentionally represented as an overlap-heavy speaker bucket rather than a falsely precise identity claim.",
-  "cleanedTranscript": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets, shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 6: A lot of people counting on us for answers.\nSpeaker 14: You shall know fear.\nSpeaker 8: Specter one, report.\nSpeaker 8: Need a sitrep.\nSpeaker 9: This isn't real.\nSpeaker 10: The hell it ain't!\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave David.\nSpeaker 13: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 15: You were never cut out to be a Mason.\nSpeaker 6: No more games! This ends now.\nSpeaker 16: Get the Reznov challenge pack when you preorder now!"
+  ]
 }

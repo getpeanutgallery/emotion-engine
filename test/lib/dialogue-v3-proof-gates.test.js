@@ -16,6 +16,7 @@ const {
 } = require('../../server/lib/dialogue-v3-speaker-grouping.cjs');
 const {
   projectSpeakerGroupingTruthFromDialogueTruth,
+  projectRuntimeAlignedSpeakerGroupingTruth,
   compareSpeakerGroupingTruthProjection
 } = require('../../server/lib/dialogue-v3-speaker-grouping-benchmark.cjs');
 
@@ -24,6 +25,8 @@ const FIXTURE_ROOT = path.join(ROOT, 'test/fixtures/dialogue-v3-proof-gates');
 const RULESET_PATH = path.join(ROOT, 'docs/2026-04-16-dialogue-traits-v3-speaker-grouping-heuristics-ruleset.yaml');
 const COD_DIALOGUE_TRUTH_PATH = path.join(ROOT, 'benchmarks/fixtures/cod-test/truth/dialogue-data.json');
 const COD_GROUPING_TRUTH_PATH = path.join(ROOT, 'benchmarks/fixtures/cod-test/truth/speaker-grouping.json');
+const COD_RUNTIME_DIALOGUE_V3_PATH = path.join(ROOT, 'output/cod-test/phase1-gather-context/dialogue-v3-source-truth.reconciled.json');
+const COD_RUNTIME_ALIGNED_GROUPING_TRUTH_PATH = path.join(ROOT, 'benchmarks/fixtures/cod-test/truth/speaker-grouping.reconciled-runtime-aligned.json');
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(FIXTURE_ROOT, relativePath), 'utf8'));
@@ -106,6 +109,24 @@ test('cod-test golden speaker-grouping truth file matches the comparator-ready p
   assert.equal(checkedIn.summary.assignment_count, 20);
   assert.equal(checkedIn.assignments[0].speaker_group_key, 'first_segment_000');
   assert.equal(checkedIn.assignments[19].speaker_group_key, 'first_segment_019');
+});
+
+test('cod-test runtime-aligned speaker-grouping truth file is reproducibly derived from golden dialogue truth plus reconciled runtime dialogue surface', () => {
+  const dialogueTruth = loadCodTruthJson(COD_DIALOGUE_TRUTH_PATH);
+  const runtimeDialogue = loadCodTruthJson(COD_RUNTIME_DIALOGUE_V3_PATH);
+  const projected = projectRuntimeAlignedSpeakerGroupingTruth(dialogueTruth, runtimeDialogue, {
+    sourcePath: 'benchmarks/fixtures/cod-test/truth/dialogue-data.json',
+    runtimeDialoguePath: 'output/cod-test/phase1-gather-context/dialogue-v3-source-truth.reconciled.json'
+  });
+  const checkedIn = loadCodTruthJson(COD_RUNTIME_ALIGNED_GROUPING_TRUTH_PATH);
+
+  assert.deepEqual(checkedIn, projected);
+  assert.equal(checkedIn.summary.group_count, 11);
+  assert.equal(checkedIn.summary.assignment_count, 17);
+  assert.deepEqual(checkedIn.alignment.unmatched_truth_segment_indexes, [9, 10, 11]);
+  assert.deepEqual(checkedIn.alignment.unmatched_runtime_segment_indexes, [11]);
+  assert.equal(checkedIn.assignments[0].speaker_group_key, 'first_segment_000');
+  assert.equal(checkedIn.assignments[checkedIn.assignments.length - 1].speaker_group_key, 'first_segment_017');
 });
 
 test('cod-test comparator-ready truth projection passes a perfect normalized runtime artifact and flags partition drift', () => {

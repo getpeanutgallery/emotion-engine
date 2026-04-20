@@ -132,6 +132,9 @@ function validateManifest(manifest, manifestPath) {
         throw new Error(`${prefix}.${field} must be a non-empty string`);
       }
     }
+    if (artifact.runtimeArtifactKey !== undefined && (typeof artifact.runtimeArtifactKey !== 'string' || artifact.runtimeArtifactKey.trim().length === 0)) {
+      throw new Error(`${prefix}.runtimeArtifactKey must be a non-empty string when provided`);
+    }
     if (typeof artifact.output?.path !== 'string' || artifact.output.path.trim().length === 0) {
       throw new Error(`${prefix}.output.path must be a non-empty string`);
     }
@@ -1868,7 +1871,11 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
   const artifactResults = [];
   for (const artifact of manifest.artifacts) {
     const truthAbsolutePath = path.resolve(manifestDir, artifact.truth.path);
-    const outputResolution = resolvePhase1ArtifactPath(outputDir, artifact.artifactKey, { config, strict: artifact.required });
+    const outputResolution = resolvePhase1ArtifactPath(outputDir, artifact.artifactKey, {
+      config,
+      strict: artifact.required,
+      aliasArtifactKey: artifact.runtimeArtifactKey || null
+    });
     const outputAbsolutePath = outputResolution.resolvedPath || path.resolve(outputDir, artifact.output.path);
 
     if (!fs.existsSync(truthAbsolutePath)) {

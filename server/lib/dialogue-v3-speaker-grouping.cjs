@@ -10,6 +10,7 @@ const GROUPING_CONTRACT_MODE = 'traits-first-derived';
 const DEFAULT_ACTION_CREATE = 'create_group';
 const DEFAULT_ACTION_REUSE = 'reuse_group';
 const DEFAULT_ACTION_AMBIGUOUS = 'ambiguous_reuse';
+const NON_CLEAN_SHARED_DEFAULT_REUSE_PENALTY = -2.5;
 
 const GROUPING_ACTIONS = Object.freeze([
   DEFAULT_ACTION_CREATE,
@@ -57,6 +58,14 @@ const STABLE_IDENTITY_FIELDS = Object.freeze([
   'accent_strength',
   'accent_family'
 ]);
+const NON_DISCRIMINATIVE_DEFAULT_MATCHES = Object.freeze(new Map([
+  ['accent_strength', new Set(['none_apparent'])],
+  ['accent_family', new Set(['neutral_or_unmarked'])],
+  ['transmission_medium', new Set(['direct'])],
+  ['spatial_texture', new Set(['room'])],
+  ['interpersonal_stance', new Set(['neutral'])],
+  ['delivery_overlay', new Set(['none_apparent'])]
+]));
 
 function assertPlainObject(value, label) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -99,6 +108,11 @@ function createEmptySupportState() {
 
 function isConcreteValue(value) {
   return !ABSTAINING_SENTINELS.has(value) && !AMBIGUOUS_SENTINELS.has(value);
+}
+
+function isNonDiscriminativeDefaultFieldMatch(field, value) {
+  return NON_DISCRIMINATIVE_DEFAULT_MATCHES.has(field)
+    && NON_DISCRIMINATIVE_DEFAULT_MATCHES.get(field).has(value);
 }
 
 function sortValueCountEntries(entries) {
@@ -342,7 +356,9 @@ function recordContribution(accumulator, contribution) {
     relation: contribution.relation || null,
     rule_id: contribution.rule_id || null,
     delta: Number(contribution.delta || 0),
-    detail: contribution.detail || null
+    detail: contribution.detail || null,
+    value: contribution.value,
+    detail_value: contribution.detail_value
   };
   accumulator.total_score += entry.delta;
   if (entry.bucket && Object.prototype.hasOwnProperty.call(accumulator.bucket_totals, entry.bucket)) {
@@ -590,20 +606,26 @@ function evaluateBlockerRules({ segment, snapshot, compiledRuleset, comparisonBy
   };
 }
 
-function applyEvidenceBonuses({ accumulator, snapshot, compiledRuleset, cleanReuseGate, blockerState, exactStableIdentityMatchCount }) {
+function applyEvidenceBonuses({ accumulator, snapshot, compiledRuleset, cleanReuseGate, blockerState, exactStableIdentityMatchCount, discriminativeStableIdentityExactMatchCount, nonDefaultExactMatchFields }) {
   const positiveRules = compiledRuleset.positive_evidence_rules || [];
+  const hasSelectiveNonCleanReuseEvidence = Array.isArray(nonDefaultExactMatchFields) && nonDefaultExactMatchFields.length >= 1;
   for (const rule of positiveRules) {
     if (rule.id === 'recent_group_reuse_bonus') {
       const distance = Math.max(0, 0 + (snapshot.for_segment_index - snapshot.last_segment_index));
       const maxDistance = Number(rule.applies_when?.max_index_distance ?? Infinity);
-      if (distance <= maxDistance && blockerState.hard_block === false) {
+      const allowBonus = cleanReuseGate
+        || discriminativeStableIdentityExactMatchCount >= 1
+        || hasSelectiveNonCleanReuseEvidence;
+      if (distance <= maxDistance && blockerState.hard_block === false && allowBonus) {
         recordContribution(accumulator, {
           source: 'positive_evidence_rule',
           bucket: 'stable_identity_cues',
           rule_id: rule.id,
           relation: 'bonus',
           delta: Number(rule.weight || 0),
-          detail: 'recent_group_reuse_bonus'
+          detail: cleanReuseGate || discriminativeStableIdentityExactMatchCount >= 1
+            ? 'recent_group_reuse_bonus'
+            : 'recent_group_reuse_bonus_from_non_default_exact_support'
         });
       }
       continue;
@@ -613,14 +635,15 @@ function applyEvidenceBonuses({ accumulator, snapshot, compiledRuleset, cleanReu
       const segmentCount = Number(snapshot.support?.segment_count || 0);
       const candidateGroupAtLeast = Number(rule.applies_when?.candidate_group_has_at_least || 0);
       const matchedAtLeast = Number(rule.applies_when?.matched_stable_identity_fields_at_least || 0);
-      if (segmentCount >= candidateGroupAtLeast && exactStableIdentityMatchCount >= matchedAtLeast) {
+      const allowBonus = cleanReuseGate || discriminativeStableIdentityExactMatchCount >= matchedAtLeast;
+      if (segmentCount >= candidateGroupAtLeast && exactStableIdentityMatchCount >= matchedAtLeast && allowBonus) {
         recordContribution(accumulator, {
           source: 'positive_evidence_rule',
           bucket: 'stable_identity_cues',
           rule_id: rule.id,
           relation: 'bonus',
           delta: Number(rule.weight || 0),
-          detail: 'repeated_support_bonus'
+          detail: allowBonus ? 'repeated_support_bonus' : 'repeated_support_bonus_suppressed'
         });
       }
       continue;
@@ -658,6 +681,53 @@ function applyDegradedPenalties({ accumulator, penalties }) {
   }
 }
 
+function evaluateSparseTraitReuseDiagnostics({ accumulator, cleanReuseGate, matchedConcreteStableIdentityFields, discriminativeStableIdentityExactMatchCount, stableIdentityMismatchCount, abstentions }) {
+  const positiveContributions = accumulator.contributions.filter((entry) => entry.delta > 0);
+  const exactFieldMatches = positiveContributions.filter((entry) => entry.source === 'field_policy' && entry.relation === 'exact_match');
+  const defaultSharedOnlyFieldMatches = exactFieldMatches.filter((entry) => isNonDiscriminativeDefaultFieldMatch(entry.field, entry.detail_value || entry.value));
+  const nonDefaultExactFieldMatches = exactFieldMatches.filter((entry) => !isNonDiscriminativeDefaultFieldMatch(entry.field, entry.detail_value || entry.value));
+  const exactFieldOnlyUsesDefaults = exactFieldMatches.length > 0 && defaultSharedOnlyFieldMatches.length === exactFieldMatches.length;
+  const stableIdentityAbstentionCount = abstentions.filter((item) => STABLE_IDENTITY_FIELDS.includes(item.field)).length;
+  const positiveBonusRuleIds = positiveContributions
+    .filter((entry) => entry.source === 'positive_evidence_rule')
+    .map((entry) => entry.rule_id)
+    .filter(Boolean);
+  const defaultSharedOnlyReusePressure = !cleanReuseGate
+    && matchedConcreteStableIdentityFields > 0
+    && discriminativeStableIdentityExactMatchCount === 0
+    && stableIdentityMismatchCount === 0
+    && stableIdentityAbstentionCount >= 4
+    && exactFieldOnlyUsesDefaults
+    && positiveBonusRuleIds.every((ruleId) => ['recent_group_reuse_bonus', 'repeated_support_bonus'].includes(ruleId));
+
+  return {
+    default_shared_only_reuse_pressure: defaultSharedOnlyReusePressure,
+    stable_identity_abstention_count: stableIdentityAbstentionCount,
+    discriminative_stable_identity_exact_match_count: discriminativeStableIdentityExactMatchCount,
+    matched_concrete_stable_identity_fields: matchedConcreteStableIdentityFields,
+    positive_bonus_rule_ids: positiveBonusRuleIds,
+    exact_default_shared_match_fields: defaultSharedOnlyFieldMatches.map((entry) => entry.field),
+    non_default_exact_match_fields: nonDefaultExactFieldMatches.map((entry) => entry.field),
+    selective_non_clean_reuse_support: !cleanReuseGate && nonDefaultExactFieldMatches.length > 0
+  };
+}
+
+function applySparseTraitReusePenalty({ accumulator, diagnostics }) {
+  if (!diagnostics.default_shared_only_reuse_pressure) {
+    return;
+  }
+
+  recordContribution(accumulator, {
+    source: 'negative_evidence_rule',
+    bucket: 'stable_identity_cues',
+    field: null,
+    rule_id: 'default_shared_only_reuse_pressure_penalty',
+    relation: 'penalty',
+    delta: NON_CLEAN_SHARED_DEFAULT_REUSE_PENALTY,
+    detail: 'default_shared_only_reuse_pressure'
+  });
+}
+
 function summarizeCandidateReasons({ blockerState, accumulator }) {
   const reasonTokens = [];
   if (blockerState.triggered.length > 0) {
@@ -684,6 +754,8 @@ function scoreCandidateGroup({ segment, snapshot, compiledRuleset }) {
   let exactStableIdentityMatchCount = 0;
   let matchedConcreteStableIdentityFields = 0;
   let stableIdentityMismatchCount = 0;
+  let discriminativeStableIdentityExactMatchCount = 0;
+  const nonDefaultExactMatchFields = [];
 
   for (const field of REQUIRED_TRAIT_FIELDS) {
     const comparison = evaluateFieldComparison({
@@ -707,11 +779,22 @@ function scoreCandidateGroup({ segment, snapshot, compiledRuleset }) {
         field,
         relation: comparison.relation,
         delta: comparison.delta,
-        detail: comparison.contribution_detail
+        detail: comparison.contribution_detail,
+        value: comparison.line_value,
+        detail_value: comparison.line_value
       });
     }
 
-    if (comparison.counts.exact_stable_identity_match) exactStableIdentityMatchCount += 1;
+    if (comparison.relation === 'exact_match' && !isNonDiscriminativeDefaultFieldMatch(field, comparison.line_value)) {
+      nonDefaultExactMatchFields.push(field);
+    }
+
+    if (comparison.counts.exact_stable_identity_match) {
+      exactStableIdentityMatchCount += 1;
+      if (!isNonDiscriminativeDefaultFieldMatch(field, comparison.line_value)) {
+        discriminativeStableIdentityExactMatchCount += 1;
+      }
+    }
     if (comparison.counts.concrete_stable_identity_match) matchedConcreteStableIdentityFields += 1;
     if (comparison.counts.stable_identity_mismatch) stableIdentityMismatchCount += 1;
   }
@@ -730,11 +813,23 @@ function scoreCandidateGroup({ segment, snapshot, compiledRuleset }) {
     compiledRuleset,
     cleanReuseGate,
     blockerState,
-    exactStableIdentityMatchCount
+    exactStableIdentityMatchCount,
+    discriminativeStableIdentityExactMatchCount,
+    nonDefaultExactMatchFields
   });
 
   const degradedPenalties = evaluateDegradedPenalties(segment, compiledRuleset);
   applyDegradedPenalties({ accumulator, penalties: degradedPenalties });
+
+  const diagnostics = evaluateSparseTraitReuseDiagnostics({
+    accumulator,
+    cleanReuseGate,
+    matchedConcreteStableIdentityFields,
+    discriminativeStableIdentityExactMatchCount,
+    stableIdentityMismatchCount,
+    abstentions
+  });
+  applySparseTraitReusePenalty({ accumulator, diagnostics });
 
   return {
     group_id: snapshot.group_id,
@@ -750,8 +845,10 @@ function scoreCandidateGroup({ segment, snapshot, compiledRuleset }) {
     abstentions_from_unknown_mixed_variable: abstentions,
     matched_concrete_stable_identity_fields: matchedConcreteStableIdentityFields,
     exact_stable_identity_match_count: exactStableIdentityMatchCount,
+    discriminative_stable_identity_exact_match_count: discriminativeStableIdentityExactMatchCount,
     stable_identity_mismatch_count: stableIdentityMismatchCount,
     previous_occurrence_distance: Math.max(0, segment.index - snapshot.last_segment_index),
+    diagnostics,
     short_contract_safe_reason: summarizeCandidateReasons({ blockerState, accumulator })
   };
 }
@@ -802,8 +899,19 @@ function buildCreateCandidate() {
     abstentions_from_unknown_mixed_variable: [],
     matched_concrete_stable_identity_fields: 0,
     exact_stable_identity_match_count: 0,
+    discriminative_stable_identity_exact_match_count: 0,
     stable_identity_mismatch_count: 0,
     previous_occurrence_distance: Number.POSITIVE_INFINITY,
+    diagnostics: {
+      default_shared_only_reuse_pressure: false,
+      stable_identity_abstention_count: 0,
+      discriminative_stable_identity_exact_match_count: 0,
+      matched_concrete_stable_identity_fields: 0,
+      positive_bonus_rule_ids: [],
+      exact_default_shared_match_fields: [],
+      non_default_exact_match_fields: [],
+      selective_non_clean_reuse_support: false
+    },
     short_contract_safe_reason: []
   };
 }
@@ -835,7 +943,9 @@ function resolveSegmentAssignment({ segment, candidateScores, compiledRuleset })
       clean_reuse_gate: candidate.clean_reuse_gate,
       matched_concrete_stable_identity_fields: candidate.matched_concrete_stable_identity_fields,
       exact_stable_identity_match_count: candidate.exact_stable_identity_match_count,
-      stable_identity_mismatch_count: candidate.stable_identity_mismatch_count
+      discriminative_stable_identity_exact_match_count: candidate.discriminative_stable_identity_exact_match_count,
+      stable_identity_mismatch_count: candidate.stable_identity_mismatch_count,
+      diagnostics: cloneJson(candidate.diagnostics || {})
     }))
   };
 
@@ -874,9 +984,30 @@ function resolveSegmentAssignment({ segment, candidateScores, compiledRuleset })
   const belowConfidentReuse = topCandidate.score < reuseThreshold;
   const weakStableIdentitySupport = topCandidate.matched_concrete_stable_identity_fields < minimumCleanIdentityMatches;
   const closeMargin = scoreMargin !== null && scoreMargin < ambiguityMargin;
+  const sparseNonCleanReusePressure = topCandidate.clean_reuse_gate === false
+    && topCandidate.diagnostics?.default_shared_only_reuse_pressure === true;
 
   if (topCandidate.soft_review_blocked && belowConfidentReuse) {
     abstentionReasons.add('phonation');
+    return {
+      ...decisionBase,
+      chosen_action: DEFAULT_ACTION_CREATE,
+      chosen_group_id: null,
+      chosen_speaker_id: null,
+      ambiguous: false,
+      runner_up_group_id: topCandidate.group_id,
+      score_margin: scoreMargin,
+      abstention_reasons: sanitizeReasonVocabulary([...abstentionReasons]),
+      short_contract_safe_reason: sanitizeReasonVocabulary([
+        ...topCandidate.short_contract_safe_reason,
+        ...abstentionReasons
+      ])
+    };
+  }
+
+  if (sparseNonCleanReusePressure) {
+    abstentionReasons.add('stable_identity_cues');
+    abstentionReasons.add('gating_cues');
     return {
       ...decisionBase,
       chosen_action: DEFAULT_ACTION_CREATE,
@@ -981,6 +1112,8 @@ function resolveSegmentAssignment({ segment, candidateScores, compiledRuleset })
 
 function buildDecisionLedgerEntry({ segment, decision, candidateScores }) {
   const chosenCandidate = candidateScores.find((candidate) => candidate.group_id === decision.chosen_group_id) || null;
+  const topCandidate = [...candidateScores].sort(compareCandidateRank)[0] || null;
+  const diagnosticCandidate = chosenCandidate || topCandidate;
   const blockersTriggered = candidateScores.flatMap((candidate) => candidate.blockers_triggered.map((blocker) => ({
     group_id: candidate.group_id,
     ...blocker
@@ -990,8 +1123,19 @@ function buildDecisionLedgerEntry({ segment, decision, candidateScores }) {
     segment_index: segment.index,
     candidate_groups_considered: cloneJson(decision.candidate_groups_considered),
     blockers_triggered: blockersTriggered,
-    score_contributions_by_field_or_bucket: chosenCandidate ? cloneJson(chosenCandidate.score_contributions_by_field_or_bucket) : [],
-    abstentions_from_unknown_mixed_variable: chosenCandidate ? cloneJson(chosenCandidate.abstentions_from_unknown_mixed_variable) : [],
+    diagnostic_subject_group_id: diagnosticCandidate?.group_id || null,
+    score_contributions_by_field_or_bucket: diagnosticCandidate ? cloneJson(diagnosticCandidate.score_contributions_by_field_or_bucket) : [],
+    abstentions_from_unknown_mixed_variable: diagnosticCandidate ? cloneJson(diagnosticCandidate.abstentions_from_unknown_mixed_variable) : [],
+    diagnostics: diagnosticCandidate ? cloneJson(diagnosticCandidate.diagnostics) : {
+      default_shared_only_reuse_pressure: false,
+      stable_identity_abstention_count: 0,
+      discriminative_stable_identity_exact_match_count: 0,
+      matched_concrete_stable_identity_fields: 0,
+      positive_bonus_rule_ids: [],
+      exact_default_shared_match_fields: [],
+      non_default_exact_match_fields: [],
+      selective_non_clean_reuse_support: false
+    },
     chosen_action: decision.chosen_action,
     chosen_group_id: decision.chosen_group_id,
     chosen_speaker_id: decision.chosen_speaker_id,

@@ -3,18 +3,28 @@
   "contract": {
     "artifact": "speaker-grouping-truth",
     "mode": "first-slice-comparator-projection",
-    "source_artifact": "dialogue-data"
+    "source_artifact": "dialogue-data",
+    "truth_status": "derived_non_gold"
   },
   "projection": {
     "source_path": "benchmarks/fixtures/cod-test/truth/dialogue-data.json",
     "derived_from_paths": [
       "dialogue_segments[*].index",
-      "dialogue_segments[*].speaker_id",
-      "speaker_profiles[*].speaker_id",
-      "speaker_profiles[*].grounded.linked_segment_indexes",
-      "speaker_profiles[*].label"
+      "dialogue_segments[*].text",
+      "dialogue_segments[*].traits"
     ],
-    "stable_group_key_rule": "first_segment_index"
+    "stable_group_key_rule": "first_segment_index",
+    "grouping_method": "deterministic post-truth grouping over traits-only dialogue truth",
+    "compatibility_fields": [
+      {
+        "field": "source_speaker_id",
+        "meaning": "Derived deterministic grouping continuity id retained for comparator compatibility; not owned by active dialogue-data.json source truth."
+      },
+      {
+        "field": "label",
+        "meaning": "Derived grouping label retained for comparator readability; not owned by active dialogue-data.json source truth."
+      }
+    ]
   },
   "speaker_groups": [
     {
@@ -35,11 +45,12 @@
       "first_segment_index": 2,
       "segment_indexes": [
         2,
+        9,
         15
       ],
       "source_speaker_id": "spk_002",
       "label": "Speaker 2",
-      "segment_count": 2
+      "segment_count": 3
     },
     {
       "speaker_group_key": "first_segment_003",
@@ -71,16 +82,6 @@
       ],
       "source_speaker_id": "spk_007",
       "label": "Speaker 7",
-      "segment_count": 1
-    },
-    {
-      "speaker_group_key": "first_segment_009",
-      "first_segment_index": 9,
-      "segment_indexes": [
-        9
-      ],
-      "source_speaker_id": "spk_014",
-      "label": "Speaker 14",
       "segment_count": 1
     },
     {
@@ -221,9 +222,9 @@
     },
     {
       "segment_index": 9,
-      "speaker_group_key": "first_segment_009",
-      "source_speaker_id": "spk_014",
-      "label": "Speaker 14",
+      "speaker_group_key": "first_segment_002",
+      "source_speaker_id": "spk_002",
+      "label": "Speaker 2",
       "text": "You shall know fear."
     },
     {
@@ -298,7 +299,7 @@
     }
   ],
   "summary": {
-    "group_count": 13,
+    "group_count": 12,
     "assignment_count": 20
   }
 }

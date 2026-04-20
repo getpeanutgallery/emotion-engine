@@ -1,0 +1,415 @@
+{
+  "artifactKey": "metricsData",
+  "label": "Phase 3 metrics",
+  "phase": "phase3-report",
+  "script": "metrics",
+  "status": "error",
+  "truth": {
+    "path": "benchmarks/fixtures/cod-test/truth/metrics.json"
+  },
+  "output": {
+    "path": "output/cod-test/phase3-report/metrics/metrics.json"
+  },
+  "comparator": {
+    "kind": "json-structured",
+    "profile": "metrics-default",
+    "resolvedOptions": {
+      "timingToleranceSeconds": 2,
+      "numericTolerance": 0.1,
+      "unknownSentinels": [
+        "unknown",
+        "ambiguous"
+      ],
+      "ignorePaths": [
+        "$.generatedAt"
+      ],
+      "posture": null
+    },
+    "directives": {
+      "comparatorIgnorePaths": [],
+      "truthIgnorePaths": [
+        "$.generatedAt"
+      ],
+      "effectiveIgnorePaths": [
+        "$.generatedAt"
+      ]
+    }
+  },
+  "comparisonBoundary": null,
+  "counts": {
+    "totalTruthFields": 19,
+    "scoreableFields": 8,
+    "skippedFields": 1,
+    "passedFields": 3,
+    "failedFields": 5,
+    "erroredFields": 10,
+    "ignoredDifferenceFields": 1
+  },
+  "accuracy": {
+    "passed": 3,
+    "failed": 5,
+    "rate": 0.375
+  },
+  "coverage": {
+    "scoreable": 8,
+    "skipped": 1,
+    "totalTruthFields": 19,
+    "rate": 0.42105263157894735
+  },
+  "mismatchClassificationCounts": {},
+  "failures": [
+    {
+      "path": "summary.totalChunks",
+      "rule": "exact",
+      "truthValue": 28,
+      "outputValue": 0,
+      "reason": "Values differed"
+    },
+    {
+      "path": "summary.totalSeconds",
+      "rule": "exact",
+      "truthValue": 140,
+      "outputValue": 0,
+      "reason": "Values differed"
+    },
+    {
+      "path": "implementationStatus.state",
+      "rule": "exact",
+      "truthValue": "computed",
+      "outputValue": "not_applicable",
+      "reason": "Values differed"
+    },
+    {
+      "path": "implementationStatus.dataSource",
+      "rule": "exact",
+      "truthValue": "derived-from-phase2.chunkAnalysis",
+      "outputValue": "phase2.wholeVideoAnalysis",
+      "reason": "Values differed"
+    },
+    {
+      "path": "frictionIndex",
+      "rule": "tolerant-number",
+      "truthValue": 100,
+      "outputValue": 0,
+      "reason": "Numeric delta 100 exceeded tolerance 0.1"
+    }
+  ],
+  "skips": [
+    {
+      "path": "generatedAt",
+      "truthValue": "2026-03-26T13:35:12.112Z",
+      "reason": "Comparator ignored benchmark path"
+    }
+  ],
+  "ignoredDifferences": [
+    {
+      "path": "generatedAt",
+      "truthValue": "2026-03-26T13:35:12.112Z",
+      "outputValue": "2026-04-17T21:41:05.667Z",
+      "reason": "Ignored path values differed"
+    }
+  ],
+  "alignments": [],
+  "errors": [
+    {
+      "path": "implementationStatus.reason",
+      "rule": "structural",
+      "outputValue": "Chunk-derived timeline metrics were skipped because this run produced wholeVideoAnalysis without chunkAnalysis timeseries data.",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "averages.patience",
+      "rule": "structural",
+      "truthValue": 0.6428571428571428,
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "averages.boredom",
+      "rule": "structural",
+      "truthValue": 0.42857142857142855,
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "averages.excitement",
+      "rule": "structural",
+      "truthValue": 0.7821428571428576,
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "peakMoments.patience",
+      "rule": "structural",
+      "truthValue": {
+        "highest": {
+          "timestamp": 75,
+          "score": 0.9
+        },
+        "lowest": {
+          "timestamp": 0,
+          "score": 0.2
+        }
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "peakMoments.boredom",
+      "rule": "structural",
+      "truthValue": {
+        "highest": {
+          "timestamp": 75,
+          "score": 1
+        },
+        "lowest": {
+          "timestamp": 5,
+          "score": 0.2
+        }
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "peakMoments.excitement",
+      "rule": "structural",
+      "truthValue": {
+        "highest": {
+          "timestamp": 5,
+          "score": 0.9
+        },
+        "lowest": {
+          "timestamp": 120,
+          "score": 0.3
+        }
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "trends.patience",
+      "rule": "structural",
+      "truthValue": {
+        "direction": "increasing",
+        "change": 0.05714285714285705,
+        "firstHalfAverage": 0.6142857142857141,
+        "secondHalfAverage": 0.6714285714285712
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "trends.boredom",
+      "rule": "structural",
+      "truthValue": {
+        "direction": "increasing",
+        "change": 0.24285714285714283,
+        "firstHalfAverage": 0.3071428571428571,
+        "secondHalfAverage": 0.5499999999999999
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "trends.excitement",
+      "rule": "structural",
+      "truthValue": {
+        "direction": "stable",
+        "change": -0.007142857142856562,
+        "firstHalfAverage": 0.7857142857142851,
+        "secondHalfAverage": 0.7785714285714286
+      },
+      "reason": "Output object missing field present in truth"
+    }
+  ],
+  "fieldResults": [
+    {
+      "path": "generatedAt",
+      "status": "skip",
+      "rule": "structural",
+      "truthValue": "2026-03-26T13:35:12.112Z",
+      "outputValue": "2026-04-17T21:41:05.667Z",
+      "reason": "Comparator ignored benchmark path"
+    },
+    {
+      "path": "pipelineVersion",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "1.0",
+      "outputValue": "1.0"
+    },
+    {
+      "path": "summary.totalChunks",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": 28,
+      "outputValue": 0,
+      "reason": "Values differed"
+    },
+    {
+      "path": "summary.failedChunks",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 0,
+      "outputValue": 0
+    },
+    {
+      "path": "summary.totalSeconds",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": 140,
+      "outputValue": 0,
+      "reason": "Values differed"
+    },
+    {
+      "path": "summary.videoDuration",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 140.017,
+      "outputValue": 140.017,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "implementationStatus.reason",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": "Chunk-derived timeline metrics were skipped because this run produced wholeVideoAnalysis without chunkAnalysis timeseries data.",
+      "reason": "Truth object missing field present in output"
+    },
+    {
+      "path": "implementationStatus.state",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "computed",
+      "outputValue": "not_applicable",
+      "reason": "Values differed"
+    },
+    {
+      "path": "implementationStatus.dataSource",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "derived-from-phase2.chunkAnalysis",
+      "outputValue": "phase2.wholeVideoAnalysis",
+      "reason": "Values differed"
+    },
+    {
+      "path": "averages.patience",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": 0.6428571428571428,
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "averages.boredom",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": 0.42857142857142855,
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "averages.excitement",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": 0.7821428571428576,
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "peakMoments.patience",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "highest": {
+          "timestamp": 75,
+          "score": 0.9
+        },
+        "lowest": {
+          "timestamp": 0,
+          "score": 0.2
+        }
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "peakMoments.boredom",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "highest": {
+          "timestamp": 75,
+          "score": 1
+        },
+        "lowest": {
+          "timestamp": 5,
+          "score": 0.2
+        }
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "peakMoments.excitement",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "highest": {
+          "timestamp": 5,
+          "score": 0.9
+        },
+        "lowest": {
+          "timestamp": 120,
+          "score": 0.3
+        }
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "trends.patience",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "direction": "increasing",
+        "change": 0.05714285714285705,
+        "firstHalfAverage": 0.6142857142857141,
+        "secondHalfAverage": 0.6714285714285712
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "trends.boredom",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "direction": "increasing",
+        "change": 0.24285714285714283,
+        "firstHalfAverage": 0.3071428571428571,
+        "secondHalfAverage": 0.5499999999999999
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "trends.excitement",
+      "status": "error",
+      "rule": "structural",
+      "truthValue": {
+        "direction": "stable",
+        "change": -0.007142857142856562,
+        "firstHalfAverage": 0.7857142857142851,
+        "secondHalfAverage": 0.7785714285714286
+      },
+      "reason": "Output object missing field present in truth"
+    },
+    {
+      "path": "frictionIndex",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 100,
+      "outputValue": 0,
+      "reason": "Numeric delta 100 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 100,
+        "tolerance": 0.1
+      }
+    }
+  ],
+  "summary": "3/8 scoreable fields passed; 1/19 truth fields were skipped.",
+  "context": {
+    "fixtureId": "cod-test",
+    "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",
+    "truthPath": "benchmarks/fixtures/cod-test/truth/metrics.json",
+    "outputPath": "output/cod-test/phase3-report/metrics/metrics.json"
+  }
+}

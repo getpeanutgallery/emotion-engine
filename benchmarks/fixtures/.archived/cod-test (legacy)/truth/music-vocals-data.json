@@ -1,0 +1,167 @@
+{
+  "_benchmark": {
+    "ignorePaths": [
+      "$.analysisMode",
+      "$.timingMode",
+      "$.sourceStrategy",
+      "$.coverage",
+      "$.provenance"
+    ]
+  },
+  "vocal_segments": [
+    {
+      "start": 64,
+      "end": 65,
+      "text": "Obey your master",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "chant"
+    },
+    {
+      "start": 68,
+      "end": 70,
+      "text": "Your life burns faster",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "chant"
+    },
+    {
+      "start": 76,
+      "end": 78,
+      "text": "Master of puppets I\u2019m pulling your strings",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    },
+    {
+      "start": 80,
+      "end": 83,
+      "text": "Twisting your mind and smashing your dreams",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    },
+    {
+      "start": 84,
+      "end": 86,
+      "text": "Blinded by me, you can\u2019t see a thing",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    },
+    {
+      "start": 87,
+      "end": 88,
+      "text": "Just call my name, \u2018cause I\u2019ll hear you scream",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    },
+    {
+      "start": 89,
+      "end": 91,
+      "text": "Master, master",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    },
+    {
+      "start": 91,
+      "end": 94,
+      "text": "Where\u2019s the dreams that I\u2019ve been after?",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    },
+    {
+      "start": 94,
+      "end": 95.5,
+      "text": "Master, master",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    },
+    {
+      "start": 95.5,
+      "end": 98,
+      "text": "You promised only lies",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung"
+    },
+    {
+      "start": 116,
+      "end": 118,
+      "text": "Obey your master",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "chant"
+    },
+    {
+      "start": 127,
+      "end": 130,
+      "text": "Master, master",
+      "confidence": 0.9,
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "chant"
+    }
+  ],
+  "summary": "Metallica vocal refrains and lyric lines from \u201cMaster of Puppets\u201d drive the trailer's sung music-vocals lane from the first \"Obey your master\" chant through the recurring \"Master, master\" refrain.",
+  "hasVocals": true,
+  "totalDuration": 140.042449,
+  "recognizedSong": {
+    "status": "recognized",
+    "confidence": 0.98,
+    "candidates": [
+      {
+        "title": "Master of Puppets",
+        "artist": "Metallica",
+        "confidence": 0.98,
+        "evidence": [
+          "Literal lyric fragments such as \"Master, master\" and \"Obey your master\" are clearly audible.",
+          "The surrounding sung lines align with the same famous metal song chorus/verse sequence."
+        ],
+        "matchedLyrics": [
+          "Obey your master",
+          "Master, master, where\u2019s the dreams that I\u2019ve been after?",
+          "Master, master, you promised only lies!"
+        ],
+        "timeRanges": [
+          {
+            "start": 64,
+            "end": 98
+          },
+          {
+            "start": 116,
+            "end": 118
+          },
+          {
+            "start": 127,
+            "end": 130
+          }
+        ]
+      }
+    ],
+    "primaryEvidence": "Repeated literal lyric fragments uniquely ground the vocal lane to one famous song.",
+    "multipleSongsDetected": false
+  },
+  "recognitionNotes": [
+    "Spoken dialogue and promo VO elsewhere in the trailer are intentionally excluded from lyric evidence.",
+    "The opening chant fragments are short, but later full lyric lines confirm the song identification."
+  ],
+  "qualityNotes": [
+    "Trailer SFX and dialogue overlap lightly mask some consonants, but the core lyric fragments remain clear enough to ground the song."
+  ]
+}

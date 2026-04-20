@@ -154,7 +154,7 @@
       "path": "vocal_segments[truth=4,output=4].text",
       "rule": "fuzzy-string",
       "truthValue": "Blinded by me, you can’t see a thing",
-      "outputValue": "Obey your master!",
+      "outputValue": "I'll be your master",
       "reason": "Normalized strings differed"
     },
     {
@@ -1199,9 +1199,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Blinded by me, you can’t see a thing",
-      "outputValue": "Obey your master!",
+      "outputValue": "I'll be your master",
       "normalizedTruthValue": "blinded by me you can t see a thing",
-      "normalizedOutputValue": "obey your master",
+      "normalizedOutputValue": "i ll be your master",
       "reason": "Normalized strings differed"
     },
     {

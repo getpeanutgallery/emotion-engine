@@ -1,0 +1,77 @@
+{
+  "_benchmark": {
+    "ignorePaths": [
+      "$.generatedAt"
+    ]
+  },
+  "generatedAt": "2026-03-26T13:35:12.112Z",
+  "pipelineVersion": "1.0",
+  "summary": {
+    "totalChunks": 28,
+    "failedChunks": 0,
+    "totalSeconds": 140,
+    "videoDuration": 140.017
+  },
+  "implementationStatus": {
+    "state": "computed",
+    "dataSource": "derived-from-phase2.chunkAnalysis"
+  },
+  "averages": {
+    "patience": 0.6428571428571428,
+    "boredom": 0.42857142857142855,
+    "excitement": 0.7821428571428576
+  },
+  "peakMoments": {
+    "patience": {
+      "highest": {
+        "timestamp": 75,
+        "score": 0.9
+      },
+      "lowest": {
+        "timestamp": 0,
+        "score": 0.2
+      }
+    },
+    "boredom": {
+      "highest": {
+        "timestamp": 75,
+        "score": 1
+      },
+      "lowest": {
+        "timestamp": 5,
+        "score": 0.2
+      }
+    },
+    "excitement": {
+      "highest": {
+        "timestamp": 5,
+        "score": 0.9
+      },
+      "lowest": {
+        "timestamp": 120,
+        "score": 0.3
+      }
+    }
+  },
+  "trends": {
+    "patience": {
+      "direction": "increasing",
+      "change": 0.05714285714285705,
+      "firstHalfAverage": 0.6142857142857141,
+      "secondHalfAverage": 0.6714285714285712
+    },
+    "boredom": {
+      "direction": "increasing",
+      "change": 0.24285714285714283,
+      "firstHalfAverage": 0.3071428571428571,
+      "secondHalfAverage": 0.5499999999999999
+    },
+    "excitement": {
+      "direction": "stable",
+      "change": -0.007142857142856562,
+      "firstHalfAverage": 0.7857142857142851,
+      "secondHalfAverage": 0.7785714285714286
+    }
+  },
+  "frictionIndex": 100
+}

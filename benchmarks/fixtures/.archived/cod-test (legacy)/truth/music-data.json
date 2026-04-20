@@ -1,0 +1,95 @@
+{
+  "_benchmark": {
+    "ignorePaths": [
+      "$.analysisMode",
+      "$.timingMode",
+      "$.sourceStrategy",
+      "$.coverage",
+      "$.provenance"
+    ]
+  },
+  "segments": [
+    {
+      "start": 0,
+      "end": 30,
+      "type": "music",
+      "description": "High-intensity cinematic trailer music featuring dramatic orchestral swells, electronic pulses, and percussive hits, layered with intense dialogue and sound effects.",
+      "mood": "tense",
+      "intensity": 9
+    },
+    {
+      "start": 30,
+      "end": 60,
+      "type": "music",
+      "description": "High-intensity, action-oriented trailer music with driving percussion, electronic synth pulses, and dramatic orchestral swells.",
+      "mood": "energetic",
+      "intensity": 9
+    },
+    {
+      "start": 60,
+      "end": 90,
+      "type": "music",
+      "description": "Intense, high-energy rock music with aggressive vocals and dramatic sound effects.",
+      "mood": "energetic",
+      "intensity": 9
+    },
+    {
+      "start": 90,
+      "end": 120,
+      "type": "music",
+      "description": "High-intensity cinematic trailer music with dramatic orchestral stabs, heavy percussion, and sound effects.",
+      "mood": "energetic",
+      "intensity": 9
+    },
+    {
+      "start": 120,
+      "end": 140.042449,
+      "type": "music",
+      "description": "High-energy, cinematic action trailer music with intense sound effects and a promotional voiceover.",
+      "mood": "energetic",
+      "intensity": 9
+    }
+  ],
+  "summary": "The trailer maintains high intensity, combining dramatic, action-oriented cinematic music with promotional voiceover and sound effects.",
+  "hasMusic": true,
+  "recognizedSong": {
+    "status": "possible",
+    "confidence": 0.86,
+    "candidates": [
+      {
+        "title": "Master of Puppets",
+        "artist": "Metallica",
+        "confidence": 0.86,
+        "evidence": [
+          "The aggressive metal cue includes a distinctive repeated \"master\" hook in the music lane.",
+          "The later sung refrain strongly aligns with the same well-known song."
+        ],
+        "matchedLyrics": [
+          "Master, master"
+        ],
+        "timeRanges": [
+          {
+            "start": 76,
+            "end": 98
+          },
+          {
+            "start": 116,
+            "end": 118
+          },
+          {
+            "start": 127,
+            "end": 130
+          }
+        ],
+        "ambiguity": "Trailer dialogue and SFX overlap partially mask the cue in some windows."
+      }
+    ],
+    "primaryEvidence": "The music lane contains a distinctive metal hook that plausibly matches one famous song, reinforced by later vocal evidence.",
+    "ambiguity": "Recognition is strong but still partially masked by trailer editing.",
+    "multipleSongsDetected": false
+  },
+  "recognitionNotes": [
+    "Instrumental and arrangement cues support the match, but the vocal lane remains the stronger source of literal lyric evidence.",
+    "Spoken dialogue over score must not be treated as lyric evidence for song recognition."
+  ]
+}

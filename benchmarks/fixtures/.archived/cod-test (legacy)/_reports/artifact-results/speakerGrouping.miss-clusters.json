@@ -1,0 +1,73 @@
+{
+  "mismatch_count": 9,
+  "summary_by_category": {
+    "grouping_reuse_miss_after_source_truth_conversion": 5,
+    "runtime_extra_segment_not_in_truth": 1,
+    "grouping_assignment_mismatch": 3
+  },
+  "mismatches": [
+    {
+      "segment_index": 1,
+      "expected_speaker_group_key": "first_segment_000",
+      "actual_speaker_group_key": "first_segment_001",
+      "category": "grouping_reuse_miss_after_source_truth_conversion",
+      "rationale": "Golden truth expects this line to reuse an earlier speaker group, but runtime grouping left it as a singleton. With the current converted v3 source truth, this is a reuse miss at the grouping layer."
+    },
+    {
+      "segment_index": 2,
+      "expected_speaker_group_key": "first_segment_000",
+      "actual_speaker_group_key": "first_segment_002",
+      "category": "grouping_reuse_miss_after_source_truth_conversion",
+      "rationale": "Golden truth expects this line to reuse an earlier speaker group, but runtime grouping left it as a singleton. With the current converted v3 source truth, this is a reuse miss at the grouping layer."
+    },
+    {
+      "segment_index": 5,
+      "expected_speaker_group_key": "first_segment_000",
+      "actual_speaker_group_key": "first_segment_005",
+      "category": "grouping_reuse_miss_after_source_truth_conversion",
+      "rationale": "Golden truth expects this line to reuse an earlier speaker group, but runtime grouping left it as a singleton. With the current converted v3 source truth, this is a reuse miss at the grouping layer."
+    },
+    {
+      "segment_index": 8,
+      "expected_speaker_group_key": "first_segment_006",
+      "actual_speaker_group_key": "first_segment_008",
+      "category": "grouping_reuse_miss_after_source_truth_conversion",
+      "rationale": "Golden truth expects this line to reuse an earlier speaker group, but runtime grouping left it as a singleton. With the current converted v3 source truth, this is a reuse miss at the grouping layer."
+    },
+    {
+      "segment_index": 11,
+      "expected_speaker_group_key": null,
+      "actual_speaker_group_key": "first_segment_011",
+      "category": "runtime_extra_segment_not_in_truth",
+      "rationale": "Runtime produced a segment index not present in golden truth; this points to extraction/segmentation drift before grouping."
+    },
+    {
+      "segment_index": 13,
+      "expected_speaker_group_key": "first_segment_003",
+      "actual_speaker_group_key": "first_segment_010",
+      "category": "grouping_assignment_mismatch",
+      "rationale": "Expected and runtime both assigned this segment index, but the chosen stable group keys differ."
+    },
+    {
+      "segment_index": 14,
+      "expected_speaker_group_key": "first_segment_014",
+      "actual_speaker_group_key": "first_segment_012",
+      "category": "grouping_assignment_mismatch",
+      "rationale": "Expected and runtime both assigned this segment index, but the chosen stable group keys differ."
+    },
+    {
+      "segment_index": 16,
+      "expected_speaker_group_key": "first_segment_006",
+      "actual_speaker_group_key": "first_segment_016",
+      "category": "grouping_reuse_miss_after_source_truth_conversion",
+      "rationale": "Golden truth expects this line to reuse an earlier speaker group, but runtime grouping left it as a singleton. With the current converted v3 source truth, this is a reuse miss at the grouping layer."
+    },
+    {
+      "segment_index": 17,
+      "expected_speaker_group_key": "first_segment_017",
+      "actual_speaker_group_key": "first_segment_007",
+      "category": "grouping_assignment_mismatch",
+      "rationale": "Expected and runtime both assigned this segment index, but the chosen stable group keys differ."
+    }
+  ]
+}

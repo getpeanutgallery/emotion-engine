@@ -10,11 +10,12 @@
   "artifacts": [
     {
       "artifactKey": "dialogueData",
+      "runtimeArtifactKey": "dialogueV3SourceTruth",
       "label": "Phase 1 dialogue",
       "phase": "phase1-gather-context",
       "script": "get-dialogue",
       "output": {
-        "path": "phase1-gather-context/dialogue-data.json"
+        "path": "phase1-gather-context/dialogue-v3-source-truth.json"
       },
       "truth": {
         "path": "truth/dialogue-data.json"

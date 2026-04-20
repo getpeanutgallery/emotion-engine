@@ -57,26 +57,34 @@ function isFamousSongReconciliationConfigured(config = {}) {
   return flattenPhaseScripts(config?.gather_context).some((scriptPath) => isFamousSongReconciliationScript(scriptPath));
 }
 
-function getRawArtifactPath(outputDir, artifactKey) {
-  const parts = RAW_PHASE1_PATHS[artifactKey];
+function resolvePhase1ArtifactKeyAlias(artifactKey, aliasArtifactKey = null) {
+  const normalizedAlias = typeof aliasArtifactKey === 'string' ? aliasArtifactKey.trim() : '';
+  return normalizedAlias || artifactKey;
+}
+
+function getRawArtifactPath(outputDir, artifactKey, { aliasArtifactKey = null } = {}) {
+  const resolvedArtifactKey = resolvePhase1ArtifactKeyAlias(artifactKey, aliasArtifactKey);
+  const parts = RAW_PHASE1_PATHS[resolvedArtifactKey];
   if (!parts) return null;
   return path.resolve(outputDir, ...parts);
 }
 
-function getReconciledArtifactPath(outputDir, artifactKey) {
-  const parts = RECONCILED_PHASE1_PATHS[artifactKey];
+function getReconciledArtifactPath(outputDir, artifactKey, { aliasArtifactKey = null } = {}) {
+  const resolvedArtifactKey = resolvePhase1ArtifactKeyAlias(artifactKey, aliasArtifactKey);
+  const parts = RECONCILED_PHASE1_PATHS[resolvedArtifactKey];
   if (!parts) return null;
   return path.resolve(outputDir, ...parts);
 }
 
-function getReconciledArtifactRuntimeKey(artifactKey) {
-  return RECONCILED_PHASE1_RUNTIME_KEYS[artifactKey] || null;
+function getReconciledArtifactRuntimeKey(artifactKey, { aliasArtifactKey = null } = {}) {
+  const resolvedArtifactKey = resolvePhase1ArtifactKeyAlias(artifactKey, aliasArtifactKey);
+  return RECONCILED_PHASE1_RUNTIME_KEYS[resolvedArtifactKey] || null;
 }
 
-function selectCanonicalPhase1ArtifactFromBag(artifacts = {}, artifactKey, { config = {}, strict = false } = {}) {
+function selectCanonicalPhase1ArtifactFromBag(artifacts = {}, artifactKey, { config = {}, strict = false, aliasArtifactKey = null } = {}) {
   const reconciliationConfigured = isFamousSongReconciliationConfigured(config);
-  const rawRuntimeKey = artifactKey;
-  const reconciledRuntimeKey = getReconciledArtifactRuntimeKey(artifactKey);
+  const rawRuntimeKey = resolvePhase1ArtifactKeyAlias(artifactKey, aliasArtifactKey);
+  const reconciledRuntimeKey = getReconciledArtifactRuntimeKey(artifactKey, { aliasArtifactKey });
   const shouldUseReconciled = reconciliationConfigured && Boolean(reconciledRuntimeKey);
 
   if (shouldUseReconciled) {
@@ -109,9 +117,9 @@ function selectCanonicalPhase1ArtifactFromBag(artifacts = {}, artifactKey, { con
   };
 }
 
-function resolvePhase1ArtifactPath(outputDir, artifactKey, { config = {}, strict = false } = {}) {
-  const rawPath = getRawArtifactPath(outputDir, artifactKey);
-  const reconciledPath = getReconciledArtifactPath(outputDir, artifactKey);
+function resolvePhase1ArtifactPath(outputDir, artifactKey, { config = {}, strict = false, aliasArtifactKey = null } = {}) {
+  const rawPath = getRawArtifactPath(outputDir, artifactKey, { aliasArtifactKey });
+  const reconciledPath = getReconciledArtifactPath(outputDir, artifactKey, { aliasArtifactKey });
   const reconciliationConfigured = isFamousSongReconciliationConfigured(config);
   const shouldUseReconciled = reconciliationConfigured && Boolean(reconciledPath);
   const resolvedPath = shouldUseReconciled ? reconciledPath : rawPath;
@@ -138,6 +146,7 @@ module.exports = {
   flattenPhaseScripts,
   isFamousSongReconciliationScript,
   isFamousSongReconciliationConfigured,
+  resolvePhase1ArtifactKeyAlias,
   getRawArtifactPath,
   getReconciledArtifactPath,
   getReconciledArtifactRuntimeKey,

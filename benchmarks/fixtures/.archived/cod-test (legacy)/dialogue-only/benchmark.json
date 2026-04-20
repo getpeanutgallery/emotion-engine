@@ -1,0 +1,41 @@
+{
+  "contractVersion": "ee.benchmark-manifest/v1",
+  "fixtureId": "cod-test",
+  "fixture": {
+    "path": "../fixture.json"
+  },
+  "reports": {
+    "outputDir": "_reports"
+  },
+  "artifacts": [
+    {
+      "artifactKey": "dialogueData",
+      "label": "Phase 1 dialogue",
+      "phase": "phase1-gather-context",
+      "script": "get-dialogue",
+      "output": {
+        "path": "phase1-gather-context/dialogue-data.json"
+      },
+      "truth": {
+        "path": "../truth/dialogue-data.json"
+      },
+      "comparator": {
+        "kind": "json-structured",
+        "profile": "dialogue-default",
+        "options": {
+          "timingToleranceSeconds": 2,
+          "unknownSentinels": ["unknown", "ambiguous"],
+          "posture": {
+            "kind": "phase1-dialogue-provisional",
+            "deferredContractPaths": [
+              "$.cleanedTranscript",
+              "$.speaker_profiles",
+              "$.handoffContext"
+            ]
+          }
+        }
+      },
+      "required": true
+    }
+  ]
+}

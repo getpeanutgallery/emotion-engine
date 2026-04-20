@@ -1,0 +1,167 @@
+{
+  "contractVersion": "ee.benchmark-manifest/v1",
+  "fixtureId": "cod-test",
+  "fixture": {
+    "path": "fixture.json"
+  },
+  "reports": {
+    "outputDir": "_reports"
+  },
+  "artifacts": [
+    {
+      "artifactKey": "dialogueData",
+      "label": "Phase 1 dialogue",
+      "phase": "phase1-gather-context",
+      "script": "get-dialogue",
+      "output": {
+        "path": "phase1-gather-context/dialogue-data.json"
+      },
+      "truth": {
+        "path": "truth/dialogue-data.json"
+      },
+      "comparator": {
+        "kind": "json-structured",
+        "profile": "dialogue-default",
+        "options": {
+          "timingToleranceSeconds": 2,
+          "unknownSentinels": [
+            "unknown",
+            "ambiguous"
+          ],
+          "posture": {
+            "kind": "phase1-dialogue-provisional",
+            "deferredContractPaths": [
+              "$.cleanedTranscript",
+              "$.speaker_profiles",
+              "$.handoffContext"
+            ]
+          }
+        }
+      },
+      "required": true
+    },
+    {
+      "artifactKey": "musicData",
+      "label": "Phase 1 music",
+      "phase": "phase1-gather-context",
+      "script": "get-music",
+      "output": {
+        "path": "phase1-gather-context/music-data.json"
+      },
+      "truth": {
+        "path": "truth/music-data.json"
+      },
+      "comparator": {
+        "kind": "json-structured",
+        "profile": "music-default",
+        "options": {
+          "timingToleranceSeconds": 2,
+          "unknownSentinels": [
+            "unknown",
+            "ambiguous"
+          ]
+        }
+      },
+      "required": true
+    },
+    {
+      "artifactKey": "musicVocalsData",
+      "label": "Phase 1 music vocals",
+      "phase": "phase1-gather-context",
+      "script": "get-music-vocals",
+      "output": {
+        "path": "phase1-gather-context/music-vocals-data.json"
+      },
+      "truth": {
+        "path": "truth/music-vocals-data.json"
+      },
+      "comparator": {
+        "kind": "json-structured",
+        "profile": "music-vocals-default",
+        "options": {
+          "timingToleranceSeconds": 2,
+          "unknownSentinels": [
+            "unknown",
+            "ambiguous"
+          ]
+        }
+      },
+      "required": true
+    },
+    {
+      "artifactKey": "recommendationData",
+      "label": "Phase 3 recommendation",
+      "phase": "phase3-report",
+      "script": "recommendation",
+      "output": {
+        "path": "phase3-report/recommendation/recommendation.json"
+      },
+      "truth": {
+        "path": "truth/recommendation.json"
+      },
+      "comparator": {
+        "kind": "json-structured",
+        "profile": "recommendation-default",
+        "options": {
+          "numericTolerance": 0.1,
+          "unknownSentinels": [
+            "unknown",
+            "ambiguous"
+          ]
+        }
+      },
+      "required": true
+    },
+
+    {
+      "artifactKey": "metricsData",
+      "label": "Phase 3 metrics",
+      "phase": "phase3-report",
+      "script": "metrics",
+      "output": {
+        "path": "phase3-report/metrics/metrics.json"
+      },
+      "truth": {
+        "path": "truth/metrics.json"
+      },
+      "comparator": {
+        "kind": "json-structured",
+        "profile": "metrics-default",
+        "options": {
+          "timingToleranceSeconds": 2,
+          "numericTolerance": 0.1,
+          "unknownSentinels": [
+            "unknown",
+            "ambiguous"
+          ]
+        }
+      },
+      "required": true
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "label": "Phase 3 emotional analysis",
+      "phase": "phase3-report",
+      "script": "emotional-analysis",
+      "output": {
+        "path": "phase3-report/emotional-analysis/emotional-data.json"
+      },
+      "truth": {
+        "path": "truth/emotional-analysis.json"
+      },
+      "comparator": {
+        "kind": "json-structured",
+        "profile": "emotional-analysis-default",
+        "options": {
+          "timingToleranceSeconds": 2,
+          "numericTolerance": 0.1,
+          "unknownSentinels": [
+            "unknown",
+            "ambiguous"
+          ]
+        }
+      },
+      "required": true
+    }
+  ]
+}

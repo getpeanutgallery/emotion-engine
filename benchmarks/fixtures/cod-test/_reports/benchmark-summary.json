@@ -15,10 +15,10 @@
   "artifacts": [
     {
       "artifactKey": "dialogueData",
-      "status": "error",
-      "accuracyRate": 0.20245398773006135,
-      "coverageRate": 0.9878787878787879,
-      "ignoredDifferenceCount": 41,
+      "status": "fail",
+      "accuracyRate": 0.3611111111111111,
+      "coverageRate": 0.9664429530201343,
+      "ignoredDifferenceCount": 0,
       "comparisonBoundary": {
         "comparisonMode": "phase1-dialogue-provisional",
         "outputSurface": "reconciled",
@@ -30,8 +30,7 @@
         ]
       },
       "mismatchClassificationCounts": {
-        "reconciled_post_processing_contract_mismatch": 69,
-        "deferred_contract_drift": 62
+        "reconciled_post_processing_contract_mismatch": 184
       }
     },
     {
@@ -83,45 +82,35 @@
   "totals": {
     "artifactsTotal": 6,
     "artifactsPassed": 0,
-    "artifactsFailed": 0,
-    "artifactsErrored": 6,
-    "totalTruthFields": 727,
-    "scoreableFields": 341,
-    "skippedFields": 16,
-    "passedFields": 100,
-    "failedFields": 241,
-    "erroredFields": 370,
-    "ignoredDifferenceFields": 81,
+    "artifactsFailed": 1,
+    "artifactsErrored": 5,
+    "totalTruthFields": 860,
+    "scoreableFields": 466,
+    "skippedFields": 25,
+    "passedFields": 171,
+    "failedFields": 295,
+    "erroredFields": 369,
+    "ignoredDifferenceFields": 40,
     "mismatchClassificationCounts": {
-      "reconciled_post_processing_contract_mismatch": 69,
-      "deferred_contract_drift": 62
+      "reconciled_post_processing_contract_mismatch": 184
     }
   },
   "accuracy": {
-    "passed": 100,
-    "failed": 241,
-    "rate": 0.2932551319648094
+    "passed": 171,
+    "failed": 295,
+    "rate": 0.3669527896995708
   },
   "coverage": {
-    "scoreable": 341,
-    "skipped": 16,
-    "ignoredDifferences": 81,
-    "totalTruthFields": 727,
-    "rate": 0.469050894085282
+    "scoreable": 466,
+    "skipped": 25,
+    "ignoredDifferences": 40,
+    "totalTruthFields": 860,
+    "rate": 0.541860465116279
   },
   "mismatchClassificationCounts": {
-    "reconciled_post_processing_contract_mismatch": 69,
-    "deferred_contract_drift": 62
+    "reconciled_post_processing_contract_mismatch": 184
   },
   "errors": [
-    {
-      "artifactKey": "dialogueData",
-      "path": "cleanedTranscript",
-      "rule": "structural",
-      "truthValue": "Speaker 1: They want you afraid. Fear makes you easier to control.\nSpeaker 1: It's time to wake up.\nSpeaker 2: Your streets, shall once again run red with your blood.\nSpeaker 3: Raul Menendez ignited global unrest on an unprecedented scale.\nSpeaker 1: Menendez is a terrorist.\nSpeaker 1: We're bringing peace and security to the world.\nSpeaker 6: He refuses to let me go.\nSpeaker 7: Stop looking backwards, David. What matters is what we do next.\nSpeaker 6: A lot of people counting on us for answers.\nSpeaker 14: You shall know fear.\nSpeaker 8: Specter one, report.\nSpeaker 8: Need a sitrep.\nSpeaker 9: This isn't real.\nSpeaker 10: The hell it ain't!\nSpeaker 12: Pull it together, man!\nSpeaker 2: So eager to leave David.\nSpeaker 13: Killing a man is a hell of a lot easier than killing the idea.\nSpeaker 15: You were never cut out to be a Mason.\nSpeaker 6: No more games! This ends now.\nSpeaker 16: Get the Reznov challenge pack when you preorder now!",
-      "reason": "Output object missing field present in truth",
-      "classification": "deferred_contract_drift"
-    },
     {
       "artifactKey": "musicData",
       "path": "globalArc",
@@ -5099,5 +5088,5 @@
       "reason": "Output array missing item present in truth"
     }
   ],
-  "summary": "0/6 artifacts passed. 100/341 scoreable fields passed. Truth coverage was 341/727 fields. deferred contract drift=62. reconciled contract mismatch=69."
+  "summary": "0/6 artifacts passed. 171/466 scoreable fields passed. Truth coverage was 466/860 fields. reconciled contract mismatch=184."
 }
