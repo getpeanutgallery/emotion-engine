@@ -15,23 +15,19 @@
   "artifacts": [
     {
       "artifactKey": "dialogueData",
+      "label": "Phase 1 dialogue (primary spoken, reconciled)",
       "status": "fail",
       "accuracyRate": 0.3611111111111111,
       "coverageRate": 0.9664429530201343,
       "ignoredDifferenceCount": 0,
       "comparisonBoundary": {
-        "comparisonMode": "phase1-dialogue-provisional",
+        "comparisonMode": "dual-dialogue-surface",
         "outputSurface": "reconciled",
-        "truthSurface": "provisional-truth",
-        "deferredContractPaths": [
-          "$.cleanedTranscript",
-          "$.speaker_profiles",
-          "$.handoffContext"
-        ]
+        "truthSurface": "spoken_reconciled",
+        "reportSurface": "primary",
+        "runtimeArtifactKey": "dialogueV3SourceTruth"
       },
-      "mismatchClassificationCounts": {
-        "reconciled_post_processing_contract_mismatch": 184
-      },
+      "mismatchClassificationCounts": {},
       "dialogueScoring": {
         "dialogue_text_full_transcript_pct": 90.7,
         "dialogue_text_windowed_pct": 90.7,
@@ -213,7 +209,218 @@
       }
     },
     {
+      "artifactKey": "dialogueDataRaw",
+      "label": "Phase 1 dialogue (diagnostic raw capture)",
+      "status": "pass",
+      "accuracyRate": 1,
+      "coverageRate": 0.617363344051447,
+      "ignoredDifferenceCount": 0,
+      "comparisonBoundary": {
+        "comparisonMode": "dual-dialogue-surface",
+        "outputSurface": "raw",
+        "truthSurface": "raw_capture",
+        "reportSurface": "diagnostic",
+        "runtimeArtifactKey": "dialogueV3SourceTruth"
+      },
+      "mismatchClassificationCounts": {},
+      "dialogueScoring": {
+        "dialogue_text_full_transcript_pct": 100,
+        "dialogue_text_windowed_pct": 100,
+        "dialogue_boundary_pct": 100,
+        "truth_segment_count": 18,
+        "output_segment_count": 18,
+        "split_event_count": 0,
+        "merge_event_count": 0,
+        "missing_truth_window_count": 0,
+        "extra_output_window_count": 0,
+        "normalization_profile": "dialogue-text-v1",
+        "window_alignments": [
+          {
+            "truth_indexes": [
+              0
+            ],
+            "output_indexes": [
+              0
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              1
+            ],
+            "output_indexes": [
+              1
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              2
+            ],
+            "output_indexes": [
+              2
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              3
+            ],
+            "output_indexes": [
+              3
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              4
+            ],
+            "output_indexes": [
+              4
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              5
+            ],
+            "output_indexes": [
+              5
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              6
+            ],
+            "output_indexes": [
+              6
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              7
+            ],
+            "output_indexes": [
+              7
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              8
+            ],
+            "output_indexes": [
+              8
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              9
+            ],
+            "output_indexes": [
+              9
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              10
+            ],
+            "output_indexes": [
+              10
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              11
+            ],
+            "output_indexes": [
+              11
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              12
+            ],
+            "output_indexes": [
+              12
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              13
+            ],
+            "output_indexes": [
+              13
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              14
+            ],
+            "output_indexes": [
+              14
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              15
+            ],
+            "output_indexes": [
+              15
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              16
+            ],
+            "output_indexes": [
+              16
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              17
+            ],
+            "output_indexes": [
+              17
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          }
+        ]
+      }
+    },
+    {
       "artifactKey": "musicData",
+      "label": "Phase 1 music",
       "status": "error",
       "accuracyRate": 0.32,
       "coverageRate": 0.8928571428571429,
@@ -235,6 +442,7 @@
     },
     {
       "artifactKey": "musicVocalsData",
+      "label": "Phase 1 music vocals",
       "status": "error",
       "accuracyRate": 0.4943820224719101,
       "coverageRate": 0.8090909090909091,
@@ -362,6 +570,7 @@
     },
     {
       "artifactKey": "recommendationData",
+      "label": "Phase 3 recommendation",
       "status": "error",
       "accuracyRate": 0.10526315789473684,
       "coverageRate": 0.5277777777777778,
@@ -383,6 +592,7 @@
     },
     {
       "artifactKey": "metricsData",
+      "label": "Phase 3 metrics",
       "status": "error",
       "accuracyRate": 0.375,
       "coverageRate": 0.42105263157894735,
@@ -401,6 +611,7 @@
     },
     {
       "artifactKey": "emotionalAnalysisData",
+      "label": "Phase 3 emotional analysis",
       "status": "error",
       "accuracyRate": 0.16666666666666666,
       "coverageRate": 0.03519061583577713,
@@ -423,36 +634,32 @@
     }
   ],
   "totals": {
-    "artifactsTotal": 6,
-    "artifactsPassed": 0,
+    "artifactsTotal": 7,
+    "artifactsPassed": 1,
     "artifactsFailed": 1,
     "artifactsErrored": 5,
-    "totalTruthFields": 860,
-    "scoreableFields": 466,
-    "skippedFields": 25,
-    "passedFields": 171,
+    "totalTruthFields": 1171,
+    "scoreableFields": 658,
+    "skippedFields": 144,
+    "passedFields": 363,
     "failedFields": 295,
     "erroredFields": 369,
     "ignoredDifferenceFields": 40,
-    "mismatchClassificationCounts": {
-      "reconciled_post_processing_contract_mismatch": 184
-    }
+    "mismatchClassificationCounts": {}
   },
   "accuracy": {
-    "passed": 171,
+    "passed": 363,
     "failed": 295,
-    "rate": 0.3669527896995708
+    "rate": 0.5516717325227963
   },
   "coverage": {
-    "scoreable": 466,
-    "skipped": 25,
+    "scoreable": 658,
+    "skipped": 144,
     "ignoredDifferences": 40,
-    "totalTruthFields": 860,
-    "rate": 0.541860465116279
+    "totalTruthFields": 1171,
+    "rate": 0.5619128949615713
   },
-  "mismatchClassificationCounts": {
-    "reconciled_post_processing_contract_mismatch": 184
-  },
+  "mismatchClassificationCounts": {},
   "errors": [
     {
       "artifactKey": "musicData",
@@ -5431,5 +5638,5 @@
       "reason": "Output array missing item present in truth"
     }
   ],
-  "summary": "0/6 artifacts passed. 171/466 scoreable fields passed. Truth coverage was 466/860 fields. reconciled contract mismatch=184."
+  "summary": "1/7 artifacts passed. 363/658 scoreable fields passed. Truth coverage was 658/1171 fields."
 }

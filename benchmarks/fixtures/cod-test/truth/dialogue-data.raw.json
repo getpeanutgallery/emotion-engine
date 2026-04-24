@@ -1,0 +1,389 @@
+{
+  "schema_version": 1,
+  "contract": {
+    "artifact": "dialogue-data",
+    "mode": "traits",
+    "traits_contract_version": "3.0.0"
+  },
+  "summary": "A dramatic trailer featuring multiple voices discussing themes of fear, control, terrorism, and personal conflict, interspersed with song lyrics and concluding with a promotional message for a game pre-order.",
+  "dialogue_segments": [
+    {
+      "index": 0,
+      "text": "They want you afraid.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "fearful",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 1,
+      "text": "Fear makes you easier to control.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 2,
+      "text": "It's time to wake up.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 3,
+      "text": "Your streets shall once again run red with your blood.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 4,
+      "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 5,
+      "text": "Menendez is a terrorist. We're bringing peace and security to the world.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 6,
+      "text": "He refuses to let me go.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 7,
+      "text": "Stop looking backwards, David, but matters is what we do next.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "directive",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 8,
+      "text": "A lot of people counting on us for answers.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 9,
+      "text": "This isn't real.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 10,
+      "text": "The hell it isn't!",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "intense",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "tense",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 11,
+      "text": "Obey your master... Master... Just call me faster... Master... Master... The master's puppet's a puppet's brain... Twisting your mind, smashing your day... Blinding from me, you can't see... Just go ahead, it's all in your head... Master, master... Plans and dreams are now in the after... Master, master... You'll be in my grasp...",
+      "traits": {
+        "audibility": "heavily_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "fast",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 12,
+      "text": "Pull it together, man.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 13,
+      "text": "So eager to leave, David?",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "intense",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 14,
+      "text": "Killing a man is a hell of a lot easier than killing an idea.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "masculine",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 15,
+      "text": "You were never cut out to be a Mason.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 16,
+      "text": "No more games. This ends now.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "neutral",
+        "delivery_overlay": "none_apparent"
+      }
+    },
+    {
+      "index": 17,
+      "text": "Get the Reznov challenge pack when you pre-order now.",
+      "traits": {
+        "audibility": "partially_masked",
+        "overlap": "single_voice",
+        "gender_presentation": "unknown",
+        "age_impression": "unknown",
+        "pitch_band": "unknown",
+        "phonation": "unknown",
+        "pace": "unknown",
+        "energy": "unknown",
+        "transmission_medium": "direct",
+        "spatial_texture": "room",
+        "accent_strength": "none_apparent",
+        "accent_family": "neutral_or_unmarked",
+        "affect": "unknown",
+        "interpersonal_stance": "directive",
+        "delivery_overlay": "none_apparent"
+      }
+    }
+  ]
+}

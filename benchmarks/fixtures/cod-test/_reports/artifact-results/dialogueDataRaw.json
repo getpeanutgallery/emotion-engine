@@ -1,0 +1,3413 @@
+{
+  "artifactKey": "dialogueDataRaw",
+  "label": "Phase 1 dialogue (diagnostic raw capture)",
+  "phase": "phase1-gather-context",
+  "script": "get-dialogue",
+  "status": "pass",
+  "truth": {
+    "path": "benchmarks/fixtures/cod-test/truth/dialogue-data.raw.json"
+  },
+  "output": {
+    "path": "output/cod-test/phase1-gather-context/dialogue-v3-source-truth.json"
+  },
+  "comparator": {
+    "kind": "json-structured",
+    "profile": "dialogue-default",
+    "resolvedOptions": {
+      "timingToleranceSeconds": 2,
+      "numericTolerance": 0.1,
+      "unknownSentinels": [
+        "unknown",
+        "ambiguous"
+      ],
+      "ignorePaths": [
+        "$.totalDuration",
+        "$.dialogue_segments[*].start",
+        "$.dialogue_segments[*].end"
+      ],
+      "posture": null
+    },
+    "directives": {
+      "comparatorIgnorePaths": [],
+      "truthIgnorePaths": [],
+      "effectiveIgnorePaths": [
+        "$.totalDuration",
+        "$.dialogue_segments[*].start",
+        "$.dialogue_segments[*].end"
+      ]
+    }
+  },
+  "comparisonBoundary": {
+    "comparisonMode": "dual-dialogue-surface",
+    "outputSurface": "raw",
+    "truthSurface": "raw_capture",
+    "reportSurface": "diagnostic",
+    "runtimeArtifactKey": "dialogueV3SourceTruth"
+  },
+  "counts": {
+    "totalTruthFields": 311,
+    "scoreableFields": 192,
+    "skippedFields": 119,
+    "passedFields": 192,
+    "failedFields": 0,
+    "erroredFields": 0,
+    "ignoredDifferenceFields": 0
+  },
+  "accuracy": {
+    "passed": 192,
+    "failed": 0,
+    "rate": 1
+  },
+  "coverage": {
+    "scoreable": 192,
+    "skipped": 119,
+    "totalTruthFields": 311,
+    "rate": 0.617363344051447
+  },
+  "mismatchClassificationCounts": {},
+  "dialogueScoring": {
+    "dialogue_text_full_transcript_pct": 100,
+    "dialogue_text_windowed_pct": 100,
+    "dialogue_boundary_pct": 100,
+    "truth_segment_count": 18,
+    "output_segment_count": 18,
+    "split_event_count": 0,
+    "merge_event_count": 0,
+    "missing_truth_window_count": 0,
+    "extra_output_window_count": 0,
+    "normalization_profile": "dialogue-text-v1",
+    "window_alignments": [
+      {
+        "truth_indexes": [
+          0
+        ],
+        "output_indexes": [
+          0
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          1
+        ],
+        "output_indexes": [
+          1
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          2
+        ],
+        "output_indexes": [
+          2
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          3
+        ],
+        "output_indexes": [
+          3
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          4
+        ],
+        "output_indexes": [
+          4
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          5
+        ],
+        "output_indexes": [
+          5
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          6
+        ],
+        "output_indexes": [
+          6
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          7
+        ],
+        "output_indexes": [
+          7
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          8
+        ],
+        "output_indexes": [
+          8
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          9
+        ],
+        "output_indexes": [
+          9
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          10
+        ],
+        "output_indexes": [
+          10
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          11
+        ],
+        "output_indexes": [
+          11
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          12
+        ],
+        "output_indexes": [
+          12
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          13
+        ],
+        "output_indexes": [
+          13
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          14
+        ],
+        "output_indexes": [
+          14
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          15
+        ],
+        "output_indexes": [
+          15
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          16
+        ],
+        "output_indexes": [
+          16
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          17
+        ],
+        "output_indexes": [
+          17
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      }
+    ]
+  },
+  "failures": [],
+  "skips": [
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.gender_presentation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.age_impression",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.pitch_band",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.phonation",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.pace",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.energy",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.affect",
+      "truthValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    }
+  ],
+  "ignoredDifferences": [],
+  "alignments": [
+    {
+      "path": "dialogue_segments",
+      "strategy": "time-aware-segments",
+      "matches": [
+        {
+          "truthIndex": 0,
+          "outputIndex": 0,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 1,
+          "outputIndex": 1,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 2,
+          "outputIndex": 2,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 3,
+          "outputIndex": 3,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 4,
+          "outputIndex": 4,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 5,
+          "outputIndex": 5,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 6,
+          "outputIndex": 6,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 7,
+          "outputIndex": 7,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 8,
+          "outputIndex": 8,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 9,
+          "outputIndex": 9,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 10,
+          "outputIndex": 10,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 11,
+          "outputIndex": 11,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 12,
+          "outputIndex": 12,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 13,
+          "outputIndex": 13,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 14,
+          "outputIndex": 14,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 15,
+          "outputIndex": 15,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 16,
+          "outputIndex": 16,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        },
+        {
+          "truthIndex": 17,
+          "outputIndex": 17,
+          "overlapSeconds": null,
+          "overlapRatio": null,
+          "centerDelta": null,
+          "startDelta": null,
+          "endDelta": null,
+          "indexDelta": 0,
+          "score": 1000
+        }
+      ],
+      "unmatchedTruth": [],
+      "unmatchedOutput": []
+    }
+  ],
+  "errors": [],
+  "fieldResults": [
+    {
+      "path": "schema_version",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 1,
+      "outputValue": 1
+    },
+    {
+      "path": "contract.artifact",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "dialogue-data",
+      "outputValue": "dialogue-data"
+    },
+    {
+      "path": "contract.mode",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "traits",
+      "outputValue": "traits"
+    },
+    {
+      "path": "contract.traits_contract_version",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "3.0.0",
+      "outputValue": "3.0.0"
+    },
+    {
+      "path": "summary",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "A dramatic trailer featuring multiple voices discussing themes of fear, control, terrorism, and personal conflict, interspersed with song lyrics and concluding with a promotional message for a game pre-order.",
+      "outputValue": "A dramatic trailer featuring multiple voices discussing themes of fear, control, terrorism, and personal conflict, interspersed with song lyrics and concluding with a promotional message for a game pre-order.",
+      "normalizedTruthValue": "a dramatic trailer featuring multiple voices discussing themes of fear control terrorism and personal conflict interspersed with song lyrics and concluding with a promotional message for a game pre order",
+      "normalizedOutputValue": "a dramatic trailer featuring multiple voices discussing themes of fear control terrorism and personal conflict interspersed with song lyrics and concluding with a promotional message for a game pre order"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 0,
+      "outputValue": 0
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "They want you afraid.",
+      "outputValue": "They want you afraid.",
+      "normalizedTruthValue": "they want you afraid",
+      "normalizedOutputValue": "they want you afraid"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.affect",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "fearful",
+      "outputValue": "fearful"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 1,
+      "outputValue": 1
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Fear makes you easier to control.",
+      "outputValue": "Fear makes you easier to control.",
+      "normalizedTruthValue": "fear makes you easier to control",
+      "normalizedOutputValue": "fear makes you easier to control"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 2,
+      "outputValue": 2
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "It's time to wake up.",
+      "outputValue": "It's time to wake up.",
+      "normalizedTruthValue": "it s time to wake up",
+      "normalizedOutputValue": "it s time to wake up"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 3,
+      "outputValue": 3
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Your streets shall once again run red with your blood.",
+      "outputValue": "Your streets shall once again run red with your blood.",
+      "normalizedTruthValue": "your streets shall once again run red with your blood",
+      "normalizedOutputValue": "your streets shall once again run red with your blood"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=3,output=3].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 4,
+      "outputValue": 4
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Raul Menendez ignited global unrest on an unprecedented scale.",
+      "outputValue": "Raul Menendez ignited global unrest on an unprecedented scale.",
+      "normalizedTruthValue": "raul menendez ignited global unrest on an unprecedented scale",
+      "normalizedOutputValue": "raul menendez ignited global unrest on an unprecedented scale"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=4,output=4].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 5,
+      "outputValue": 5
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Menendez is a terrorist. We're bringing peace and security to the world.",
+      "outputValue": "Menendez is a terrorist. We're bringing peace and security to the world.",
+      "normalizedTruthValue": "menendez is a terrorist we re bringing peace and security to the world",
+      "normalizedOutputValue": "menendez is a terrorist we re bringing peace and security to the world"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 6,
+      "outputValue": 6
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "He refuses to let me go.",
+      "outputValue": "He refuses to let me go.",
+      "normalizedTruthValue": "he refuses to let me go",
+      "normalizedOutputValue": "he refuses to let me go"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=6,output=6].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 7,
+      "outputValue": 7
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Stop looking backwards, David, but matters is what we do next.",
+      "outputValue": "Stop looking backwards, David, but matters is what we do next.",
+      "normalizedTruthValue": "stop looking backwards david but matters is what we do next",
+      "normalizedOutputValue": "stop looking backwards david but matters is what we do next"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "directive",
+      "outputValue": "directive"
+    },
+    {
+      "path": "dialogue_segments[truth=7,output=7].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 8,
+      "outputValue": 8
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "A lot of people counting on us for answers.",
+      "outputValue": "A lot of people counting on us for answers.",
+      "normalizedTruthValue": "a lot of people counting on us for answers",
+      "normalizedOutputValue": "a lot of people counting on us for answers"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=8,output=8].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 9,
+      "outputValue": 9
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "This isn't real.",
+      "outputValue": "This isn't real.",
+      "normalizedTruthValue": "this isn t real",
+      "normalizedOutputValue": "this isn t real"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=9,output=9].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 10,
+      "outputValue": 10
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "The hell it isn't!",
+      "outputValue": "The hell it isn't!",
+      "normalizedTruthValue": "the hell it isn t",
+      "normalizedOutputValue": "the hell it isn t"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.energy",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "intense",
+      "outputValue": "intense"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.affect",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "tense",
+      "outputValue": "tense"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=10,output=10].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 11,
+      "outputValue": 11
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Obey your master... Master... Just call me faster... Master... Master... The master's puppet's a puppet's brain... Twisting your mind, smashing your day... Blinding from me, you can't see... Just go ahead, it's all in your head... Master, master... Plans and dreams are now in the after... Master, master... You'll be in my grasp...",
+      "outputValue": "Obey your master... Master... Just call me faster... Master... Master... The master's puppet's a puppet's brain... Twisting your mind, smashing your day... Blinding from me, you can't see... Just go ahead, it's all in your head... Master, master... Plans and dreams are now in the after... Master, master... You'll be in my grasp...",
+      "normalizedTruthValue": "obey your master master just call me faster master master the master s puppet s a puppet s brain twisting your mind smashing your day blinding from me you can t see just go ahead it s all in your head master master plans and dreams are now in the after master master you ll be in my grasp",
+      "normalizedOutputValue": "obey your master master just call me faster master master the master s puppet s a puppet s brain twisting your mind smashing your day blinding from me you can t see just go ahead it s all in your head master master plans and dreams are now in the after master master you ll be in my grasp"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "heavily_masked",
+      "outputValue": "heavily_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.pace",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "fast",
+      "outputValue": "fast"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=11,output=11].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 12,
+      "outputValue": 12
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Pull it together, man.",
+      "outputValue": "Pull it together, man.",
+      "normalizedTruthValue": "pull it together man",
+      "normalizedOutputValue": "pull it together man"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.gender_presentation",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "masculine",
+      "outputValue": "masculine"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=12,output=12].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 13,
+      "outputValue": 13
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "So eager to leave, David?",
+      "outputValue": "So eager to leave, David?",
+      "normalizedTruthValue": "so eager to leave david",
+      "normalizedOutputValue": "so eager to leave david"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.energy",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "intense",
+      "outputValue": "intense"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=13,output=13].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 14,
+      "outputValue": 14
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Killing a man is a hell of a lot easier than killing an idea.",
+      "outputValue": "Killing a man is a hell of a lot easier than killing an idea.",
+      "normalizedTruthValue": "killing a man is a hell of a lot easier than killing an idea",
+      "normalizedOutputValue": "killing a man is a hell of a lot easier than killing an idea"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.gender_presentation",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "masculine",
+      "outputValue": "masculine"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 15,
+      "outputValue": 15
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "You were never cut out to be a Mason.",
+      "outputValue": "You were never cut out to be a Mason.",
+      "normalizedTruthValue": "you were never cut out to be a mason",
+      "normalizedOutputValue": "you were never cut out to be a mason"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 16,
+      "outputValue": 16
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "No more games. This ends now.",
+      "outputValue": "No more games. This ends now.",
+      "normalizedTruthValue": "no more games this ends now",
+      "normalizedOutputValue": "no more games this ends now"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral",
+      "outputValue": "neutral"
+    },
+    {
+      "path": "dialogue_segments[truth=16,output=16].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].index",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": 17,
+      "outputValue": 17
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].text",
+      "status": "pass",
+      "rule": "fuzzy-string",
+      "truthValue": "Get the Reznov challenge pack when you pre-order now.",
+      "outputValue": "Get the Reznov challenge pack when you pre-order now.",
+      "normalizedTruthValue": "get the reznov challenge pack when you pre order now",
+      "normalizedOutputValue": "get the reznov challenge pack when you pre order now"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.audibility",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "partially_masked"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.overlap",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "single_voice",
+      "outputValue": "single_voice"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.gender_presentation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.age_impression",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.pitch_band",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.phonation",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.pace",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.energy",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.transmission_medium",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "direct",
+      "outputValue": "direct"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.spatial_texture",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "room",
+      "outputValue": "room"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.accent_strength",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.accent_family",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "neutral_or_unmarked",
+      "outputValue": "neutral_or_unmarked"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.affect",
+      "status": "skip",
+      "rule": "exact",
+      "truthValue": "unknown",
+      "outputValue": "unknown",
+      "reason": "Explicit truth sentinel"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.interpersonal_stance",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "directive",
+      "outputValue": "directive"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.delivery_overlay",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "none_apparent",
+      "outputValue": "none_apparent"
+    }
+  ],
+  "summary": "192/192 scoreable fields passed; 119/311 truth fields were skipped. dialogue_text_full_transcript_pct=100.0%; dialogue_text_windowed_pct=100.0%; dialogue_boundary_pct=100.0%.",
+  "context": {
+    "fixtureId": "cod-test",
+    "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",
+    "truthPath": "benchmarks/fixtures/cod-test/truth/dialogue-data.raw.json",
+    "outputPath": "output/cod-test/phase1-gather-context/dialogue-v3-source-truth.json"
+  }
+}

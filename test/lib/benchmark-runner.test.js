@@ -2700,3 +2700,136 @@ test('benchmark runner - lyric leakage regression fails dialogue while preservin
   assert.match(summaryMd, /vocal_text_full_transcript_pct=/);
   assert.doesNotMatch(summaryMd, /master score|composite score/i);
 });
+
+
+test('benchmark runner - dual dialogue surfaces can share one runtime artifact family while reporting primary vs diagnostic labels explicitly', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-dual-dialogue-surfaces');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const configDir = path.join(rootDir, 'configs');
+  const benchmarkDir = path.join(rootDir, 'benchmarks', 'fixtures', 'temp-dual-dialogue-fixture');
+  const outputDir = path.join(rootDir, 'output', 'temp-run');
+  const configPath = path.join(configDir, 'temp.yaml');
+  const fixturePath = path.join(benchmarkDir, 'fixture.json');
+  const benchmarkPath = path.join(benchmarkDir, 'benchmark.json');
+
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.writeFileSync(configPath, 'name: temp dual dialogue benchmark config\n', 'utf8');
+
+  writeJson(fixturePath, {
+    contractVersion: FIXTURE_CONTRACT_VERSION,
+    fixtureId: 'temp-dual-dialogue-fixture',
+    asset: { repoPath: 'examples/videos/emotion-tests/cod.mp4' },
+    config: { repoPath: 'configs/temp.yaml' },
+    benchmark: { entryPath: 'benchmark.json' },
+    notes: ['temp dual dialogue benchmark fixture']
+  });
+
+  const rawTruth = {
+    schema_version: 1,
+    contract: { artifact: 'dialogue-data', mode: 'traits', traits_contract_version: '3.0.0' },
+    summary: 'Raw dialogue capture including lyric leakage.',
+    dialogue_segments: [
+      { index: 0, text: 'Wake up now.', traits: { audibility: 'clear', overlap: 'single_voice', gender_presentation: 'unknown', age_impression: 'unknown', pitch_band: 'unknown', phonation: 'unknown', pace: 'unknown', energy: 'unknown', transmission_medium: 'direct', spatial_texture: 'room', accent_strength: 'unknown', accent_family: 'unknown', affect: 'unknown', interpersonal_stance: 'neutral', delivery_overlay: 'none_apparent' } },
+      { index: 1, text: 'Master, master.', traits: { audibility: 'partially_masked', overlap: 'single_voice', gender_presentation: 'unknown', age_impression: 'unknown', pitch_band: 'unknown', phonation: 'unknown', pace: 'unknown', energy: 'unknown', transmission_medium: 'direct', spatial_texture: 'room', accent_strength: 'unknown', accent_family: 'unknown', affect: 'unknown', interpersonal_stance: 'neutral', delivery_overlay: 'none_apparent' } }
+    ]
+  };
+  const reconciledTruth = {
+    schema_version: 1,
+    contract: { artifact: 'dialogue-data', mode: 'traits', traits_contract_version: '3.0.0' },
+    summary: 'Reconciled spoken dialogue only.',
+    dialogue_segments: [
+      { index: 0, text: 'Wake up now.', traits: { audibility: 'clear', overlap: 'single_voice', gender_presentation: 'unknown', age_impression: 'unknown', pitch_band: 'unknown', phonation: 'unknown', pace: 'unknown', energy: 'unknown', transmission_medium: 'direct', spatial_texture: 'room', accent_strength: 'unknown', accent_family: 'unknown', affect: 'unknown', interpersonal_stance: 'neutral', delivery_overlay: 'none_apparent' } }
+    ]
+  };
+
+  writeJson(benchmarkPath, {
+    contractVersion: MANIFEST_CONTRACT_VERSION,
+    fixtureId: 'temp-dual-dialogue-fixture',
+    fixture: { path: 'fixture.json' },
+    reports: { outputDir: '_reports' },
+    artifacts: [
+      {
+        artifactKey: 'dialogueData',
+        runtimeArtifactKey: 'dialogueV3SourceTruth',
+        label: 'Phase 1 dialogue (primary spoken, reconciled)',
+        phase: 'phase1-gather-context',
+        script: 'get-dialogue',
+        output: { path: 'phase1-gather-context/dialogue-v3-source-truth.reconciled.json' },
+        truth: { path: 'truth/dialogue-data.json' },
+        benchmarkRouting: {
+          runtimeArtifactSurface: 'reconciled',
+          truthSurface: 'spoken_reconciled',
+          reportSurface: 'primary'
+        },
+        comparator: {
+          kind: 'json-structured',
+          profile: 'dialogue-default',
+          options: { timingToleranceSeconds: 2, unknownSentinels: ['unknown', 'ambiguous'] }
+        },
+        required: true
+      },
+      {
+        artifactKey: 'dialogueDataRaw',
+        runtimeArtifactKey: 'dialogueV3SourceTruth',
+        label: 'Phase 1 dialogue (diagnostic raw capture)',
+        phase: 'phase1-gather-context',
+        script: 'get-dialogue',
+        output: { path: 'phase1-gather-context/dialogue-v3-source-truth.json' },
+        truth: { path: 'truth/dialogue-data.raw.json' },
+        benchmarkRouting: {
+          runtimeArtifactSurface: 'raw',
+          truthSurface: 'raw_capture',
+          reportSurface: 'diagnostic'
+        },
+        comparator: {
+          kind: 'json-structured',
+          profile: 'dialogue-default',
+          options: { timingToleranceSeconds: 2, unknownSentinels: ['unknown', 'ambiguous'] }
+        },
+        required: true
+      }
+    ]
+  });
+
+  writeJson(path.join(benchmarkDir, 'truth', 'dialogue-data.json'), reconciledTruth);
+  writeJson(path.join(benchmarkDir, 'truth', 'dialogue-data.raw.json'), rawTruth);
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'dialogue-v3-source-truth.json'), rawTruth);
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'dialogue-v3-source-truth.reconciled.json'), reconciledTruth);
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark dual dialogue surfaces',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-dual-dialogue-fixture/benchmark.json'
+      },
+      gather_context: [
+        'server/scripts/get-context/get-dialogue.cjs',
+        'server/scripts/get-context/reconcile-famous-song-phase1.cjs'
+      ]
+    },
+    configPath,
+    outputDir
+  });
+
+  assert.strictEqual(result.status, 'pass');
+  const primary = result.artifactResults.find((artifact) => artifact.artifactKey === 'dialogueData');
+  const diagnostic = result.artifactResults.find((artifact) => artifact.artifactKey === 'dialogueDataRaw');
+  assert.strictEqual(primary.comparisonBoundary.comparisonMode, 'dual-dialogue-surface');
+  assert.strictEqual(primary.comparisonBoundary.outputSurface, 'reconciled');
+  assert.strictEqual(primary.comparisonBoundary.truthSurface, 'spoken_reconciled');
+  assert.strictEqual(primary.comparisonBoundary.reportSurface, 'primary');
+  assert.strictEqual(diagnostic.comparisonBoundary.outputSurface, 'raw');
+  assert.strictEqual(diagnostic.comparisonBoundary.truthSurface, 'raw_capture');
+  assert.strictEqual(diagnostic.comparisonBoundary.reportSurface, 'diagnostic');
+  assert(primary.dialogueScoring, 'primary dialogue scoring block should remain present');
+  assert(diagnostic.dialogueScoring, 'diagnostic dialogue scoring block should remain present');
+
+  const summaryMd = fs.readFileSync(path.join(result.reportDir, 'benchmark-summary.md'), 'utf8');
+  assert(summaryMd.indexOf('**dialogueData**') < summaryMd.indexOf('**dialogueDataRaw**'));
+  assert.match(summaryMd, /primary spoken benchmark/);
+  assert.match(summaryMd, /diagnostic raw capture/);
+  assert(fs.existsSync(path.join(result.reportDir, 'artifact-results', 'dialogueDataRaw.json')));
+});

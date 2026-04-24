@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const RECONCILIATION_SCRIPT_BASENAME = 'reconcile-famous-song-phase1.cjs';
+const VALID_RUNTIME_ARTIFACT_SURFACES = Object.freeze(['raw', 'reconciled', 'canonical']);
 
 const RAW_PHASE1_PATHS = Object.freeze({
   dialogueData: ['phase1-gather-context', 'dialogue-data.json'],
@@ -62,6 +63,18 @@ function resolvePhase1ArtifactKeyAlias(artifactKey, aliasArtifactKey = null) {
   return normalizedAlias || artifactKey;
 }
 
+function normalizeRuntimeArtifactSurface(runtimeArtifactSurface = 'canonical') {
+  const normalizedSurface = typeof runtimeArtifactSurface === 'string'
+    ? runtimeArtifactSurface.trim().toLowerCase()
+    : 'canonical';
+
+  if (!VALID_RUNTIME_ARTIFACT_SURFACES.includes(normalizedSurface)) {
+    throw new Error(`Unsupported runtime artifact surface: ${runtimeArtifactSurface}`);
+  }
+
+  return normalizedSurface;
+}
+
 function getRawArtifactPath(outputDir, artifactKey, { aliasArtifactKey = null } = {}) {
   const resolvedArtifactKey = resolvePhase1ArtifactKeyAlias(artifactKey, aliasArtifactKey);
   const parts = RAW_PHASE1_PATHS[resolvedArtifactKey];
@@ -81,11 +94,13 @@ function getReconciledArtifactRuntimeKey(artifactKey, { aliasArtifactKey = null 
   return RECONCILED_PHASE1_RUNTIME_KEYS[resolvedArtifactKey] || null;
 }
 
-function selectCanonicalPhase1ArtifactFromBag(artifacts = {}, artifactKey, { config = {}, strict = false, aliasArtifactKey = null } = {}) {
+function selectCanonicalPhase1ArtifactFromBag(artifacts = {}, artifactKey, { config = {}, strict = false, aliasArtifactKey = null, runtimeArtifactSurface = 'canonical' } = {}) {
   const reconciliationConfigured = isFamousSongReconciliationConfigured(config);
+  const requestedRuntimeSurface = normalizeRuntimeArtifactSurface(runtimeArtifactSurface);
   const rawRuntimeKey = resolvePhase1ArtifactKeyAlias(artifactKey, aliasArtifactKey);
   const reconciledRuntimeKey = getReconciledArtifactRuntimeKey(artifactKey, { aliasArtifactKey });
-  const shouldUseReconciled = reconciliationConfigured && Boolean(reconciledRuntimeKey);
+  const shouldUseReconciled = requestedRuntimeSurface === 'reconciled'
+    || (requestedRuntimeSurface === 'canonical' && reconciliationConfigured && Boolean(reconciledRuntimeKey));
 
   if (shouldUseReconciled) {
     const reconciledArtifact = artifacts?.[reconciledRuntimeKey];
@@ -93,9 +108,11 @@ function selectCanonicalPhase1ArtifactFromBag(artifacts = {}, artifactKey, { con
       return {
         artifactKey,
         reconciliationConfigured,
+        requestedRuntimeSurface,
         shouldUseReconciled,
         rawRuntimeKey,
         reconciledRuntimeKey,
+        resolvedRuntimeSurface: 'reconciled',
         resolvedRuntimeKey: reconciledRuntimeKey,
         resolvedArtifact: reconciledArtifact
       };
@@ -109,19 +126,23 @@ function selectCanonicalPhase1ArtifactFromBag(artifacts = {}, artifactKey, { con
   return {
     artifactKey,
     reconciliationConfigured,
+    requestedRuntimeSurface,
     shouldUseReconciled,
     rawRuntimeKey,
     reconciledRuntimeKey,
+    resolvedRuntimeSurface: 'raw',
     resolvedRuntimeKey: rawRuntimeKey,
     resolvedArtifact: artifacts?.[rawRuntimeKey]
   };
 }
 
-function resolvePhase1ArtifactPath(outputDir, artifactKey, { config = {}, strict = false, aliasArtifactKey = null } = {}) {
+function resolvePhase1ArtifactPath(outputDir, artifactKey, { config = {}, strict = false, aliasArtifactKey = null, runtimeArtifactSurface = 'canonical' } = {}) {
   const rawPath = getRawArtifactPath(outputDir, artifactKey, { aliasArtifactKey });
   const reconciledPath = getReconciledArtifactPath(outputDir, artifactKey, { aliasArtifactKey });
   const reconciliationConfigured = isFamousSongReconciliationConfigured(config);
-  const shouldUseReconciled = reconciliationConfigured && Boolean(reconciledPath);
+  const requestedRuntimeSurface = normalizeRuntimeArtifactSurface(runtimeArtifactSurface);
+  const shouldUseReconciled = requestedRuntimeSurface === 'reconciled'
+    || (requestedRuntimeSurface === 'canonical' && reconciliationConfigured && Boolean(reconciledPath));
   const resolvedPath = shouldUseReconciled ? reconciledPath : rawPath;
 
   if (strict && shouldUseReconciled && resolvedPath && !fs.existsSync(resolvedPath)) {
@@ -131,9 +152,11 @@ function resolvePhase1ArtifactPath(outputDir, artifactKey, { config = {}, strict
   return {
     artifactKey,
     reconciliationConfigured,
+    requestedRuntimeSurface,
     shouldUseReconciled,
     rawPath,
     reconciledPath,
+    resolvedRuntimeSurface: shouldUseReconciled ? 'reconciled' : 'raw',
     resolvedPath
   };
 }
@@ -143,10 +166,12 @@ module.exports = {
   RAW_PHASE1_PATHS,
   RECONCILED_PHASE1_PATHS,
   RECONCILED_PHASE1_RUNTIME_KEYS,
+  VALID_RUNTIME_ARTIFACT_SURFACES,
   flattenPhaseScripts,
   isFamousSongReconciliationScript,
   isFamousSongReconciliationConfigured,
   resolvePhase1ArtifactKeyAlias,
+  normalizeRuntimeArtifactSurface,
   getRawArtifactPath,
   getReconciledArtifactPath,
   getReconciledArtifactRuntimeKey,

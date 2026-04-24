@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { resolvePhase1ArtifactPath } = require('./phase1-baseline-resolution.cjs');
+const { resolvePhase1ArtifactPath, VALID_RUNTIME_ARTIFACT_SURFACES } = require('./phase1-baseline-resolution.cjs');
 
 const MANIFEST_CONTRACT_VERSION = 'ee.benchmark-manifest/v1';
 const FIXTURE_CONTRACT_VERSION = 'ee.benchmark-fixture/v1';
@@ -149,6 +149,21 @@ function validateManifest(manifest, manifestPath) {
     }
     if (artifact.comparator.options !== undefined && (typeof artifact.comparator.options !== 'object' || artifact.comparator.options === null || Array.isArray(artifact.comparator.options))) {
       throw new Error(`${prefix}.comparator.options must be an object when provided`);
+    }
+    if (artifact.benchmarkRouting !== undefined) {
+      if (typeof artifact.benchmarkRouting !== 'object' || artifact.benchmarkRouting === null || Array.isArray(artifact.benchmarkRouting)) {
+        throw new Error(`${prefix}.benchmarkRouting must be an object when provided`);
+      }
+      if (artifact.benchmarkRouting.runtimeArtifactSurface !== undefined) {
+        if (typeof artifact.benchmarkRouting.runtimeArtifactSurface !== 'string' || !VALID_RUNTIME_ARTIFACT_SURFACES.includes(artifact.benchmarkRouting.runtimeArtifactSurface)) {
+          throw new Error(`${prefix}.benchmarkRouting.runtimeArtifactSurface must be one of: ${VALID_RUNTIME_ARTIFACT_SURFACES.join(', ')}`);
+        }
+      }
+      for (const field of ['truthSurface', 'reportSurface']) {
+        if (artifact.benchmarkRouting[field] !== undefined && (typeof artifact.benchmarkRouting[field] !== 'string' || artifact.benchmarkRouting[field].trim().length === 0)) {
+          throw new Error(`${prefix}.benchmarkRouting.${field} must be a non-empty string when provided`);
+        }
+      }
     }
     if (typeof artifact.required !== 'boolean') {
       throw new Error(`${prefix}.required must be a boolean`);
@@ -722,6 +737,31 @@ function appendArtifactSpecificMarkdown(lines, artifact) {
     lines.push(`  - chunk_dominant_emotion_pct=${formatPct(artifact.chunkAnalysisScoring.chunk_dominant_emotion_pct)}`);
     lines.push(`  - chunk_persona_contract_pct=${formatPct(artifact.chunkAnalysisScoring.chunk_persona_contract_pct)}`);
   }
+}
+
+function getArtifactComparisonDisplay(artifact) {
+  const boundary = artifact.comparisonBoundary || {};
+  if (boundary.comparisonMode === 'dual-dialogue-surface') {
+    const roleLabel = boundary.reportSurface === 'primary'
+      ? 'primary spoken benchmark'
+      : boundary.reportSurface === 'diagnostic'
+        ? 'diagnostic raw capture'
+        : `${boundary.reportSurface || 'unclassified'} dialogue surface`;
+    return `${artifact.label || artifact.artifactKey} [${roleLabel}]`;
+  }
+  return artifact.label || artifact.artifactKey;
+}
+
+function sortArtifactsForSummary(artifacts) {
+  const reportSurfaceRank = { primary: 0, diagnostic: 1 };
+  return [...artifacts].sort((left, right) => {
+    const leftBoundary = left.comparisonBoundary || {};
+    const rightBoundary = right.comparisonBoundary || {};
+    const leftRank = Object.prototype.hasOwnProperty.call(reportSurfaceRank, leftBoundary.reportSurface) ? reportSurfaceRank[leftBoundary.reportSurface] : 9;
+    const rightRank = Object.prototype.hasOwnProperty.call(reportSurfaceRank, rightBoundary.reportSurface) ? reportSurfaceRank[rightBoundary.reportSurface] : 9;
+    if (leftRank !== rightRank) return leftRank - rightRank;
+    return 0;
+  });
 }
 
 function buildArtifactSummaryBits(artifactScoring) {
@@ -2377,7 +2417,7 @@ function buildMarkdownSummary(summary) {
   lines.push('');
   lines.push('## Artifacts');
   lines.push('');
-  for (const artifact of summary.artifacts) {
+  for (const artifact of sortArtifactsForSummary(summary.artifacts)) {
     const classificationBits = [];
     if (artifact.comparisonBoundary?.comparisonMode === 'phase1-dialogue-provisional') {
       classificationBits.push(`posture=${artifact.comparisonBoundary.outputSurface === 'raw' ? 'provisional raw-vs-reconciled' : 'reconciled/post-processing contract'}`);
@@ -2385,8 +2425,13 @@ function buildMarkdownSummary(summary) {
     if (artifact.mismatchClassificationCounts?.provisional_raw_dialogue_drift) classificationBits.push(`provisionalRawDrift=${artifact.mismatchClassificationCounts.provisional_raw_dialogue_drift}`);
     if (artifact.mismatchClassificationCounts?.deferred_contract_drift) classificationBits.push(`deferredContractDrift=${artifact.mismatchClassificationCounts.deferred_contract_drift}`);
     if (artifact.mismatchClassificationCounts?.reconciled_post_processing_contract_mismatch) classificationBits.push(`reconciledContractMismatch=${artifact.mismatchClassificationCounts.reconciled_post_processing_contract_mismatch}`);
+    if (artifact.comparisonBoundary?.comparisonMode === 'dual-dialogue-surface') {
+      classificationBits.push(`outputSurface=${artifact.comparisonBoundary.outputSurface}`);
+      if (artifact.comparisonBoundary.truthSurface) classificationBits.push(`truthSurface=${artifact.comparisonBoundary.truthSurface}`);
+      if (artifact.comparisonBoundary.reportSurface) classificationBits.push(`reportSurface=${artifact.comparisonBoundary.reportSurface}`);
+    }
     const classificationSuffix = classificationBits.length > 0 ? `, ${classificationBits.join(', ')}` : '';
-    lines.push(`- **${artifact.artifactKey}** — ${artifact.status}; accuracy=${artifact.accuracyRate === null ? 'n/a' : (artifact.accuracyRate * 100).toFixed(1) + '%'}, coverage=${artifact.coverageRate === null ? 'n/a' : (artifact.coverageRate * 100).toFixed(1) + '%'}, ignoredDiffs=${artifact.ignoredDifferenceCount}${classificationSuffix}`);
+    lines.push(`- **${artifact.artifactKey}** — ${getArtifactComparisonDisplay(artifact)}; ${artifact.status}; accuracy=${artifact.accuracyRate === null ? 'n/a' : (artifact.accuracyRate * 100).toFixed(1) + '%'}, coverage=${artifact.coverageRate === null ? 'n/a' : (artifact.coverageRate * 100).toFixed(1) + '%'}, ignoredDiffs=${artifact.ignoredDifferenceCount}${classificationSuffix}`);
     appendArtifactSpecificMarkdown(lines, artifact);
   }
   lines.push('');
@@ -2429,7 +2474,8 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
     const outputResolution = resolvePhase1ArtifactPath(outputDir, artifact.artifactKey, {
       config,
       strict: artifact.required,
-      aliasArtifactKey: artifact.runtimeArtifactKey || null
+      aliasArtifactKey: artifact.runtimeArtifactKey || null,
+      runtimeArtifactSurface: artifact.benchmarkRouting?.runtimeArtifactSurface || 'canonical'
     });
     const outputAbsolutePath = outputResolution.resolvedPath || path.resolve(outputDir, artifact.output.path);
 
@@ -2446,14 +2492,22 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
     const comparator = createComparator(artifact, truthDirectives.directives);
     const truthData = truthDirectives.truthData;
     const outputData = readJsonFile(outputAbsolutePath, `produced artifact ${artifact.artifactKey}`);
-    const comparisonBoundary = comparator.resolvedOptions.posture?.kind === 'phase1-dialogue-provisional'
+    const comparisonBoundary = artifact.benchmarkRouting
       ? {
-          comparisonMode: 'phase1-dialogue-provisional',
-          outputSurface: outputResolution.shouldUseReconciled ? 'reconciled' : 'raw',
-          truthSurface: 'provisional-truth',
-          deferredContractPaths: comparator.resolvedOptions.posture.deferredContractPaths
+          comparisonMode: 'dual-dialogue-surface',
+          outputSurface: outputResolution.resolvedRuntimeSurface,
+          truthSurface: artifact.benchmarkRouting.truthSurface || null,
+          reportSurface: artifact.benchmarkRouting.reportSurface || null,
+          runtimeArtifactKey: artifact.runtimeArtifactKey || artifact.artifactKey
         }
-      : null;
+      : comparator.resolvedOptions.posture?.kind === 'phase1-dialogue-provisional'
+        ? {
+            comparisonMode: 'phase1-dialogue-provisional',
+            outputSurface: outputResolution.shouldUseReconciled ? 'reconciled' : 'raw',
+            truthSurface: 'provisional-truth',
+            deferredContractPaths: comparator.resolvedOptions.posture.deferredContractPaths
+          }
+        : null;
 
     const result = compareArtifact({
       artifact,
@@ -2526,6 +2580,7 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
     status,
     artifacts: artifactResults.map((result) => ({
       artifactKey: result.artifactKey,
+      label: result.label,
       status: result.status,
       accuracyRate: result.accuracy.rate,
       coverageRate: result.coverage.rate,
