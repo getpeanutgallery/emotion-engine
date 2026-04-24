@@ -685,64 +685,31 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
 
 function reconcileMusicVocals(musicVocalsData, gate) {
   const vocalSegments = Array.isArray(musicVocalsData?.vocal_segments) ? cloneJson(musicVocalsData.vocal_segments) : [];
-  const corrections = [];
-  const skippedCorrections = [];
-
-  for (let index = 0; index < vocalSegments.length; index += 1) {
-    const segment = vocalSegments[index];
-
-    const confidence = Number(segment?.confidence);
-    if (!Number.isFinite(confidence) || confidence < MIN_CORRECTION_CONFIDENCE) {
-      skippedCorrections.push({ index, reason: 'segment_confidence_below_threshold' });
-      continue;
-    }
-
-    const bestMatch = chooseBestLyricMatch(segment?.text, gate.matchedLyrics);
-    if (!bestMatch) {
-      skippedCorrections.push({ index, reason: 'no_matching_lyric_fragment' });
-      continue;
-    }
-
-    const normalizedCurrent = normalizeText(segment.text);
-    const normalizedTarget = normalizeText(bestMatch.lyric);
-    if (!normalizedTarget || normalizedCurrent === normalizedTarget) {
-      continue;
-    }
-
-    const decision = classifyLyricCorrection(segment.text, bestMatch.lyric, bestMatch.similarity);
-    if (!decision.allowed) {
-      skippedCorrections.push({
-        index,
-        reason: decision.reason,
-        similarity: Number(bestMatch.similarity.toFixed(4)),
-        candidateLyric: bestMatch.lyric,
-        lane: decision.lane,
-        ...decision.details
-      });
-      continue;
-    }
-
-    corrections.push({
-      index,
-      start: segment?.start ?? null,
-      end: segment?.end ?? null,
-      from: segment.text,
-      to: bestMatch.lyric,
-      similarity: Number(bestMatch.similarity.toFixed(4)),
-      lane: decision.lane,
-      reason: decision.reason
-    });
-
-    segment.text = bestMatch.lyric;
-  }
+  const candidateCount = Array.isArray(gate?.recognizedSong?.candidates) ? gate.recognizedSong.candidates.length : 0;
+  const matchedLyricCount = Array.isArray(gate?.matchedLyrics) ? gate.matchedLyrics.length : 0;
 
   return {
     reconciledData: {
       ...cloneJson(musicVocalsData),
       vocal_segments: vocalSegments
     },
-    corrections,
-    skippedCorrections
+    corrections: [],
+    skippedCorrections: [],
+    policy: {
+      lyricRepairEnabled: false,
+      reason: 'transcript_text_must_remain_audio_faithful',
+      recognizedSongRole: 'identity_support_metadata_only'
+    },
+    notes: [
+      {
+        kind: 'policy',
+        decision: 'preserved_transcript_text',
+        reason: 'recognized_song_metadata_must_not_rewrite_music_vocals_transcript',
+        candidateCount,
+        matchedLyricCount,
+        gatePassed: Boolean(gate?.passed)
+      }
+    ]
   };
 }
 
@@ -755,7 +722,7 @@ function buildLedger({ outputDir, gate, dialogueResult, musicVocalsResult }) {
   const ledgerPath = getReconciledArtifactPath(outputDir, 'famousSongReconciliation');
 
   return {
-    contractVersion: 'ee.famous-song-reconciliation/v1',
+    contractVersion: 'ee.famous-song-reconciliation/v2',
     script: SCRIPT_ID,
     generatedAt: new Date().toISOString(),
     status: gate.passed ? 'applied' : 'skipped',
@@ -779,7 +746,9 @@ function buildLedger({ outputDir, gate, dialogueResult, musicVocalsResult }) {
     decisions: {
       removedDialogueSegments: dialogueResult.removedSegments,
       lyricCorrections: musicVocalsResult.corrections,
-      skippedCorrections: musicVocalsResult.skippedCorrections
+      skippedCorrections: musicVocalsResult.skippedCorrections,
+      musicVocalsPolicy: musicVocalsResult.policy,
+      musicVocalsNotes: musicVocalsResult.notes
     }
   };
 }
@@ -805,9 +774,7 @@ async function run(input) {
   const dialogueResult = gate.passed
     ? reconcileDialogue(dialogueData, gate, musicVocalsData)
     : { reconciledData: cloneJson(dialogueData), removedSegments: [] };
-  const musicVocalsResult = gate.passed
-    ? reconcileMusicVocals(musicVocalsData, gate)
-    : { reconciledData: cloneJson(musicVocalsData), corrections: [], skippedCorrections: gate.reasons.map((reason) => ({ reason })) };
+  const musicVocalsResult = reconcileMusicVocals(musicVocalsData, gate);
 
   const strippedDialogueData = stripLaneTiming(dialogueResult.reconciledData, 'dialogue_segments');
   const strippedMusicVocalsData = stripLaneTiming(musicVocalsResult.reconciledData, 'vocal_segments');

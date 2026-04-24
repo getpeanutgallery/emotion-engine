@@ -69,7 +69,7 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     }
   });
 
-  await t.test('preserves raw artifacts while emitting reconciled companions and ledger', async () => {
+  await t.test('preserves raw artifacts while emitting reconciled companions and a transparency ledger', async () => {
     const artifacts = makeArtifacts();
     const rawDialoguePath = path.join(outputDir, 'phase1-gather-context', 'dialogue-data.json');
     const rawMusicPath = path.join(outputDir, 'phase1-gather-context', 'music-data.json');
@@ -109,22 +109,29 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     assert.equal(reconciledDialogueV3.dialogue_segments[0].text, 'Move now, squad up.');
     assert.equal(reconciledDialogueV3.dialogue_segments[0].traits.interpersonal_stance, 'directive');
     assert.equal(reconciledDialogueV3.dialogue_segments[0].traits.delivery_overlay, 'none_apparent');
-    assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Obey your master');
+    assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Control your master');
     assert.equal(Object.prototype.hasOwnProperty.call(reconciledMusicVocals.vocal_segments[0], 'start'), false);
     assert.equal(Object.prototype.hasOwnProperty.call(reconciledMusicVocals.vocal_segments[0], 'end'), false);
+    assert.equal(reconciledMusicVocals.recognizedSong.status, 'recognized');
     assert.deepEqual(result.artifacts.dialogueData, artifacts.dialogueData);
     assert.deepEqual(result.artifacts.musicVocalsData, artifacts.musicVocalsData);
     assert.equal(result.artifacts.dialogueDataReconciled.dialogue_segments.length, 1);
     assert.equal(result.artifacts.dialogueDataReconciled.dialogue_segments[0].text, 'Move now, squad up.');
-    assert.equal(result.artifacts.dialogueV3SourceTruthReconciled.dialogue_segments[0].traits.interpersonal_stance, 'directive');
-    assert.equal(result.artifacts.musicVocalsDataReconciled.vocal_segments[0].text, 'Obey your master');
+    assert.equal(result.artifacts.musicVocalsDataReconciled.vocal_segments[0].text, 'Control your master');
+    assert.equal(ledger.contractVersion, 'ee.famous-song-reconciliation/v2');
     assert.equal(ledger.status, 'applied');
     assert.equal(ledger.decisions.removedDialogueSegments.length, 1);
-    assert.equal(ledger.decisions.lyricCorrections.length, 1);
-    assert.equal(ledger.decisions.lyricCorrections[0].lane, 'generic');
+    assert.deepEqual(ledger.decisions.lyricCorrections, []);
+    assert.deepEqual(ledger.decisions.skippedCorrections, []);
+    assert.deepEqual(ledger.decisions.musicVocalsPolicy, {
+      lyricRepairEnabled: false,
+      reason: 'transcript_text_must_remain_audio_faithful',
+      recognizedSongRole: 'identity_support_metadata_only'
+    });
+    assert.equal(ledger.decisions.musicVocalsNotes[0].decision, 'preserved_transcript_text');
   });
 
-  await t.test('runs lyric cleanup in index-only mode without timeRanges or timing overlap checks', async () => {
+  await t.test('runs dialogue lyric cleanup in index-only mode without rewriting music-vocals text', async () => {
     const artifacts = makeArtifacts({
       dialogueData: {
         dialogue_segments: [
@@ -164,9 +171,10 @@ test('reconcile-famous-song-phase1 script', async (t) => {
 
     assert.equal(reconciledDialogue.dialogue_segments.length, 1);
     assert.equal(reconciledDialogue.dialogue_segments[0].text, 'Move now, squad up.');
-    assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Obey your master');
+    assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Control your master');
     assert.equal(ledger.status, 'applied');
     assert.equal(ledger.trigger.reasons.length, 0);
+    assert.deepEqual(ledger.decisions.lyricCorrections, []);
   });
 
   await t.test('allows dialogue lyric cleanup when supporting music consensus is weak but dialogue/music-vocals evidence is strong', async () => {
@@ -198,151 +206,7 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     assert.equal(reconciledDialogue.dialogue_segments[0].text, 'Move now, squad up.');
     assert.equal(ledger.status, 'applied');
     assert.deepEqual(ledger.trigger.reasons, []);
-  });
-
-  await t.test('allows relaxed gate for repeated/re-entry lyric order when first occurrences have a strong ordered subsequence', async () => {
-    const artifacts = makeArtifacts({
-      dialogueData: {
-        dialogue_segments: [
-          { index: 0, speaker: 'VO', text: 'Obey your master', confidence: 0.92 },
-          { index: 1, speaker: 'VO', text: 'Come crawling faster', confidence: 0.92 },
-          { index: 2, speaker: 'VO', text: 'Master, master', confidence: 0.91 },
-          { index: 3, speaker: 'Captain', text: 'Move now, squad up.', confidence: 0.99 },
-          { index: 4, speaker: 'VO', text: 'Obey your master', confidence: 0.91 }
-        ],
-        summary: 'Dialogue includes lyric re-entry contamination.'
-      },
-      musicData: {
-        summary: 'Music lane is uncertain on the specific song.',
-        recognizedSong: {
-          status: 'possible',
-          confidence: 0.41,
-          multipleSongsDetected: true,
-          candidates: [
-            {
-              title: 'Master of Puppets',
-              artist: 'Metallica',
-              confidence: 0.41
-            }
-          ]
-        }
-      },
-      musicVocalsData: {
-        vocal_segments: [
-          { index: 0, text: 'Obey your master', confidence: 0.9, performer: 'Lead', delivery: 'sung' },
-          { index: 1, text: 'Master, master', confidence: 0.9, performer: 'Lead', delivery: 'sung' },
-          { index: 2, text: 'Come crawling faster', confidence: 0.9, performer: 'Lead', delivery: 'sung' },
-          { index: 3, text: "Master of puppets, I'm pulling your strings", confidence: 0.9, performer: 'Lead', delivery: 'sung' },
-          { index: 7, text: 'Master, master', confidence: 0.9, performer: 'Lead', delivery: 'sung' }
-        ],
-        summary: 'Vocal lane includes real chorus-style re-entry.',
-        recognizedSong: {
-          status: 'recognized',
-          confidence: 0.97,
-          multipleSongsDetected: false,
-          candidates: [
-            {
-              title: 'Master of Puppets',
-              artist: 'Metallica',
-              confidence: 0.97,
-              evidence: ['Matched chorus wording', 'Repeated chorus returns'],
-              matchedLyrics: [
-                'Obey your master',
-                'Master, master',
-                'Come crawling faster',
-                "Master of puppets, I'm pulling your strings"
-              ]
-            }
-          ]
-        }
-      }
-    });
-
-    await reconcileScript.run({ outputDir, artifacts });
-
-    const reconciledDialogue = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.reconciled.json'), 'utf8'));
-    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
-
-    assert.equal(reconciledDialogue.dialogue_segments.length, 1);
-    assert.equal(reconciledDialogue.dialogue_segments[0].text, 'Move now, squad up.');
-    assert.equal(ledger.status, 'applied');
-    assert.deepEqual(ledger.trigger.reasons, []);
-
-    const gate = reconcileScript._private.buildRecognitionGate(
-      artifacts.musicVocalsData,
-      artifacts.musicData,
-      artifacts.dialogueData
-    );
-    assert.equal(gate.evidence.hasStrongDialogueVocalsEvidence, true);
-    assert.equal(gate.evidence.requiresSupportingMusicConsensus, false);
-  });
-
-  await t.test('accepts supporting music consensus from a same-song possible match at the confidence floor', async () => {
-    const artifacts = makeArtifacts({
-      dialogueData: {
-        dialogue_segments: [
-          { index: 14, speaker: 'VO', text: 'Obey your master', confidence: 0.91 },
-          { index: 20, speaker: 'VO', text: 'Master, master', confidence: 0.91 },
-          { index: 30, speaker: 'Captain', text: 'Move now, squad up.', confidence: 0.99 }
-        ],
-        summary: 'Dialogue includes lyric contamination with reversed first-appearance ordering.'
-      },
-      musicData: {
-        summary: 'Music lane is fairly sure of the same song but does not claim full recognition certainty.',
-        totalDuration: 60,
-        recognizedSong: {
-          status: 'possible',
-          confidence: 0.7,
-          multipleSongsDetected: false,
-          candidates: [
-            {
-              title: 'Master of Puppets',
-              artist: 'Metallica',
-              confidence: 0.7
-            }
-          ]
-        }
-      },
-      musicVocalsData: {
-        vocal_segments: [
-          { index: 14, text: 'Obey your master', confidence: 0.93, performer: 'Lead', delivery: 'sung' },
-          { index: 20, text: 'Master, master', confidence: 0.93, performer: 'Lead', delivery: 'sung' }
-        ],
-        summary: 'Vocal lane catches the hook fragments in observed order.',
-        recognizedSong: {
-          status: 'recognized',
-          confidence: 0.93,
-          multipleSongsDetected: false,
-          candidates: [
-            {
-              title: 'Master of Puppets',
-              artist: 'Metallica',
-              confidence: 0.93,
-              evidence: ['Matched lyric fragments'],
-              matchedLyrics: ['Master, master', 'Obey your master']
-            }
-          ]
-        }
-      }
-    });
-
-    await reconcileScript.run({ outputDir, artifacts });
-
-    const reconciledDialogue = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.reconciled.json'), 'utf8'));
-    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
-    const gate = reconcileScript._private.buildRecognitionGate(
-      artifacts.musicVocalsData,
-      artifacts.musicData,
-      artifacts.dialogueData
-    );
-
-    assert.equal(gate.evidence.hasStrongDialogueVocalsEvidence, false);
-    assert.equal(gate.evidence.requiresSupportingMusicConsensus, true);
-    assert.equal(gate.evidence.hasSupportingMusicConsensus, true);
-    assert.equal(reconciledDialogue.dialogue_segments.length, 1);
-    assert.equal(reconciledDialogue.dialogue_segments[0].text, 'Move now, squad up.');
-    assert.equal(ledger.status, 'applied');
-    assert.deepEqual(ledger.trigger.reasons, []);
+    assert.deepEqual(ledger.decisions.lyricCorrections, []);
   });
 
   await t.test('still requires supporting music consensus when dialogue/music-vocals evidence is not strong enough', async () => {
@@ -376,167 +240,17 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     await reconcileScript.run({ outputDir, artifacts });
 
     const reconciledDialogue = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.reconciled.json'), 'utf8'));
+    const reconciledMusicVocals = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.reconciled.json'), 'utf8'));
     const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
 
     assert.equal(reconciledDialogue.dialogue_segments.length, 2);
     assert.equal(ledger.status, 'skipped');
     assert.equal(ledger.trigger.reasons.includes('hasSupportingMusicConsensus'), true);
+    assert.equal(reconciledMusicVocals.vocal_segments[0].text, artifacts.musicVocalsData.vocal_segments[0].text);
+    assert.deepEqual(ledger.decisions.lyricCorrections, []);
   });
 
-  await t.test('admits anchored near-miss lyric corrections around the relaxed floor', async () => {
-    const artifacts = makeArtifacts({
-      musicVocalsData: {
-        vocal_segments: [
-          { start: 10, end: 12.3, text: 'Come control your master', confidence: 0.9, performer: 'Lead', delivery: 'sung' },
-          { start: 13, end: 14.8, text: 'Control your master', confidence: 0.9, performer: 'Lead', delivery: 'sung' }
-        ],
-        summary: 'Two lyric-bearing vocal segments are present.',
-        totalDuration: 60,
-        recognizedSong: {
-          status: 'recognized',
-          confidence: 0.97,
-          multipleSongsDetected: false,
-          candidates: [
-            {
-              title: 'Master of Puppets',
-              artist: 'Metallica',
-              confidence: 0.97,
-              evidence: ['Matched chorus wording', 'Time-aligned hook'],
-              matchedLyrics: ['Obey your master', 'Twisting your mind'],
-              timeRanges: [{ start: 9.5, end: 16.5 }]
-            }
-          ]
-        }
-      }
-    });
-
-    await reconcileScript.run({ outputDir, artifacts });
-
-    const reconciledMusicVocals = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.reconciled.json'), 'utf8'));
-    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
-
-    assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Obey your master');
-    assert.equal(reconciledMusicVocals.vocal_segments[1].text, 'Obey your master');
-    assert.equal(ledger.decisions.lyricCorrections.length, 2);
-    assert.equal(ledger.decisions.lyricCorrections[0].lane, 'anchored_near_miss');
-    assert.equal(ledger.decisions.lyricCorrections[1].lane, 'generic');
-  });
-
-  await t.test('blocks unsafe fragment-shortening rewrites even when similarity is otherwise high', async () => {
-    const artifacts = makeArtifacts({
-      musicVocalsData: {
-        vocal_segments: [
-          { start: 10, end: 13.3, text: 'Twisting your mind and smashing your dreams', confidence: 0.93, performer: 'Lead', delivery: 'sung' },
-          { start: 14, end: 17.5, text: "Master of puppets, I'm pulling your strings", confidence: 0.93, performer: 'Lead', delivery: 'sung' }
-        ],
-        summary: 'Two lyric-bearing vocal segments are present.',
-        totalDuration: 60,
-        recognizedSong: {
-          status: 'recognized',
-          confidence: 0.97,
-          multipleSongsDetected: false,
-          candidates: [
-            {
-              title: 'Master of Puppets',
-              artist: 'Metallica',
-              confidence: 0.97,
-              evidence: ['Matched chorus wording', 'Time-aligned hook'],
-              matchedLyrics: ['Twisting your mind', 'Master of puppets'],
-              timeRanges: [{ start: 9.5, end: 18 }]
-            }
-          ]
-        }
-      }
-    });
-
-    await reconcileScript.run({ outputDir, artifacts });
-
-    const reconciledMusicVocals = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.reconciled.json'), 'utf8'));
-    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
-
-    assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Twisting your mind and smashing your dreams');
-    assert.equal(reconciledMusicVocals.vocal_segments[1].text, "Master of puppets, I'm pulling your strings");
-    assert.equal(ledger.decisions.lyricCorrections.length, 0);
-    assert.equal(ledger.decisions.skippedCorrections[0].reason, 'target_too_short_relative_to_source');
-    assert.equal(ledger.decisions.skippedCorrections[1].reason, 'target_too_short_relative_to_source');
-  });
-
-  await t.test('keeps weakly anchored fragments from rewriting to a different full lyric', async () => {
-    const artifacts = makeArtifacts({
-      musicVocalsData: {
-        vocal_segments: [
-          { start: 10, end: 12.3, text: 'Master, master', confidence: 0.9, performer: 'Lead', delivery: 'sung' },
-          { start: 12.5, end: 14.2, text: 'Promised only lies', confidence: 0.9, performer: 'Lead', delivery: 'sung' }
-        ],
-        summary: 'Two lyric-bearing vocal segments are present.',
-        totalDuration: 60,
-        recognizedSong: {
-          status: 'recognized',
-          confidence: 0.97,
-          multipleSongsDetected: false,
-          candidates: [
-            {
-              title: 'Master of Puppets',
-              artist: 'Metallica',
-              confidence: 0.97,
-              evidence: ['Matched chorus wording', 'Time-aligned hook'],
-              matchedLyrics: ['Obey your master', 'Twisting your mind'],
-              timeRanges: [{ start: 9.5, end: 16.5 }]
-            }
-          ]
-        }
-      }
-    });
-
-    await reconcileScript.run({ outputDir, artifacts });
-
-    const reconciledMusicVocals = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.reconciled.json'), 'utf8'));
-    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
-
-    assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Master, master');
-    assert.equal(reconciledMusicVocals.vocal_segments[1].text, 'Promised only lies');
-    assert.equal(ledger.decisions.lyricCorrections.length, 0);
-    assert.equal(ledger.decisions.skippedCorrections[0].reason, 'lyric_similarity_below_threshold');
-    assert.equal(ledger.decisions.skippedCorrections[1].reason, 'lyric_similarity_below_threshold');
-  });
-
-  await t.test('uses the real-shape archived near-miss without loosening the strong song gate', async () => {
-    const artifacts = makeArtifacts({
-      musicVocalsData: {
-        vocal_segments: [
-          { start: 10, end: 12.4, text: 'Come control your master', confidence: 0.9, performer: 'Lead', delivery: 'sung' }
-        ],
-        summary: 'One lyric-bearing vocal segment is present.',
-        totalDuration: 60,
-        recognizedSong: {
-          status: 'recognized',
-          confidence: 0.97,
-          multipleSongsDetected: false,
-          candidates: [
-            {
-              title: 'Master of Puppets',
-              artist: 'Metallica',
-              confidence: 0.97,
-              evidence: ['Matched chorus wording', 'Time-aligned hook'],
-              matchedLyrics: ['Obey your master', 'Twisting your mind', 'Master of puppets'],
-              timeRanges: [{ start: 9.5, end: 16.5 }]
-            }
-          ]
-        }
-      }
-    });
-
-    await reconcileScript.run({ outputDir, artifacts });
-
-    const reconciledMusicVocals = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.reconciled.json'), 'utf8'));
-    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
-
-    assert.equal(reconciledMusicVocals.vocal_segments[0].text, 'Obey your master');
-    assert.equal(ledger.decisions.lyricCorrections.length, 1);
-    assert.equal(ledger.decisions.lyricCorrections[0].lane, 'anchored_near_miss');
-  });
-
-  await t.test('accepts the current real-shape dialogue lyric mashup as composite contamination evidence', async () => {
+  await t.test('never rewrites the harmful Obey your master case toward canonical lyrics', async () => {
     const artifacts = makeArtifacts({
       dialogueData: {
         dialogue_segments: [
@@ -616,7 +330,10 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     assert.equal(ledger.decisions.removedDialogueSegments.length, 1);
     assert.equal(ledger.decisions.removedDialogueSegments[0].evidence.evidenceType, 'composite_anchor_bundle');
     assert.equal(ledger.decisions.removedDialogueSegments[0].evidence.anchorHits.some((entry) => entry.source === 'vocalSegment'), true);
-    assert.equal(reconciledMusicVocals.vocal_segments[3].text, "I'll be your master");
+    assert.equal(reconciledMusicVocals.vocal_segments[3].text, 'Obey your master!');
+    assert.notEqual(reconciledMusicVocals.vocal_segments[3].text, "I'll be your master");
+    assert.deepEqual(ledger.decisions.lyricCorrections, []);
+    assert.equal(ledger.decisions.musicVocalsNotes[0].reason, 'recognized_song_metadata_must_not_rewrite_music_vocals_transcript');
   });
 
   await t.test('does not overcorrect when recognized-song evidence is weak or ambiguous', async () => {
@@ -677,16 +394,6 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     assert.equal(ledger.status, 'skipped');
     assert.equal(Array.isArray(ledger.trigger.reasons), true);
     assert.notEqual(ledger.trigger.reasons.length, 0);
-  });
-
-  await t.test('exposes the anchored lane and truncation guard helpers directly', () => {
-    const decisionNearMiss = reconcileScript._private.classifyLyricCorrection('Come control your master', 'Obey your master', 0.5789473684210527);
-    const decisionTruncation = reconcileScript._private.classifyLyricCorrection('Twisting your mind and smashing your dreams', 'Twisting your mind', 0.6667);
-
-    assert.equal(decisionNearMiss.allowed, true);
-    assert.equal(decisionNearMiss.lane, 'anchored_near_miss');
-    assert.equal(reconcileScript._private.hasStrongPhraseAnchor('Come control your master', 'Obey your master'), true);
-    assert.equal(decisionTruncation.allowed, false);
-    assert.equal(decisionTruncation.reason, 'target_too_short_relative_to_source');
+    assert.deepEqual(ledger.decisions.lyricCorrections, []);
   });
 });
