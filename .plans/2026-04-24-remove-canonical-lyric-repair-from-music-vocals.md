@@ -102,9 +102,9 @@ This lane should remove lyric-text correction from famous-song reconciliation, p
 - generated report surfaces as needed
 - `.plans/2026-04-24-remove-canonical-lyric-repair-from-music-vocals.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** QA inspected the implementation plan doc, reconciler source, focused tests, current cod-test raw artifacts, regenerated reconciled cod-test artifacts, and the existing benchmark artifact report surface. Validation run: `node --test test/scripts/reconcile-famous-song-phase1.test.js` (pass, 7/7). Regenerated current cod-test reconciliation outputs from the raw phase1 artifacts with `node -e "const script=require('./server/scripts/get-context/reconcile-famous-song-phase1.cjs'); script.run({outputDir: require('path').resolve('output/cod-test')})..."`. Observed on regenerated cod-test artifacts that `output/cod-test/phase1-gather-context/famous-song-reconciliation.json` now reports `contractVersion: "ee.famous-song-reconciliation/v2"`, `decisions.lyricCorrections: []`, and `musicVocalsPolicy.lyricRepairEnabled: false`; `output/cod-test/phase1-gather-context/music-vocals-data.reconciled.json` preserves the raw `vocal_segments[*].text` exactly, including index 4 remaining `"Obey your master!"` rather than being rewritten to `"I'll be your master"`; and `recognizedSong` remains intact as identity/support metadata (`status: recognized`, candidate `Master of Puppets`, matched lyric support retained). Dialogue-side cleanup still works: the reconciled dialogue artifact removes the contamination block at index 11, and the ledger records it under `removedDialogueSegments` with `reason: "likely_lyric_contamination"`. Note: `benchmarks/fixtures/cod-test/_reports/artifact-results/musicVocalsData.json` was inspected but is stale pre-regeneration benchmark output and still shows the old harmful rewrite; QA conclusion is therefore based on the freshly regenerated runtime reconciliation artifacts, which match Derrick’s intended no-lyric-repair architecture.
 
 ---
 
@@ -117,31 +117,29 @@ This lane should remove lyric-text correction from famous-song reconciliation, p
 **Prompt:** Independently audit the final music-vocals reconciliation change. Confirm song recognition is no longer used to repair transcript text, only to provide identity/support metadata; verify harmful canonical lyric substitution behavior is removed; and ensure the resulting system still preserves useful support/diagnostic information.
 
 **Folders Created/Deleted/Modified:**
-- `docs/`
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- audit note if needed
 - `.plans/2026-04-24-remove-canonical-lyric-repair-from-music-vocals.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit passed. Inspected the required design doc (`docs/2026-04-24-music-vocals-no-lyric-repair-plan.md`), reconciler source, focused tests, current runtime artifacts, and the repo plan. Re-ran `node --test test/scripts/reconcile-famous-song-phase1.test.js` as an independent verifier (pass, 7/7). Confirmed in `server/scripts/get-context/reconcile-famous-song-phase1.cjs` that `reconcileMusicVocals()` now returns cloned `vocal_segments` unchanged, emits `corrections: []`, and records `musicVocalsPolicy` with `lyricRepairEnabled: false` and `recognizedSongRole: "identity_support_metadata_only"`. Confirmed in runtime artifacts that the harmful rewrite is gone: raw and reconciled `music-vocals-data` both keep index 4 as `"Obey your master!"`, while `output/cod-test/phase1-gather-context/famous-song-reconciliation.json` reports `contractVersion: "ee.famous-song-reconciliation/v2"`, empty `decisions.lyricCorrections`, and preserved `recognizedSong` support metadata for `Master of Puppets`. Dialogue-side cleanup still works: the reconciliation ledger records removal of the contamination block at index 11 and `dialogue-data.reconciled.json` no longer contains that segment. No separate audit note was needed because the implementation matches Derrick’s architecture choice without evidence of lyric repair being reintroduced elsewhere in this reconciliation path.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ In Progress
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Removed canonical lyric repair from famous-song reconciliation in the music-vocals lane while preserving `recognizedSong` as identity/support metadata and retaining dialogue-side lyric contamination cleanup.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-04` and `REF-05` now reflect the intended architecture: the reconciled music-vocals artifact preserves heard transcript text instead of rewriting toward canonical lyrics; the reconciliation ledger is versioned to `ee.famous-song-reconciliation/v2`, keeps `decisions.lyricCorrections` empty, and records explicit music-vocals policy metadata. `REF-07` matches that behavior in code and tests. `REF-03` remains a stale pre-change benchmark report surface and should not be treated as current runtime truth.
 
 **Commits:**
 - Pending
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** When the system can recognize a famous song, that recognition must stay in a support lane. Using recognition metadata to repair transcript wording makes the transcript less trustworthy, even when the result looks cleaner.
 
 ---
 

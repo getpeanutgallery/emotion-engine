@@ -99,9 +99,9 @@ Direction locked from Derrick’s feedback: do not spend time on a composite/wei
 - benchmark reports as produced by the run
 - `.plans/2026-04-24-dialogue-score-reconciliation-for-splits-and-merges.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed the bead, read the design/implementation/test context in `docs/2026-04-24-dialogue-split-merge-scoring-options.md`, `server/lib/benchmark-runner.cjs`, and `test/lib/benchmark-runner.test.js`, then ran two QA validations against the real cod fixture surfaces: `node --test test/lib/benchmark-runner.test.js` and a direct benchmark rerun via `runBenchmarkStage(...)` against the existing `output/cod-test` artifacts loaded from `configs/cod-test.yaml`. The focused regression tests passed (`27/27`). The regenerated cod-test report surface at `benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueData.json` now exposes the intended three-way dialogue scoring block on the real fixture: `dialogue_text_full_transcript_pct=90.7`, `dialogue_text_windowed_pct=90.7`, and `dialogue_boundary_pct=0.0`, with `truth_segment_count=20`, `output_segment_count=17`, `split_event_count=1`, `merge_event_count=3`, `missing_truth_window_count=0`, and `extra_output_window_count=0`. Concrete observed window alignments match the design intent: the early split (`truth[0] -> output[0,1]`) preserved `100%` text similarity while boundary status became `split`; the early merge (`truth[4,5] -> output[5]`) preserved `100%` text similarity while boundary status became `merge`; later windows with real content loss or wording damage dropped the local text percentages (`truth[7] -> output[7]` at `90.9%`, `truth[8,9,10] -> output[8]` at `56.3%`, `truth[11,12] -> output[9]` at `57.1%`, `truth[13] -> output[10]` at `80%`, `truth[16] -> output[13]` at `92.9%`). This means benign split/merge variance no longer crushes transcript scoring, but real line loss / wording corruption still lowers the text surfaces exactly where a human would expect. The separate `dialogue_boundary_pct=0.0` honestly surfaces that segmentation fidelity is still poor across the full fixture because every alignment is not boundary-perfect, even though transcript fidelity is much higher. On the current cod-test fixture, that result matches human judgment substantially better than the older one-to-one structural text penalty: the run still has serious dialogue-content and ordering problems in the middle/late section, but the headline dialogue-text score is no longer falsely dominated by split/merge-only structure drift.
 
 ---
 
@@ -121,19 +121,19 @@ Direction locked from Derrick’s feedback: do not spend time on a composite/wei
 - audit note if needed
 - `.plans/2026-04-24-dialogue-score-reconciliation-for-splits-and-merges.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit passed. Re-read the design doc (`docs/2026-04-24-dialogue-split-merge-scoring-options.md`), implementation (`server/lib/benchmark-runner.cjs`), focused regressions (`test/lib/benchmark-runner.test.js`), real cod artifact surface (`benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueData.json`), and this plan before auditing. Confirmed from code that the new model returns three independent dialogue percentages/diagnostics only — `dialogue_text_full_transcript_pct`, `dialogue_text_windowed_pct`, and `dialogue_boundary_pct` — plus counts/alignment metadata; there is no composite or weighted master score surface being introduced anywhere in the artifact or summary output. Confirmed from focused tests that benign split/merge drift now keeps transcript/windowed text at `100%` while boundary percentage drops and split/merge events are still exposed, and that missing lines still lower both text percentages while surfacing `missing_truth_window_count` instead of being hidden behind split/merge logic. Confirmed from the live cod report surface that this behavior holds on the real fixture: the early split (`truth[0] -> output[0,1]`) and early merge (`truth[4,5] -> output[5]`) preserve `100%` local text similarity while boundary status is `split` / `merge`; real wording corruption still lowers the right text surfaces (`truth[7] -> output[7]` at `90.9%`, `truth[13] -> output[10]` at `80%`); and the larger bad merge window (`truth[8,9,10] -> output[8]` at `56.3%`, plus `truth[11,12] -> output[9]` at `57.1%`) shows that real dialogue loss / leakage is still visible and still drags transcript honesty down rather than being masked by the split/merge-tolerant model. The cod artifact summary now honestly reads as high-but-imperfect transcript fidelity (`dialogue_text_full_transcript_pct=90.7`, `dialogue_text_windowed_pct=90.7`) with explicitly poor segmentation fidelity (`dialogue_boundary_pct=0.0`), which matches the intended reporting contract. Residual concern only: lyric leakage is demonstrated in the real cod surface and still penalized there, but there is not yet a dedicated named regression test that isolates lyric leakage as a standalone fixture the way split/merge and missing-line cases are isolated.
 
 ---
 
 ## Final Results
 
-**Status:** ⚠️ Partial
+**Status:** ✅ Complete
 
-**What We Built:** Completed the research/design phase for split/merge-tolerant dialogue scoring and implemented the new three-surface dialogue scoring block in the benchmark runner. Dialogue benchmark artifact results and markdown summaries now surface `dialogue_text_full_transcript_pct`, `dialogue_text_windowed_pct`, and `dialogue_boundary_pct` side by side, along with explicit split/merge/missing/extra window diagnostics. QA and independent audit remain pending.
+**What We Built:** Completed the research/design phase for split/merge-tolerant dialogue scoring, implemented the new three-surface dialogue scoring block in the benchmark runner, QA-verified the resulting cod-test report surfaces against the existing real fixture outputs, and independently audited the final behavior. Dialogue benchmark artifact results and markdown summaries now surface `dialogue_text_full_transcript_pct`, `dialogue_text_windowed_pct`, and `dialogue_boundary_pct` side by side, along with explicit split/merge/missing/extra window diagnostics, without introducing a composite/weighted master score.
 
-**Reference Check:** Task 1 design work validated against `REF-01`, `REF-03`, `REF-04`, and `REF-05`. Task 2 implementation validated against `REF-01`, `REF-03`, and `REF-05`. No deliberate deviations from the locked reporting constraint: no composite score, separate percentages only.
+**Reference Check:** Task 1 design work validated against `REF-01`, `REF-03`, `REF-04`, and `REF-05`. Task 2 implementation validated against `REF-01`, `REF-03`, and `REF-05`. Task 3 QA validated the live cod-test report surfaces against `REF-02`, `REF-03`, and `REF-04`. Task 4 audit revalidated the design doc, implementation, focused regressions, and live cod report surface against the locked reporting requirements. No deliberate deviations from the locked reporting constraint: no composite score, separate percentages only.
 
 **Commits:**
 - `acd0b95` - Add split-merge tolerant dialogue benchmark scoring

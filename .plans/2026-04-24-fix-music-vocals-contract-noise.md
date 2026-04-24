@@ -102,9 +102,9 @@ This lane should clean up that contract noise in the benchmark/comparator path o
 - refreshed report surfaces
 - `.plans/2026-04-24-fix-music-vocals-contract-noise.md`
 
-**Status:** ⏳ Pending
+**Status:** ⏸️ Deferred at session stop
 
-**Results:** Pending.
+**Results:** Not executed before landing the plane. Expected quick verification next session: confirm `musicVocalsData` remains `fail` with `erroredFields: 0` after the contract-noise cleanup commit and benchmark regeneration, and verify the remaining red is semantic only.
 
 ---
 
@@ -124,24 +124,24 @@ This lane should clean up that contract noise in the benchmark/comparator path o
 - audit note if needed
 - `.plans/2026-04-24-fix-music-vocals-contract-noise.md`
 
-**Status:** ⏳ Pending
+**Status:** ⏸️ Deferred at session stop
 
-**Results:** Pending.
+**Results:** Not executed before landing the plane. Expected after QA confirms the refreshed artifact surface.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ In Progress
+**Status:** ⚠️ Partial
 
-**What We Built:** Pending.
+**What We Built:** Completed the design and implementation for music-vocals contract-noise cleanup so output-only `vocal_segments[*].index` and extra note-array verbosity no longer need to drive `musicVocalsData` into `error`. The implementation landed benchmark-side in `server/lib/benchmark-runner.cjs`, refreshed the cod-test report surface, and moved `musicVocalsData` from noisy `error` toward a cleaner semantic `fail`. QA and audit are deferred to the next session.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-01` through `REF-05` were used for design/implementation. Final QA/audit verification remains pending.
 
 **Commits:**
-- Pending
+- `730629d` - Clean up music vocals benchmark contract noise
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** Treating output-only scaffold fields and extra diagnostic note strings as hard structural errors makes the benchmark less useful. Truth-subset note matching plus ignored scaffold metadata yields a much cleaner signal without hiding real lyric/support/sequence failures.
 
 ---
 

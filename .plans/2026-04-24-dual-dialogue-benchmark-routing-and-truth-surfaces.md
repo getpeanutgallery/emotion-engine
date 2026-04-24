@@ -105,9 +105,9 @@ This lane is benchmark/truth routing cleanup, not prompt work. It should define 
 - generated report surfaces as needed
 - `.plans/2026-04-24-dual-dialogue-benchmark-routing-and-truth-surfaces.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** QA verified the dual-surface routing on live `cod-test` benchmark artifacts and by regenerating the benchmark reports from the current `output/cod-test` outputs. Inspected `docs/2026-04-24-dual-dialogue-benchmark-routing-plan.md`, `benchmarks/fixtures/cod-test/benchmark.json`, `benchmarks/fixtures/cod-test/truth/dialogue-data.raw.json`, `benchmarks/fixtures/cod-test/_reports/benchmark-summary.md`, `benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueData.json`, `benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueDataRaw.json`, `server/lib/phase1-baseline-resolution.cjs`, and `server/lib/benchmark-runner.cjs`. Confirmed the manifest routes `dialogueData` to runtime surface `reconciled` with truth surface `spoken_reconciled` and report surface `primary`, while `dialogueDataRaw` routes to runtime surface `raw` with truth surface `raw_capture` and report surface `diagnostic`. Regenerated reports with a focused benchmark-runner invocation against `configs/cod-test.yaml` / `output/cod-test`; regenerated summary and artifact JSONs preserved that routing exactly. Report rendering clearly distinguishes the lanes: `dialogueData` appears first as `Phase 1 dialogue (primary spoken, reconciled) [primary spoken benchmark]`, and `dialogueDataRaw` appears second as `Phase 1 dialogue (diagnostic raw capture) [diagnostic raw capture]`. Percentage scoring blocks are preserved on both dialogue surfaces: primary reconciled lane shows `dialogue_text_full_transcript_pct=90.7%`, `dialogue_text_windowed_pct=90.7%`, `dialogue_boundary_pct=0.0%`; diagnostic raw lane shows `dialogue_text_full_transcript_pct=100.0%`, `dialogue_text_windowed_pct=100.0%`, `dialogue_boundary_pct=100.0%`. Observed runtime/truth pairing matches Derrick’s intended architecture: raw/original dialogue is benchmarked against raw/mixed truth for diagnostics, while reconciled dialogue is benchmarked against spoken-dialogue truth as the primary product-facing benchmark. Focused validation commands run: `node --test test/lib/phase1-baseline-resolution.test.js test/lib/benchmark-runner.test.js` and a direct `runBenchmarkStage(...)` invocation for `cod-test` that rewrote `benchmarks/fixtures/cod-test/_reports/*`. Note: overall cod-test benchmark status remains `error` because unrelated non-dialogue artifacts are still failing/errored, but the dialogue routing/reporting behavior itself is correct and complete.
 
 ---
 
@@ -120,31 +120,29 @@ This lane is benchmark/truth routing cleanup, not prompt work. It should define 
 **Prompt:** Independently audit the dual dialogue benchmark truth/routing model. Confirm raw dialogue capture and reconciled spoken-dialogue are benchmarked against the correct corresponding truth surfaces, reports clearly mark which is primary vs diagnostic, and the implementation reflects Derrick’s architecture choice without reintroducing prompt-side suppression assumptions.
 
 **Folders Created/Deleted/Modified:**
-- `docs/`
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- audit note if needed
 - `.plans/2026-04-24-dual-dialogue-benchmark-routing-and-truth-surfaces.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit passed. Verified the manifest now routes the same runtime artifact family (`dialogueV3SourceTruth`) onto two explicit benchmark lanes in `benchmarks/fixtures/cod-test/benchmark.json`: `dialogueData` uses `benchmarkRouting.runtimeArtifactSurface: reconciled`, `truthSurface: spoken_reconciled`, and `reportSurface: primary`, while `dialogueDataRaw` uses `runtimeArtifactSurface: raw`, `truthSurface: raw_capture`, and `reportSurface: diagnostic`. Verified the resolver/runner implementation matches that contract: `server/lib/phase1-baseline-resolution.cjs` now supports explicit `raw|reconciled|canonical` surface selection instead of only implicit canonical auto-selection, and `server/lib/benchmark-runner.cjs` validates the routing metadata, emits `comparisonBoundary.comparisonMode: dual-dialogue-surface`, orders report output by primary before diagnostic, and preserves the landed dialogue percentage scoring block generation on both surfaces. Verified the report artifacts match the intended architecture choice documented in `docs/2026-04-24-dual-dialogue-benchmark-routing-plan.md`: raw capture is allowed to contain lyric leakage diagnostically, while spoken-only cleanup remains a reconciliation/benchmark-truth concern rather than a prompt-side suppression assumption. Evidence: `benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueData.json` compares reconciled output `output/cod-test/phase1-gather-context/dialogue-v3-source-truth.reconciled.json` against `truth/dialogue-data.json`, has `comparisonBoundary.reportSurface: primary`, `comparator.resolvedOptions.posture: null`, and retains `dialogue_text_full_transcript_pct`, `dialogue_text_windowed_pct`, and `dialogue_boundary_pct`; `benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueDataRaw.json` compares raw output `output/cod-test/phase1-gather-context/dialogue-v3-source-truth.json` against `truth/dialogue-data.raw.json`, has `comparisonBoundary.reportSurface: diagnostic`, and retains the same percentage scoring block. `benchmarks/fixtures/cod-test/_reports/benchmark-summary.md` renders the reconciled lane first as `[primary spoken benchmark]` and the raw lane second as `[diagnostic raw capture]`. Regression tests in `test/lib/phase1-baseline-resolution.test.js` and `test/lib/benchmark-runner.test.js` explicitly cover raw-vs-reconciled routing, shared runtime artifact family reuse, report ordering, labels, and preservation of dialogue scoring blocks. Residual concern: the primary reconciled dialogue benchmark still legitimately fails on existing spoken-dialogue drift (36.1% accuracy / 96.6% coverage), but that is now exposed as a real content-quality gap rather than a routing-model bug. No separate audit note was needed because the implementation satisfied the audit criteria.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ In Progress
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** The benchmark now models dialogue as two intentional surfaces instead of one overloaded lane: a primary reconciled spoken-dialogue benchmark (`dialogueData`) and a diagnostic raw-capture benchmark (`dialogueDataRaw`). The manifest, resolver, runner, generated artifact reports, and summary output all agree on that split. Raw capture is benchmarked against `truth/dialogue-data.raw.json`, reconciled spoken dialogue is benchmarked against `truth/dialogue-data.json`, and both lanes preserve the landed dialogue percentage scoring blocks.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-03`, `REF-04`, and `REF-05` are satisfied directly by the shipped manifest/report/code state. `REF-06` and `REF-07` are satisfied because the implementation follows the documented architecture choice: tolerate lyric leakage in the raw capture lane for diagnostics, then judge spoken-only quality on the reconciled lane without reintroducing prompt-side suppression assumptions. `REF-01` and `REF-02` remain satisfied because the percentage/scoring blocks and split/merge-aware dialogue scoring stayed intact on both report surfaces.
 
 **Commits:**
-- Pending
+- Pending in this audit lane (implementation commit(s) were produced earlier in the coder lane and were not modified by audit)
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** When one runtime artifact family intentionally has both pre- and post-reconciliation meanings, benchmark identity must be decoupled from runtime artifact selection. Explicit surface routing plus explicit report-surface labeling prevents false failures and keeps diagnostic truth visible without polluting the primary product-facing benchmark.
 
 ---
 
