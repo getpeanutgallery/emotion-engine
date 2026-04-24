@@ -60,6 +60,18 @@
     "rate": 0.5277777777777778
   },
   "mismatchClassificationCounts": {},
+  "recommendationScoring": {
+    "recommendation_text_pct": 0,
+    "recommendation_reasoning_pct": 0,
+    "recommendation_key_findings_pct": 0,
+    "recommendation_suggestions_pct": 0,
+    "recommendation_confidence_pct": 0,
+    "key_findings_truth_count": 6,
+    "key_findings_output_count": 4,
+    "suggestions_truth_count": 11,
+    "suggestions_output_count": 8,
+    "list_alignment_strategy": "index-or-fuzzy-item"
+  },
   "failures": [
     {
       "path": "text",
@@ -633,7 +645,7 @@
       "reason": "Comparator ignored benchmark path"
     }
   ],
-  "summary": "2/19 scoreable fields passed; 12/36 truth fields were skipped.",
+  "summary": "2/19 scoreable fields passed; 12/36 truth fields were skipped. recommendation_text_pct=0.0%; recommendation_reasoning_pct=0.0%; recommendation_key_findings_pct=0.0%; recommendation_suggestions_pct=0.0%; recommendation_confidence_pct=0.0%.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

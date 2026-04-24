@@ -77,6 +77,185 @@
   "mismatchClassificationCounts": {
     "reconciled_post_processing_contract_mismatch": 184
   },
+  "dialogueScoring": {
+    "dialogue_text_full_transcript_pct": 90.7,
+    "dialogue_text_windowed_pct": 90.7,
+    "dialogue_boundary_pct": 0,
+    "truth_segment_count": 20,
+    "output_segment_count": 17,
+    "split_event_count": 1,
+    "merge_event_count": 3,
+    "missing_truth_window_count": 0,
+    "extra_output_window_count": 0,
+    "normalization_profile": "dialogue-text-v1",
+    "window_alignments": [
+      {
+        "truth_indexes": [
+          0
+        ],
+        "output_indexes": [
+          0,
+          1
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "split"
+      },
+      {
+        "truth_indexes": [
+          1
+        ],
+        "output_indexes": [
+          2
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          2
+        ],
+        "output_indexes": [
+          3
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          3
+        ],
+        "output_indexes": [
+          4
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          4,
+          5
+        ],
+        "output_indexes": [
+          5
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "merge"
+      },
+      {
+        "truth_indexes": [
+          6
+        ],
+        "output_indexes": [
+          6
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          7
+        ],
+        "output_indexes": [
+          7
+        ],
+        "text_similarity_pct": 90.9,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          8,
+          9,
+          10
+        ],
+        "output_indexes": [
+          8
+        ],
+        "text_similarity_pct": 56.3,
+        "boundary_status": "merge"
+      },
+      {
+        "truth_indexes": [
+          11,
+          12
+        ],
+        "output_indexes": [
+          9
+        ],
+        "text_similarity_pct": 57.1,
+        "boundary_status": "merge"
+      },
+      {
+        "truth_indexes": [
+          13
+        ],
+        "output_indexes": [
+          10
+        ],
+        "text_similarity_pct": 80,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          14
+        ],
+        "output_indexes": [
+          11
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          15
+        ],
+        "output_indexes": [
+          12
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          16
+        ],
+        "output_indexes": [
+          13
+        ],
+        "text_similarity_pct": 92.9,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          17
+        ],
+        "output_indexes": [
+          14
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          18
+        ],
+        "output_indexes": [
+          15
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      },
+      {
+        "truth_indexes": [
+          19
+        ],
+        "output_indexes": [
+          16
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      }
+    ]
+  },
   "failures": [
     {
       "path": "summary",
@@ -4502,7 +4681,7 @@
       "classification": "reconciled_post_processing_contract_mismatch"
     }
   ],
-  "summary": "posture=reconciled/post-processing contract; reconciledContractMismatch=184. 104/288 scoreable fields passed; 10/298 truth fields were skipped.",
+  "summary": "posture=reconciled/post-processing contract; reconciledContractMismatch=184. 104/288 scoreable fields passed; 10/298 truth fields were skipped. dialogue_text_full_transcript_pct=90.7%; dialogue_text_windowed_pct=90.7%; dialogue_boundary_pct=0.0%.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

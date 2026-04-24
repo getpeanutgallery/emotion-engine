@@ -69,6 +69,18 @@
     "rate": 0.8928571428571429
   },
   "mismatchClassificationCounts": {},
+  "musicScoring": {
+    "music_segment_timeline_pct": 35.3,
+    "music_segment_content_pct": 13.3,
+    "music_summary_pct": 0,
+    "recognized_song_identity_pct": 66.7,
+    "recognized_song_support_pct": 9.1,
+    "truth_segment_count": 5,
+    "output_segment_count": 6,
+    "missing_truth_segment_count": 0,
+    "extra_output_segment_count": 1,
+    "alignment_strategy": "time-aware-segments"
+  },
   "failures": [
     {
       "path": "segments",
@@ -968,7 +980,7 @@
       "reason": "Values differed"
     }
   ],
-  "summary": "16/50 scoreable fields passed; 0/56 truth fields were skipped.",
+  "summary": "16/50 scoreable fields passed; 0/56 truth fields were skipped. music_segment_timeline_pct=35.3%; music_segment_content_pct=13.3%; music_summary_pct=0.0%; recognized_song_identity_pct=66.7%; recognized_song_support_pct=9.1%.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

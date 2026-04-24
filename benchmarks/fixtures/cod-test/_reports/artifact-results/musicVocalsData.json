@@ -75,6 +75,124 @@
     "rate": 0.8090909090909091
   },
   "mismatchClassificationCounts": {},
+  "musicVocalsScoring": {
+    "vocal_text_full_transcript_pct": 45,
+    "vocal_text_windowed_pct": 44.9,
+    "vocal_boundary_pct": 57.1,
+    "truth_segment_count": 12,
+    "output_segment_count": 14,
+    "split_event_count": 2,
+    "merge_event_count": 0,
+    "missing_truth_window_count": 3,
+    "extra_output_window_count": 2,
+    "normalization_profile": "lyrics-text-v1",
+    "window_alignments": [
+      {
+        "truth_indexes": [
+          0,
+          1,
+          2
+        ],
+        "output_indexes": [
+          0,
+          1,
+          2
+        ],
+        "text_similarity_pct": 60,
+        "boundary_status": "many_to_many"
+      },
+      {
+        "truth_indexes": [],
+        "output_indexes": [
+          3
+        ],
+        "text_similarity_pct": 0,
+        "boundary_status": "extra_output"
+      },
+      {
+        "truth_indexes": [
+          3
+        ],
+        "output_indexes": [
+          4,
+          5,
+          6
+        ],
+        "text_similarity_pct": 50,
+        "boundary_status": "split"
+      },
+      {
+        "truth_indexes": [],
+        "output_indexes": [
+          7
+        ],
+        "text_similarity_pct": 0,
+        "boundary_status": "extra_output"
+      },
+      {
+        "truth_indexes": [
+          4
+        ],
+        "output_indexes": [
+          8,
+          9
+        ],
+        "text_similarity_pct": 56.3,
+        "boundary_status": "split"
+      },
+      {
+        "truth_indexes": [
+          5,
+          6,
+          7
+        ],
+        "output_indexes": [
+          10,
+          11,
+          12
+        ],
+        "text_similarity_pct": 59.1,
+        "boundary_status": "many_to_many"
+      },
+      {
+        "truth_indexes": [
+          8
+        ],
+        "output_indexes": [],
+        "text_similarity_pct": 0,
+        "boundary_status": "missing_truth"
+      },
+      {
+        "truth_indexes": [
+          9
+        ],
+        "output_indexes": [],
+        "text_similarity_pct": 0,
+        "boundary_status": "missing_truth"
+      },
+      {
+        "truth_indexes": [
+          10
+        ],
+        "output_indexes": [],
+        "text_similarity_pct": 0,
+        "boundary_status": "missing_truth"
+      },
+      {
+        "truth_indexes": [
+          11
+        ],
+        "output_indexes": [
+          13
+        ],
+        "text_similarity_pct": 100,
+        "boundary_status": "aligned"
+      }
+    ],
+    "vocal_attribution_pct": 55.6,
+    "recognized_song_identity_pct": 100,
+    "recognized_song_support_pct": 0
+  },
   "failures": [
     {
       "path": "vocal_segments",
@@ -1914,7 +2032,7 @@
       "reason": "Truth array missing item present in output"
     }
   ],
-  "summary": "44/89 scoreable fields passed; 1/110 truth fields were skipped.",
+  "summary": "44/89 scoreable fields passed; 1/110 truth fields were skipped. vocal_text_full_transcript_pct=45.0%; vocal_text_windowed_pct=44.9%; vocal_boundary_pct=57.1%; vocal_attribution_pct=55.6%; recognized_song_identity_pct=100.0%; recognized_song_support_pct=0.0%.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

@@ -31,6 +31,185 @@
       },
       "mismatchClassificationCounts": {
         "reconciled_post_processing_contract_mismatch": 184
+      },
+      "dialogueScoring": {
+        "dialogue_text_full_transcript_pct": 90.7,
+        "dialogue_text_windowed_pct": 90.7,
+        "dialogue_boundary_pct": 0,
+        "truth_segment_count": 20,
+        "output_segment_count": 17,
+        "split_event_count": 1,
+        "merge_event_count": 3,
+        "missing_truth_window_count": 0,
+        "extra_output_window_count": 0,
+        "normalization_profile": "dialogue-text-v1",
+        "window_alignments": [
+          {
+            "truth_indexes": [
+              0
+            ],
+            "output_indexes": [
+              0,
+              1
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "split"
+          },
+          {
+            "truth_indexes": [
+              1
+            ],
+            "output_indexes": [
+              2
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              2
+            ],
+            "output_indexes": [
+              3
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              3
+            ],
+            "output_indexes": [
+              4
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              4,
+              5
+            ],
+            "output_indexes": [
+              5
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "merge"
+          },
+          {
+            "truth_indexes": [
+              6
+            ],
+            "output_indexes": [
+              6
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              7
+            ],
+            "output_indexes": [
+              7
+            ],
+            "text_similarity_pct": 90.9,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              8,
+              9,
+              10
+            ],
+            "output_indexes": [
+              8
+            ],
+            "text_similarity_pct": 56.3,
+            "boundary_status": "merge"
+          },
+          {
+            "truth_indexes": [
+              11,
+              12
+            ],
+            "output_indexes": [
+              9
+            ],
+            "text_similarity_pct": 57.1,
+            "boundary_status": "merge"
+          },
+          {
+            "truth_indexes": [
+              13
+            ],
+            "output_indexes": [
+              10
+            ],
+            "text_similarity_pct": 80,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              14
+            ],
+            "output_indexes": [
+              11
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              15
+            ],
+            "output_indexes": [
+              12
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              16
+            ],
+            "output_indexes": [
+              13
+            ],
+            "text_similarity_pct": 92.9,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              17
+            ],
+            "output_indexes": [
+              14
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              18
+            ],
+            "output_indexes": [
+              15
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              19
+            ],
+            "output_indexes": [
+              16
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          }
+        ]
       }
     },
     {
@@ -40,7 +219,19 @@
       "coverageRate": 0.8928571428571429,
       "ignoredDifferenceCount": 5,
       "comparisonBoundary": null,
-      "mismatchClassificationCounts": {}
+      "mismatchClassificationCounts": {},
+      "musicScoring": {
+        "music_segment_timeline_pct": 35.3,
+        "music_segment_content_pct": 13.3,
+        "music_summary_pct": 0,
+        "recognized_song_identity_pct": 66.7,
+        "recognized_song_support_pct": 9.1,
+        "truth_segment_count": 5,
+        "output_segment_count": 6,
+        "missing_truth_segment_count": 0,
+        "extra_output_segment_count": 1,
+        "alignment_strategy": "time-aware-segments"
+      }
     },
     {
       "artifactKey": "musicVocalsData",
@@ -49,7 +240,125 @@
       "coverageRate": 0.8090909090909091,
       "ignoredDifferenceCount": 29,
       "comparisonBoundary": null,
-      "mismatchClassificationCounts": {}
+      "mismatchClassificationCounts": {},
+      "musicVocalsScoring": {
+        "vocal_text_full_transcript_pct": 45,
+        "vocal_text_windowed_pct": 44.9,
+        "vocal_boundary_pct": 57.1,
+        "truth_segment_count": 12,
+        "output_segment_count": 14,
+        "split_event_count": 2,
+        "merge_event_count": 0,
+        "missing_truth_window_count": 3,
+        "extra_output_window_count": 2,
+        "normalization_profile": "lyrics-text-v1",
+        "window_alignments": [
+          {
+            "truth_indexes": [
+              0,
+              1,
+              2
+            ],
+            "output_indexes": [
+              0,
+              1,
+              2
+            ],
+            "text_similarity_pct": 60,
+            "boundary_status": "many_to_many"
+          },
+          {
+            "truth_indexes": [],
+            "output_indexes": [
+              3
+            ],
+            "text_similarity_pct": 0,
+            "boundary_status": "extra_output"
+          },
+          {
+            "truth_indexes": [
+              3
+            ],
+            "output_indexes": [
+              4,
+              5,
+              6
+            ],
+            "text_similarity_pct": 50,
+            "boundary_status": "split"
+          },
+          {
+            "truth_indexes": [],
+            "output_indexes": [
+              7
+            ],
+            "text_similarity_pct": 0,
+            "boundary_status": "extra_output"
+          },
+          {
+            "truth_indexes": [
+              4
+            ],
+            "output_indexes": [
+              8,
+              9
+            ],
+            "text_similarity_pct": 56.3,
+            "boundary_status": "split"
+          },
+          {
+            "truth_indexes": [
+              5,
+              6,
+              7
+            ],
+            "output_indexes": [
+              10,
+              11,
+              12
+            ],
+            "text_similarity_pct": 59.1,
+            "boundary_status": "many_to_many"
+          },
+          {
+            "truth_indexes": [
+              8
+            ],
+            "output_indexes": [],
+            "text_similarity_pct": 0,
+            "boundary_status": "missing_truth"
+          },
+          {
+            "truth_indexes": [
+              9
+            ],
+            "output_indexes": [],
+            "text_similarity_pct": 0,
+            "boundary_status": "missing_truth"
+          },
+          {
+            "truth_indexes": [
+              10
+            ],
+            "output_indexes": [],
+            "text_similarity_pct": 0,
+            "boundary_status": "missing_truth"
+          },
+          {
+            "truth_indexes": [
+              11
+            ],
+            "output_indexes": [
+              13
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          }
+        ],
+        "vocal_attribution_pct": 55.6,
+        "recognized_song_identity_pct": 100,
+        "recognized_song_support_pct": 0
+      }
     },
     {
       "artifactKey": "recommendationData",
@@ -58,7 +367,19 @@
       "coverageRate": 0.5277777777777778,
       "ignoredDifferenceCount": 4,
       "comparisonBoundary": null,
-      "mismatchClassificationCounts": {}
+      "mismatchClassificationCounts": {},
+      "recommendationScoring": {
+        "recommendation_text_pct": 0,
+        "recommendation_reasoning_pct": 0,
+        "recommendation_key_findings_pct": 0,
+        "recommendation_suggestions_pct": 0,
+        "recommendation_confidence_pct": 0,
+        "key_findings_truth_count": 6,
+        "key_findings_output_count": 4,
+        "suggestions_truth_count": 11,
+        "suggestions_output_count": 8,
+        "list_alignment_strategy": "index-or-fuzzy-item"
+      }
     },
     {
       "artifactKey": "metricsData",
@@ -67,7 +388,16 @@
       "coverageRate": 0.42105263157894735,
       "ignoredDifferenceCount": 1,
       "comparisonBoundary": null,
-      "mismatchClassificationCounts": {}
+      "mismatchClassificationCounts": {},
+      "metricsScoring": {
+        "metrics_summary_pct": 50,
+        "metrics_implementation_status_pct": 0,
+        "metrics_averages_pct": 0,
+        "metrics_peak_moments_pct": 0,
+        "metrics_trends_pct": 0,
+        "friction_index_pct": 0,
+        "missing_metric_family_count": 0
+      }
     },
     {
       "artifactKey": "emotionalAnalysisData",
@@ -76,7 +406,20 @@
       "coverageRate": 0.03519061583577713,
       "ignoredDifferenceCount": 1,
       "comparisonBoundary": null,
-      "mismatchClassificationCounts": {}
+      "mismatchClassificationCounts": {},
+      "emotionalAnalysisScoring": {
+        "emotional_summary_pct": 16.7,
+        "chunk_emotions_pct": 0,
+        "emotional_arc_pct": 0,
+        "scroll_risk_timeline_pct": 0,
+        "critical_moments_pct": 0,
+        "emotional_implementation_status_pct": 0,
+        "missing_family_count": 0,
+        "truth_chunk_count": 28,
+        "output_chunk_count": 0,
+        "truth_critical_moment_count": 13,
+        "output_critical_moment_count": 0
+      }
     }
   ],
   "totals": {

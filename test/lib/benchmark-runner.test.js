@@ -2305,3 +2305,398 @@ test('benchmark runner - provisional dialogue posture reclassifies reconciled ou
   assert(artifact.failures.some((failure) => failure.path === 'dialogue_segments[truth=0,output=0].text' && failure.classification === 'reconciled_post_processing_contract_mismatch'));
   assert.match(artifact.summary, /posture=reconciled\/post-processing contract/);
 });
+
+function makeTempMusicFixture(rootDir, options = {}) {
+  const configDir = path.join(rootDir, 'configs');
+  const benchmarkDir = path.join(rootDir, 'benchmarks', 'fixtures', 'temp-music-fixture');
+  const outputDir = path.join(rootDir, 'output', 'temp-run');
+  const configPath = path.join(configDir, 'temp.yaml');
+  const fixturePath = path.join(benchmarkDir, 'fixture.json');
+  const benchmarkPath = path.join(benchmarkDir, 'benchmark.json');
+  const truthPath = path.join(benchmarkDir, 'truth', 'music-data.json');
+  const outputPath = path.join(outputDir, 'phase1-gather-context', 'music-data.json');
+
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.writeFileSync(configPath, 'name: temp music benchmark config\n', 'utf8');
+
+  writeJson(fixturePath, {
+    contractVersion: FIXTURE_CONTRACT_VERSION,
+    fixtureId: 'temp-music-fixture',
+    asset: { repoPath: 'examples/videos/emotion-tests/cod.mp4' },
+    config: { repoPath: 'configs/temp.yaml' },
+    benchmark: { entryPath: 'benchmark.json' },
+    notes: ['temp music benchmark fixture']
+  });
+
+  writeJson(benchmarkPath, {
+    contractVersion: MANIFEST_CONTRACT_VERSION,
+    fixtureId: 'temp-music-fixture',
+    fixture: { path: 'fixture.json' },
+    reports: { outputDir: '_reports' },
+    artifacts: [
+      {
+        artifactKey: 'musicData',
+        label: 'Music',
+        phase: 'phase1-gather-context',
+        script: 'get-music',
+        output: { path: 'phase1-gather-context/music-data.json' },
+        truth: { path: 'truth/music-data.json' },
+        comparator: {
+          kind: 'json-structured',
+          profile: 'music-default',
+          options: {
+            timingToleranceSeconds: 2,
+            numericTolerance: 0.1,
+            unknownSentinels: ['unknown', 'ambiguous']
+          }
+        },
+        required: true
+      }
+    ]
+  });
+
+  const truthPayload = options.truthPayload || {
+    segments: [
+      { start: 0, end: 10, type: 'music', description: 'Aggressive action cue.', mood: 'tense', intensity: 9 },
+      { start: 10, end: 20, type: 'music', description: 'Hook refrain arrives.', mood: 'energetic', intensity: 8 }
+    ],
+    summary: 'Two music segments with one recognizable hook.',
+    hasMusic: true,
+    recognizedSong: {
+      status: 'recognized',
+      confidence: 0.95,
+      candidates: [
+        {
+          title: 'Master of Puppets',
+          artist: 'Metallica',
+          confidence: 0.95,
+          evidence: ['Distinctive hook is audible.'],
+          matchedLyrics: ['Master, master'],
+          timeRanges: [{ start: 12, end: 14 }]
+        }
+      ],
+      primaryEvidence: 'Literal hook support is present.',
+      multipleSongsDetected: false
+    },
+    recognitionNotes: ['Dialogue is excluded from music recognition evidence.']
+  };
+
+  const outputPayload = options.outputPayload || truthPayload;
+  writeJson(truthPath, truthPayload);
+  writeJson(outputPath, outputPayload);
+  return { configPath, outputDir };
+}
+
+function makeTempDialogueMusicLeakageFixture(rootDir) {
+  const configDir = path.join(rootDir, 'configs');
+  const benchmarkDir = path.join(rootDir, 'benchmarks', 'fixtures', 'temp-dialogue-music-leakage-fixture');
+  const outputDir = path.join(rootDir, 'output', 'temp-run');
+  const configPath = path.join(configDir, 'temp.yaml');
+  const fixturePath = path.join(benchmarkDir, 'fixture.json');
+  const benchmarkPath = path.join(benchmarkDir, 'benchmark.json');
+
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.writeFileSync(configPath, 'name: temp dialogue music leakage benchmark config\n', 'utf8');
+
+  writeJson(fixturePath, {
+    contractVersion: FIXTURE_CONTRACT_VERSION,
+    fixtureId: 'temp-dialogue-music-leakage-fixture',
+    asset: { repoPath: 'examples/videos/emotion-tests/cod.mp4' },
+    config: { repoPath: 'configs/temp.yaml' },
+    benchmark: { entryPath: 'benchmark.json' },
+    notes: ['temp dialogue/music-vocals lyric leakage regression fixture']
+  });
+
+  writeJson(benchmarkPath, {
+    contractVersion: MANIFEST_CONTRACT_VERSION,
+    fixtureId: 'temp-dialogue-music-leakage-fixture',
+    fixture: { path: 'fixture.json' },
+    reports: { outputDir: '_reports' },
+    artifacts: [
+      {
+        artifactKey: 'dialogueData',
+        label: 'Dialogue',
+        phase: 'phase1-gather-context',
+        script: 'get-dialogue',
+        output: { path: 'phase1-gather-context/dialogue-data.json' },
+        truth: { path: 'truth/dialogue-data.json' },
+        comparator: {
+          kind: 'json-structured',
+          profile: 'dialogue-default',
+          options: { timingToleranceSeconds: 2, unknownSentinels: ['unknown', 'ambiguous'] }
+        },
+        required: true
+      },
+      {
+        artifactKey: 'musicVocalsData',
+        label: 'Music vocals',
+        phase: 'phase1-gather-context',
+        script: 'get-music-vocals',
+        output: { path: 'phase1-gather-context/music-vocals-data.json' },
+        truth: { path: 'truth/music-vocals-data.json' },
+        comparator: {
+          kind: 'json-structured',
+          profile: 'music-vocals-default',
+          options: { timingToleranceSeconds: 2, unknownSentinels: ['unknown', 'ambiguous'] }
+        },
+        required: true
+      }
+    ]
+  });
+
+  writeJson(path.join(benchmarkDir, 'truth', 'dialogue-data.json'), {
+    dialogue_segments: [
+      { start: 0, end: 2, speaker: 'Speaker 1', text: 'Wake up, Mason.', confidence: 0.98 },
+      { start: 4, end: 6, speaker: 'Speaker 2', text: 'This is not a victory.', confidence: 0.98 }
+    ],
+    summary: 'Spoken dialogue only.',
+    totalDuration: 30,
+    handoffContext: null
+  });
+
+  writeJson(path.join(benchmarkDir, 'truth', 'music-vocals-data.json'), {
+    vocal_segments: [
+      { start: 20, end: 22, text: 'Master, master', confidence: 0.95, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' },
+      { start: 22, end: 24, text: 'Obey your master', confidence: 0.95, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' }
+    ],
+    summary: 'Sung vocals only.',
+    hasVocals: true,
+    totalDuration: 30,
+    recognizedSong: {
+      status: 'recognized',
+      confidence: 0.95,
+      candidates: [
+        {
+          title: 'Master of Puppets',
+          artist: 'Metallica',
+          confidence: 0.95,
+          evidence: ['Literal lyric fragments are audible.'],
+          matchedLyrics: ['Master, master', 'Obey your master'],
+          timeRanges: [{ start: 20, end: 24 }]
+        }
+      ],
+      primaryEvidence: 'Literal lyric evidence grounds one specific song.',
+      multipleSongsDetected: false
+    },
+    recognitionNotes: ['Dialogue is excluded from lyric evidence.']
+  });
+
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.json'), {
+    dialogue_segments: [
+      { start: 0, end: 2, speaker: 'Speaker 1', text: 'Wake up, Mason.', confidence: 0.98 },
+      { start: 4, end: 6, speaker: 'Speaker 2', text: 'This is not a victory.', confidence: 0.98 },
+      { start: 20, end: 24, speaker: 'Speaker 3', text: 'Master, master. Obey your master.', confidence: 0.98 }
+    ],
+    summary: 'Dialogue contaminated by sung lyrics.',
+    totalDuration: 30,
+    handoffContext: null
+  });
+
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.json'), {
+    vocal_segments: [
+      { start: 20, end: 22, text: 'Master, master', confidence: 0.95, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' },
+      { start: 22, end: 24, text: 'Obey your master', confidence: 0.95, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' }
+    ],
+    summary: 'Sung vocals only.',
+    hasVocals: true,
+    totalDuration: 30,
+    recognizedSong: {
+      status: 'recognized',
+      confidence: 0.95,
+      candidates: [
+        {
+          title: 'Master of Puppets',
+          artist: 'Metallica',
+          confidence: 0.95,
+          evidence: ['Literal lyric fragments are audible.'],
+          matchedLyrics: ['Master, master', 'Obey your master'],
+          timeRanges: [{ start: 20, end: 24 }]
+        }
+      ],
+      primaryEvidence: 'Literal lyric evidence grounds one specific song.',
+      multipleSongsDetected: false
+    },
+    recognitionNotes: ['Dialogue is excluded from lyric evidence.']
+  });
+
+  return { configPath, outputDir };
+}
+
+test('benchmark runner - music scoring surfaces split timeline/content/summary/song percentages with no composite score', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-music-scoring');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempMusicFixture(rootDir, {
+    outputPayload: {
+      segments: [
+        { start: 0, end: 10, type: 'music', description: 'Aggressive action cue.', mood: 'tense', intensity: 9 },
+        { start: 14, end: 25, type: 'music', description: 'Wrong hook summary.', mood: 'brooding', intensity: 5 },
+        { start: 26, end: 28, type: 'music', description: 'Extra segment.', mood: 'tense', intensity: 7 }
+      ],
+      summary: 'Wrong top-level summary.',
+      hasMusic: true,
+      recognizedSong: {
+        status: 'recognized',
+        confidence: 0.95,
+        candidates: [
+          {
+            title: 'Master of Puppets',
+            artist: 'Metallica',
+            confidence: 0.95,
+            evidence: ['Bad support prose.'],
+            matchedLyrics: ['Master, master'],
+            timeRanges: [{ start: 16, end: 18 }]
+          }
+        ],
+        primaryEvidence: 'Wrong support detail.',
+        multipleSongsDetected: false
+      },
+      recognitionNotes: ['Wrong note.']
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: { name: 'Temp benchmark music scoring', benchmark: { enabled: true, path: '../benchmarks/fixtures/temp-music-fixture/benchmark.json' } },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert(artifact.musicScoring);
+  assert(artifact.musicScoring.music_segment_timeline_pct < 100);
+  assert(artifact.musicScoring.music_segment_content_pct < 100);
+  assert(artifact.musicScoring.music_summary_pct < 100);
+  assert.strictEqual(artifact.musicScoring.recognized_song_identity_pct, 100);
+  assert(artifact.musicScoring.recognized_song_support_pct < 100);
+  const summaryMd = fs.readFileSync(path.join(result.reportDir, 'benchmark-summary.md'), 'utf8');
+  assert.match(summaryMd, /music_segment_timeline_pct=/);
+  assert.doesNotMatch(summaryMd, /master score|composite score/i);
+});
+
+test('benchmark runner - recommendation scoring surfaces expose narrative percentages', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-recommendation-scoring');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempRecommendationFixture(rootDir);
+  const result = runBenchmarkStage({
+    config: { name: 'Temp benchmark recommendation scoring', benchmark: { enabled: true, path: '../benchmarks/fixtures/temp-recommendation-fixture/benchmark.json' } },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert(artifact.recommendationScoring);
+  assert.strictEqual(artifact.recommendationScoring.recommendation_text_pct, 100);
+  assert.strictEqual(artifact.recommendationScoring.recommendation_reasoning_pct, 100);
+  assert.strictEqual(artifact.recommendationScoring.recommendation_key_findings_pct, 100);
+  assert.strictEqual(artifact.recommendationScoring.recommendation_suggestions_pct, 100);
+  assert.strictEqual(artifact.recommendationScoring.recommendation_confidence_pct, 100);
+});
+
+test('benchmark runner - metrics scoring surfaces expose family percentages and missing family counts', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-metrics-scoring');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempMetricsFixture(rootDir, {
+    outputPayload: {
+      generatedAt: '2026-03-27T12:34:56.000Z',
+      pipelineVersion: '1.0',
+      summary: { totalChunks: 28, failedChunks: 0, totalSeconds: 140, videoDuration: 140.05 },
+      implementationStatus: { state: 'computed', dataSource: 'derived-from-phase2.chunkAnalysis' },
+      frictionIndex: 100
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: { name: 'Temp benchmark metrics scoring', benchmark: { enabled: true, path: '../benchmarks/fixtures/temp-metrics-fixture/benchmark.json' } },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert(artifact.metricsScoring);
+  assert.strictEqual(artifact.metricsScoring.metrics_summary_pct, 100);
+  assert.strictEqual(artifact.metricsScoring.metrics_implementation_status_pct, 100);
+  assert.strictEqual(artifact.metricsScoring.metrics_averages_pct, 0);
+  assert.strictEqual(artifact.metricsScoring.metrics_peak_moments_pct, 0);
+  assert.strictEqual(artifact.metricsScoring.metrics_trends_pct, 0);
+  assert.strictEqual(artifact.metricsScoring.friction_index_pct, 100);
+  assert.strictEqual(artifact.metricsScoring.missing_metric_family_count, 3);
+});
+
+test('benchmark runner - emotional analysis scoring surfaces expose family percentages and counts', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-emotional-scoring');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempEmotionalAnalysisFixture(rootDir);
+  const result = runBenchmarkStage({
+    config: { name: 'Temp benchmark emotional scoring', benchmark: { enabled: true, path: '../benchmarks/fixtures/temp-emotional-fixture/benchmark.json' } },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert(artifact.emotionalAnalysisScoring);
+  assert.strictEqual(artifact.emotionalAnalysisScoring.emotional_summary_pct, 100);
+  assert.strictEqual(artifact.emotionalAnalysisScoring.chunk_emotions_pct, 100);
+  assert(Number.isFinite(artifact.emotionalAnalysisScoring.emotional_arc_pct));
+  assert(Number.isFinite(artifact.emotionalAnalysisScoring.scroll_risk_timeline_pct));
+  assert(Number.isFinite(artifact.emotionalAnalysisScoring.critical_moments_pct));
+  assert.strictEqual(artifact.emotionalAnalysisScoring.emotional_implementation_status_pct, 100);
+});
+
+test('benchmark runner - chunk analysis scoring surfaces expose percentage families', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-chunk-scoring');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempChunkAnalysisFixture(rootDir);
+  const result = runBenchmarkStage({
+    config: { name: 'Temp benchmark chunk scoring', benchmark: { enabled: true, path: '../benchmarks/fixtures/temp-chunk-analysis-fixture/benchmark.json' } },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert(artifact.chunkAnalysisScoring);
+  assert.strictEqual(artifact.chunkAnalysisScoring.chunk_timeline_pct, 100);
+  assert.strictEqual(artifact.chunkAnalysisScoring.chunk_summary_pct, 100);
+  assert.strictEqual(artifact.chunkAnalysisScoring.chunk_emotion_scores_pct, 100);
+  assert.strictEqual(artifact.chunkAnalysisScoring.chunk_dominant_emotion_pct, 100);
+  assert.strictEqual(artifact.chunkAnalysisScoring.chunk_persona_contract_pct, 100);
+});
+
+test('benchmark runner - lyric leakage regression fails dialogue while preserving music-vocals scoring surfaces', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-lyric-leakage-regression');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempDialogueMusicLeakageFixture(rootDir);
+  const result = runBenchmarkStage({
+    config: { name: 'Temp benchmark lyric leakage regression', benchmark: { enabled: true, path: '../benchmarks/fixtures/temp-dialogue-music-leakage-fixture/benchmark.json' } },
+    configPath,
+    outputDir
+  });
+
+  const dialogueArtifact = result.artifactResults.find((artifact) => artifact.artifactKey === 'dialogueData');
+  const musicVocalsArtifact = result.artifactResults.find((artifact) => artifact.artifactKey === 'musicVocalsData');
+  assert.strictEqual(result.status, 'fail');
+  assert.strictEqual(dialogueArtifact.status, 'fail');
+  assert.strictEqual(musicVocalsArtifact.status, 'pass');
+  assert(dialogueArtifact.dialogueScoring.dialogue_text_full_transcript_pct < 100);
+  assert(dialogueArtifact.dialogueScoring.dialogue_text_windowed_pct < 100);
+  assert.strictEqual(dialogueArtifact.dialogueScoring.truth_segment_count, 2);
+  assert.strictEqual(dialogueArtifact.dialogueScoring.output_segment_count, 3);
+  assert(dialogueArtifact.dialogueScoring.dialogue_boundary_pct < 100);
+  assert(dialogueArtifact.failures.some((failure) => failure.path.includes('dialogue_segments[output=')) || dialogueArtifact.errors.some((error) => error.path.includes('dialogue_segments[output=')));
+  assert(musicVocalsArtifact.musicVocalsScoring);
+  assert.strictEqual(musicVocalsArtifact.musicVocalsScoring.vocal_text_full_transcript_pct, 100);
+  const summaryMd = fs.readFileSync(path.join(result.reportDir, 'benchmark-summary.md'), 'utf8');
+  assert.match(summaryMd, /dialogue_text_full_transcript_pct=/);
+  assert.match(summaryMd, /vocal_text_full_transcript_pct=/);
+  assert.doesNotMatch(summaryMd, /master score|composite score/i);
+});

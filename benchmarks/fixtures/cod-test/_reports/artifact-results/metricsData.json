@@ -57,6 +57,15 @@
     "rate": 0.42105263157894735
   },
   "mismatchClassificationCounts": {},
+  "metricsScoring": {
+    "metrics_summary_pct": 50,
+    "metrics_implementation_status_pct": 0,
+    "metrics_averages_pct": 0,
+    "metrics_peak_moments_pct": 0,
+    "metrics_trends_pct": 0,
+    "friction_index_pct": 0,
+    "missing_metric_family_count": 0
+  },
   "failures": [
     {
       "path": "summary.totalChunks",
@@ -405,7 +414,7 @@
       }
     }
   ],
-  "summary": "3/8 scoreable fields passed; 1/19 truth fields were skipped.",
+  "summary": "3/8 scoreable fields passed; 1/19 truth fields were skipped. metrics_summary_pct=50.0%; metrics_implementation_status_pct=0.0%; metrics_averages_pct=0.0%; metrics_peak_moments_pct=0.0%; metrics_trends_pct=0.0%; friction_index_pct=0.0%.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

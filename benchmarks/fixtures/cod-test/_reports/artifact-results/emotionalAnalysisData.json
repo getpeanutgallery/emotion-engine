@@ -60,6 +60,19 @@
     "rate": 0.03519061583577713
   },
   "mismatchClassificationCounts": {},
+  "emotionalAnalysisScoring": {
+    "emotional_summary_pct": 16.7,
+    "chunk_emotions_pct": 0,
+    "emotional_arc_pct": 0,
+    "scroll_risk_timeline_pct": 0,
+    "critical_moments_pct": 0,
+    "emotional_implementation_status_pct": 0,
+    "missing_family_count": 0,
+    "truth_chunk_count": 28,
+    "output_chunk_count": 0,
+    "truth_critical_moment_count": 13,
+    "output_critical_moment_count": 0
+  },
   "failures": [
     {
       "path": "implementationStatus.state",
@@ -9206,7 +9219,7 @@
       "reason": "Output array missing item present in truth"
     }
   ],
-  "summary": "2/12 scoreable fields passed; 1/341 truth fields were skipped.",
+  "summary": "2/12 scoreable fields passed; 1/341 truth fields were skipped. emotional_summary_pct=16.7%; chunk_emotions_pct=0.0%; emotional_arc_pct=0.0%; scroll_risk_timeline_pct=0.0%; critical_moments_pct=0.0%; emotional_implementation_status_pct=0.0%.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

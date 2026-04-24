@@ -304,9 +304,14 @@ function getDialogueSegmentOrderValue(segment, fallbackIndex) {
   return fallbackIndex;
 }
 
-function buildDialogueScoring(truthData, outputData) {
-  const truthSegments = Array.isArray(truthData?.dialogue_segments) ? truthData.dialogue_segments : [];
-  const outputSegments = Array.isArray(outputData?.dialogue_segments) ? outputData.dialogue_segments : [];
+function buildAlignedTextBoundaryScoring({
+  truthSegments,
+  outputSegments,
+  normalizationProfile,
+  transcriptFieldName,
+  windowedFieldName,
+  boundaryFieldName
+}) {
   const truthSegmentTokens = truthSegments.map((segment) => tokenizeDialogueTextForScoring(getDialogueSegmentText(segment)));
   const outputSegmentTokens = outputSegments.map((segment) => tokenizeDialogueTextForScoring(getDialogueSegmentText(segment)));
   const truthTranscriptTokens = truthSegmentTokens.flat();
@@ -455,7 +460,7 @@ function buildDialogueScoring(truthData, outputData) {
   }
 
   const totalBoundaryEvents = matchedBoundaryEvents + missingBoundaryEvents + extraBoundaryEvents;
-  const dialogueBoundaryPct = totalBoundaryEvents > 0 ? (matchedBoundaryEvents / totalBoundaryEvents) * 100 : 100;
+  const boundaryPct = totalBoundaryEvents > 0 ? (matchedBoundaryEvents / totalBoundaryEvents) * 100 : 100;
 
   const windowAlignments = windowSolution.steps.map((step) => {
     if (step.kind === 'missing_truth') {
@@ -494,18 +499,284 @@ function buildDialogueScoring(truthData, outputData) {
   });
 
   return {
-    dialogue_text_full_transcript_pct: roundPct(fullTranscript.similarity * 100),
-    dialogue_text_windowed_pct: totalWindowWeight > 0 ? roundPct((weightedSimilarity / totalWindowWeight) * 100) : 0,
-    dialogue_boundary_pct: roundPct(dialogueBoundaryPct),
+    [transcriptFieldName]: roundPct(fullTranscript.similarity * 100),
+    [windowedFieldName]: totalWindowWeight > 0 ? roundPct((weightedSimilarity / totalWindowWeight) * 100) : 0,
+    [boundaryFieldName]: roundPct(boundaryPct),
     truth_segment_count: truthSegments.length,
     output_segment_count: outputSegments.length,
     split_event_count: splitEventCount,
     merge_event_count: mergeEventCount,
     missing_truth_window_count: missingTruthWindowCount,
     extra_output_window_count: extraOutputWindowCount,
-    normalization_profile: 'dialogue-text-v1',
+    normalization_profile: normalizationProfile,
     window_alignments: windowAlignments
   };
+}
+
+function buildDialogueScoring(truthData, outputData) {
+  return buildAlignedTextBoundaryScoring({
+    truthSegments: Array.isArray(truthData?.dialogue_segments) ? truthData.dialogue_segments : [],
+    outputSegments: Array.isArray(outputData?.dialogue_segments) ? outputData.dialogue_segments : [],
+    normalizationProfile: 'dialogue-text-v1',
+    transcriptFieldName: 'dialogue_text_full_transcript_pct',
+    windowedFieldName: 'dialogue_text_windowed_pct',
+    boundaryFieldName: 'dialogue_boundary_pct'
+  });
+}
+
+function buildMusicVocalsScoring(truthData, outputData, fieldResults) {
+  const scoring = buildAlignedTextBoundaryScoring({
+    truthSegments: Array.isArray(truthData?.vocal_segments) ? truthData.vocal_segments : [],
+    outputSegments: Array.isArray(outputData?.vocal_segments) ? outputData.vocal_segments : [],
+    normalizationProfile: 'lyrics-text-v1',
+    transcriptFieldName: 'vocal_text_full_transcript_pct',
+    windowedFieldName: 'vocal_text_windowed_pct',
+    boundaryFieldName: 'vocal_boundary_pct'
+  });
+
+  return {
+    ...scoring,
+    vocal_attribution_pct: scoreFieldResults(fieldResults, (result) => /^vocal_segments\[truth=\d+,output=\d+\]\.(performer|performer_id|delivery)$/.test(result.path)),
+    recognized_song_identity_pct: scoreFieldResults(fieldResults, (result) => /^recognizedSong\.(status|confidence|multipleSongsDetected)$/.test(result.path)
+      || /^recognizedSong\.candidates\[\d+\]\.(title|artist|confidence)$/.test(result.path)),
+    recognized_song_support_pct: scoreFieldResults(fieldResults, (result) => /^recognizedSong\.candidates\[\d+\]\.(evidence|matchedLyrics|timeRanges)(\[.*\]|\..*)?$/.test(result.path)
+      || /^recognizedSong\.(primaryEvidence|ambiguity)$/.test(result.path)
+      || /^recognitionNotes\[\d+\]$/.test(result.path)
+      || /^qualityNotes\[\d+\]$/.test(result.path))
+  };
+}
+
+function normalizeTopLevelCount(value) {
+  return Array.isArray(value) ? value.length : 0;
+}
+
+function countMissingTopLevelFamilies(outputData, familyKeys) {
+  return familyKeys.filter((key) => !Object.prototype.hasOwnProperty.call(outputData || {}, key)).length;
+}
+
+function scoreFieldResults(fieldResults, predicate) {
+  const relevant = fieldResults.filter((result) => predicate(result) && (result.status === 'pass' || result.status === 'fail' || result.status === 'error'));
+  if (relevant.length === 0) {
+    return 0;
+  }
+  const passed = relevant.filter((result) => result.status === 'pass').length;
+  return roundPct((passed / relevant.length) * 100);
+}
+
+function buildArtifactScoring(comparatorProfile, truthData, outputData, fieldResults) {
+  if (comparatorProfile === 'dialogue-default') {
+    return { dialogueScoring: buildDialogueScoring(truthData, outputData) };
+  }
+
+  if (comparatorProfile === 'music-default') {
+    return {
+      musicScoring: {
+        music_segment_timeline_pct: scoreFieldResults(fieldResults, (result) => result.path === 'segments'
+          || /^segments\[\d+\]$/.test(result.path)
+          || /^segments\[\d+\]\.(start|end|type)$/.test(result.path)),
+        music_segment_content_pct: scoreFieldResults(fieldResults, (result) => /^segments\[\d+\]\.(description|mood|intensity)$/.test(result.path)),
+        music_summary_pct: scoreFieldResults(fieldResults, (result) => result.path === 'summary'),
+        recognized_song_identity_pct: scoreFieldResults(fieldResults, (result) => /^recognizedSong\.(status|confidence|multipleSongsDetected)$/.test(result.path)
+          || /^recognizedSong\.candidates\[\d+\]\.(title|artist|confidence)$/.test(result.path)),
+        recognized_song_support_pct: scoreFieldResults(fieldResults, (result) => /^recognizedSong\.candidates\[\d+\]\.(evidence|matchedLyrics|timeRanges)(\[.*\]|\..*)?$/.test(result.path)
+          || /^recognizedSong\.(primaryEvidence|ambiguity)$/.test(result.path)
+          || /^recognitionNotes\[\d+\]$/.test(result.path)),
+        truth_segment_count: normalizeTopLevelCount(truthData?.segments),
+        output_segment_count: normalizeTopLevelCount(outputData?.segments),
+        missing_truth_segment_count: Math.max(0, normalizeTopLevelCount(truthData?.segments) - normalizeTopLevelCount(outputData?.segments)),
+        extra_output_segment_count: Math.max(0, normalizeTopLevelCount(outputData?.segments) - normalizeTopLevelCount(truthData?.segments)),
+        alignment_strategy: 'time-aware-segments'
+      }
+    };
+  }
+
+  if (comparatorProfile === 'music-vocals-default') {
+    return { musicVocalsScoring: buildMusicVocalsScoring(truthData, outputData, fieldResults) };
+  }
+
+  if (comparatorProfile === 'recommendation-default') {
+    return {
+      recommendationScoring: {
+        recommendation_text_pct: scoreFieldResults(fieldResults, (result) => result.path === 'text'),
+        recommendation_reasoning_pct: scoreFieldResults(fieldResults, (result) => result.path === 'reasoning'),
+        recommendation_key_findings_pct: scoreFieldResults(fieldResults, (result) => result.path === 'keyFindings' || /^keyFindings\[\d+\]$/.test(result.path)),
+        recommendation_suggestions_pct: scoreFieldResults(fieldResults, (result) => result.path === 'suggestions' || /^suggestions\[\d+\]$/.test(result.path)),
+        recommendation_confidence_pct: scoreFieldResults(fieldResults, (result) => result.path === 'confidence'),
+        key_findings_truth_count: normalizeTopLevelCount(truthData?.keyFindings),
+        key_findings_output_count: normalizeTopLevelCount(outputData?.keyFindings),
+        suggestions_truth_count: normalizeTopLevelCount(truthData?.suggestions),
+        suggestions_output_count: normalizeTopLevelCount(outputData?.suggestions),
+        list_alignment_strategy: 'index-or-fuzzy-item'
+      }
+    };
+  }
+
+  if (comparatorProfile === 'metrics-default') {
+    return {
+      metricsScoring: {
+        metrics_summary_pct: scoreFieldResults(fieldResults, (result) => result.path.startsWith('summary.')),
+        metrics_implementation_status_pct: scoreFieldResults(fieldResults, (result) => result.path.startsWith('implementationStatus.')),
+        metrics_averages_pct: scoreFieldResults(fieldResults, (result) => result.path.startsWith('averages.')),
+        metrics_peak_moments_pct: scoreFieldResults(fieldResults, (result) => result.path.startsWith('peakMoments.')),
+        metrics_trends_pct: scoreFieldResults(fieldResults, (result) => result.path.startsWith('trends.')),
+        friction_index_pct: scoreFieldResults(fieldResults, (result) => result.path === 'frictionIndex'),
+        missing_metric_family_count: countMissingTopLevelFamilies(outputData, ['averages', 'peakMoments', 'trends'])
+      }
+    };
+  }
+
+  if (comparatorProfile === 'emotional-analysis-default') {
+    return {
+      emotionalAnalysisScoring: {
+        emotional_summary_pct: scoreFieldResults(fieldResults, (result) => result.path.startsWith('summary.')),
+        chunk_emotions_pct: scoreFieldResults(fieldResults, (result) => result.path === 'chunkAnalysis'
+          || /^chunkAnalysis\[[^\]]+\](\..+)?$/.test(result.path)),
+        emotional_arc_pct: scoreFieldResults(fieldResults, (result) => result.path.startsWith('emotionalArc.')),
+        scroll_risk_timeline_pct: scoreFieldResults(fieldResults, (result) => result.path === 'scrollRiskTimeline'
+          || /^scrollRiskTimeline\[\d+\](\..+)?$/.test(result.path)),
+        critical_moments_pct: scoreFieldResults(fieldResults, (result) => result.path === 'criticalMoments'
+          || /^criticalMoments\[\d+\](\..+)?$/.test(result.path)),
+        emotional_implementation_status_pct: scoreFieldResults(fieldResults, (result) => result.path.startsWith('implementationStatus.')),
+        missing_family_count: countMissingTopLevelFamilies(outputData, ['chunkAnalysis', 'emotionalArc', 'scrollRiskTimeline', 'criticalMoments']),
+        truth_chunk_count: normalizeTopLevelCount(truthData?.chunkAnalysis),
+        output_chunk_count: normalizeTopLevelCount(outputData?.chunkAnalysis),
+        truth_critical_moment_count: normalizeTopLevelCount(truthData?.criticalMoments),
+        output_critical_moment_count: normalizeTopLevelCount(outputData?.criticalMoments)
+      }
+    };
+  }
+
+  if (comparatorProfile === 'chunk-analysis-default') {
+    return {
+      chunkAnalysisScoring: {
+        chunk_timeline_pct: scoreFieldResults(fieldResults, (result) => result.path === 'chunks'
+          || /^chunks\[[^\]]+\]\.(startTime|endTime|status)$/.test(result.path)),
+        chunk_summary_pct: scoreFieldResults(fieldResults, (result) => /^chunks\[[^\]]+\]\.summary$/.test(result.path)),
+        chunk_emotion_scores_pct: scoreFieldResults(fieldResults, (result) => /^chunks\[[^\]]+\]\.emotions\.[^.]+\.score$/.test(result.path)),
+        chunk_dominant_emotion_pct: scoreFieldResults(fieldResults, (result) => /^chunks\[[^\]]+\]\.dominant_emotion$/.test(result.path)),
+        chunk_persona_contract_pct: scoreFieldResults(fieldResults, (result) => result.path.startsWith('persona.') || /^chunks\[[^\]]+\]\.persona\./.test(result.path)),
+        truth_chunk_count: normalizeTopLevelCount(truthData?.chunks),
+        output_chunk_count: normalizeTopLevelCount(outputData?.chunks),
+        alignment_strategy: 'chunkIndex+splitIndex'
+      }
+    };
+  }
+
+  return {};
+}
+
+function formatPct(value) {
+  return value === null || value === undefined ? 'n/a' : `${Number(value).toFixed(1)}%`;
+}
+
+function appendArtifactSpecificMarkdown(lines, artifact) {
+  if (artifact.dialogueScoring) {
+    lines.push(`  - dialogue_text_full_transcript_pct=${formatPct(artifact.dialogueScoring.dialogue_text_full_transcript_pct)}`);
+    lines.push(`  - dialogue_text_windowed_pct=${formatPct(artifact.dialogueScoring.dialogue_text_windowed_pct)}`);
+    lines.push(`  - dialogue_boundary_pct=${formatPct(artifact.dialogueScoring.dialogue_boundary_pct)}`);
+    lines.push(`  - splits=${artifact.dialogueScoring.split_event_count}, merges=${artifact.dialogueScoring.merge_event_count}, missingTruthWindows=${artifact.dialogueScoring.missing_truth_window_count}, extraOutputWindows=${artifact.dialogueScoring.extra_output_window_count}`);
+  }
+  if (artifact.musicScoring) {
+    lines.push(`  - music_segment_timeline_pct=${formatPct(artifact.musicScoring.music_segment_timeline_pct)}`);
+    lines.push(`  - music_segment_content_pct=${formatPct(artifact.musicScoring.music_segment_content_pct)}`);
+    lines.push(`  - music_summary_pct=${formatPct(artifact.musicScoring.music_summary_pct)}`);
+    lines.push(`  - recognized_song_identity_pct=${formatPct(artifact.musicScoring.recognized_song_identity_pct)}`);
+    lines.push(`  - recognized_song_support_pct=${formatPct(artifact.musicScoring.recognized_song_support_pct)}`);
+  }
+  if (artifact.musicVocalsScoring) {
+    lines.push(`  - vocal_text_full_transcript_pct=${formatPct(artifact.musicVocalsScoring.vocal_text_full_transcript_pct)}`);
+    lines.push(`  - vocal_text_windowed_pct=${formatPct(artifact.musicVocalsScoring.vocal_text_windowed_pct)}`);
+    lines.push(`  - vocal_boundary_pct=${formatPct(artifact.musicVocalsScoring.vocal_boundary_pct)}`);
+    lines.push(`  - vocal_attribution_pct=${formatPct(artifact.musicVocalsScoring.vocal_attribution_pct)}`);
+    lines.push(`  - recognized_song_identity_pct=${formatPct(artifact.musicVocalsScoring.recognized_song_identity_pct)}`);
+    lines.push(`  - recognized_song_support_pct=${formatPct(artifact.musicVocalsScoring.recognized_song_support_pct)}`);
+    lines.push(`  - splits=${artifact.musicVocalsScoring.split_event_count}, merges=${artifact.musicVocalsScoring.merge_event_count}, missingTruthWindows=${artifact.musicVocalsScoring.missing_truth_window_count}, extraOutputWindows=${artifact.musicVocalsScoring.extra_output_window_count}`);
+  }
+  if (artifact.recommendationScoring) {
+    lines.push(`  - recommendation_text_pct=${formatPct(artifact.recommendationScoring.recommendation_text_pct)}`);
+    lines.push(`  - recommendation_reasoning_pct=${formatPct(artifact.recommendationScoring.recommendation_reasoning_pct)}`);
+    lines.push(`  - recommendation_key_findings_pct=${formatPct(artifact.recommendationScoring.recommendation_key_findings_pct)}`);
+    lines.push(`  - recommendation_suggestions_pct=${formatPct(artifact.recommendationScoring.recommendation_suggestions_pct)}`);
+    lines.push(`  - recommendation_confidence_pct=${formatPct(artifact.recommendationScoring.recommendation_confidence_pct)}`);
+  }
+  if (artifact.metricsScoring) {
+    lines.push(`  - metrics_summary_pct=${formatPct(artifact.metricsScoring.metrics_summary_pct)}`);
+    lines.push(`  - metrics_implementation_status_pct=${formatPct(artifact.metricsScoring.metrics_implementation_status_pct)}`);
+    lines.push(`  - metrics_averages_pct=${formatPct(artifact.metricsScoring.metrics_averages_pct)}`);
+    lines.push(`  - metrics_peak_moments_pct=${formatPct(artifact.metricsScoring.metrics_peak_moments_pct)}`);
+    lines.push(`  - metrics_trends_pct=${formatPct(artifact.metricsScoring.metrics_trends_pct)}`);
+    lines.push(`  - friction_index_pct=${formatPct(artifact.metricsScoring.friction_index_pct)}`);
+  }
+  if (artifact.emotionalAnalysisScoring) {
+    lines.push(`  - emotional_summary_pct=${formatPct(artifact.emotionalAnalysisScoring.emotional_summary_pct)}`);
+    lines.push(`  - chunk_emotions_pct=${formatPct(artifact.emotionalAnalysisScoring.chunk_emotions_pct)}`);
+    lines.push(`  - emotional_arc_pct=${formatPct(artifact.emotionalAnalysisScoring.emotional_arc_pct)}`);
+    lines.push(`  - scroll_risk_timeline_pct=${formatPct(artifact.emotionalAnalysisScoring.scroll_risk_timeline_pct)}`);
+    lines.push(`  - critical_moments_pct=${formatPct(artifact.emotionalAnalysisScoring.critical_moments_pct)}`);
+    lines.push(`  - emotional_implementation_status_pct=${formatPct(artifact.emotionalAnalysisScoring.emotional_implementation_status_pct)}`);
+  }
+  if (artifact.chunkAnalysisScoring) {
+    lines.push(`  - chunk_timeline_pct=${formatPct(artifact.chunkAnalysisScoring.chunk_timeline_pct)}`);
+    lines.push(`  - chunk_summary_pct=${formatPct(artifact.chunkAnalysisScoring.chunk_summary_pct)}`);
+    lines.push(`  - chunk_emotion_scores_pct=${formatPct(artifact.chunkAnalysisScoring.chunk_emotion_scores_pct)}`);
+    lines.push(`  - chunk_dominant_emotion_pct=${formatPct(artifact.chunkAnalysisScoring.chunk_dominant_emotion_pct)}`);
+    lines.push(`  - chunk_persona_contract_pct=${formatPct(artifact.chunkAnalysisScoring.chunk_persona_contract_pct)}`);
+  }
+}
+
+function buildArtifactSummaryBits(artifactScoring) {
+  const bits = [];
+  if (artifactScoring.dialogueScoring) {
+    bits.push(`dialogue_text_full_transcript_pct=${formatPct(artifactScoring.dialogueScoring.dialogue_text_full_transcript_pct)}`);
+    bits.push(`dialogue_text_windowed_pct=${formatPct(artifactScoring.dialogueScoring.dialogue_text_windowed_pct)}`);
+    bits.push(`dialogue_boundary_pct=${formatPct(artifactScoring.dialogueScoring.dialogue_boundary_pct)}`);
+  }
+  if (artifactScoring.musicScoring) {
+    bits.push(`music_segment_timeline_pct=${formatPct(artifactScoring.musicScoring.music_segment_timeline_pct)}`);
+    bits.push(`music_segment_content_pct=${formatPct(artifactScoring.musicScoring.music_segment_content_pct)}`);
+    bits.push(`music_summary_pct=${formatPct(artifactScoring.musicScoring.music_summary_pct)}`);
+    bits.push(`recognized_song_identity_pct=${formatPct(artifactScoring.musicScoring.recognized_song_identity_pct)}`);
+    bits.push(`recognized_song_support_pct=${formatPct(artifactScoring.musicScoring.recognized_song_support_pct)}`);
+  }
+  if (artifactScoring.musicVocalsScoring) {
+    bits.push(`vocal_text_full_transcript_pct=${formatPct(artifactScoring.musicVocalsScoring.vocal_text_full_transcript_pct)}`);
+    bits.push(`vocal_text_windowed_pct=${formatPct(artifactScoring.musicVocalsScoring.vocal_text_windowed_pct)}`);
+    bits.push(`vocal_boundary_pct=${formatPct(artifactScoring.musicVocalsScoring.vocal_boundary_pct)}`);
+    bits.push(`vocal_attribution_pct=${formatPct(artifactScoring.musicVocalsScoring.vocal_attribution_pct)}`);
+    bits.push(`recognized_song_identity_pct=${formatPct(artifactScoring.musicVocalsScoring.recognized_song_identity_pct)}`);
+    bits.push(`recognized_song_support_pct=${formatPct(artifactScoring.musicVocalsScoring.recognized_song_support_pct)}`);
+  }
+  if (artifactScoring.recommendationScoring) {
+    bits.push(`recommendation_text_pct=${formatPct(artifactScoring.recommendationScoring.recommendation_text_pct)}`);
+    bits.push(`recommendation_reasoning_pct=${formatPct(artifactScoring.recommendationScoring.recommendation_reasoning_pct)}`);
+    bits.push(`recommendation_key_findings_pct=${formatPct(artifactScoring.recommendationScoring.recommendation_key_findings_pct)}`);
+    bits.push(`recommendation_suggestions_pct=${formatPct(artifactScoring.recommendationScoring.recommendation_suggestions_pct)}`);
+    bits.push(`recommendation_confidence_pct=${formatPct(artifactScoring.recommendationScoring.recommendation_confidence_pct)}`);
+  }
+  if (artifactScoring.metricsScoring) {
+    bits.push(`metrics_summary_pct=${formatPct(artifactScoring.metricsScoring.metrics_summary_pct)}`);
+    bits.push(`metrics_implementation_status_pct=${formatPct(artifactScoring.metricsScoring.metrics_implementation_status_pct)}`);
+    bits.push(`metrics_averages_pct=${formatPct(artifactScoring.metricsScoring.metrics_averages_pct)}`);
+    bits.push(`metrics_peak_moments_pct=${formatPct(artifactScoring.metricsScoring.metrics_peak_moments_pct)}`);
+    bits.push(`metrics_trends_pct=${formatPct(artifactScoring.metricsScoring.metrics_trends_pct)}`);
+    bits.push(`friction_index_pct=${formatPct(artifactScoring.metricsScoring.friction_index_pct)}`);
+  }
+  if (artifactScoring.emotionalAnalysisScoring) {
+    bits.push(`emotional_summary_pct=${formatPct(artifactScoring.emotionalAnalysisScoring.emotional_summary_pct)}`);
+    bits.push(`chunk_emotions_pct=${formatPct(artifactScoring.emotionalAnalysisScoring.chunk_emotions_pct)}`);
+    bits.push(`emotional_arc_pct=${formatPct(artifactScoring.emotionalAnalysisScoring.emotional_arc_pct)}`);
+    bits.push(`scroll_risk_timeline_pct=${formatPct(artifactScoring.emotionalAnalysisScoring.scroll_risk_timeline_pct)}`);
+    bits.push(`critical_moments_pct=${formatPct(artifactScoring.emotionalAnalysisScoring.critical_moments_pct)}`);
+    bits.push(`emotional_implementation_status_pct=${formatPct(artifactScoring.emotionalAnalysisScoring.emotional_implementation_status_pct)}`);
+  }
+  if (artifactScoring.chunkAnalysisScoring) {
+    bits.push(`chunk_timeline_pct=${formatPct(artifactScoring.chunkAnalysisScoring.chunk_timeline_pct)}`);
+    bits.push(`chunk_summary_pct=${formatPct(artifactScoring.chunkAnalysisScoring.chunk_summary_pct)}`);
+    bits.push(`chunk_emotion_scores_pct=${formatPct(artifactScoring.chunkAnalysisScoring.chunk_emotion_scores_pct)}`);
+    bits.push(`chunk_dominant_emotion_pct=${formatPct(artifactScoring.chunkAnalysisScoring.chunk_dominant_emotion_pct)}`);
+    bits.push(`chunk_persona_contract_pct=${formatPct(artifactScoring.chunkAnalysisScoring.chunk_persona_contract_pct)}`);
+  }
+  return bits;
 }
 
 function alignItemsByScore(truthItems, outputItems, scoreCandidate) {
@@ -2032,19 +2303,11 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
   }
 
   const summaryPrefix = postureSummaryBits.length > 0 ? `${postureSummaryBits.join('; ')}. ` : '';
-  const dialogueScoring = comparator.profile === 'dialogue-default'
-    ? buildDialogueScoring(truthData, outputData)
-    : null;
-  const dialogueSummaryBits = dialogueScoring
-    ? [
-        `dialogue_text_full_transcript_pct=${dialogueScoring.dialogue_text_full_transcript_pct?.toFixed(1) ?? 'n/a'}%`,
-        `dialogue_text_windowed_pct=${dialogueScoring.dialogue_text_windowed_pct?.toFixed(1) ?? 'n/a'}%`,
-        `dialogue_boundary_pct=${dialogueScoring.dialogue_boundary_pct?.toFixed(1) ?? 'n/a'}%`
-      ]
-    : [];
+  const artifactScoring = buildArtifactScoring(comparator.profile, truthData, outputData, fieldResults);
+  const artifactSummaryBits = buildArtifactSummaryBits(artifactScoring);
   const summary = hardError
-    ? `${summaryPrefix}${counts.passedFields}/${counts.scoreableFields} scoreable fields passed; ${counts.skippedFields}/${counts.totalTruthFields} truth fields were skipped.${dialogueSummaryBits.length ? ` ${dialogueSummaryBits.join('; ')}.` : ''}`
-    : `${summaryPrefix}${counts.passedFields}/${counts.scoreableFields} scoreable fields passed; ${counts.skippedFields}/${counts.totalTruthFields} truth fields were skipped.${dialogueSummaryBits.length ? ` ${dialogueSummaryBits.join('; ')}.` : ''}`;
+    ? `${summaryPrefix}${counts.passedFields}/${counts.scoreableFields} scoreable fields passed; ${counts.skippedFields}/${counts.totalTruthFields} truth fields were skipped.${artifactSummaryBits.length ? ` ${artifactSummaryBits.join('; ')}.` : ''}`
+    : `${summaryPrefix}${counts.passedFields}/${counts.scoreableFields} scoreable fields passed; ${counts.skippedFields}/${counts.totalTruthFields} truth fields were skipped.${artifactSummaryBits.length ? ` ${artifactSummaryBits.join('; ')}.` : ''}`;
 
   return {
     artifactKey: artifact.artifactKey,
@@ -2074,7 +2337,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
       rate: coverageRate
     },
     mismatchClassificationCounts,
-    dialogueScoring,
+    ...artifactScoring,
     failures,
     skips,
     ignoredDifferences,
@@ -2124,12 +2387,7 @@ function buildMarkdownSummary(summary) {
     if (artifact.mismatchClassificationCounts?.reconciled_post_processing_contract_mismatch) classificationBits.push(`reconciledContractMismatch=${artifact.mismatchClassificationCounts.reconciled_post_processing_contract_mismatch}`);
     const classificationSuffix = classificationBits.length > 0 ? `, ${classificationBits.join(', ')}` : '';
     lines.push(`- **${artifact.artifactKey}** — ${artifact.status}; accuracy=${artifact.accuracyRate === null ? 'n/a' : (artifact.accuracyRate * 100).toFixed(1) + '%'}, coverage=${artifact.coverageRate === null ? 'n/a' : (artifact.coverageRate * 100).toFixed(1) + '%'}, ignoredDiffs=${artifact.ignoredDifferenceCount}${classificationSuffix}`);
-    if (artifact.dialogueScoring) {
-      lines.push(`  - dialogue_text_full_transcript_pct=${artifact.dialogueScoring.dialogue_text_full_transcript_pct?.toFixed(1) ?? 'n/a'}%`);
-      lines.push(`  - dialogue_text_windowed_pct=${artifact.dialogueScoring.dialogue_text_windowed_pct?.toFixed(1) ?? 'n/a'}%`);
-      lines.push(`  - dialogue_boundary_pct=${artifact.dialogueScoring.dialogue_boundary_pct?.toFixed(1) ?? 'n/a'}%`);
-      lines.push(`  - splits=${artifact.dialogueScoring.split_event_count}, merges=${artifact.dialogueScoring.merge_event_count}, missingTruthWindows=${artifact.dialogueScoring.missing_truth_window_count}, extraOutputWindows=${artifact.dialogueScoring.extra_output_window_count}`);
-    }
+    appendArtifactSpecificMarkdown(lines, artifact);
   }
   lines.push('');
   lines.push(summary.summary);
@@ -2274,7 +2532,13 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
       ignoredDifferenceCount: result.counts.ignoredDifferenceFields,
       comparisonBoundary: result.comparisonBoundary,
       mismatchClassificationCounts: result.mismatchClassificationCounts,
-      dialogueScoring: result.dialogueScoring
+      dialogueScoring: result.dialogueScoring,
+      musicScoring: result.musicScoring,
+      musicVocalsScoring: result.musicVocalsScoring,
+      recommendationScoring: result.recommendationScoring,
+      metricsScoring: result.metricsScoring,
+      emotionalAnalysisScoring: result.emotionalAnalysisScoring,
+      chunkAnalysisScoring: result.chunkAnalysisScoring
     })),
     totals,
     accuracy: {
