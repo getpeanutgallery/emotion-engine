@@ -228,6 +228,286 @@ function scoreTokenOverlap(leftValue, rightValue) {
   return (2 * overlapCount) / (leftTokens.size + rightTokens.size);
 }
 
+
+function normalizeDialogueTextForScoring(value) {
+  if (typeof value !== 'string') {
+    return '';
+  }
+
+  return normalizeWhitespace(
+    value
+      .normalize('NFKD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[’‘]/g, "'")
+      .replace(/[“”]/g, '"')
+      .toLowerCase()
+      .replace(/-/g, '')
+      .replace(/[^\p{L}\p{N}\s]+/gu, ' ')
+  );
+}
+
+function tokenizeDialogueTextForScoring(value) {
+  return normalizeDialogueTextForScoring(value).split(' ').filter(Boolean);
+}
+
+function levenshteinDistance(leftTokens, rightTokens) {
+  const rows = leftTokens.length + 1;
+  const cols = rightTokens.length + 1;
+  const dp = Array.from({ length: rows }, () => Array(cols).fill(0));
+
+  for (let i = 0; i < rows; i += 1) dp[i][0] = i;
+  for (let j = 0; j < cols; j += 1) dp[0][j] = j;
+
+  for (let i = 1; i < rows; i += 1) {
+    for (let j = 1; j < cols; j += 1) {
+      const cost = leftTokens[i - 1] === rightTokens[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + cost
+      );
+    }
+  }
+
+  return dp[leftTokens.length][rightTokens.length];
+}
+
+function scoreTokenSequenceSimilarity(leftTokens, rightTokens) {
+  if (leftTokens.length === 0 && rightTokens.length === 0) {
+    return { similarity: 1, editDistance: 0, tokenCount: 0 };
+  }
+
+  const tokenCount = Math.max(leftTokens.length, rightTokens.length);
+  const editDistance = levenshteinDistance(leftTokens, rightTokens);
+  const similarity = tokenCount > 0 ? Math.max(0, 1 - (editDistance / tokenCount)) : 1;
+  return { similarity, editDistance, tokenCount };
+}
+
+function roundPct(value) {
+  if (!Number.isFinite(value)) {
+    return null;
+  }
+  return Math.round(value * 10) / 10;
+}
+
+function getDialogueSegmentText(segment) {
+  return typeof segment?.text === 'string' ? segment.text : '';
+}
+
+function getDialogueSegmentOrderValue(segment, fallbackIndex) {
+  if (Number.isFinite(segment?.start)) {
+    return Number(segment.start);
+  }
+  if (Number.isFinite(segment?.index)) {
+    return Number(segment.index);
+  }
+  return fallbackIndex;
+}
+
+function buildDialogueScoring(truthData, outputData) {
+  const truthSegments = Array.isArray(truthData?.dialogue_segments) ? truthData.dialogue_segments : [];
+  const outputSegments = Array.isArray(outputData?.dialogue_segments) ? outputData.dialogue_segments : [];
+  const truthSegmentTokens = truthSegments.map((segment) => tokenizeDialogueTextForScoring(getDialogueSegmentText(segment)));
+  const outputSegmentTokens = outputSegments.map((segment) => tokenizeDialogueTextForScoring(getDialogueSegmentText(segment)));
+  const truthTranscriptTokens = truthSegmentTokens.flat();
+  const outputTranscriptTokens = outputSegmentTokens.flat();
+  const fullTranscript = scoreTokenSequenceSimilarity(truthTranscriptTokens, outputTranscriptTokens);
+
+  const maxWindowSegments = 3;
+  const minimumWindowSimilarity = 0.5;
+  const searchWindow = Array.from({ length: truthSegments.length + 1 }, () => Array(outputSegments.length + 1).fill(null));
+
+  function truthSkipPenalty(index) {
+    return truthSegmentTokens[index]?.length || 1;
+  }
+
+  function outputSkipPenalty(index) {
+    return outputSegmentTokens[index]?.length || 1;
+  }
+
+  function windowScore(startTruth, truthLen, startOutput, outputLen) {
+    const truthTokens = truthSegmentTokens.slice(startTruth, startTruth + truthLen).flat();
+    const outputTokens = outputSegmentTokens.slice(startOutput, startOutput + outputLen).flat();
+    const similarityResult = scoreTokenSequenceSimilarity(truthTokens, outputTokens);
+    if (similarityResult.similarity < minimumWindowSimilarity) {
+      return null;
+    }
+
+    const truthWeight = truthTokens.length || truthLen || 1;
+    const outputWeight = outputTokens.length || outputLen || 1;
+    const weight = Math.max(truthWeight, outputWeight, 1);
+    const sizePenalty = (truthLen + outputLen - 2) * 0.05;
+    const score = (similarityResult.similarity * weight) - sizePenalty;
+    const truthOrderValue = getDialogueSegmentOrderValue(truthSegments[startTruth], startTruth);
+    const outputOrderValue = getDialogueSegmentOrderValue(outputSegments[startOutput], startOutput);
+
+    return {
+      score,
+      similarity: similarityResult.similarity,
+      editDistance: similarityResult.editDistance,
+      tokenCount: similarityResult.tokenCount,
+      truthTokens,
+      outputTokens,
+      truthLen,
+      outputLen,
+      orderDelta: Math.abs(truthOrderValue - outputOrderValue)
+    };
+  }
+
+  function solve(i, j) {
+    if (searchWindow[i][j]) {
+      return searchWindow[i][j];
+    }
+
+    if (i >= truthSegments.length && j >= outputSegments.length) {
+      const terminal = { score: 0, steps: [] };
+      searchWindow[i][j] = terminal;
+      return terminal;
+    }
+
+    let best = { score: Number.NEGATIVE_INFINITY, steps: [] };
+
+    if (i < truthSegments.length) {
+      const next = solve(i + 1, j);
+      const candidate = {
+        score: next.score - truthSkipPenalty(i),
+        steps: [{ kind: 'missing_truth', truthIndexes: [i], outputIndexes: [] }, ...next.steps]
+      };
+      if (candidate.score > best.score) {
+        best = candidate;
+      }
+    }
+
+    if (j < outputSegments.length) {
+      const next = solve(i, j + 1);
+      const candidate = {
+        score: next.score - outputSkipPenalty(j),
+        steps: [{ kind: 'extra_output', truthIndexes: [], outputIndexes: [j] }, ...next.steps]
+      };
+      if (candidate.score > best.score) {
+        best = candidate;
+      }
+    }
+
+    for (let truthLen = 1; truthLen <= maxWindowSegments && i + truthLen <= truthSegments.length; truthLen += 1) {
+      for (let outputLen = 1; outputLen <= maxWindowSegments && j + outputLen <= outputSegments.length; outputLen += 1) {
+        const candidateWindow = windowScore(i, truthLen, j, outputLen);
+        if (!candidateWindow) {
+          continue;
+        }
+        const next = solve(i + truthLen, j + outputLen);
+        const candidate = {
+          score: next.score + candidateWindow.score,
+          steps: [{
+            kind: 'matched_window',
+            truthIndexes: Array.from({ length: truthLen }, (_, offset) => i + offset),
+            outputIndexes: Array.from({ length: outputLen }, (_, offset) => j + offset),
+            similarity: candidateWindow.similarity,
+            editDistance: candidateWindow.editDistance,
+            tokenCount: candidateWindow.tokenCount,
+            orderDelta: candidateWindow.orderDelta
+          }, ...next.steps]
+        };
+        if (candidate.score > best.score) {
+          best = candidate;
+        }
+      }
+    }
+
+    searchWindow[i][j] = best;
+    return best;
+  }
+
+  const windowSolution = solve(0, 0);
+  const matchedWindows = windowSolution.steps.filter((step) => step.kind === 'matched_window');
+  const windowWeights = windowSolution.steps.map((step) => {
+    if (step.kind === 'matched_window') {
+      return Math.max(step.tokenCount, 1);
+    }
+    if (step.kind === 'missing_truth') {
+      return step.truthIndexes.reduce((sum, index) => sum + (truthSegmentTokens[index]?.length || 1), 0);
+    }
+    return step.outputIndexes.reduce((sum, index) => sum + (outputSegmentTokens[index]?.length || 1), 0);
+  });
+  const totalWindowWeight = windowWeights.reduce((sum, value) => sum + value, 0);
+  const weightedSimilarity = windowSolution.steps.reduce((sum, step, index) => {
+    const weight = windowWeights[index] || 1;
+    if (step.kind !== 'matched_window') {
+      return sum;
+    }
+    return sum + (step.similarity * weight);
+  }, 0);
+  const splitEventCount = matchedWindows.filter((step) => step.truthIndexes.length === 1 && step.outputIndexes.length > 1).length;
+  const mergeEventCount = matchedWindows.filter((step) => step.truthIndexes.length > 1 && step.outputIndexes.length === 1).length;
+  const missingTruthWindowCount = windowSolution.steps.filter((step) => step.kind === 'missing_truth').length;
+  const extraOutputWindowCount = windowSolution.steps.filter((step) => step.kind === 'extra_output').length;
+
+  let matchedBoundaryEvents = 0;
+  let missingBoundaryEvents = 0;
+  let extraBoundaryEvents = 0;
+
+  for (const step of matchedWindows) {
+    const truthBoundaries = Math.max(0, step.truthIndexes.length - 1);
+    const outputBoundaries = Math.max(0, step.outputIndexes.length - 1);
+    matchedBoundaryEvents += Math.min(truthBoundaries, outputBoundaries);
+    missingBoundaryEvents += Math.max(0, truthBoundaries - outputBoundaries);
+    extraBoundaryEvents += Math.max(0, outputBoundaries - truthBoundaries);
+  }
+
+  const totalBoundaryEvents = matchedBoundaryEvents + missingBoundaryEvents + extraBoundaryEvents;
+  const dialogueBoundaryPct = totalBoundaryEvents > 0 ? (matchedBoundaryEvents / totalBoundaryEvents) * 100 : 100;
+
+  const windowAlignments = windowSolution.steps.map((step) => {
+    if (step.kind === 'missing_truth') {
+      return {
+        truth_indexes: step.truthIndexes,
+        output_indexes: [],
+        text_similarity_pct: 0,
+        boundary_status: 'missing_truth'
+      };
+    }
+
+    if (step.kind === 'extra_output') {
+      return {
+        truth_indexes: [],
+        output_indexes: step.outputIndexes,
+        text_similarity_pct: 0,
+        boundary_status: 'extra_output'
+      };
+    }
+
+    let boundaryStatus = 'aligned';
+    if (step.truthIndexes.length === 1 && step.outputIndexes.length > 1) {
+      boundaryStatus = 'split';
+    } else if (step.truthIndexes.length > 1 && step.outputIndexes.length === 1) {
+      boundaryStatus = 'merge';
+    } else if (step.truthIndexes.length > 1 && step.outputIndexes.length > 1) {
+      boundaryStatus = 'many_to_many';
+    }
+
+    return {
+      truth_indexes: step.truthIndexes,
+      output_indexes: step.outputIndexes,
+      text_similarity_pct: roundPct(step.similarity * 100),
+      boundary_status: boundaryStatus
+    };
+  });
+
+  return {
+    dialogue_text_full_transcript_pct: roundPct(fullTranscript.similarity * 100),
+    dialogue_text_windowed_pct: totalWindowWeight > 0 ? roundPct((weightedSimilarity / totalWindowWeight) * 100) : 0,
+    dialogue_boundary_pct: roundPct(dialogueBoundaryPct),
+    truth_segment_count: truthSegments.length,
+    output_segment_count: outputSegments.length,
+    split_event_count: splitEventCount,
+    merge_event_count: mergeEventCount,
+    missing_truth_window_count: missingTruthWindowCount,
+    extra_output_window_count: extraOutputWindowCount,
+    normalization_profile: 'dialogue-text-v1',
+    window_alignments: windowAlignments
+  };
+}
+
 function alignItemsByScore(truthItems, outputItems, scoreCandidate) {
   const candidates = [];
   for (let truthIndex = 0; truthIndex < truthItems.length; truthIndex += 1) {
@@ -1752,9 +2032,19 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
   }
 
   const summaryPrefix = postureSummaryBits.length > 0 ? `${postureSummaryBits.join('; ')}. ` : '';
+  const dialogueScoring = comparator.profile === 'dialogue-default'
+    ? buildDialogueScoring(truthData, outputData)
+    : null;
+  const dialogueSummaryBits = dialogueScoring
+    ? [
+        `dialogue_text_full_transcript_pct=${dialogueScoring.dialogue_text_full_transcript_pct?.toFixed(1) ?? 'n/a'}%`,
+        `dialogue_text_windowed_pct=${dialogueScoring.dialogue_text_windowed_pct?.toFixed(1) ?? 'n/a'}%`,
+        `dialogue_boundary_pct=${dialogueScoring.dialogue_boundary_pct?.toFixed(1) ?? 'n/a'}%`
+      ]
+    : [];
   const summary = hardError
-    ? `${summaryPrefix}${counts.passedFields}/${counts.scoreableFields} scoreable fields passed; ${counts.skippedFields}/${counts.totalTruthFields} truth fields were skipped.`
-    : `${summaryPrefix}${counts.passedFields}/${counts.scoreableFields} scoreable fields passed; ${counts.skippedFields}/${counts.totalTruthFields} truth fields were skipped.`;
+    ? `${summaryPrefix}${counts.passedFields}/${counts.scoreableFields} scoreable fields passed; ${counts.skippedFields}/${counts.totalTruthFields} truth fields were skipped.${dialogueSummaryBits.length ? ` ${dialogueSummaryBits.join('; ')}.` : ''}`
+    : `${summaryPrefix}${counts.passedFields}/${counts.scoreableFields} scoreable fields passed; ${counts.skippedFields}/${counts.totalTruthFields} truth fields were skipped.${dialogueSummaryBits.length ? ` ${dialogueSummaryBits.join('; ')}.` : ''}`;
 
   return {
     artifactKey: artifact.artifactKey,
@@ -1784,6 +2074,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
       rate: coverageRate
     },
     mismatchClassificationCounts,
+    dialogueScoring,
     failures,
     skips,
     ignoredDifferences,
@@ -1833,6 +2124,12 @@ function buildMarkdownSummary(summary) {
     if (artifact.mismatchClassificationCounts?.reconciled_post_processing_contract_mismatch) classificationBits.push(`reconciledContractMismatch=${artifact.mismatchClassificationCounts.reconciled_post_processing_contract_mismatch}`);
     const classificationSuffix = classificationBits.length > 0 ? `, ${classificationBits.join(', ')}` : '';
     lines.push(`- **${artifact.artifactKey}** — ${artifact.status}; accuracy=${artifact.accuracyRate === null ? 'n/a' : (artifact.accuracyRate * 100).toFixed(1) + '%'}, coverage=${artifact.coverageRate === null ? 'n/a' : (artifact.coverageRate * 100).toFixed(1) + '%'}, ignoredDiffs=${artifact.ignoredDifferenceCount}${classificationSuffix}`);
+    if (artifact.dialogueScoring) {
+      lines.push(`  - dialogue_text_full_transcript_pct=${artifact.dialogueScoring.dialogue_text_full_transcript_pct?.toFixed(1) ?? 'n/a'}%`);
+      lines.push(`  - dialogue_text_windowed_pct=${artifact.dialogueScoring.dialogue_text_windowed_pct?.toFixed(1) ?? 'n/a'}%`);
+      lines.push(`  - dialogue_boundary_pct=${artifact.dialogueScoring.dialogue_boundary_pct?.toFixed(1) ?? 'n/a'}%`);
+      lines.push(`  - splits=${artifact.dialogueScoring.split_event_count}, merges=${artifact.dialogueScoring.merge_event_count}, missingTruthWindows=${artifact.dialogueScoring.missing_truth_window_count}, extraOutputWindows=${artifact.dialogueScoring.extra_output_window_count}`);
+    }
   }
   lines.push('');
   lines.push(summary.summary);
@@ -1976,7 +2273,8 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
       coverageRate: result.coverage.rate,
       ignoredDifferenceCount: result.counts.ignoredDifferenceFields,
       comparisonBoundary: result.comparisonBoundary,
-      mismatchClassificationCounts: result.mismatchClassificationCounts
+      mismatchClassificationCounts: result.mismatchClassificationCounts,
+      dialogueScoring: result.dialogueScoring
     })),
     totals,
     accuracy: {

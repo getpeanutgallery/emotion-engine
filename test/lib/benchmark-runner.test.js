@@ -1684,6 +1684,115 @@ test('benchmark runner - music-vocals comparator uses time-aware alignment to re
   assert(artifact.fieldResults.some((field) => field.path === 'vocal_segments[truth=3,output=1].text' && field.status === 'pass'));
 });
 
+
+test('benchmark runner - dialogue scoring surfaces preserve transcript text across split and merge drift while surfacing boundary penalties', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-dialogue-scoring-split-merge');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempFixture(rootDir, {
+    truthPayload: {
+      dialogue_segments: [
+        { start: 0, end: 2, speaker: 'Speaker 1', text: 'They want you afraid. Fear makes you easier to control.', confidence: 0.98 },
+        { start: 4, end: 5, speaker: 'Speaker 2', text: 'Menendez is a terrorist.', confidence: 0.98 },
+        { start: 5.1, end: 7, speaker: 'Speaker 2', text: "We're bringing peace and security to the world.", confidence: 0.98 }
+      ],
+      summary: 'Dialogue split merge scoring test.',
+      totalDuration: 20,
+      handoffContext: null
+    },
+    outputPayload: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', text: 'They want you afraid.', confidence: 0.98 },
+        { start: 1.1, end: 2, speaker: 'Speaker 1', text: 'Fear makes you easier to control.', confidence: 0.98 },
+        { start: 4, end: 7, speaker: 'Speaker 2', text: "Menendez is a terrorist. We're bringing peace and security to the world.", confidence: 0.98 }
+      ],
+      summary: 'Dialogue split merge scoring test.',
+      totalDuration: 20,
+      handoffContext: null
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark dialogue split merge scoring',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert(artifact.dialogueScoring, 'dialogue scoring block should be present');
+  assert.strictEqual(artifact.dialogueScoring.dialogue_text_full_transcript_pct, 100);
+  assert.strictEqual(artifact.dialogueScoring.dialogue_text_windowed_pct, 100);
+  assert.strictEqual(artifact.dialogueScoring.split_event_count, 1);
+  assert.strictEqual(artifact.dialogueScoring.merge_event_count, 1);
+  assert(artifact.dialogueScoring.dialogue_boundary_pct < 100);
+  assert(artifact.dialogueScoring.window_alignments.some((entry) => entry.boundary_status === 'split'));
+  assert(artifact.dialogueScoring.window_alignments.some((entry) => entry.boundary_status === 'merge'));
+  assert.match(artifact.summary, /dialogue_text_full_transcript_pct=100\.0%/);
+
+  const summaryMd = fs.readFileSync(path.join(result.reportDir, 'benchmark-summary.md'), 'utf8');
+  assert.match(summaryMd, /dialogue_text_full_transcript_pct=100\.0%/);
+  assert.match(summaryMd, /dialogue_text_windowed_pct=100\.0%/);
+  assert.match(summaryMd, /dialogue_boundary_pct=/);
+});
+
+test('benchmark runner - dialogue scoring surfaces penalize missing lines without collapsing into split merge diagnostics', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-dialogue-scoring-missing-line');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempFixture(rootDir, {
+    truthPayload: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', text: 'Alpha.', confidence: 0.98 },
+        { start: 2, end: 3, speaker: 'Speaker 2', text: 'Bravo line missing.', confidence: 0.98 },
+        { start: 4, end: 5, speaker: 'Speaker 3', text: 'Charlie.', confidence: 0.98 }
+      ],
+      summary: 'Dialogue missing line scoring test.',
+      totalDuration: 20,
+      handoffContext: null
+    },
+    outputPayload: {
+      dialogue_segments: [
+        { start: 0, end: 1, speaker: 'Speaker 1', text: 'Alpha.', confidence: 0.98 },
+        { start: 4, end: 5, speaker: 'Speaker 3', text: 'Charlie.', confidence: 0.98 }
+      ],
+      summary: 'Dialogue missing line scoring test.',
+      totalDuration: 20,
+      handoffContext: null
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp benchmark dialogue missing line scoring',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert(artifact.dialogueScoring, 'dialogue scoring block should be present');
+  assert(artifact.dialogueScoring.dialogue_text_full_transcript_pct < 100);
+  assert(artifact.dialogueScoring.dialogue_text_windowed_pct < 100);
+  assert.strictEqual(artifact.dialogueScoring.missing_truth_window_count, 1);
+  assert.strictEqual(artifact.dialogueScoring.extra_output_window_count, 0);
+  assert.strictEqual(artifact.dialogueScoring.split_event_count, 0);
+  assert.strictEqual(artifact.dialogueScoring.merge_event_count, 0);
+  assert(artifact.dialogueScoring.window_alignments.some((entry) => entry.boundary_status === 'missing_truth'));
+  assert.match(artifact.summary, /dialogue_text_windowed_pct=/);
+});
+
 test('benchmark runner - dialogue comparator tolerates index-only outputs by ignoring non-authoritative timing and totalDuration fields', async (t) => {
   const rootDir = path.join(__dirname, 'tmp-benchmark-dialogue-index-only-chronology');
   fs.rmSync(rootDir, { recursive: true, force: true });
