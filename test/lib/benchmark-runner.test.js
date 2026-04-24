@@ -2522,6 +2522,208 @@ function makeTempDialogueMusicLeakageFixture(rootDir) {
   return { configPath, outputDir };
 }
 
+
+function makeTempMusicVocalsContractNoiseFixture(rootDir, { truthPayload, outputPayload } = {}) {
+  const configDir = path.join(rootDir, 'configs');
+  const benchmarkDir = path.join(rootDir, 'benchmarks', 'fixtures', 'temp-music-vocals-contract-noise-fixture');
+  const outputDir = path.join(rootDir, 'output', 'temp-run');
+  const configPath = path.join(configDir, 'temp.yaml');
+  const fixturePath = path.join(benchmarkDir, 'fixture.json');
+  const benchmarkPath = path.join(benchmarkDir, 'benchmark.json');
+  const truthPath = path.join(benchmarkDir, 'truth', 'music-vocals-data.json');
+  const outputPath = path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.json');
+
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.writeFileSync(configPath, 'name: temp music vocals contract-noise benchmark config\n', 'utf8');
+
+  writeJson(fixturePath, {
+    contractVersion: FIXTURE_CONTRACT_VERSION,
+    fixtureId: 'temp-music-vocals-contract-noise-fixture',
+    asset: { repoPath: 'examples/videos/emotion-tests/cod.mp4' },
+    config: { repoPath: 'configs/temp.yaml' },
+    benchmark: { entryPath: 'benchmark.json' },
+    notes: ['temp music vocals contract-noise regression fixture']
+  });
+
+  writeJson(benchmarkPath, {
+    contractVersion: MANIFEST_CONTRACT_VERSION,
+    fixtureId: 'temp-music-vocals-contract-noise-fixture',
+    fixture: { path: 'fixture.json' },
+    reports: { outputDir: '_reports' },
+    artifacts: [
+      {
+        artifactKey: 'musicVocalsData',
+        label: 'Music vocals',
+        phase: 'phase1-gather-context',
+        script: 'get-music-vocals',
+        output: { path: 'phase1-gather-context/music-vocals-data.json' },
+        truth: { path: 'truth/music-vocals-data.json' },
+        comparator: {
+          kind: 'json-structured',
+          profile: 'music-vocals-default',
+          options: { timingToleranceSeconds: 2, unknownSentinels: ['unknown', 'ambiguous'] }
+        },
+        required: true
+      }
+    ]
+  });
+
+  const defaultTruthPayload = {
+    vocal_segments: [
+      { start: 8, end: 12, text: 'Master, master', confidence: 0.95, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' },
+      { start: 12, end: 16, text: 'Obey your master', confidence: 0.95, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' }
+    ],
+    summary: 'Music vocals contract-noise test.',
+    hasVocals: true,
+    totalDuration: 20,
+    recognizedSong: {
+      status: 'recognized',
+      confidence: 0.95,
+      candidates: [
+        {
+          title: 'Master of Puppets',
+          artist: 'Metallica',
+          confidence: 0.95,
+          evidence: ['Literal lyric fragments are audible.'],
+          matchedLyrics: ['Master, master', 'Obey your master'],
+          timeRanges: [{ start: 8, end: 16 }]
+        }
+      ],
+      primaryEvidence: 'Literal lyric evidence grounds one specific song.',
+      multipleSongsDetected: false
+    },
+    recognitionNotes: ['Dialogue is excluded from lyric evidence.'],
+    qualityNotes: ['Crowd noise lightly masks the final consonant.']
+  };
+
+  writeJson(truthPath, truthPayload || defaultTruthPayload);
+  writeJson(outputPath, outputPayload || truthPayload || defaultTruthPayload);
+  return { configPath, outputDir };
+}
+
+
+test('benchmark runner - music-vocals comparator ignores output-only segment indexes and extra note coverage while preserving semantic lyric failures', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-music-vocals-contract-noise-extra-output');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempMusicVocalsContractNoiseFixture(rootDir, {
+    outputPayload: {
+      vocal_segments: [
+        { index: 0, start: 8, end: 12, text: 'Master, master', confidence: 0.95, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' },
+        { index: 1, start: 12, end: 16, text: 'Disobey your master', confidence: 0.95, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' }
+      ],
+      summary: 'Music vocals contract-noise test.',
+      hasVocals: true,
+      totalDuration: 20,
+      recognizedSong: {
+        status: 'recognized',
+        confidence: 0.95,
+        candidates: [
+          {
+            title: 'Master of Puppets',
+            artist: 'Metallica',
+            confidence: 0.95,
+            evidence: ['Literal lyric fragments are audible.'],
+            matchedLyrics: ['Master, master', 'Obey your master'],
+            timeRanges: [{ start: 8, end: 16 }]
+          }
+        ],
+        primaryEvidence: 'Literal lyric evidence grounds one specific song.',
+        multipleSongsDetected: false
+      },
+      recognitionNotes: [
+        'Dialogue is excluded from lyric evidence.',
+        'Crowd chant fragments also support the recognition call.'
+      ],
+      qualityNotes: [
+        'Crowd noise lightly masks the final consonant.',
+        'Compression smear softens the backing vocal edge.'
+      ]
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp music vocals contract-noise extra output comparator',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-music-vocals-contract-noise-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(result.status, 'fail');
+  assert.strictEqual(artifact.status, 'fail');
+  assert.strictEqual(artifact.errors.length, 0);
+  assert(artifact.failures.some((failure) => failure.path === 'vocal_segments[truth=1,output=1].text'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'vocal_segments[truth=0,output=0].index'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'vocal_segments[truth=1,output=1].index'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'recognitionNotes[output=1]'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'qualityNotes[output=1]'));
+  assert(!artifact.failures.some((failure) => failure.path.startsWith('recognitionNotes')));
+  assert(!artifact.failures.some((failure) => failure.path.startsWith('qualityNotes')));
+});
+
+test('benchmark runner - music-vocals comparator still fails when benchmark-required recognition or quality notes are missing', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-music-vocals-contract-noise-missing-truth');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempMusicVocalsContractNoiseFixture(rootDir, {
+    outputPayload: {
+      vocal_segments: [
+        { index: 0, start: 8, end: 12, text: 'Master, master', confidence: 0.95, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' },
+        { index: 1, start: 12, end: 16, text: 'Obey your master', confidence: 0.95, performer: 'Metallica', performer_id: 'voc_001', delivery: 'chant' }
+      ],
+      summary: 'Music vocals contract-noise test.',
+      hasVocals: true,
+      totalDuration: 20,
+      recognizedSong: {
+        status: 'recognized',
+        confidence: 0.95,
+        candidates: [
+          {
+            title: 'Master of Puppets',
+            artist: 'Metallica',
+            confidence: 0.95,
+            evidence: ['Literal lyric fragments are audible.'],
+            matchedLyrics: ['Master, master', 'Obey your master'],
+            timeRanges: [{ start: 8, end: 16 }]
+          }
+        ],
+        primaryEvidence: 'Literal lyric evidence grounds one specific song.',
+        multipleSongsDetected: false
+      },
+      recognitionNotes: ['Extra note unrelated to the benchmark expectation.'],
+      qualityNotes: []
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp music vocals contract-noise missing truth comparator',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-music-vocals-contract-noise-fixture/benchmark.json'
+      }
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(result.status, 'fail');
+  assert.strictEqual(artifact.status, 'fail');
+  assert.strictEqual(artifact.errors.length, 0);
+  assert(artifact.failures.some((failure) => failure.path === 'recognitionNotes[truth=0]'));
+  assert(artifact.failures.some((failure) => failure.path === 'qualityNotes[truth=0]'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'recognitionNotes[output=0]'));
+});
+
 test('benchmark runner - music scoring surfaces split timeline/content/summary/song percentages with no composite score', async (t) => {
   const rootDir = path.join(__dirname, 'tmp-benchmark-music-scoring');
   fs.rmSync(rootDir, { recursive: true, force: true });

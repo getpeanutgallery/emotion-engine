@@ -3,7 +3,7 @@
   "label": "Phase 1 music vocals",
   "phase": "phase1-gather-context",
   "script": "get-music-vocals",
-  "status": "error",
+  "status": "fail",
   "truth": {
     "path": "benchmarks/fixtures/cod-test/truth/music-vocals-data.json"
   },
@@ -24,6 +24,7 @@
         "$.totalDuration",
         "$.vocal_segments[*].start",
         "$.vocal_segments[*].end",
+        "$.vocal_segments[*].index",
         "$.analysisMode",
         "$.timingMode",
         "$.sourceStrategy",
@@ -45,6 +46,7 @@
         "$.totalDuration",
         "$.vocal_segments[*].start",
         "$.vocal_segments[*].end",
+        "$.vocal_segments[*].index",
         "$.analysisMode",
         "$.timingMode",
         "$.sourceStrategy",
@@ -55,29 +57,29 @@
   },
   "comparisonBoundary": null,
   "counts": {
-    "totalTruthFields": 110,
-    "scoreableFields": 89,
+    "totalTruthFields": 88,
+    "scoreableFields": 87,
     "skippedFields": 1,
-    "passedFields": 44,
-    "failedFields": 45,
-    "erroredFields": 20,
-    "ignoredDifferenceFields": 29
+    "passedFields": 45,
+    "failedFields": 42,
+    "erroredFields": 0,
+    "ignoredDifferenceFields": 51
   },
   "accuracy": {
-    "passed": 44,
-    "failed": 45,
-    "rate": 0.4943820224719101
+    "passed": 45,
+    "failed": 42,
+    "rate": 0.5172413793103449
   },
   "coverage": {
-    "scoreable": 89,
+    "scoreable": 87,
     "skipped": 1,
-    "totalTruthFields": 110,
-    "rate": 0.8090909090909091
+    "totalTruthFields": 88,
+    "rate": 0.9886363636363636
   },
   "mismatchClassificationCounts": {},
   "musicVocalsScoring": {
-    "vocal_text_full_transcript_pct": 45,
-    "vocal_text_windowed_pct": 44.9,
+    "vocal_text_full_transcript_pct": 46.2,
+    "vocal_text_windowed_pct": 46,
     "vocal_boundary_pct": 57.1,
     "truth_segment_count": 12,
     "output_segment_count": 14,
@@ -102,24 +104,24 @@
         "boundary_status": "many_to_many"
       },
       {
-        "truth_indexes": [],
-        "output_indexes": [
-          3
-        ],
-        "text_similarity_pct": 0,
-        "boundary_status": "extra_output"
-      },
-      {
         "truth_indexes": [
           3
         ],
         "output_indexes": [
+          3,
           4,
-          5,
+          5
+        ],
+        "text_similarity_pct": 53.8,
+        "boundary_status": "split"
+      },
+      {
+        "truth_indexes": [],
+        "output_indexes": [
           6
         ],
-        "text_similarity_pct": 50,
-        "boundary_status": "split"
+        "text_similarity_pct": 0,
+        "boundary_status": "extra_output"
       },
       {
         "truth_indexes": [],
@@ -191,7 +193,7 @@
     ],
     "vocal_attribution_pct": 55.6,
     "recognized_song_identity_pct": 100,
-    "recognized_song_support_pct": 0
+    "recognized_song_support_pct": 25
   },
   "failures": [
     {
@@ -272,7 +274,7 @@
       "path": "vocal_segments[truth=4,output=4].text",
       "rule": "fuzzy-string",
       "truthValue": "Blinded by me, you can’t see a thing",
-      "outputValue": "I'll be your master",
+      "outputValue": "Obey your master!",
       "reason": "Normalized strings differed"
     },
     {
@@ -500,47 +502,16 @@
       "reason": "Unmatched truth segment: no plausible time-aware output match"
     },
     {
-      "path": "recognitionNotes",
-      "rule": "structural",
-      "truthValue": {
-        "length": 2
-      },
-      "outputValue": {
-        "length": 5
-      },
-      "reason": "Array length mismatch: truth=2 output=5"
-    },
-    {
-      "path": "recognitionNotes[0]",
-      "rule": "exact",
-      "truthValue": "Spoken dialogue and promo VO elsewhere in the trailer are intentionally excluded from lyric evidence.",
-      "outputValue": "This chunk contains spoken dialogue over background music, but no sung lyrics.",
-      "reason": "Values differed"
-    },
-    {
-      "path": "recognitionNotes[1]",
-      "rule": "exact",
+      "path": "recognitionNotes[truth=1]",
+      "rule": "music-vocals-recognition-notes",
       "truthValue": "The opening chant fragments are short, but later full lyric lines confirm the song identification.",
-      "outputValue": "Spoken dialogue at the beginning of the chunk is excluded from lyric evidence.",
-      "reason": "Values differed"
+      "reason": "Missing benchmark-expected note in output"
     },
     {
-      "path": "qualityNotes",
-      "rule": "structural",
-      "truthValue": {
-        "length": 1
-      },
-      "outputValue": {
-        "length": 6
-      },
-      "reason": "Array length mismatch: truth=1 output=6"
-    },
-    {
-      "path": "qualityNotes[0]",
-      "rule": "exact",
+      "path": "qualityNotes[truth=0]",
+      "rule": "music-vocals-quality-notes",
       "truthValue": "Trailer SFX and dialogue overlap lightly mask some consonants, but the core lyric fragments remain clear enough to ground the song.",
-      "outputValue": "Whole-asset music analysis supplied global arc context before chunk-level timing refinement.",
-      "reason": "Values differed"
+      "reason": "Missing benchmark-expected note in output"
     }
   ],
   "skips": [
@@ -597,6 +568,11 @@
       "reason": "Ignored path contains extra output field"
     },
     {
+      "path": "vocal_segments[truth=0,output=0].index",
+      "outputValue": 0,
+      "reason": "Ignored path contains extra output field"
+    },
+    {
       "path": "vocal_segments[truth=0,output=0].start",
       "truthValue": 64,
       "reason": "Ignored path omits output field present in truth"
@@ -605,6 +581,11 @@
       "path": "vocal_segments[truth=0,output=0].end",
       "truthValue": 65,
       "reason": "Ignored path omits output field present in truth"
+    },
+    {
+      "path": "vocal_segments[truth=1,output=1].index",
+      "outputValue": 1,
+      "reason": "Ignored path contains extra output field"
     },
     {
       "path": "vocal_segments[truth=1,output=1].start",
@@ -617,6 +598,11 @@
       "reason": "Ignored path omits output field present in truth"
     },
     {
+      "path": "vocal_segments[truth=2,output=2].index",
+      "outputValue": 2,
+      "reason": "Ignored path contains extra output field"
+    },
+    {
       "path": "vocal_segments[truth=2,output=2].start",
       "truthValue": 76,
       "reason": "Ignored path omits output field present in truth"
@@ -625,6 +611,11 @@
       "path": "vocal_segments[truth=2,output=2].end",
       "truthValue": 78,
       "reason": "Ignored path omits output field present in truth"
+    },
+    {
+      "path": "vocal_segments[truth=3,output=3].index",
+      "outputValue": 3,
+      "reason": "Ignored path contains extra output field"
     },
     {
       "path": "vocal_segments[truth=3,output=3].start",
@@ -637,6 +628,11 @@
       "reason": "Ignored path omits output field present in truth"
     },
     {
+      "path": "vocal_segments[truth=4,output=4].index",
+      "outputValue": 4,
+      "reason": "Ignored path contains extra output field"
+    },
+    {
       "path": "vocal_segments[truth=4,output=4].start",
       "truthValue": 84,
       "reason": "Ignored path omits output field present in truth"
@@ -645,6 +641,11 @@
       "path": "vocal_segments[truth=4,output=4].end",
       "truthValue": 86,
       "reason": "Ignored path omits output field present in truth"
+    },
+    {
+      "path": "vocal_segments[truth=5,output=5].index",
+      "outputValue": 5,
+      "reason": "Ignored path contains extra output field"
     },
     {
       "path": "vocal_segments[truth=5,output=5].start",
@@ -657,6 +658,11 @@
       "reason": "Ignored path omits output field present in truth"
     },
     {
+      "path": "vocal_segments[truth=6,output=6].index",
+      "outputValue": 6,
+      "reason": "Ignored path contains extra output field"
+    },
+    {
       "path": "vocal_segments[truth=6,output=6].start",
       "truthValue": 89,
       "reason": "Ignored path omits output field present in truth"
@@ -665,6 +671,11 @@
       "path": "vocal_segments[truth=6,output=6].end",
       "truthValue": 91,
       "reason": "Ignored path omits output field present in truth"
+    },
+    {
+      "path": "vocal_segments[truth=7,output=7].index",
+      "outputValue": 7,
+      "reason": "Ignored path contains extra output field"
     },
     {
       "path": "vocal_segments[truth=7,output=7].start",
@@ -677,6 +688,11 @@
       "reason": "Ignored path omits output field present in truth"
     },
     {
+      "path": "vocal_segments[truth=8,output=8].index",
+      "outputValue": 8,
+      "reason": "Ignored path contains extra output field"
+    },
+    {
       "path": "vocal_segments[truth=8,output=8].start",
       "truthValue": 94,
       "reason": "Ignored path omits output field present in truth"
@@ -685,6 +701,11 @@
       "path": "vocal_segments[truth=8,output=8].end",
       "truthValue": 95.5,
       "reason": "Ignored path omits output field present in truth"
+    },
+    {
+      "path": "vocal_segments[truth=9,output=9].index",
+      "outputValue": 9,
+      "reason": "Ignored path contains extra output field"
     },
     {
       "path": "vocal_segments[truth=9,output=9].start",
@@ -697,6 +718,11 @@
       "reason": "Ignored path omits output field present in truth"
     },
     {
+      "path": "vocal_segments[truth=10,output=10].index",
+      "outputValue": 10,
+      "reason": "Ignored path contains extra output field"
+    },
+    {
       "path": "vocal_segments[truth=10,output=10].start",
       "truthValue": 116,
       "reason": "Ignored path omits output field present in truth"
@@ -707,6 +733,11 @@
       "reason": "Ignored path omits output field present in truth"
     },
     {
+      "path": "vocal_segments[truth=11,output=11].index",
+      "outputValue": 11,
+      "reason": "Ignored path contains extra output field"
+    },
+    {
       "path": "vocal_segments[truth=11,output=11].start",
       "truthValue": 127,
       "reason": "Ignored path omits output field present in truth"
@@ -715,6 +746,56 @@
       "path": "vocal_segments[truth=11,output=11].end",
       "truthValue": 130,
       "reason": "Ignored path omits output field present in truth"
+    },
+    {
+      "path": "recognitionNotes[output=0]",
+      "outputValue": "This chunk contains spoken dialogue over background music, but no sung lyrics.",
+      "reason": "Extra diagnostic note outside benchmark-required coverage"
+    },
+    {
+      "path": "recognitionNotes[output=2]",
+      "outputValue": "Spoken dialogue over music is excluded from lyric evidence.",
+      "reason": "Extra diagnostic note outside benchmark-required coverage"
+    },
+    {
+      "path": "recognitionNotes[output=3]",
+      "outputValue": "Spoken dialogue or promotional voiceover may overlap but is excluded from lyric evidence.",
+      "reason": "Extra diagnostic note outside benchmark-required coverage"
+    },
+    {
+      "path": "recognitionNotes[output=4]",
+      "outputValue": "Vocals are interspersed with spoken dialogue, but music-led segments are clear and dominant in the rock song portion.",
+      "reason": "Extra diagnostic note outside benchmark-required coverage"
+    },
+    {
+      "path": "qualityNotes[output=0]",
+      "outputValue": "Whole-asset music analysis supplied global arc context before chunk-level timing refinement.",
+      "reason": "Extra diagnostic note outside benchmark-required coverage"
+    },
+    {
+      "path": "qualityNotes[output=1]",
+      "outputValue": "Audio is clear with no masking, but no vocal segments present.",
+      "reason": "Extra diagnostic note outside benchmark-required coverage"
+    },
+    {
+      "path": "qualityNotes[output=2]",
+      "outputValue": "Audio is clear with minimal background noise masking the vocals.",
+      "reason": "Extra diagnostic note outside benchmark-required coverage"
+    },
+    {
+      "path": "qualityNotes[output=3]",
+      "outputValue": "Sung lyrics are clear with minimal masking.",
+      "reason": "Extra diagnostic note outside benchmark-required coverage"
+    },
+    {
+      "path": "qualityNotes[output=4]",
+      "outputValue": "Vocals are clear and prominent in the mix.",
+      "reason": "Extra diagnostic note outside benchmark-required coverage"
+    },
+    {
+      "path": "qualityNotes[output=5]",
+      "outputValue": "High confidence due to clear lyrical content and recognizable song structure; timing aligns with the noted rock song entry at 76.0-98.0s.",
+      "reason": "Extra diagnostic note outside benchmark-required coverage"
     }
   ],
   "alignments": [
@@ -887,6 +968,7 @@
       "path": "recognizedSong.candidates[truth=0,output=0].evidence",
       "strategy": "recognized-song-support-evidence",
       "minimumSimilarity": 0.4,
+      "allowExtraOutput": false,
       "matches": [
         {
           "truthIndex": 0,
@@ -907,6 +989,7 @@
       "path": "recognizedSong.candidates[truth=0,output=0].matchedLyrics",
       "strategy": "recognized-song-support-lyrics",
       "minimumSimilarity": 0.5,
+      "allowExtraOutput": false,
       "matches": [
         {
           "truthIndex": 0,
@@ -967,130 +1050,86 @@
         }
       ],
       "unmatchedOutput": []
+    },
+    {
+      "path": "recognitionNotes",
+      "strategy": "music-vocals-recognition-notes",
+      "minimumSimilarity": 0.4,
+      "allowExtraOutput": true,
+      "matches": [
+        {
+          "truthIndex": 0,
+          "outputIndex": 1,
+          "similarity": 0.5185185185185185,
+          "score": 517.5185185185185
+        }
+      ],
+      "unmatchedTruth": [
+        {
+          "truthIndex": 1,
+          "value": "The opening chant fragments are short, but later full lyric lines confirm the song identification."
+        }
+      ],
+      "unmatchedOutput": [
+        {
+          "outputIndex": 0,
+          "value": "This chunk contains spoken dialogue over background music, but no sung lyrics."
+        },
+        {
+          "outputIndex": 2,
+          "value": "Spoken dialogue over music is excluded from lyric evidence."
+        },
+        {
+          "outputIndex": 3,
+          "value": "Spoken dialogue or promotional voiceover may overlap but is excluded from lyric evidence."
+        },
+        {
+          "outputIndex": 4,
+          "value": "Vocals are interspersed with spoken dialogue, but music-led segments are clear and dominant in the rock song portion."
+        }
+      ]
+    },
+    {
+      "path": "qualityNotes",
+      "strategy": "music-vocals-quality-notes",
+      "minimumSimilarity": 0.4,
+      "allowExtraOutput": true,
+      "matches": [],
+      "unmatchedTruth": [
+        {
+          "truthIndex": 0,
+          "value": "Trailer SFX and dialogue overlap lightly mask some consonants, but the core lyric fragments remain clear enough to ground the song."
+        }
+      ],
+      "unmatchedOutput": [
+        {
+          "outputIndex": 0,
+          "value": "Whole-asset music analysis supplied global arc context before chunk-level timing refinement."
+        },
+        {
+          "outputIndex": 1,
+          "value": "Audio is clear with no masking, but no vocal segments present."
+        },
+        {
+          "outputIndex": 2,
+          "value": "Audio is clear with minimal background noise masking the vocals."
+        },
+        {
+          "outputIndex": 3,
+          "value": "Sung lyrics are clear with minimal masking."
+        },
+        {
+          "outputIndex": 4,
+          "value": "Vocals are clear and prominent in the mix."
+        },
+        {
+          "outputIndex": 5,
+          "value": "High confidence due to clear lyrical content and recognizable song structure; timing aligns with the noted rock song entry at 76.0-98.0s."
+        }
+      ]
     }
   ],
-  "errors": [
-    {
-      "path": "vocal_segments[truth=0,output=0].index",
-      "rule": "structural",
-      "outputValue": 0,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "path": "vocal_segments[truth=1,output=1].index",
-      "rule": "structural",
-      "outputValue": 1,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "path": "vocal_segments[truth=2,output=2].index",
-      "rule": "structural",
-      "outputValue": 2,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "path": "vocal_segments[truth=3,output=3].index",
-      "rule": "structural",
-      "outputValue": 3,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "path": "vocal_segments[truth=4,output=4].index",
-      "rule": "structural",
-      "outputValue": 4,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "path": "vocal_segments[truth=5,output=5].index",
-      "rule": "structural",
-      "outputValue": 5,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "path": "vocal_segments[truth=6,output=6].index",
-      "rule": "structural",
-      "outputValue": 6,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "path": "vocal_segments[truth=7,output=7].index",
-      "rule": "structural",
-      "outputValue": 7,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "path": "vocal_segments[truth=8,output=8].index",
-      "rule": "structural",
-      "outputValue": 8,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "path": "vocal_segments[truth=9,output=9].index",
-      "rule": "structural",
-      "outputValue": 9,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "path": "vocal_segments[truth=10,output=10].index",
-      "rule": "structural",
-      "outputValue": 10,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "path": "vocal_segments[truth=11,output=11].index",
-      "rule": "structural",
-      "outputValue": 11,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "path": "recognitionNotes[2]",
-      "rule": "structural",
-      "outputValue": "Spoken dialogue over music is excluded from lyric evidence.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "recognitionNotes[3]",
-      "rule": "structural",
-      "outputValue": "Spoken dialogue or promotional voiceover may overlap but is excluded from lyric evidence.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "recognitionNotes[4]",
-      "rule": "structural",
-      "outputValue": "Vocals are interspersed with spoken dialogue, but music-led segments are clear and dominant in the rock song portion.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "qualityNotes[1]",
-      "rule": "structural",
-      "outputValue": "Audio is clear with no masking, but no vocal segments present.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "qualityNotes[2]",
-      "rule": "structural",
-      "outputValue": "Audio is clear with minimal background noise masking the vocals.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "qualityNotes[3]",
-      "rule": "structural",
-      "outputValue": "Sung lyrics are clear with minimal masking.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "qualityNotes[4]",
-      "rule": "structural",
-      "outputValue": "Vocals are clear and prominent in the mix.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "qualityNotes[5]",
-      "rule": "structural",
-      "outputValue": "High confidence due to clear lyrical content and recognizable song structure; timing aligns with the noted rock song entry at 76.0-98.0s.",
-      "reason": "Truth array missing item present in output"
-    }
-  ],
+  "errors": [],
   "fieldResults": [
     {
       "path": "vocal_segments",
@@ -1103,13 +1142,6 @@
         "length": 14
       },
       "reason": "Array length mismatch: truth=12 output=14"
-    },
-    {
-      "path": "vocal_segments[truth=0,output=0].index",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": 0,
-      "reason": "Truth object missing field present in output"
     },
     {
       "path": "vocal_segments[truth=0,output=0].text",
@@ -1156,13 +1188,6 @@
       "reason": "Values differed"
     },
     {
-      "path": "vocal_segments[truth=1,output=1].index",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": 1,
-      "reason": "Truth object missing field present in output"
-    },
-    {
       "path": "vocal_segments[truth=1,output=1].text",
       "status": "fail",
       "rule": "fuzzy-string",
@@ -1207,13 +1232,6 @@
       "reason": "Values differed"
     },
     {
-      "path": "vocal_segments[truth=2,output=2].index",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": 2,
-      "reason": "Truth object missing field present in output"
-    },
-    {
       "path": "vocal_segments[truth=2,output=2].text",
       "status": "pass",
       "rule": "fuzzy-string",
@@ -1254,13 +1272,6 @@
       "rule": "exact",
       "truthValue": "sung",
       "outputValue": "sung"
-    },
-    {
-      "path": "vocal_segments[truth=3,output=3].index",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": 3,
-      "reason": "Truth object missing field present in output"
     },
     {
       "path": "vocal_segments[truth=3,output=3].text",
@@ -1306,20 +1317,13 @@
       "outputValue": "sung"
     },
     {
-      "path": "vocal_segments[truth=4,output=4].index",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": 4,
-      "reason": "Truth object missing field present in output"
-    },
-    {
       "path": "vocal_segments[truth=4,output=4].text",
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Blinded by me, you can’t see a thing",
-      "outputValue": "I'll be your master",
+      "outputValue": "Obey your master!",
       "normalizedTruthValue": "blinded by me you can t see a thing",
-      "normalizedOutputValue": "i ll be your master",
+      "normalizedOutputValue": "obey your master",
       "reason": "Normalized strings differed"
     },
     {
@@ -1354,13 +1358,6 @@
       "rule": "exact",
       "truthValue": "sung",
       "outputValue": "sung"
-    },
-    {
-      "path": "vocal_segments[truth=5,output=5].index",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": 5,
-      "reason": "Truth object missing field present in output"
     },
     {
       "path": "vocal_segments[truth=5,output=5].text",
@@ -1406,13 +1403,6 @@
       "outputValue": "sung"
     },
     {
-      "path": "vocal_segments[truth=6,output=6].index",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": 6,
-      "reason": "Truth object missing field present in output"
-    },
-    {
       "path": "vocal_segments[truth=6,output=6].text",
       "status": "pass",
       "rule": "fuzzy-string",
@@ -1453,13 +1443,6 @@
       "rule": "exact",
       "truthValue": "sung",
       "outputValue": "sung"
-    },
-    {
-      "path": "vocal_segments[truth=7,output=7].index",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": 7,
-      "reason": "Truth object missing field present in output"
     },
     {
       "path": "vocal_segments[truth=7,output=7].text",
@@ -1505,13 +1488,6 @@
       "outputValue": "sung"
     },
     {
-      "path": "vocal_segments[truth=8,output=8].index",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": 8,
-      "reason": "Truth object missing field present in output"
-    },
-    {
       "path": "vocal_segments[truth=8,output=8].text",
       "status": "fail",
       "rule": "fuzzy-string",
@@ -1553,13 +1529,6 @@
       "rule": "exact",
       "truthValue": "sung",
       "outputValue": "sung"
-    },
-    {
-      "path": "vocal_segments[truth=9,output=9].index",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": 9,
-      "reason": "Truth object missing field present in output"
     },
     {
       "path": "vocal_segments[truth=9,output=9].text",
@@ -1605,13 +1574,6 @@
       "outputValue": "sung"
     },
     {
-      "path": "vocal_segments[truth=10,output=10].index",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": 10,
-      "reason": "Truth object missing field present in output"
-    },
-    {
       "path": "vocal_segments[truth=10,output=10].text",
       "status": "fail",
       "rule": "fuzzy-string",
@@ -1654,13 +1616,6 @@
       "truthValue": "chant",
       "outputValue": "sung",
       "reason": "Values differed"
-    },
-    {
-      "path": "vocal_segments[truth=11,output=11].index",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": 11,
-      "reason": "Truth object missing field present in output"
     },
     {
       "path": "vocal_segments[truth=11,output=11].text",
@@ -1928,111 +1883,32 @@
       "reason": "Unmatched truth segment: no plausible time-aware output match"
     },
     {
-      "path": "recognitionNotes",
-      "status": "fail",
-      "rule": "structural",
-      "truthValue": {
-        "length": 2
-      },
-      "outputValue": {
-        "length": 5
-      },
-      "reason": "Array length mismatch: truth=2 output=5"
-    },
-    {
-      "path": "recognitionNotes[0]",
-      "status": "fail",
-      "rule": "exact",
+      "path": "recognitionNotes[truth=0,output=1]",
+      "status": "pass",
+      "rule": "music-vocals-recognition-notes",
       "truthValue": "Spoken dialogue and promo VO elsewhere in the trailer are intentionally excluded from lyric evidence.",
-      "outputValue": "This chunk contains spoken dialogue over background music, but no sung lyrics.",
-      "reason": "Values differed"
-    },
-    {
-      "path": "recognitionNotes[1]",
-      "status": "fail",
-      "rule": "exact",
-      "truthValue": "The opening chant fragments are short, but later full lyric lines confirm the song identification.",
       "outputValue": "Spoken dialogue at the beginning of the chunk is excluded from lyric evidence.",
-      "reason": "Values differed"
+      "metrics": {
+        "similarity": 0.5185185185185185,
+        "minimumSimilarity": 0.4
+      }
     },
     {
-      "path": "recognitionNotes[2]",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": "Spoken dialogue over music is excluded from lyric evidence.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "recognitionNotes[3]",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": "Spoken dialogue or promotional voiceover may overlap but is excluded from lyric evidence.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "recognitionNotes[4]",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": "Vocals are interspersed with spoken dialogue, but music-led segments are clear and dominant in the rock song portion.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "qualityNotes",
+      "path": "recognitionNotes[truth=1]",
       "status": "fail",
-      "rule": "structural",
-      "truthValue": {
-        "length": 1
-      },
-      "outputValue": {
-        "length": 6
-      },
-      "reason": "Array length mismatch: truth=1 output=6"
+      "rule": "music-vocals-recognition-notes",
+      "truthValue": "The opening chant fragments are short, but later full lyric lines confirm the song identification.",
+      "reason": "Missing benchmark-expected note in output"
     },
     {
-      "path": "qualityNotes[0]",
+      "path": "qualityNotes[truth=0]",
       "status": "fail",
-      "rule": "exact",
+      "rule": "music-vocals-quality-notes",
       "truthValue": "Trailer SFX and dialogue overlap lightly mask some consonants, but the core lyric fragments remain clear enough to ground the song.",
-      "outputValue": "Whole-asset music analysis supplied global arc context before chunk-level timing refinement.",
-      "reason": "Values differed"
-    },
-    {
-      "path": "qualityNotes[1]",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": "Audio is clear with no masking, but no vocal segments present.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "qualityNotes[2]",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": "Audio is clear with minimal background noise masking the vocals.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "qualityNotes[3]",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": "Sung lyrics are clear with minimal masking.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "qualityNotes[4]",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": "Vocals are clear and prominent in the mix.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "qualityNotes[5]",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": "High confidence due to clear lyrical content and recognizable song structure; timing aligns with the noted rock song entry at 76.0-98.0s.",
-      "reason": "Truth array missing item present in output"
+      "reason": "Missing benchmark-expected note in output"
     }
   ],
-  "summary": "44/89 scoreable fields passed; 1/110 truth fields were skipped. vocal_text_full_transcript_pct=45.0%; vocal_text_windowed_pct=44.9%; vocal_boundary_pct=57.1%; vocal_attribution_pct=55.6%; recognized_song_identity_pct=100.0%; recognized_song_support_pct=0.0%.",
+  "summary": "45/87 scoreable fields passed; 1/88 truth fields were skipped. vocal_text_full_transcript_pct=46.2%; vocal_text_windowed_pct=46.0%; vocal_boundary_pct=57.1%; vocal_attribution_pct=55.6%; recognized_song_identity_pct=100.0%; recognized_song_support_pct=25.0%.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

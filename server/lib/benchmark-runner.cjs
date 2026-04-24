@@ -13,7 +13,7 @@ const DEFAULT_TOLERANT_NUMBER_FIELD_NAMES = new Set(['confidence']);
 const DEFAULT_FUZZY_STRING_FIELD_NAMES = new Set(['text', 'summary', 'description', 'reasoning', 'cleanedTranscript', 'handoffContext', 'label', 'note', 'keyFindings', 'suggestions']);
 const PROFILE_DEFAULT_IGNORE_PATHS = Object.freeze({
   'dialogue-default': ['$.totalDuration', '$.dialogue_segments[*].start', '$.dialogue_segments[*].end'],
-  'music-vocals-default': ['$.totalDuration', '$.vocal_segments[*].start', '$.vocal_segments[*].end']
+  'music-vocals-default': ['$.totalDuration', '$.vocal_segments[*].start', '$.vocal_segments[*].end', '$.vocal_segments[*].index']
 });
 
 function resolveBenchmarkConfig(config, options = {}) {
@@ -556,8 +556,8 @@ function buildMusicVocalsScoring(truthData, outputData, fieldResults) {
       || /^recognizedSong\.candidates\[\d+\]\.(title|artist|confidence)$/.test(result.path)),
     recognized_song_support_pct: scoreFieldResults(fieldResults, (result) => /^recognizedSong\.candidates\[\d+\]\.(evidence|matchedLyrics|timeRanges)(\[.*\]|\..*)?$/.test(result.path)
       || /^recognizedSong\.(primaryEvidence|ambiguity)$/.test(result.path)
-      || /^recognitionNotes\[\d+\]$/.test(result.path)
-      || /^qualityNotes\[\d+\]$/.test(result.path))
+      || /^recognitionNotes(\[.*\])?$/.test(result.path)
+      || /^qualityNotes(\[.*\])?$/.test(result.path))
   };
 }
 
@@ -1806,6 +1806,9 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
   function compareUnorderedFuzzySupportArray(pathString, truthValue, outputValue, options = {}) {
     const minimumSimilarity = options.minimumSimilarity || 0.5;
     const rule = options.rule || 'fuzzy-support-list';
+    const allowExtraOutput = options.allowExtraOutput === true;
+    const missingTruthReason = options.missingTruthReason || 'Missing supported item in output list';
+    const extraOutputReason = options.extraOutputReason || 'Extra unsupported item in output list';
     const alignment = alignItemsByScore(truthValue, outputValue, (truthItem, outputItem, truthIndex, outputIndex) => {
       if (typeof truthItem !== 'string' || typeof outputItem !== 'string') {
         return null;
@@ -1820,7 +1823,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
       };
     });
 
-    if (truthValue.length !== outputValue.length) {
+    if (!allowExtraOutput && truthValue.length !== outputValue.length) {
       pushFieldResult({
         path: pathString,
         status: 'fail',
@@ -1835,6 +1838,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
       path: pathString,
       strategy: rule,
       minimumSimilarity,
+      allowExtraOutput,
       matches: alignment.matches.map((entry) => ({
         truthIndex: entry.truthIndex,
         outputIndex: entry.outputIndex,
@@ -1863,18 +1867,22 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
         rule,
         truthValue: truthValue[truthIndex],
         outputValue: undefined,
-        reason: 'Missing supported item in output list'
+        reason: missingTruthReason
       });
     }
 
     for (const outputIndex of alignment.unmatchedOutputIndexes) {
+      if (allowExtraOutput) {
+        emitIgnoredDifference(`${pathString}[output=${outputIndex}]`, extraOutputReason, undefined, outputValue[outputIndex]);
+        continue;
+      }
       pushFieldResult({
         path: `${pathString}[output=${outputIndex}]`,
         status: 'fail',
         rule,
         truthValue: undefined,
         outputValue: outputValue[outputIndex],
-        reason: 'Extra unsupported item in output list'
+        reason: extraOutputReason
       });
     }
   }
@@ -2177,6 +2185,17 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
 
       if (comparator.profile === 'dialogue-default' && currentPath === 'speaker_profiles') {
         compareSpeakerProfilesArray(currentPath, truthValue, outputValue);
+        return;
+      }
+
+      if (comparator.profile === 'music-vocals-default' && (currentPath === 'recognitionNotes' || currentPath === 'qualityNotes')) {
+        compareUnorderedFuzzySupportArray(currentPath, truthValue, outputValue, {
+          minimumSimilarity: 0.4,
+          rule: currentPath === 'recognitionNotes' ? 'music-vocals-recognition-notes' : 'music-vocals-quality-notes',
+          allowExtraOutput: true,
+          missingTruthReason: 'Missing benchmark-expected note in output',
+          extraOutputReason: 'Extra diagnostic note outside benchmark-required coverage'
+        });
         return;
       }
 

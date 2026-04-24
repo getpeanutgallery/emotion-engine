@@ -8,11 +8,11 @@
 
 ## Totals
 
-- Artifacts: 1/7 passed, 1 failed, 5 errored
-- Accuracy: 363/658 scoreable fields passed (55.2%)
-- Coverage: 658/1171 truth fields scoreable (56.2%)
+- Artifacts: 1/7 passed, 2 failed, 4 errored
+- Accuracy: 364/656 scoreable fields passed (55.5%)
+- Coverage: 656/1149 truth fields scoreable (57.1%)
 - Skipped truth fields: 144
-- Ignored differences surfaced outside score: 40
+- Ignored differences surfaced outside score: 62
 
 ## Artifacts
 
@@ -32,13 +32,13 @@
   - music_summary_pct=0.0%
   - recognized_song_identity_pct=66.7%
   - recognized_song_support_pct=9.1%
-- **musicVocalsData** — Phase 1 music vocals; error; accuracy=49.4%, coverage=80.9%, ignoredDiffs=29
-  - vocal_text_full_transcript_pct=45.0%
-  - vocal_text_windowed_pct=44.9%
+- **musicVocalsData** — Phase 1 music vocals; fail; accuracy=51.7%, coverage=98.9%, ignoredDiffs=51
+  - vocal_text_full_transcript_pct=46.2%
+  - vocal_text_windowed_pct=46.0%
   - vocal_boundary_pct=57.1%
   - vocal_attribution_pct=55.6%
   - recognized_song_identity_pct=100.0%
-  - recognized_song_support_pct=0.0%
+  - recognized_song_support_pct=25.0%
   - splits=2, merges=0, missingTruthWindows=3, extraOutputWindows=2
 - **recommendationData** — Phase 3 recommendation; error; accuracy=10.5%, coverage=52.8%, ignoredDiffs=4
   - recommendation_text_pct=0.0%
@@ -61,5 +61,5 @@
   - critical_moments_pct=0.0%
   - emotional_implementation_status_pct=0.0%
 
-1/7 artifacts passed. 363/658 scoreable fields passed. Truth coverage was 658/1171 fields.
+1/7 artifacts passed. 364/656 scoreable fields passed. Truth coverage was 656/1149 fields.
 

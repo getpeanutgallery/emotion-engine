@@ -443,15 +443,15 @@
     {
       "artifactKey": "musicVocalsData",
       "label": "Phase 1 music vocals",
-      "status": "error",
-      "accuracyRate": 0.4943820224719101,
-      "coverageRate": 0.8090909090909091,
-      "ignoredDifferenceCount": 29,
+      "status": "fail",
+      "accuracyRate": 0.5172413793103449,
+      "coverageRate": 0.9886363636363636,
+      "ignoredDifferenceCount": 51,
       "comparisonBoundary": null,
       "mismatchClassificationCounts": {},
       "musicVocalsScoring": {
-        "vocal_text_full_transcript_pct": 45,
-        "vocal_text_windowed_pct": 44.9,
+        "vocal_text_full_transcript_pct": 46.2,
+        "vocal_text_windowed_pct": 46,
         "vocal_boundary_pct": 57.1,
         "truth_segment_count": 12,
         "output_segment_count": 14,
@@ -476,24 +476,24 @@
             "boundary_status": "many_to_many"
           },
           {
-            "truth_indexes": [],
-            "output_indexes": [
-              3
-            ],
-            "text_similarity_pct": 0,
-            "boundary_status": "extra_output"
-          },
-          {
             "truth_indexes": [
               3
             ],
             "output_indexes": [
+              3,
               4,
-              5,
+              5
+            ],
+            "text_similarity_pct": 53.8,
+            "boundary_status": "split"
+          },
+          {
+            "truth_indexes": [],
+            "output_indexes": [
               6
             ],
-            "text_similarity_pct": 50,
-            "boundary_status": "split"
+            "text_similarity_pct": 0,
+            "boundary_status": "extra_output"
           },
           {
             "truth_indexes": [],
@@ -565,7 +565,7 @@
         ],
         "vocal_attribution_pct": 55.6,
         "recognized_song_identity_pct": 100,
-        "recognized_song_support_pct": 0
+        "recognized_song_support_pct": 25
       }
     },
     {
@@ -636,28 +636,28 @@
   "totals": {
     "artifactsTotal": 7,
     "artifactsPassed": 1,
-    "artifactsFailed": 1,
-    "artifactsErrored": 5,
-    "totalTruthFields": 1171,
-    "scoreableFields": 658,
+    "artifactsFailed": 2,
+    "artifactsErrored": 4,
+    "totalTruthFields": 1149,
+    "scoreableFields": 656,
     "skippedFields": 144,
-    "passedFields": 363,
-    "failedFields": 295,
-    "erroredFields": 369,
-    "ignoredDifferenceFields": 40,
+    "passedFields": 364,
+    "failedFields": 292,
+    "erroredFields": 349,
+    "ignoredDifferenceFields": 62,
     "mismatchClassificationCounts": {}
   },
   "accuracy": {
-    "passed": 363,
-    "failed": 295,
-    "rate": 0.5516717325227963
+    "passed": 364,
+    "failed": 292,
+    "rate": 0.5548780487804879
   },
   "coverage": {
-    "scoreable": 658,
+    "scoreable": 656,
     "skipped": 144,
-    "ignoredDifferences": 40,
-    "totalTruthFields": 1171,
-    "rate": 0.5619128949615713
+    "ignoredDifferences": 62,
+    "totalTruthFields": 1149,
+    "rate": 0.5709312445604874
   },
   "mismatchClassificationCounts": {},
   "errors": [
@@ -729,146 +729,6 @@
         "end": 130
       },
       "reason": "Output array missing item present in truth"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "vocal_segments[truth=0,output=0].index",
-      "rule": "structural",
-      "outputValue": 0,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "vocal_segments[truth=1,output=1].index",
-      "rule": "structural",
-      "outputValue": 1,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "vocal_segments[truth=2,output=2].index",
-      "rule": "structural",
-      "outputValue": 2,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "vocal_segments[truth=3,output=3].index",
-      "rule": "structural",
-      "outputValue": 3,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "vocal_segments[truth=4,output=4].index",
-      "rule": "structural",
-      "outputValue": 4,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "vocal_segments[truth=5,output=5].index",
-      "rule": "structural",
-      "outputValue": 5,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "vocal_segments[truth=6,output=6].index",
-      "rule": "structural",
-      "outputValue": 6,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "vocal_segments[truth=7,output=7].index",
-      "rule": "structural",
-      "outputValue": 7,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "vocal_segments[truth=8,output=8].index",
-      "rule": "structural",
-      "outputValue": 8,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "vocal_segments[truth=9,output=9].index",
-      "rule": "structural",
-      "outputValue": 9,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "vocal_segments[truth=10,output=10].index",
-      "rule": "structural",
-      "outputValue": 10,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "vocal_segments[truth=11,output=11].index",
-      "rule": "structural",
-      "outputValue": 11,
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "recognitionNotes[2]",
-      "rule": "structural",
-      "outputValue": "Spoken dialogue over music is excluded from lyric evidence.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "recognitionNotes[3]",
-      "rule": "structural",
-      "outputValue": "Spoken dialogue or promotional voiceover may overlap but is excluded from lyric evidence.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "recognitionNotes[4]",
-      "rule": "structural",
-      "outputValue": "Vocals are interspersed with spoken dialogue, but music-led segments are clear and dominant in the rock song portion.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "qualityNotes[1]",
-      "rule": "structural",
-      "outputValue": "Audio is clear with no masking, but no vocal segments present.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "qualityNotes[2]",
-      "rule": "structural",
-      "outputValue": "Audio is clear with minimal background noise masking the vocals.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "qualityNotes[3]",
-      "rule": "structural",
-      "outputValue": "Sung lyrics are clear with minimal masking.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "qualityNotes[4]",
-      "rule": "structural",
-      "outputValue": "Vocals are clear and prominent in the mix.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "artifactKey": "musicVocalsData",
-      "path": "qualityNotes[5]",
-      "rule": "structural",
-      "outputValue": "High confidence due to clear lyrical content and recognizable song structure; timing aligns with the noted rock song entry at 76.0-98.0s.",
-      "reason": "Truth array missing item present in output"
     },
     {
       "artifactKey": "recommendationData",
@@ -5638,5 +5498,5 @@
       "reason": "Output array missing item present in truth"
     }
   ],
-  "summary": "1/7 artifacts passed. 363/658 scoreable fields passed. Truth coverage was 658/1171 fields."
+  "summary": "1/7 artifacts passed. 364/656 scoreable fields passed. Truth coverage was 656/1149 fields."
 }
