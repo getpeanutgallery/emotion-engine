@@ -336,55 +336,40 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     assert.equal(ledger.decisions.musicVocalsNotes[0].reason, 'recognized_song_metadata_must_not_rewrite_music_vocals_transcript');
   });
 
-  await t.test('removes a sparse-anchor lyric contamination run when direct vocal support fills the gaps', async () => {
+  await t.test('removes the remaining middle lyric lines via one extra bounded second-hop promotion', async () => {
     const artifacts = makeArtifacts({
       dialogueData: {
         dialogue_segments: [
-          { index: 10, speaker: 'Captain', text: 'The hell it is.', confidence: 0.98 },
-          { index: 11, speaker: 'Speaker 8', text: 'Obey your master, master.', confidence: 0.44 },
-          { index: 12, speaker: 'Speaker 8', text: 'Come crawling faster, master.', confidence: 0.45 },
-          { index: 13, speaker: 'Speaker 8', text: "Master of puppets, I'm pulling your strings.", confidence: 0.46 },
-          { index: 14, speaker: 'Speaker 8', text: 'Twisting your mind and smashing your dreams.', confidence: 0.45 },
-          { index: 15, speaker: 'Speaker 8', text: "Blinded by me, you can't see a thing.", confidence: 0.45 },
-          { index: 16, speaker: 'Speaker 8', text: "Just call my name, 'cause I'll hear you scream.", confidence: 0.45 },
-          { index: 17, speaker: 'Speaker 8', text: 'Master, master.', confidence: 0.44 },
-          { index: 18, speaker: 'Speaker 8', text: "Just call my name, 'cause I'll hear you scream.", confidence: 0.45 },
-          { index: 19, speaker: 'Speaker 8', text: 'Master, master.', confidence: 0.44 },
-          { index: 20, speaker: 'Captain', text: 'Fall back to the ridge!', confidence: 0.99 },
-          { index: 25, speaker: 'Speaker 8', text: 'Obey your master.', confidence: 0.43 }
+          { index: 0, speaker: 'Captain', text: 'Hold your ground.', confidence: 0.99 },
+          { index: 10, speaker: 'Singer', text: 'Silver skyline.', confidence: 0.43 },
+          { index: 11, speaker: 'Singer', text: 'Neon thunder calling softly.', confidence: 0.45 },
+          { index: 12, speaker: 'Singer', text: 'Static hearts are falling slowly.', confidence: 0.45 },
+          { index: 13, speaker: 'Singer', text: 'Midnight engines turning over.', confidence: 0.45 },
+          { index: 20, speaker: 'Captain', text: 'Move to the ridge!', confidence: 0.99 },
+          { index: 30, speaker: 'Singer', text: 'Final refrain.', confidence: 0.43 }
         ],
-        summary: 'Dialogue includes a famous-song lyric contamination run.'
+        summary: 'Sparse lyric anchors leave one middle line requiring a bounded second hop.'
       },
       musicVocalsData: {
         vocal_segments: [
-          { index: 11, text: 'Obey your master', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
-          { index: 12, text: 'Come crawling faster', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
-          { index: 13, text: "Master of puppets I'll pull your strings", confidence: 0.95, performer: 'Lead', delivery: 'sung' },
-          { index: 14, text: 'Twisting your mind and smashing your dreams', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
-          { index: 15, text: "Blinded by me you can't see a thing", confidence: 0.95, performer: 'Lead', delivery: 'sung' },
-          { index: 16, text: "Just call my name 'cause I'll hear you scream", confidence: 0.95, performer: 'Lead', delivery: 'sung' },
-          { index: 17, text: 'Master! Master!', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
-          { index: 18, text: "Just call my name 'cause I'll hear you scream", confidence: 0.95, performer: 'Lead', delivery: 'sung' },
-          { index: 19, text: 'Master! Master!', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
-          { index: 25, text: 'Obey your master', confidence: 0.95, performer: 'Lead', delivery: 'sung' }
+          { index: 10, text: 'Silver skyline', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 11, text: 'Neon thunder calling softly', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 12, text: 'Static hearts are falling slowly', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 13, text: 'Midnight engines turning over', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 30, text: 'Final refrain', confidence: 0.95, performer: 'Lead', delivery: 'sung' }
         ],
-        summary: 'Vocal lane captures the known song clearly.',
+        summary: 'The vocal lane captures a recognized song with sparse lyric anchors.',
         recognizedSong: {
           status: 'recognized',
           confidence: 0.95,
           multipleSongsDetected: false,
           candidates: [
             {
-              title: 'Master of Puppets',
-              artist: 'Metallica',
+              title: 'City Lights',
+              artist: 'Example Artist',
               confidence: 0.95,
-              evidence: ['Sparse matched lyric anchors with richer transcript support.'],
-              matchedLyrics: [
-                'Obey your master',
-                "Master of puppets I'll pull your strings",
-                'Master',
-                'Come crawling faster'
-              ]
+              evidence: ['Sparse anchors with a longer local lyric chain.'],
+              matchedLyrics: ['Silver skyline', 'Final refrain']
             }
           ]
         }
@@ -398,15 +383,83 @@ test('reconcile-famous-song-phase1 script', async (t) => {
 
     assert.deepEqual(
       reconciledDialogue.dialogue_segments.map((segment) => segment.index),
-      [10, 20]
+      [0, 20]
     );
     assert.deepEqual(
       ledger.decisions.removedDialogueSegments.map((segment) => segment.indexOrder),
-      [11, 12, 13, 14, 15, 16, 17, 18, 19, 25]
+      [10, 11, 12, 13, 30]
     );
-    assert.equal(
-      ledger.decisions.removedDialogueSegments.some((segment) => segment.evidence.evidenceType === 'direct_vocal_support'),
-      true
+    assert.deepEqual(
+      ledger.decisions.removedDialogueSegments
+        .filter((segment) => segment.evidence.evidenceType === 'direct_vocal_support')
+        .map((segment) => ({ index: segment.indexOrder, hop: segment.evidence.promotionHop })),
+      [
+        { index: 11, hop: 1 },
+        { index: 12, hop: 1 },
+        { index: 13, hop: 2 }
+      ]
+    );
+  });
+
+  await t.test('stops after the bounded extra hop instead of propagating indefinitely', async () => {
+    const artifacts = makeArtifacts({
+      dialogueData: {
+        dialogue_segments: [
+          { index: 0, speaker: 'Singer', text: 'Silver skyline.', confidence: 0.43 },
+          { index: 1, speaker: 'Singer', text: 'Neon thunder calling softly.', confidence: 0.45 },
+          { index: 2, speaker: 'Singer', text: 'Static hearts are falling slowly.', confidence: 0.45 },
+          { index: 3, speaker: 'Singer', text: 'Midnight engines turning over.', confidence: 0.45 },
+          { index: 4, speaker: 'Singer', text: 'Paper sirens fading under.', confidence: 0.45 },
+          { index: 10, speaker: 'Captain', text: 'Hold the line!', confidence: 0.99 },
+          { index: 20, speaker: 'Singer', text: 'Final refrain.', confidence: 0.43 }
+        ],
+        summary: 'Only one extra local propagation hop should be allowed.'
+      },
+      musicVocalsData: {
+        vocal_segments: [
+          { index: 0, text: 'Silver skyline', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 1, text: 'Neon thunder calling softly', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 2, text: 'Static hearts are falling slowly', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 3, text: 'Midnight engines turning over', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 4, text: 'Paper sirens fading under', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 20, text: 'Final refrain', confidence: 0.95, performer: 'Lead', delivery: 'sung' }
+        ],
+        summary: 'The vocal lane captures a sparse-anchor lyric cluster.',
+        recognizedSong: {
+          status: 'recognized',
+          confidence: 0.95,
+          multipleSongsDetected: false,
+          candidates: [
+            {
+              title: 'City Lights',
+              artist: 'Example Artist',
+              confidence: 0.95,
+              evidence: ['Sparse anchors with a longer direct-vocal lyric chain.'],
+              matchedLyrics: ['Silver skyline', 'Final refrain']
+            }
+          ]
+        }
+      }
+    });
+
+    await reconcileScript.run({ outputDir, artifacts });
+
+    const reconciledDialogue = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.reconciled.json'), 'utf8'));
+    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
+
+    assert.deepEqual(
+      reconciledDialogue.dialogue_segments.map((segment) => segment.index),
+      [4, 10]
+    );
+    assert.deepEqual(
+      ledger.decisions.removedDialogueSegments
+        .filter((segment) => segment.evidence.evidenceType === 'direct_vocal_support')
+        .map((segment) => ({ index: segment.indexOrder, hop: segment.evidence.promotionHop })),
+      [
+        { index: 1, hop: 1 },
+        { index: 2, hop: 1 },
+        { index: 3, hop: 2 }
+      ]
     );
   });
 
@@ -460,7 +513,7 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     );
   });
 
-  await t.test('keeps a real spoken neighbor even when adjacent lyric evidence is present', async () => {
+  await t.test('preserves a real spoken neighbor while still removing adjacent lyric contamination', async () => {
     const artifacts = makeArtifacts({
       dialogueData: {
         dialogue_segments: [

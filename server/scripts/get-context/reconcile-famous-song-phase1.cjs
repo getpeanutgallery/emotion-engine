@@ -632,6 +632,9 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
   );
   const removedSegments = [];
   const dialogueSignalCache = new Map();
+  const promotionHopCache = new Map();
+  const promotionHopPending = new Set();
+  const MAX_DIRECT_VOCAL_PROMOTION_HOPS = 2;
 
   function getDialogueSignal(segment, index) {
     const cached = dialogueSignalCache.get(index);
@@ -671,29 +674,57 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
     return signal;
   }
 
-  function hasAdjacentLyricEvidence(index) {
+  function getAdjacentSignals(index) {
     const segment = dialogueSegments[index] || {};
     const dialogueOrderIndex = getSegmentOrderIndex(segment, index);
-    const neighbors = [
+    return [
       { segment: dialogueSegments[index - 1], fallbackIndex: index - 1 },
       { segment: dialogueSegments[index + 1], fallbackIndex: index + 1 }
-    ].filter(({ segment: neighbor }) => Boolean(neighbor));
+    ]
+      .filter(({ segment: neighbor }) => Boolean(neighbor))
+      .map(({ segment: neighbor, fallbackIndex }) => ({
+        neighborSignal: getDialogueSignal(neighbor, fallbackIndex),
+        fallbackIndex
+      }))
+      .filter(({ neighborSignal }) => Math.abs(dialogueOrderIndex - neighborSignal.dialogueOrderIndex) <= 1);
+  }
 
-    return neighbors.some(({ segment: neighbor, fallbackIndex }) => {
-      const neighborSignal = getDialogueSignal(neighbor, fallbackIndex);
-      return (
-        Math.abs(dialogueOrderIndex - neighborSignal.dialogueOrderIndex) <= 1 &&
-        neighborSignal.hasExistingLyricEvidence
-      );
-    });
+  function getPromotionHop(index) {
+    if (promotionHopCache.has(index)) return promotionHopCache.get(index);
+    if (promotionHopPending.has(index)) return null;
+
+    const segment = dialogueSegments[index] || {};
+    const signal = getDialogueSignal(segment, index);
+    if (!signal.lowConfidence || !signal.hasDirectVocalTextSupport || signal.hasExistingLyricEvidence) {
+      promotionHopCache.set(index, null);
+      return null;
+    }
+
+    if (signal.hasNearbyVocalIndexEvidence) {
+      promotionHopCache.set(index, 1);
+      return 1;
+    }
+
+    promotionHopPending.add(index);
+    const candidateResult = getAdjacentSignals(index).reduce((bestHop, { fallbackIndex, neighborSignal }) => {
+      if (neighborSignal.hasExistingLyricEvidence) return Math.min(bestHop, 1);
+
+      const neighborHop = getPromotionHop(fallbackIndex);
+      if (neighborHop === null || neighborHop >= MAX_DIRECT_VOCAL_PROMOTION_HOPS) return bestHop;
+
+      return Math.min(bestHop, neighborHop + 1);
+    }, Infinity);
+    promotionHopPending.delete(index);
+
+    const promotionHop = Number.isFinite(candidateResult) ? candidateResult : null;
+    promotionHopCache.set(index, promotionHop);
+    return promotionHop;
   }
 
   const reconciledSegments = dialogueSegments.filter((segment, index) => {
     const signal = getDialogueSignal(segment, index);
-    const promotedDirectVocalCandidate =
-      signal.lowConfidence &&
-      signal.hasDirectVocalTextSupport &&
-      (signal.hasNearbyVocalIndexEvidence || hasAdjacentLyricEvidence(index));
+    const promotionHop = getPromotionHop(index);
+    const promotedDirectVocalCandidate = promotionHop !== null && promotionHop <= MAX_DIRECT_VOCAL_PROMOTION_HOPS;
     if (!signal.hasExistingLyricEvidence && !promotedDirectVocalCandidate) return true;
 
     if (!signal.lowConfidence && !isShortOrRefrainLike(segment)) return true;
@@ -701,7 +732,8 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
       hasStrongSpokenSignal(dialogueSegments, index, {
         isLyricLikeNeighbor: (neighbor, fallbackIndex) => {
           const neighborSignal = getDialogueSignal(neighbor, fallbackIndex);
-          return neighborSignal.hasExistingLyricEvidence || neighborSignal.hasDirectVocalTextSupport;
+          const neighborPromotionHop = getPromotionHop(fallbackIndex);
+          return neighborSignal.hasExistingLyricEvidence || neighborPromotionHop !== null;
         }
       })
     ) {
@@ -726,6 +758,7 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
         nearbyVocalIndexEvidence: signal.hasNearbyVocalIndexEvidence,
         directVocalTextSupport: signal.hasDirectVocalTextSupport,
         evidenceType,
+        promotionHop,
         anchorHits: Array.isArray(signal.evidenceHit?.anchorHits) ? signal.evidenceHit.anchorHits : []
       },
       reason: 'likely_lyric_contamination'
