@@ -1176,11 +1176,14 @@ async function run(input) {
                 'Identify speakers as Speaker 1, Speaker 2, etc. for human-readable labels, while reusing anonymous speaker_id values for same-speaker linkage.',
                 'Preserve dialogue chronology using array order/index; include start/end timestamps only when directly supportable from the audio.',
                 'Keep grounded speaker identity separate from any inferred_traits guesswork.',
-                'Include intelligible dialogue and dialogue-like vocal material when it plausibly functions as dialogue. Exclude purely instrumental or otherwise non-vocal sections.',
-                'Do not drop or trim intelligible words merely because musical score is present underneath, delivery has melodic contour, or a phrase might also resemble lyrics.',
+                'Include audibly supported spoken dialogue and dialogue-like vocal material when it plausibly functions as dialogue, including short spoken fragments when only part of a weak, filtered, or partially masked line is recoverable. Exclude purely instrumental or otherwise non-vocal sections.',
+                'Do not drop or trim audibly supported spoken words merely because musical score is present underneath, delivery has melodic contour, or a phrase might also resemble lyrics.',
                 'If classification is ambiguous, preserve the line and express uncertainty through conservative confidence rather than suppressing it.',
                 'Reconciliation happens later; do not act as the final filter for whether a retained speech-like phrase should be stripped as lyric-only material.',
-                'If no intelligible dialogue or dialogue-like vocal material is detected, return an empty dialogue_segments array.'
+                'If a spoken line is real but weak, filtered, reverberant, synthetic-sounding, or only partly recoverable, keep the audible portion as its own segment instead of dropping it.',
+                'Do not absorb a short weak spoken line into stronger neighboring lines merely because the neighboring lines are clearer, longer, or easier to summarize.',
+                'Low confidence is an allowed outcome. If spoken words are audibly supported but faint or uncertain, preserve them with reduced confidence rather than suppressing them.',
+                'If no audibly supported spoken words or spoken fragments are detected, return an empty dialogue_segments array.'
               ]
             });
 
@@ -1478,11 +1481,14 @@ async function run(input) {
                 'Preserve chunk-local dialogue chronology using array order/index; include chunk-local start/end timestamps only when directly supportable from the audio.',
                 'Preserve prior speaker_id continuity by default; introduce a new speaker_id only when this chunk provides clear acoustic contradiction.',
                 'Keep grounded speaker identity separate from any inferred_traits guesswork.',
-                'Include intelligible dialogue and dialogue-like vocal material in this chunk when it plausibly functions as dialogue. Exclude purely instrumental or otherwise non-vocal sections.',
-                'Do not drop or trim intelligible words merely because musical score is present underneath, delivery has melodic contour, or a phrase might also resemble lyrics.',
+                'Include audibly supported spoken dialogue and dialogue-like vocal material in this chunk when it plausibly functions as dialogue, including short spoken fragments when only part of a weak, filtered, or partially masked line is recoverable. Exclude purely instrumental or otherwise non-vocal sections.',
+                'Do not drop or trim audibly supported spoken words merely because musical score is present underneath, delivery has melodic contour, or a phrase might also resemble lyrics.',
                 'If classification is ambiguous, preserve the line and express uncertainty through conservative confidence rather than suppressing it.',
                 'Reconciliation happens later; do not act as the final filter for whether a retained speech-like phrase should be stripped as lyric-only material.',
-                'If no intelligible dialogue or dialogue-like vocal material is detected, return an empty dialogue_segments array.',
+                'If a spoken line is real but weak, filtered, reverberant, synthetic-sounding, or only partly recoverable, keep the audible portion as its own segment instead of dropping it.',
+                'Do not absorb a short weak spoken line into stronger neighboring lines merely because the neighboring lines are clearer, longer, or easier to summarize.',
+                'Low confidence is an allowed outcome. If spoken words are audibly supported but faint or uncertain, preserve them with reduced confidence rather than suppressing them.',
+                'If no audibly supported spoken words or spoken fragments are detected, return an empty dialogue_segments array.',
                 'handoffContext must stay brief and continuity-focused.'
               ]
             });
@@ -2268,7 +2274,7 @@ Rules:
 - Return JSON only. No markdown. No explanation.
 - Preserve dialogue segment chronology via array order/index values.
 - start/end timestamps are optional and should be included only when directly supportable from the audio.
-- If no intelligible dialogue or dialogue-like vocal material is present, return an empty dialogue_segments array.
+- If no audibly supported spoken words or spoken fragments are present, return an empty dialogue_segments array.
 ${runtimeAnchorRules.join('\n')}
 
 Segmentation rules:
@@ -2279,13 +2285,17 @@ Segmentation rules:
 - If words are part of one uninterrupted utterance from the same voice, keep them in one segment; do not split artificially.
 - Do not bridge across silence, music-only gaps, or non-vocal stretches to create a cleaner sentence.
 - Preserve utterance ordering from the source audio; do not pull later lines earlier or compress dialogue into earlier entries.
+- Do not absorb a short weak spoken line into stronger neighboring lines merely because the neighboring lines are clearer, longer, or easier to summarize.
+- A brief audible insert between stronger surrounding lines should stay as its own segment when the insert itself is audibly supported, even if its confidence is low.
 
 Damaged-speech rules:
-- When speech is partially masked, clipped, distant, distorted, or overlapped, prefer a short literal fragment of what is actually audible.
+- When speech is partially masked, clipped, distant, distorted, reverberant, filtered, synthetic-sounding, or overlapped, prefer a short literal fragment of what is actually audible.
 - Preserve damaged speech as heard.
 - Do not smooth a damaged line into a cleaner full sentence.
 - Do not borrow missing words from neighboring beats, scene context, likely script memory, or semantic expectation.
 - If only part of a line is supported by the audio, return only that supported fragment.
+- If a spoken line is real but weak, filtered, reverberant, synthetic-sounding, or only partly recoverable, keep the audible portion as its own segment instead of dropping it.
+- When deciding between omitting a weak spoken line and keeping a short supported fragment with low confidence, prefer the supported fragment.
 - Prefer a short literal fragment over a polished but weakly supported reconstruction.
 
 Speaker rules:
@@ -2303,7 +2313,8 @@ Speaker rules:
 Confidence rules:
 - Use conservative confidence values.
 - Confidence must reflect both transcription certainty and speaker-assignment certainty.
-- Lower confidence materially when speech is short, masked, clipped, overlapped, stylized, distant, noisy, or speaker attribution is ambiguous.
+- Lower confidence materially when speech is short, masked, clipped, overlapped, stylized, distant, noisy, filtered, reverberant, or speaker attribution is ambiguous.
+- Low confidence is an allowed outcome. If spoken words are audibly supported but faint or uncertain, preserve them with reduced confidence rather than suppressing them.
 - Do not use near-certain scores unless the words and the speaker match are both strongly supported by the audio.
 - Similar-sounding voices, damaged fragments, and overlap-heavy moments should often stay moderate-confidence rather than near-certain.
 - Do not signal certainty you did not earn from the audio.
@@ -2326,9 +2337,9 @@ ${inferredTraitsRules}
 - If a trait is only weakly supported, include it with a low confidence and a short note that makes the uncertainty explicit.
 
 Scope rules:
-- Include intelligible spoken dialogue.
+- Include audibly supported spoken dialogue, including short spoken fragments when only part of a weak, filtered, or partially masked line is recoverable.
 - Exclude purely instrumental or non-vocal sections.
-- Do not drop or trim intelligible words merely because musical score is present underneath, the delivery has melodic contour, or the phrase might also resemble lyrics.
+- Do not drop or trim audibly supported spoken words merely because musical score is present underneath, the delivery has melodic contour, or the phrase might also resemble lyrics.
 - If classification is ambiguous, preserve the line and express uncertainty through conservative confidence rather than suppressing it.
 - Reconciliation happens later; do not act as the final filter for whether a retained speech-like phrase should be stripped as lyric-only material.
 - Do not use the summary to justify dropping ambiguous dialogue-like vocals early.
@@ -2527,7 +2538,7 @@ Rules:
 - Return JSON only. No markdown. No explanation.
 - Preserve dialogue segment chronology via array order/index values.
 - start/end timestamps are optional and should be chunk-local only when directly supportable from the audio.
-- If no intelligible dialogue or dialogue-like vocal material is present, return an empty dialogue_segments array.
+- If no audibly supported spoken words or spoken fragments are present, return an empty dialogue_segments array.
 - Keep handoffContext brief and continuity-focused.
 - The handoff is reference-only memory. Never copy or continue prior lines unless they are audibly present in this chunk.
 
@@ -2538,12 +2549,17 @@ Segmentation rules:
 - If words are part of one uninterrupted utterance from the same voice, keep them in one segment; do not split artificially.
 - Do not bridge across silence, music-only gaps, or non-vocal stretches to create a cleaner sentence.
 - Preserve utterance ordering faithfully; do not compress late dialogue into early entries or reshuffle chronology.
+- Do not absorb a short weak spoken line into stronger neighboring lines merely because the neighboring lines are clearer, longer, or easier to summarize.
+- A brief audible insert between stronger surrounding lines should stay as its own segment when the insert itself is audibly supported, even if its confidence is low.
 
 Damaged-speech rules:
-- When speech is masked, clipped, distant, distorted, or overlapped, prefer a short literal fragment of what is actually audible.
+- When speech is masked, clipped, distant, distorted, reverberant, filtered, synthetic-sounding, or overlapped, prefer a short literal fragment of what is actually audible.
 - Preserve damaged speech as heard.
 - Do not smooth a damaged line into a cleaner full sentence.
 - Do not borrow missing words from neighboring chunks, scene context, or semantic expectation.
+- If only part of a line is supported by the audio, return only that supported fragment.
+- If a spoken line is real but weak, filtered, reverberant, synthetic-sounding, or only partly recoverable, keep the audible portion as its own segment instead of dropping it.
+- When deciding between omitting a weak spoken line and keeping a short supported fragment with low confidence, prefer the supported fragment.
 
 Speaker rules:
 - Speaker continuity is acoustic, not semantic.
@@ -2560,6 +2576,8 @@ Speaker rules:
 Confidence and profile rules:
 - Use conservative confidence values.
 - Confidence must reflect both transcription certainty and speaker-assignment certainty.
+- Lower confidence materially when speech is short, masked, clipped, overlapped, stylized, distant, noisy, filtered, reverberant, or speaker attribution is ambiguous.
+- Low confidence is an allowed outcome. If spoken words are audibly supported but faint or uncertain, preserve them with reduced confidence rather than suppressing them.
 - Every speaker_profiles[*].grounded object must include a numeric confidence from 0.0 to 1.0.
 - grounded should contain cautious same-speaker evidence: anonymous continuity, linked_segment_indexes, and acoustically supported descriptors.
 - When supportable, include practical acoustic_descriptors that would help a later reviewer distinguish or reunify speakers, such as pitch range, raspiness/smoothness, breathiness, intensity, cadence, pacing, mic distance, recording texture, accent impression, age impression, or delivery mode.
@@ -2576,9 +2594,9 @@ ${inferredTraitsRules}
 - If a trait is only weakly supported, include it with a low confidence and a short note that makes the uncertainty explicit.
 
 Scope rules:
-- Include intelligible spoken dialogue and dialogue-like vocal material.
+- Include audibly supported spoken dialogue and dialogue-like vocal material, including short spoken fragments when only part of a weak, filtered, or partially masked line is recoverable.
 - Exclude purely instrumental or non-vocal sections.
-- Do not drop or trim intelligible words merely because musical score is present underneath, the delivery has melodic contour, or the phrase might also resemble lyrics.
+- Do not drop or trim audibly supported spoken words merely because musical score is present underneath, the delivery has melodic contour, or the phrase might also resemble lyrics.
 - If classification is ambiguous, preserve the line and express uncertainty through conservative confidence rather than suppressing it.
 - Reconciliation happens later; do not act as the final filter for whether a retained speech-like phrase should be stripped as lyric-only material.
 - Do not use adjacent spoken context or the handoff summary to pull unsupported words into this chunk.`;
