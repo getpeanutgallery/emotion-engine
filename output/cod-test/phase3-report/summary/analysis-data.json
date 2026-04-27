@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generatedAt": "2026-04-27T17:41:03.783Z",
+    "generatedAt": "2026-04-27T20:42:28.438Z",
     "pipelineVersion": "1.0",
     "pipelineName": "COD Test Pipeline",
     "videoDuration": 0,
@@ -15,8 +15,8 @@
       "frictionIndex": 0
     },
     "recommendation": {
-      "text": "Insufficient data provided for analysis. Recommend collecting chunk-level emotion analysis and computed metrics to generate actionable insights.",
-      "reasoning": "The input data contains empty metrics summaries and no chunk summaries, making it impossible to analyze viewer retention or emotional impact. Without averages, trends, friction index, or peak moments, no evidence-based recommendations can be made. The lack of data prevents any specific analysis of hooks, pacing, or emotional beats.",
+      "text": "Insufficient data provided for analysis. Please provide chunk-level emotion analysis and computed metrics to generate actionable recommendations.",
+      "reasoning": "The input data contains empty fields for averages, trends, friction index, peak moments, and chunk summaries. Without this information, it is not possible to assess viewer retention or emotional impact. To proceed, data collection is required.",
       "confidence": 0.1
     }
   },
@@ -29,7 +29,7 @@
     },
     "summary": {
       "metadata": {
-        "generatedAt": "2026-04-27T17:41:03.783Z",
+        "generatedAt": "2026-04-27T20:42:28.437Z",
         "pipelineVersion": "1.0",
         "videoDuration": 0,
         "chunksAnalyzed": 0,
@@ -44,20 +44,18 @@
         "frictionIndex": 0
       },
       "recommendation": {
-        "text": "Insufficient data provided for analysis. Recommend collecting chunk-level emotion analysis and computed metrics to generate actionable insights.",
-        "reasoning": "The input data contains empty metrics summaries and no chunk summaries, making it impossible to analyze viewer retention or emotional impact. Without averages, trends, friction index, or peak moments, no evidence-based recommendations can be made. The lack of data prevents any specific analysis of hooks, pacing, or emotional beats.",
+        "text": "Insufficient data provided for analysis. Please provide chunk-level emotion analysis and computed metrics to generate actionable recommendations.",
+        "reasoning": "The input data contains empty fields for averages, trends, friction index, peak moments, and chunk summaries. Without this information, it is not possible to assess viewer retention or emotional impact. To proceed, data collection is required.",
         "confidence": 0.1
       },
       "reportPaths": {
         "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
         "recommendation": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
         "emotionalAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json",
-        "finalReport": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md",
-        "analysisData": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json",
         "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json"
       },
       "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json",
-      "generatedAt": "2026-04-27T17:41:03.783Z"
+      "generatedAt": "2026-04-27T20:42:28.437Z"
     }
   }
 }

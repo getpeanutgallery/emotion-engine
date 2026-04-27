@@ -6,8 +6,8 @@
   "run": {
     "configName": "COD Test Pipeline",
     "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-    "startedAt": "2026-04-27T17:40:43.337Z",
-    "completedAt": "2026-04-27T17:40:43.338Z",
+    "startedAt": "2026-04-27T20:42:15.650Z",
+    "completedAt": "2026-04-27T20:42:15.651Z",
     "durationMs": 1,
     "attempt": 1
   },
@@ -15,7 +15,7 @@
     "artifactKey": "metricsData",
     "data": {
       "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
-      "generatedAt": "2026-04-27T17:40:43.337Z",
+      "generatedAt": "2026-04-27T20:42:15.651Z",
       "averages": {},
       "peakMoments": {},
       "trends": {},

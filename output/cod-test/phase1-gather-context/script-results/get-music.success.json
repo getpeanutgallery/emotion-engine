@@ -6,9 +6,9 @@
   "run": {
     "configName": "COD Test Pipeline",
     "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-    "startedAt": "2026-04-27T17:36:55.074Z",
-    "completedAt": "2026-04-27T17:37:27.860Z",
-    "durationMs": 32786,
+    "startedAt": "2026-04-27T20:38:43.278Z",
+    "completedAt": "2026-04-27T20:39:14.631Z",
+    "durationMs": 31353,
     "attempt": 1
   },
   "payload": {
@@ -17,38 +17,54 @@
       "segments": [
         {
           "start": 0,
-          "end": 35,
+          "end": 25,
           "type": "music",
-          "description": "Opening with restrained percussion and tense dialogue over a low orchestral score bed",
+          "description": "Tense dialogue over low, ominous score with ambient pulses and spoken overlay",
           "mood": "tense",
+          "intensity": 4
+        },
+        {
+          "start": 25,
+          "end": 50,
+          "type": "music",
+          "description": "Building percussion and synth melodies with action sound effects, spoken overlay continues",
+          "mood": "anticipatory",
           "intensity": 6
         },
         {
-          "start": 35,
-          "end": 76,
+          "start": 50,
+          "end": 75,
           "type": "music",
-          "description": "Score intensifies with rising strings and percussion under continued dialogue and action sound effects",
-          "mood": "building tension",
-          "intensity": 7
+          "description": "Intensifying score with distorted guitars and heavy drum hits, dialogue overlay present",
+          "mood": "aggressive",
+          "intensity": 8
         },
         {
-          "start": 76,
-          "end": 98,
+          "start": 75,
+          "end": 110,
           "type": "music",
-          "description": "Heavy metal song segment with aggressive guitar riffs and prominent vocal chants, dominating the audio bed",
+          "description": "Dominant heavy metal track with repeated vocal chants and high-energy instrumentation",
           "mood": "energetic",
-          "intensity": 9
+          "intensity": 10
         },
         {
-          "start": 98,
+          "start": 110,
+          "end": 130,
+          "type": "music",
+          "description": "Music fades to background, focused dialogue with residual tension and minimal score",
+          "mood": "resolved",
+          "intensity": 5
+        },
+        {
+          "start": 130,
           "end": 140,
           "type": "music",
-          "description": "Orchestral score returns with dialogue and action sounds, leading to a spoken promo over fading music",
-          "mood": "tense",
-          "intensity": 6
+          "description": "Promotional voiceover over subtle ambient sound and minimal score bed",
+          "mood": "neutral",
+          "intensity": 3
         }
       ],
-      "summary": "A tense trailer audio track with building orchestral score under dialogue, featuring a central heavy metal song segment with vocal chants, and concluding with action-oriented dialogue and promotional content.",
+      "summary": "A tense trailer audio with building intensity, featuring dialogue over ominous score, escalating to a heavy metal music peak with vocal chants, then resolving with dialogue and a promotional voiceover.",
       "hasMusic": true,
       "analysisMode": "whole_asset",
       "timingMode": "full_timeline",
@@ -61,12 +77,12 @@
       },
       "globalArc": {
         "dominantMood": "energetic",
-        "energyCurve": "rising_then_drop",
+        "energyCurve": "rising_then_plateau_then_drop",
         "notableTransitions": [
           {
-            "start": 76,
-            "end": 98,
-            "label": "heavy metal song entry with vocal chants"
+            "start": 75,
+            "end": 80,
+            "label": "heavy metal music entry"
           }
         ]
       },
@@ -85,15 +101,15 @@
         "base64BudgetBytes": 9437184
       },
       "recognizedSong": {
-        "status": "possible",
-        "confidence": 0.75,
+        "status": "recognized",
+        "confidence": 0.9,
         "candidates": [
           {
             "title": "Master of Puppets",
             "artist": "Metallica",
-            "confidence": 0.75,
+            "confidence": 0.9,
             "evidence": [
-              "Distinctive heavy metal riff and repeated 'master' chants in the music lane, with lyrical cues matching the song."
+              "Distinctive heavy metal riff and repeated vocal chants of 'master' in the music lane."
             ],
             "matchedLyrics": [
               "Obey your master",
@@ -101,23 +117,23 @@
             ],
             "timeRanges": [
               {
-                "start": 76,
-                "end": 98
+                "start": 75,
+                "end": 110
               }
             ],
-            "ambiguity": "Dialogue and sound effects partially mask the music, but key elements remain audible."
+            "ambiguity": "Dialogue and action SFX partially mask the cue but lyrics remain clear."
           }
         ],
-        "primaryEvidence": "Clear lyrical and musical cues aligning with a well-known song, though concurrent audio reduces certainty.",
-        "ambiguity": "Partial masking by dialogue and SFX.",
+        "primaryEvidence": "Iconic guitar riff and lyrical content are audibly present, confirming song identity.",
+        "ambiguity": "Minor masking from overlapping audio elements.",
         "multipleSongsDetected": false
       },
       "recognitionNotes": [
-        "The song segment is interspersed with dialogue, but the music remains the dominant bed; recognition is evidence-based on audible lyrics and instrumentation."
+        "Lyrics are identifiable despite spoken overlay and sound effects, supporting high confidence."
       ],
       "qualityNotes": [
         "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-        "Segment timings are approximate based on audio flow; confidence is moderate due to potential masking in parts of the track."
+        "Confidence is high due to specific musical and lyrical cues; segment timings are estimated from audio flow."
       ]
     }
   },

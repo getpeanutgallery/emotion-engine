@@ -100,13 +100,46 @@ This slice should determine whether that survivor is caused by sparse `matchedLy
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- fresh rerun artifacts/reports
-- optional QA note
+- `output/_archives/cod-test-pre-ee-7j6r-20260427-163732/`
+- `output/cod-test/**`
+- `benchmarks/fixtures/cod-test/_reports/**`
+- `.logs/cod-test-20260427-163732-ee-7j6r-bridge-rule-qa.log`
+- `.logs/cod-test-20260427-163732-ee-7j6r-bridge-rule-qa.time`
+- `docs/2026-04-27-bridge-rule-qa-rerun-note.md`
 - `.plans/2026-04-27-investigate-your-life-burns-faster-anomaly.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Ran the canonical cod-test rerun shape with archive + clean live digital-twin isolation: `set -euo pipefail; mkdir -p .logs output/_archives; TS=$(date +%Y%m%d-%H%M%S); ARCHIVE_DIR="output/_archives/cod-test-pre-ee-7j6r-$TS"; LOG=".logs/cod-test-$TS-ee-7j6r-bridge-rule-qa.log"; TIMELOG=".logs/cod-test-$TS-ee-7j6r-bridge-rule-qa.time"; mkdir -p "$ARCHIVE_DIR"; if [ -d output/cod-test ]; then mv output/cod-test "$ARCHIVE_DIR/"; fi; if [ -d benchmarks/fixtures/cod-test/_reports ]; then cp -a benchmarks/fixtures/cod-test/_reports "$ARCHIVE_DIR/benchmark_reports_before"; fi; set -a; . ./.env; set +a; /usr/bin/time -p -o "$TIMELOG" node server/run-pipeline.cjs --config configs/cod-test.yaml --clean-live-digital-twin --verbose 2>&1 | tee "$LOG"`.
+
+Actual QA run packet:
+- archive: `output/_archives/cod-test-pre-ee-7j6r-20260427-163732/`
+- log: `.logs/cod-test-20260427-163732-ee-7j6r-bridge-rule-qa.log`
+- timing: `.logs/cod-test-20260427-163732-ee-7j6r-bridge-rule-qa.time` → `real 295.84`
+
+Outcome:
+- Pipeline completed Phases 1-3, then exited non-zero at benchmark time with `0/7 artifacts passed`, `362/699 scoreable fields passed`, `699/1203` truth fields covered.
+- The specific anomaly is gone in the fresh run. Archived pre-run raw + reconciled dialogue both contained `index 16 = "Your life burns faster"`; fresh raw + reconciled dialogue contain no `Your life burns faster` line.
+- Fresh reconciliation status remains `applied` in `output/cod-test/phase1-gather-context/famous-song-reconciliation.json`.
+
+Important interpretation:
+- This rerun did **not** prove the bounded bridge rule fired in live runtime.
+- Instead, upstream Phase 1 capture shifted: fresh raw dialogue indexes `13-20` are now canonical lyric lines, and fresh `music-vocals-data.json` now carries direct support for those same lines in both `recognizedSong.primaryCandidate.matchedLyrics` and `vocal_segments`.
+- The fresh reconciliation ledger removed dialogue indexes `13,14,15,16,17,18,19,20,21,27` using direct lyric evidence. No `removedDialogueSegments[*].evidence.boundedLyricBridge` entries appeared in this live rerun.
+- So the visible anomaly is resolved, but for this provider-backed run it disappeared because direct lyric support got stronger, not because the new bridge path was exercised on the old survivor shape.
+
+Useful before/after deltas:
+- Archived pre-run packet `output/_archives/cod-test-pre-ee-7j6r-20260427-163732/cod-test/phase1-gather-context/`: raw dialogue `26`, reconciled dialogue `20`, removed dialogue indexes `13,14,15,17,23,24`, survivor `index 16 = "Your life burns faster"` still present after reconciliation.
+- Fresh packet `output/cod-test/phase1-gather-context/`: raw dialogue `29`, reconciled dialogue `19`, removed dialogue indexes `13,14,15,16,17,18,19,20,21,27`, no `Your life burns faster` in raw or reconciled dialogue.
+- Benchmark summary stayed red before and after (`0/7` passed, `3 fail`, `4 error`), but the artifact surfaces moved:
+  - `dialogueData` accuracy `0.5121 -> 0.4095`, output segments `20 -> 19`
+  - `dialogueDataRaw` accuracy `0.7761 -> 0.8284`, output segments `26 -> 29`
+  - `musicVocalsData` accuracy `0.3881 -> 0.4468`, ignored differences `33 -> 53`
+  - `musicData` accuracy `0.3333 -> 0.2941`
+  - `recommendationData` accuracy `0.1176 -> 0.1333`
+  - `metricsData` and `emotionalAnalysisData` unchanged at the top-line summary level
+
+Durable QA note written to `docs/2026-04-27-bridge-rule-qa-rerun-note.md`.
 
 ---
 
@@ -119,33 +152,39 @@ This slice should determine whether that survivor is caused by sparse `matchedLy
 **Prompt:** After bead `ee-7j6r` is closed, claim bead `ee-hbk5` with `bd update ee-hbk5 --status in_progress --json`, independently audit the post-fix outcome, verify whether the anomaly was addressed for the right reason, update this plan with exact audit findings, and close the bead with `bd close ee-hbk5 --reason "Independent audit complete" --json`.
 
 **Folders Created/Deleted/Modified:**
-- `docs/`
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- audit note if needed
 - `.plans/2026-04-27-investigate-your-life-burns-faster-anomaly.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit passed. Evidence checked: committed bridge-rule diff `f9f700b`, focused regression coverage in `test/scripts/reconcile-famous-song-phase1.test.js`, fresh live artifacts under `output/cod-test/phase1-gather-context/`, archived pre-fix comparison packet under `output/_archives/cod-test-pre-ee-7j6r-20260427-163732/`, QA note `docs/2026-04-27-bridge-rule-qa-rerun-note.md`, and current benchmark report surfaces under `benchmarks/fixtures/cod-test/_reports/`.
+
+Audit findings:
+- The bounded bridge-rule in `REF-03` is correctly implemented as a narrow same-speaker sandwich rule. It only activates for low-confidence dialogue with no existing lyric evidence, requires immediate left/right same-speaker neighbors, requires those neighbors to already be lyric-like through direct evidence or the existing direct-vocal promotion path, and is still blocked by the pre-existing spoken-signal guard. That is the right shape for the originally observed survivor pattern rather than a broad removal heuristic.
+- The focused tests are appropriate and passing. They cover the exact survivor pattern (`Your life burns faster` bridged away), a high-confidence spoken guardrail, and adjacent propagation/containment behavior. Fresh validation rerun: `node --test test/scripts/reconcile-famous-song-phase1.test.js` ✅ (13/13 passing).
+- The anomaly is actually gone in the latest provider-backed output for the right observable reason in that run: fresh raw dialogue no longer contains `Your life burns faster`, fresh reconciled dialogue also does not contain it, and the fresh reconciliation ledger removes the surrounding lyric block using `evidenceType: direct` only.
+- QA's interpretation is correct. The latest rerun did **not** demonstrate live bridge activation. Compared with the archived pre-fix packet where raw+reconciled dialogue both still contained `index 16 = "Your life burns faster"`, the fresh packet shows stronger upstream lyric capture instead: raw dialogue indexes `13-21` are already canonical lyric lines and `music-vocals-data.json` now supplies direct matched-lyric coverage for the same cluster. The ledger contains no `bounded_lyric_bridge` removals in this run.
+- Remaining risk/follow-up: the new bridge path is regression-covered but not replay-proven against the original provider output shape because the live source shifted underneath QA. That is acceptable for closure of this anomaly bead because the code path is narrowly guarded and unit-covered, but if future work needs runtime proof of the bridge itself, the repo should preserve or synthesize a fixed artifact fixture for the original `Speaker 9` survivor packet and run reconciliation deterministically against it.
 
 ---
 
 ## Final Results
 
-**Status:** ⚠️ Partial
+**Status:** ✅ Complete
 
-**What We Built:** Completed the coder slice for the approved follow-up: a narrow bounded bridge-rule in reconciliation that can remove a low-confidence sung line like `Your life burns faster` when it is directly sandwiched inside already-confirmed same-speaker lyric contamination, without broadening upstream lyric extraction.
+**What We Built:** Completed the diagnosis, implemented the approved bounded bridge-rule, ran the canonical cod-test QA rerun, and independently audited the post-fix outcome. The visible `Your life burns faster` anomaly is gone in the latest provider-backed packet, and the newly added bridge path remains in place as a narrowly guarded regression safety net for the original survivor shape.
 
-**Reference Check:** `REF-03` and `REF-05` were updated directly. The implementation follows the Task 1 diagnosis against `REF-06`, `REF-07`, `REF-08`, and `REF-10`: it bridges only the local survivor gap and leaves upstream lyric support behavior unchanged.
+**Reference Check:** `REF-03` and `REF-05` were updated directly in the coder slice and then independently re-audited. The QA/audit pass rechecked `REF-06`, `REF-07`, `REF-08`, `REF-09`, and `REF-10` using both the fresh artifact packet and the archived pre-run packet at `output/_archives/cod-test-pre-ee-7j6r-20260427-163732/`. Final read: the anomaly is gone, the fresh reconciliation ledger removes the lyric block through direct lyric evidence rather than `boundedLyricBridge`, and that interpretation matches both the raw artifacts and the QA note.
 
 **Commits:**
 - `f9f700b` - Add bounded lyric bridge for reconciliation
 - `494fc15` - Update anomaly plan with coder handoff
+- `0915698` - Refresh anomaly plan commit references
 
-**Lessons Learned:** The safest fix here was not a looser fuzzy matcher; it was a bounded structural rule keyed to local contamination shape. That preserves the earlier direct-vocal promotion behavior while cleaning up the exact survivor pattern the audit isolated.
+**Lessons Learned:** For provider-backed reruns, outcome verification and mechanism verification are different questions. Here, the outcome is genuinely fixed in the fresh packet, but the mechanism observed live was upstream evidence improvement rather than bridge activation. The bridge-rule still earns its keep because the implementation is bounded and the exact anomaly shape is covered by focused tests; if future slices need runtime proof of that specific path, they should pin a deterministic fixture of the old packet instead of relying on another live provider replay.
 
 ---
 
-*Planned on 2026-04-27*
+*Completed on 2026-04-27*

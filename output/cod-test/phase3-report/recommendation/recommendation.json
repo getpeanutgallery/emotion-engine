@@ -1,22 +1,20 @@
 {
-  "generatedAt": "2026-04-27T17:41:03.780Z",
+  "generatedAt": "2026-04-27T20:42:28.435Z",
   "pipelineVersion": "1.0",
-  "text": "Insufficient data provided for analysis. Recommend collecting chunk-level emotion analysis and computed metrics to generate actionable insights.",
-  "reasoning": "The input data contains empty metrics summaries and no chunk summaries, making it impossible to analyze viewer retention or emotional impact. Without averages, trends, friction index, or peak moments, no evidence-based recommendations can be made. The lack of data prevents any specific analysis of hooks, pacing, or emotional beats.",
+  "text": "Insufficient data provided for analysis. Please provide chunk-level emotion analysis and computed metrics to generate actionable recommendations.",
+  "reasoning": "The input data contains empty fields for averages, trends, friction index, peak moments, and chunk summaries. Without this information, it is not possible to assess viewer retention or emotional impact. To proceed, data collection is required.",
   "confidence": 0.1,
   "keyFindings": [
     "No emotion analysis data available",
-    "Metrics summaries are empty",
-    "Chunk summaries array is empty"
+    "Metrics summary is empty",
+    "Chunk summaries are missing"
   ],
   "suggestions": [
-    "Collect chunk-level emotion analysis data",
-    "Compute metrics such as averages, trends, friction index, and peak moments",
-    "Ensure data is populated before analysis",
-    "Use the pipeline to generate meaningful summaries",
-    "Review the pipeline configuration to ensure data is being captured correctly",
-    "Validate the emotion analysis tool output for completeness",
-    "Set up a process to regularly compute and update metrics"
+    "Collect chunk-level emotion data including valence, arousal, and engagement scores",
+    "Compute metrics such as average emotion scores, trends over time, friction index, and identify peak moments",
+    "Analyze the start/hook for initial emotional impact",
+    "Review pacing based on emotion transitions",
+    "Identify key emotional beats for retention"
   ],
   "failedChunks": 0,
   "ai": {
@@ -32,8 +30,8 @@
       "validatorCalls": 2
     },
     "usage": {
-      "input": 2120,
-      "output": 1018
+      "input": 2006,
+      "output": 692
     }
   }
 }

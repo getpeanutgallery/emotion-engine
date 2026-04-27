@@ -17,8 +17,8 @@
       "artifactKey": "dialogueData",
       "label": "Phase 1 dialogue (primary spoken, reconciled)",
       "status": "fail",
-      "accuracyRate": 0.5121212121212121,
-      "coverageRate": 0.9565217391304348,
+      "accuracyRate": 0.4095238095238095,
+      "coverageRate": 0.9545454545454546,
       "ignoredDifferenceCount": 0,
       "comparisonBoundary": {
         "comparisonMode": "dual-dialogue-surface",
@@ -29,12 +29,12 @@
       },
       "mismatchClassificationCounts": {},
       "dialogueScoring": {
-        "dialogue_text_full_transcript_pct": 92.9,
-        "dialogue_text_windowed_pct": 93.1,
+        "dialogue_text_full_transcript_pct": 95,
+        "dialogue_text_windowed_pct": 95,
         "dialogue_boundary_pct": 0,
         "truth_segment_count": 20,
-        "output_segment_count": 20,
-        "split_event_count": 2,
+        "output_segment_count": 19,
+        "split_event_count": 1,
         "merge_event_count": 2,
         "missing_truth_window_count": 0,
         "extra_output_window_count": 0,
@@ -109,7 +109,7 @@
             "output_indexes": [
               7
             ],
-            "text_similarity_pct": 100,
+            "text_similarity_pct": 90.9,
             "boundary_status": "aligned"
           },
           {
@@ -168,18 +168,17 @@
               14
             ],
             "output_indexes": [
-              13,
-              14
+              13
             ],
-            "text_similarity_pct": 50,
-            "boundary_status": "split"
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
           },
           {
             "truth_indexes": [
               15
             ],
             "output_indexes": [
-              15
+              14
             ],
             "text_similarity_pct": 100,
             "boundary_status": "aligned"
@@ -189,7 +188,7 @@
               16
             ],
             "output_indexes": [
-              16
+              15
             ],
             "text_similarity_pct": 92.9,
             "boundary_status": "aligned"
@@ -199,6 +198,16 @@
               17
             ],
             "output_indexes": [
+              16
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              18
+            ],
+            "output_indexes": [
               17
             ],
             "text_similarity_pct": 100,
@@ -206,20 +215,10 @@
           },
           {
             "truth_indexes": [
-              18
-            ],
-            "output_indexes": [
-              18
-            ],
-            "text_similarity_pct": 100,
-            "boundary_status": "aligned"
-          },
-          {
-            "truth_indexes": [
               19
             ],
             "output_indexes": [
-              19
+              18
             ],
             "text_similarity_pct": 100,
             "boundary_status": "aligned"
@@ -231,8 +230,8 @@
       "artifactKey": "dialogueDataRaw",
       "label": "Phase 1 dialogue (diagnostic raw capture)",
       "status": "fail",
-      "accuracyRate": 0.7761194029850746,
-      "coverageRate": 0.628125,
+      "accuracyRate": 0.8284313725490197,
+      "coverageRate": 0.631578947368421,
       "ignoredDifferenceCount": 0,
       "comparisonBoundary": {
         "comparisonMode": "dual-dialogue-surface",
@@ -243,15 +242,15 @@
       },
       "mismatchClassificationCounts": {},
       "dialogueScoring": {
-        "dialogue_text_full_transcript_pct": 66.7,
-        "dialogue_text_windowed_pct": 58.2,
-        "dialogue_boundary_pct": 14.3,
+        "dialogue_text_full_transcript_pct": 71,
+        "dialogue_text_windowed_pct": 50.4,
+        "dialogue_boundary_pct": 0,
         "truth_segment_count": 18,
-        "output_segment_count": 26,
-        "split_event_count": 3,
+        "output_segment_count": 29,
+        "split_event_count": 5,
         "merge_event_count": 0,
         "missing_truth_window_count": 1,
-        "extra_output_window_count": 3,
+        "extra_output_window_count": 7,
         "normalization_profile": "dialogue-text-v1",
         "window_alignments": [
           {
@@ -331,7 +330,7 @@
             "output_indexes": [
               7
             ],
-            "text_similarity_pct": 90.9,
+            "text_similarity_pct": 81.8,
             "boundary_status": "aligned"
           },
           {
@@ -340,24 +339,32 @@
             ],
             "output_indexes": [
               8,
-              9,
-              10
+              9
             ],
-            "text_similarity_pct": 60,
+            "text_similarity_pct": 75,
             "boundary_status": "split"
           },
           {
             "truth_indexes": [
-              9,
+              9
+            ],
+            "output_indexes": [
+              10,
+              11
+            ],
+            "text_similarity_pct": 57.1,
+            "boundary_status": "split"
+          },
+          {
+            "truth_indexes": [
               10
             ],
             "output_indexes": [
-              11,
               12,
               13
             ],
-            "text_similarity_pct": 61.5,
-            "boundary_status": "many_to_many"
+            "text_similarity_pct": 50,
+            "boundary_status": "split"
           },
           {
             "truth_indexes": [
@@ -392,14 +399,46 @@
             "boundary_status": "extra_output"
           },
           {
+            "truth_indexes": [],
+            "output_indexes": [
+              17
+            ],
+            "text_similarity_pct": 0,
+            "boundary_status": "extra_output"
+          },
+          {
+            "truth_indexes": [],
+            "output_indexes": [
+              18
+            ],
+            "text_similarity_pct": 0,
+            "boundary_status": "extra_output"
+          },
+          {
+            "truth_indexes": [],
+            "output_indexes": [
+              19
+            ],
+            "text_similarity_pct": 0,
+            "boundary_status": "extra_output"
+          },
+          {
+            "truth_indexes": [],
+            "output_indexes": [
+              20
+            ],
+            "text_similarity_pct": 0,
+            "boundary_status": "extra_output"
+          },
+          {
             "truth_indexes": [
               12
             ],
             "output_indexes": [
-              17,
-              18
+              21,
+              22
             ],
-            "text_similarity_pct": 50,
+            "text_similarity_pct": 66.7,
             "boundary_status": "split"
           },
           {
@@ -407,7 +446,7 @@
               13
             ],
             "output_indexes": [
-              19
+              23
             ],
             "text_similarity_pct": 100,
             "boundary_status": "aligned"
@@ -417,7 +456,7 @@
               14
             ],
             "output_indexes": [
-              20
+              24
             ],
             "text_similarity_pct": 100,
             "boundary_status": "aligned"
@@ -427,7 +466,7 @@
               15
             ],
             "output_indexes": [
-              21
+              25
             ],
             "text_similarity_pct": 100,
             "boundary_status": "aligned"
@@ -437,22 +476,21 @@
               16
             ],
             "output_indexes": [
-              22
+              26,
+              27
             ],
-            "text_similarity_pct": 100,
-            "boundary_status": "aligned"
+            "text_similarity_pct": 66.7,
+            "boundary_status": "split"
           },
           {
             "truth_indexes": [
               17
             ],
             "output_indexes": [
-              23,
-              24,
-              25
+              28
             ],
-            "text_similarity_pct": 60,
-            "boundary_status": "split"
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
           }
         ]
       }
@@ -461,21 +499,21 @@
       "artifactKey": "musicData",
       "label": "Phase 1 music",
       "status": "error",
-      "accuracyRate": 0.3333333333333333,
-      "coverageRate": 0.8490566037735849,
+      "accuracyRate": 0.29411764705882354,
+      "coverageRate": 0.864406779661017,
       "ignoredDifferenceCount": 5,
       "comparisonBoundary": null,
       "mismatchClassificationCounts": {},
       "musicScoring": {
-        "music_segment_timeline_pct": 35.7,
-        "music_segment_content_pct": 25,
+        "music_segment_timeline_pct": 35.3,
+        "music_segment_content_pct": 13.3,
         "music_summary_pct": 0,
-        "recognized_song_identity_pct": 66.7,
+        "recognized_song_identity_pct": 83.3,
         "recognized_song_support_pct": 0,
         "truth_segment_count": 5,
-        "output_segment_count": 4,
-        "missing_truth_segment_count": 1,
-        "extra_output_segment_count": 0,
+        "output_segment_count": 6,
+        "missing_truth_segment_count": 0,
+        "extra_output_segment_count": 1,
         "alignment_strategy": "time-aware-segments"
       }
     },
@@ -483,30 +521,32 @@
       "artifactKey": "musicVocalsData",
       "label": "Phase 1 music vocals",
       "status": "fail",
-      "accuracyRate": 0.3880597014925373,
-      "coverageRate": 0.9852941176470589,
-      "ignoredDifferenceCount": 33,
+      "accuracyRate": 0.44680851063829785,
+      "coverageRate": 0.9894736842105263,
+      "ignoredDifferenceCount": 53,
       "comparisonBoundary": null,
       "mismatchClassificationCounts": {},
       "musicVocalsScoring": {
-        "vocal_text_full_transcript_pct": 12.7,
-        "vocal_text_windowed_pct": 17.1,
-        "vocal_boundary_pct": 50,
+        "vocal_text_full_transcript_pct": 55.4,
+        "vocal_text_windowed_pct": 53,
+        "vocal_boundary_pct": 60,
         "truth_segment_count": 12,
-        "output_segment_count": 6,
+        "output_segment_count": 14,
         "split_event_count": 0,
         "merge_event_count": 1,
-        "missing_truth_window_count": 8,
+        "missing_truth_window_count": 1,
         "extra_output_window_count": 3,
         "normalization_profile": "lyrics-text-v1",
         "window_alignments": [
           {
-            "truth_indexes": [],
+            "truth_indexes": [
+              0
+            ],
             "output_indexes": [
               0
             ],
-            "text_similarity_pct": 0,
-            "boundary_status": "extra_output"
+            "text_similarity_pct": 75,
+            "boundary_status": "aligned"
           },
           {
             "truth_indexes": [],
@@ -526,66 +566,60 @@
           },
           {
             "truth_indexes": [
-              0,
-              1
+              1,
+              2
             ],
             "output_indexes": [
               3,
+              4,
+              5
+            ],
+            "text_similarity_pct": 53.3,
+            "boundary_status": "many_to_many"
+          },
+          {
+            "truth_indexes": [
+              3
+            ],
+            "output_indexes": [
+              6
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
               4
+            ],
+            "output_indexes": [
+              7
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
+          },
+          {
+            "truth_indexes": [
+              5,
+              6,
+              7
+            ],
+            "output_indexes": [
+              8,
+              9,
+              10
             ],
             "text_similarity_pct": 57.1,
             "boundary_status": "many_to_many"
           },
           {
             "truth_indexes": [
-              2,
-              3
-            ],
-            "output_indexes": [
-              5
-            ],
-            "text_similarity_pct": 53.3,
-            "boundary_status": "merge"
-          },
-          {
-            "truth_indexes": [
-              4
-            ],
-            "output_indexes": [],
-            "text_similarity_pct": 0,
-            "boundary_status": "missing_truth"
-          },
-          {
-            "truth_indexes": [
-              5
-            ],
-            "output_indexes": [],
-            "text_similarity_pct": 0,
-            "boundary_status": "missing_truth"
-          },
-          {
-            "truth_indexes": [
-              6
-            ],
-            "output_indexes": [],
-            "text_similarity_pct": 0,
-            "boundary_status": "missing_truth"
-          },
-          {
-            "truth_indexes": [
-              7
-            ],
-            "output_indexes": [],
-            "text_similarity_pct": 0,
-            "boundary_status": "missing_truth"
-          },
-          {
-            "truth_indexes": [
               8
             ],
-            "output_indexes": [],
-            "text_similarity_pct": 0,
-            "boundary_status": "missing_truth"
+            "output_indexes": [
+              11
+            ],
+            "text_similarity_pct": 100,
+            "boundary_status": "aligned"
           },
           {
             "truth_indexes": [
@@ -596,20 +630,23 @@
             "boundary_status": "missing_truth"
           },
           {
-            "truth_indexes": [
-              10
+            "truth_indexes": [],
+            "output_indexes": [
+              12
             ],
-            "output_indexes": [],
             "text_similarity_pct": 0,
-            "boundary_status": "missing_truth"
+            "boundary_status": "extra_output"
           },
           {
             "truth_indexes": [
+              10,
               11
             ],
-            "output_indexes": [],
-            "text_similarity_pct": 0,
-            "boundary_status": "missing_truth"
+            "output_indexes": [
+              13
+            ],
+            "text_similarity_pct": 60,
+            "boundary_status": "merge"
           }
         ],
         "vocal_attribution_pct": 55.6,
@@ -621,8 +658,8 @@
       "artifactKey": "recommendationData",
       "label": "Phase 3 recommendation",
       "status": "error",
-      "accuracyRate": 0.11764705882352941,
-      "coverageRate": 0.4722222222222222,
+      "accuracyRate": 0.13333333333333333,
+      "coverageRate": 0.4166666666666667,
       "ignoredDifferenceCount": 4,
       "comparisonBoundary": null,
       "mismatchClassificationCounts": {},
@@ -635,7 +672,7 @@
         "key_findings_truth_count": 6,
         "key_findings_output_count": 3,
         "suggestions_truth_count": 11,
-        "suggestions_output_count": 7,
+        "suggestions_output_count": 5,
         "list_alignment_strategy": "index-or-fuzzy-item"
       }
     },
@@ -687,26 +724,26 @@
     "artifactsPassed": 0,
     "artifactsFailed": 3,
     "artifactsErrored": 4,
-    "totalTruthFields": 1182,
-    "scoreableFields": 680,
+    "totalTruthFields": 1203,
+    "scoreableFields": 699,
     "skippedFields": 149,
-    "passedFields": 373,
-    "failedFields": 307,
-    "erroredFields": 353,
-    "ignoredDifferenceFields": 44,
+    "passedFields": 362,
+    "failedFields": 337,
+    "erroredFields": 355,
+    "ignoredDifferenceFields": 64,
     "mismatchClassificationCounts": {}
   },
   "accuracy": {
-    "passed": 373,
-    "failed": 307,
-    "rate": 0.5485294117647059
+    "passed": 362,
+    "failed": 337,
+    "rate": 0.5178826895565093
   },
   "coverage": {
-    "scoreable": 680,
+    "scoreable": 699,
     "skipped": 149,
-    "ignoredDifferences": 44,
-    "totalTruthFields": 1182,
-    "rate": 0.5752961082910322
+    "ignoredDifferences": 64,
+    "totalTruthFields": 1203,
+    "rate": 0.5810473815461347
   },
   "mismatchClassificationCounts": {},
   "errors": [
@@ -716,12 +753,12 @@
       "rule": "structural",
       "outputValue": {
         "dominantMood": "energetic",
-        "energyCurve": "rising_then_drop",
+        "energyCurve": "rising_then_plateau_then_drop",
         "notableTransitions": [
           {
-            "start": 76,
-            "end": 98,
-            "label": "heavy metal song entry with vocal chants"
+            "start": 75,
+            "end": 80,
+            "label": "heavy metal music entry"
           }
         ]
       },
@@ -733,23 +770,23 @@
       "rule": "structural",
       "outputValue": [
         "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-        "Segment timings are approximate based on audio flow; confidence is moderate due to potential masking in parts of the track."
+        "Confidence is high due to specific musical and lyrical cues; segment timings are estimated from audio flow."
       ],
       "reason": "Truth object missing field present in output"
     },
     {
       "artifactKey": "musicData",
-      "path": "segments[4]",
+      "path": "segments[5]",
       "rule": "structural",
-      "truthValue": {
-        "start": 120,
-        "end": 140.042449,
+      "outputValue": {
+        "start": 130,
+        "end": 140,
         "type": "music",
-        "description": "High-energy, cinematic action trailer music with intense sound effects and a promotional voiceover.",
-        "mood": "energetic",
-        "intensity": 9
+        "description": "Promotional voiceover over subtle ambient sound and minimal score bed",
+        "mood": "neutral",
+        "intensity": 3
       },
-      "reason": "Output array missing item present in truth"
+      "reason": "Truth array missing item present in output"
     },
     {
       "artifactKey": "musicData",
@@ -811,6 +848,20 @@
       "path": "keyFindings[5]",
       "rule": "structural",
       "truthValue": "The end-slate/pre-order stretch weakens the final emotional payoff and likely causes scroll-off before the CTA lands.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "recommendationData",
+      "path": "suggestions[5]",
+      "rule": "structural",
+      "truthValue": "At the 85-95s section, compress the Alaska/Hawaii transition so the audience gets to playable action faster.",
+      "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "recommendationData",
+      "path": "suggestions[6]",
+      "rule": "structural",
+      "truthValue": "Use more pattern interrupts in the back half: alternate combat scale, color palette, or perspective to offset boredom growth.",
       "reason": "Output array missing item present in truth"
     },
     {
@@ -5574,5 +5625,5 @@
       "reason": "Output array missing item present in truth"
     }
   ],
-  "summary": "0/7 artifacts passed. 373/680 scoreable fields passed. Truth coverage was 680/1182 fields."
+  "summary": "0/7 artifacts passed. 362/699 scoreable fields passed. Truth coverage was 699/1203 fields."
 }
