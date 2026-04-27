@@ -63,11 +63,11 @@ This slice should determine whether that survivor is caused by sparse `matchedLy
 
 ### Task 2: Implement the approved narrow fix
 
-**Bead ID:** `Pending`  
+**Bead ID:** `ee-rjdx`  
 **SubAgent:** `primary`  
 **Role:** `coder`  
 **References:** `REF-03`, `REF-04`, `REF-05`, `REF-06`, `REF-07`, `REF-08`, `REF-10`  
-**Prompt:** After Derrick approves the exact change, implement the narrow fix, add/update tests, run validation, update this plan, commit/push by default, and close the bead.
+**Prompt:** Implement the approved narrow bridge-rule in `server/scripts/get-context/reconcile-famous-song-phase1.cjs`. Claim bead `ee-rjdx` on start with `bd update ee-rjdx --status in_progress --json`. Add/update focused tests in `test/scripts/reconcile-famous-song-phase1.test.js`, run relevant validation, update this plan with exact results/files/commits, commit and push by default, and close the bead with `bd close ee-rjdx --reason "Implemented approved narrow bridge-rule and validated it" --json`.
 
 **Folders Created/Deleted/Modified:**
 - `server/`
@@ -75,22 +75,23 @@ This slice should determine whether that survivor is caused by sparse `matchedLy
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- to be determined by Task 1
+- `server/scripts/get-context/reconcile-famous-song-phase1.cjs`
+- `test/scripts/reconcile-famous-song-phase1.test.js`
 - `.plans/2026-04-27-investigate-your-life-burns-faster-anomaly.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Implemented a narrow local bridge-rule in `server/scripts/get-context/reconcile-famous-song-phase1.cjs` for a low-confidence same-speaker dialogue line that is directly sandwiched between already lyric-like contamination candidates. The rule stays bounded: it only applies when the middle line has no existing lyric evidence, is low-confidence, lacks a strong spoken-signal neighbor pattern, and both immediate same-speaker neighbors are already lyric-like via direct evidence or the existing direct-vocal promotion path. Added focused regression coverage in `test/scripts/reconcile-famous-song-phase1.test.js` for the exact `Your life burns faster` survivor pattern plus a guardrail case that proves a high-confidence same-speaker spoken line does not get bridged away. Validation run: `node --test test/scripts/reconcile-famous-song-phase1.test.js` ✅. Commit/push info recorded below in Final Results.
 
 ---
 
 ### Task 3: Rerun cod-test after the approved fix
 
-**Bead ID:** `Pending`  
+**Bead ID:** `ee-7j6r`  
 **SubAgent:** `primary`  
 **Role:** `qa`  
 **References:** `REF-03`, `REF-06`, `REF-07`, `REF-08`, `REF-09`, `REF-10`  
-**Prompt:** After the approved fix lands, run the canonical cod-test pipeline, compare results, update this plan, write a concise QA note if useful, and close the bead.
+**Prompt:** After bead `ee-rjdx` is closed, claim bead `ee-7j6r` with `bd update ee-7j6r --status in_progress --json`, run the canonical cod-test pipeline, compare anomaly outcomes and benchmark deltas, update this plan with exact findings/artifacts, write a concise QA note if useful, and close the bead with `bd close ee-7j6r --reason "Ran cod-test and recorded anomaly outcome" --json`.
 
 **Folders Created/Deleted/Modified:**
 - `output/`
@@ -111,11 +112,11 @@ This slice should determine whether that survivor is caused by sparse `matchedLy
 
 ### Task 4: Independent audit of the anomaly outcome
 
-**Bead ID:** `Pending`  
+**Bead ID:** `ee-hbk5`  
 **SubAgent:** `primary`  
 **Role:** `auditor`  
 **References:** `REF-03`, `REF-06`, `REF-07`, `REF-08`, `REF-09`, `REF-10`  
-**Prompt:** Independently audit the post-fix outcome, verify whether the anomaly was addressed for the right reason, update this plan, and close the bead.
+**Prompt:** After bead `ee-7j6r` is closed, claim bead `ee-hbk5` with `bd update ee-hbk5 --status in_progress --json`, independently audit the post-fix outcome, verify whether the anomaly was addressed for the right reason, update this plan with exact audit findings, and close the bead with `bd close ee-hbk5 --reason "Independent audit complete" --json`.
 
 **Folders Created/Deleted/Modified:**
 - `docs/`
@@ -135,14 +136,14 @@ This slice should determine whether that survivor is caused by sparse `matchedLy
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Investigated the `Your life burns faster` survivor far enough to identify the likely cause and define an approval-ready next change, but intentionally stopped before implementation or rerun.
+**What We Built:** Completed the coder slice for the approved follow-up: a narrow bounded bridge-rule in reconciliation that can remove a low-confidence sung line like `Your life burns faster` when it is directly sandwiched inside already-confirmed same-speaker lyric contamination, without broadening upstream lyric extraction.
 
-**Reference Check:** Directly rechecked the current dialogue artifact, reconciled artifact, music-vocals artifact, reconciliation ledger, and benchmark truth surfaces during manual audit.
+**Reference Check:** `REF-03` and `REF-05` were updated directly. The implementation follows the Task 1 diagnosis against `REF-06`, `REF-07`, `REF-08`, and `REF-10`: it bridges only the local survivor gap and leaves upstream lyric support behavior unchanged.
 
 **Commits:**
-- Pending.
+- Pending commit/push from Task 2.
 
-**Lessons Learned:** When upstream support surfaces omit an exact lyric fragment, current reconciliation can leave a low-confidence sung bridge line behind even when adjacent lyric contamination is removed. A small local bridge rule is likely the narrowest next fix.
+**Lessons Learned:** The safest fix here was not a looser fuzzy matcher; it was a bounded structural rule keyed to local contamination shape. That preserves the earlier direct-vocal promotion behavior while cleaning up the exact survivor pattern the audit isolated.
 
 ---
 

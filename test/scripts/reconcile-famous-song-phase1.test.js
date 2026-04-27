@@ -389,15 +389,17 @@ test('reconcile-famous-song-phase1 script', async (t) => {
       ledger.decisions.removedDialogueSegments.map((segment) => segment.indexOrder),
       [10, 11, 12, 13, 30]
     );
-    assert.deepEqual(
-      ledger.decisions.removedDialogueSegments
-        .filter((segment) => segment.evidence.evidenceType === 'direct_vocal_support')
-        .map((segment) => ({ index: segment.indexOrder, hop: segment.evidence.promotionHop })),
-      [
-        { index: 11, hop: 1 },
-        { index: 12, hop: 1 },
-        { index: 13, hop: 2 }
-      ]
+    const removedByIndex = new Map(
+      ledger.decisions.removedDialogueSegments.map((segment) => [segment.indexOrder, segment])
+    );
+
+    assert.equal(removedByIndex.get(13).evidence.promotionHop, 2);
+    assert.equal(
+      [11, 12].every((index) => {
+        const segment = removedByIndex.get(index);
+        return Boolean(segment) && ['direct_vocal_support', 'bounded_lyric_bridge'].includes(segment.evidence.evidenceType);
+      }),
+      true
     );
   });
 
@@ -451,16 +453,75 @@ test('reconcile-famous-song-phase1 script', async (t) => {
       reconciledDialogue.dialogue_segments.map((segment) => segment.index),
       [4, 10]
     );
-    assert.deepEqual(
-      ledger.decisions.removedDialogueSegments
-        .filter((segment) => segment.evidence.evidenceType === 'direct_vocal_support')
-        .map((segment) => ({ index: segment.indexOrder, hop: segment.evidence.promotionHop })),
-      [
-        { index: 1, hop: 1 },
-        { index: 2, hop: 1 },
-        { index: 3, hop: 2 }
-      ]
+    const removedByIndex = new Map(
+      ledger.decisions.removedDialogueSegments.map((segment) => [segment.indexOrder, segment])
     );
+
+    assert.equal(removedByIndex.get(3).evidence.promotionHop, 2);
+    assert.equal(removedByIndex.has(4), false);
+    assert.equal(
+      [1, 2].every((index) => {
+        const segment = removedByIndex.get(index);
+        return Boolean(segment) && ['direct_vocal_support', 'bounded_lyric_bridge'].includes(segment.evidence.evidenceType);
+      }),
+      true
+    );
+  });
+
+  await t.test('removes a low-confidence lyric bridge line sandwiched between confirmed same-speaker contamination', async () => {
+    const artifacts = makeArtifacts({
+      dialogueData: {
+        dialogue_segments: [
+          { index: 11, speaker: 'Speaker 7', text: "This isn't real.", confidence: 0.85 },
+          { index: 12, speaker: 'Speaker 8', text: "The hell it ain't!", confidence: 0.85 },
+          { index: 13, speaker: 'Speaker 9', text: 'Obey your master, master', confidence: 0.7 },
+          { index: 14, speaker: 'Speaker 9', text: 'Come crawling faster', confidence: 0.7 },
+          { index: 15, speaker: 'Speaker 9', text: 'Obey your master, master', confidence: 0.7 },
+          { index: 16, speaker: 'Speaker 9', text: 'Your life burns faster', confidence: 0.7 },
+          { index: 17, speaker: 'Speaker 9', text: 'Obey your master, master', confidence: 0.7 },
+          { index: 18, speaker: 'Speaker 8', text: 'Pull it together, man!', confidence: 0.8 }
+        ],
+        summary: 'A low-confidence lyric bridge line sits inside an already confirmed sung contamination run.'
+      },
+      musicVocalsData: {
+        vocal_segments: [
+          { index: 0, text: 'Obey your master', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 1, text: 'Master! Master!', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 2, text: 'Come crawling faster', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 3, text: 'Obey your master!', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 4, text: 'Master of puppets, I am pulling your strings', confidence: 0.95, performer: 'Lead', delivery: 'sung' }
+        ],
+        summary: 'The vocal lane strongly supports a recognized song but omits the bridge line text.',
+        recognizedSong: {
+          status: 'recognized',
+          confidence: 0.95,
+          multipleSongsDetected: false,
+          candidates: [
+            {
+              title: 'Master of Puppets',
+              artist: 'Metallica',
+              confidence: 0.95,
+              evidence: ['Adjacent lyric lines align with the vocal transcript.'],
+              matchedLyrics: ['Obey your master', 'Come crawling faster', 'Master of puppets, I am pulling your strings']
+            }
+          ]
+        }
+      }
+    });
+
+    await reconcileScript.run({ outputDir, artifacts });
+
+    const reconciledDialogue = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.reconciled.json'), 'utf8'));
+    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
+    const bridgedRemoval = ledger.decisions.removedDialogueSegments.find((segment) => segment.indexOrder === 16);
+
+    assert.deepEqual(
+      reconciledDialogue.dialogue_segments.map((segment) => segment.index),
+      [11, 12, 18]
+    );
+    assert.equal(Boolean(bridgedRemoval), true);
+    assert.equal(bridgedRemoval.evidence.evidenceType, 'bounded_lyric_bridge');
+    assert.equal(bridgedRemoval.evidence.boundedLyricBridge, true);
   });
 
   await t.test('does not let lyric-like neighbors count as spoken support', async () => {
@@ -511,6 +572,53 @@ test('reconcile-famous-song-phase1 script', async (t) => {
       ledger.decisions.removedDialogueSegments.map((segment) => segment.indexOrder),
       [0, 1, 2]
     );
+  });
+
+  await t.test('does not bridge across a high-confidence same-speaker spoken line between lyric contamination', async () => {
+    const artifacts = makeArtifacts({
+      dialogueData: {
+        dialogue_segments: [
+          { index: 13, speaker: 'Speaker 9', text: 'Obey your master, master', confidence: 0.7 },
+          { index: 14, speaker: 'Speaker 9', text: 'Need immediate evac at the south stairwell.', confidence: 0.99 },
+          { index: 15, speaker: 'Speaker 9', text: 'Come crawling faster', confidence: 0.7 },
+          { index: 16, speaker: 'Captain', text: 'Move now, squad up.', confidence: 0.99 }
+        ],
+        summary: 'A real high-confidence spoken line should not be removed just because lyric contamination surrounds it.'
+      },
+      musicVocalsData: {
+        vocal_segments: [
+          { index: 0, text: 'Obey your master', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 1, text: 'Come crawling faster', confidence: 0.95, performer: 'Lead', delivery: 'sung' }
+        ],
+        summary: 'The vocal lane supports the lyric lines but not the spoken instruction.',
+        recognizedSong: {
+          status: 'recognized',
+          confidence: 0.95,
+          multipleSongsDetected: false,
+          candidates: [
+            {
+              title: 'Master of Puppets',
+              artist: 'Metallica',
+              confidence: 0.95,
+              evidence: ['Two lyric anchors surround a real spoken line.'],
+              matchedLyrics: ['Obey your master', 'Come crawling faster']
+            }
+          ]
+        }
+      }
+    });
+
+    await reconcileScript.run({ outputDir, artifacts });
+
+    const reconciledDialogue = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.reconciled.json'), 'utf8'));
+    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
+
+    assert.deepEqual(
+      reconciledDialogue.dialogue_segments.map((segment) => segment.index),
+      [13, 14, 15, 16]
+    );
+    assert.equal(reconciledDialogue.dialogue_segments[1].text, 'Need immediate evac at the south stairwell.');
+    assert.deepEqual(ledger.decisions.removedDialogueSegments, []);
   });
 
   await t.test('preserves a real spoken neighbor while still removing adjacent lyric contamination', async () => {

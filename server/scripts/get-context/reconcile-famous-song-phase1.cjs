@@ -634,6 +634,8 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
   const dialogueSignalCache = new Map();
   const promotionHopCache = new Map();
   const promotionHopPending = new Set();
+  const bridgeCandidateCache = new Map();
+  const bridgeCandidatePending = new Set();
   const MAX_DIRECT_VOCAL_PROMOTION_HOPS = 2;
 
   function getDialogueSignal(segment, index) {
@@ -721,11 +723,63 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
     return promotionHop;
   }
 
+  function getBridgeCandidate(index) {
+    if (bridgeCandidateCache.has(index)) return bridgeCandidateCache.get(index);
+    if (bridgeCandidatePending.has(index)) return false;
+
+    const segment = dialogueSegments[index] || {};
+    const signal = getDialogueSignal(segment, index);
+    if (signal.hasExistingLyricEvidence || !signal.lowConfidence || hasStrongSpokenSignal(dialogueSegments, index)) {
+      bridgeCandidateCache.set(index, false);
+      return false;
+    }
+
+    const speaker = compactString(segment?.speaker || segment?.speaker_id);
+    if (!speaker) {
+      bridgeCandidateCache.set(index, false);
+      return false;
+    }
+
+    const leftSegment = dialogueSegments[index - 1] || null;
+    const rightSegment = dialogueSegments[index + 1] || null;
+    if (!leftSegment || !rightSegment) {
+      bridgeCandidateCache.set(index, false);
+      return false;
+    }
+
+    const leftSpeaker = compactString(leftSegment?.speaker || leftSegment?.speaker_id);
+    const rightSpeaker = compactString(rightSegment?.speaker || rightSegment?.speaker_id);
+    if (!leftSpeaker || !rightSpeaker || leftSpeaker !== speaker || rightSpeaker !== speaker) {
+      bridgeCandidateCache.set(index, false);
+      return false;
+    }
+
+    const leftSignal = getDialogueSignal(leftSegment, index - 1);
+    const rightSignal = getDialogueSignal(rightSegment, index + 1);
+    const dialogueOrderIndex = signal.dialogueOrderIndex;
+    const leftAdjacent = Math.abs(dialogueOrderIndex - leftSignal.dialogueOrderIndex) <= 1;
+    const rightAdjacent = Math.abs(dialogueOrderIndex - rightSignal.dialogueOrderIndex) <= 1;
+    if (!leftAdjacent || !rightAdjacent) {
+      bridgeCandidateCache.set(index, false);
+      return false;
+    }
+
+    bridgeCandidatePending.add(index);
+    const leftLyricLike = leftSignal.hasExistingLyricEvidence || getPromotionHop(index - 1) !== null;
+    const rightLyricLike = rightSignal.hasExistingLyricEvidence || getPromotionHop(index + 1) !== null;
+    bridgeCandidatePending.delete(index);
+
+    const bridgeCandidate = Boolean(leftLyricLike && rightLyricLike);
+    bridgeCandidateCache.set(index, bridgeCandidate);
+    return bridgeCandidate;
+  }
+
   const reconciledSegments = dialogueSegments.filter((segment, index) => {
     const signal = getDialogueSignal(segment, index);
     const promotionHop = getPromotionHop(index);
     const promotedDirectVocalCandidate = promotionHop !== null && promotionHop <= MAX_DIRECT_VOCAL_PROMOTION_HOPS;
-    if (!signal.hasExistingLyricEvidence && !promotedDirectVocalCandidate) return true;
+    const bridgedLyricCandidate = getBridgeCandidate(index);
+    if (!signal.hasExistingLyricEvidence && !promotedDirectVocalCandidate && !bridgedLyricCandidate) return true;
 
     if (!signal.lowConfidence && !isShortOrRefrainLike(segment)) return true;
     if (
@@ -740,11 +794,13 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
       return true;
     }
 
-    if (!signal.hasNearbyVocalIndexEvidence && !signal.hasDirectVocalTextSupport && vocalEvidenceIndexes.size > 0) {
+    if (!bridgedLyricCandidate && !signal.hasNearbyVocalIndexEvidence && !signal.hasDirectVocalTextSupport && vocalEvidenceIndexes.size > 0) {
       return true;
     }
 
-    const evidenceType = signal.evidenceHit?.evidenceType || (promotedDirectVocalCandidate ? 'direct_vocal_support' : 'direct');
+    const evidenceType = signal.evidenceHit?.evidenceType || (bridgedLyricCandidate
+      ? 'bounded_lyric_bridge'
+      : (promotedDirectVocalCandidate ? 'direct_vocal_support' : 'direct'));
     removedSegments.push({
       index,
       indexOrder: signal.dialogueOrderIndex,
@@ -759,6 +815,7 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
         directVocalTextSupport: signal.hasDirectVocalTextSupport,
         evidenceType,
         promotionHop,
+        boundedLyricBridge: bridgedLyricCandidate,
         anchorHits: Array.isArray(signal.evidenceHit?.anchorHits) ? signal.evidenceHit.anchorHits : []
       },
       reason: 'likely_lyric_contamination'
