@@ -172,7 +172,7 @@
     {
       "path": "generatedAt",
       "truthValue": "2026-03-26T13:35:50.603Z",
-      "outputValue": "2026-04-17T21:41:30.141Z",
+      "outputValue": "2026-04-27T17:41:03.782Z",
       "reason": "Ignored path values differed"
     }
   ],
@@ -4477,7 +4477,7 @@
       "status": "skip",
       "rule": "structural",
       "truthValue": "2026-03-26T13:35:50.603Z",
-      "outputValue": "2026-04-17T21:41:30.141Z",
+      "outputValue": "2026-04-27T17:41:03.782Z",
       "reason": "Comparator ignored benchmark path"
     },
     {

@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "kind": "audio.chunk.plan",
   "domain": "music_vocals",
-  "createdAt": "2026-04-17T21:38:00.138Z",
+  "createdAt": "2026-04-27T17:37:29.317Z",
   "transportTrace": {
     "reason": "within_budget",
     "base64Expansion": "4*ceil(bytes/3)",

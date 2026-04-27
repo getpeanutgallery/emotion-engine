@@ -4,127 +4,183 @@
       "speaker": "Speaker 1",
       "speaker_id": "spk_001",
       "text": "They want you afraid.",
-      "confidence": 0.5,
+      "confidence": 0.9,
       "index": 0
     },
     {
       "speaker": "Speaker 1",
       "speaker_id": "spk_001",
       "text": "Fear makes you easier to control.",
-      "confidence": 0.5,
+      "confidence": 0.9,
       "index": 1
     },
     {
       "speaker": "Speaker 1",
       "speaker_id": "spk_001",
       "text": "It's time to wake up.",
-      "confidence": 0.5,
+      "confidence": 0.9,
       "index": 2
+    },
+    {
+      "speaker": "Speaker 2",
+      "speaker_id": "spk_002",
+      "text": "Your streets shall once again run red with your blood.",
+      "confidence": 0.9,
+      "index": 3
+    },
+    {
+      "speaker": "Speaker 3",
+      "speaker_id": "spk_003",
+      "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+      "confidence": 0.9,
+      "index": 4
     },
     {
       "speaker": "Speaker 1",
       "speaker_id": "spk_001",
-      "text": "Your streets shall once again run red with your blood.",
-      "confidence": 0.5,
-      "index": 3
-    },
-    {
-      "speaker": "Speaker 2",
-      "speaker_id": "spk_002",
-      "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
-      "confidence": 0.5,
-      "index": 4
-    },
-    {
-      "speaker": "Speaker 2",
-      "speaker_id": "spk_002",
       "text": "Menendez is a terrorist. We're bringing peace and security to the world.",
-      "confidence": 0.5,
+      "confidence": 0.9,
       "index": 5
     },
     {
-      "speaker": "Speaker 3",
-      "speaker_id": "spk_003",
+      "speaker": "Speaker 4",
+      "speaker_id": "spk_004",
       "text": "He refuses to let me go.",
-      "confidence": 0.5,
+      "confidence": 0.85,
       "index": 6
-    },
-    {
-      "speaker": "Speaker 4",
-      "speaker_id": "spk_004",
-      "text": "Stop looking backwards, David, but matters is what we do next.",
-      "confidence": 0.5,
-      "index": 7
-    },
-    {
-      "speaker": "Speaker 4",
-      "speaker_id": "spk_004",
-      "text": "A lot of people counting on us for answers.",
-      "confidence": 0.5,
-      "index": 8
-    },
-    {
-      "speaker": "Speaker 3",
-      "speaker_id": "spk_003",
-      "text": "This isn't real.",
-      "confidence": 0.5,
-      "index": 9
-    },
-    {
-      "speaker": "Speaker 4",
-      "speaker_id": "spk_004",
-      "text": "The hell it isn't!",
-      "confidence": 0.5,
-      "index": 10
     },
     {
       "speaker": "Speaker 5",
       "speaker_id": "spk_005",
-      "text": "Obey your master... Master... Just call me faster... Master... Master... The master's puppet's a puppet's brain... Twisting your mind, smashing your day... Blinding from me, you can't see... Just go ahead, it's all in your head... Master, master... Plans and dreams are now in the after... Master, master... You'll be in my grasp...",
-      "confidence": 0.4,
-      "index": 11
+      "text": "Stop looking backwards, David. What matters is what we do next.",
+      "confidence": 0.9,
+      "index": 7
+    },
+    {
+      "speaker": "Speaker 5",
+      "speaker_id": "spk_005",
+      "text": "A lot of people counting on us for answers.",
+      "confidence": 0.9,
+      "index": 8
     },
     {
       "speaker": "Speaker 6",
       "speaker_id": "spk_006",
-      "text": "Pull it together, man.",
-      "confidence": 0.5,
-      "index": 12
+      "text": "Spectre One report.",
+      "confidence": 0.8,
+      "index": 9
     },
     {
-      "speaker": "Speaker 4",
-      "speaker_id": "spk_004",
-      "text": "So eager to leave, David?",
-      "confidence": 0.5,
-      "index": 13
-    },
-    {
-      "speaker": "Speaker 4",
-      "speaker_id": "spk_004",
-      "text": "Killing a man is a hell of a lot easier than killing an idea.",
-      "confidence": 0.5,
-      "index": 14
-    },
-    {
-      "speaker": "Speaker 4",
-      "speaker_id": "spk_004",
-      "text": "You were never cut out to be a Mason.",
-      "confidence": 0.5,
-      "index": 15
-    },
-    {
-      "speaker": "Speaker 4",
-      "speaker_id": "spk_004",
-      "text": "No more games. This ends now.",
-      "confidence": 0.5,
-      "index": 16
+      "speaker": "Speaker 6",
+      "speaker_id": "spk_006",
+      "text": "Need a sitrep.",
+      "confidence": 0.8,
+      "index": 10
     },
     {
       "speaker": "Speaker 7",
       "speaker_id": "spk_007",
-      "text": "Get the Reznov challenge pack when you pre-order now.",
-      "confidence": 0.5,
+      "text": "This isn't real.",
+      "confidence": 0.85,
+      "index": 11
+    },
+    {
+      "speaker": "Speaker 8",
+      "speaker_id": "spk_008",
+      "text": "The hell it ain't!",
+      "confidence": 0.85,
+      "index": 12
+    },
+    {
+      "speaker": "Speaker 9",
+      "speaker_id": "spk_009",
+      "text": "Obey your master, master",
+      "confidence": 0.7,
+      "index": 13
+    },
+    {
+      "speaker": "Speaker 9",
+      "speaker_id": "spk_009",
+      "text": "Come crawling faster",
+      "confidence": 0.7,
+      "index": 14
+    },
+    {
+      "speaker": "Speaker 9",
+      "speaker_id": "spk_009",
+      "text": "Obey your master, master",
+      "confidence": 0.7,
+      "index": 15
+    },
+    {
+      "speaker": "Speaker 9",
+      "speaker_id": "spk_009",
+      "text": "Your life burns faster",
+      "confidence": 0.7,
+      "index": 16
+    },
+    {
+      "speaker": "Speaker 9",
+      "speaker_id": "spk_009",
+      "text": "Obey your master, master",
+      "confidence": 0.7,
       "index": 17
+    },
+    {
+      "speaker": "Speaker 8",
+      "speaker_id": "spk_008",
+      "text": "Pull it together, man!",
+      "confidence": 0.8,
+      "index": 18
+    },
+    {
+      "speaker": "Speaker 10",
+      "speaker_id": "spk_010",
+      "text": "So eager to leave, David.",
+      "confidence": 0.85,
+      "index": 19
+    },
+    {
+      "speaker": "Speaker 10",
+      "speaker_id": "spk_010",
+      "text": "Killing a man is a hell of a lot easier than killing an idea.",
+      "confidence": 0.9,
+      "index": 20
+    },
+    {
+      "speaker": "Speaker 1",
+      "speaker_id": "spk_001",
+      "text": "You were never cut out to be a Mason.",
+      "confidence": 0.85,
+      "index": 21
+    },
+    {
+      "speaker": "Speaker 10",
+      "speaker_id": "spk_010",
+      "text": "No more games. This ends now.",
+      "confidence": 0.85,
+      "index": 22
+    },
+    {
+      "speaker": "Speaker 9",
+      "speaker_id": "spk_009",
+      "text": "Obey your master, master",
+      "confidence": 0.7,
+      "index": 23
+    },
+    {
+      "speaker": "Speaker 9",
+      "speaker_id": "spk_009",
+      "text": "Master, master...",
+      "confidence": 0.7,
+      "index": 24
+    },
+    {
+      "speaker": "Speaker 11",
+      "speaker_id": "spk_011",
+      "text": "Get the Reznov Challenge Pack when you pre-order now.",
+      "confidence": 0.9,
+      "index": 25
     }
   ],
   "speaker_profiles": [
@@ -132,64 +188,124 @@
       "speaker_id": "spk_001",
       "label": "Speaker 1",
       "grounded": {
-        "confidence": 0.4,
+        "confidence": 0.9,
         "linked_segment_indexes": [
           0,
           1,
           2,
-          3
+          5,
+          21
         ],
-        "acoustic_descriptors": []
+        "acoustic_descriptors": [
+          {
+            "label": "female voice",
+            "confidence": 0.9
+          },
+          {
+            "label": "clear articulation",
+            "confidence": 0.8
+          },
+          {
+            "label": "authoritative tone",
+            "confidence": 0.7
+          }
+        ]
       },
       "inferred_traits": {
-        "traits": []
+        "traits": [
+          {
+            "trait": "gender_presentation",
+            "value": "feminine",
+            "confidence": 0.9,
+            "note": "based on vocal pitch and timbre"
+          },
+          {
+            "trait": "role_impression",
+            "value": "commanding or persuasive speaker",
+            "confidence": 0.6,
+            "note": "speculative from delivery style"
+          }
+        ]
       }
     },
     {
       "speaker_id": "spk_002",
       "label": "Speaker 2",
       "grounded": {
-        "confidence": 0.4,
+        "confidence": 0.85,
         "linked_segment_indexes": [
-          4,
-          5
+          3
         ],
-        "acoustic_descriptors": []
+        "acoustic_descriptors": [
+          {
+            "label": "deep male voice",
+            "confidence": 0.9
+          },
+          {
+            "label": "threatening tone",
+            "confidence": 0.8
+          }
+        ]
       },
       "inferred_traits": {
-        "traits": []
+        "traits": [
+          {
+            "trait": "demeanor",
+            "value": "menacing or villainous",
+            "confidence": 0.7,
+            "note": "speculative from content and delivery"
+          }
+        ]
       }
     },
     {
       "speaker_id": "spk_003",
       "label": "Speaker 3",
       "grounded": {
-        "confidence": 0.4,
+        "confidence": 0.85,
         "linked_segment_indexes": [
-          6,
-          9
+          4
         ],
-        "acoustic_descriptors": []
+        "acoustic_descriptors": [
+          {
+            "label": "narrator-like male voice",
+            "confidence": 0.8
+          },
+          {
+            "label": "formal delivery",
+            "confidence": 0.7
+          }
+        ]
       },
       "inferred_traits": {
-        "traits": []
+        "traits": [
+          {
+            "trait": "role_impression",
+            "value": "news reporter or announcer",
+            "confidence": 0.6,
+            "note": "speculative from style"
+          }
+        ]
       }
     },
     {
       "speaker_id": "spk_004",
       "label": "Speaker 4",
       "grounded": {
-        "confidence": 0.4,
+        "confidence": 0.8,
         "linked_segment_indexes": [
-          7,
-          8,
-          10,
-          13,
-          14,
-          15,
-          16
+          6
         ],
-        "acoustic_descriptors": []
+        "acoustic_descriptors": [
+          {
+            "label": "male voice",
+            "confidence": 0.8
+          },
+          {
+            "label": "tense delivery",
+            "confidence": 0.7
+          }
+        ]
       },
       "inferred_traits": {
         "traits": []
@@ -199,46 +315,218 @@
       "speaker_id": "spk_005",
       "label": "Speaker 5",
       "grounded": {
-        "confidence": 0.4,
+        "confidence": 0.85,
         "linked_segment_indexes": [
-          11
+          7,
+          8
         ],
-        "acoustic_descriptors": []
+        "acoustic_descriptors": [
+          {
+            "label": "male voice",
+            "confidence": 0.8
+          },
+          {
+            "label": "calm and measured tone",
+            "confidence": 0.7
+          }
+        ]
       },
       "inferred_traits": {
-        "traits": []
+        "traits": [
+          {
+            "trait": "demeanor",
+            "value": "composed or strategic",
+            "confidence": 0.5,
+            "note": "speculative from delivery"
+          }
+        ]
       }
     },
     {
       "speaker_id": "spk_006",
       "label": "Speaker 6",
       "grounded": {
-        "confidence": 0.4,
+        "confidence": 0.75,
         "linked_segment_indexes": [
-          12
+          9,
+          10
         ],
-        "acoustic_descriptors": []
+        "acoustic_descriptors": [
+          {
+            "label": "radio-filtered male voice",
+            "confidence": 0.8
+          },
+          {
+            "label": "military-style communication",
+            "confidence": 0.7
+          }
+        ]
       },
       "inferred_traits": {
-        "traits": []
+        "traits": [
+          {
+            "trait": "role_impression",
+            "value": "soldier or operator",
+            "confidence": 0.6,
+            "note": "speculative from context"
+          }
+        ]
       }
     },
     {
       "speaker_id": "spk_007",
       "label": "Speaker 7",
       "grounded": {
-        "confidence": 0.4,
+        "confidence": 0.8,
         "linked_segment_indexes": [
-          17
+          11
         ],
-        "acoustic_descriptors": []
+        "acoustic_descriptors": [
+          {
+            "label": "male voice",
+            "confidence": 0.8
+          },
+          {
+            "label": "uncertain or distressed tone",
+            "confidence": 0.7
+          }
+        ]
       },
       "inferred_traits": {
         "traits": []
       }
+    },
+    {
+      "speaker_id": "spk_008",
+      "label": "Speaker 8",
+      "grounded": {
+        "confidence": 0.8,
+        "linked_segment_indexes": [
+          12,
+          18
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "shouting male voice",
+            "confidence": 0.8
+          },
+          {
+            "label": "urgent delivery",
+            "confidence": 0.7
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "demeanor",
+            "value": "agitated or intense",
+            "confidence": 0.6,
+            "note": "speculative from vocal energy"
+          }
+        ]
+      }
+    },
+    {
+      "speaker_id": "spk_009",
+      "label": "Speaker 9",
+      "grounded": {
+        "confidence": 0.7,
+        "linked_segment_indexes": [
+          13,
+          14,
+          15,
+          16,
+          17,
+          23,
+          24
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "singing male voice",
+            "confidence": 0.9
+          },
+          {
+            "label": "melodic contour",
+            "confidence": 0.8
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "role_impression",
+            "value": "vocalist in a song",
+            "confidence": 0.9,
+            "note": "obvious from context"
+          }
+        ]
+      }
+    },
+    {
+      "speaker_id": "spk_010",
+      "label": "Speaker 10",
+      "grounded": {
+        "confidence": 0.85,
+        "linked_segment_indexes": [
+          19,
+          20,
+          22
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "male voice",
+            "confidence": 0.8
+          },
+          {
+            "label": "serious and direct tone",
+            "confidence": 0.7
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "demeanor",
+            "value": "determined or resolute",
+            "confidence": 0.6,
+            "note": "speculative from delivery"
+          }
+        ]
+      }
+    },
+    {
+      "speaker_id": "spk_011",
+      "label": "Speaker 11",
+      "grounded": {
+        "confidence": 0.85,
+        "linked_segment_indexes": [
+          25
+        ],
+        "acoustic_descriptors": [
+          {
+            "label": "promotional male voice",
+            "confidence": 0.8
+          },
+          {
+            "label": "enthusiastic delivery",
+            "confidence": 0.7
+          }
+        ]
+      },
+      "inferred_traits": {
+        "traits": [
+          {
+            "trait": "role_impression",
+            "value": "announcer or marketer",
+            "confidence": 0.7,
+            "note": "speculative from content"
+          }
+        ]
+      }
     }
   ],
-  "summary": "A dramatic trailer featuring multiple voices discussing themes of fear, control, terrorism, and personal conflict, interspersed with song lyrics and concluding with a promotional message for a game pre-order.",
+  "summary": "A trailer-style dialogue featuring multiple speakers discussing themes of fear, control, terrorism, and conflict, with references to Raul Menendez, interspersed with song lyrics about obedience, and ending with a promotional message.",
   "totalDuration": 140.042449,
   "handoffContext": null,
   "analysisMode": "whole_asset",
@@ -246,8 +534,8 @@
   "sourceStrategy": "base64",
   "coverage": {
     "start": 0,
-    "end": 0,
-    "duration": 0,
+    "end": 87,
+    "duration": 87,
     "complete": false
   },
   "provenance": {

@@ -8,39 +8,39 @@
 
 ## Totals
 
-- Artifacts: 1/7 passed, 2 failed, 4 errored
-- Accuracy: 364/656 scoreable fields passed (55.5%)
-- Coverage: 656/1149 truth fields scoreable (57.1%)
-- Skipped truth fields: 144
-- Ignored differences surfaced outside score: 62
+- Artifacts: 0/7 passed, 3 failed, 4 errored
+- Accuracy: 373/680 scoreable fields passed (54.9%)
+- Coverage: 680/1182 truth fields scoreable (57.5%)
+- Skipped truth fields: 149
+- Ignored differences surfaced outside score: 44
 
 ## Artifacts
 
-- **dialogueData** — Phase 1 dialogue (primary spoken, reconciled) [primary spoken benchmark]; fail; accuracy=36.1%, coverage=96.6%, ignoredDiffs=0, outputSurface=reconciled, truthSurface=spoken_reconciled, reportSurface=primary
-  - dialogue_text_full_transcript_pct=90.7%
-  - dialogue_text_windowed_pct=90.7%
+- **dialogueData** — Phase 1 dialogue (primary spoken, reconciled) [primary spoken benchmark]; fail; accuracy=51.2%, coverage=95.7%, ignoredDiffs=0, outputSurface=reconciled, truthSurface=spoken_reconciled, reportSurface=primary
+  - dialogue_text_full_transcript_pct=92.9%
+  - dialogue_text_windowed_pct=93.1%
   - dialogue_boundary_pct=0.0%
-  - splits=1, merges=3, missingTruthWindows=0, extraOutputWindows=0
-- **dialogueDataRaw** — Phase 1 dialogue (diagnostic raw capture) [diagnostic raw capture]; pass; accuracy=100.0%, coverage=61.7%, ignoredDiffs=0, outputSurface=raw, truthSurface=raw_capture, reportSurface=diagnostic
-  - dialogue_text_full_transcript_pct=100.0%
-  - dialogue_text_windowed_pct=100.0%
-  - dialogue_boundary_pct=100.0%
-  - splits=0, merges=0, missingTruthWindows=0, extraOutputWindows=0
-- **musicData** — Phase 1 music; error; accuracy=32.0%, coverage=89.3%, ignoredDiffs=5
-  - music_segment_timeline_pct=35.3%
-  - music_segment_content_pct=13.3%
+  - splits=2, merges=2, missingTruthWindows=0, extraOutputWindows=0
+- **dialogueDataRaw** — Phase 1 dialogue (diagnostic raw capture) [diagnostic raw capture]; fail; accuracy=77.6%, coverage=62.8%, ignoredDiffs=0, outputSurface=raw, truthSurface=raw_capture, reportSurface=diagnostic
+  - dialogue_text_full_transcript_pct=66.7%
+  - dialogue_text_windowed_pct=58.2%
+  - dialogue_boundary_pct=14.3%
+  - splits=3, merges=0, missingTruthWindows=1, extraOutputWindows=3
+- **musicData** — Phase 1 music; error; accuracy=33.3%, coverage=84.9%, ignoredDiffs=5
+  - music_segment_timeline_pct=35.7%
+  - music_segment_content_pct=25.0%
   - music_summary_pct=0.0%
   - recognized_song_identity_pct=66.7%
-  - recognized_song_support_pct=9.1%
-- **musicVocalsData** — Phase 1 music vocals; fail; accuracy=51.7%, coverage=98.9%, ignoredDiffs=51
-  - vocal_text_full_transcript_pct=46.2%
-  - vocal_text_windowed_pct=46.0%
-  - vocal_boundary_pct=57.1%
+  - recognized_song_support_pct=0.0%
+- **musicVocalsData** — Phase 1 music vocals; fail; accuracy=38.8%, coverage=98.5%, ignoredDiffs=33
+  - vocal_text_full_transcript_pct=12.7%
+  - vocal_text_windowed_pct=17.1%
+  - vocal_boundary_pct=50.0%
   - vocal_attribution_pct=55.6%
   - recognized_song_identity_pct=100.0%
   - recognized_song_support_pct=25.0%
-  - splits=2, merges=0, missingTruthWindows=3, extraOutputWindows=2
-- **recommendationData** — Phase 3 recommendation; error; accuracy=10.5%, coverage=52.8%, ignoredDiffs=4
+  - splits=0, merges=1, missingTruthWindows=8, extraOutputWindows=3
+- **recommendationData** — Phase 3 recommendation; error; accuracy=11.8%, coverage=47.2%, ignoredDiffs=4
   - recommendation_text_pct=0.0%
   - recommendation_reasoning_pct=0.0%
   - recommendation_key_findings_pct=0.0%
@@ -61,5 +61,5 @@
   - critical_moments_pct=0.0%
   - emotional_implementation_status_pct=0.0%
 
-1/7 artifacts passed. 364/656 scoreable fields passed. Truth coverage was 656/1149 fields.
+0/7 artifacts passed. 373/680 scoreable fields passed. Truth coverage was 680/1182 fields.
 

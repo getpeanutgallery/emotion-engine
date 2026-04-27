@@ -49,36 +49,36 @@
   },
   "comparisonBoundary": null,
   "counts": {
-    "totalTruthFields": 56,
-    "scoreableFields": 50,
+    "totalTruthFields": 53,
+    "scoreableFields": 45,
     "skippedFields": 0,
-    "passedFields": 16,
-    "failedFields": 34,
-    "erroredFields": 6,
+    "passedFields": 15,
+    "failedFields": 30,
+    "erroredFields": 8,
     "ignoredDifferenceFields": 5
   },
   "accuracy": {
-    "passed": 16,
-    "failed": 34,
-    "rate": 0.32
+    "passed": 15,
+    "failed": 30,
+    "rate": 0.3333333333333333
   },
   "coverage": {
-    "scoreable": 50,
+    "scoreable": 45,
     "skipped": 0,
-    "totalTruthFields": 56,
-    "rate": 0.8928571428571429
+    "totalTruthFields": 53,
+    "rate": 0.8490566037735849
   },
   "mismatchClassificationCounts": {},
   "musicScoring": {
-    "music_segment_timeline_pct": 35.3,
-    "music_segment_content_pct": 13.3,
+    "music_segment_timeline_pct": 35.7,
+    "music_segment_content_pct": 25,
     "music_summary_pct": 0,
     "recognized_song_identity_pct": 66.7,
-    "recognized_song_support_pct": 9.1,
+    "recognized_song_support_pct": 0,
     "truth_segment_count": 5,
-    "output_segment_count": 6,
-    "missing_truth_segment_count": 0,
-    "extra_output_segment_count": 1,
+    "output_segment_count": 4,
+    "missing_truth_segment_count": 1,
+    "extra_output_segment_count": 0,
     "alignment_strategy": "time-aware-segments"
   },
   "failures": [
@@ -89,57 +89,57 @@
         "length": 5
       },
       "outputValue": {
-        "length": 6
+        "length": 4
       },
-      "reason": "Array length mismatch: truth=5 output=6"
+      "reason": "Array length mismatch: truth=5 output=4"
     },
     {
       "path": "segments[0].end",
       "rule": "tolerant-time",
       "truthValue": 30,
-      "outputValue": 25,
+      "outputValue": 35,
       "reason": "Time delta 5 exceeded tolerance 2"
     },
     {
       "path": "segments[0].description",
       "rule": "fuzzy-string",
       "truthValue": "High-intensity cinematic trailer music featuring dramatic orchestral swells, electronic pulses, and percussive hits, layered with intense dialogue and sound effects.",
-      "outputValue": "Opening with tense atmospheric underscore beneath dialogue",
+      "outputValue": "Opening with restrained percussion and tense dialogue over a low orchestral score bed",
       "reason": "Normalized strings differed"
     },
     {
       "path": "segments[0].intensity",
       "rule": "exact",
       "truthValue": 9,
-      "outputValue": 5,
+      "outputValue": 6,
       "reason": "Values differed"
     },
     {
       "path": "segments[1].start",
       "rule": "tolerant-time",
       "truthValue": 30,
-      "outputValue": 25,
+      "outputValue": 35,
       "reason": "Time delta 5 exceeded tolerance 2"
     },
     {
       "path": "segments[1].end",
       "rule": "tolerant-time",
       "truthValue": 60,
-      "outputValue": 50,
-      "reason": "Time delta 10 exceeded tolerance 2"
+      "outputValue": 76,
+      "reason": "Time delta 16 exceeded tolerance 2"
     },
     {
       "path": "segments[1].description",
       "rule": "fuzzy-string",
       "truthValue": "High-intensity, action-oriented trailer music with driving percussion, electronic synth pulses, and dramatic orchestral swells.",
-      "outputValue": "Action build-up with percussive score and dialogue overlays",
+      "outputValue": "Score intensifies with rising strings and percussion under continued dialogue and action sound effects",
       "reason": "Normalized strings differed"
     },
     {
       "path": "segments[1].mood",
       "rule": "exact",
       "truthValue": "energetic",
-      "outputValue": "intense",
+      "outputValue": "building tension",
       "reason": "Values differed"
     },
     {
@@ -153,120 +153,78 @@
       "path": "segments[2].start",
       "rule": "tolerant-time",
       "truthValue": 60,
-      "outputValue": 50,
-      "reason": "Time delta 10 exceeded tolerance 2"
+      "outputValue": 76,
+      "reason": "Time delta 16 exceeded tolerance 2"
     },
     {
       "path": "segments[2].end",
       "rule": "tolerant-time",
       "truthValue": 90,
-      "outputValue": 76,
-      "reason": "Time delta 14 exceeded tolerance 2"
+      "outputValue": 98,
+      "reason": "Time delta 8 exceeded tolerance 2"
     },
     {
       "path": "segments[2].description",
       "rule": "fuzzy-string",
       "truthValue": "Intense, high-energy rock music with aggressive vocals and dramatic sound effects.",
-      "outputValue": "Rising music intensity leading to climax with spoken overlays",
+      "outputValue": "Heavy metal song segment with aggressive guitar riffs and prominent vocal chants, dominating the audio bed",
       "reason": "Normalized strings differed"
-    },
-    {
-      "path": "segments[2].mood",
-      "rule": "exact",
-      "truthValue": "energetic",
-      "outputValue": "climactic",
-      "reason": "Values differed"
-    },
-    {
-      "path": "segments[2].intensity",
-      "rule": "exact",
-      "truthValue": 9,
-      "outputValue": 8,
-      "reason": "Values differed"
     },
     {
       "path": "segments[3].start",
       "rule": "tolerant-time",
       "truthValue": 90,
-      "outputValue": 76,
-      "reason": "Time delta 14 exceeded tolerance 2"
+      "outputValue": 98,
+      "reason": "Time delta 8 exceeded tolerance 2"
     },
     {
       "path": "segments[3].end",
       "rule": "tolerant-time",
       "truthValue": 120,
-      "outputValue": 98,
-      "reason": "Time delta 22 exceeded tolerance 2"
+      "outputValue": 140,
+      "reason": "Time delta 20 exceeded tolerance 2"
     },
     {
       "path": "segments[3].description",
       "rule": "fuzzy-string",
       "truthValue": "High-intensity cinematic trailer music with dramatic orchestral stabs, heavy percussion, and sound effects.",
-      "outputValue": "Music-led segment with rock vocals and instrumental hook, partially masked by SFX",
+      "outputValue": "Orchestral score returns with dialogue and action sounds, leading to a spoken promo over fading music",
       "reason": "Normalized strings differed"
     },
     {
       "path": "segments[3].mood",
       "rule": "exact",
       "truthValue": "energetic",
-      "outputValue": "aggressive",
+      "outputValue": "tense",
       "reason": "Values differed"
     },
     {
-      "path": "segments[4].start",
-      "rule": "tolerant-time",
-      "truthValue": 120,
-      "outputValue": 98,
-      "reason": "Time delta 22 exceeded tolerance 2"
-    },
-    {
-      "path": "segments[4].end",
-      "rule": "tolerant-time",
-      "truthValue": 140.042449,
-      "outputValue": 120,
-      "reason": "Time delta 20.042449000000005 exceeded tolerance 2"
-    },
-    {
-      "path": "segments[4].description",
-      "rule": "fuzzy-string",
-      "truthValue": "High-energy, cinematic action trailer music with intense sound effects and a promotional voiceover.",
-      "outputValue": "Post-song action with continued score bed and dialogue",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "segments[4].mood",
-      "rule": "exact",
-      "truthValue": "energetic",
-      "outputValue": "determined",
-      "reason": "Values differed"
-    },
-    {
-      "path": "segments[4].intensity",
+      "path": "segments[3].intensity",
       "rule": "exact",
       "truthValue": 9,
-      "outputValue": 7,
+      "outputValue": 6,
       "reason": "Values differed"
     },
     {
       "path": "summary",
       "rule": "fuzzy-string",
       "truthValue": "The trailer maintains high intensity, combining dramatic, action-oriented cinematic music with promotional voiceover and sound effects.",
-      "outputValue": "An intense trailer with dialogue-driven narrative, building action sequences, a prominent rock song segment featuring audible lyrics, and a concluding promotional call-to-action.",
+      "outputValue": "A tense trailer audio track with building orchestral score under dialogue, featuring a central heavy metal song segment with vocal chants, and concluding with action-oriented dialogue and promotional content.",
       "reason": "Normalized strings differed"
     },
     {
       "path": "recognizedSong.confidence",
       "rule": "tolerant-number",
       "truthValue": 0.86,
-      "outputValue": 0.64,
-      "reason": "Numeric delta 0.21999999999999997 exceeded tolerance 0.1"
+      "outputValue": 0.75,
+      "reason": "Numeric delta 0.10999999999999999 exceeded tolerance 0.1"
     },
     {
       "path": "recognizedSong.candidates[0].confidence",
       "rule": "tolerant-number",
       "truthValue": 0.86,
-      "outputValue": 0.64,
-      "reason": "Numeric delta 0.21999999999999997 exceeded tolerance 0.1"
+      "outputValue": 0.75,
+      "reason": "Numeric delta 0.10999999999999999 exceeded tolerance 0.1"
     },
     {
       "path": "recognizedSong.candidates[0].evidence",
@@ -283,7 +241,25 @@
       "path": "recognizedSong.candidates[0].evidence[0]",
       "rule": "exact",
       "truthValue": "The aggressive metal cue includes a distinctive repeated \"master\" hook in the music lane.",
-      "outputValue": "Distinctive thrash-metal hook and repeated master chant audible in the music lane.",
+      "outputValue": "Distinctive heavy metal riff and repeated 'master' chants in the music lane, with lyrical cues matching the song.",
+      "reason": "Values differed"
+    },
+    {
+      "path": "recognizedSong.candidates[0].matchedLyrics",
+      "rule": "structural",
+      "truthValue": {
+        "length": 1
+      },
+      "outputValue": {
+        "length": 2
+      },
+      "reason": "Array length mismatch: truth=1 output=2"
+    },
+    {
+      "path": "recognizedSong.candidates[0].matchedLyrics[0]",
+      "rule": "exact",
+      "truthValue": "Master, master",
+      "outputValue": "Obey your master",
       "reason": "Values differed"
     },
     {
@@ -301,35 +277,39 @@
       "path": "recognizedSong.candidates[0].ambiguity",
       "rule": "exact",
       "truthValue": "Trailer dialogue and SFX overlap partially mask the cue in some windows.",
-      "outputValue": "Trailer dialogue and SFX partially mask the cue, reducing clarity.",
+      "outputValue": "Dialogue and sound effects partially mask the music, but key elements remain audible.",
       "reason": "Values differed"
     },
     {
       "path": "recognizedSong.primaryEvidence",
       "rule": "exact",
       "truthValue": "The music lane contains a distinctive metal hook that plausibly matches one famous song, reinforced by later vocal evidence.",
-      "outputValue": "A likely famous-song hook with audible lyrics is present, but recognition remains evidence-gated due to masking.",
+      "outputValue": "Clear lyrical and musical cues aligning with a well-known song, though concurrent audio reduces certainty.",
       "reason": "Values differed"
     },
     {
       "path": "recognizedSong.ambiguity",
       "rule": "exact",
       "truthValue": "Recognition is strong but still partially masked by trailer editing.",
-      "outputValue": "Partial masking by dialogue and sound effects reduces certainty.",
+      "outputValue": "Partial masking by dialogue and SFX.",
       "reason": "Values differed"
+    },
+    {
+      "path": "recognitionNotes",
+      "rule": "structural",
+      "truthValue": {
+        "length": 2
+      },
+      "outputValue": {
+        "length": 1
+      },
+      "reason": "Array length mismatch: truth=2 output=1"
     },
     {
       "path": "recognitionNotes[0]",
       "rule": "exact",
       "truthValue": "Instrumental and arrangement cues support the match, but the vocal lane remains the stronger source of literal lyric evidence.",
-      "outputValue": "Music recognition is based on audible lyrics and instrumental hook, but dialogue overlap and SFX reduce confidence.",
-      "reason": "Values differed"
-    },
-    {
-      "path": "recognitionNotes[1]",
-      "rule": "exact",
-      "truthValue": "Spoken dialogue over score must not be treated as lyric evidence for song recognition.",
-      "outputValue": "Spoken overlays are present but do not suppress the music classification as the score remains dominant.",
+      "outputValue": "The song segment is interspersed with dialogue, but the music remains the dominant bed; recognition is evidence-based on audible lyrics and instrumentation.",
       "reason": "Values differed"
     }
   ],
@@ -386,12 +366,12 @@
       "rule": "structural",
       "outputValue": {
         "dominantMood": "energetic",
-        "energyCurve": "rising_then_peak_then_drop",
+        "energyCurve": "rising_then_drop",
         "notableTransitions": [
           {
             "start": 76,
             "end": 98,
-            "label": "rock song entry with vocals"
+            "label": "heavy metal song entry with vocal chants"
           }
         ]
       },
@@ -402,29 +382,34 @@
       "rule": "structural",
       "outputValue": [
         "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-        "Segment timings are approximate based on narrative flow; exact boundaries may vary.",
-        "Confidence is moderate due to audio masking in key sections."
+        "Segment timings are approximate based on audio flow; confidence is moderate due to potential masking in parts of the track."
       ],
       "reason": "Truth object missing field present in output"
     },
     {
-      "path": "segments[5]",
+      "path": "segments[4]",
       "rule": "structural",
-      "outputValue": {
+      "truthValue": {
         "start": 120,
-        "end": 140,
+        "end": 140.042449,
         "type": "music",
-        "description": "Final dialogue and promotional segment with music fade and SFX",
-        "mood": "conclusive",
-        "intensity": 6
+        "description": "High-energy, cinematic action trailer music with intense sound effects and a promotional voiceover.",
+        "mood": "energetic",
+        "intensity": 9
       },
-      "reason": "Truth array missing item present in output"
+      "reason": "Output array missing item present in truth"
     },
     {
       "path": "recognizedSong.candidates[0].evidence[1]",
       "rule": "structural",
       "truthValue": "The later sung refrain strongly aligns with the same well-known song.",
       "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "recognizedSong.candidates[0].matchedLyrics[1]",
+      "rule": "structural",
+      "outputValue": "Master, master",
+      "reason": "Truth array missing item present in output"
     },
     {
       "path": "recognizedSong.candidates[0].timeRanges[1]",
@@ -443,6 +428,12 @@
         "end": 130
       },
       "reason": "Output array missing item present in truth"
+    },
+    {
+      "path": "recognitionNotes[1]",
+      "rule": "structural",
+      "truthValue": "Spoken dialogue over score must not be treated as lyric evidence for song recognition.",
+      "reason": "Output array missing item present in truth"
     }
   ],
   "fieldResults": [
@@ -452,12 +443,12 @@
       "rule": "structural",
       "outputValue": {
         "dominantMood": "energetic",
-        "energyCurve": "rising_then_peak_then_drop",
+        "energyCurve": "rising_then_drop",
         "notableTransitions": [
           {
             "start": 76,
             "end": 98,
-            "label": "rock song entry with vocals"
+            "label": "heavy metal song entry with vocal chants"
           }
         ]
       },
@@ -469,8 +460,7 @@
       "rule": "structural",
       "outputValue": [
         "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-        "Segment timings are approximate based on narrative flow; exact boundaries may vary.",
-        "Confidence is moderate due to audio masking in key sections."
+        "Segment timings are approximate based on audio flow; confidence is moderate due to potential masking in parts of the track."
       ],
       "reason": "Truth object missing field present in output"
     },
@@ -482,9 +472,9 @@
         "length": 5
       },
       "outputValue": {
-        "length": 6
+        "length": 4
       },
-      "reason": "Array length mismatch: truth=5 output=6"
+      "reason": "Array length mismatch: truth=5 output=4"
     },
     {
       "path": "segments[0].start",
@@ -502,7 +492,7 @@
       "status": "fail",
       "rule": "tolerant-time",
       "truthValue": 30,
-      "outputValue": 25,
+      "outputValue": 35,
       "reason": "Time delta 5 exceeded tolerance 2",
       "metrics": {
         "deltaSeconds": 5,
@@ -521,9 +511,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "High-intensity cinematic trailer music featuring dramatic orchestral swells, electronic pulses, and percussive hits, layered with intense dialogue and sound effects.",
-      "outputValue": "Opening with tense atmospheric underscore beneath dialogue",
+      "outputValue": "Opening with restrained percussion and tense dialogue over a low orchestral score bed",
       "normalizedTruthValue": "high intensity cinematic trailer music featuring dramatic orchestral swells electronic pulses and percussive hits layered with intense dialogue and sound effects",
-      "normalizedOutputValue": "opening with tense atmospheric underscore beneath dialogue",
+      "normalizedOutputValue": "opening with restrained percussion and tense dialogue over a low orchestral score bed",
       "reason": "Normalized strings differed"
     },
     {
@@ -538,7 +528,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": 9,
-      "outputValue": 5,
+      "outputValue": 6,
       "reason": "Values differed"
     },
     {
@@ -546,7 +536,7 @@
       "status": "fail",
       "rule": "tolerant-time",
       "truthValue": 30,
-      "outputValue": 25,
+      "outputValue": 35,
       "reason": "Time delta 5 exceeded tolerance 2",
       "metrics": {
         "deltaSeconds": 5,
@@ -558,10 +548,10 @@
       "status": "fail",
       "rule": "tolerant-time",
       "truthValue": 60,
-      "outputValue": 50,
-      "reason": "Time delta 10 exceeded tolerance 2",
+      "outputValue": 76,
+      "reason": "Time delta 16 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 10,
+        "deltaSeconds": 16,
         "toleranceSeconds": 2
       }
     },
@@ -577,9 +567,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "High-intensity, action-oriented trailer music with driving percussion, electronic synth pulses, and dramatic orchestral swells.",
-      "outputValue": "Action build-up with percussive score and dialogue overlays",
+      "outputValue": "Score intensifies with rising strings and percussion under continued dialogue and action sound effects",
       "normalizedTruthValue": "high intensity action oriented trailer music with driving percussion electronic synth pulses and dramatic orchestral swells",
-      "normalizedOutputValue": "action build up with percussive score and dialogue overlays",
+      "normalizedOutputValue": "score intensifies with rising strings and percussion under continued dialogue and action sound effects",
       "reason": "Normalized strings differed"
     },
     {
@@ -587,7 +577,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "energetic",
-      "outputValue": "intense",
+      "outputValue": "building tension",
       "reason": "Values differed"
     },
     {
@@ -603,10 +593,10 @@
       "status": "fail",
       "rule": "tolerant-time",
       "truthValue": 60,
-      "outputValue": 50,
-      "reason": "Time delta 10 exceeded tolerance 2",
+      "outputValue": 76,
+      "reason": "Time delta 16 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 10,
+        "deltaSeconds": 16,
         "toleranceSeconds": 2
       }
     },
@@ -615,10 +605,10 @@
       "status": "fail",
       "rule": "tolerant-time",
       "truthValue": 90,
-      "outputValue": 76,
-      "reason": "Time delta 14 exceeded tolerance 2",
+      "outputValue": 98,
+      "reason": "Time delta 8 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 14,
+        "deltaSeconds": 8,
         "toleranceSeconds": 2
       }
     },
@@ -634,36 +624,34 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Intense, high-energy rock music with aggressive vocals and dramatic sound effects.",
-      "outputValue": "Rising music intensity leading to climax with spoken overlays",
+      "outputValue": "Heavy metal song segment with aggressive guitar riffs and prominent vocal chants, dominating the audio bed",
       "normalizedTruthValue": "intense high energy rock music with aggressive vocals and dramatic sound effects",
-      "normalizedOutputValue": "rising music intensity leading to climax with spoken overlays",
+      "normalizedOutputValue": "heavy metal song segment with aggressive guitar riffs and prominent vocal chants dominating the audio bed",
       "reason": "Normalized strings differed"
     },
     {
       "path": "segments[2].mood",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "energetic",
-      "outputValue": "climactic",
-      "reason": "Values differed"
+      "outputValue": "energetic"
     },
     {
       "path": "segments[2].intensity",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": 9,
-      "outputValue": 8,
-      "reason": "Values differed"
+      "outputValue": 9
     },
     {
       "path": "segments[3].start",
       "status": "fail",
       "rule": "tolerant-time",
       "truthValue": 90,
-      "outputValue": 76,
-      "reason": "Time delta 14 exceeded tolerance 2",
+      "outputValue": 98,
+      "reason": "Time delta 8 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 14,
+        "deltaSeconds": 8,
         "toleranceSeconds": 2
       }
     },
@@ -672,10 +660,10 @@
       "status": "fail",
       "rule": "tolerant-time",
       "truthValue": 120,
-      "outputValue": 98,
-      "reason": "Time delta 22 exceeded tolerance 2",
+      "outputValue": 140,
+      "reason": "Time delta 20 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 22,
+        "deltaSeconds": 20,
         "toleranceSeconds": 2
       }
     },
@@ -691,9 +679,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "High-intensity cinematic trailer music with dramatic orchestral stabs, heavy percussion, and sound effects.",
-      "outputValue": "Music-led segment with rock vocals and instrumental hook, partially masked by SFX",
+      "outputValue": "Orchestral score returns with dialogue and action sounds, leading to a spoken promo over fading music",
       "normalizedTruthValue": "high intensity cinematic trailer music with dramatic orchestral stabs heavy percussion and sound effects",
-      "normalizedOutputValue": "music led segment with rock vocals and instrumental hook partially masked by sfx",
+      "normalizedOutputValue": "orchestral score returns with dialogue and action sounds leading to a spoken promo over fading music",
       "reason": "Normalized strings differed"
     },
     {
@@ -701,95 +689,39 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "energetic",
-      "outputValue": "aggressive",
+      "outputValue": "tense",
       "reason": "Values differed"
     },
     {
       "path": "segments[3].intensity",
-      "status": "pass",
-      "rule": "exact",
-      "truthValue": 9,
-      "outputValue": 9
-    },
-    {
-      "path": "segments[4].start",
-      "status": "fail",
-      "rule": "tolerant-time",
-      "truthValue": 120,
-      "outputValue": 98,
-      "reason": "Time delta 22 exceeded tolerance 2",
-      "metrics": {
-        "deltaSeconds": 22,
-        "toleranceSeconds": 2
-      }
-    },
-    {
-      "path": "segments[4].end",
-      "status": "fail",
-      "rule": "tolerant-time",
-      "truthValue": 140.042449,
-      "outputValue": 120,
-      "reason": "Time delta 20.042449000000005 exceeded tolerance 2",
-      "metrics": {
-        "deltaSeconds": 20.042449000000005,
-        "toleranceSeconds": 2
-      }
-    },
-    {
-      "path": "segments[4].type",
-      "status": "pass",
-      "rule": "exact",
-      "truthValue": "music",
-      "outputValue": "music"
-    },
-    {
-      "path": "segments[4].description",
-      "status": "fail",
-      "rule": "fuzzy-string",
-      "truthValue": "High-energy, cinematic action trailer music with intense sound effects and a promotional voiceover.",
-      "outputValue": "Post-song action with continued score bed and dialogue",
-      "normalizedTruthValue": "high energy cinematic action trailer music with intense sound effects and a promotional voiceover",
-      "normalizedOutputValue": "post song action with continued score bed and dialogue",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "segments[4].mood",
-      "status": "fail",
-      "rule": "exact",
-      "truthValue": "energetic",
-      "outputValue": "determined",
-      "reason": "Values differed"
-    },
-    {
-      "path": "segments[4].intensity",
       "status": "fail",
       "rule": "exact",
       "truthValue": 9,
-      "outputValue": 7,
+      "outputValue": 6,
       "reason": "Values differed"
     },
     {
-      "path": "segments[5]",
+      "path": "segments[4]",
       "status": "error",
       "rule": "structural",
-      "outputValue": {
+      "truthValue": {
         "start": 120,
-        "end": 140,
+        "end": 140.042449,
         "type": "music",
-        "description": "Final dialogue and promotional segment with music fade and SFX",
-        "mood": "conclusive",
-        "intensity": 6
+        "description": "High-energy, cinematic action trailer music with intense sound effects and a promotional voiceover.",
+        "mood": "energetic",
+        "intensity": 9
       },
-      "reason": "Truth array missing item present in output"
+      "reason": "Output array missing item present in truth"
     },
     {
       "path": "summary",
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "The trailer maintains high intensity, combining dramatic, action-oriented cinematic music with promotional voiceover and sound effects.",
-      "outputValue": "An intense trailer with dialogue-driven narrative, building action sequences, a prominent rock song segment featuring audible lyrics, and a concluding promotional call-to-action.",
+      "outputValue": "A tense trailer audio track with building orchestral score under dialogue, featuring a central heavy metal song segment with vocal chants, and concluding with action-oriented dialogue and promotional content.",
       "normalizedTruthValue": "the trailer maintains high intensity combining dramatic action oriented cinematic music with promotional voiceover and sound effects",
-      "normalizedOutputValue": "an intense trailer with dialogue driven narrative building action sequences a prominent rock song segment featuring audible lyrics and a concluding promotional call to action",
+      "normalizedOutputValue": "a tense trailer audio track with building orchestral score under dialogue featuring a central heavy metal song segment with vocal chants and concluding with action oriented dialogue and promotional content",
       "reason": "Normalized strings differed"
     },
     {
@@ -811,10 +743,10 @@
       "status": "fail",
       "rule": "tolerant-number",
       "truthValue": 0.86,
-      "outputValue": 0.64,
-      "reason": "Numeric delta 0.21999999999999997 exceeded tolerance 0.1",
+      "outputValue": 0.75,
+      "reason": "Numeric delta 0.10999999999999999 exceeded tolerance 0.1",
       "metrics": {
-        "delta": 0.21999999999999997,
+        "delta": 0.10999999999999999,
         "tolerance": 0.1
       }
     },
@@ -837,10 +769,10 @@
       "status": "fail",
       "rule": "tolerant-number",
       "truthValue": 0.86,
-      "outputValue": 0.64,
-      "reason": "Numeric delta 0.21999999999999997 exceeded tolerance 0.1",
+      "outputValue": 0.75,
+      "reason": "Numeric delta 0.10999999999999999 exceeded tolerance 0.1",
       "metrics": {
-        "delta": 0.21999999999999997,
+        "delta": 0.10999999999999999,
         "tolerance": 0.1
       }
     },
@@ -861,7 +793,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "The aggressive metal cue includes a distinctive repeated \"master\" hook in the music lane.",
-      "outputValue": "Distinctive thrash-metal hook and repeated master chant audible in the music lane.",
+      "outputValue": "Distinctive heavy metal riff and repeated 'master' chants in the music lane, with lyrical cues matching the song.",
       "reason": "Values differed"
     },
     {
@@ -872,11 +804,31 @@
       "reason": "Output array missing item present in truth"
     },
     {
+      "path": "recognizedSong.candidates[0].matchedLyrics",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 1
+      },
+      "outputValue": {
+        "length": 2
+      },
+      "reason": "Array length mismatch: truth=1 output=2"
+    },
+    {
       "path": "recognizedSong.candidates[0].matchedLyrics[0]",
-      "status": "pass",
+      "status": "fail",
       "rule": "exact",
       "truthValue": "Master, master",
-      "outputValue": "Master, master"
+      "outputValue": "Obey your master",
+      "reason": "Values differed"
+    },
+    {
+      "path": "recognizedSong.candidates[0].matchedLyrics[1]",
+      "status": "error",
+      "rule": "structural",
+      "outputValue": "Master, master",
+      "reason": "Truth array missing item present in output"
     },
     {
       "path": "recognizedSong.candidates[0].timeRanges",
@@ -937,7 +889,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "Trailer dialogue and SFX overlap partially mask the cue in some windows.",
-      "outputValue": "Trailer dialogue and SFX partially mask the cue, reducing clarity.",
+      "outputValue": "Dialogue and sound effects partially mask the music, but key elements remain audible.",
       "reason": "Values differed"
     },
     {
@@ -945,7 +897,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "The music lane contains a distinctive metal hook that plausibly matches one famous song, reinforced by later vocal evidence.",
-      "outputValue": "A likely famous-song hook with audible lyrics is present, but recognition remains evidence-gated due to masking.",
+      "outputValue": "Clear lyrical and musical cues aligning with a well-known song, though concurrent audio reduces certainty.",
       "reason": "Values differed"
     },
     {
@@ -953,7 +905,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "Recognition is strong but still partially masked by trailer editing.",
-      "outputValue": "Partial masking by dialogue and sound effects reduces certainty.",
+      "outputValue": "Partial masking by dialogue and SFX.",
       "reason": "Values differed"
     },
     {
@@ -964,23 +916,34 @@
       "outputValue": false
     },
     {
+      "path": "recognitionNotes",
+      "status": "fail",
+      "rule": "structural",
+      "truthValue": {
+        "length": 2
+      },
+      "outputValue": {
+        "length": 1
+      },
+      "reason": "Array length mismatch: truth=2 output=1"
+    },
+    {
       "path": "recognitionNotes[0]",
       "status": "fail",
       "rule": "exact",
       "truthValue": "Instrumental and arrangement cues support the match, but the vocal lane remains the stronger source of literal lyric evidence.",
-      "outputValue": "Music recognition is based on audible lyrics and instrumental hook, but dialogue overlap and SFX reduce confidence.",
+      "outputValue": "The song segment is interspersed with dialogue, but the music remains the dominant bed; recognition is evidence-based on audible lyrics and instrumentation.",
       "reason": "Values differed"
     },
     {
       "path": "recognitionNotes[1]",
-      "status": "fail",
-      "rule": "exact",
+      "status": "error",
+      "rule": "structural",
       "truthValue": "Spoken dialogue over score must not be treated as lyric evidence for song recognition.",
-      "outputValue": "Spoken overlays are present but do not suppress the music classification as the score remains dominant.",
-      "reason": "Values differed"
+      "reason": "Output array missing item present in truth"
     }
   ],
-  "summary": "16/50 scoreable fields passed; 0/56 truth fields were skipped. music_segment_timeline_pct=35.3%; music_segment_content_pct=13.3%; music_summary_pct=0.0%; recognized_song_identity_pct=66.7%; recognized_song_support_pct=9.1%.",
+  "summary": "15/45 scoreable fields passed; 0/53 truth fields were skipped. music_segment_timeline_pct=35.7%; music_segment_content_pct=25.0%; music_summary_pct=0.0%; recognized_song_identity_pct=66.7%; recognized_song_support_pct=0.0%.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

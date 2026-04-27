@@ -1,6 +1,6 @@
 # Emotion Analysis - Final Report
 
-**Generated:** 2026-04-17T21:41:30.143Z
+**Generated:** 2026-04-27T17:41:03.784Z
 **Pipeline Version:** 1.0
 **Pipeline Name:** COD Test Pipeline
 
@@ -15,9 +15,9 @@
 
 ## AI Recommendation
 
-> Due to insufficient emotion analysis data, no specific retention improvements can be recommended. Next steps include collecting chunk-level emotion metrics and viewer engagement data to enable actionable insights.
+> Insufficient data provided for analysis. Recommend collecting chunk-level emotion analysis and computed metrics to generate actionable insights.
 
-*The provided metrics summary has empty averages, trends, and peak moments, with a friction index of zero, indicating no analysis was performed. Chunk summaries are also empty, so there is no evidence of emotional beats or viewer friction points. Without data on hook effectiveness, pacing, or emotional peaks, it is impossible to identify retention issues or opportunities. This lack of data prevents any concrete recommendations for edits.*
+*The input data contains empty metrics summaries and no chunk summaries, making it impossible to analyze viewer retention or emotional impact. Without averages, trends, friction index, or peak moments, no evidence-based recommendations can be made. The lack of data prevents any specific analysis of hooks, pacing, or emotional beats.*
 
 ---
 

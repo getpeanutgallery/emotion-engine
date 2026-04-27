@@ -94,16 +94,21 @@ That shifts the highest-value next lane away from structural scoring work and to
 **Folders Created/Deleted/Modified:**
 - `output/`
 - `benchmarks/`
+- `docs/`
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- fresh cod-test output/report artifacts
-- optional QA note if useful
+- `.logs/cod-test-20260427-ee-6yxq-rerun.log`
+- `output/cod-test/phase1-gather-context/dialogue-data.json`
+- `output/cod-test/phase1-gather-context/dialogue-data.reconciled.json`
+- `benchmarks/fixtures/cod-test/_reports/benchmark-summary.json`
+- `benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueData.json`
+- `docs/2026-04-27-cod-test-rerun-qa-note.md`
 - `.plans/2026-04-27-audit-dialogue-prompt-for-missed-lines-and-rerun-cod-test.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Identified the canonical rerun path as the full benchmarked pipeline: `node server/run-pipeline.cjs --config configs/cod-test.yaml --verbose` (after `node validate-configs.cjs`). The rerun completed Phase 1-3 and refreshed the canonical cod-test benchmark reports, then ended with the expected benchmark-stage failure surface (`0/7 artifacts passed. 369/723 scoreable fields passed. Truth coverage was 723/1221 fields.`) recorded in `.logs/cod-test-20260427-ee-6yxq-rerun.log`. The target omission did **not** improve: truth `You shall know fear.` at `benchmarks/fixtures/cod-test/truth/dialogue-data.json` index `9` was still absent from the reconciled runtime output in `output/cod-test/phase1-gather-context/dialogue-data.reconciled.json`, where the sequence still jumps from `A lot of people counting on us for answers.` to `This isn't real.`. The scored weak-line merge window also stayed unchanged in `benchmarks/fixtures/cod-test/_reports/benchmark-summary.json`: truth indexes `[8,9,10]` still align to output index `[8]` with `text_similarity_pct: 56.3`, and truth indexes `[11,12]` still align to output index `[9]` with `text_similarity_pct: 57.1`. Exact before/after score movement from the canonical dialogue report was negative: `dialogue_text_full_transcript_pct` regressed from `90.7` to `66.5`; `dialogue_text_windowed_pct` regressed from `90.7` to `67.2`; `dialogue_boundary_pct` stayed flat at `0.0` before and after. The rerun also introduced clear regressions/hallucinations: output segment count rose from `17` to `25`, `extra_output_window_count` rose from `0` to `6`, and the refreshed reconciled output added unsupported lyric-heavy segments such as `Come crawling faster, master.`, `Master of puppets, I'm pulling your strings.`, `Twisting your mind and smashing your dreams.`, `Blinded by me, you can't see a thing.`, and repeated `Just call my name, 'cause I'll hear you scream.` / `Master, master.` lines. A concise QA handoff note was written to `docs/2026-04-27-cod-test-rerun-qa-note.md` for the auditor lane.
 
 ---
 
@@ -120,12 +125,12 @@ That shifts the highest-value next lane away from structural scoring work and to
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- audit note if needed
+- `docs/2026-04-27-dialogue-prompt-rerun-audit-note.md`
 - `.plans/2026-04-27-audit-dialogue-prompt-for-missed-lines-and-rerun-cod-test.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independently verified the rerun against the concrete tracked baseline (`HEAD`) and current artifacts. The regression is real, not report noise: `dialogue_text_full_transcript_pct` fell from `90.7` to `66.5`, `dialogue_text_windowed_pct` fell from `90.7` to `67.2`, `output_segment_count` rose from `17` to `25`, `split_event_count` rose from `1` to `3`, and `extra_output_window_count` rose from `0` to `6`, while `dialogue_boundary_pct` stayed flat at `0.0`. The target omission was **not** fixed: truth indexes `[8,9,10]` still align to output `[8]` with `text_similarity_pct: 56.3`, and `You shall know fear.` remains absent from both `output/cod-test/phase1-gather-context/dialogue-data.json` / `.reconciled.json` and the benchmark alignment. Evidence also supports the prompt-regression hypothesis: the revision broadened retention around ambiguous lyric-like vocal material (`audibly supported spoken dialogue and dialogue-like vocal material`, `do not drop ... merely because ... a phrase might also resemble lyrics`, `if classification is ambiguous, preserve the line`, `reconciliation happens later`), and the rerun produced exactly that failure shape with lyric-heavy extra segments such as `Come crawling faster, master.`, `Master of puppets, I'm pulling your strings.`, `Twisting your mind and smashing your dreams.`, `Blinded by me, you can't see a thing.`, and repeated `Just call my name, 'cause I'll hear you scream.` / `Master, master.` windows. A concise audit note was written to `docs/2026-04-27-dialogue-prompt-rerun-audit-note.md`. Recommendation: do **not** keep this revision live as-is; restore the pre-rerun prompt behavior or otherwise back out the broadened lyric-tolerant scope wording, then plan a narrower follow-up that preserves only the weak-line / anti-absorption / low-confidence-retention intent for short spoken inserts, plus add a validator/runtime guardrail to reject lyric-burst false positives before final acceptance.
 
 ---
 

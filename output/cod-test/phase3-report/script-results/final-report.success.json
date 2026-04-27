@@ -6,8 +6,8 @@
   "run": {
     "configName": "COD Test Pipeline",
     "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-    "startedAt": "2026-04-17T21:41:30.142Z",
-    "completedAt": "2026-04-17T21:41:30.147Z",
+    "startedAt": "2026-04-27T17:41:03.783Z",
+    "completedAt": "2026-04-27T17:41:03.788Z",
     "durationMs": 5,
     "attempt": 1
   },
@@ -16,12 +16,12 @@
     "data": {
       "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md",
       "analysisDataPath": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json",
-      "generatedAt": "2026-04-17T21:41:30.147Z",
+      "generatedAt": "2026-04-27T17:41:03.788Z",
       "summary": {
         "duration": 0,
         "totalTokens": 0,
         "chunksAnalyzed": 0,
-        "reportSize": 1881
+        "reportSize": 1705
       }
     }
   },
@@ -45,7 +45,7 @@
     "duration": 0,
     "totalTokens": 0,
     "chunksAnalyzed": 0,
-    "reportSize": 1881
+    "reportSize": 1705
   },
   "diagnostics": {
     "warnings": [

@@ -2,54 +2,38 @@
   "segments": [
     {
       "start": 0,
-      "end": 25,
+      "end": 35,
       "type": "music",
-      "description": "Opening with tense atmospheric underscore beneath dialogue",
+      "description": "Opening with restrained percussion and tense dialogue over a low orchestral score bed",
       "mood": "tense",
-      "intensity": 5
+      "intensity": 6
     },
     {
-      "start": 25,
-      "end": 50,
-      "type": "music",
-      "description": "Action build-up with percussive score and dialogue overlays",
-      "mood": "intense",
-      "intensity": 7
-    },
-    {
-      "start": 50,
+      "start": 35,
       "end": 76,
       "type": "music",
-      "description": "Rising music intensity leading to climax with spoken overlays",
-      "mood": "climactic",
-      "intensity": 8
+      "description": "Score intensifies with rising strings and percussion under continued dialogue and action sound effects",
+      "mood": "building tension",
+      "intensity": 7
     },
     {
       "start": 76,
       "end": 98,
       "type": "music",
-      "description": "Music-led segment with rock vocals and instrumental hook, partially masked by SFX",
-      "mood": "aggressive",
+      "description": "Heavy metal song segment with aggressive guitar riffs and prominent vocal chants, dominating the audio bed",
+      "mood": "energetic",
       "intensity": 9
     },
     {
       "start": 98,
-      "end": 120,
-      "type": "music",
-      "description": "Post-song action with continued score bed and dialogue",
-      "mood": "determined",
-      "intensity": 7
-    },
-    {
-      "start": 120,
       "end": 140,
       "type": "music",
-      "description": "Final dialogue and promotional segment with music fade and SFX",
-      "mood": "conclusive",
+      "description": "Orchestral score returns with dialogue and action sounds, leading to a spoken promo over fading music",
+      "mood": "tense",
       "intensity": 6
     }
   ],
-  "summary": "An intense trailer with dialogue-driven narrative, building action sequences, a prominent rock song segment featuring audible lyrics, and a concluding promotional call-to-action.",
+  "summary": "A tense trailer audio track with building orchestral score under dialogue, featuring a central heavy metal song segment with vocal chants, and concluding with action-oriented dialogue and promotional content.",
   "hasMusic": true,
   "analysisMode": "whole_asset",
   "timingMode": "full_timeline",
@@ -62,12 +46,12 @@
   },
   "globalArc": {
     "dominantMood": "energetic",
-    "energyCurve": "rising_then_peak_then_drop",
+    "energyCurve": "rising_then_drop",
     "notableTransitions": [
       {
         "start": 76,
         "end": 98,
-        "label": "rock song entry with vocals"
+        "label": "heavy metal song entry with vocal chants"
       }
     ]
   },
@@ -87,16 +71,17 @@
   },
   "recognizedSong": {
     "status": "possible",
-    "confidence": 0.64,
+    "confidence": 0.75,
     "candidates": [
       {
         "title": "Master of Puppets",
         "artist": "Metallica",
-        "confidence": 0.64,
+        "confidence": 0.75,
         "evidence": [
-          "Distinctive thrash-metal hook and repeated master chant audible in the music lane."
+          "Distinctive heavy metal riff and repeated 'master' chants in the music lane, with lyrical cues matching the song."
         ],
         "matchedLyrics": [
+          "Obey your master",
           "Master, master"
         ],
         "timeRanges": [
@@ -105,20 +90,18 @@
             "end": 98
           }
         ],
-        "ambiguity": "Trailer dialogue and SFX partially mask the cue, reducing clarity."
+        "ambiguity": "Dialogue and sound effects partially mask the music, but key elements remain audible."
       }
     ],
-    "primaryEvidence": "A likely famous-song hook with audible lyrics is present, but recognition remains evidence-gated due to masking.",
-    "ambiguity": "Partial masking by dialogue and sound effects reduces certainty.",
+    "primaryEvidence": "Clear lyrical and musical cues aligning with a well-known song, though concurrent audio reduces certainty.",
+    "ambiguity": "Partial masking by dialogue and SFX.",
     "multipleSongsDetected": false
   },
   "recognitionNotes": [
-    "Music recognition is based on audible lyrics and instrumental hook, but dialogue overlap and SFX reduce confidence.",
-    "Spoken overlays are present but do not suppress the music classification as the score remains dominant."
+    "The song segment is interspersed with dialogue, but the music remains the dominant bed; recognition is evidence-based on audible lyrics and instrumentation."
   ],
   "qualityNotes": [
     "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-    "Segment timings are approximate based on narrative flow; exact boundaries may vary.",
-    "Confidence is moderate due to audio masking in key sections."
+    "Segment timings are approximate based on audio flow; confidence is moderate due to potential masking in parts of the track."
   ]
 }

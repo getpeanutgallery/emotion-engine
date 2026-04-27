@@ -76,13 +76,38 @@ This follow-up should add exactly one additional bounded hop inside an already-r
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- fresh cod-test artifacts/reports
-- optional QA note
+- `output/cod-test/phase1-gather-context/dialogue-data.json`
+- `output/cod-test/phase1-gather-context/dialogue-data.reconciled.json`
+- `output/cod-test/phase1-gather-context/dialogue-v3-source-truth.reconciled.json`
+- `output/cod-test/phase1-gather-context/music-vocals-data.json`
+- `output/cod-test/phase1-gather-context/famous-song-reconciliation.json`
+- `benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueData.json`
+- `benchmarks/fixtures/cod-test/_reports/benchmark-summary.json`
+- `docs/2026-04-27-bounded-second-hop-reconciliation-rerun-qa-note.md`
 - `.plans/2026-04-27-bounded-second-hop-reconciliation-followup.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed the bead with `bd update ee-k8qa --status in_progress --json`. Canonical validation/rerun commands executed from repo root:
+1. `set -a && . ./.env && set +a && node validate-configs.cjs`
+2. `set -a && . ./.env && set +a && node server/run-pipeline.cjs --config configs/cod-test.yaml --verbose`
+3. After a transient first-attempt `OpenRouter: read ECONNRESET` failure in `server/scripts/get-context/get-dialogue.cjs`, reran step 2 successfully through Phase 1-3; it then exited non-zero at the expected benchmark-stage failure surface after refreshing the artifacts/reports.
+
+Fresh rerun finding: the bounded second-hop logic did **not** get exercised on this canonical rerun because the fresh vocals recognition regressed and the reconciliation gate skipped entirely. `output/cod-test/phase1-gather-context/famous-song-reconciliation.json` now shows `status: "skipped"`, trigger failures `statusRecognized`, `confidenceStrong`, `singlePrimaryCandidate`, `sufficientMatchedLyrics`, and `hasSupportingMusicConsensus`, with `recognizedSong.status: "unknown"`, `confidence: 0`, `candidates: []`, and `removedDialogueSegments: []`.
+
+That means the remaining lyric lines were **not** removed; the reconciled dialogue instead re-expanded to a full lyric burst in `output/cod-test/phase1-gather-context/dialogue-data.reconciled.json`: indexes `13` `Obey your master`, `14` `Come crawling faster`, `15` `Master of puppets, I'm pulling your strings`, `16` `Twisting your mind and smashing your dreams`, `17` `Blinded by me, you can't see a thing`, `18` `Just call my name, 'cause I'll hear you scream`, `19` `Master, master`, `20` `Just call my name, 'cause I'll hear you scream`, `21` `Master, master`, plus late index `27` `Obey your master`.
+
+Fresh benchmark comparison from `benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueData.json`:
+- earlier high-score baseline: `dialogue_text_full_transcript_pct=90.7`, `dialogue_text_windowed_pct=90.7`, `extra_output_window_count=0`
+- prior post-fix run (`REF-03`): `dialogue_text_full_transcript_pct=81.3`, `dialogue_text_windowed_pct=81.7`, `extra_output_window_count=1`
+- fresh bounded-second-hop rerun: `dialogue_text_full_transcript_pct=65.8`, `dialogue_text_windowed_pct=66.5`, `dialogue_boundary_pct=14.3`, `output_segment_count=29`, `extra_output_window_count=7`
+- the fresh rerun is also slightly worse than the earlier failed rerun documented in `.plans/2026-04-27-audit-dialogue-prompt-for-missed-lines-and-rerun-cod-test.md` (`66.5 / 67.2 / 6`)
+
+Collateral-removal read: no legitimate spoken lines were wrongly removed by reconciliation in this run because reconciliation removed nothing. Nearby spoken lines still present in the reconciled artifact include `This isn't real.`, `The hell it ain't!`, `Pull it together, man`, `So eager to leave, David`, `Killing the man is a hell of a lot easier than killing the idea`, `You were never cut out to be a Mason`, `No more games, this ends now`, and the preorder line.
+
+Weak-line status: unchanged. `You shall know fear.` remains absent from the fresh reconciled dialogue, and the fresh benchmark still aligns truth index `9` against output index `9` (`Spectre 1 report`) rather than recovering the line.
+
+Wrote the concise QA note to `docs/2026-04-27-bounded-second-hop-reconciliation-rerun-qa-note.md`. References validated: `REF-03`, `REF-05`, `REF-07`, `REF-08`. 
 
 ---
 
@@ -99,27 +124,27 @@ This follow-up should add exactly one additional bounded hop inside an already-r
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- audit note if needed
+- `docs/2026-04-27-bounded-second-hop-reconciliation-audit-note.md`
 - `.plans/2026-04-27-bounded-second-hop-reconciliation-followup.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit confirms the bad rerun is mainly explained by upstream recognized-song failure, not by evidence that the bounded second-hop implementation regressed dialogue reconciliation. `output/cod-test/phase1-gather-context/famous-song-reconciliation.json` shows `status: "skipped"` with failed trigger reasons `statusRecognized`, `confidenceStrong`, `singlePrimaryCandidate`, `sufficientMatchedLyrics`, and `hasSupportingMusicConsensus`; `trigger.recognizedSong` is `status: "unknown"`, `confidence: 0`, `candidates: []`; and `decisions.removedDialogueSegments` is empty. Because `buildRecognitionGate()` must pass before `reconcileDialogue()` can remove any lyric contamination, the new hop logic from `5ba0151` did not get a chance to execute on this run. Supporting evidence: `output/cod-test/phase1-gather-context/music-vocals-data.json` still contains eleven sung lyric segments (`"Obey your master"`, `"Master of puppets, I'm pulling your strings"`, `"Master, master"`, etc.), while `output/cod-test/phase1-gather-context/music-data.json` independently reports `recognizedSong.status: "possible"` for `Master of Puppets` at `confidence: 0.7`, so the failure is in recognition activation/gating rather than absence of lyric material. Recommendation: do not judge the bounded second-hop logic from this rerun; treat it as landed and unit-tested but unproven under live rerun conditions, and prioritize recognized-song stability/diagnostics before further reconciliation evaluation. Wrote concise audit note to `docs/2026-04-27-bounded-second-hop-reconciliation-audit-note.md`. References validated: `REF-03`, `REF-04`, `REF-05`, `REF-07`, `REF-08`.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ⚠️ Partial
 
-**What We Built:** Pending.
+**What We Built:** Implemented and validated a bounded second-hop lyric-reconciliation change, reran the canonical `cod-test` pipeline, and independently audited the failed rerun. The audit distinguishes implementation correctness from live-run instability: the rerun regression is best explained by upstream recognized-song detection failing to activate, which caused reconciliation to skip before the new logic could run.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-03`, `REF-04`, `REF-05`, `REF-07`, and `REF-08` were all rechecked during audit. No evidence from the live rerun contradicts the implementation behavior proven by commit `5ba0151` and its tests; the live run simply did not reach that path.
 
 **Commits:**
-- Pending.
+- `5ba0151` - Add bounded second-hop lyric reconciliation
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** A single live rerun is not a valid reconciliation verdict when the recognized-song gate is unstable. Separate "recognizer activated reliably" from "reconciliation behaved correctly once activated," otherwise regressions get misattributed.
 
 ---
 

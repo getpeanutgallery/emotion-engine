@@ -98,13 +98,36 @@ The likely causes currently visible are twofold. First, the reconciliation gate 
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- fresh cod-test output/report artifacts
-- optional QA note
+- `.logs/cod-test-20260427-ee-5n2f-postfix-rerun.log`
+- `output/cod-test/phase1-gather-context/dialogue-data.json`
+- `output/cod-test/phase1-gather-context/dialogue-data.reconciled.json`
+- `output/cod-test/phase1-gather-context/famous-song-reconciliation.json`
+- `benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueData.json`
+- `benchmarks/fixtures/cod-test/_reports/benchmark-summary.json`
+- `docs/2026-04-27-famous-song-reconciliation-postfix-qa-note.md`
 - `.plans/2026-04-27-investigate-famous-song-reconciliation-under-removal.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed `ee-5n2f` and reran the canonical full cod-test pipeline with the exact command sequence:
+- `set -a && . ./.env && set +a`
+- `node validate-configs.cjs`
+- `node server/run-pipeline.cjs --config configs/cod-test.yaml --verbose`
+
+The run completed Phase 1-3, refreshed the canonical benchmark/report artifacts, and ended with the expected benchmark-stage failure surface recorded in `.logs/cod-test-20260427-ee-5n2f-postfix-rerun.log`: `0/7 artifacts passed. 359/701 scoreable fields passed. Truth coverage was 701/1204 fields.`
+
+**Metric comparison**
+- Earlier high-score baseline (documented in `.plans/2026-04-27-audit-dialogue-prompt-for-missed-lines-and-rerun-cod-test.md`): `dialogue_text_full_transcript_pct=90.7`, `dialogue_text_windowed_pct=90.7`, `extra_output_window_count=0`
+- Failed rerun immediately before this fix (same plan/report surface): `dialogue_text_full_transcript_pct=66.5`, `dialogue_text_windowed_pct=67.2`, `extra_output_window_count=6`
+- Post-fix rerun (`benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueData.json`): `dialogue_text_full_transcript_pct=81.3`, `dialogue_text_windowed_pct=81.7`, `dialogue_boundary_pct=28.6`, `output_segment_count=22`, `extra_output_window_count=1`
+
+**Reconciled dialogue correctness findings**
+- The fix produced a real reconciliation improvement versus the failed rerun: the fresh ledger at `output/cod-test/phase1-gather-context/famous-song-reconciliation.json` removed dialogue indexes `13`, `14`, `18`, `19`, and `20` with texts `Obey your master`, `Come crawling faster`, `Just call my name, 'cause I'll hear you scream`, `Master, master`, and `Just call my name, 'cause I'll hear you scream`.
+- The contamination block is therefore much smaller than the pre-fix failed rerun’s long `13-20` lyric burst, but it is **not fully eliminated**. Fresh reconciled dialogue still contains lyric lines at indexes `15`, `16`, and `17`: `Master of puppets, I'm pulling your strings`, `Twisting your mind and smashing your dreams`, and `Blinded by me, you can't see a thing`.
+- I did **not** find evidence in this contaminated cluster that legitimate spoken lines were wrongly removed. Spoken lines `This isn't real.`, `The hell it ain't!`, `Pull it together, man.`, `So eager to leave, David.`, and `Killing the man is a hell of a lot easier than killing the idea.` remain present in `output/cod-test/phase1-gather-context/dialogue-data.reconciled.json`.
+- The weak-line issue remains unchanged: `You shall know fear.` is still missing from the fresh reconciled dialogue, and the benchmark alignment still merges truth indexes `[8,9]` into output `[8]` before aligning truth index `[10]` to output `[9]`.
+
+Concise QA note written to `docs/2026-04-27-famous-song-reconciliation-postfix-qa-note.md`. The main QA read is: this generic reconciliation fix recovered most of the score loss caused by under-removal (`66.5/67.2/6` → `81.3/81.7/1`) and removed five obvious lyric contaminants without harming nearby spoken lines, but three lyric lines still survive in reconciled dialogue, so this lane improved correctness substantially without yet matching the earlier `90.7/90.7/0` baseline.
 
 ---
 
@@ -121,12 +144,12 @@ The likely causes currently visible are twofold. First, the reconciliation gate 
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- audit note if needed
+- `docs/2026-04-27-famous-song-reconciliation-postfix-audit.md`
 - `.plans/2026-04-27-investigate-famous-song-reconciliation-under-removal.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independently verified the post-fix improvement against the live artifacts and the current benchmark report. The gain is real, not report noise: `output/cod-test/phase1-gather-context/dialogue-data.reconciled.json` now removes five lyric-contamination lines (`13`, `14`, `18`, `19`, `20`) that survived the prior failed rerun, shrinking the famous-song contamination block to only three remaining lyric lines (`15`, `16`, `17`). That concrete artifact cleanup matches the current report movement in `benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueData.json`: `dialogue_text_full_transcript_pct 66.5 -> 81.3`, `dialogue_text_windowed_pct 67.2 -> 81.7`, and `extra_output_window_count 6 -> 1` relative to the immediately pre-fix failed rerun documented in this plan/QA note. I did not find evidence that legitimate spoken lines were wrongly removed; nearby spoken lines such as `This isn't real.`, `The hell it ain't!`, `Pull it together, man.`, `So eager to leave, David.`, `Killing the man is a hell of a lot easier than killing the idea.`, and `You were never cut out to be a Mason.` all remain present in the reconciled artifact. The three surviving lyric lines are explainable by the current narrow generic logic: commit `eb4cc6a` promotes only first-hop direct-vocal-support neighbors off sparse recognized-song anchor hits (`Master, master`, `Obey your master`), so indexes `14`, `18`, and `20` get promoted but middle lines `15`, `16`, and `17` never become candidates because `hasAdjacentLyricEvidence()` only chains through `hasExistingLyricEvidence`, not prior direct-vocal-support promotions. Concise audit note written to `docs/2026-04-27-famous-song-reconciliation-postfix-audit.md`. Recommendation: stop here on generic reconciliation for now and return to the weak-line omission issue (`You shall know fear.`), since the lyric-removal fix already recovered most of the lost score while further broadening this lane now would trade for higher false-positive risk.
 
 ---
 

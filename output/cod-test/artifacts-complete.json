@@ -6,127 +6,183 @@
         "speaker": "Speaker 1",
         "speaker_id": "spk_001",
         "text": "They want you afraid.",
-        "confidence": 0.5,
+        "confidence": 0.9,
         "index": 0
       },
       {
         "speaker": "Speaker 1",
         "speaker_id": "spk_001",
         "text": "Fear makes you easier to control.",
-        "confidence": 0.5,
+        "confidence": 0.9,
         "index": 1
       },
       {
         "speaker": "Speaker 1",
         "speaker_id": "spk_001",
         "text": "It's time to wake up.",
-        "confidence": 0.5,
+        "confidence": 0.9,
         "index": 2
+      },
+      {
+        "speaker": "Speaker 2",
+        "speaker_id": "spk_002",
+        "text": "Your streets shall once again run red with your blood.",
+        "confidence": 0.9,
+        "index": 3
+      },
+      {
+        "speaker": "Speaker 3",
+        "speaker_id": "spk_003",
+        "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+        "confidence": 0.9,
+        "index": 4
       },
       {
         "speaker": "Speaker 1",
         "speaker_id": "spk_001",
-        "text": "Your streets shall once again run red with your blood.",
-        "confidence": 0.5,
-        "index": 3
-      },
-      {
-        "speaker": "Speaker 2",
-        "speaker_id": "spk_002",
-        "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
-        "confidence": 0.5,
-        "index": 4
-      },
-      {
-        "speaker": "Speaker 2",
-        "speaker_id": "spk_002",
         "text": "Menendez is a terrorist. We're bringing peace and security to the world.",
-        "confidence": 0.5,
+        "confidence": 0.9,
         "index": 5
       },
       {
-        "speaker": "Speaker 3",
-        "speaker_id": "spk_003",
+        "speaker": "Speaker 4",
+        "speaker_id": "spk_004",
         "text": "He refuses to let me go.",
-        "confidence": 0.5,
+        "confidence": 0.85,
         "index": 6
-      },
-      {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "Stop looking backwards, David, but matters is what we do next.",
-        "confidence": 0.5,
-        "index": 7
-      },
-      {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "A lot of people counting on us for answers.",
-        "confidence": 0.5,
-        "index": 8
-      },
-      {
-        "speaker": "Speaker 3",
-        "speaker_id": "spk_003",
-        "text": "This isn't real.",
-        "confidence": 0.5,
-        "index": 9
-      },
-      {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "The hell it isn't!",
-        "confidence": 0.5,
-        "index": 10
       },
       {
         "speaker": "Speaker 5",
         "speaker_id": "spk_005",
-        "text": "Obey your master... Master... Just call me faster... Master... Master... The master's puppet's a puppet's brain... Twisting your mind, smashing your day... Blinding from me, you can't see... Just go ahead, it's all in your head... Master, master... Plans and dreams are now in the after... Master, master... You'll be in my grasp...",
-        "confidence": 0.4,
-        "index": 11
+        "text": "Stop looking backwards, David. What matters is what we do next.",
+        "confidence": 0.9,
+        "index": 7
+      },
+      {
+        "speaker": "Speaker 5",
+        "speaker_id": "spk_005",
+        "text": "A lot of people counting on us for answers.",
+        "confidence": 0.9,
+        "index": 8
       },
       {
         "speaker": "Speaker 6",
         "speaker_id": "spk_006",
-        "text": "Pull it together, man.",
-        "confidence": 0.5,
-        "index": 12
+        "text": "Spectre One report.",
+        "confidence": 0.8,
+        "index": 9
       },
       {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "So eager to leave, David?",
-        "confidence": 0.5,
-        "index": 13
-      },
-      {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "Killing a man is a hell of a lot easier than killing an idea.",
-        "confidence": 0.5,
-        "index": 14
-      },
-      {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "You were never cut out to be a Mason.",
-        "confidence": 0.5,
-        "index": 15
-      },
-      {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "No more games. This ends now.",
-        "confidence": 0.5,
-        "index": 16
+        "speaker": "Speaker 6",
+        "speaker_id": "spk_006",
+        "text": "Need a sitrep.",
+        "confidence": 0.8,
+        "index": 10
       },
       {
         "speaker": "Speaker 7",
         "speaker_id": "spk_007",
-        "text": "Get the Reznov challenge pack when you pre-order now.",
-        "confidence": 0.5,
+        "text": "This isn't real.",
+        "confidence": 0.85,
+        "index": 11
+      },
+      {
+        "speaker": "Speaker 8",
+        "speaker_id": "spk_008",
+        "text": "The hell it ain't!",
+        "confidence": 0.85,
+        "index": 12
+      },
+      {
+        "speaker": "Speaker 9",
+        "speaker_id": "spk_009",
+        "text": "Obey your master, master",
+        "confidence": 0.7,
+        "index": 13
+      },
+      {
+        "speaker": "Speaker 9",
+        "speaker_id": "spk_009",
+        "text": "Come crawling faster",
+        "confidence": 0.7,
+        "index": 14
+      },
+      {
+        "speaker": "Speaker 9",
+        "speaker_id": "spk_009",
+        "text": "Obey your master, master",
+        "confidence": 0.7,
+        "index": 15
+      },
+      {
+        "speaker": "Speaker 9",
+        "speaker_id": "spk_009",
+        "text": "Your life burns faster",
+        "confidence": 0.7,
+        "index": 16
+      },
+      {
+        "speaker": "Speaker 9",
+        "speaker_id": "spk_009",
+        "text": "Obey your master, master",
+        "confidence": 0.7,
         "index": 17
+      },
+      {
+        "speaker": "Speaker 8",
+        "speaker_id": "spk_008",
+        "text": "Pull it together, man!",
+        "confidence": 0.8,
+        "index": 18
+      },
+      {
+        "speaker": "Speaker 10",
+        "speaker_id": "spk_010",
+        "text": "So eager to leave, David.",
+        "confidence": 0.85,
+        "index": 19
+      },
+      {
+        "speaker": "Speaker 10",
+        "speaker_id": "spk_010",
+        "text": "Killing a man is a hell of a lot easier than killing an idea.",
+        "confidence": 0.9,
+        "index": 20
+      },
+      {
+        "speaker": "Speaker 1",
+        "speaker_id": "spk_001",
+        "text": "You were never cut out to be a Mason.",
+        "confidence": 0.85,
+        "index": 21
+      },
+      {
+        "speaker": "Speaker 10",
+        "speaker_id": "spk_010",
+        "text": "No more games. This ends now.",
+        "confidence": 0.85,
+        "index": 22
+      },
+      {
+        "speaker": "Speaker 9",
+        "speaker_id": "spk_009",
+        "text": "Obey your master, master",
+        "confidence": 0.7,
+        "index": 23
+      },
+      {
+        "speaker": "Speaker 9",
+        "speaker_id": "spk_009",
+        "text": "Master, master...",
+        "confidence": 0.7,
+        "index": 24
+      },
+      {
+        "speaker": "Speaker 11",
+        "speaker_id": "spk_011",
+        "text": "Get the Reznov Challenge Pack when you pre-order now.",
+        "confidence": 0.9,
+        "index": 25
       }
     ],
     "speaker_profiles": [
@@ -134,64 +190,124 @@
         "speaker_id": "spk_001",
         "label": "Speaker 1",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.9,
           "linked_segment_indexes": [
             0,
             1,
             2,
-            3
+            5,
+            21
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "female voice",
+              "confidence": 0.9
+            },
+            {
+              "label": "clear articulation",
+              "confidence": 0.8
+            },
+            {
+              "label": "authoritative tone",
+              "confidence": 0.7
+            }
+          ]
         },
         "inferred_traits": {
-          "traits": []
+          "traits": [
+            {
+              "trait": "gender_presentation",
+              "value": "feminine",
+              "confidence": 0.9,
+              "note": "based on vocal pitch and timbre"
+            },
+            {
+              "trait": "role_impression",
+              "value": "commanding or persuasive speaker",
+              "confidence": 0.6,
+              "note": "speculative from delivery style"
+            }
+          ]
         }
       },
       {
         "speaker_id": "spk_002",
         "label": "Speaker 2",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.85,
           "linked_segment_indexes": [
-            4,
-            5
+            3
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "deep male voice",
+              "confidence": 0.9
+            },
+            {
+              "label": "threatening tone",
+              "confidence": 0.8
+            }
+          ]
         },
         "inferred_traits": {
-          "traits": []
+          "traits": [
+            {
+              "trait": "demeanor",
+              "value": "menacing or villainous",
+              "confidence": 0.7,
+              "note": "speculative from content and delivery"
+            }
+          ]
         }
       },
       {
         "speaker_id": "spk_003",
         "label": "Speaker 3",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.85,
           "linked_segment_indexes": [
-            6,
-            9
+            4
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "narrator-like male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "formal delivery",
+              "confidence": 0.7
+            }
+          ]
         },
         "inferred_traits": {
-          "traits": []
+          "traits": [
+            {
+              "trait": "role_impression",
+              "value": "news reporter or announcer",
+              "confidence": 0.6,
+              "note": "speculative from style"
+            }
+          ]
         }
       },
       {
         "speaker_id": "spk_004",
         "label": "Speaker 4",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.8,
           "linked_segment_indexes": [
-            7,
-            8,
-            10,
-            13,
-            14,
-            15,
-            16
+            6
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "tense delivery",
+              "confidence": 0.7
+            }
+          ]
         },
         "inferred_traits": {
           "traits": []
@@ -201,46 +317,218 @@
         "speaker_id": "spk_005",
         "label": "Speaker 5",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.85,
           "linked_segment_indexes": [
-            11
+            7,
+            8
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "calm and measured tone",
+              "confidence": 0.7
+            }
+          ]
         },
         "inferred_traits": {
-          "traits": []
+          "traits": [
+            {
+              "trait": "demeanor",
+              "value": "composed or strategic",
+              "confidence": 0.5,
+              "note": "speculative from delivery"
+            }
+          ]
         }
       },
       {
         "speaker_id": "spk_006",
         "label": "Speaker 6",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.75,
           "linked_segment_indexes": [
-            12
+            9,
+            10
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "radio-filtered male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "military-style communication",
+              "confidence": 0.7
+            }
+          ]
         },
         "inferred_traits": {
-          "traits": []
+          "traits": [
+            {
+              "trait": "role_impression",
+              "value": "soldier or operator",
+              "confidence": 0.6,
+              "note": "speculative from context"
+            }
+          ]
         }
       },
       {
         "speaker_id": "spk_007",
         "label": "Speaker 7",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.8,
           "linked_segment_indexes": [
-            17
+            11
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "uncertain or distressed tone",
+              "confidence": 0.7
+            }
+          ]
         },
         "inferred_traits": {
           "traits": []
         }
+      },
+      {
+        "speaker_id": "spk_008",
+        "label": "Speaker 8",
+        "grounded": {
+          "confidence": 0.8,
+          "linked_segment_indexes": [
+            12,
+            18
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "shouting male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "urgent delivery",
+              "confidence": 0.7
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "demeanor",
+              "value": "agitated or intense",
+              "confidence": 0.6,
+              "note": "speculative from vocal energy"
+            }
+          ]
+        }
+      },
+      {
+        "speaker_id": "spk_009",
+        "label": "Speaker 9",
+        "grounded": {
+          "confidence": 0.7,
+          "linked_segment_indexes": [
+            13,
+            14,
+            15,
+            16,
+            17,
+            23,
+            24
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "singing male voice",
+              "confidence": 0.9
+            },
+            {
+              "label": "melodic contour",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "role_impression",
+              "value": "vocalist in a song",
+              "confidence": 0.9,
+              "note": "obvious from context"
+            }
+          ]
+        }
+      },
+      {
+        "speaker_id": "spk_010",
+        "label": "Speaker 10",
+        "grounded": {
+          "confidence": 0.85,
+          "linked_segment_indexes": [
+            19,
+            20,
+            22
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "serious and direct tone",
+              "confidence": 0.7
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "demeanor",
+              "value": "determined or resolute",
+              "confidence": 0.6,
+              "note": "speculative from delivery"
+            }
+          ]
+        }
+      },
+      {
+        "speaker_id": "spk_011",
+        "label": "Speaker 11",
+        "grounded": {
+          "confidence": 0.85,
+          "linked_segment_indexes": [
+            25
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "promotional male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "enthusiastic delivery",
+              "confidence": 0.7
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "role_impression",
+              "value": "announcer or marketer",
+              "confidence": 0.7,
+              "note": "speculative from content"
+            }
+          ]
+        }
       }
     ],
-    "summary": "A dramatic trailer featuring multiple voices discussing themes of fear, control, terrorism, and personal conflict, interspersed with song lyrics and concluding with a promotional message for a game pre-order.",
+    "summary": "A trailer-style dialogue featuring multiple speakers discussing themes of fear, control, terrorism, and conflict, with references to Raul Menendez, interspersed with song lyrics about obedience, and ending with a promotional message.",
     "totalDuration": 140.042449,
     "handoffContext": null,
     "analysisMode": "whole_asset",
@@ -248,8 +536,8 @@
     "sourceStrategy": "base64",
     "coverage": {
       "start": 0,
-      "end": 0,
-      "duration": 0,
+      "end": 87,
+      "duration": 87,
       "complete": false
     },
     "provenance": {
@@ -259,15 +547,572 @@
       "fallbackApplied": false
     }
   },
+  "dialogueV3SourceTruth": {
+    "schema_version": 1,
+    "contract": {
+      "artifact": "dialogue-data",
+      "mode": "traits",
+      "traits_contract_version": "3.0.0"
+    },
+    "summary": "A trailer-style dialogue featuring multiple speakers discussing themes of fear, control, terrorism, and conflict, with references to Raul Menendez, interspersed with song lyrics about obedience, and ending with a promotional message.",
+    "dialogue_segments": [
+      {
+        "index": 0,
+        "text": "They want you afraid.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "feminine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "clear",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "fearful",
+          "interpersonal_stance": "directive",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 1,
+        "text": "Fear makes you easier to control.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "feminine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "clear",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "directive",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 2,
+        "text": "It's time to wake up.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "feminine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "clear",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "directive",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 3,
+        "text": "Your streets shall once again run red with your blood.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "low",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 4,
+        "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "performative",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 5,
+        "text": "Menendez is a terrorist. We're bringing peace and security to the world.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "feminine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "clear",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "directive",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 6,
+        "text": "He refuses to let me go.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "tense",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 7,
+        "text": "Stop looking backwards, David. What matters is what we do next.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "measured",
+          "energy": "calm",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "calm",
+          "interpersonal_stance": "directive",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 8,
+        "text": "A lot of people counting on us for answers.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "measured",
+          "energy": "calm",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "calm",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 9,
+        "text": "Spectre One report.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "radio",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 10,
+        "text": "Need a sitrep.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "radio",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 11,
+        "text": "This isn't real.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 12,
+        "text": "The hell it ain't!",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "intense",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "tense",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 13,
+        "text": "Obey your master, master",
+        "traits": {
+          "audibility": "partially_masked",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 14,
+        "text": "Come crawling faster",
+        "traits": {
+          "audibility": "partially_masked",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "fast",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 15,
+        "text": "Obey your master, master",
+        "traits": {
+          "audibility": "partially_masked",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 16,
+        "text": "Your life burns faster",
+        "traits": {
+          "audibility": "partially_masked",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "fast",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 17,
+        "text": "Obey your master, master",
+        "traits": {
+          "audibility": "partially_masked",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 18,
+        "text": "Pull it together, man!",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "intense",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "tense",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 19,
+        "text": "So eager to leave, David.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "steady",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "serious",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 20,
+        "text": "Killing a man is a hell of a lot easier than killing an idea.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "steady",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "serious",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 21,
+        "text": "You were never cut out to be a Mason.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "feminine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "clear",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "directive",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 22,
+        "text": "No more games. This ends now.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "steady",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "serious",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 23,
+        "text": "Obey your master, master",
+        "traits": {
+          "audibility": "partially_masked",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 24,
+        "text": "Master, master...",
+        "traits": {
+          "audibility": "partially_masked",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "measured",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 25,
+        "text": "Get the Reznov Challenge Pack when you pre-order now.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "performative",
+          "delivery_overlay": "none_apparent"
+        }
+      }
+    ]
+  },
   "__scriptExecution": {
     "get-dialogue": {
       "status": "success",
       "run": {
         "configName": "COD Test Pipeline",
         "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-17T21:36:40.864Z",
-        "completedAt": "2026-04-17T21:37:30.116Z",
-        "durationMs": 49252,
+        "startedAt": "2026-04-27T17:35:55.203Z",
+        "completedAt": "2026-04-27T17:36:55.073Z",
+        "durationMs": 59870,
         "attempt": 1
       },
       "lineage": {
@@ -294,9 +1139,9 @@
       "run": {
         "configName": "COD Test Pipeline",
         "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-17T21:37:30.117Z",
-        "completedAt": "2026-04-17T21:37:58.680Z",
-        "durationMs": 28563,
+        "startedAt": "2026-04-27T17:36:55.074Z",
+        "completedAt": "2026-04-27T17:37:27.860Z",
+        "durationMs": 32786,
         "attempt": 1
       },
       "lineage": {
@@ -323,9 +1168,9 @@
       "run": {
         "configName": "COD Test Pipeline",
         "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-17T21:37:58.680Z",
-        "completedAt": "2026-04-17T21:40:19.350Z",
-        "durationMs": 140670,
+        "startedAt": "2026-04-27T17:37:27.860Z",
+        "completedAt": "2026-04-27T17:40:01.203Z",
+        "durationMs": 153343,
         "attempt": 1
       },
       "lineage": {
@@ -352,9 +1197,9 @@
       "run": {
         "configName": "COD Test Pipeline",
         "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-17T21:40:19.351Z",
-        "completedAt": "2026-04-17T21:40:19.354Z",
-        "durationMs": 3,
+        "startedAt": "2026-04-27T17:40:01.204Z",
+        "completedAt": "2026-04-27T17:40:01.215Z",
+        "durationMs": 11,
         "attempt": 1
       },
       "lineage": {
@@ -381,9 +1226,9 @@
       "run": {
         "configName": "COD Test Pipeline",
         "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-17T21:40:19.355Z",
-        "completedAt": "2026-04-17T21:41:05.665Z",
-        "durationMs": 46310,
+        "startedAt": "2026-04-27T17:40:01.216Z",
+        "completedAt": "2026-04-27T17:40:43.336Z",
+        "durationMs": 42120,
         "attempt": 1
       },
       "lineage": {
@@ -410,9 +1255,9 @@
       "run": {
         "configName": "COD Test Pipeline",
         "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-17T21:41:05.666Z",
-        "completedAt": "2026-04-17T21:41:05.668Z",
-        "durationMs": 2,
+        "startedAt": "2026-04-27T17:40:43.337Z",
+        "completedAt": "2026-04-27T17:40:43.338Z",
+        "durationMs": 1,
         "attempt": 1
       },
       "lineage": {
@@ -439,9 +1284,9 @@
       "run": {
         "configName": "COD Test Pipeline",
         "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-17T21:41:05.668Z",
-        "completedAt": "2026-04-17T21:41:30.140Z",
-        "durationMs": 24472,
+        "startedAt": "2026-04-27T17:40:43.338Z",
+        "completedAt": "2026-04-27T17:41:03.780Z",
+        "durationMs": 20442,
         "attempt": 1
       },
       "lineage": {
@@ -468,8 +1313,8 @@
       "run": {
         "configName": "COD Test Pipeline",
         "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-17T21:41:30.140Z",
-        "completedAt": "2026-04-17T21:41:30.141Z",
+        "startedAt": "2026-04-27T17:41:03.781Z",
+        "completedAt": "2026-04-27T17:41:03.782Z",
         "durationMs": 1,
         "attempt": 1
       },
@@ -497,9 +1342,9 @@
       "run": {
         "configName": "COD Test Pipeline",
         "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-17T21:41:30.142Z",
-        "completedAt": "2026-04-17T21:41:30.142Z",
-        "durationMs": 0,
+        "startedAt": "2026-04-27T17:41:03.782Z",
+        "completedAt": "2026-04-27T17:41:03.783Z",
+        "durationMs": 1,
         "attempt": 1
       },
       "lineage": {
@@ -526,8 +1371,8 @@
       "run": {
         "configName": "COD Test Pipeline",
         "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-        "startedAt": "2026-04-17T21:41:30.142Z",
-        "completedAt": "2026-04-17T21:41:30.147Z",
+        "startedAt": "2026-04-27T17:41:03.783Z",
+        "completedAt": "2026-04-27T17:41:03.788Z",
         "durationMs": 5,
         "attempt": 1
       },
@@ -555,54 +1400,38 @@
     "segments": [
       {
         "start": 0,
-        "end": 25,
+        "end": 35,
         "type": "music",
-        "description": "Opening with tense atmospheric underscore beneath dialogue",
+        "description": "Opening with restrained percussion and tense dialogue over a low orchestral score bed",
         "mood": "tense",
-        "intensity": 5
+        "intensity": 6
       },
       {
-        "start": 25,
-        "end": 50,
-        "type": "music",
-        "description": "Action build-up with percussive score and dialogue overlays",
-        "mood": "intense",
-        "intensity": 7
-      },
-      {
-        "start": 50,
+        "start": 35,
         "end": 76,
         "type": "music",
-        "description": "Rising music intensity leading to climax with spoken overlays",
-        "mood": "climactic",
-        "intensity": 8
+        "description": "Score intensifies with rising strings and percussion under continued dialogue and action sound effects",
+        "mood": "building tension",
+        "intensity": 7
       },
       {
         "start": 76,
         "end": 98,
         "type": "music",
-        "description": "Music-led segment with rock vocals and instrumental hook, partially masked by SFX",
-        "mood": "aggressive",
+        "description": "Heavy metal song segment with aggressive guitar riffs and prominent vocal chants, dominating the audio bed",
+        "mood": "energetic",
         "intensity": 9
       },
       {
         "start": 98,
-        "end": 120,
-        "type": "music",
-        "description": "Post-song action with continued score bed and dialogue",
-        "mood": "determined",
-        "intensity": 7
-      },
-      {
-        "start": 120,
         "end": 140,
         "type": "music",
-        "description": "Final dialogue and promotional segment with music fade and SFX",
-        "mood": "conclusive",
+        "description": "Orchestral score returns with dialogue and action sounds, leading to a spoken promo over fading music",
+        "mood": "tense",
         "intensity": 6
       }
     ],
-    "summary": "An intense trailer with dialogue-driven narrative, building action sequences, a prominent rock song segment featuring audible lyrics, and a concluding promotional call-to-action.",
+    "summary": "A tense trailer audio track with building orchestral score under dialogue, featuring a central heavy metal song segment with vocal chants, and concluding with action-oriented dialogue and promotional content.",
     "hasMusic": true,
     "analysisMode": "whole_asset",
     "timingMode": "full_timeline",
@@ -615,12 +1444,12 @@
     },
     "globalArc": {
       "dominantMood": "energetic",
-      "energyCurve": "rising_then_peak_then_drop",
+      "energyCurve": "rising_then_drop",
       "notableTransitions": [
         {
           "start": 76,
           "end": 98,
-          "label": "rock song entry with vocals"
+          "label": "heavy metal song entry with vocal chants"
         }
       ]
     },
@@ -640,16 +1469,17 @@
     },
     "recognizedSong": {
       "status": "possible",
-      "confidence": 0.64,
+      "confidence": 0.75,
       "candidates": [
         {
           "title": "Master of Puppets",
           "artist": "Metallica",
-          "confidence": 0.64,
+          "confidence": 0.75,
           "evidence": [
-            "Distinctive thrash-metal hook and repeated master chant audible in the music lane."
+            "Distinctive heavy metal riff and repeated 'master' chants in the music lane, with lyrical cues matching the song."
           ],
           "matchedLyrics": [
+            "Obey your master",
             "Master, master"
           ],
           "timeRanges": [
@@ -658,28 +1488,26 @@
               "end": 98
             }
           ],
-          "ambiguity": "Trailer dialogue and SFX partially mask the cue, reducing clarity."
+          "ambiguity": "Dialogue and sound effects partially mask the music, but key elements remain audible."
         }
       ],
-      "primaryEvidence": "A likely famous-song hook with audible lyrics is present, but recognition remains evidence-gated due to masking.",
-      "ambiguity": "Partial masking by dialogue and sound effects reduces certainty.",
+      "primaryEvidence": "Clear lyrical and musical cues aligning with a well-known song, though concurrent audio reduces certainty.",
+      "ambiguity": "Partial masking by dialogue and SFX.",
       "multipleSongsDetected": false
     },
     "recognitionNotes": [
-      "Music recognition is based on audible lyrics and instrumental hook, but dialogue overlap and SFX reduce confidence.",
-      "Spoken overlays are present but do not suppress the music classification as the score remains dominant."
+      "The song segment is interspersed with dialogue, but the music remains the dominant bed; recognition is evidence-based on audible lyrics and instrumentation."
     ],
     "qualityNotes": [
       "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-      "Segment timings are approximate based on narrative flow; exact boundaries may vary.",
-      "Confidence is moderate due to audio masking in key sections."
+      "Segment timings are approximate based on audio flow; confidence is moderate due to potential masking in parts of the track."
     ]
   },
   "musicVocalsData": {
     "vocal_segments": [
       {
         "index": 0,
-        "text": "I'll be your master",
+        "text": "Obey your master",
         "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
@@ -695,22 +1523,14 @@
       },
       {
         "index": 2,
-        "text": "Master of puppets, I'm pulling your strings",
-        "confidence": 0.85,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 3,
-        "text": "Come crawling faster",
+        "text": "Master, master",
         "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
         "delivery": "sung"
       },
       {
-        "index": 4,
+        "index": 3,
         "text": "Obey your master!",
         "confidence": 0.95,
         "performer": "Vocalist 1",
@@ -718,79 +1538,23 @@
         "delivery": "sung"
       },
       {
+        "index": 4,
+        "text": "Come crawling faster",
+        "confidence": 0.94,
+        "performer": "Vocalist 1",
+        "performer_id": "voc_001",
+        "delivery": "sung"
+      },
+      {
         "index": 5,
-        "text": "Twisting your mind and smashing your dreams",
-        "confidence": 0.85,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 6,
-        "text": "Master, master",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 7,
         "text": "Master of puppets, I'm pulling your strings",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 8,
-        "text": "Twisting your mind and smashing your dreams",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 9,
-        "text": "Blinded by me, you can't see a thing",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 10,
-        "text": "Just call my name, 'cause I'll hear you scream",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 11,
-        "text": "Master, master",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 12,
-        "text": "Just call my name, 'cause I'll hear you scream",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 13,
-        "text": "Master, master",
-        "confidence": 0.95,
+        "confidence": 0.93,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
         "delivery": "sung"
       }
     ],
-    "summary": "Sung rock vocals continue with lyrical phrases from 'Master of Puppets'.",
+    "summary": "No text-bearing music-led vocals detected in this chunk.",
     "hasVocals": true,
     "totalDuration": 140.042449,
     "analysisMode": "hybrid",
@@ -827,12 +1591,16 @@
           "artist": "Metallica",
           "confidence": 0.95,
           "evidence": [
-            "Literal lyric fragments match the heard refrain, including 'Master, master' and 'I'll be your master'."
+            "Literal lyric fragments match the heard refrain."
           ],
           "matchedLyrics": [
+            "Obey your master",
             "Master, master",
-            "I'll be your master",
-            "Master of puppets, I'm pulling your strings"
+            "Come crawling faster",
+            "Master of puppets, I'm pulling your strings",
+            "Twisting your mind and smashing your dreams",
+            "Blinded by me, you can't see a thing",
+            "Just call my name, 'cause I'll hear you scream"
           ]
         }
       ],
@@ -840,19 +1608,19 @@
       "multipleSongsDetected": false
     },
     "recognitionNotes": [
-      "This chunk contains spoken dialogue over background music, but no sung lyrics.",
-      "Spoken dialogue at the beginning of the chunk is excluded from lyric evidence.",
-      "Spoken dialogue over music is excluded from lyric evidence.",
-      "Spoken dialogue or promotional voiceover may overlap but is excluded from lyric evidence.",
-      "Vocals are interspersed with spoken dialogue, but music-led segments are clear and dominant in the rock song portion."
+      "Only spoken dialogue and orchestral score detected; no sung lyrics in this chunk.",
+      "Spoken dialogue in the audio (e.g., 'This isn't real') is excluded from lyric evidence as it is not music-led.",
+      "Spoken dialogue in this chunk was excluded from lyric evidence.",
+      "This chunk contains spoken promotional dialogue, not sung lyrics.",
+      "Vocals are clear but may have slight overlap with dialogue; confidence remains high due to distinct lyrical content."
     ],
     "qualityNotes": [
       "Whole-asset music analysis supplied global arc context before chunk-level timing refinement.",
-      "Audio is clear with no masking, but no vocal segments present.",
-      "Audio is clear with minimal background noise masking the vocals.",
-      "Sung lyrics are clear with minimal masking.",
-      "Vocals are clear and prominent in the mix.",
-      "High confidence due to clear lyrical content and recognizable song structure; timing aligns with the noted rock song entry at 76.0-98.0s."
+      "Audio consists of spoken dialogue with background music; no music-led vocals detected.",
+      "Audio contains dialogue and sound effects, with building orchestral music.",
+      "The heavy metal song entry begins around 76s within this chunk, with clear vocal delivery.",
+      "Lyrics are clear with minimal masking.",
+      "High confidence in vocal segments due to clear audio and recognizable lyrics; timing aligns with the heavy metal song segment."
     ]
   },
   "dialogueDataReconciled": {
@@ -861,127 +1629,141 @@
         "speaker": "Speaker 1",
         "speaker_id": "spk_001",
         "text": "They want you afraid.",
-        "confidence": 0.5,
+        "confidence": 0.9,
         "index": 0
       },
       {
         "speaker": "Speaker 1",
         "speaker_id": "spk_001",
         "text": "Fear makes you easier to control.",
-        "confidence": 0.5,
+        "confidence": 0.9,
         "index": 1
       },
       {
         "speaker": "Speaker 1",
         "speaker_id": "spk_001",
         "text": "It's time to wake up.",
-        "confidence": 0.5,
+        "confidence": 0.9,
         "index": 2
+      },
+      {
+        "speaker": "Speaker 2",
+        "speaker_id": "spk_002",
+        "text": "Your streets shall once again run red with your blood.",
+        "confidence": 0.9,
+        "index": 3
+      },
+      {
+        "speaker": "Speaker 3",
+        "speaker_id": "spk_003",
+        "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+        "confidence": 0.9,
+        "index": 4
       },
       {
         "speaker": "Speaker 1",
         "speaker_id": "spk_001",
-        "text": "Your streets shall once again run red with your blood.",
-        "confidence": 0.5,
-        "index": 3
-      },
-      {
-        "speaker": "Speaker 2",
-        "speaker_id": "spk_002",
-        "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
-        "confidence": 0.5,
-        "index": 4
-      },
-      {
-        "speaker": "Speaker 2",
-        "speaker_id": "spk_002",
         "text": "Menendez is a terrorist. We're bringing peace and security to the world.",
-        "confidence": 0.5,
+        "confidence": 0.9,
         "index": 5
       },
       {
-        "speaker": "Speaker 3",
-        "speaker_id": "spk_003",
+        "speaker": "Speaker 4",
+        "speaker_id": "spk_004",
         "text": "He refuses to let me go.",
-        "confidence": 0.5,
+        "confidence": 0.85,
         "index": 6
-      },
-      {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "Stop looking backwards, David, but matters is what we do next.",
-        "confidence": 0.5,
-        "index": 7
-      },
-      {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "A lot of people counting on us for answers.",
-        "confidence": 0.5,
-        "index": 8
-      },
-      {
-        "speaker": "Speaker 3",
-        "speaker_id": "spk_003",
-        "text": "This isn't real.",
-        "confidence": 0.5,
-        "index": 9
-      },
-      {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "The hell it isn't!",
-        "confidence": 0.5,
-        "index": 10
       },
       {
         "speaker": "Speaker 5",
         "speaker_id": "spk_005",
-        "text": "Obey your master... Master... Just call me faster... Master... Master... The master's puppet's a puppet's brain... Twisting your mind, smashing your day... Blinding from me, you can't see... Just go ahead, it's all in your head... Master, master... Plans and dreams are now in the after... Master, master... You'll be in my grasp...",
-        "confidence": 0.4,
-        "index": 11
+        "text": "Stop looking backwards, David. What matters is what we do next.",
+        "confidence": 0.9,
+        "index": 7
+      },
+      {
+        "speaker": "Speaker 5",
+        "speaker_id": "spk_005",
+        "text": "A lot of people counting on us for answers.",
+        "confidence": 0.9,
+        "index": 8
       },
       {
         "speaker": "Speaker 6",
         "speaker_id": "spk_006",
-        "text": "Pull it together, man.",
-        "confidence": 0.5,
-        "index": 12
+        "text": "Spectre One report.",
+        "confidence": 0.8,
+        "index": 9
       },
       {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "So eager to leave, David?",
-        "confidence": 0.5,
-        "index": 13
-      },
-      {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "Killing a man is a hell of a lot easier than killing an idea.",
-        "confidence": 0.5,
-        "index": 14
-      },
-      {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "You were never cut out to be a Mason.",
-        "confidence": 0.5,
-        "index": 15
-      },
-      {
-        "speaker": "Speaker 4",
-        "speaker_id": "spk_004",
-        "text": "No more games. This ends now.",
-        "confidence": 0.5,
-        "index": 16
+        "speaker": "Speaker 6",
+        "speaker_id": "spk_006",
+        "text": "Need a sitrep.",
+        "confidence": 0.8,
+        "index": 10
       },
       {
         "speaker": "Speaker 7",
         "speaker_id": "spk_007",
-        "text": "Get the Reznov challenge pack when you pre-order now.",
-        "confidence": 0.5,
-        "index": 17
+        "text": "This isn't real.",
+        "confidence": 0.85,
+        "index": 11
+      },
+      {
+        "speaker": "Speaker 8",
+        "speaker_id": "spk_008",
+        "text": "The hell it ain't!",
+        "confidence": 0.85,
+        "index": 12
+      },
+      {
+        "speaker": "Speaker 9",
+        "speaker_id": "spk_009",
+        "text": "Your life burns faster",
+        "confidence": 0.7,
+        "index": 16
+      },
+      {
+        "speaker": "Speaker 8",
+        "speaker_id": "spk_008",
+        "text": "Pull it together, man!",
+        "confidence": 0.8,
+        "index": 18
+      },
+      {
+        "speaker": "Speaker 10",
+        "speaker_id": "spk_010",
+        "text": "So eager to leave, David.",
+        "confidence": 0.85,
+        "index": 19
+      },
+      {
+        "speaker": "Speaker 10",
+        "speaker_id": "spk_010",
+        "text": "Killing a man is a hell of a lot easier than killing an idea.",
+        "confidence": 0.9,
+        "index": 20
+      },
+      {
+        "speaker": "Speaker 1",
+        "speaker_id": "spk_001",
+        "text": "You were never cut out to be a Mason.",
+        "confidence": 0.85,
+        "index": 21
+      },
+      {
+        "speaker": "Speaker 10",
+        "speaker_id": "spk_010",
+        "text": "No more games. This ends now.",
+        "confidence": 0.85,
+        "index": 22
+      },
+      {
+        "speaker": "Speaker 11",
+        "speaker_id": "spk_011",
+        "text": "Get the Reznov Challenge Pack when you pre-order now.",
+        "confidence": 0.9,
+        "index": 25
       }
     ],
     "speaker_profiles": [
@@ -989,64 +1771,124 @@
         "speaker_id": "spk_001",
         "label": "Speaker 1",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.9,
           "linked_segment_indexes": [
             0,
             1,
             2,
-            3
+            5,
+            21
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "female voice",
+              "confidence": 0.9
+            },
+            {
+              "label": "clear articulation",
+              "confidence": 0.8
+            },
+            {
+              "label": "authoritative tone",
+              "confidence": 0.7
+            }
+          ]
         },
         "inferred_traits": {
-          "traits": []
+          "traits": [
+            {
+              "trait": "gender_presentation",
+              "value": "feminine",
+              "confidence": 0.9,
+              "note": "based on vocal pitch and timbre"
+            },
+            {
+              "trait": "role_impression",
+              "value": "commanding or persuasive speaker",
+              "confidence": 0.6,
+              "note": "speculative from delivery style"
+            }
+          ]
         }
       },
       {
         "speaker_id": "spk_002",
         "label": "Speaker 2",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.85,
           "linked_segment_indexes": [
-            4,
-            5
+            3
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "deep male voice",
+              "confidence": 0.9
+            },
+            {
+              "label": "threatening tone",
+              "confidence": 0.8
+            }
+          ]
         },
         "inferred_traits": {
-          "traits": []
+          "traits": [
+            {
+              "trait": "demeanor",
+              "value": "menacing or villainous",
+              "confidence": 0.7,
+              "note": "speculative from content and delivery"
+            }
+          ]
         }
       },
       {
         "speaker_id": "spk_003",
         "label": "Speaker 3",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.85,
           "linked_segment_indexes": [
-            6,
-            9
+            4
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "narrator-like male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "formal delivery",
+              "confidence": 0.7
+            }
+          ]
         },
         "inferred_traits": {
-          "traits": []
+          "traits": [
+            {
+              "trait": "role_impression",
+              "value": "news reporter or announcer",
+              "confidence": 0.6,
+              "note": "speculative from style"
+            }
+          ]
         }
       },
       {
         "speaker_id": "spk_004",
         "label": "Speaker 4",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.8,
           "linked_segment_indexes": [
-            7,
-            8,
-            10,
-            13,
-            14,
-            15,
-            16
+            6
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "tense delivery",
+              "confidence": 0.7
+            }
+          ]
         },
         "inferred_traits": {
           "traits": []
@@ -1056,46 +1898,218 @@
         "speaker_id": "spk_005",
         "label": "Speaker 5",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.85,
           "linked_segment_indexes": [
-            11
+            7,
+            8
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "calm and measured tone",
+              "confidence": 0.7
+            }
+          ]
         },
         "inferred_traits": {
-          "traits": []
+          "traits": [
+            {
+              "trait": "demeanor",
+              "value": "composed or strategic",
+              "confidence": 0.5,
+              "note": "speculative from delivery"
+            }
+          ]
         }
       },
       {
         "speaker_id": "spk_006",
         "label": "Speaker 6",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.75,
           "linked_segment_indexes": [
-            12
+            9,
+            10
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "radio-filtered male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "military-style communication",
+              "confidence": 0.7
+            }
+          ]
         },
         "inferred_traits": {
-          "traits": []
+          "traits": [
+            {
+              "trait": "role_impression",
+              "value": "soldier or operator",
+              "confidence": 0.6,
+              "note": "speculative from context"
+            }
+          ]
         }
       },
       {
         "speaker_id": "spk_007",
         "label": "Speaker 7",
         "grounded": {
-          "confidence": 0.4,
+          "confidence": 0.8,
           "linked_segment_indexes": [
-            17
+            11
           ],
-          "acoustic_descriptors": []
+          "acoustic_descriptors": [
+            {
+              "label": "male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "uncertain or distressed tone",
+              "confidence": 0.7
+            }
+          ]
         },
         "inferred_traits": {
           "traits": []
         }
+      },
+      {
+        "speaker_id": "spk_008",
+        "label": "Speaker 8",
+        "grounded": {
+          "confidence": 0.8,
+          "linked_segment_indexes": [
+            12,
+            18
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "shouting male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "urgent delivery",
+              "confidence": 0.7
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "demeanor",
+              "value": "agitated or intense",
+              "confidence": 0.6,
+              "note": "speculative from vocal energy"
+            }
+          ]
+        }
+      },
+      {
+        "speaker_id": "spk_009",
+        "label": "Speaker 9",
+        "grounded": {
+          "confidence": 0.7,
+          "linked_segment_indexes": [
+            13,
+            14,
+            15,
+            16,
+            17,
+            23,
+            24
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "singing male voice",
+              "confidence": 0.9
+            },
+            {
+              "label": "melodic contour",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "role_impression",
+              "value": "vocalist in a song",
+              "confidence": 0.9,
+              "note": "obvious from context"
+            }
+          ]
+        }
+      },
+      {
+        "speaker_id": "spk_010",
+        "label": "Speaker 10",
+        "grounded": {
+          "confidence": 0.85,
+          "linked_segment_indexes": [
+            19,
+            20,
+            22
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "serious and direct tone",
+              "confidence": 0.7
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "demeanor",
+              "value": "determined or resolute",
+              "confidence": 0.6,
+              "note": "speculative from delivery"
+            }
+          ]
+        }
+      },
+      {
+        "speaker_id": "spk_011",
+        "label": "Speaker 11",
+        "grounded": {
+          "confidence": 0.85,
+          "linked_segment_indexes": [
+            25
+          ],
+          "acoustic_descriptors": [
+            {
+              "label": "promotional male voice",
+              "confidence": 0.8
+            },
+            {
+              "label": "enthusiastic delivery",
+              "confidence": 0.7
+            }
+          ]
+        },
+        "inferred_traits": {
+          "traits": [
+            {
+              "trait": "role_impression",
+              "value": "announcer or marketer",
+              "confidence": 0.7,
+              "note": "speculative from content"
+            }
+          ]
+        }
       }
     ],
-    "summary": "A dramatic trailer featuring multiple voices discussing themes of fear, control, terrorism, and personal conflict, interspersed with song lyrics and concluding with a promotional message for a game pre-order.",
+    "summary": "A trailer-style dialogue featuring multiple speakers discussing themes of fear, control, terrorism, and conflict, with references to Raul Menendez, interspersed with song lyrics about obedience, and ending with a promotional message.",
     "totalDuration": 140.042449,
     "handoffContext": null,
     "analysisMode": "whole_asset",
@@ -1103,8 +2117,8 @@
     "sourceStrategy": "base64",
     "coverage": {
       "start": 0,
-      "end": 0,
-      "duration": 0,
+      "end": 87,
+      "duration": 87,
       "complete": false
     },
     "provenance": {
@@ -1114,11 +2128,442 @@
       "fallbackApplied": false
     }
   },
+  "dialogueV3SourceTruthReconciled": {
+    "schema_version": 1,
+    "contract": {
+      "artifact": "dialogue-data",
+      "mode": "traits",
+      "traits_contract_version": "3.0.0"
+    },
+    "summary": "A trailer-style dialogue featuring multiple speakers discussing themes of fear, control, terrorism, and conflict, with references to Raul Menendez, interspersed with song lyrics about obedience, and ending with a promotional message.",
+    "dialogue_segments": [
+      {
+        "index": 0,
+        "text": "They want you afraid.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "feminine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "clear",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "fearful",
+          "interpersonal_stance": "directive",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 1,
+        "text": "Fear makes you easier to control.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "feminine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "clear",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "directive",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 2,
+        "text": "It's time to wake up.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "feminine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "clear",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "directive",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 3,
+        "text": "Your streets shall once again run red with your blood.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "low",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 4,
+        "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "performative",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 5,
+        "text": "Menendez is a terrorist. We're bringing peace and security to the world.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "feminine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "clear",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "directive",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 6,
+        "text": "He refuses to let me go.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "tense",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 7,
+        "text": "Stop looking backwards, David. What matters is what we do next.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "measured",
+          "energy": "calm",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "calm",
+          "interpersonal_stance": "directive",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 8,
+        "text": "A lot of people counting on us for answers.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "measured",
+          "energy": "calm",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "calm",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 9,
+        "text": "Spectre One report.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "radio",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 10,
+        "text": "Need a sitrep.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "radio",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 11,
+        "text": "This isn't real.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 12,
+        "text": "The hell it ain't!",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "intense",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "tense",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 13,
+        "text": "Your life burns faster",
+        "traits": {
+          "audibility": "partially_masked",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "fast",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 14,
+        "text": "Pull it together, man!",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "intense",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "tense",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 15,
+        "text": "So eager to leave, David.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "steady",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "serious",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 16,
+        "text": "Killing a man is a hell of a lot easier than killing an idea.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "steady",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "serious",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 17,
+        "text": "You were never cut out to be a Mason.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "feminine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "clear",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "directive",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 18,
+        "text": "No more games. This ends now.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "steady",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "serious",
+          "interpersonal_stance": "neutral",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      {
+        "index": 19,
+        "text": "Get the Reznov Challenge Pack when you pre-order now.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "unknown",
+          "pitch_band": "unknown",
+          "phonation": "unknown",
+          "pace": "unknown",
+          "energy": "unknown",
+          "transmission_medium": "direct",
+          "spatial_texture": "room",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "unknown",
+          "interpersonal_stance": "performative",
+          "delivery_overlay": "none_apparent"
+        }
+      }
+    ]
+  },
   "musicVocalsDataReconciled": {
     "vocal_segments": [
       {
         "index": 0,
-        "text": "I'll be your master",
+        "text": "Obey your master",
         "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
@@ -1134,22 +2579,14 @@
       },
       {
         "index": 2,
-        "text": "Master of puppets, I'm pulling your strings",
-        "confidence": 0.85,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 3,
-        "text": "Come crawling faster",
+        "text": "Master, master",
         "confidence": 0.95,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
         "delivery": "sung"
       },
       {
-        "index": 4,
+        "index": 3,
         "text": "Obey your master!",
         "confidence": 0.95,
         "performer": "Vocalist 1",
@@ -1157,79 +2594,23 @@
         "delivery": "sung"
       },
       {
+        "index": 4,
+        "text": "Come crawling faster",
+        "confidence": 0.94,
+        "performer": "Vocalist 1",
+        "performer_id": "voc_001",
+        "delivery": "sung"
+      },
+      {
         "index": 5,
-        "text": "Twisting your mind and smashing your dreams",
-        "confidence": 0.85,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 6,
-        "text": "Master, master",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 7,
         "text": "Master of puppets, I'm pulling your strings",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 8,
-        "text": "Twisting your mind and smashing your dreams",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 9,
-        "text": "Blinded by me, you can't see a thing",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 10,
-        "text": "Just call my name, 'cause I'll hear you scream",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 11,
-        "text": "Master, master",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 12,
-        "text": "Just call my name, 'cause I'll hear you scream",
-        "confidence": 0.95,
-        "performer": "Vocalist 1",
-        "performer_id": "voc_001",
-        "delivery": "sung"
-      },
-      {
-        "index": 13,
-        "text": "Master, master",
-        "confidence": 0.95,
+        "confidence": 0.93,
         "performer": "Vocalist 1",
         "performer_id": "voc_001",
         "delivery": "sung"
       }
     ],
-    "summary": "Sung rock vocals continue with lyrical phrases from 'Master of Puppets'.",
+    "summary": "No text-bearing music-led vocals detected in this chunk.",
     "hasVocals": true,
     "totalDuration": 140.042449,
     "analysisMode": "hybrid",
@@ -1266,12 +2647,16 @@
           "artist": "Metallica",
           "confidence": 0.95,
           "evidence": [
-            "Literal lyric fragments match the heard refrain, including 'Master, master' and 'I'll be your master'."
+            "Literal lyric fragments match the heard refrain."
           ],
           "matchedLyrics": [
+            "Obey your master",
             "Master, master",
-            "I'll be your master",
-            "Master of puppets, I'm pulling your strings"
+            "Come crawling faster",
+            "Master of puppets, I'm pulling your strings",
+            "Twisting your mind and smashing your dreams",
+            "Blinded by me, you can't see a thing",
+            "Just call my name, 'cause I'll hear you scream"
           ]
         }
       ],
@@ -1279,26 +2664,26 @@
       "multipleSongsDetected": false
     },
     "recognitionNotes": [
-      "This chunk contains spoken dialogue over background music, but no sung lyrics.",
-      "Spoken dialogue at the beginning of the chunk is excluded from lyric evidence.",
-      "Spoken dialogue over music is excluded from lyric evidence.",
-      "Spoken dialogue or promotional voiceover may overlap but is excluded from lyric evidence.",
-      "Vocals are interspersed with spoken dialogue, but music-led segments are clear and dominant in the rock song portion."
+      "Only spoken dialogue and orchestral score detected; no sung lyrics in this chunk.",
+      "Spoken dialogue in the audio (e.g., 'This isn't real') is excluded from lyric evidence as it is not music-led.",
+      "Spoken dialogue in this chunk was excluded from lyric evidence.",
+      "This chunk contains spoken promotional dialogue, not sung lyrics.",
+      "Vocals are clear but may have slight overlap with dialogue; confidence remains high due to distinct lyrical content."
     ],
     "qualityNotes": [
       "Whole-asset music analysis supplied global arc context before chunk-level timing refinement.",
-      "Audio is clear with no masking, but no vocal segments present.",
-      "Audio is clear with minimal background noise masking the vocals.",
-      "Sung lyrics are clear with minimal masking.",
-      "Vocals are clear and prominent in the mix.",
-      "High confidence due to clear lyrical content and recognizable song structure; timing aligns with the noted rock song entry at 76.0-98.0s."
+      "Audio consists of spoken dialogue with background music; no music-led vocals detected.",
+      "Audio contains dialogue and sound effects, with building orchestral music.",
+      "The heavy metal song entry begins around 76s within this chunk, with clear vocal delivery.",
+      "Lyrics are clear with minimal masking.",
+      "High confidence in vocal segments due to clear audio and recognizable lyrics; timing aligns with the heavy metal song segment."
     ]
   },
   "famousSongReconciliation": {
-    "contractVersion": "ee.famous-song-reconciliation/v1",
+    "contractVersion": "ee.famous-song-reconciliation/v2",
     "script": "reconcile-famous-song-phase1",
-    "generatedAt": "2026-04-17T21:40:19.354Z",
-    "status": "skipped",
+    "generatedAt": "2026-04-27T17:40:01.214Z",
+    "status": "applied",
     "sourceArtifacts": {
       "dialogueData": "output/cod-test/phase1-gather-context/dialogue-data.json",
       "musicData": "output/cod-test/phase1-gather-context/music-data.json",
@@ -1310,10 +2695,8 @@
       "ledger": "output/cod-test/phase1-gather-context/famous-song-reconciliation.json"
     },
     "trigger": {
-      "passed": false,
-      "reasons": [
-        "hasSupportingMusicConsensus"
-      ],
+      "passed": true,
+      "reasons": [],
       "recognizedSong": {
         "status": "recognized",
         "confidence": 0.95,
@@ -1323,12 +2706,16 @@
             "artist": "Metallica",
             "confidence": 0.95,
             "evidence": [
-              "Literal lyric fragments match the heard refrain, including 'Master, master' and 'I'll be your master'."
+              "Literal lyric fragments match the heard refrain."
             ],
             "matchedLyrics": [
+              "Obey your master",
               "Master, master",
-              "I'll be your master",
-              "Master of puppets, I'm pulling your strings"
+              "Come crawling faster",
+              "Master of puppets, I'm pulling your strings",
+              "Twisting your mind and smashing your dreams",
+              "Blinded by me, you can't see a thing",
+              "Just call my name, 'cause I'll hear you scream"
             ]
           }
         ],
@@ -1340,26 +2727,31 @@
         "artist": "Metallica",
         "confidence": 0.95,
         "evidence": [
-          "Literal lyric fragments match the heard refrain, including 'Master, master' and 'I'll be your master'."
+          "Literal lyric fragments match the heard refrain."
         ],
         "matchedLyrics": [
+          "Obey your master",
           "Master, master",
-          "I'll be your master",
-          "Master of puppets, I'm pulling your strings"
+          "Come crawling faster",
+          "Master of puppets, I'm pulling your strings",
+          "Twisting your mind and smashing your dreams",
+          "Blinded by me, you can't see a thing",
+          "Just call my name, 'cause I'll hear you scream"
         ]
       },
       "supportingMusicRecognizedSong": {
         "status": "possible",
-        "confidence": 0.64,
+        "confidence": 0.75,
         "candidates": [
           {
             "title": "Master of Puppets",
             "artist": "Metallica",
-            "confidence": 0.64,
+            "confidence": 0.75,
             "evidence": [
-              "Distinctive thrash-metal hook and repeated master chant audible in the music lane."
+              "Distinctive heavy metal riff and repeated 'master' chants in the music lane, with lyrical cues matching the song."
             ],
             "matchedLyrics": [
+              "Obey your master",
               "Master, master"
             ],
             "timeRanges": [
@@ -1368,20 +2760,128 @@
                 "end": 98
               }
             ],
-            "ambiguity": "Trailer dialogue and SFX partially mask the cue, reducing clarity."
+            "ambiguity": "Dialogue and sound effects partially mask the music, but key elements remain audible."
           }
         ],
-        "primaryEvidence": "A likely famous-song hook with audible lyrics is present, but recognition remains evidence-gated due to masking.",
-        "ambiguity": "Partial masking by dialogue and sound effects reduces certainty.",
+        "primaryEvidence": "Clear lyrical and musical cues aligning with a well-known song, though concurrent audio reduces certainty.",
+        "ambiguity": "Partial masking by dialogue and SFX.",
         "multipleSongsDetected": false
       }
     },
     "decisions": {
-      "removedDialogueSegments": [],
-      "lyricCorrections": [],
-      "skippedCorrections": [
+      "removedDialogueSegments": [
         {
-          "reason": "hasSupportingMusicConsensus"
+          "index": 13,
+          "indexOrder": 13,
+          "text": "Obey your master, master",
+          "confidence": 0.7,
+          "matchedLyric": "Obey your master",
+          "similarity": 1,
+          "evidence": {
+            "nearbyVocalIndexEvidence": false,
+            "directVocalTextSupport": true,
+            "evidenceType": "direct",
+            "promotionHop": null,
+            "anchorHits": []
+          },
+          "reason": "likely_lyric_contamination"
+        },
+        {
+          "index": 14,
+          "indexOrder": 14,
+          "text": "Come crawling faster",
+          "confidence": 0.7,
+          "matchedLyric": "Come crawling faster",
+          "similarity": 1,
+          "evidence": {
+            "nearbyVocalIndexEvidence": false,
+            "directVocalTextSupport": true,
+            "evidenceType": "direct",
+            "promotionHop": null,
+            "anchorHits": []
+          },
+          "reason": "likely_lyric_contamination"
+        },
+        {
+          "index": 15,
+          "indexOrder": 15,
+          "text": "Obey your master, master",
+          "confidence": 0.7,
+          "matchedLyric": "Obey your master",
+          "similarity": 1,
+          "evidence": {
+            "nearbyVocalIndexEvidence": false,
+            "directVocalTextSupport": true,
+            "evidenceType": "direct",
+            "promotionHop": null,
+            "anchorHits": []
+          },
+          "reason": "likely_lyric_contamination"
+        },
+        {
+          "index": 17,
+          "indexOrder": 17,
+          "text": "Obey your master, master",
+          "confidence": 0.7,
+          "matchedLyric": "Obey your master",
+          "similarity": 1,
+          "evidence": {
+            "nearbyVocalIndexEvidence": false,
+            "directVocalTextSupport": true,
+            "evidenceType": "direct",
+            "promotionHop": null,
+            "anchorHits": []
+          },
+          "reason": "likely_lyric_contamination"
+        },
+        {
+          "index": 23,
+          "indexOrder": 23,
+          "text": "Obey your master, master",
+          "confidence": 0.7,
+          "matchedLyric": "Obey your master",
+          "similarity": 1,
+          "evidence": {
+            "nearbyVocalIndexEvidence": false,
+            "directVocalTextSupport": true,
+            "evidenceType": "direct",
+            "promotionHop": null,
+            "anchorHits": []
+          },
+          "reason": "likely_lyric_contamination"
+        },
+        {
+          "index": 24,
+          "indexOrder": 24,
+          "text": "Master, master...",
+          "confidence": 0.7,
+          "matchedLyric": "Master, master",
+          "similarity": 1,
+          "evidence": {
+            "nearbyVocalIndexEvidence": false,
+            "directVocalTextSupport": true,
+            "evidenceType": "direct",
+            "promotionHop": null,
+            "anchorHits": []
+          },
+          "reason": "likely_lyric_contamination"
+        }
+      ],
+      "lyricCorrections": [],
+      "skippedCorrections": [],
+      "musicVocalsPolicy": {
+        "lyricRepairEnabled": false,
+        "reason": "transcript_text_must_remain_audio_faithful",
+        "recognizedSongRole": "identity_support_metadata_only"
+      },
+      "musicVocalsNotes": [
+        {
+          "kind": "policy",
+          "decision": "preserved_transcript_text",
+          "reason": "recognized_song_metadata_must_not_rewrite_music_vocals_transcript",
+          "candidateCount": 1,
+          "matchedLyricCount": 7,
+          "gatePassed": true
         }
       ]
     }
@@ -1412,53 +2912,53 @@
     },
     "wholeVideoScores": {
       "patience": {
-        "score": 6,
-        "reasoning": "As a viewer with a 3-second hook threshold, the intense opening visuals and dialogue ('They want you afraid') initially grab me. However, the mid-section dialogue scenes (e.g., 0:27-0:36) slow the pace significantly, testing my patience. The rapid-fire action sequences later help recover attention, but the overall length (2+ minutes) is a challenge for my short-form content diet."
+        "score": 7,
+        "reasoning": "作为一部2分20秒的电影式游戏预告片，其节奏和视觉密度对目标受众（熟悉该系列的玩家）而言是可接受的。然而，对于一个被短视频训练、耐心基线为5/10的‘最难取悦’观众来说，较长的叙事铺垫和对话段落会持续消耗耐心，使其保持在警惕状态。"
       },
       "boredom": {
-        "score": 5,
-        "reasoning": "Boredom spikes during slower narrative exposition and character conversations that feel like typical movie trailer filler. The constant location jumps (Nicaragua, LA, etc.) and high-octane action prevent sustained boredom, but the predictable 'global conflict' tropes and some static shots (e.g., the team briefing) risk disengagement."
+        "score": 4,
+        "reasoning": "视频通过快速剪辑、强烈的视觉效果（爆炸、动作场面、未来都市）、不断变化的场景（全球多地）和高能量的配乐（包括重金属段落）来积极对抗无聊。虽然存在一些以对话为主的文戏段落可能降低兴奋度，但整体上视觉和听觉的持续刺激将无聊感控制在较低水平。"
       },
       "excitement": {
-        "score": 7,
-        "reasoning": "The video delivers strong excitement through explosive set pieces, futuristic combat, and the aggressive 'Master of Puppets' soundtrack. Moments like the zero-gravity fight (0:56) and the mech battle (1:50) are genuine adrenaline spikes. However, the excitement is somewhat generic—big explosions and gunfights I've seen before—which caps the score."
+        "score": 8,
+        "reasoning": "视频的核心吸引力在于其高规格的制作价值、激烈的动作场面、熟悉的IP角色（如梅森、伍兹）以及营造的宏大危机感。重金属音乐段落（‘Master of Puppets’）与动作蒙太奇的结合创造了强烈的兴奋峰值，足以让目标受众保持高度投入。"
       }
     },
     "wholeVideoCategories": {
       "hookEffectiveness": {
-        "score": 7,
-        "reasoning": "The first 3 seconds are effective: glitchy visuals, a close-up eye, and the line 'They want you afraid' create immediate tension and curiosity. It avoids slow logo animations, which I hate. However, the hook relies on familiar 'dark thriller' tropes rather than something truly novel."
+        "score": 8,
+        "reasoning": "开场（0-3秒）立即切入混乱、高对比度的视觉画面（数据流、爆炸、人脸特写）并配以紧张的对话（‘They want you afraid’），没有使用拖沓的logo或品牌介绍，成功在3秒内建立了悬念和视觉冲击，符合‘立即视觉冲击’的要求。"
       },
       "valueClarity": {
-        "score": 6,
-        "reasoning": "I quickly understand this is a Call of Duty trailer (logo at 0:10). The value proposition is 'epic, globe-trotting military sci-fi action.' However, the specific selling points (new mechanics, story uniqueness) are unclear amid the chaos. It feels like a montage of cool moments without a clear 'why this one is different.'"
+        "score": 9,
+        "reasoning": "对于目标受众（《使命召唤》玩家）而言，价值极其清晰：这是《黑色行动》系列的下一部续作，拥有电影化的叙事、未来战争设定、熟悉的回归角色以及多人/僵尸模式。预告片明确展示了这些核心卖点。对于非玩家，价值可能稍显模糊，但‘大制作动作游戏’的定位是明确的。"
       },
       "dialogueAuthenticity": {
-        "score": 4,
-        "reasoning": "The dialogue often sounds like generic, over-serious trailer speak ('Fear makes you easier to control,' 'Killing a man is easier than killing an idea'). It lacks the raw, authentic feel I crave. The characters feel like archetypes, not real people, which makes me skeptical."
+        "score": 7,
+        "reasoning": "对话采用了典型的军事惊悚片/游戏预告片风格，语气严肃、充满戏剧张力。虽然部分台词（如‘Fear makes you easier to control’）略显陈词滥调，但整体上符合系列基调和角色设定（如梅森的挣扎、伍兹的硬派），没有明显的‘假’或‘过度营销’感。"
       },
       "musicEnergyAlignment": {
-        "score": 8,
-        "reasoning": "The use of Metallica's 'Master of Puppets' is a strong choice. The song's aggressive energy matches the action perfectly, especially during the rapid-cut montage (1:04 onwards). The music drives the pace and makes the violence feel more intense and rhythmic."
+        "score": 9,
+        "reasoning": "音乐与视频能量高度同步。开场使用紧张的低音铺垫悬念，在动作升级时音乐随之增强，并在中段（约76秒起）引入激昂的重金属歌曲（‘Master of Puppets’），完美匹配了快速剪辑的全球动作场面，极大地提升了兴奋感和节奏感。"
       },
       "visualMomentum": {
-        "score": 7,
-        "reasoning": "Visual momentum is high during action segments with quick cuts, dynamic camera moves, and varied locations (city, jungle, snow). However, momentum dips during slower dialogue scenes and some lingering establishing shots. The constant scene changes keep it visually stimulating but can feel disjointed."
+        "score": 8,
+        "reasoning": "视觉节奏非常快，场景切换频繁（从未来都市到丛林、雪地、东京夜景等），大量使用动态镜头、爆炸特效和第一人称动作视角。这种持续的视觉变化和高密度信息流有效维持了观看动力，防止了静态或冗长镜头的出现。"
       },
       "ctaPackaging": {
-        "score": 5,
-        "reasoning": "The CTA ('Pre-order now' for the Reznov pack) feels tacked on at the end (2:01). It's a standard, uninspired offer that doesn't integrate with the trailer's narrative. For me, it's just another ad interrupting the experience, not a compelling reason to act."
+        "score": 7,
+        "reasoning": "CTA（预购信息）出现在视频末尾（约1分58秒后），在主要叙事高潮之后，时机合理。它通过展示‘Reznov Challenge Pack’和‘Vault Edition’的诱人内容（角色皮肤、武器蓝图）来包装CTA，提供了明确的行动激励。然而，对于已经兴奋的观众来说，这部分可能感觉像是从电影体验突然切换到了购物频道。"
       },
       "trust": {
-        "score": 6,
-        "reasoning": "The production quality is high, which builds some trust in the game's polish. However, the over-the-top, clichéd dialogue and predictable 'evil corporation vs. rebels' plot make the story feel inauthentic. I trust it will be a visually impressive game, but I'm skeptical about its narrative depth."
+        "score": 8,
+        "reasoning": "视频展现了极高的制作价值（逼真的图形、动作捕捉、音效设计），这建立了对其产品质量的信任。引用系列经典角色和情节（梅森、伍兹、雷兹诺夫）也利用了玩家已有的情感连接和信任。没有发现明显的‘虚假宣传’或过度承诺的迹象。"
       }
     },
-    "overallSummary": "This is a high-production-value, action-packed trailer that uses intense visuals and a killer soundtrack to grab attention. It succeeds in showcasing chaotic, globe-spanning combat and futuristic warfare. However, it relies heavily on familiar military shooter tropes, features somewhat cheesy dialogue, and has pacing issues in the middle that risk losing impatient viewers like me. The CTA is weak and doesn't feel integrated.",
+    "overallSummary": "这是一部制作精良、能量充沛的3A游戏预告片，成功地在2分20秒内展示了宏大的世界观、激烈的动作和系列传承。它通过快速的视觉节奏、高能量的音乐和熟悉的IP元素，有效地抓住了目标受众的注意力并维持了兴奋感。虽然其长度和部分叙事段落可能挑战极端缺乏耐心的观众，但对于其核心受众而言，它提供了足够强的观看理由直至结束。",
     "retentionVerdict": {
-      "wouldComplete": "maybe",
-      "confidence": 0.75,
-      "reasoning": "I'd likely watch to the end because the action sequences are frequent and visually impressive, and the music keeps the energy up. However, if I weren't already a CoD fan, the generic story beats and slower dialogue sections might cause me to scroll away before the finale. The strong hook and sustained action make completion probable, but not guaranteed."
+      "wouldComplete": "yes",
+      "confidence": 0.85,
+      "reasoning": "基于视频的高制作价值、持续的动作刺激、与系列粉丝的情感连接以及清晰的价值主张，目标受众（对《使命召唤》或大型动作游戏感兴趣的玩家）极有可能观看完整个预告片。对于persona所代表的‘最难取悦’的短视频观众，虽然耐心会受到考验，但视频的视觉密度和音乐能量足以将其留住。"
     },
     "evidenceMoments": [
       {
@@ -1471,60 +2971,46 @@
         "driver": "cross_modal",
         "category": "hookEffectiveness",
         "impact": "high",
-        "summary": "Immediate visual punch with glitch effects and a tense close-up, paired with the provocative line 'They want you afraid.' This meets my 3-second hook requirement."
+        "summary": "开场瞬间切入高对比度、快切的混乱视觉（数据流、爆炸、人脸特写）并配以紧张的画外音（‘They want you afraid’），立即建立了悬念和视觉冲击，没有浪费任何时间。"
       },
       {
-        "timestamp": 27,
+        "timestamp": 76,
         "timeRange": {
-          "start": 27,
-          "end": 36
-        },
-        "type": "friction",
-        "driver": "dialogue",
-        "category": "patience",
-        "impact": "medium",
-        "summary": "A sequence of slower character conversations in a field and a transport vehicle. The pacing drops significantly, and the dialogue ('Stop looking backwards, David') feels like generic trailer exposition, risking boredom."
-      },
-      {
-        "timestamp": 104,
-        "timeRange": {
-          "start": 104,
-          "end": 120
+          "start": 76,
+          "end": 98
         },
         "type": "positive",
         "driver": "music",
         "category": "excitement",
         "impact": "high",
-        "summary": "The 'Master of Puppets' vocals kick in fully, driving a rapid montage of global action scenes (Los Angeles, Angola, Tokyo). The music and visuals sync perfectly, creating a sustained high-energy peak."
+        "summary": "重金属歌曲‘Master of Puppets’响起，配合全球多地（尼加拉瓜、洛杉矶、安哥拉、东京、阿拉斯加）的快速动作蒙太奇，创造了视频中最强烈的兴奋和节奏高峰。"
       },
       {
-        "timestamp": 201,
+        "timestamp": 158,
         "timeRange": {
-          "start": 201,
-          "end": 206
+          "start": 158,
+          "end": 165
         },
         "type": "friction",
         "driver": "cross_modal",
         "category": "ctaPackaging",
         "impact": "medium",
-        "summary": "The trailer shifts abruptly from the final action beat to a static screen promoting the 'Reznov Challenge Pack' pre-order. The transition is jarring, and the offer feels like a standard, unexciting add-on."
+        "summary": "在叙事高潮和标题展示后，视频切换到静态的‘预购’和‘特别版’内容展示页面。虽然信息清晰，但这种从动态电影体验到静态产品列表的转换可能会让部分观众的兴奋度冷却，产生‘广告时间到了’的感觉。"
       }
     ],
     "strongestMoments": [
-      "The opening hook (0-3s) with its immediate visual and audio tension.",
-      "The music-driven action montage from 1:04 to 1:20, where the song's energy and rapid cuts create a thrilling sequence.",
-      "The visually striking zero-gravity fight scene around 0:56."
+      "重金属音乐段落（约76-98秒）与全球动作蒙太奇的结合，是视频能量和兴奋度的顶点。",
+      "开场3秒的高密度视觉和对话钩子，成功抓住了注意力。",
+      "对经典角色（梅森、伍兹）和情节线索的展示，强化了与系列粉丝的情感连接。"
     ],
     "biggestRisks": [
-      "The mid-section dialogue scenes (e.g., 0:27-0:36) are slow and feature clichéd writing, which could cause viewers like me to lose interest and scroll.",
-      "The overall narrative feels generic ('global threat, rogue hero'), lacking a unique hook beyond 'more Call of Duty.'",
-      "The CTA at the end is poorly integrated and feels like a separate advertisement, weakening the final impression."
+      "视频总长超过2分钟，对于习惯15-60秒内容的观众，中段的叙事对话部分（如角色在墓地、机舱内的对话）存在耐心流失的风险。",
+      "结尾的CTA部分虽然必要，但其呈现方式相对直接和商业化，可能削弱之前建立的电影化沉浸感。"
     ],
     "recommendationSeeds": [
-      "Tighten the mid-section by cutting or shortening some dialogue scenes to maintain the relentless pace set by the action.",
-      "Replace some of the generic 'war is hell' dialogue with more authentic, character-driven lines that feel less like trailer speak.",
-      "Integrate the CTA more naturally—perhaps tease the Reznov pack within the action montage or tie it to a story moment.",
-      "Consider a more unique visual or narrative hook in the first 3 seconds to stand out from other military shooter trailers."
+      "考虑为社交媒体平台（如TikTok, Shorts）剪辑一个45-60秒的‘高光精华版’，聚焦于动作场面和音乐高潮，以适配更短的注意力窗口。",
+      "在叙事性对话段落中，可以尝试插入更快速、更具冲击力的闪回或动作镜头，以维持视觉节奏，防止兴奋度下滑。",
+      "将CTA信息（如‘预购’）以更动态、更融入视频风格的方式呈现（例如，作为动作场景中的全息投影或快速闪现的文字），而不是完全静态的页面。"
     ],
     "comparisonHints": {
       "safeForChunkEquivalence": false,
@@ -1533,9 +3019,9 @@
     },
     "ai": {
       "usage": {
-        "input": 47378,
-        "output": 2406,
-        "total": 49784
+        "input": 47123,
+        "output": 2481,
+        "total": 49604
       },
       "requestCount": 1
     },
@@ -1543,7 +3029,7 @@
   },
   "metricsData": {
     "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
-    "generatedAt": "2026-04-17T21:41:05.667Z",
+    "generatedAt": "2026-04-27T17:40:43.337Z",
     "averages": {},
     "peakMoments": {},
     "trends": {},
@@ -1562,25 +3048,23 @@
   },
   "recommendationData": {
     "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
-    "generatedAt": "2026-04-17T21:41:30.140Z",
-    "text": "Due to insufficient emotion analysis data, no specific retention improvements can be recommended. Next steps include collecting chunk-level emotion metrics and viewer engagement data to enable actionable insights.",
-    "reasoning": "The provided metrics summary has empty averages, trends, and peak moments, with a friction index of zero, indicating no analysis was performed. Chunk summaries are also empty, so there is no evidence of emotional beats or viewer friction points. Without data on hook effectiveness, pacing, or emotional peaks, it is impossible to identify retention issues or opportunities. This lack of data prevents any concrete recommendations for edits.",
+    "generatedAt": "2026-04-27T17:41:03.780Z",
+    "text": "Insufficient data provided for analysis. Recommend collecting chunk-level emotion analysis and computed metrics to generate actionable insights.",
+    "reasoning": "The input data contains empty metrics summaries and no chunk summaries, making it impossible to analyze viewer retention or emotional impact. Without averages, trends, friction index, or peak moments, no evidence-based recommendations can be made. The lack of data prevents any specific analysis of hooks, pacing, or emotional beats.",
     "confidence": 0.1,
     "keyFindings": [
-      "No emotion analysis data available in chunk summaries",
-      "Metrics summary is completely empty with no averages or trends",
-      "Friction index is zero, suggesting no viewer engagement analysis",
-      "Peak moments are not identified, missing emotional high points"
+      "No emotion analysis data available",
+      "Metrics summaries are empty",
+      "Chunk summaries array is empty"
     ],
     "suggestions": [
-      "Run the emotion analysis pipeline to generate chunk-level data",
-      "Collect viewer retention metrics like drop-off rates and watch time",
-      "Analyze the video for emotional peaks and valleys using the data",
-      "Review the hook and pacing based on actual engagement trends",
-      "Conduct A/B testing with different edits to measure impact",
-      "Gather feedback on emotional beats from target audience",
-      "Use the data to identify friction points and smooth transitions",
-      "Optimize content length based on retention patterns"
+      "Collect chunk-level emotion analysis data",
+      "Compute metrics such as averages, trends, friction index, and peak moments",
+      "Ensure data is populated before analysis",
+      "Use the pipeline to generate meaningful summaries",
+      "Review the pipeline configuration to ensure data is being captured correctly",
+      "Validate the emotion analysis tool output for completeness",
+      "Set up a process to regularly compute and update metrics"
     ],
     "summary": {
       "hasRecommendation": true,
@@ -1589,7 +3073,7 @@
   },
   "emotionalAnalysis": {
     "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json",
-    "generatedAt": "2026-04-17T21:41:30.141Z",
+    "generatedAt": "2026-04-27T17:41:03.782Z",
     "summary": {
       "totalChunks": 0,
       "failedChunks": 0,
@@ -1610,7 +3094,7 @@
   },
   "summary": {
     "metadata": {
-      "generatedAt": "2026-04-17T21:41:30.142Z",
+      "generatedAt": "2026-04-27T17:41:03.783Z",
       "pipelineVersion": "1.0",
       "videoDuration": 0,
       "chunksAnalyzed": 0,
@@ -1625,8 +3109,8 @@
       "frictionIndex": 0
     },
     "recommendation": {
-      "text": "Due to insufficient emotion analysis data, no specific retention improvements can be recommended. Next steps include collecting chunk-level emotion metrics and viewer engagement data to enable actionable insights.",
-      "reasoning": "The provided metrics summary has empty averages, trends, and peak moments, with a friction index of zero, indicating no analysis was performed. Chunk summaries are also empty, so there is no evidence of emotional beats or viewer friction points. Without data on hook effectiveness, pacing, or emotional peaks, it is impossible to identify retention issues or opportunities. This lack of data prevents any concrete recommendations for edits.",
+      "text": "Insufficient data provided for analysis. Recommend collecting chunk-level emotion analysis and computed metrics to generate actionable insights.",
+      "reasoning": "The input data contains empty metrics summaries and no chunk summaries, making it impossible to analyze viewer retention or emotional impact. Without averages, trends, friction index, or peak moments, no evidence-based recommendations can be made. The lack of data prevents any specific analysis of hooks, pacing, or emotional beats.",
       "confidence": 0.1
     },
     "reportPaths": {
@@ -1638,13 +3122,13 @@
       "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json"
     },
     "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json",
-    "generatedAt": "2026-04-17T21:41:30.142Z"
+    "generatedAt": "2026-04-27T17:41:03.783Z"
   },
   "summaryData": {
     "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json",
-    "generatedAt": "2026-04-17T21:41:30.142Z",
+    "generatedAt": "2026-04-27T17:41:03.783Z",
     "metadata": {
-      "generatedAt": "2026-04-17T21:41:30.142Z",
+      "generatedAt": "2026-04-27T17:41:03.783Z",
       "pipelineVersion": "1.0",
       "videoDuration": 0,
       "chunksAnalyzed": 0,
@@ -1658,12 +3142,12 @@
   "finalReport": {
     "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md",
     "analysisDataPath": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json",
-    "generatedAt": "2026-04-17T21:41:30.147Z",
+    "generatedAt": "2026-04-27T17:41:03.788Z",
     "summary": {
       "duration": 0,
       "totalTokens": 0,
       "chunksAnalyzed": 0,
-      "reportSize": 1881
+      "reportSize": 1705
     }
   }
 }

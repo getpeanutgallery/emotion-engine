@@ -100,13 +100,14 @@ This slice should focus on diagnosis first. We need to determine whether the ins
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- fresh rerun artifacts/reports
-- optional QA note
+- refreshed `output/cod-test/**` rerun artifacts
+- refreshed `benchmarks/fixtures/cod-test/_reports/**` benchmark reports
+- `docs/2026-04-27-recognized-song-instability-postfix-qa-note.md`
 - `.plans/2026-04-27-investigate-recognized-song-instability.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Ran the canonical rerun path as `set -a && . ./.env && set +a && node validate-configs.cjs && node server/run-pipeline.cjs --config configs/cod-test.yaml --verbose`. `node validate-configs.cjs` passed, and the rerun refreshed `output/cod-test/**` plus `benchmarks/fixtures/cod-test/_reports/**`; log: `.logs/cod-test-20260427-133555-ee-xjf5-rerun.log`. The core stability objective was met: fresh `output/cod-test/phase1-gather-context/music-vocals-data.json` preserved a strong recognized-song result instead of collapsing to `unknown` (`status: "recognized"`, `confidence: 0.95`, one `Master of Puppets` candidate, seven matched lyric fragments, `multipleSongsDetected: false`). Fresh `output/cod-test/phase1-gather-context/famous-song-reconciliation.json` then shows reconciliation activating successfully (`status: "applied"`, `trigger.passed: true`, no failing trigger reasons) with six dialogue removals at indexes `13, 14, 15, 17, 23, 24`. The refreshed dialogue benchmark report at `benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueData.json` improved materially versus both comparison points: current rerun `dialogue_text_full_transcript_pct=92.9`, `dialogue_text_windowed_pct=93.1`, `dialogue_boundary_pct=0.0`, `output_segment_count=20`, `extra_output_window_count=0`; prior known-good post-fix run documented in `docs/2026-04-27-famous-song-reconciliation-postfix-qa-note.md` was `81.3 / 81.7 / 1`; recent failed rerun documented in `.plans/2026-04-27-audit-dialogue-prompt-for-missed-lines-and-rerun-cod-test.md` was `66.5 / 67.2 / 6`. The refreshed reconciled dialogue artifact still is not perfect—`output/cod-test/phase1-gather-context/dialogue-data.reconciled.json` keeps an anomalous line `"Your life burns faster"` and the benchmark summary still ends red overall (`0/7 artifacts passed`, `373/680` scoreable fields passed, truth coverage `680/1182`)—but this QA lane confirms the recognized-song activation no longer collapsed in this rerun and reconciliation finally had a fair chance to execute. Wrote concise QA note to `docs/2026-04-27-recognized-song-instability-postfix-qa-note.md`. No provider/runtime instability (such as the earlier whole-asset `ECONNRESET` fallback shape) surfaced in this rerun beyond the expected benchmark-stage failure.
 
 ---
 
@@ -123,27 +124,27 @@ This slice should focus on diagnosis first. We need to determine whether the ins
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- audit note if needed
+- `docs/2026-04-27-recognized-song-instability-outcome-audit.md`
 - `.plans/2026-04-27-investigate-recognized-song-instability.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independently audited the live rerun against the post-fix artifacts, the reconciliation ledger, the benchmark reports, the truth fixtures, and the landed fix in `server/scripts/get-context/get-music-vocals.cjs` (`git show eb2860b -- server/scripts/get-context/get-music-vocals.cjs test/scripts/get-music-vocals.test.js`). Verdict: the recognized-song collapse bug was actually fixed in the live rerun. Fresh `output/cod-test/phase1-gather-context/music-vocals-data.json` now preserves `recognizedSong.status: "recognized"`, `confidence: 0.95`, one `Master of Puppets` candidate, and seven matched lyric fragments instead of regressing to `unknown`. Fresh `output/cod-test/phase1-gather-context/famous-song-reconciliation.json` shows `status: "applied"` / `trigger.passed: true`, proving reconciliation finally got a fair chance to execute, and it removed the six expected lyric-contamination dialogue segments (`13, 14, 15, 17, 23, 24`). The dialogue benchmark improvement in `benchmarks/fixtures/cod-test/_reports/artifact-results/dialogueData.json` (`92.9 / 93.1`, `extra_output_window_count=0`) is therefore attributable to the expected cause: reconciliation could finally remove obvious lyric contamination after the music-vocals artifact kept the recognized-song identity. The remaining reconciled line `"Your life burns faster"` is real but belongs to a different slice: it survives because the current recognized-song matched-lyrics set did not include that exact line, so the current policy had no direct support to remove it, even though benchmark truth also contains that lyric on the music-vocals side. That makes it a content-quality / lyric-coverage follow-up, not evidence that recognized-song instability remains unresolved. Wrote concise audit note to `docs/2026-04-27-recognized-song-instability-outcome-audit.md`. This instability slice is complete enough to move on.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Diagnosed and fixed the music-vocals recognized-song collapse caused by last-chunk overwrite behavior, validated the change with a targeted regression test, reran the canonical `cod-test` pipeline, and independently confirmed that the fix held up in live artifacts and re-enabled famous-song reconciliation.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-04`, `REF-06`, `REF-07`, `REF-08`, and `REF-09` were satisfied for this slice. The fix changed the `music-vocals` aggregation behavior in the narrow place the audit identified, the rerun artifact preserved recognized-song identity, the reconciliation gate passed, and the downstream dialogue benchmark improvement matched the expected lyric-removal effect. Remaining `"Your life burns faster"` contamination is tracked here as an out-of-scope follow-up issue rather than a reference failure for this slice.
 
 **Commits:**
-- Pending.
+- `eb2860b` - Fix music vocals recognized-song chunk aggregation
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** A provider/runtime wobble can expose aggregation bugs that were previously masked by whole-asset success, so chunk fallback paths need their own durable winner-selection logic rather than last-write-wins state. Also, once reconciliation is finally allowed to run, remaining transcript anomalies should be triaged separately as content-quality or policy-coverage issues instead of being lumped back into recognition stability.
 
 ---
 
