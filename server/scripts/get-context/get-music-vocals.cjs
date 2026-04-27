@@ -234,6 +234,77 @@ function buildFallbackNote(reason) {
   return normalized ? `Whole-asset music-vocals analysis fell back to chunked mode: ${normalized}` : null;
 }
 
+const RECOGNIZED_SONG_STATUS_PRIORITY = Object.freeze(new Map([
+  ['recognized', 4],
+  ['possible', 3],
+  ['multiple_possible', 2],
+  ['unknown', 1],
+  ['none_present', 0]
+]));
+
+function getRecognizedSongStatusPriority(recognizedSong) {
+  const status = compactString(recognizedSong?.status).toLowerCase();
+  return RECOGNIZED_SONG_STATUS_PRIORITY.get(status) ?? -1;
+}
+
+function getRecognizedSongConfidenceScore(recognizedSong) {
+  const topLevelConfidence = Number(recognizedSong?.confidence);
+  if (Number.isFinite(topLevelConfidence)) {
+    return topLevelConfidence;
+  }
+
+  const candidateConfidences = Array.isArray(recognizedSong?.candidates)
+    ? recognizedSong.candidates
+        .map((candidate) => Number(candidate?.confidence))
+        .filter((value) => Number.isFinite(value))
+    : [];
+
+  if (candidateConfidences.length > 0) {
+    return Math.max(...candidateConfidences);
+  }
+
+  return 0;
+}
+
+function getRecognizedSongMatchedLyricCount(recognizedSong) {
+  return Array.isArray(recognizedSong?.candidates)
+    ? recognizedSong.candidates.reduce((count, candidate) => {
+        const matchedLyrics = Array.isArray(candidate?.matchedLyrics) ? candidate.matchedLyrics : [];
+        return count + matchedLyrics.filter((value) => compactString(value)).length;
+      }, 0)
+    : 0;
+}
+
+function choosePreferredRecognizedSong(currentRecognizedSong, nextRecognizedSong) {
+  if (!nextRecognizedSong || typeof nextRecognizedSong !== 'object' || Array.isArray(nextRecognizedSong)) {
+    return currentRecognizedSong || null;
+  }
+
+  if (!currentRecognizedSong || typeof currentRecognizedSong !== 'object' || Array.isArray(currentRecognizedSong)) {
+    return nextRecognizedSong;
+  }
+
+  const currentStatusPriority = getRecognizedSongStatusPriority(currentRecognizedSong);
+  const nextStatusPriority = getRecognizedSongStatusPriority(nextRecognizedSong);
+  if (nextStatusPriority !== currentStatusPriority) {
+    return nextStatusPriority > currentStatusPriority ? nextRecognizedSong : currentRecognizedSong;
+  }
+
+  const currentConfidence = getRecognizedSongConfidenceScore(currentRecognizedSong);
+  const nextConfidence = getRecognizedSongConfidenceScore(nextRecognizedSong);
+  if (nextConfidence !== currentConfidence) {
+    return nextConfidence > currentConfidence ? nextRecognizedSong : currentRecognizedSong;
+  }
+
+  const currentMatchedLyricCount = getRecognizedSongMatchedLyricCount(currentRecognizedSong);
+  const nextMatchedLyricCount = getRecognizedSongMatchedLyricCount(nextRecognizedSong);
+  if (nextMatchedLyricCount !== currentMatchedLyricCount) {
+    return nextMatchedLyricCount > currentMatchedLyricCount ? nextRecognizedSong : currentRecognizedSong;
+  }
+
+  return currentRecognizedSong;
+}
+
 function stripMusicVocalSegmentTiming(musicVocalsData) {
   if (!musicVocalsData || typeof musicVocalsData !== 'object' || Array.isArray(musicVocalsData)) {
     return musicVocalsData;
@@ -554,7 +625,7 @@ async function run(input) {
     fs.mkdirSync(chunksDir, { recursive: true });
 
     let rollingSummary = '';
-    let lastChunkRecognizedSong = null;
+    let bestChunkRecognizedSong = null;
     const collectedRecognitionNotes = [];
 
     if (strategy.actualMode === 'whole_asset' || strategy.actualMode === 'hybrid') {
@@ -868,7 +939,7 @@ async function run(input) {
           ? parsed.vocalSummary.trim()
           : rollingVocalSummary;
         if (parsed.recognizedSong) {
-          lastChunkRecognizedSong = parsed.recognizedSong;
+          bestChunkRecognizedSong = choosePreferredRecognizedSong(bestChunkRecognizedSong, parsed.recognizedSong);
         }
         if (Array.isArray(parsed.recognitionNotes) && parsed.recognitionNotes.length > 0) {
           collectedRecognitionNotes.push(...parsed.recognitionNotes);
@@ -908,7 +979,7 @@ async function run(input) {
       ...(Array.isArray(wholeAssetAnalysis?.qualityNotes) ? wholeAssetAnalysis.qualityNotes : [])
     ].filter((value) => compactString(value))));
     const finalRecognizedSong = normalizeRecognizedSong(
-      wholeAssetAnalysis?.recognizedSong || lastChunkRecognizedSong,
+      wholeAssetAnalysis?.recognizedSong || bestChunkRecognizedSong,
       { maxDuration: duration }
     );
     const finalRecognitionNotes = normalizeRecognitionNotes([

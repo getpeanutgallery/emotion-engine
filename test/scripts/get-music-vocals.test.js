@@ -304,6 +304,108 @@ test('Get Music Vocals Script', async (t) => {
     ok(completionPrompts[0].includes('recognizedSong is optional.'));
   });
 
+  await t.test('keeps the strongest earlier chunk-level recognizedSong when a later chunk returns unknown', async () => {
+    mockDurationSeconds = 90;
+    let chunkCallCount = 0;
+
+    completeImplementation = async (options) => {
+      completionPrompts.push(String(options?.prompt || ''));
+      completionOptions.push(options || {});
+      chunkCallCount += 1;
+
+      if (chunkCallCount === 1) {
+        return {
+          content: JSON.stringify({
+            rollingSummary: 'No lyric-bearing vocals yet.',
+            vocalSummary: 'No text-bearing music-led vocals were detected in this chunk.',
+            vocal_segments: [],
+            recognizedSong: {
+              status: 'unknown',
+              confidence: 0,
+              candidates: [],
+              multipleSongsDetected: false
+            },
+            qualityNotes: ['Intro chunk is instrumental.']
+          }),
+          usage: { input: 70, output: 40 }
+        };
+      }
+
+      if (chunkCallCount === 2) {
+        return {
+          content: JSON.stringify({
+            rollingSummary: 'The central hook clearly identifies the song.',
+            vocalSummary: 'The hook lands clearly over the guitars in this chunk.',
+            vocal_segments: [
+              {
+                start: 32,
+                end: 35,
+                text: 'Master, master',
+                confidence: 0.93,
+                performer: 'Metallica lead vocal',
+                performer_id: 'voc_001',
+                delivery: 'chant'
+              }
+            ],
+            recognizedSong: {
+              status: 'recognized',
+              confidence: 0.96,
+              candidates: [
+                {
+                  title: 'Master of Puppets',
+                  artist: 'Metallica',
+                  confidence: 0.96,
+                  evidence: ['Literal hook fragment is clearly audible in this chunk.'],
+                  matchedLyrics: ['Master, master'],
+                  timeRanges: [{ start: 32, end: 35 }]
+                }
+              ],
+              primaryEvidence: 'A literal hook fragment strongly grounds the song identity.',
+              multipleSongsDetected: false
+            },
+            qualityNotes: ['Hook is prominent and unmasked.']
+          }),
+          usage: { input: 90, output: 70 }
+        };
+      }
+
+      return {
+        content: JSON.stringify({
+          rollingSummary: 'The final chunk is promo VO over the tail of the cue.',
+          vocalSummary: 'No text-bearing music-led vocals were detected in this chunk.',
+          vocal_segments: [],
+          recognizedSong: {
+            status: 'unknown',
+            confidence: 0,
+            candidates: [],
+            multipleSongsDetected: false
+          },
+          qualityNotes: ['The outro is dominated by spoken promo VO.']
+        }),
+        usage: { input: 70, output: 45 }
+      };
+    };
+
+    const result = await getMusicVocalsScript.run({
+      assetPath: '/path/to/test-video.mp4',
+      outputDir: testOutputDir,
+      config: makeMusicVocalsConfig({
+        phase1Music: {
+          mode: 'chunked',
+          analysis_window_seconds: 30
+        }
+      })
+    });
+
+    is(chunkCallCount, 3);
+    is(result.artifacts.musicVocalsData.analysisMode, 'chunked');
+    is(result.artifacts.musicVocalsData.recognizedSong.status, 'recognized');
+    is(result.artifacts.musicVocalsData.recognizedSong.candidates[0].title, 'Master of Puppets');
+    is(result.artifacts.musicVocalsData.recognizedSong.candidates[0].matchedLyrics[0], 'Master, master');
+    is(result.artifacts.musicVocalsData.vocal_segments.length, 1);
+    is(result.artifacts.musicVocalsData.vocal_segments[0].text, 'Master, master');
+  });
+
   await t.test('auto mode upgrades lyric-bearing music context to hybrid so chunk refinement backstops whole-asset recall', async () => {
     completeImplementation = async (options) => {
       const prompt = String(options?.prompt || '');
