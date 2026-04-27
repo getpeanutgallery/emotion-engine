@@ -166,7 +166,8 @@ function isShortOrRefrainLike(segment) {
   return words.length <= 6 || (words.length > 0 && uniqueWordCount / words.length < 0.7);
 }
 
-function hasStrongSpokenSignal(dialogueSegments, index) {
+function hasStrongSpokenSignal(dialogueSegments, index, options = {}) {
+  const { isLyricLikeNeighbor = () => false } = options;
   const segment = dialogueSegments[index] || {};
   const speaker = compactString(segment.speaker || segment.speaker_id);
   const segmentOrderIndex = getSegmentOrderIndex(segment, index);
@@ -182,7 +183,12 @@ function hasStrongSpokenSignal(dialogueSegments, index) {
     const neighborOrderIndex = getSegmentOrderIndex(neighbor, fallbackIndex);
     const proximity = Math.abs(segmentOrderIndex - neighborOrderIndex);
 
-    return proximity <= 1 && tokenize(neighbor.text).length >= 4 && !isShortOrRefrainLike(neighbor);
+    return (
+      proximity <= 1 &&
+      tokenize(neighbor.text).length >= 4 &&
+      !isShortOrRefrainLike(neighbor) &&
+      !isLyricLikeNeighbor(neighbor, fallbackIndex, neighborOrderIndex)
+    );
   });
 }
 
@@ -617,6 +623,7 @@ function buildRecognitionGate(musicVocalsData, musicData, dialogueData) {
 function reconcileDialogue(dialogueData, gate, musicVocalsData) {
   const dialogueSegments = Array.isArray(dialogueData?.dialogue_segments) ? dialogueData.dialogue_segments : [];
   const vocalSegments = Array.isArray(musicVocalsData?.vocal_segments) ? musicVocalsData.vocal_segments : [];
+  const vocalSegmentTexts = vocalSegments.map((entry) => compactString(entry?.text)).filter(Boolean);
   const vocalEvidenceIndexes = new Set(gate?.evidence?.vocalLyricEvidence?.hitOrderIndexes || []);
   const dialogueEvidenceHitsByOrderIndex = new Map(
     Array.isArray(gate?.evidence?.dialogueLyricEvidence?.hits)
@@ -624,49 +631,102 @@ function reconcileDialogue(dialogueData, gate, musicVocalsData) {
       : []
   );
   const removedSegments = [];
+  const dialogueSignalCache = new Map();
 
-  const reconciledSegments = dialogueSegments.filter((segment, index) => {
+  function getDialogueSignal(segment, index) {
+    const cached = dialogueSignalCache.get(index);
+    if (cached) return cached;
+
     const dialogueOrderIndex = getSegmentOrderIndex(segment, index);
     const evidenceHit = dialogueEvidenceHitsByOrderIndex.get(dialogueOrderIndex) || null;
     const bestMatch = chooseBestLyricMatch(segment?.text, gate.matchedLyrics);
     const hasStrictLyricMatch = Boolean(bestMatch && bestMatch.similarity >= MIN_DIALOGUE_LYRIC_SIMILARITY);
-    if (!hasStrictLyricMatch && !evidenceHit) return true;
-
     const confidence = Number(segment?.confidence);
     const lowConfidence = !Number.isFinite(confidence) || confidence <= 0.96;
-    if (!lowConfidence && !isShortOrRefrainLike(segment)) return true;
-    if (hasStrongSpokenSignal(dialogueSegments, index)) return true;
-
     const hasNearbyVocalIndexEvidence = Array.from(vocalEvidenceIndexes).some(
       (orderIndex) => Math.abs(orderIndex - dialogueOrderIndex) <= MIN_DIALOGUE_INDEX_PROXIMITY
     );
-
-    const bestVocalMatch = chooseBestLyricMatch(
-      segment?.text,
-      vocalSegments.map((entry) => compactString(entry?.text)).filter(Boolean)
-    );
+    const bestVocalMatch = chooseBestLyricMatch(segment?.text, vocalSegmentTexts);
     const hasAnchoredVocalBundleSupport = Array.isArray(evidenceHit?.anchorHits)
       ? evidenceHit.anchorHits.some((entry) => entry.source === 'vocalSegment')
       : false;
-    const hasDirectVocalTextSupport =
-      (bestVocalMatch && bestVocalMatch.similarity >= MIN_GATE_LYRIC_TEXT_SIMILARITY) || hasAnchoredVocalBundleSupport;
+    const hasDirectVocalTextSupport = Boolean(
+      (bestVocalMatch && bestVocalMatch.similarity >= MIN_GATE_LYRIC_TEXT_SIMILARITY) || hasAnchoredVocalBundleSupport
+    );
+    const hasExistingLyricEvidence = Boolean(hasStrictLyricMatch || evidenceHit);
 
-    if (!hasNearbyVocalIndexEvidence && !hasDirectVocalTextSupport && vocalEvidenceIndexes.size > 0) {
+    const signal = {
+      dialogueOrderIndex,
+      evidenceHit,
+      bestMatch,
+      hasStrictLyricMatch,
+      confidence,
+      lowConfidence,
+      hasNearbyVocalIndexEvidence,
+      bestVocalMatch,
+      hasDirectVocalTextSupport,
+      hasExistingLyricEvidence
+    };
+    dialogueSignalCache.set(index, signal);
+    return signal;
+  }
+
+  function hasAdjacentLyricEvidence(index) {
+    const segment = dialogueSegments[index] || {};
+    const dialogueOrderIndex = getSegmentOrderIndex(segment, index);
+    const neighbors = [
+      { segment: dialogueSegments[index - 1], fallbackIndex: index - 1 },
+      { segment: dialogueSegments[index + 1], fallbackIndex: index + 1 }
+    ].filter(({ segment: neighbor }) => Boolean(neighbor));
+
+    return neighbors.some(({ segment: neighbor, fallbackIndex }) => {
+      const neighborSignal = getDialogueSignal(neighbor, fallbackIndex);
+      return (
+        Math.abs(dialogueOrderIndex - neighborSignal.dialogueOrderIndex) <= 1 &&
+        neighborSignal.hasExistingLyricEvidence
+      );
+    });
+  }
+
+  const reconciledSegments = dialogueSegments.filter((segment, index) => {
+    const signal = getDialogueSignal(segment, index);
+    const promotedDirectVocalCandidate =
+      signal.lowConfidence &&
+      signal.hasDirectVocalTextSupport &&
+      (signal.hasNearbyVocalIndexEvidence || hasAdjacentLyricEvidence(index));
+    if (!signal.hasExistingLyricEvidence && !promotedDirectVocalCandidate) return true;
+
+    if (!signal.lowConfidence && !isShortOrRefrainLike(segment)) return true;
+    if (
+      hasStrongSpokenSignal(dialogueSegments, index, {
+        isLyricLikeNeighbor: (neighbor, fallbackIndex) => {
+          const neighborSignal = getDialogueSignal(neighbor, fallbackIndex);
+          return neighborSignal.hasExistingLyricEvidence || neighborSignal.hasDirectVocalTextSupport;
+        }
+      })
+    ) {
       return true;
     }
 
+    if (!signal.hasNearbyVocalIndexEvidence && !signal.hasDirectVocalTextSupport && vocalEvidenceIndexes.size > 0) {
+      return true;
+    }
+
+    const evidenceType = signal.evidenceHit?.evidenceType || (promotedDirectVocalCandidate ? 'direct_vocal_support' : 'direct');
     removedSegments.push({
       index,
-      indexOrder: dialogueOrderIndex,
+      indexOrder: signal.dialogueOrderIndex,
       text: compactString(segment?.text),
-      confidence: Number.isFinite(confidence) ? confidence : null,
-      matchedLyric: evidenceHit?.lyric || bestMatch?.lyric || '',
-      similarity: Number((evidenceHit?.similarity ?? bestMatch?.similarity ?? 0).toFixed(4)),
+      confidence: Number.isFinite(signal.confidence) ? signal.confidence : null,
+      matchedLyric: signal.evidenceHit?.lyric || signal.bestMatch?.lyric || signal.bestVocalMatch?.lyric || '',
+      similarity: Number(
+        (signal.evidenceHit?.similarity ?? signal.bestMatch?.similarity ?? signal.bestVocalMatch?.similarity ?? 0).toFixed(4)
+      ),
       evidence: {
-        nearbyVocalIndexEvidence: hasNearbyVocalIndexEvidence,
-        directVocalTextSupport: Boolean(hasDirectVocalTextSupport),
-        evidenceType: evidenceHit?.evidenceType || 'direct',
-        anchorHits: Array.isArray(evidenceHit?.anchorHits) ? evidenceHit.anchorHits : []
+        nearbyVocalIndexEvidence: signal.hasNearbyVocalIndexEvidence,
+        directVocalTextSupport: signal.hasDirectVocalTextSupport,
+        evidenceType,
+        anchorHits: Array.isArray(signal.evidenceHit?.anchorHits) ? signal.evidenceHit.anchorHits : []
       },
       reason: 'likely_lyric_contamination'
     });

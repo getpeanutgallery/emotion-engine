@@ -336,6 +336,180 @@ test('reconcile-famous-song-phase1 script', async (t) => {
     assert.equal(ledger.decisions.musicVocalsNotes[0].reason, 'recognized_song_metadata_must_not_rewrite_music_vocals_transcript');
   });
 
+  await t.test('removes a sparse-anchor lyric contamination run when direct vocal support fills the gaps', async () => {
+    const artifacts = makeArtifacts({
+      dialogueData: {
+        dialogue_segments: [
+          { index: 10, speaker: 'Captain', text: 'The hell it is.', confidence: 0.98 },
+          { index: 11, speaker: 'Speaker 8', text: 'Obey your master, master.', confidence: 0.44 },
+          { index: 12, speaker: 'Speaker 8', text: 'Come crawling faster, master.', confidence: 0.45 },
+          { index: 13, speaker: 'Speaker 8', text: "Master of puppets, I'm pulling your strings.", confidence: 0.46 },
+          { index: 14, speaker: 'Speaker 8', text: 'Twisting your mind and smashing your dreams.', confidence: 0.45 },
+          { index: 15, speaker: 'Speaker 8', text: "Blinded by me, you can't see a thing.", confidence: 0.45 },
+          { index: 16, speaker: 'Speaker 8', text: "Just call my name, 'cause I'll hear you scream.", confidence: 0.45 },
+          { index: 17, speaker: 'Speaker 8', text: 'Master, master.', confidence: 0.44 },
+          { index: 18, speaker: 'Speaker 8', text: "Just call my name, 'cause I'll hear you scream.", confidence: 0.45 },
+          { index: 19, speaker: 'Speaker 8', text: 'Master, master.', confidence: 0.44 },
+          { index: 20, speaker: 'Captain', text: 'Fall back to the ridge!', confidence: 0.99 },
+          { index: 25, speaker: 'Speaker 8', text: 'Obey your master.', confidence: 0.43 }
+        ],
+        summary: 'Dialogue includes a famous-song lyric contamination run.'
+      },
+      musicVocalsData: {
+        vocal_segments: [
+          { index: 11, text: 'Obey your master', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 12, text: 'Come crawling faster', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 13, text: "Master of puppets I'll pull your strings", confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 14, text: 'Twisting your mind and smashing your dreams', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 15, text: "Blinded by me you can't see a thing", confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 16, text: "Just call my name 'cause I'll hear you scream", confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 17, text: 'Master! Master!', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 18, text: "Just call my name 'cause I'll hear you scream", confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 19, text: 'Master! Master!', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 25, text: 'Obey your master', confidence: 0.95, performer: 'Lead', delivery: 'sung' }
+        ],
+        summary: 'Vocal lane captures the known song clearly.',
+        recognizedSong: {
+          status: 'recognized',
+          confidence: 0.95,
+          multipleSongsDetected: false,
+          candidates: [
+            {
+              title: 'Master of Puppets',
+              artist: 'Metallica',
+              confidence: 0.95,
+              evidence: ['Sparse matched lyric anchors with richer transcript support.'],
+              matchedLyrics: [
+                'Obey your master',
+                "Master of puppets I'll pull your strings",
+                'Master',
+                'Come crawling faster'
+              ]
+            }
+          ]
+        }
+      }
+    });
+
+    await reconcileScript.run({ outputDir, artifacts });
+
+    const reconciledDialogue = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.reconciled.json'), 'utf8'));
+    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
+
+    assert.deepEqual(
+      reconciledDialogue.dialogue_segments.map((segment) => segment.index),
+      [10, 20]
+    );
+    assert.deepEqual(
+      ledger.decisions.removedDialogueSegments.map((segment) => segment.indexOrder),
+      [11, 12, 13, 14, 15, 16, 17, 18, 19, 25]
+    );
+    assert.equal(
+      ledger.decisions.removedDialogueSegments.some((segment) => segment.evidence.evidenceType === 'direct_vocal_support'),
+      true
+    );
+  });
+
+  await t.test('does not let lyric-like neighbors count as spoken support', async () => {
+    const artifacts = makeArtifacts({
+      dialogueData: {
+        dialogue_segments: [
+          { index: 0, speaker: 'Speaker 8', text: 'Come crawling faster, master.', confidence: 0.45 },
+          { index: 1, speaker: 'Speaker 8', text: "Master of puppets, I'm pulling your strings.", confidence: 0.45 },
+          { index: 2, speaker: 'Speaker 8', text: 'Twisting your mind and smashing your dreams.', confidence: 0.45 },
+          { index: 3, speaker: 'Captain', text: 'Hold the perimeter.', confidence: 0.99 }
+        ],
+        summary: 'Same-speaker lyric lines should not preserve each other as speech.'
+      },
+      musicVocalsData: {
+        vocal_segments: [
+          { index: 0, text: 'Come crawling faster', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 1, text: "Master of puppets I'll pull your strings", confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 2, text: 'Twisting your mind and smashing your dreams', confidence: 0.95, performer: 'Lead', delivery: 'sung' }
+        ],
+        summary: 'The vocal lane strongly supports a recognized song.',
+        recognizedSong: {
+          status: 'recognized',
+          confidence: 0.95,
+          multipleSongsDetected: false,
+          candidates: [
+            {
+              title: 'Master of Puppets',
+              artist: 'Metallica',
+              confidence: 0.95,
+              evidence: ['Adjacent lyric lines align with the vocal transcript.'],
+              matchedLyrics: ['Come crawling faster', "Master of puppets I'll pull your strings"]
+            }
+          ]
+        }
+      }
+    });
+
+    await reconcileScript.run({ outputDir, artifacts });
+
+    const reconciledDialogue = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.reconciled.json'), 'utf8'));
+    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
+
+    assert.deepEqual(
+      reconciledDialogue.dialogue_segments.map((segment) => segment.index),
+      [3]
+    );
+    assert.deepEqual(
+      ledger.decisions.removedDialogueSegments.map((segment) => segment.indexOrder),
+      [0, 1, 2]
+    );
+  });
+
+  await t.test('keeps a real spoken neighbor even when adjacent lyric evidence is present', async () => {
+    const artifacts = makeArtifacts({
+      dialogueData: {
+        dialogue_segments: [
+          { index: 0, speaker: 'Speaker 8', text: 'You can do this, stay with me now.', confidence: 0.45 },
+          { index: 1, speaker: 'Speaker 8', text: 'Twisting your mind and smashing your dreams.', confidence: 0.45 },
+          { index: 2, speaker: 'Captain', text: 'Move now, squad up.', confidence: 0.99 },
+          { index: 3, speaker: 'Narrator', text: 'Obey your master.', confidence: 0.43 }
+        ],
+        summary: 'A real spoken line sits beside lyric-contaminated dialogue.'
+      },
+      musicVocalsData: {
+        vocal_segments: [
+          { index: 1, text: 'Twisting your mind and smashing your dreams', confidence: 0.95, performer: 'Lead', delivery: 'sung' },
+          { index: 3, text: 'Obey your master', confidence: 0.95, performer: 'Lead', delivery: 'sung' }
+        ],
+        summary: 'The vocal lane identifies a known song.',
+        recognizedSong: {
+          status: 'recognized',
+          confidence: 0.95,
+          multipleSongsDetected: false,
+          candidates: [
+            {
+              title: 'Master of Puppets',
+              artist: 'Metallica',
+              confidence: 0.95,
+              evidence: ['One lyric line appears beside real spoken dialogue.'],
+              matchedLyrics: ['Twisting your mind', 'Obey your master']
+            }
+          ]
+        }
+      }
+    });
+
+    await reconcileScript.run({ outputDir, artifacts });
+
+    const reconciledDialogue = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.reconciled.json'), 'utf8'));
+    const ledger = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'famous-song-reconciliation.json'), 'utf8'));
+
+    assert.deepEqual(
+      reconciledDialogue.dialogue_segments.map((segment) => segment.index),
+      [0, 1, 2]
+    );
+    assert.equal(reconciledDialogue.dialogue_segments[0].text, 'You can do this, stay with me now.');
+    assert.deepEqual(
+      ledger.decisions.removedDialogueSegments.map((segment) => segment.indexOrder),
+      [3]
+    );
+  });
+
   await t.test('does not overcorrect when recognized-song evidence is weak or ambiguous', async () => {
     const artifacts = makeArtifacts({
       dialogueData: {
