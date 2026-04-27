@@ -81,7 +81,7 @@ This slice should determine whether that survivor is caused by sparse `matchedLy
 
 **Status:** ✅ Complete
 
-**Results:** Implemented a narrow local bridge-rule in `server/scripts/get-context/reconcile-famous-song-phase1.cjs` for a low-confidence same-speaker dialogue line that is directly sandwiched between already lyric-like contamination candidates. The rule stays bounded: it only applies when the middle line has no existing lyric evidence, is low-confidence, lacks a strong spoken-signal neighbor pattern, and both immediate same-speaker neighbors are already lyric-like via direct evidence or the existing direct-vocal promotion path. Added focused regression coverage in `test/scripts/reconcile-famous-song-phase1.test.js` for the exact `Your life burns faster` survivor pattern plus a guardrail case that proves a high-confidence same-speaker spoken line does not get bridged away. Validation run: `node --test test/scripts/reconcile-famous-song-phase1.test.js` ✅. Committed and pushed to `main` as `f9f700b` (`Add bounded lyric bridge for reconciliation`).
+**Results:** Implemented a narrow local bridge-rule in `server/scripts/get-context/reconcile-famous-song-phase1.cjs` for a low-confidence same-speaker dialogue line that is directly sandwiched between already lyric-like contamination candidates. The rule stays bounded: it only applies when the middle line has no existing lyric evidence, is low-confidence, lacks a strong spoken-signal neighbor pattern, and both immediate same-speaker neighbors are already lyric-like via direct evidence or the existing direct-vocal promotion path. Added focused regression coverage in `test/scripts/reconcile-famous-song-phase1.test.js` for the exact `Your life burns faster` survivor pattern plus a guardrail case that proves a high-confidence same-speaker spoken line does not get bridged away. Validation run: `node --test test/scripts/reconcile-famous-song-phase1.test.js` ✅. Committed and pushed to `main` as `f9f700b` (`Add bounded lyric bridge for reconciliation`), then updated this plan in follow-up commit `494fc15` (`Update anomaly plan with coder handoff`).
 
 ---
 
@@ -142,6 +142,7 @@ This slice should determine whether that survivor is caused by sparse `matchedLy
 
 **Commits:**
 - `f9f700b` - Add bounded lyric bridge for reconciliation
+- `494fc15` - Update anomaly plan with coder handoff
 
 **Lessons Learned:** The safest fix here was not a looser fuzzy matcher; it was a bounded structural rule keyed to local contamination shape. That preserves the earlier direct-vocal promotion behavior while cleaning up the exact survivor pattern the audit isolated.
 
