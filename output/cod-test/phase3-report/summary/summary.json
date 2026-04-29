@@ -1,28 +1,84 @@
 {
   "metadata": {
-    "generatedAt": "2026-04-27T20:42:28.437Z",
+    "generatedAt": "2026-04-29T13:10:57.308Z",
     "pipelineVersion": "1.0",
-    "videoDuration": 0,
-    "chunksAnalyzed": 0,
+    "videoDuration": 140.017,
+    "chunksAnalyzed": 28,
     "failedChunks": 0,
-    "totalSeconds": 0,
-    "totalTokens": 0
+    "totalSeconds": 140,
+    "totalTokens": 1299160
   },
   "keyMetrics": {
-    "averages": {},
-    "peakMoments": {},
-    "trends": {},
-    "frictionIndex": 0
+    "averages": {
+      "patience": 0.6392857142857146,
+      "boredom": 0.2749999999999996,
+      "excitement": 0.7392857142857143
+    },
+    "peakMoments": {
+      "patience": {
+        "highest": {
+          "timestamp": 70,
+          "score": 0.9
+        },
+        "lowest": {
+          "timestamp": 135,
+          "score": 0.3
+        }
+      },
+      "boredom": {
+        "highest": {
+          "timestamp": 135,
+          "score": 0.8
+        },
+        "lowest": {
+          "timestamp": 0,
+          "score": 0.2
+        }
+      },
+      "excitement": {
+        "highest": {
+          "timestamp": 55,
+          "score": 0.9
+        },
+        "lowest": {
+          "timestamp": 135,
+          "score": 0.2
+        }
+      }
+    },
+    "trends": {
+      "patience": {
+        "direction": "stable",
+        "change": -0.0071428571428571175,
+        "firstHalfAverage": 0.6428571428571427,
+        "secondHalfAverage": 0.6357142857142856
+      },
+      "boredom": {
+        "direction": "increasing",
+        "change": 0.09285714285714294,
+        "firstHalfAverage": 0.22857142857142834,
+        "secondHalfAverage": 0.3214285714285713
+      },
+      "excitement": {
+        "direction": "stable",
+        "change": -0.007142857142857562,
+        "firstHalfAverage": 0.7428571428571424,
+        "secondHalfAverage": 0.7357142857142849
+      }
+    },
+    "frictionIndex": 39.5281462585034
   },
   "recommendation": {
-    "text": "Insufficient data provided for analysis. Please provide chunk-level emotion analysis and computed metrics to generate actionable recommendations.",
-    "reasoning": "The input data contains empty fields for averages, trends, friction index, peak moments, and chunk summaries. Without this information, it is not possible to assess viewer retention or emotional impact. To proceed, data collection is required.",
-    "confidence": 0.1
+    "text": "为提升针对缺乏耐心青少年的留存率，必须彻底改造视频结尾的静态信息展示部分，将其无缝融入高能量的动作流中。同时，需优化中段的动作蒙太奇，通过引入视觉或叙事转折来打破同质化，防止兴奋度进入平台期。开场的高强度钩子非常成功，应予以保留。",
+    "reasoning": "数据表明，视频在0-125秒内成功维持了高兴奋度（平均约0.74）和低无聊感，这得益于持续的快节奏动作和视觉冲击。然而，关键问题出现在结尾：从130秒开始，当内容切换到静态的游戏标题和预购信息时，情绪出现断崖式下跌。在135秒（chunk 27），耐心降至最低点（0.3），无聊感飙升至最高点（0.8），兴奋度跌至谷底（0.2）。这直接导致了整体无聊感趋势的上升（变化+0.093）和高达39.5的摩擦指数。中段（如chunk 19， 95-100秒）也显示出因动作场景同质化而导致的耐心下降（得分4）和无聊感上升（得分5），表明纯粹的强度堆砌会引发疲劳。",
+    "confidence": 0.85
   },
   "reportPaths": {
     "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
     "recommendation": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
     "emotionalAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json",
+    "finalReport": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md",
+    "analysisData": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json",
     "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json"
   }
 }

@@ -1,19 +1,72 @@
 {
-  "generatedAt": "2026-04-27T20:42:15.651Z",
+  "generatedAt": "2026-04-29T13:10:29.923Z",
   "pipelineVersion": "1.0",
   "summary": {
-    "totalChunks": 0,
+    "totalChunks": 28,
     "failedChunks": 0,
-    "totalSeconds": 0,
+    "totalSeconds": 140,
     "videoDuration": 140.017
   },
   "implementationStatus": {
-    "state": "not_applicable",
-    "dataSource": "phase2.wholeVideoAnalysis",
-    "reason": "Chunk-derived timeline metrics were skipped because this run produced wholeVideoAnalysis without chunkAnalysis timeseries data."
+    "state": "computed",
+    "dataSource": "derived-from-phase2.chunkAnalysis"
   },
-  "averages": {},
-  "peakMoments": {},
-  "trends": {},
-  "frictionIndex": 0
+  "averages": {
+    "patience": 0.6392857142857146,
+    "boredom": 0.2749999999999996,
+    "excitement": 0.7392857142857143
+  },
+  "peakMoments": {
+    "patience": {
+      "highest": {
+        "timestamp": 70,
+        "score": 0.9
+      },
+      "lowest": {
+        "timestamp": 135,
+        "score": 0.3
+      }
+    },
+    "boredom": {
+      "highest": {
+        "timestamp": 135,
+        "score": 0.8
+      },
+      "lowest": {
+        "timestamp": 0,
+        "score": 0.2
+      }
+    },
+    "excitement": {
+      "highest": {
+        "timestamp": 55,
+        "score": 0.9
+      },
+      "lowest": {
+        "timestamp": 135,
+        "score": 0.2
+      }
+    }
+  },
+  "trends": {
+    "patience": {
+      "direction": "stable",
+      "change": -0.0071428571428571175,
+      "firstHalfAverage": 0.6428571428571427,
+      "secondHalfAverage": 0.6357142857142856
+    },
+    "boredom": {
+      "direction": "increasing",
+      "change": 0.09285714285714294,
+      "firstHalfAverage": 0.22857142857142834,
+      "secondHalfAverage": 0.3214285714285713
+    },
+    "excitement": {
+      "direction": "stable",
+      "change": -0.007142857142857562,
+      "firstHalfAverage": 0.7428571428571424,
+      "secondHalfAverage": 0.7357142857142849
+    }
+  },
+  "frictionIndex": 39.5281462585034
 }

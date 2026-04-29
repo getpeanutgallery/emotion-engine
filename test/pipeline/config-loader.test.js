@@ -126,17 +126,38 @@ test('Config Loader - loadConfig', async (t) => {
     assert.deepStrictEqual(config.process, ['server/scripts/process/whole-video-mimo.cjs']);
   });
 
-  await t.test('should keep cod-test benchmark manifest aligned to whole-video process lane', async () => {
+  await t.test('should keep cod-test benchmark manifest on the chunk contract', async () => {
     const repoRoot = path.resolve(__dirname, '..', '..');
     const configPath = path.join(repoRoot, 'configs', 'cod-test.yaml');
     const config = await loadConfig(configPath);
     const benchmarkPath = path.resolve(path.dirname(configPath), config.benchmark.path);
     const benchmark = JSON.parse(fs.readFileSync(benchmarkPath, 'utf8'));
     const artifactKeys = benchmark.artifacts.map((artifact) => artifact.artifactKey);
+    const chunkAnalysisArtifact = benchmark.artifacts.find((artifact) => artifact.artifactKey === 'chunkAnalysis');
 
-    assert(!artifactKeys.includes('chunkAnalysis'));
+    assert(artifactKeys.includes('chunkAnalysis'));
     assert(artifactKeys.includes('metricsData'));
     assert(artifactKeys.includes('emotionalAnalysisData'));
+    assert.strictEqual(chunkAnalysisArtifact?.phase, 'phase2-process');
+    assert.strictEqual(chunkAnalysisArtifact?.script, 'video-chunks');
+    assert.strictEqual(chunkAnalysisArtifact?.output?.path, 'phase2-process/chunk-analysis.json');
+  });
+
+  await t.test('should load the dedicated cod-test chunk benchmark config', async () => {
+    const repoRoot = path.resolve(__dirname, '..', '..');
+    const configPath = path.join(repoRoot, 'configs', 'cod-test-phase2-chunk-benchmark.yaml');
+    const config = await loadConfig(configPath);
+
+    assert.deepStrictEqual(config.gather_context, []);
+    assert.deepStrictEqual(config.process, ['server/scripts/process/video-chunks.cjs']);
+    assert.deepStrictEqual(config.report, [
+      'server/scripts/report/metrics.cjs',
+      'server/scripts/report/recommendation.cjs',
+      'server/scripts/report/emotional-analysis.cjs',
+      'server/scripts/report/summary.cjs',
+      'server/scripts/report/final-report.cjs'
+    ]);
+    assert.strictEqual(config.asset?.outputDir, 'output/cod-test');
   });
   
   await t.test('should load JSON config file', async () => {

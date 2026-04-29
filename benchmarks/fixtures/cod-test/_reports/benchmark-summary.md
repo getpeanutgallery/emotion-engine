@@ -3,16 +3,16 @@
 - Status: **error**
 - Benchmark: `benchmarks/fixtures/cod-test/benchmark.json`
 - Fixture: `benchmarks/fixtures/cod-test/fixture.json`
-- Config: `COD Test Pipeline`
+- Config: `COD Test Phase 2 Chunk Benchmark Slice`
 - Output Dir: `output/cod-test`
 
 ## Totals
 
-- Artifacts: 0/7 passed, 3 failed, 4 errored
-- Accuracy: 362/699 scoreable fields passed (51.8%)
-- Coverage: 699/1203 truth fields scoreable (58.1%)
-- Skipped truth fields: 149
-- Ignored differences surfaced outside score: 64
+- Artifacts: 0/8 passed, 5 failed, 3 errored
+- Accuracy: 2093/3265 scoreable fields passed (64.1%)
+- Coverage: 3265/3477 truth fields scoreable (93.9%)
+- Skipped truth fields: 179
+- Ignored differences surfaced outside score: 94
 
 ## Artifacts
 
@@ -40,26 +40,32 @@
   - recognized_song_identity_pct=100.0%
   - recognized_song_support_pct=25.0%
   - splits=0, merges=1, missingTruthWindows=1, extraOutputWindows=3
-- **recommendationData** — Phase 3 recommendation; error; accuracy=13.3%, coverage=41.7%, ignoredDiffs=4
+- **chunkAnalysis** — Phase 2 chunk analysis; fail; accuracy=66.5%, coverage=94.9%, ignoredDiffs=29
+  - chunk_timeline_pct=100.0%
+  - chunk_summary_pct=0.0%
+  - chunk_emotion_scores_pct=31.0%
+  - chunk_dominant_emotion_pct=71.4%
+  - chunk_persona_contract_pct=100.0%
+- **recommendationData** — Phase 3 recommendation; error; accuracy=15.8%, coverage=52.8%, ignoredDiffs=4
   - recommendation_text_pct=0.0%
   - recommendation_reasoning_pct=0.0%
   - recommendation_key_findings_pct=0.0%
   - recommendation_suggestions_pct=0.0%
-  - recommendation_confidence_pct=0.0%
-- **metricsData** — Phase 3 metrics; error; accuracy=37.5%, coverage=42.1%, ignoredDiffs=1
-  - metrics_summary_pct=50.0%
-  - metrics_implementation_status_pct=0.0%
-  - metrics_averages_pct=0.0%
-  - metrics_peak_moments_pct=0.0%
-  - metrics_trends_pct=0.0%
+  - recommendation_confidence_pct=100.0%
+- **metricsData** — Phase 3 metrics; fail; accuracy=65.7%, coverage=97.2%, ignoredDiffs=1
+  - metrics_summary_pct=100.0%
+  - metrics_implementation_status_pct=100.0%
+  - metrics_averages_pct=66.7%
+  - metrics_peak_moments_pct=41.7%
+  - metrics_trends_pct=75.0%
   - friction_index_pct=0.0%
-- **emotionalAnalysisData** — Phase 3 emotional analysis; error; accuracy=16.7%, coverage=3.5%, ignoredDiffs=1
-  - emotional_summary_pct=16.7%
-  - chunk_emotions_pct=0.0%
-  - emotional_arc_pct=0.0%
+- **emotionalAnalysisData** — Phase 3 emotional analysis; error; accuracy=67.4%, coverage=98.9%, ignoredDiffs=2
+  - emotional_summary_pct=83.3%
+  - chunk_emotions_pct=76.6%
+  - emotional_arc_pct=60.8%
   - scroll_risk_timeline_pct=0.0%
   - critical_moments_pct=0.0%
-  - emotional_implementation_status_pct=0.0%
+  - emotional_implementation_status_pct=100.0%
 
-0/7 artifacts passed. 362/699 scoreable fields passed. Truth coverage was 699/1203 fields.
+0/8 artifacts passed. 2093/3265 scoreable fields passed. Truth coverage was 3265/3477 fields.
 
