@@ -148,10 +148,11 @@ The implementation should identify all AI-backed prompt surfaces, land the Engli
 **Reference Check:** `REF-01`/`REF-02` satisfied by prompt/recovery coverage across every audited surface. `REF-03`/`REF-04` addressed by the required targeted rerun attempt plus the successful four-chunk English validation slice, which showed raw captures and normalized Phase 2/3 artifacts in English after rollout.
 
 **Commits:**
-- Pending
+- `97cc31b` — Roll out English-only AI output contract (`emotion-engine`)
+- `11e70ea` — Enforce English-only chunk outputs (`tools`)
 
 **Lessons Learned:** The language-control slice is narrow and landed cleanly, but the strongest runtime validation path is currently limited by two separate upstream/runtime issues outside this rollout: Phase 1 dialogue can still fail with `OpenRouter: No content in response`, and the canonical chunk benchmark can still die on a validator tool-call-limit error at chunk 5 even after early English-only chunks succeed.
 
 ---
 
-*Completed on Pending*
+*Completed on 2026-04-29*
