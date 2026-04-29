@@ -35,6 +35,7 @@ const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 const { parseJsonObjectInput } = require('../../lib/json-validator.cjs');
 const { parseRecommendationResponse } = require('../../lib/recommendation-validator.cjs');
 const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
+const { buildEnglishOnlyOutputRuleBlock } = require('../../lib/english-only-contract.cjs');
 const {
   TOOL_NAME,
   buildRecommendationValidatorToolContract,
@@ -158,6 +159,7 @@ function buildPrompt({ chunks, metricsData, config, recoveryRuntime = null }) {
     '}',
     '',
     'Rules:',
+    buildEnglishOnlyOutputRuleBlock(),
     '- Keep it specific (talk about the start/hook, pacing, emotional beats).',
     '- If data is insufficient, say so and provide next steps.',
     '- Do not invent timestamps or quotes not present in the input.',

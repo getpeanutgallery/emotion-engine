@@ -32,6 +32,7 @@ const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 const { preflightAudio, planTimeChunks } = require('../../lib/audio-preflight.cjs');
 const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
+const { buildEnglishOnlyOutputRuleBlock, pushEnglishOnlyError } = require('../../lib/english-only-contract.cjs');
 const { extractAudioChunk } = require('../../lib/audio-chunk-extractor.cjs');
 const {
   buildAudioExtractArgs,
@@ -1429,6 +1430,24 @@ function validateWholeAssetMusicAnalysisObject(input, durationSeconds = 0) {
     errors.push({ path: '$.qualityNotes', code: 'required_array', message: 'qualityNotes must be an array when provided.' });
   }
 
+  pushEnglishOnlyError(errors, '$.summary', 'summary', summary);
+  if (recognizedSong) {
+    pushEnglishOnlyError(errors, '$.recognizedSong.primaryEvidence', 'recognizedSong primaryEvidence', recognizedSong.primaryEvidence);
+    pushEnglishOnlyError(errors, '$.recognizedSong.ambiguity', 'recognizedSong ambiguity', recognizedSong.ambiguity);
+    for (const candidate of Array.isArray(recognizedSong.candidates) ? recognizedSong.candidates : []) {
+      pushEnglishOnlyError(errors, '$.recognizedSong.candidates[].ambiguity', 'recognized song candidate ambiguity', candidate?.ambiguity);
+      for (const evidenceEntry of Array.isArray(candidate?.evidence) ? candidate.evidence : []) {
+        pushEnglishOnlyError(errors, '$.recognizedSong.candidates[].evidence[]', 'recognized song candidate evidence', evidenceEntry);
+      }
+    }
+  }
+  for (const note of recognitionNotes) {
+    pushEnglishOnlyError(errors, '$.recognitionNotes[]', 'recognitionNotes entry', note);
+  }
+  for (const note of qualityNotes) {
+    pushEnglishOnlyError(errors, '$.qualityNotes[]', 'qualityNotes entry', note);
+  }
+
   return {
     ok: errors.length === 0,
     value: errors.length === 0 ? {
@@ -1569,6 +1588,7 @@ Return JSON only in this format:
 }
 
 Rules:
+${buildEnglishOnlyOutputRuleBlock()}
 - Preserve vocal segment chronology via array order and index values. Array order/index is the truthful chronology signal for this lane.
 - If timing is uncertain but the lyric-bearing event is clearly present, still emit the segment in the correct order/index position.
 - Aim for full-trailer lyric coverage, not just representative examples.
@@ -1662,6 +1682,7 @@ Return JSON only in this format:
 }
 
 Rules:
+${buildEnglishOnlyOutputRuleBlock()}
 - Preserve vocal segment chronology via array order and index values. Array order/index is the truthful chronology signal for this chunk output.
 - If timing is uncertain but a lyric-bearing moment is clearly present, still emit the segment in the correct order/index position.
 - Keep spoken narration, spoken dialogue over score, and non-lexical vocalizations out of vocal_segments.

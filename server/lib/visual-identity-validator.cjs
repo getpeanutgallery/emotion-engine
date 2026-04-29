@@ -1,4 +1,5 @@
 const { parseAndValidateJsonObject } = require('./structured-output.cjs');
+const { pushEnglishOnlyError } = require('./english-only-contract.cjs');
 
 const TOOL_NAME = 'validate_visual_identity_json';
 const ANALYSIS_MODES = new Set(['whole_asset', 'hybrid', 'chunked']);
@@ -228,6 +229,33 @@ function validateVisualIdentityObject(input) {
     visualBeats,
     editorialSignals: validateEditorialSignals(input.editorialSignals, errors)
   };
+
+  pushEnglishOnlyError(errors, '$.summary', 'summary', normalized.summary);
+  for (const entry of timeline) {
+    pushEnglishOnlyError(errors, '$.timeline[].kind', 'timeline kind', entry?.kind);
+    pushEnglishOnlyError(errors, '$.timeline[].visualSummary', 'timeline visualSummary', entry?.visualSummary);
+    for (const value of entry?.entities || []) pushEnglishOnlyError(errors, '$.timeline[].entities[]', 'timeline entities entry', value);
+    for (const value of entry?.hooks || []) pushEnglishOnlyError(errors, '$.timeline[].hooks[]', 'timeline hooks entry', value);
+    for (const value of entry?.risks || []) pushEnglishOnlyError(errors, '$.timeline[].risks[]', 'timeline risks entry', value);
+    for (const value of entry?.continuity?.introduces || []) pushEnglishOnlyError(errors, '$.timeline[].continuity.introduces[]', 'continuity introduces entry', value);
+    for (const value of entry?.continuity?.paysOff || []) pushEnglishOnlyError(errors, '$.timeline[].continuity.paysOff[]', 'continuity paysOff entry', value);
+    for (const value of entry?.continuity?.callbacks || []) pushEnglishOnlyError(errors, '$.timeline[].continuity.callbacks[]', 'continuity callbacks entry', value);
+  }
+  for (const key of ['characters', 'locations', 'objects', 'motifs']) {
+    for (const value of normalized.identityRegistry?.[key] || []) {
+      pushEnglishOnlyError(errors, `$.identityRegistry.${key}[]`, `identityRegistry.${key} entry`, value);
+    }
+  }
+  for (const [beatKey, beats] of Object.entries(normalized.visualBeats || {})) {
+    for (const beat of beats || []) {
+      pushEnglishOnlyError(errors, `$.visualBeats.${beatKey}[].label`, `${beatKey} label`, beat?.label);
+      pushEnglishOnlyError(errors, `$.visualBeats.${beatKey}[].summary`, `${beatKey} summary`, beat?.summary);
+    }
+  }
+  pushEnglishOnlyError(errors, '$.editorialSignals.openingRead', 'editorialSignals.openingRead', normalized.editorialSignals?.openingRead);
+  pushEnglishOnlyError(errors, '$.editorialSignals.midpointEscalation', 'editorialSignals.midpointEscalation', normalized.editorialSignals?.midpointEscalation);
+  pushEnglishOnlyError(errors, '$.editorialSignals.endingMomentum', 'editorialSignals.endingMomentum', normalized.editorialSignals?.endingMomentum);
+  pushEnglishOnlyError(errors, '$.editorialSignals.continuityStrength', 'editorialSignals.continuityStrength', normalized.editorialSignals?.continuityStrength);
 
   return {
     ok: errors.length === 0,

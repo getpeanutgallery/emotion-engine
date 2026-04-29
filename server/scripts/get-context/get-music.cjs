@@ -32,6 +32,7 @@ const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 const { preflightAudio, planTimeChunks } = require('../../lib/audio-preflight.cjs');
 const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
+const { buildEnglishOnlyOutputRuleBlock, pushEnglishOnlyError } = require('../../lib/english-only-contract.cjs');
 const { extractAudioChunk } = require('../../lib/audio-chunk-extractor.cjs');
 const {
   buildAudioExtractArgs,
@@ -1304,6 +1305,36 @@ function validateWholeAssetMusicAnalysisObject(input, durationSeconds = 0) {
     errors.push({ path: '$.qualityNotes', code: 'required_array', message: 'qualityNotes must be an array when provided.' });
   }
 
+  pushEnglishOnlyError(errors, '$.summary', 'summary', summary);
+  for (const segment of normalizedSegments) {
+    pushEnglishOnlyError(errors, '$.segments[].type', 'segment type', segment?.type);
+    pushEnglishOnlyError(errors, '$.segments[].description', 'segment description', segment?.description);
+    pushEnglishOnlyError(errors, '$.segments[].mood', 'segment mood', segment?.mood);
+  }
+  if (globalArc) {
+    pushEnglishOnlyError(errors, '$.globalArc.dominantMood', 'globalArc dominantMood', globalArc.dominantMood);
+    pushEnglishOnlyError(errors, '$.globalArc.energyCurve', 'globalArc energyCurve', globalArc.energyCurve);
+    for (const transition of globalArc.notableTransitions || []) {
+      pushEnglishOnlyError(errors, '$.globalArc.notableTransitions[].label', 'globalArc transition label', transition?.label);
+    }
+  }
+  if (recognizedSong) {
+    pushEnglishOnlyError(errors, '$.recognizedSong.primaryEvidence', 'recognizedSong primaryEvidence', recognizedSong.primaryEvidence);
+    pushEnglishOnlyError(errors, '$.recognizedSong.ambiguity', 'recognizedSong ambiguity', recognizedSong.ambiguity);
+    for (const candidate of Array.isArray(recognizedSong.candidates) ? recognizedSong.candidates : []) {
+      pushEnglishOnlyError(errors, '$.recognizedSong.candidates[].ambiguity', 'recognized song candidate ambiguity', candidate?.ambiguity);
+      for (const evidenceEntry of Array.isArray(candidate?.evidence) ? candidate.evidence : []) {
+        pushEnglishOnlyError(errors, '$.recognizedSong.candidates[].evidence[]', 'recognized song candidate evidence', evidenceEntry);
+      }
+    }
+  }
+  for (const note of recognitionNotes) {
+    pushEnglishOnlyError(errors, '$.recognitionNotes[]', 'recognitionNotes entry', note);
+  }
+  for (const note of qualityNotes) {
+    pushEnglishOnlyError(errors, '$.qualityNotes[]', 'qualityNotes entry', note);
+  }
+
   return {
     ok: errors.length === 0,
     value: errors.length === 0 ? {
@@ -1380,6 +1411,7 @@ Return JSON only in this format:
 }
 
 Rules:
+${buildEnglishOnlyOutputRuleBlock()}
 - Use the original full timeline in seconds for every segment and transition.
 - Provide 1-12 segments covering the major audio changes across the full asset.
 - Keep start/end in ascending order and within 0.0s to ${durationSeconds.toFixed(1)}s.
@@ -1492,6 +1524,7 @@ Return JSON only in this format:
 Allowed values for analysis.type: music | speech | silence | ambient | sfx.
 Allowed values for analysis.mood: upbeat | calm | tense | sad | energetic | neutral.
 Additional rules:
+${buildEnglishOnlyOutputRuleBlock()}
 - Keep this lane coarse and non-lexical; do not transcribe spoken lines or sung lyrics.
 - For mixed chunks, describe the score bed even when spoken dialogue is present; do not let analysis.type = speech erase meaningful underlying music.
 - Differentiate spoken-over-score from music-led vocals in analysis.description or rollingSummary, but leave exact words and transcript boundaries to the dialogue and music-vocals lanes.

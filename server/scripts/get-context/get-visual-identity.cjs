@@ -18,6 +18,7 @@ const { shouldCaptureRaw, getRawPhaseDir, sanitizeRawCaptureValue, writeRawJson 
 const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
+const { buildEnglishOnlyOutputRuleBlock } = require('../../lib/english-only-contract.cjs');
 const {
   executeWithTargets,
   createRetryableError,
@@ -269,6 +270,7 @@ function buildVisualIdentityPrompt({
   prompt += '- Keep motif labels concise and reusable so downstream reporting can cite them.\n\n';
 
   prompt += '# OUTPUT REQUIREMENTS\n\n';
+  prompt += `${buildEnglishOnlyOutputRuleBlock()}\n\n`;
   prompt += 'Return JSON only. No markdown fences, prose, or wrapper text. The runtime will add provenance and input metadata, so return ONLY this analysis-core JSON object:\n\n';
   prompt += '{\n';
   prompt += '  "analysisMode": "whole_asset",\n';

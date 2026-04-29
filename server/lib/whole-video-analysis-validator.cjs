@@ -1,4 +1,5 @@
 const { parseAndValidateJsonObject } = require('./structured-output.cjs');
+const { pushEnglishOnlyError } = require('./english-only-contract.cjs');
 
 const TOOL_NAME = 'validate_whole_video_analysis_json';
 const DEFAULT_PRIMARY_LENSES = Object.freeze(['patience', 'boredom', 'excitement']);
@@ -205,6 +206,23 @@ function validateWholeVideoAnalysisObject(input, { lenses = DEFAULT_PRIMARY_LENS
     biggestRisks: validateStringArray(input.biggestRisks, '$.biggestRisks', 'biggestRisks', errors, { minItems: 1 }),
     recommendationSeeds: validateStringArray(input.recommendationSeeds, '$.recommendationSeeds', 'recommendationSeeds', errors, { minItems: 1 })
   };
+
+  for (const [lens, entry] of Object.entries(normalized.wholeVideoScores || {})) {
+    pushEnglishOnlyError(errors, `$.wholeVideoScores.${lens}.reasoning`, `${lens} reasoning`, entry?.reasoning);
+  }
+  for (const [category, entry] of Object.entries(normalized.wholeVideoCategories || {})) {
+    pushEnglishOnlyError(errors, `$.wholeVideoCategories.${category}.reasoning`, `${category} reasoning`, entry?.reasoning);
+  }
+  pushEnglishOnlyError(errors, '$.overallSummary', 'overallSummary', normalized.overallSummary);
+  pushEnglishOnlyError(errors, '$.retentionVerdict.reasoning', 'retention verdict reasoning', normalized.retentionVerdict?.reasoning);
+  for (const entry of normalized.evidenceMoments || []) {
+    pushEnglishOnlyError(errors, '$.evidenceMoments[].driver', 'evidence driver', entry?.driver);
+    pushEnglishOnlyError(errors, '$.evidenceMoments[].category', 'evidence category', entry?.category);
+    pushEnglishOnlyError(errors, '$.evidenceMoments[].summary', 'evidence summary', entry?.summary);
+  }
+  for (const value of normalized.strongestMoments || []) pushEnglishOnlyError(errors, '$.strongestMoments[]', 'strongestMoments entry', value);
+  for (const value of normalized.biggestRisks || []) pushEnglishOnlyError(errors, '$.biggestRisks[]', 'biggestRisks entry', value);
+  for (const value of normalized.recommendationSeeds || []) pushEnglishOnlyError(errors, '$.recommendationSeeds[]', 'recommendationSeeds entry', value);
 
   return {
     ok: errors.length === 0,

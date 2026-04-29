@@ -1,4 +1,5 @@
 const { parseJsonObjectInput } = require('./json-validator.cjs');
+const { pushEnglishOnlyError } = require('./english-only-contract.cjs');
 
 function compactString(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -91,6 +92,15 @@ function validateRecommendationObject(input) {
 
   const keyFindings = validateStringArray(input.keyFindings, '$.keyFindings', 'keyFindings', errors);
   const suggestions = validateStringArray(input.suggestions, '$.suggestions', 'suggestions', errors);
+
+  pushEnglishOnlyError(errors, '$.text', 'text', text);
+  pushEnglishOnlyError(errors, '$.reasoning', 'reasoning', reasoning);
+  for (const finding of keyFindings) {
+    pushEnglishOnlyError(errors, '$.keyFindings[]', 'keyFindings entry', finding);
+  }
+  for (const suggestion of suggestions) {
+    pushEnglishOnlyError(errors, '$.suggestions[]', 'suggestions entry', suggestion);
+  }
 
   const summary = summarizeValidationErrors(errors);
 

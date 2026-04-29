@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 
+const { buildEnglishOnlyOutputRuleBlock } = require('./english-only-contract.cjs');
+
 function normalizeRecoveryTextList(value) {
   if (!Array.isArray(value)) return [];
   return value
@@ -41,6 +43,7 @@ function buildRecoveryPromptAddendum(recoveryRuntime, { heading = 'AI RECOVERY R
     `${heading}:`,
     '- This is a bounded same-script recovery re-entry attempt.',
     '- Preserve the original task and schema; only repair the failing output behavior.',
+    buildEnglishOnlyOutputRuleBlock(),
     '- Return JSON only with the exact required schema.',
     '- Do not change unrelated semantics or invent new upstream facts.'
   ];
@@ -98,6 +101,7 @@ function buildLocalValidationRepairPromptAddendum({
   const lines = [
     '',
     'LOCAL VALIDATION REPAIR:',
+    buildEnglishOnlyOutputRuleBlock(),
     '- Return JSON only with the same required schema.',
     '- Keep the same task and domain assumptions; fix only the invalid output behavior.',
     '- Do not wrap the JSON in a tool call envelope, markdown fence, or explanation.',

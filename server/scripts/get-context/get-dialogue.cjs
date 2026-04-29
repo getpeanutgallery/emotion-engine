@@ -33,6 +33,7 @@ const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 const { preflightAudio, planTimeChunks } = require('../../lib/audio-preflight.cjs');
 const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
+const { buildEnglishOnlyOutputRuleBlock } = require('../../lib/english-only-contract.cjs');
 const { extractAudioChunk } = require('../../lib/audio-chunk-extractor.cjs');
 const {
   buildAudioExtractArgs,
@@ -2271,6 +2272,7 @@ Return JSON only with this shape:
 }
 
 Rules:
+${buildEnglishOnlyOutputRuleBlock()}
 - Return JSON only. No markdown. No explanation.
 - Preserve dialogue segment chronology via array order/index values.
 - start/end timestamps are optional and should be included only when directly supportable from the audio.
@@ -2535,6 +2537,7 @@ Return JSON only with this shape:
 }
 
 Rules:
+${buildEnglishOnlyOutputRuleBlock()}
 - Return JSON only. No markdown. No explanation.
 - Preserve dialogue segment chronology via array order/index values.
 - start/end timestamps are optional and should be chunk-local only when directly supportable from the audio.
@@ -2614,6 +2617,7 @@ You are given a mechanically-stitched transcript with chunk boundaries. Your job
 - provide an audit trail of the main merge operations and assumptions
 - include debugging references/payloads so downstream tooling can trace back
 
+${buildEnglishOnlyOutputRuleBlock()}
 Return JSON only with this structure:
 
 {

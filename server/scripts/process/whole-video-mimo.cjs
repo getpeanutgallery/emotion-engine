@@ -17,6 +17,7 @@ const { shouldCaptureRaw, getRawPhaseDir, sanitizeRawCaptureValue, writeRawJson 
 const { getEventsLogger } = require('../../lib/events-timeline.cjs');
 const { storePromptPayload } = require('../../lib/prompt-store.cjs');
 const { getRecoveryRuntime, buildRecoveryPromptAddendum } = require('../../lib/ai-recovery-runtime.cjs');
+const { buildEnglishOnlyOutputRuleBlock } = require('../../lib/english-only-contract.cjs');
 const {
   executeWithTargets,
   createRetryableError,
@@ -459,6 +460,7 @@ function buildWholeVideoPrompt({
   prompt += '- Keep the numeric output at the whole-video level only.\n\n';
 
   prompt += '# OUTPUT REQUIREMENTS\n\n';
+  prompt += `${buildEnglishOnlyOutputRuleBlock()}\n\n`;
   prompt += 'Return JSON only. No markdown fences, prose, or wrapper text. The runtime will add provider/input metadata, so return ONLY this analysis-core JSON object:\n\n';
   prompt += '{\n';
   prompt += '  "wholeVideoScores": {\n';

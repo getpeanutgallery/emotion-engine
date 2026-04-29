@@ -2,6 +2,7 @@ const {
   parseJsonObjectInput,
   parseMinuteSecondTimestampToSeconds
 } = require('./json-validator.cjs');
+const { pushEnglishOnlyError } = require('./english-only-contract.cjs');
 
 function compactString(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -665,6 +666,23 @@ function validateDialogueTranscriptionObject(input, { requireHandoff = false } =
     pushError(errors, '$.handoffContext', 'required_string', 'handoffContext must be a non-empty string.');
   }
 
+  pushEnglishOnlyError(errors, '$.summary', 'summary', summary);
+  pushEnglishOnlyError(errors, '$.handoffContext', 'handoffContext', handoffContext);
+  for (const segment of speaker_profiles) {
+    pushEnglishOnlyError(errors, '$.speaker_profiles.label', 'speaker profile label', segment?.label);
+    for (const descriptor of Array.isArray(segment?.grounded?.acoustic_descriptors) ? segment.grounded.acoustic_descriptors : []) {
+      pushEnglishOnlyError(errors, '$.speaker_profiles.grounded.acoustic_descriptors[].label', 'acoustic descriptor label', descriptor?.label);
+    }
+    for (const trait of Array.isArray(segment?.inferred_traits?.traits) ? segment.inferred_traits.traits : []) {
+      pushEnglishOnlyError(errors, '$.speaker_profiles.inferred_traits.traits[].trait', 'inferred trait name', trait?.trait);
+      pushEnglishOnlyError(errors, '$.speaker_profiles.inferred_traits.traits[].value', 'inferred trait value', trait?.value);
+      pushEnglishOnlyError(errors, '$.speaker_profiles.inferred_traits.traits[].note', 'inferred trait note', trait?.note);
+    }
+  }
+  for (const note of Array.isArray(qualityNotes) ? qualityNotes : []) {
+    pushEnglishOnlyError(errors, '$.qualityNotes[]', 'qualityNotes entry', note);
+  }
+
   if (errors.length > 0) {
     return {
       ok: false,
@@ -741,6 +759,12 @@ function validateDialogueStitchObject(input) {
         notes: typeof input.debug.notes === 'string' ? input.debug.notes : null,
         refs: Array.isArray(input.debug.refs) ? input.debug.refs : []
       };
+
+  for (const entry of auditTrail) {
+    pushEnglishOnlyError(errors, '$.auditTrail[].op', 'auditTrail op', entry?.op);
+    pushEnglishOnlyError(errors, '$.auditTrail[].detail', 'auditTrail detail', entry?.detail);
+  }
+  pushEnglishOnlyError(errors, '$.debug.notes', 'debug notes', debug?.notes);
 
   return {
     ok: errors.length === 0,
@@ -969,6 +993,23 @@ function validateMusicAnalysisObject(input) {
   const recognizedSong = validateRecognizedSong(input.recognizedSong, errors, '$.recognizedSong');
   const recognitionNotes = validateOptionalRecognitionNotes(input.recognitionNotes, errors);
 
+  pushEnglishOnlyError(errors, '$.analysis.description', 'analysis.description', description);
+  pushEnglishOnlyError(errors, '$.analysis.mood', 'analysis.mood', mood);
+  pushEnglishOnlyError(errors, '$.rollingSummary', 'rollingSummary', rollingSummary);
+  if (recognizedSong) {
+    pushEnglishOnlyError(errors, '$.recognizedSong.primaryEvidence', 'recognizedSong primaryEvidence', recognizedSong.primaryEvidence);
+    pushEnglishOnlyError(errors, '$.recognizedSong.ambiguity', 'recognizedSong ambiguity', recognizedSong.ambiguity);
+    for (const candidate of Array.isArray(recognizedSong.candidates) ? recognizedSong.candidates : []) {
+      pushEnglishOnlyError(errors, '$.recognizedSong.candidates[].ambiguity', 'recognized song candidate ambiguity', candidate?.ambiguity);
+      for (const evidenceEntry of Array.isArray(candidate?.evidence) ? candidate.evidence : []) {
+        pushEnglishOnlyError(errors, '$.recognizedSong.candidates[].evidence[]', 'recognized song candidate evidence', evidenceEntry);
+      }
+    }
+  }
+  for (const note of recognitionNotes) {
+    pushEnglishOnlyError(errors, '$.recognitionNotes[]', 'recognitionNotes entry', note);
+  }
+
   return {
     ok: errors.length === 0,
     value: errors.length === 0 ? {
@@ -1026,6 +1067,25 @@ function validateMusicVocalsAnalysisObject(input) {
     pushError(errors, '$.qualityNotes', 'invalid_type', 'qualityNotes must be an array when provided.');
   }
 
+  pushEnglishOnlyError(errors, '$.rollingSummary', 'rollingSummary', rollingSummary);
+  pushEnglishOnlyError(errors, '$.vocalSummary', 'vocalSummary', vocalSummary);
+  if (recognizedSong) {
+    pushEnglishOnlyError(errors, '$.recognizedSong.primaryEvidence', 'recognizedSong primaryEvidence', recognizedSong.primaryEvidence);
+    pushEnglishOnlyError(errors, '$.recognizedSong.ambiguity', 'recognizedSong ambiguity', recognizedSong.ambiguity);
+    for (const candidate of Array.isArray(recognizedSong.candidates) ? recognizedSong.candidates : []) {
+      pushEnglishOnlyError(errors, '$.recognizedSong.candidates[].ambiguity', 'recognized song candidate ambiguity', candidate?.ambiguity);
+      for (const evidenceEntry of Array.isArray(candidate?.evidence) ? candidate.evidence : []) {
+        pushEnglishOnlyError(errors, '$.recognizedSong.candidates[].evidence[]', 'recognized song candidate evidence', evidenceEntry);
+      }
+    }
+  }
+  for (const note of recognitionNotes) {
+    pushEnglishOnlyError(errors, '$.recognitionNotes[]', 'recognitionNotes entry', note);
+  }
+  for (const note of qualityNotes) {
+    pushEnglishOnlyError(errors, '$.qualityNotes[]', 'qualityNotes entry', note);
+  }
+
   return {
     ok: errors.length === 0,
     value: errors.length === 0 ? {
@@ -1080,7 +1140,10 @@ function validateEmotionStateObject(input, lenses = []) {
       score: validateFiniteNumber(value.score, `${lensPath}.score`, `${lens} score`, errors, { min: 1, max: 10 }),
       reasoning: validateNonEmptyString(value.reasoning, `${lensPath}.reasoning`, `${lens} reasoning`, errors)
     };
+    pushEnglishOnlyError(errors, `${lensPath}.reasoning`, `${lens} reasoning`, emotions[lens].reasoning);
   }
+
+  pushEnglishOnlyError(errors, '$.summary', 'summary', summary);
 
   return {
     ok: errors.length === 0,
