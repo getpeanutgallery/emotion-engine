@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-29T13:10:29.923Z",
+  "generatedAt": "2026-04-29T22:29:00.629Z",
   "pipelineVersion": "1.0",
   "summary": {
     "totalChunks": 28,
@@ -12,25 +12,25 @@
     "dataSource": "derived-from-phase2.chunkAnalysis"
   },
   "averages": {
-    "patience": 0.6392857142857146,
-    "boredom": 0.2749999999999996,
-    "excitement": 0.7392857142857143
+    "patience": 0.7499999999999987,
+    "boredom": 0.24999999999999994,
+    "excitement": 0.8250000000000012
   },
   "peakMoments": {
     "patience": {
       "highest": {
-        "timestamp": 70,
+        "timestamp": 40,
         "score": 0.9
       },
       "lowest": {
-        "timestamp": 135,
-        "score": 0.3
+        "timestamp": 85,
+        "score": 0.6
       }
     },
     "boredom": {
       "highest": {
-        "timestamp": 135,
-        "score": 0.8
+        "timestamp": 105,
+        "score": 1
       },
       "lowest": {
         "timestamp": 0,
@@ -39,34 +39,34 @@
     },
     "excitement": {
       "highest": {
-        "timestamp": 55,
-        "score": 0.9
+        "timestamp": 40,
+        "score": 1
       },
       "lowest": {
-        "timestamp": 135,
-        "score": 0.2
+        "timestamp": 95,
+        "score": 0.4
       }
     }
   },
   "trends": {
     "patience": {
       "direction": "stable",
-      "change": -0.0071428571428571175,
-      "firstHalfAverage": 0.6428571428571427,
-      "secondHalfAverage": 0.6357142857142856
+      "change": -0.028571428571428248,
+      "firstHalfAverage": 0.7642857142857139,
+      "secondHalfAverage": 0.7357142857142857
     },
     "boredom": {
       "direction": "increasing",
-      "change": 0.09285714285714294,
-      "firstHalfAverage": 0.22857142857142834,
-      "secondHalfAverage": 0.3214285714285713
+      "change": 0.10000000000000009,
+      "firstHalfAverage": 0.19999999999999973,
+      "secondHalfAverage": 0.2999999999999998
     },
     "excitement": {
       "direction": "stable",
-      "change": -0.007142857142857562,
-      "firstHalfAverage": 0.7428571428571424,
-      "secondHalfAverage": 0.7357142857142849
+      "change": 0.007142857142856673,
+      "firstHalfAverage": 0.8214285714285711,
+      "secondHalfAverage": 0.8285714285714277
     }
   },
-  "frictionIndex": 39.5281462585034
+  "frictionIndex": 77.19940476190476
 }

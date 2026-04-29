@@ -9,10 +9,10 @@
 ## Totals
 
 - Artifacts: 0/8 passed, 5 failed, 3 errored
-- Accuracy: 2093/3265 scoreable fields passed (64.1%)
-- Coverage: 3265/3477 truth fields scoreable (93.9%)
-- Skipped truth fields: 179
-- Ignored differences surfaced outside score: 94
+- Accuracy: 2072/3282 scoreable fields passed (63.1%)
+- Coverage: 3282/3489 truth fields scoreable (94.1%)
+- Skipped truth fields: 181
+- Ignored differences surfaced outside score: 96
 
 ## Artifacts
 
@@ -40,32 +40,32 @@
   - recognized_song_identity_pct=100.0%
   - recognized_song_support_pct=25.0%
   - splits=0, merges=1, missingTruthWindows=1, extraOutputWindows=3
-- **chunkAnalysis** — Phase 2 chunk analysis; fail; accuracy=66.5%, coverage=94.9%, ignoredDiffs=29
+- **chunkAnalysis** — Phase 2 chunk analysis; fail; accuracy=66.9%, coverage=94.9%, ignoredDiffs=29
   - chunk_timeline_pct=100.0%
   - chunk_summary_pct=0.0%
   - chunk_emotion_scores_pct=31.0%
-  - chunk_dominant_emotion_pct=71.4%
+  - chunk_dominant_emotion_pct=78.6%
   - chunk_persona_contract_pct=100.0%
-- **recommendationData** — Phase 3 recommendation; error; accuracy=15.8%, coverage=52.8%, ignoredDiffs=4
+- **recommendationData** — Phase 3 recommendation; error; accuracy=15.0%, coverage=55.6%, ignoredDiffs=4
   - recommendation_text_pct=0.0%
   - recommendation_reasoning_pct=0.0%
   - recommendation_key_findings_pct=0.0%
   - recommendation_suggestions_pct=0.0%
   - recommendation_confidence_pct=100.0%
-- **metricsData** — Phase 3 metrics; fail; accuracy=65.7%, coverage=97.2%, ignoredDiffs=1
+- **metricsData** — Phase 3 metrics; fail; accuracy=54.3%, coverage=97.2%, ignoredDiffs=1
   - metrics_summary_pct=100.0%
   - metrics_implementation_status_pct=100.0%
-  - metrics_averages_pct=66.7%
-  - metrics_peak_moments_pct=41.7%
-  - metrics_trends_pct=75.0%
+  - metrics_averages_pct=33.3%
+  - metrics_peak_moments_pct=33.3%
+  - metrics_trends_pct=58.3%
   - friction_index_pct=0.0%
-- **emotionalAnalysisData** — Phase 3 emotional analysis; error; accuracy=67.4%, coverage=98.9%, ignoredDiffs=2
+- **emotionalAnalysisData** — Phase 3 emotional analysis; error; accuracy=65.9%, coverage=99.1%, ignoredDiffs=4
   - emotional_summary_pct=83.3%
-  - chunk_emotions_pct=76.6%
-  - emotional_arc_pct=60.8%
+  - chunk_emotions_pct=77.5%
+  - emotional_arc_pct=56.4%
   - scroll_risk_timeline_pct=0.0%
   - critical_moments_pct=0.0%
   - emotional_implementation_status_pct=100.0%
 
-0/8 artifacts passed. 2093/3265 scoreable fields passed. Truth coverage was 3265/3477 fields.
+0/8 artifacts passed. 2072/3282 scoreable fields passed. Truth coverage was 3282/3489 fields.
 

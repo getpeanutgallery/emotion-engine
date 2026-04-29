@@ -4,32 +4,85 @@
   "phase": "phase3-report",
   "script": "metrics",
   "run": {
-    "configName": "COD Test Pipeline",
+    "configName": "COD Test Phase 2 Chunk Benchmark Slice",
     "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-    "startedAt": "2026-04-27T20:42:15.650Z",
-    "completedAt": "2026-04-27T20:42:15.651Z",
-    "durationMs": 1,
+    "startedAt": "2026-04-29T22:29:00.627Z",
+    "completedAt": "2026-04-29T22:29:00.629Z",
+    "durationMs": 2,
     "attempt": 1
   },
   "payload": {
     "artifactKey": "metricsData",
     "data": {
       "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
-      "generatedAt": "2026-04-27T20:42:15.651Z",
-      "averages": {},
-      "peakMoments": {},
-      "trends": {},
-      "frictionIndex": 0,
+      "generatedAt": "2026-04-29T22:29:00.629Z",
+      "averages": {
+        "patience": 0.7499999999999987,
+        "boredom": 0.24999999999999994,
+        "excitement": 0.8250000000000012
+      },
+      "peakMoments": {
+        "patience": {
+          "highest": {
+            "timestamp": 40,
+            "score": 0.9
+          },
+          "lowest": {
+            "timestamp": 85,
+            "score": 0.6
+          }
+        },
+        "boredom": {
+          "highest": {
+            "timestamp": 105,
+            "score": 1
+          },
+          "lowest": {
+            "timestamp": 0,
+            "score": 0.2
+          }
+        },
+        "excitement": {
+          "highest": {
+            "timestamp": 40,
+            "score": 1
+          },
+          "lowest": {
+            "timestamp": 95,
+            "score": 0.4
+          }
+        }
+      },
+      "trends": {
+        "patience": {
+          "direction": "stable",
+          "change": -0.028571428571428248,
+          "firstHalfAverage": 0.7642857142857139,
+          "secondHalfAverage": 0.7357142857142857
+        },
+        "boredom": {
+          "direction": "increasing",
+          "change": 0.10000000000000009,
+          "firstHalfAverage": 0.19999999999999973,
+          "secondHalfAverage": 0.2999999999999998
+        },
+        "excitement": {
+          "direction": "stable",
+          "change": 0.007142857142856673,
+          "firstHalfAverage": 0.8214285714285711,
+          "secondHalfAverage": 0.8285714285714277
+        }
+      },
+      "frictionIndex": 77.19940476190476,
       "implementationStatus": {
-        "state": "not_applicable",
-        "dataSource": "phase2.wholeVideoAnalysis",
-        "reason": "Chunk-derived timeline metrics were skipped because this run produced wholeVideoAnalysis without chunkAnalysis timeseries data."
+        "state": "computed",
+        "dataSource": "derived-from-phase2.chunkAnalysis"
       },
       "summary": {
-        "averages": 0,
-        "peakMoments": 0,
-        "trends": 0,
-        "frictionIndex": 0
+        "averages": 3,
+        "peakMoments": 3,
+        "trends": 3,
+        "frictionIndex": 77.19940476190476
       }
     }
   },
@@ -44,13 +97,13 @@
   "metrics": {
     "tokensTotal": null,
     "warningsCount": 1,
-    "totalSeconds": 0,
-    "successfulChunks": 0,
+    "totalSeconds": 140,
+    "successfulChunks": 28,
     "failedChunks": 0
   },
   "diagnostics": {
     "warnings": [
-      "Whole-video Phase 2 output detected; chunk-derived timeline metrics were intentionally skipped for this run."
+      "Computed report metrics from chunkAnalysis without a dedicated per-second phase artifact."
     ],
     "degraded": true,
     "debugCaptureEnabled": true,

@@ -3,7 +3,7 @@
   "label": "Phase 3 metrics",
   "phase": "phase3-report",
   "script": "metrics",
-  "status": "error",
+  "status": "fail",
   "truth": {
     "path": "benchmarks/fixtures/cod-test/truth/metrics.json"
   },
@@ -37,70 +37,147 @@
   },
   "comparisonBoundary": null,
   "counts": {
-    "totalTruthFields": 19,
-    "scoreableFields": 8,
+    "totalTruthFields": 36,
+    "scoreableFields": 35,
     "skippedFields": 1,
-    "passedFields": 3,
-    "failedFields": 5,
-    "erroredFields": 10,
+    "passedFields": 19,
+    "failedFields": 16,
+    "erroredFields": 0,
     "ignoredDifferenceFields": 1
   },
   "accuracy": {
-    "passed": 3,
-    "failed": 5,
-    "rate": 0.375
+    "passed": 19,
+    "failed": 16,
+    "rate": 0.5428571428571428
   },
   "coverage": {
-    "scoreable": 8,
+    "scoreable": 35,
     "skipped": 1,
-    "totalTruthFields": 19,
-    "rate": 0.42105263157894735
+    "totalTruthFields": 36,
+    "rate": 0.9722222222222222
   },
   "mismatchClassificationCounts": {},
   "metricsScoring": {
-    "metrics_summary_pct": 50,
-    "metrics_implementation_status_pct": 0,
-    "metrics_averages_pct": 0,
-    "metrics_peak_moments_pct": 0,
-    "metrics_trends_pct": 0,
+    "metrics_summary_pct": 100,
+    "metrics_implementation_status_pct": 100,
+    "metrics_averages_pct": 33.3,
+    "metrics_peak_moments_pct": 33.3,
+    "metrics_trends_pct": 58.3,
     "friction_index_pct": 0,
     "missing_metric_family_count": 0
   },
   "failures": [
     {
-      "path": "summary.totalChunks",
-      "rule": "exact",
-      "truthValue": 28,
+      "path": "averages.patience",
+      "rule": "tolerant-number",
+      "truthValue": 0.6428571428571428,
+      "outputValue": 0.7499999999999987,
+      "reason": "Numeric delta 0.10714285714285587 exceeded tolerance 0.1"
+    },
+    {
+      "path": "averages.boredom",
+      "rule": "tolerant-number",
+      "truthValue": 0.42857142857142855,
+      "outputValue": 0.24999999999999994,
+      "reason": "Numeric delta 0.1785714285714286 exceeded tolerance 0.1"
+    },
+    {
+      "path": "peakMoments.patience.highest.timestamp",
+      "rule": "tolerant-time",
+      "truthValue": 75,
+      "outputValue": 40,
+      "reason": "Time delta 35 exceeded tolerance 2"
+    },
+    {
+      "path": "peakMoments.patience.lowest.timestamp",
+      "rule": "tolerant-time",
+      "truthValue": 0,
+      "outputValue": 85,
+      "reason": "Time delta 85 exceeded tolerance 2"
+    },
+    {
+      "path": "peakMoments.patience.lowest.score",
+      "rule": "tolerant-number",
+      "truthValue": 0.2,
+      "outputValue": 0.6,
+      "reason": "Numeric delta 0.39999999999999997 exceeded tolerance 0.1"
+    },
+    {
+      "path": "peakMoments.boredom.highest.timestamp",
+      "rule": "tolerant-time",
+      "truthValue": 75,
+      "outputValue": 105,
+      "reason": "Time delta 30 exceeded tolerance 2"
+    },
+    {
+      "path": "peakMoments.boredom.lowest.timestamp",
+      "rule": "tolerant-time",
+      "truthValue": 5,
       "outputValue": 0,
+      "reason": "Time delta 5 exceeded tolerance 2"
+    },
+    {
+      "path": "peakMoments.excitement.highest.timestamp",
+      "rule": "tolerant-time",
+      "truthValue": 5,
+      "outputValue": 40,
+      "reason": "Time delta 35 exceeded tolerance 2"
+    },
+    {
+      "path": "peakMoments.excitement.lowest.timestamp",
+      "rule": "tolerant-time",
+      "truthValue": 120,
+      "outputValue": 95,
+      "reason": "Time delta 25 exceeded tolerance 2"
+    },
+    {
+      "path": "peakMoments.excitement.lowest.score",
+      "rule": "tolerant-number",
+      "truthValue": 0.3,
+      "outputValue": 0.4,
+      "reason": "Numeric delta 0.10000000000000003 exceeded tolerance 0.1"
+    },
+    {
+      "path": "trends.patience.direction",
+      "rule": "exact",
+      "truthValue": "increasing",
+      "outputValue": "stable",
       "reason": "Values differed"
     },
     {
-      "path": "summary.totalSeconds",
-      "rule": "exact",
-      "truthValue": 140,
-      "outputValue": 0,
-      "reason": "Values differed"
+      "path": "trends.patience.firstHalfAverage",
+      "rule": "tolerant-number",
+      "truthValue": 0.6142857142857141,
+      "outputValue": 0.7642857142857139,
+      "reason": "Numeric delta 0.1499999999999998 exceeded tolerance 0.1"
     },
     {
-      "path": "implementationStatus.state",
-      "rule": "exact",
-      "truthValue": "computed",
-      "outputValue": "not_applicable",
-      "reason": "Values differed"
+      "path": "trends.boredom.change",
+      "rule": "tolerant-number",
+      "truthValue": 0.24285714285714283,
+      "outputValue": 0.10000000000000009,
+      "reason": "Numeric delta 0.14285714285714274 exceeded tolerance 0.1"
     },
     {
-      "path": "implementationStatus.dataSource",
-      "rule": "exact",
-      "truthValue": "derived-from-phase2.chunkAnalysis",
-      "outputValue": "phase2.wholeVideoAnalysis",
-      "reason": "Values differed"
+      "path": "trends.boredom.firstHalfAverage",
+      "rule": "tolerant-number",
+      "truthValue": 0.3071428571428571,
+      "outputValue": 0.19999999999999973,
+      "reason": "Numeric delta 0.10714285714285737 exceeded tolerance 0.1"
+    },
+    {
+      "path": "trends.boredom.secondHalfAverage",
+      "rule": "tolerant-number",
+      "truthValue": 0.5499999999999999,
+      "outputValue": 0.2999999999999998,
+      "reason": "Numeric delta 0.2500000000000001 exceeded tolerance 0.1"
     },
     {
       "path": "frictionIndex",
       "rule": "tolerant-number",
       "truthValue": 100,
-      "outputValue": 0,
-      "reason": "Numeric delta 100 exceeded tolerance 0.1"
+      "outputValue": 77.19940476190476,
+      "reason": "Numeric delta 22.80059523809524 exceeded tolerance 0.1"
     }
   ],
   "skips": [
@@ -114,122 +191,19 @@
     {
       "path": "generatedAt",
       "truthValue": "2026-03-26T13:35:12.112Z",
-      "outputValue": "2026-04-27T20:42:15.651Z",
+      "outputValue": "2026-04-29T22:29:00.629Z",
       "reason": "Ignored path values differed"
     }
   ],
   "alignments": [],
-  "errors": [
-    {
-      "path": "implementationStatus.reason",
-      "rule": "structural",
-      "outputValue": "Chunk-derived timeline metrics were skipped because this run produced wholeVideoAnalysis without chunkAnalysis timeseries data.",
-      "reason": "Truth object missing field present in output"
-    },
-    {
-      "path": "averages.patience",
-      "rule": "structural",
-      "truthValue": 0.6428571428571428,
-      "reason": "Output object missing field present in truth"
-    },
-    {
-      "path": "averages.boredom",
-      "rule": "structural",
-      "truthValue": 0.42857142857142855,
-      "reason": "Output object missing field present in truth"
-    },
-    {
-      "path": "averages.excitement",
-      "rule": "structural",
-      "truthValue": 0.7821428571428576,
-      "reason": "Output object missing field present in truth"
-    },
-    {
-      "path": "peakMoments.patience",
-      "rule": "structural",
-      "truthValue": {
-        "highest": {
-          "timestamp": 75,
-          "score": 0.9
-        },
-        "lowest": {
-          "timestamp": 0,
-          "score": 0.2
-        }
-      },
-      "reason": "Output object missing field present in truth"
-    },
-    {
-      "path": "peakMoments.boredom",
-      "rule": "structural",
-      "truthValue": {
-        "highest": {
-          "timestamp": 75,
-          "score": 1
-        },
-        "lowest": {
-          "timestamp": 5,
-          "score": 0.2
-        }
-      },
-      "reason": "Output object missing field present in truth"
-    },
-    {
-      "path": "peakMoments.excitement",
-      "rule": "structural",
-      "truthValue": {
-        "highest": {
-          "timestamp": 5,
-          "score": 0.9
-        },
-        "lowest": {
-          "timestamp": 120,
-          "score": 0.3
-        }
-      },
-      "reason": "Output object missing field present in truth"
-    },
-    {
-      "path": "trends.patience",
-      "rule": "structural",
-      "truthValue": {
-        "direction": "increasing",
-        "change": 0.05714285714285705,
-        "firstHalfAverage": 0.6142857142857141,
-        "secondHalfAverage": 0.6714285714285712
-      },
-      "reason": "Output object missing field present in truth"
-    },
-    {
-      "path": "trends.boredom",
-      "rule": "structural",
-      "truthValue": {
-        "direction": "increasing",
-        "change": 0.24285714285714283,
-        "firstHalfAverage": 0.3071428571428571,
-        "secondHalfAverage": 0.5499999999999999
-      },
-      "reason": "Output object missing field present in truth"
-    },
-    {
-      "path": "trends.excitement",
-      "rule": "structural",
-      "truthValue": {
-        "direction": "stable",
-        "change": -0.007142857142856562,
-        "firstHalfAverage": 0.7857142857142851,
-        "secondHalfAverage": 0.7785714285714286
-      },
-      "reason": "Output object missing field present in truth"
-    }
-  ],
+  "errors": [],
   "fieldResults": [
     {
       "path": "generatedAt",
       "status": "skip",
       "rule": "structural",
       "truthValue": "2026-03-26T13:35:12.112Z",
-      "outputValue": "2026-04-27T20:42:15.651Z",
+      "outputValue": "2026-04-29T22:29:00.629Z",
       "reason": "Comparator ignored benchmark path"
     },
     {
@@ -241,11 +215,10 @@
     },
     {
       "path": "summary.totalChunks",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": 28,
-      "outputValue": 0,
-      "reason": "Values differed"
+      "outputValue": 28
     },
     {
       "path": "summary.failedChunks",
@@ -256,11 +229,10 @@
     },
     {
       "path": "summary.totalSeconds",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": 140,
-      "outputValue": 0,
-      "reason": "Values differed"
+      "outputValue": 140
     },
     {
       "path": "summary.videoDuration",
@@ -274,147 +246,333 @@
       }
     },
     {
-      "path": "implementationStatus.reason",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": "Chunk-derived timeline metrics were skipped because this run produced wholeVideoAnalysis without chunkAnalysis timeseries data.",
-      "reason": "Truth object missing field present in output"
-    },
-    {
       "path": "implementationStatus.state",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "computed",
-      "outputValue": "not_applicable",
-      "reason": "Values differed"
+      "outputValue": "computed"
     },
     {
       "path": "implementationStatus.dataSource",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "derived-from-phase2.chunkAnalysis",
-      "outputValue": "phase2.wholeVideoAnalysis",
-      "reason": "Values differed"
+      "outputValue": "derived-from-phase2.chunkAnalysis"
     },
     {
       "path": "averages.patience",
-      "status": "error",
-      "rule": "structural",
+      "status": "fail",
+      "rule": "tolerant-number",
       "truthValue": 0.6428571428571428,
-      "reason": "Output object missing field present in truth"
+      "outputValue": 0.7499999999999987,
+      "reason": "Numeric delta 0.10714285714285587 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.10714285714285587,
+        "tolerance": 0.1
+      }
     },
     {
       "path": "averages.boredom",
-      "status": "error",
-      "rule": "structural",
+      "status": "fail",
+      "rule": "tolerant-number",
       "truthValue": 0.42857142857142855,
-      "reason": "Output object missing field present in truth"
+      "outputValue": 0.24999999999999994,
+      "reason": "Numeric delta 0.1785714285714286 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.1785714285714286,
+        "tolerance": 0.1
+      }
     },
     {
       "path": "averages.excitement",
-      "status": "error",
-      "rule": "structural",
+      "status": "pass",
+      "rule": "tolerant-number",
       "truthValue": 0.7821428571428576,
-      "reason": "Output object missing field present in truth"
+      "outputValue": 0.8250000000000012,
+      "metrics": {
+        "delta": 0.04285714285714359,
+        "tolerance": 0.1
+      }
     },
     {
-      "path": "peakMoments.patience",
-      "status": "error",
-      "rule": "structural",
-      "truthValue": {
-        "highest": {
-          "timestamp": 75,
-          "score": 0.9
-        },
-        "lowest": {
-          "timestamp": 0,
-          "score": 0.2
-        }
-      },
-      "reason": "Output object missing field present in truth"
+      "path": "peakMoments.patience.highest.timestamp",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 75,
+      "outputValue": 40,
+      "reason": "Time delta 35 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 35,
+        "toleranceSeconds": 2
+      }
     },
     {
-      "path": "peakMoments.boredom",
-      "status": "error",
-      "rule": "structural",
-      "truthValue": {
-        "highest": {
-          "timestamp": 75,
-          "score": 1
-        },
-        "lowest": {
-          "timestamp": 5,
-          "score": 0.2
-        }
-      },
-      "reason": "Output object missing field present in truth"
+      "path": "peakMoments.patience.highest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 0.9,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
     },
     {
-      "path": "peakMoments.excitement",
-      "status": "error",
-      "rule": "structural",
-      "truthValue": {
-        "highest": {
-          "timestamp": 5,
-          "score": 0.9
-        },
-        "lowest": {
-          "timestamp": 120,
-          "score": 0.3
-        }
-      },
-      "reason": "Output object missing field present in truth"
+      "path": "peakMoments.patience.lowest.timestamp",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 0,
+      "outputValue": 85,
+      "reason": "Time delta 85 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 85,
+        "toleranceSeconds": 2
+      }
     },
     {
-      "path": "trends.patience",
-      "status": "error",
-      "rule": "structural",
-      "truthValue": {
-        "direction": "increasing",
-        "change": 0.05714285714285705,
-        "firstHalfAverage": 0.6142857142857141,
-        "secondHalfAverage": 0.6714285714285712
-      },
-      "reason": "Output object missing field present in truth"
+      "path": "peakMoments.patience.lowest.score",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.2,
+      "outputValue": 0.6,
+      "reason": "Numeric delta 0.39999999999999997 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.39999999999999997,
+        "tolerance": 0.1
+      }
     },
     {
-      "path": "trends.boredom",
-      "status": "error",
-      "rule": "structural",
-      "truthValue": {
-        "direction": "increasing",
-        "change": 0.24285714285714283,
-        "firstHalfAverage": 0.3071428571428571,
-        "secondHalfAverage": 0.5499999999999999
-      },
-      "reason": "Output object missing field present in truth"
+      "path": "peakMoments.boredom.highest.timestamp",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 75,
+      "outputValue": 105,
+      "reason": "Time delta 30 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 30,
+        "toleranceSeconds": 2
+      }
     },
     {
-      "path": "trends.excitement",
-      "status": "error",
-      "rule": "structural",
-      "truthValue": {
-        "direction": "stable",
-        "change": -0.007142857142856562,
-        "firstHalfAverage": 0.7857142857142851,
-        "secondHalfAverage": 0.7785714285714286
-      },
-      "reason": "Output object missing field present in truth"
+      "path": "peakMoments.boredom.highest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 1,
+      "outputValue": 1,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "peakMoments.boredom.lowest.timestamp",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 5,
+      "outputValue": 0,
+      "reason": "Time delta 5 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 5,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "peakMoments.boredom.lowest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.2,
+      "outputValue": 0.2,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "peakMoments.excitement.highest.timestamp",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 5,
+      "outputValue": 40,
+      "reason": "Time delta 35 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 35,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "peakMoments.excitement.highest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.9,
+      "outputValue": 1,
+      "metrics": {
+        "delta": 0.09999999999999998,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "peakMoments.excitement.lowest.timestamp",
+      "status": "fail",
+      "rule": "tolerant-time",
+      "truthValue": 120,
+      "outputValue": 95,
+      "reason": "Time delta 25 exceeded tolerance 2",
+      "metrics": {
+        "deltaSeconds": 25,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "peakMoments.excitement.lowest.score",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.3,
+      "outputValue": 0.4,
+      "reason": "Numeric delta 0.10000000000000003 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.10000000000000003,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.patience.direction",
+      "status": "fail",
+      "rule": "exact",
+      "truthValue": "increasing",
+      "outputValue": "stable",
+      "reason": "Values differed"
+    },
+    {
+      "path": "trends.patience.change",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.05714285714285705,
+      "outputValue": -0.028571428571428248,
+      "metrics": {
+        "delta": 0.0857142857142853,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.patience.firstHalfAverage",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.6142857142857141,
+      "outputValue": 0.7642857142857139,
+      "reason": "Numeric delta 0.1499999999999998 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.1499999999999998,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.patience.secondHalfAverage",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.6714285714285712,
+      "outputValue": 0.7357142857142857,
+      "metrics": {
+        "delta": 0.0642857142857145,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.boredom.direction",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "increasing",
+      "outputValue": "increasing"
+    },
+    {
+      "path": "trends.boredom.change",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.24285714285714283,
+      "outputValue": 0.10000000000000009,
+      "reason": "Numeric delta 0.14285714285714274 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.14285714285714274,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.boredom.firstHalfAverage",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.3071428571428571,
+      "outputValue": 0.19999999999999973,
+      "reason": "Numeric delta 0.10714285714285737 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.10714285714285737,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.boredom.secondHalfAverage",
+      "status": "fail",
+      "rule": "tolerant-number",
+      "truthValue": 0.5499999999999999,
+      "outputValue": 0.2999999999999998,
+      "reason": "Numeric delta 0.2500000000000001 exceeded tolerance 0.1",
+      "metrics": {
+        "delta": 0.2500000000000001,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.excitement.direction",
+      "status": "pass",
+      "rule": "exact",
+      "truthValue": "stable",
+      "outputValue": "stable"
+    },
+    {
+      "path": "trends.excitement.change",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": -0.007142857142856562,
+      "outputValue": 0.007142857142856673,
+      "metrics": {
+        "delta": 0.014285714285713236,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.excitement.firstHalfAverage",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.7857142857142851,
+      "outputValue": 0.8214285714285711,
+      "metrics": {
+        "delta": 0.03571428571428592,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "trends.excitement.secondHalfAverage",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.7785714285714286,
+      "outputValue": 0.8285714285714277,
+      "metrics": {
+        "delta": 0.049999999999999156,
+        "tolerance": 0.1
+      }
     },
     {
       "path": "frictionIndex",
       "status": "fail",
       "rule": "tolerant-number",
       "truthValue": 100,
-      "outputValue": 0,
-      "reason": "Numeric delta 100 exceeded tolerance 0.1",
+      "outputValue": 77.19940476190476,
+      "reason": "Numeric delta 22.80059523809524 exceeded tolerance 0.1",
       "metrics": {
-        "delta": 100,
+        "delta": 22.80059523809524,
         "tolerance": 0.1
       }
     }
   ],
-  "summary": "3/8 scoreable fields passed; 1/19 truth fields were skipped. metrics_summary_pct=50.0%; metrics_implementation_status_pct=0.0%; metrics_averages_pct=0.0%; metrics_peak_moments_pct=0.0%; metrics_trends_pct=0.0%; friction_index_pct=0.0%.",
+  "summary": "19/35 scoreable fields passed; 1/36 truth fields were skipped. metrics_summary_pct=100.0%; metrics_implementation_status_pct=100.0%; metrics_averages_pct=33.3%; metrics_peak_moments_pct=33.3%; metrics_trends_pct=58.3%; friction_index_pct=0.0%.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

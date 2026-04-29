@@ -4,10 +4,10 @@
   "phase": "phase3-report",
   "script": "summary",
   "run": {
-    "configName": "COD Test Pipeline",
+    "configName": "COD Test Phase 2 Chunk Benchmark Slice",
     "outputDir": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test",
-    "startedAt": "2026-04-27T20:42:28.437Z",
-    "completedAt": "2026-04-27T20:42:28.438Z",
+    "startedAt": "2026-04-29T22:29:31.151Z",
+    "completedAt": "2026-04-29T22:29:31.152Z",
     "durationMs": 1,
     "attempt": 1
   },
@@ -15,33 +15,89 @@
     "artifactKey": "summary",
     "data": {
       "metadata": {
-        "generatedAt": "2026-04-27T20:42:28.437Z",
+        "generatedAt": "2026-04-29T22:29:31.151Z",
         "pipelineVersion": "1.0",
-        "videoDuration": 0,
-        "chunksAnalyzed": 0,
+        "videoDuration": 140.017,
+        "chunksAnalyzed": 28,
         "failedChunks": 0,
-        "totalSeconds": 0,
-        "totalTokens": 0
+        "totalSeconds": 140,
+        "totalTokens": 1308654
       },
       "keyMetrics": {
-        "averages": {},
-        "peakMoments": {},
-        "trends": {},
-        "frictionIndex": 0
+        "averages": {
+          "patience": 0.7499999999999987,
+          "boredom": 0.24999999999999994,
+          "excitement": 0.8250000000000012
+        },
+        "peakMoments": {
+          "patience": {
+            "highest": {
+              "timestamp": 40,
+              "score": 0.9
+            },
+            "lowest": {
+              "timestamp": 85,
+              "score": 0.6
+            }
+          },
+          "boredom": {
+            "highest": {
+              "timestamp": 105,
+              "score": 1
+            },
+            "lowest": {
+              "timestamp": 0,
+              "score": 0.2
+            }
+          },
+          "excitement": {
+            "highest": {
+              "timestamp": 40,
+              "score": 1
+            },
+            "lowest": {
+              "timestamp": 95,
+              "score": 0.4
+            }
+          }
+        },
+        "trends": {
+          "patience": {
+            "direction": "stable",
+            "change": -0.028571428571428248,
+            "firstHalfAverage": 0.7642857142857139,
+            "secondHalfAverage": 0.7357142857142857
+          },
+          "boredom": {
+            "direction": "increasing",
+            "change": 0.10000000000000009,
+            "firstHalfAverage": 0.19999999999999973,
+            "secondHalfAverage": 0.2999999999999998
+          },
+          "excitement": {
+            "direction": "stable",
+            "change": 0.007142857142856673,
+            "firstHalfAverage": 0.8214285714285711,
+            "secondHalfAverage": 0.8285714285714277
+          }
+        },
+        "frictionIndex": 77.19940476190476
       },
       "recommendation": {
-        "text": "Insufficient data provided for analysis. Please provide chunk-level emotion analysis and computed metrics to generate actionable recommendations.",
-        "reasoning": "The input data contains empty fields for averages, trends, friction index, peak moments, and chunk summaries. Without this information, it is not possible to assess viewer retention or emotional impact. To proceed, data collection is required.",
-        "confidence": 0.1
+        "text": "To improve viewer retention, immediately eliminate the static establishing shot at 95-100 seconds and replace it with high-energy action to counter the boredom spike. Maintain the fast-paced, excitement-driven editing from the successful chunks to keep the impatient-teenager audience engaged throughout.",
+        "reasoning": "The data shows boredom increasing in the second half, with a peak at chunk 19 (95-100s) where boredom scores 1.0 and excitement drops to 0.4, contrasting with surrounding chunks that have high excitement (9-10) and low boredom (1-2). The high friction index of 77.2 indicates significant viewer drop-off risk, and the impatient persona requires constant stimulation. By addressing this lull, the video can sustain the adrenaline rush that hooks viewers, as seen in chunks with dominant excitement emotions.",
+        "confidence": 0.85
       },
       "reportPaths": {
         "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
         "recommendation": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json",
         "emotionalAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json",
+        "finalReport": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md",
+        "analysisData": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/analysis-data.json",
         "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json"
       },
       "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json",
-      "generatedAt": "2026-04-27T20:42:28.437Z"
+      "generatedAt": "2026-04-29T22:29:31.151Z"
     }
   },
   "artifacts": {
@@ -54,16 +110,14 @@
   },
   "metrics": {
     "tokensTotal": null,
-    "warningsCount": 1,
+    "warningsCount": 0,
     "keyMetricsCount": 4,
     "hasRecommendation": true,
-    "reportPathCount": 4
+    "reportPathCount": 6
   },
   "diagnostics": {
-    "warnings": [
-      "Metrics data was missing or sparse; summary key metrics were reduced to the available subset."
-    ],
-    "degraded": true,
+    "warnings": [],
+    "degraded": false,
     "debugCaptureEnabled": true,
     "captureRefs": [
       "phase3-report/raw/_meta/errors.jsonl",

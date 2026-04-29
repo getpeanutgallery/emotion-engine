@@ -8,7 +8,7 @@
     "path": "benchmarks/fixtures/cod-test/truth/music-vocals-data.json"
   },
   "output": {
-    "path": "output/cod-test/phase1-gather-context/music-vocals-data.reconciled.json"
+    "path": "output/cod-test/phase1-gather-context/music-vocals-data.json"
   },
   "comparator": {
     "kind": "json-structured",
@@ -2081,6 +2081,6 @@
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",
     "truthPath": "benchmarks/fixtures/cod-test/truth/music-vocals-data.json",
-    "outputPath": "output/cod-test/phase1-gather-context/music-vocals-data.reconciled.json"
+    "outputPath": "output/cod-test/phase1-gather-context/music-vocals-data.json"
   }
 }

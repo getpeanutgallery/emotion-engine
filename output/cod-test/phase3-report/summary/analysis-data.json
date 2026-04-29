@@ -1,34 +1,34 @@
 {
   "metadata": {
-    "generatedAt": "2026-04-29T13:10:57.309Z",
+    "generatedAt": "2026-04-29T22:29:31.152Z",
     "pipelineVersion": "1.0",
     "pipelineName": "COD Test Phase 2 Chunk Benchmark Slice",
     "videoDuration": 140.017,
     "chunksAnalyzed": 28,
-    "totalTokens": 1299160
+    "totalTokens": 1308654
   },
   "summary": {
     "keyMetrics": {
       "averages": {
-        "patience": 0.6392857142857146,
-        "boredom": 0.2749999999999996,
-        "excitement": 0.7392857142857143
+        "patience": 0.7499999999999987,
+        "boredom": 0.24999999999999994,
+        "excitement": 0.8250000000000012
       },
       "peakMoments": {
         "patience": {
           "highest": {
-            "timestamp": 70,
+            "timestamp": 40,
             "score": 0.9
           },
           "lowest": {
-            "timestamp": 135,
-            "score": 0.3
+            "timestamp": 85,
+            "score": 0.6
           }
         },
         "boredom": {
           "highest": {
-            "timestamp": 135,
-            "score": 0.8
+            "timestamp": 105,
+            "score": 1
           },
           "lowest": {
             "timestamp": 0,
@@ -37,40 +37,40 @@
         },
         "excitement": {
           "highest": {
-            "timestamp": 55,
-            "score": 0.9
+            "timestamp": 40,
+            "score": 1
           },
           "lowest": {
-            "timestamp": 135,
-            "score": 0.2
+            "timestamp": 95,
+            "score": 0.4
           }
         }
       },
       "trends": {
         "patience": {
           "direction": "stable",
-          "change": -0.0071428571428571175,
-          "firstHalfAverage": 0.6428571428571427,
-          "secondHalfAverage": 0.6357142857142856
+          "change": -0.028571428571428248,
+          "firstHalfAverage": 0.7642857142857139,
+          "secondHalfAverage": 0.7357142857142857
         },
         "boredom": {
           "direction": "increasing",
-          "change": 0.09285714285714294,
-          "firstHalfAverage": 0.22857142857142834,
-          "secondHalfAverage": 0.3214285714285713
+          "change": 0.10000000000000009,
+          "firstHalfAverage": 0.19999999999999973,
+          "secondHalfAverage": 0.2999999999999998
         },
         "excitement": {
           "direction": "stable",
-          "change": -0.007142857142857562,
-          "firstHalfAverage": 0.7428571428571424,
-          "secondHalfAverage": 0.7357142857142849
+          "change": 0.007142857142856673,
+          "firstHalfAverage": 0.8214285714285711,
+          "secondHalfAverage": 0.8285714285714277
         }
       },
-      "frictionIndex": 39.5281462585034
+      "frictionIndex": 77.19940476190476
     },
     "recommendation": {
-      "text": "为提升针对缺乏耐心青少年的留存率，必须彻底改造视频结尾的静态信息展示部分，将其无缝融入高能量的动作流中。同时，需优化中段的动作蒙太奇，通过引入视觉或叙事转折来打破同质化，防止兴奋度进入平台期。开场的高强度钩子非常成功，应予以保留。",
-      "reasoning": "数据表明，视频在0-125秒内成功维持了高兴奋度（平均约0.74）和低无聊感，这得益于持续的快节奏动作和视觉冲击。然而，关键问题出现在结尾：从130秒开始，当内容切换到静态的游戏标题和预购信息时，情绪出现断崖式下跌。在135秒（chunk 27），耐心降至最低点（0.3），无聊感飙升至最高点（0.8），兴奋度跌至谷底（0.2）。这直接导致了整体无聊感趋势的上升（变化+0.093）和高达39.5的摩擦指数。中段（如chunk 19， 95-100秒）也显示出因动作场景同质化而导致的耐心下降（得分4）和无聊感上升（得分5），表明纯粹的强度堆砌会引发疲劳。",
+      "text": "To improve viewer retention, immediately eliminate the static establishing shot at 95-100 seconds and replace it with high-energy action to counter the boredom spike. Maintain the fast-paced, excitement-driven editing from the successful chunks to keep the impatient-teenager audience engaged throughout.",
+      "reasoning": "The data shows boredom increasing in the second half, with a peak at chunk 19 (95-100s) where boredom scores 1.0 and excitement drops to 0.4, contrasting with surrounding chunks that have high excitement (9-10) and low boredom (1-2). The high friction index of 77.2 indicates significant viewer drop-off risk, and the impatient persona requires constant stimulation. By addressing this lull, the video can sustain the adrenaline rush that hooks viewers, as seen in chunks with dominant excitement emotions.",
       "confidence": 0.85
     }
   },
@@ -83,24 +83,24 @@
           "startTime": 0,
           "endTime": 5,
           "status": "success",
-          "summary": "The video chunk opens with glitchy visuals and immediate dialogue about fear, quickly cutting through intense scenes of war and distress, establishing a high-stakes narrative.",
+          "summary": "The video chunk opens with an intense, fast-paced hook featuring close-up visuals of an eye, a soldier in a red-tinted scene, and a voiceover about fear, immediately grabbing attention.",
           "emotions": {
             "patience": {
-              "score": 6,
-              "reasoning": "Immediate hook with dialogue and visuals prevents abandonment, but skepticism remains as per persona's baseline."
+              "score": 8,
+              "reasoning": "The hook is immediate and compelling, with no slow buildup, so the viewer is likely to stay engaged."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "Rapid scene changes and intense action keep engagement high, avoiding boredom spikes."
+              "reasoning": "Fast cuts, dramatic visuals, and a tense voiceover keep boredom very low."
             },
             "excitement": {
-              "score": 7,
-              "reasoning": "War imagery, emotional close-ups, and narrative tension build positive arousal and interest."
+              "score": 9,
+              "reasoning": "High-energy action, explosions, and intense dialogue create strong excitement."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.85,
-          "tokens": 47160,
+          "confidence": 0.9,
+          "tokens": 46573,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -117,24 +117,24 @@
           "startTime": 5,
           "endTime": 10,
           "status": "success",
-          "summary": "片段以快速剪辑展示战争破坏、人物痛苦和城市毁灭的高冲击力画面，节奏极快，视觉信息密集。",
+          "summary": "The video chunk features a fast-paced action sequence with explosions, soldiers, and intense music, designed to maintain viewer engagement.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "作为缺乏耐心的观众，这种快速、高强度的视觉轰炸实际上能维持我的注意力，因为没有拖沓的镜头让我感到无聊或想要滑动。"
+              "score": 8,
+              "reasoning": "The rapid cuts and immediate action prevent impatience, as there is no slow buildup or filler content."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "完全没有无聊的时刻。每秒都有新的、强烈的视觉元素（废墟、惊恐面孔、毁灭场景）冲击感官，远未达到我的无聊阈值（7/10）。"
+              "reasoning": "High-intensity visuals and audio stimulation leave little room for boredom to develop."
             },
             "excitement": {
-              "score": 6,
-              "reasoning": "画面内容（战争、痛苦、毁灭）结合快速剪辑，营造出紧张和高能量的氛围，足以激发兴趣，但尚未达到让我完全投入的‘高潮’点。"
+              "score": 9,
+              "reasoning": "Explosions, combat scenes, and a driving musical score create a high level of excitement and engagement."
             }
           },
-          "dominant_emotion": "patience",
-          "confidence": 0.85,
-          "tokens": 46550,
+          "dominant_emotion": "excitement",
+          "confidence": 0.9,
+          "tokens": 46559,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -151,24 +151,24 @@
           "startTime": 10,
           "endTime": 15,
           "status": "success",
-          "summary": "破碎屏幕上的扭曲面孔特写，周围是火焰和废墟，人物跑过，视觉混乱且充满破坏感。",
+          "summary": "The chunk opens with the 'Call of Duty: Black Ops 7' title card, then cuts to a large, damaged screen displaying a man's face delivering a threatening monologue amidst a burning, chaotic street scene.",
           "emotions": {
             "patience": {
-              "score": 5,
-              "reasoning": "画面信息密集且混乱，但延续了之前的快节奏，我可能愿意多看几秒搞清楚发生了什么，不过耐心正在消耗。"
+              "score": 7,
+              "reasoning": "The immediate cut from title to a high-stakes, visually dense scene with a clear threat maintains engagement. No slow logos or generic intros to trigger impatience."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "视觉上很刺激，有火焰、破碎的屏幕和跑动的人物，没有静态或无聊的时刻。"
+              "reasoning": "The combination of a burning cityscape, a menacing close-up on a screen, and a direct, violent threat creates immediate tension and visual interest, leaving no room for boredom."
             },
             "excitement": {
-              "score": 7,
-              "reasoning": "扭曲的面孔和火焰营造了强烈的紧张感和破坏氛围，这种高冲击力的视觉效果能抓住我的注意力。"
+              "score": 6,
+              "reasoning": "The high-risk narrative setup ('streets run red with blood') and the chaotic, fiery visuals create a sense of impending action and stakes, generating moderate excitement to see what happens next."
             }
           },
-          "dominant_emotion": "excitement",
+          "dominant_emotion": "patience",
           "confidence": 0.85,
-          "tokens": 46321,
+          "tokens": 46540,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -185,24 +185,24 @@
           "startTime": 15,
           "endTime": 20,
           "status": "success",
-          "summary": "快速切换的激烈动作镜头，包括爆炸、枪战和角色特写，节奏紧凑。",
+          "summary": "A close-up of a man's face on a shattered screen amidst a burning street delivers a violent threat, followed by rapid cuts showing global casualty maps and large-scale destruction.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "快速的剪辑和持续的动作场面能暂时维持注意力，但缺乏叙事深度可能让耐心开始下降。"
+              "score": 8,
+              "reasoning": "The immediate, high-stakes visual and threatening dialogue ('run red with your blood') provides a clear and compelling hook. The rapid cuts to global-scale destruction maintain a sense of urgency and narrative progression, preventing impatience."
             },
             "boredom": {
-              "score": 3,
-              "reasoning": "高强度的视觉刺激和快速变化的场景有效防止了无聊感的产生。"
+              "score": 2,
+              "reasoning": "There is no dead air or static shot. The visuals are intense and constantly changing (face, map, explosions), and the audio is layered with impactful dialogue and sound effects. Boredom is very low."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "爆炸、枪战和紧张的氛围营造出强烈的兴奋感，符合动作游戏预告片的预期。"
+              "score": 7,
+              "reasoning": "The combination of a personal threat and visuals of worldwide catastrophe creates high stakes and dramatic tension. The fast-paced editing and ominous score build excitement for the conflict being established."
             }
           },
-          "dominant_emotion": "excitement",
+          "dominant_emotion": "patience",
           "confidence": 0.85,
-          "tokens": 46269,
+          "tokens": 46450,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -219,24 +219,24 @@
           "startTime": 20,
           "endTime": 25,
           "status": "success",
-          "summary": "快速切换的激烈动作镜头，包括未来城市废墟、机器人部队和角色对话，节奏紧凑。",
+          "summary": "A building collapses, the year 2035 is displayed, a character speaks about terrorism and peace, and robotic soldiers are shown.",
           "emotions": {
             "patience": {
-              "score": 6,
-              "reasoning": "开场视觉冲击强，但中间有角色对话镜头，节奏稍缓，可能让不耐烦的观众略微分心。"
+              "score": 7,
+              "reasoning": "The chunk has quick cuts and visual interest, maintaining attention without dragging."
             },
             "boredom": {
-              "score": 4,
-              "reasoning": "整体节奏快，视觉元素丰富，但对话部分可能让追求纯粹动作的观众感到一丝乏味。"
+              "score": 2,
+              "reasoning": "Action-packed visuals and dialogue prevent boredom; no slow or static moments."
             },
             "excitement": {
-              "score": 7,
-              "reasoning": "激烈的动作场面、未来科技元素和紧张的对话营造出高能量氛围，能有效吸引注意力。"
+              "score": 8,
+              "reasoning": "Building music, dramatic destruction, and narrative stakes create high excitement."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.85,
-          "tokens": 46282,
+          "tokens": 47179,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -253,24 +253,24 @@
           "startTime": 25,
           "endTime": 30,
           "status": "success",
-          "summary": "高强度动作序列，快速剪辑展示未来城市废墟、机器人部队和激烈战斗，配合紧张对话和音乐，旨在立即抓住观众注意力。",
+          "summary": "A futuristic city lies in ruins as a VTOL aircraft flies through the devastation under a dramatic sunset sky, with ominous music building anticipation.",
           "emotions": {
             "patience": {
               "score": 7,
-              "reasoning": "快速剪辑和持续动作维持了注意力，没有缓慢开场或静态镜头，符合耐心阈值。"
+              "reasoning": "The dynamic visuals of the aircraft moving through a detailed, destroyed cityscape and the building musical score maintain viewer attention without static shots or dead air."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "视觉冲击强，节奏紧凑，无死时间或模糊内容，无聊感极低。"
+              "reasoning": "The high-production-value scene of large-scale destruction and the escalating, anticipatory music provide strong visual and auditory stimulation, leaving little room for disengagement."
             },
             "excitement": {
               "score": 8,
-              "reasoning": "激烈动作、爆炸和紧张对话创造高能量，符合对视觉冲击和前所未有事件的偏好。"
+              "reasoning": "The dramatic reveal of a devastated future metropolis, combined with intense, building percussion and synth melodies, creates a strong sense of scale, tension, and impending action."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.85,
-          "tokens": 46449,
+          "tokens": 46516,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -287,24 +287,24 @@
           "startTime": 30,
           "endTime": 35,
           "status": "success",
-          "summary": "片段展示了未来城市废墟中的激烈战斗，士兵与机器人部队交火，快速剪辑和高强度动作场面。",
+          "summary": "A rapid-fire montage of chaotic action sequences featuring futuristic soldiers, explosions, and high-tech combat in various global locations, driven by intense music and urgent dialogue.",
           "emotions": {
             "patience": {
-              "score": 4,
-              "reasoning": "作为没耐心的青少年，我已经看了30秒预告片，注意力可能开始分散。但这个片段的快速剪辑和持续动作场面勉强维持了我的耐心，没有明显停顿或无聊时刻。"
+              "score": 7,
+              "reasoning": "The rapid cuts and constant action prevent patience from dropping too low, but the sheer volume of information and lack of a single clear focus slightly tests my willingness to follow every detail."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "几乎没有无聊感。画面持续变化，充满未来科技感的战斗、爆炸和战术动作，完全符合我喜欢的‘高强度动作序列’和‘快速剪辑’标准，没有静态镜头或拖沓节奏。"
+              "reasoning": "There is zero chance of boredom here. The visual stimuli are constant, the action is high-stakes, and the pacing is relentless. My thumb is nowhere near the scroll button."
             },
             "excitement": {
               "score": 8,
-              "reasoning": "兴奋感很强。机器人部队、城市废墟环境、激烈交火，加上音乐开始变得更有节奏感（根据全局音乐上下文），这些元素组合在一起，视觉冲击力足，很容易抓住我的注意力，让我想继续看下去。"
+              "reasoning": "This is pure, high-octane spectacle. The explosions, futuristic tech, global settings, and aggressive music create a powerful sense of hype and adrenaline. It's exactly the kind of over-the-top action that grabs my attention."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.9,
-          "tokens": 46405,
+          "confidence": 0.85,
+          "tokens": 46582,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -321,24 +321,24 @@
           "startTime": 35,
           "endTime": 40,
           "status": "success",
-          "summary": "士兵们在室内走廊中快速推进，遭遇激烈交火，伴随爆炸和紧张的战术通讯。",
+          "summary": "A rapid-fire montage of intense combat sequences featuring soldiers in futuristic gear, explosions, and chaotic firefights across various indoor and outdoor environments, driven by aggressive music.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "片段节奏极快，动作连贯，没有拖沓或静态镜头，作为观众的注意力被持续的移动和威胁所维持。"
+              "score": 8,
+              "reasoning": "The constant visual stimulation and rapid scene changes prevent any drop in attention. There's no slow buildup or static shots to test patience."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "视觉上充满爆炸、枪口闪光和快速剪辑，音频上有激烈的音乐和紧张的对话，几乎没有产生无聊感的空间。"
+              "reasoning": "Boredom is virtually impossible with this density of action. Every second introduces a new explosive or high-stakes visual, leaving no room for disengagement."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "高强度的战斗场面、近距离交火、爆炸效果以及角色紧迫的呼喊，共同营造出强烈的紧张感和刺激感。"
+              "score": 9,
+              "reasoning": "The combination of high-intensity action, futuristic combat, rapid editing, and aggressive music creates a peak excitement state. This is the core emotional payload of the trailer segment."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.85,
-          "tokens": 46318,
+          "confidence": 0.95,
+          "tokens": 46637,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -355,24 +355,24 @@
           "startTime": 40,
           "endTime": 45,
           "status": "success",
-          "summary": "士兵们在室内走廊中快速推进，遭遇激烈交火，伴随爆炸和紧张的战术通讯。",
+          "summary": "This chunk features rapid-fire combat sequences with soldiers in futuristic gear, intense gunfire, and explosions, all set to aggressive music.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "视频片段节奏紧凑，士兵快速移动和交火维持了推进感，没有明显的停顿或拖沓，符合动作场景的预期节奏。"
+              "score": 9,
+              "reasoning": "The immediate action and quick cuts keep me engaged without any lull, so I'm patient and willing to continue watching."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "爆炸、枪战和战术行动提供了持续的视觉和听觉刺激，对于偏好动作内容的观众来说，几乎没有无聊的空隙。"
+              "reasoning": "The high-octane visuals and sound prevent any disengagement; boredom is minimal."
             },
             "excitement": {
-              "score": 6,
-              "reasoning": "激烈的交火和爆炸场面提升了紧张感和动作强度，但作为更长预告片中的一个短片段，其兴奋度可能受限于上下文。"
+              "score": 10,
+              "reasoning": "The explosive action and energetic pacing create a thrilling experience that maximizes excitement."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.8,
-          "tokens": 46362,
+          "confidence": 0.95,
+          "tokens": 46778,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -389,24 +389,24 @@
           "startTime": 45,
           "endTime": 50,
           "status": "success",
-          "summary": "士兵们在室内走廊快速推进，遭遇激烈交火，伴随爆炸和紧张的战术通讯。",
+          "summary": "This chunk features intense, rapid-fire action with soldiers running through red-lit corridors, explosions, and first-person shooter perspectives, maintaining high energy and visual stimulation.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "持续的动作和快速的镜头切换维持了观看的意愿，没有明显的停顿或拖沓。"
+              "score": 8,
+              "reasoning": "The relentless pace and constant visual changes (running, explosions, gunfire) prevent any lull, keeping the viewer engaged and willing to continue watching."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "高强度的动作、爆炸和紧张的通讯提供了持续的刺激，几乎没有无聊的时刻。"
+              "reasoning": "There is no static or slow moment; every second is filled with high-intensity action, explosions, or urgent movement, leaving no room for disengagement."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "激烈的交火、爆炸和快速的战术推进创造了高度紧张和兴奋的氛围。"
+              "score": 9,
+              "reasoning": "The combination of chaotic combat, dramatic red lighting, explosive effects, and fast cuts creates a highly stimulating and adrenaline-pumping experience."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.85,
-          "tokens": 46251,
+          "confidence": 0.95,
+          "tokens": 46428,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -423,24 +423,24 @@
           "startTime": 50,
           "endTime": 55,
           "status": "success",
-          "summary": "士兵们在室内走廊快速推进，遭遇激烈交火，伴随爆炸和紧张的战术通讯。",
+          "summary": "This 5-second chunk shows soldiers rapidly running through a red-lit corridor, maintaining the high-energy, fast-paced action established in the previous segment.",
           "emotions": {
             "patience": {
-              "score": 6,
-              "reasoning": "作为不耐烦的青少年，面对持续的高强度动作，我的耐心处于中等水平。虽然内容没有拖沓，但如果没有新的视觉或叙事转折，我可能会开始考虑划走。"
+              "score": 8,
+              "reasoning": "The rapid movement and clear action maintain viewer engagement. There is no slow buildup or static shot that would trigger impatience for this persona."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "几乎没有无聊感。画面充满了即时的动作、爆炸和快速移动，持续提供视觉刺激，防止了注意力的流失。"
+              "reasoning": "The continuous motion, dramatic lighting, and clear sense of urgency provide strong visual stimulation, leaving little room for disengagement or boredom."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "激烈的枪战、爆炸和紧张的氛围直接激发了兴奋感。这种高强度的动作场面符合我对刺激内容的期待，让我保持投入。"
+              "score": 7,
+              "reasoning": "The fast-paced action and tense atmosphere are engaging, but the lack of a new narrative beat or major visual spectacle within this specific 5-second window keeps excitement from peaking."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.85,
-          "tokens": 46367,
+          "tokens": 46487,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -457,24 +457,24 @@
           "startTime": 55,
           "endTime": 60,
           "status": "success",
-          "summary": "士兵们在室内走廊快速推进，遭遇激烈交火，伴随爆炸和紧张的战术通讯。",
+          "summary": "A high-energy action shot of soldiers sprinting through a red-lit corridor, maintaining the fast-paced intensity established in the previous segment.",
           "emotions": {
             "patience": {
-              "score": 8,
-              "reasoning": "快节奏的动作场面和持续的视觉变化（快速移动、爆炸、枪战）能有效抓住注意力，防止因单调而产生的不耐烦。"
+              "score": 7,
+              "reasoning": "The continuous, fast-paced motion and clear action provide enough stimulus to maintain viewer patience for this short duration. There's no static or slow moment that would trigger abandonment."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "场景充满高强度的动作、爆炸和紧张的氛围，几乎没有静态或重复的镜头，无聊感极低。"
+              "reasoning": "The intense visual of soldiers running urgently through a dramatic red-lit environment is inherently engaging and leaves little room for boredom to set in within 5 seconds."
             },
             "excitement": {
-              "score": 9,
-              "reasoning": "密集的战斗动作、爆炸特效、快速剪辑和紧张的音效共同营造出高度刺激和兴奋的体验。"
+              "score": 8,
+              "reasoning": "The rapid movement, dramatic lighting, and context of a high-stakes military operation create a strong sense of urgency and excitement, pulling the viewer into the action."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.9,
-          "tokens": 46203,
+          "confidence": 0.85,
+          "tokens": 46599,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -491,24 +491,24 @@
           "startTime": 60,
           "endTime": 65,
           "status": "success",
-          "summary": "士兵们在室内走廊快速推进，遭遇激烈交火，伴随爆炸和紧张的战术通讯。",
+          "summary": "A high-energy action shot of soldiers sprinting through a red-lit corridor, maintaining the fast-paced intensity established in the previous segment.",
           "emotions": {
             "patience": {
-              "score": 6,
-              "reasoning": "作为高强度动作场景，观众注意力被抓住，但作为青少年观众，如果此类场景持续过长可能开始失去耐心。"
+              "score": 7,
+              "reasoning": "The rapid movement and urgent visual of soldiers running through a confined, dramatically lit space sustains attention. The established pattern of quick cuts and high stakes keeps the viewer engaged, preventing a drop in patience."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "快节奏的战斗、爆炸和紧张氛围提供了强烈的感官刺激，几乎没有无聊的元素。"
+              "reasoning": "The scene is visually dynamic with strong color contrast (red lighting) and clear forward momentum. There is no static imagery or slow buildup, which are primary triggers for boredom in this persona."
             },
             "excitement": {
               "score": 8,
-              "reasoning": "激烈的交火、爆炸效果和紧张的战术通讯创造了高度兴奋和投入的观看体验。"
+              "reasoning": "The combination of urgent action, dramatic lighting, and the continuation of a high-intensity sequence creates a strong sense of adrenaline and anticipation. The visual punch and clear stakes align with what keeps this persona watching."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.8,
-          "tokens": 46349,
+          "confidence": 0.85,
+          "tokens": 46487,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -525,24 +525,24 @@
           "startTime": 65,
           "endTime": 70,
           "status": "success",
-          "summary": "士兵们在室内走廊快速推进，遭遇激烈交火，伴随爆炸和紧张的战术通讯。",
+          "summary": "A fast-paced action shot of soldiers sprinting through a red-lit corridor, maintaining the intense, high-energy momentum.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "动作场面持续不断，没有明显的停顿或无聊的对话，让我愿意继续看下去。"
+              "score": 8,
+              "reasoning": "The continuous, urgent action provides no lull or static moment that would test patience. The viewer is carried forward by the momentum."
             },
             "boredom": {
-              "score": 3,
-              "reasoning": "画面一直在动，有交火和爆炸，没有静态镜头，所以不太可能感到无聊。"
+              "score": 2,
+              "reasoning": "The rapid movement, chaotic environment, and intense music leave no room for disengagement or boredom to set in within this short clip."
             },
             "excitement": {
-              "score": 6,
-              "reasoning": "场面很火爆，节奏快，但有点重复，没有特别让我‘哇’一下的新东西。"
+              "score": 9,
+              "reasoning": "High-octane action, dramatic red lighting, and aggressive music create a strong sense of adrenaline and engagement, hitting the excitement threshold."
             }
           },
-          "dominant_emotion": "patience",
-          "confidence": 0.85,
-          "tokens": 46436,
+          "dominant_emotion": "excitement",
+          "confidence": 0.9,
+          "tokens": 46605,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -559,24 +559,24 @@
           "startTime": 70,
           "endTime": 75,
           "status": "success",
-          "summary": "士兵们在室内走廊快速推进，遭遇激烈交火，伴随爆炸和紧张的战术通讯。",
+          "summary": "A fast-paced action sequence showing soldiers sprinting through a red-lit corridor, accompanied by intense heavy metal music with repeated vocal chants.",
           "emotions": {
             "patience": {
-              "score": 9,
-              "reasoning": "片段以快节奏的战术推进和突发的爆炸开场，视觉冲击力强，动作连贯，没有拖沓的铺垫，完全符合‘即时视觉冲击’的期待，让我愿意持续观看。"
+              "score": 8,
+              "reasoning": "The rapid cuts, constant motion, and high-energy music maintain a pace that holds attention. There are no slow moments or unclear visuals to trigger impatience."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "内容高度紧张，充满动作（移动、交火、爆炸）和声音刺激（枪声、通讯、音乐），没有任何静态或重复的镜头，无聊感极低。"
+              "reasoning": "The scene is visually dynamic with clear action and a strong, driving soundtrack. There is no dead air, static shots, or ambiguous content that would lead to disengagement."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "激烈的交火、突然的爆炸、紧张的士兵通讯，配合背景中高强度的重金属音乐，共同营造出强烈的紧张感和动作高潮，非常刺激。"
+              "score": 9,
+              "reasoning": "The combination of urgent action, dramatic red lighting, and aggressive metal music creates a high-intensity, visceral moment. This is the kind of explosive, pattern-interrupting content that aligns with the persona's preference for immediate visual punch and high stakes."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.9,
-          "tokens": 46363,
+          "tokens": 46531,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -593,24 +593,24 @@
           "startTime": 75,
           "endTime": 80,
           "status": "success",
-          "summary": "士兵们在室内走廊快速推进，遭遇激烈交火，伴随爆炸和紧张的战术通讯。",
+          "summary": "A high-intensity action sequence showing soldiers sprinting through a red-lit corridor, accompanied by aggressive heavy metal music with vocal chants.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "节奏极快，镜头切换频繁，爆炸和交火提供了持续的视觉刺激，符合我对‘立即视觉冲击’的期待，没有拖沓的镜头。"
+              "score": 8,
+              "reasoning": "The chunk is pure, non-stop action from the first frame. There's no slow intro or exposition to test my patience. As a viewer who abandons slow content, this immediate visual and auditory punch keeps me locked in."
             },
             "boredom": {
-              "score": 3,
-              "reasoning": "高强度的动作场面、爆炸和紧张的通讯有效地填充了每一秒，几乎没有给无聊感留下空间。"
+              "score": 2,
+              "reasoning": "Boredom is virtually impossible here. The rapid movement, intense red lighting, and pounding music create a sensory overload that actively fights disengagement. There's no dead air or static shot to trigger a scroll."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "激烈的室内交火、爆炸的视觉冲击以及紧张的战术通讯，创造了高能量、高风险的氛围，非常吸引人。"
+              "score": 9,
+              "reasoning": "This is peak excitement fuel. The combination of urgent movement, combat-ready visuals, and the aggressive, chant-heavy metal track creates a visceral, high-energy hit. It's the kind of clip that makes me want to see what happens next."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.85,
-          "tokens": 46397,
+          "confidence": 0.95,
+          "tokens": 46494,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -627,24 +627,24 @@
           "startTime": 80,
           "endTime": 85,
           "status": "success",
-          "summary": "A high-intensity action sequence showing soldiers moving rapidly through a corridor, likely under fire, with quick cuts and explosive energy.",
+          "summary": "A high-intensity action sequence in a neon-lit urban environment, accompanied by aggressive heavy metal music with vocal chants.",
           "emotions": {
             "patience": {
               "score": 8,
-              "reasoning": "The action is immediate and fast-paced. There's no slow buildup or boring intro to wait through. My attention is grabbed right away, so I'm willing to stick with it."
+              "reasoning": "The fast-paced visuals and music maintain engagement, keeping the viewer patient."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "Constant movement, explosions, and tactical chaos. There's zero dead air or static shots. My brain is getting the rapid-fire stimulation it craves."
+              "reasoning": "The dynamic action and intense soundtrack minimize boredom."
             },
             "excitement": {
               "score": 9,
-              "reasoning": "This is pure, uncut adrenaline. The speed, the violence, the chaos—it's exactly the kind of dopamine hit I scroll for. This slaps."
+              "reasoning": "The combination of combat, futuristic setting, and heavy metal music creates high excitement."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.9,
-          "tokens": 46411,
+          "tokens": 46797,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -661,24 +661,24 @@
           "startTime": 85,
           "endTime": 90,
           "status": "success",
-          "summary": "士兵们在红色警报灯光的走廊中快速移动，气氛紧张，伴随着简短的战术对话和激烈的重金属音乐。",
+          "summary": "A fast-paced action sequence in Alaska with quick cuts of combat, explosions, and a mech suit, accompanied by heavy metal music.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "快速的镜头切换、紧张的红色灯光和明确的战术对话（‘Spectre One report’， ‘Need a sitrep’）保持了基本的观看动力，没有明显的拖沓，足以让我继续看下去。"
+              "score": 6,
+              "reasoning": "The rapid cuts and high energy keep me engaged, but I'm still impatient by nature, so patience is moderate."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "视觉上充满动感（移动的士兵、闪烁的警报灯），听觉上有激烈的重金属音乐和清晰的对话，没有静态或无意义的时刻，无聊感很低。"
+              "reasoning": "No slow moments or boring visuals; constant action and visual variety prevent boredom."
             },
             "excitement": {
-              "score": 6,
-              "reasoning": "紧张的环境、快速的行动和激烈的音乐共同营造了一种高能量的氛围，但这个5秒片段更多是延续之前的紧张感，而非提供全新的、令人震惊的转折或高潮。"
+              "score": 8,
+              "reasoning": "Intense action, impressive visuals like the mech suit, and the heavy metal soundtrack create high excitement."
             }
           },
-          "dominant_emotion": "patience",
+          "dominant_emotion": "excitement",
           "confidence": 0.85,
-          "tokens": 46365,
+          "tokens": 47239,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -695,24 +695,24 @@
           "startTime": 90,
           "endTime": 95,
           "status": "success",
-          "summary": "快速剪辑的蒙太奇展示全球多地（雪地、丛林、城市）的激烈战斗、机甲和爆炸场景，伴随着高强度的重金属音乐。",
+          "summary": "A high-intensity action sequence featuring soldiers in a red-lit corridor, a rapid visual shock of an exploding red core, and a character moving quickly through a dark hallway.",
           "emotions": {
             "patience": {
               "score": 7,
-              "reasoning": "极快的剪辑节奏和持续的动作轰炸符合短视频消费习惯，能维持注意力，但信息过载可能开始消耗耐心。"
+              "reasoning": "The rapid cuts and constant action prevent boredom, but the red-lit corridor setting is a familiar action trope that could risk slight impatience if extended."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "几乎没有静态或缓慢的时刻，视觉和听觉刺激持续不断，无聊感极低。"
+              "reasoning": "The high-energy visuals, dramatic lighting, and explosive centerpiece are the opposite of boring. There's no dead air or slow buildup."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "高强度的战斗画面、爆炸、未来科技（机甲）与激昂的重金属音乐结合，创造了强烈的兴奋感和肾上腺素冲击。"
+              "score": 9,
+              "reasoning": "The explosive red core visual is a major pattern interrupt. Combined with the urgent music and fast-paced action, it creates a strong spike of excitement and engagement."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.9,
-          "tokens": 46309,
+          "tokens": 46518,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -729,24 +729,24 @@
           "startTime": 95,
           "endTime": 100,
           "status": "success",
-          "summary": "高强度动作蒙太奇片段，快速切换多个战斗场景，包含爆炸、射击和未来科技元素，节奏极快。",
+          "summary": "A high-quality establishing shot of a futuristic cityscape with smoke and flying vehicles, serving as a visual transition but lacking immediate action or narrative progression.",
           "emotions": {
             "patience": {
-              "score": 4,
-              "reasoning": "作为追求即时满足的观众，这种纯动作堆砌、缺乏清晰叙事推进或新奇视觉钩子的快速剪辑，容易让我感到疲劳和不耐烦，想快进或划走。"
+              "score": 6,
+              "reasoning": "The high production value and clear context of a major game trailer maintain some patience, but the static nature of the establishing shot begins to test my limit."
             },
             "boredom": {
-              "score": 5,
-              "reasoning": "虽然场面火爆，但连续的、同质化的战斗镜头（爆炸、枪战）如果没有变化或亮点，很快会变得单调，让我注意力涣散。"
+              "score": 7,
+              "reasoning": "This is a slow, scenic establishing shot with no characters, dialogue, or immediate stakes. It feels like filler between action beats, and my attention is drifting."
             },
             "excitement": {
-              "score": 7,
-              "reasoning": "重金属音乐、爆炸音效和高速剪辑确实能带来短暂的感官刺激和肾上腺素飙升，尤其是在预告片的高潮部分，这种强度能暂时抓住我的注意力。"
+              "score": 4,
+              "reasoning": "The visuals are impressive but passive. There's no conflict, movement, or hook within this specific chunk to generate excitement."
             }
           },
-          "dominant_emotion": "excitement",
-          "confidence": 0.75,
-          "tokens": 46461,
+          "dominant_emotion": "boredom",
+          "confidence": 0.85,
+          "tokens": 46563,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -763,24 +763,24 @@
           "startTime": 100,
           "endTime": 105,
           "status": "success",
-          "summary": "高强度动作场景，士兵在红色警报灯光的走廊中奔跑，配合激烈的重金属音乐和紧迫的战术对话。",
+          "summary": "Intense action sequence with urgent dialogue and heavy metal music, maintaining high viewer engagement.",
           "emotions": {
             "patience": {
               "score": 8,
-              "reasoning": "节奏极快，画面不断切换（奔跑、爬行、爆炸），音乐激烈，没有静态或拖沓的镜头，符合我对高密度刺激的需求，愿意继续观看。"
+              "reasoning": "Fast-paced action and urgent dialogue keep the viewer engaged, preventing abandonment."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "视觉上充满动态（奔跑、闪烁的红光、飞溅的碎片），听觉上有强烈的音乐和紧迫的对话，完全没有给我感到无聊或想要划走的时间窗口。"
+              "reasoning": "Dynamic visuals and intense atmosphere minimize disengagement."
             },
             "excitement": {
               "score": 9,
-              "reasoning": "红色警报灯光营造出极高的紧张感和危机感，配合重金属音乐的节奏和“Master, master”的重复吟唱，以及战术通讯的紧迫感，直接拉满肾上腺素，非常刺激。"
+              "reasoning": "Heavy metal music, action-packed scenes, and dramatic lighting create high arousal and thrill."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.9,
-          "tokens": 46406,
+          "tokens": 47023,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -797,24 +797,24 @@
           "startTime": 105,
           "endTime": 110,
           "status": "success",
-          "summary": "在红色警报灯光的未来走廊中，士兵小队快速战术移动，配合高强度的重金属音乐和重复的‘Master, master’人声，营造出紧张、高能量的动作场面。",
+          "summary": "Fast-paced action sequence in a futuristic Los Angeles with heavy metal music, featuring soldiers in combat and crashing vehicles.",
           "emotions": {
             "patience": {
               "score": 8,
-              "reasoning": "快速剪辑、持续的动作和强烈的音乐节奏保持了注意力的连续性，没有出现静态或拖沓的镜头，作为观众我愿意继续观看。"
+              "reasoning": "The chunk delivers immediate action with no slow buildup, matching the persona's preference for instant engagement."
             },
             "boredom": {
-              "score": 2,
-              "reasoning": "视觉上充满动态（奔跑、闪烁的红光、战术动作），听觉上是激烈的重金属音乐和重复的、有冲击力的人声，没有任何元素让我感到乏味或想离开。"
+              "score": 1,
+              "reasoning": "Constant visual changes, intense music, and high-stakes action eliminate any chance of boredom."
             },
             "excitement": {
               "score": 9,
-              "reasoning": "高能量的音乐（重金属、重复的‘Master’人声）、快速的动作场面（士兵奔跑、紧张的环境）以及整体预告片的高潮氛围，共同创造了强烈的兴奋感和期待感。"
+              "reasoning": "The combination of heavy metal music, rapid cuts, and futuristic combat creates a high-energy, dopamine-inducing experience."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.95,
-          "tokens": 46340,
+          "tokens": 46822,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -831,24 +831,24 @@
           "startTime": 110,
           "endTime": 115,
           "status": "success",
-          "summary": "视频片段展示了高强度的动作蒙太奇，包括未来城市战斗、士兵小队、爆炸和特效，配合激昂的重金属音乐和重复的‘Master, master’人声，营造出持续的高能量和紧张感。",
+          "summary": "This chunk features intense combat action with rapid cuts, heavy metal music, and chaotic visuals, maintaining high energy.",
           "emotions": {
             "patience": {
               "score": 7,
-              "reasoning": "快速剪辑和不断变化的视觉内容维持了注意力，没有明显的拖沓或静止镜头，观众有理由继续观看。"
+              "reasoning": "The fast-paced action and immediate visual punch align with the persona's preference for quick hooks, holding attention despite impatience."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "视频充满了动作、爆炸和视觉特效，节奏紧凑，几乎没有让观众感到无聊或脱离的时刻。"
+              "reasoning": "No slow moments or static shots; constant movement and combat prevent disengagement."
             },
             "excitement": {
               "score": 9,
-              "reasoning": "高强度的动作场面、快速的剪辑、激昂的音乐和视觉冲击（如爆炸、未来科技）共同营造出极高的兴奋感和投入度。"
+              "reasoning": "Heavy metal music, explosions, and rapid combat scenes create a thrilling experience that matches the persona's excitement threshold."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.85,
-          "tokens": 46309,
+          "tokens": 46518,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -865,24 +865,24 @@
           "startTime": 115,
           "endTime": 120,
           "status": "success",
-          "summary": "视频片段展示了士兵在雪地环境中进行激烈的交火，伴随着爆炸、机器人和快速切换的战斗镜头，背景是重复的重金属音乐歌词‘Master, master’。",
+          "summary": "A soldier engages in fast-paced combat in a futuristic setting, with rapid cuts and intense action.",
           "emotions": {
             "patience": {
-              "score": 4,
-              "reasoning": "虽然Alex天生缺乏耐心，但这个片段持续的高强度动作和快速剪辑可能暂时缓解了他的不耐烦，让他愿意继续观看。然而，如果这种节奏不能维持，他的耐心会迅速耗尽。"
+              "score": 6,
+              "reasoning": "Continuous action maintains attention, but the persona's inherent impatience keeps them on the verge of scrolling if pacing dips."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "片段中充满了爆炸、枪战、机器人和快速场景切换，提供了持续的视觉和听觉刺激，这与Alex厌恶静态和缓慢节奏的偏好高度契合，因此无聊感很低。"
+              "reasoning": "High-energy visuals, constant movement, and combat minimize boredom; no lulls detected."
             },
             "excitement": {
               "score": 8,
-              "reasoning": "激烈的战斗场面、重金属音乐的驱动以及快节奏的剪辑共同营造出一种高能量、紧张刺激的氛围，这直接迎合了Alex对‘立即视觉冲击’和‘清晰利害关系’的偏好，能有效激发他的兴奋感。"
+              "reasoning": "Intense combat, quick cuts, and high stakes create strong excitement, aligning with the persona's preference for immediate visual punch."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.85,
-          "tokens": 46461,
+          "confidence": 0.8,
+          "tokens": 47029,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -899,24 +899,24 @@
           "startTime": 120,
           "endTime": 125,
           "status": "success",
-          "summary": "视频片段展示了士兵在雪地环境中进行激烈的交火，伴随着爆炸、机器人和快速切换的战斗镜头，背景是重复的重金属音乐歌词‘Master, master’。",
+          "summary": "The video chunk shows a scene with residual tension and focused dialogue, maintaining viewer engagement through visual effects and narrative progression.",
           "emotions": {
             "patience": {
-              "score": 6,
-              "reasoning": "虽然我通常极度没耐心，但这个片段没有浪费任何时间在无聊的介绍上，直接切入高强度的战斗场面，视觉上立即满足了对动作的期待，让我愿意继续看下去。"
+              "score": 7,
+              "reasoning": "The viewer remains patient due to the ongoing narrative and visual interest from previous action sequences, expecting further developments."
             },
             "boredom": {
-              "score": 4,
-              "reasoning": "快节奏的剪辑、爆炸和战斗场面持续提供刺激，没有静态或拖沓的镜头，因此无聊感较低。但这种纯粹的战斗蒙太奇可能有点套路化，缺乏让我完全沉浸的独特钩子。"
+              "score": 3,
+              "reasoning": "Boredom is low as the scene retains tension and avoids static shots, keeping the viewer's attention with dynamic elements."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "视觉冲击力很强，爆炸、枪战、未来科技感的机器人，配合重金属音乐的强烈节奏，营造出高能量、紧张刺激的氛围，非常符合我对‘爽快’内容的偏好。"
+              "score": 6,
+              "reasoning": "Excitement is moderate, driven by the resolved mood and residual intensity from earlier high-energy segments, but not at peak levels."
             }
           },
-          "dominant_emotion": "excitement",
-          "confidence": 0.85,
-          "tokens": 46457,
+          "dominant_emotion": "patience",
+          "confidence": 0.7,
+          "tokens": 48558,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -933,24 +933,24 @@
           "startTime": 125,
           "endTime": 130,
           "status": "success",
-          "summary": "雪地战斗场面，高强度动作，重金属音乐。",
+          "summary": "A rapid-fire montage of global action set-pieces (Nicaragua, Los Angeles, Angola, Tokyo, Alaska, Avalon) synchronized to aggressive metal music, featuring futuristic combat, explosions, and high-tech weaponry with no narrative downtime.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "高强度的动作场面和快速剪辑能抓住注意力，但角色设定的本质是不耐烦的，这种密集的刺激可能无法长时间维持耐心。"
+              "score": 8,
+              "reasoning": "The relentless pace and constant visual stimulation (location jumps, explosions, combat) prevent any patience from dropping. There's no slow moment to trigger abandonment."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "快节奏的战斗、爆炸和机器人几乎没有给无聊留下空间，视觉和听觉刺激持续不断。"
+              "reasoning": "Boredom is virtually non-existent. Every second is packed with new, high-intensity action beats, visual effects, or location changes, leaving no room for disengagement."
             },
             "excitement": {
               "score": 9,
-              "reasoning": "激烈的交火、爆炸、机器人和重金属音乐共同营造出极高的兴奋感，符合角色对高强度、快节奏内容的偏好。"
+              "reasoning": "Peak excitement. The combination of fast cuts, heavy music, global scale action, and futuristic combat creates a sensory overload designed to thrill. This is the 'hook' that keeps me watching."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.9,
-          "tokens": 46394,
+          "tokens": 46589,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -967,24 +967,24 @@
           "startTime": 130,
           "endTime": 135,
           "status": "success",
-          "summary": "视频片段展示了游戏标题、发布信息和预购奖励的静态画面，节奏从高强度的动作场景放缓至信息展示。",
+          "summary": "Soldiers leap from a skyscraper in Avalon, engage in rapid combat with futuristic weapons and robots, featuring quick scene cuts and high-energy action.",
           "emotions": {
             "patience": {
-              "score": 4,
-              "reasoning": "从高强度动作突然切换到静态信息展示，对于追求即时刺激的观众来说，耐心会迅速下降。这种节奏变化不符合其‘3秒内抓住注意力’的预期。"
+              "score": 8,
+              "reasoning": "The relentless pace and lack of downtime keep the viewer fully engaged, sustaining patience as there are no slow or boring segments to test tolerance."
             },
             "boredom": {
-              "score": 7,
-              "reasoning": "静态的文字和图像信息，缺乏动态视觉元素或叙事推进，容易导致注意力涣散和无聊感上升，已达到‘即将划走’的阈值。"
+              "score": 2,
+              "reasoning": "Constant visual stimulation through fast cuts, dramatic stunts, and intense combat minimizes any opportunity for boredom to arise."
             },
             "excitement": {
-              "score": 3,
-              "reasoning": "预告片的高潮已过，此片段为收尾的信息告知，缺乏能激发强烈情绪反应的视觉或听觉刺激，兴奋感处于低水平。"
+              "score": 9,
+              "reasoning": "The thrilling sequence of building jumps, aerial maneuvers, and close-quarters combat generates a high level of adrenaline and excitement."
             }
           },
-          "dominant_emotion": "boredom",
-          "confidence": 0.85,
-          "tokens": 46399,
+          "dominant_emotion": "excitement",
+          "confidence": 0.9,
+          "tokens": 47054,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -1001,24 +1001,24 @@
           "startTime": 135,
           "endTime": 140,
           "status": "success",
-          "summary": "视频片段展示了游戏《使命召唤：黑色行动7》的‘金库版’和‘雷兹诺夫挑战包’的静态促销画面，伴随着促销旁白，节奏从之前高强度的动作和音乐完全放缓至商业信息展示。",
+          "summary": "Soldiers leap from a skyscraper in Avalon, engaging in rapid, high-intensity combat with futuristic weapons, featuring quick cuts and explosive action that immediately grabs attention.",
           "emotions": {
             "patience": {
-              "score": 3,
-              "reasoning": "作为不耐烦的青少年，看到高强度的动作场面突然切换到静态的‘预购’促销广告，我的耐心会急剧下降。这感觉像是内容被生硬打断，进入了我不想看的‘广告时间’。"
+              "score": 8,
+              "reasoning": "The immediate high-stakes action (jumping from a building) and rapid cuts prevent any patience from dropping. There's no slow buildup; it's all forward momentum."
             },
             "boredom": {
-              "score": 8,
-              "reasoning": "画面是静态的促销图文，没有动作、没有叙事推进，只有商业信息。这完全无法维持我的注意力，无聊感飙升，已经到了‘划走’的临界点。"
+              "score": 2,
+              "reasoning": "Constant motion, explosions, and combat eliminate any chance of boredom. The visual spectacle and pacing are perfectly aligned with short-form, high-energy content."
             },
             "excitement": {
-              "score": 2,
-              "reasoning": "之前的兴奋感（来自动作和音乐）在这里完全中断。静态的促销信息无法激发任何情绪，只有‘又来了’的厌烦感。"
+              "score": 9,
+              "reasoning": "The sheer audacity of the skyscraper jump, combined with the fast-paced combat and explosive visuals, creates a peak excitement moment. This is the kind of 'never seen before' stunt that hooks viewers."
             }
           },
-          "dominant_emotion": "boredom",
-          "confidence": 0.85,
-          "tokens": 46366,
+          "dominant_emotion": "excitement",
+          "confidence": 0.9,
+          "tokens": 46499,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -1030,7 +1030,7 @@
           }
         }
       ],
-      "totalTokens": 1299160,
+      "totalTokens": 1308654,
       "statusSummary": {
         "total": 28,
         "successful": 28,
@@ -1049,35 +1049,35 @@
     },
     "summary": {
       "metadata": {
-        "generatedAt": "2026-04-29T13:10:57.308Z",
+        "generatedAt": "2026-04-29T22:29:31.151Z",
         "pipelineVersion": "1.0",
         "videoDuration": 140.017,
         "chunksAnalyzed": 28,
         "failedChunks": 0,
         "totalSeconds": 140,
-        "totalTokens": 1299160
+        "totalTokens": 1308654
       },
       "keyMetrics": {
         "averages": {
-          "patience": 0.6392857142857146,
-          "boredom": 0.2749999999999996,
-          "excitement": 0.7392857142857143
+          "patience": 0.7499999999999987,
+          "boredom": 0.24999999999999994,
+          "excitement": 0.8250000000000012
         },
         "peakMoments": {
           "patience": {
             "highest": {
-              "timestamp": 70,
+              "timestamp": 40,
               "score": 0.9
             },
             "lowest": {
-              "timestamp": 135,
-              "score": 0.3
+              "timestamp": 85,
+              "score": 0.6
             }
           },
           "boredom": {
             "highest": {
-              "timestamp": 135,
-              "score": 0.8
+              "timestamp": 105,
+              "score": 1
             },
             "lowest": {
               "timestamp": 0,
@@ -1086,40 +1086,40 @@
           },
           "excitement": {
             "highest": {
-              "timestamp": 55,
-              "score": 0.9
+              "timestamp": 40,
+              "score": 1
             },
             "lowest": {
-              "timestamp": 135,
-              "score": 0.2
+              "timestamp": 95,
+              "score": 0.4
             }
           }
         },
         "trends": {
           "patience": {
             "direction": "stable",
-            "change": -0.0071428571428571175,
-            "firstHalfAverage": 0.6428571428571427,
-            "secondHalfAverage": 0.6357142857142856
+            "change": -0.028571428571428248,
+            "firstHalfAverage": 0.7642857142857139,
+            "secondHalfAverage": 0.7357142857142857
           },
           "boredom": {
             "direction": "increasing",
-            "change": 0.09285714285714294,
-            "firstHalfAverage": 0.22857142857142834,
-            "secondHalfAverage": 0.3214285714285713
+            "change": 0.10000000000000009,
+            "firstHalfAverage": 0.19999999999999973,
+            "secondHalfAverage": 0.2999999999999998
           },
           "excitement": {
             "direction": "stable",
-            "change": -0.007142857142857562,
-            "firstHalfAverage": 0.7428571428571424,
-            "secondHalfAverage": 0.7357142857142849
+            "change": 0.007142857142856673,
+            "firstHalfAverage": 0.8214285714285711,
+            "secondHalfAverage": 0.8285714285714277
           }
         },
-        "frictionIndex": 39.5281462585034
+        "frictionIndex": 77.19940476190476
       },
       "recommendation": {
-        "text": "为提升针对缺乏耐心青少年的留存率，必须彻底改造视频结尾的静态信息展示部分，将其无缝融入高能量的动作流中。同时，需优化中段的动作蒙太奇，通过引入视觉或叙事转折来打破同质化，防止兴奋度进入平台期。开场的高强度钩子非常成功，应予以保留。",
-        "reasoning": "数据表明，视频在0-125秒内成功维持了高兴奋度（平均约0.74）和低无聊感，这得益于持续的快节奏动作和视觉冲击。然而，关键问题出现在结尾：从130秒开始，当内容切换到静态的游戏标题和预购信息时，情绪出现断崖式下跌。在135秒（chunk 27），耐心降至最低点（0.3），无聊感飙升至最高点（0.8），兴奋度跌至谷底（0.2）。这直接导致了整体无聊感趋势的上升（变化+0.093）和高达39.5的摩擦指数。中段（如chunk 19， 95-100秒）也显示出因动作场景同质化而导致的耐心下降（得分4）和无聊感上升（得分5），表明纯粹的强度堆砌会引发疲劳。",
+        "text": "To improve viewer retention, immediately eliminate the static establishing shot at 95-100 seconds and replace it with high-energy action to counter the boredom spike. Maintain the fast-paced, excitement-driven editing from the successful chunks to keep the impatient-teenager audience engaged throughout.",
+        "reasoning": "The data shows boredom increasing in the second half, with a peak at chunk 19 (95-100s) where boredom scores 1.0 and excitement drops to 0.4, contrasting with surrounding chunks that have high excitement (9-10) and low boredom (1-2). The high friction index of 77.2 indicates significant viewer drop-off risk, and the impatient persona requires constant stimulation. By addressing this lull, the video can sustain the adrenaline rush that hooks viewers, as seen in chunks with dominant excitement emotions.",
         "confidence": 0.85
       },
       "reportPaths": {
@@ -1131,7 +1131,7 @@
         "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json"
       },
       "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json",
-      "generatedAt": "2026-04-29T13:10:57.308Z"
+      "generatedAt": "2026-04-29T22:29:31.151Z"
     }
   }
 }
