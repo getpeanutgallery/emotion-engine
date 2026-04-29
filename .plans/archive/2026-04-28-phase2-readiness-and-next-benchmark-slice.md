@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-04-28  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -108,21 +108,25 @@ The intent is not to quietly broaden scope. We should pick one concrete next sli
 
 **Execution status update (2026-04-29 / `ee-70qi.1`):** ✅ Coder implementation complete. Added the dedicated slice config at `configs/cod-test-phase2-chunk-benchmark.yaml`, restored the benchmark contract entry for `phase2-process/chunk-analysis.json` in `benchmarks/fixtures/cod-test/benchmark.json`, and extended `test/pipeline/config-loader.test.js` to cover the dedicated config and restored chunk benchmark contract. A live rerun via `node server/run-pipeline.cjs --config configs/cod-test-phase2-chunk-benchmark.yaml --verbose` hydrated the current persisted Phase 1 packet from `output/cod-test`, regenerated a fresh `output/cod-test/phase2-process/chunk-analysis.json`, and produced Phase 3 outputs whose `implementationStatus.dataSource` is `derived-from-phase2.chunkAnalysis` instead of placeholder/not-applicable behavior. The benchmark advanced from a contract-mismatch artifact-absence failure to an honest comparable-state benchmark report at `benchmarks/fixtures/cod-test/_reports/benchmark-summary.json`, where `chunkAnalysis` is now evaluated as a real artifact (`status: fail`, `accuracyRate: 0.6648`, `coverageRate: 0.9490`) rather than missing. Exact files touched by coder work: `configs/cod-test-phase2-chunk-benchmark.yaml`, `benchmarks/fixtures/cod-test/benchmark.json`, `test/pipeline/config-loader.test.js`, `.plans/2026-04-28-phase2-readiness-and-next-benchmark-slice.md`.
 
+**Execution status update (2026-04-29 / `ee-70qi.2`):** ✅ QA verified the bounded chunk-contract restoration slice end-to-end. Independent QA re-read the readiness/slice references plus coder commit `429d95f6da5da81bb1af2c29d22c546799774b60`, ran the slice-focused config-loader test coverage, and performed a fresh dedicated-config rerun with `node server/run-pipeline.cjs --config configs/cod-test-phase2-chunk-benchmark.yaml --verbose`. That rerun regenerated `output/cod-test/phase2-process/chunk-analysis.json` with 28 successful provider-facing chunks (plus one skipped terminal micro-chunk under 1s), drove Phase 3 outputs whose implementation metadata remains derived from `phase2.chunkAnalysis`, and exercised the benchmark/report surfaces against a real chunk artifact rather than failing on a missing/mismatched contract. The benchmark stage still exits non-zero because current outputs do not yet match fixture truth closely enough (`0/8` artifacts passed), but the relevant contract-restoration acceptance criteria were satisfied: `chunkAnalysis` is scored as a real artifact (`truth_chunk_count: 28`, `output_chunk_count: 28`, `chunk_timeline_pct: 100`, `chunk_persona_contract_pct: 100`) and the stale whole-video artifact still explicitly declares `comparisonHints.safeForChunkEquivalence: false` / `safeForPhase3Metrics: false`, so whole-video output is not being treated as chunk-equivalent. QA caveat for audit: the broad `node --test test/pipeline/config-loader.test.js` suite still contains an unrelated pre-existing failure for missing `configs/video-analysis.yaml`, so QA relied on the targeted dedicated-config subtest plus the fresh end-to-end rerun for this slice. Exact files touched by QA work: `.plans/2026-04-28-phase2-readiness-and-next-benchmark-slice.md`, plus regenerated runtime/report artifacts under `output/cod-test/` and `benchmarks/fixtures/cod-test/_reports/` from the fresh rerun.
+
+**Execution status update (2026-04-29 / `ee-70qi.3`):** ✅ Auditor PASS on the chosen slice. Independent audit re-read the plan, `docs/2026-04-28-phase2-readiness-audit.md`, `docs/2026-04-28-next-phase2-slice-decision.md`, coder commit `429d95f6da5da81bb1af2c29d22c546799774b60`, and the current repo state after QA rerun. Audit confirmed the implementation stayed within the chunk-contract restoration scope: `configs/cod-test.yaml` still keeps the canonical whole-video producer untouched, while the new dedicated slice config `configs/cod-test-phase2-chunk-benchmark.yaml` isolates the benchmark lane to `server/scripts/process/video-chunks.cjs` with `gather_context: []` and the expected shared runtime target `output/cod-test/phase2-process/chunk-analysis.json`. Fresh current-state evidence shows `output/cod-test/phase2-process/script-results/video-chunks.success.json` truthfully produced the chunk artifact from 28 successful chunks, downstream Phase 3 consumers now report `implementationStatus.dataSource = derived-from-phase2.chunkAnalysis`, and the benchmark report now scores `chunkAnalysis` as a real compared artifact (`truth_chunk_count: 28`, `output_chunk_count: 28`, `chunk_timeline_pct: 100`, `chunk_persona_contract_pct: 100`, `accuracyRate: 0.6519`, `coverageRate: 0.9490`) instead of failing on a missing/mismatched contract. The stale whole-video artifact remains explicitly non-equivalent (`comparisonHints.safeForChunkEquivalence: false`, `safeForPhase3Metrics: false`), so the slice does not silently treat whole-video output as chunk-equivalent. Auditor caveats recorded but not slice-blocking: the benchmark remains red for real quality mismatches in multiple artifacts, and `node --test test/pipeline/config-loader.test.js` still contains the unrelated pre-existing missing-`configs/video-analysis.yaml` failure outside this slice. Exact files touched by auditor work: `.plans/2026-04-28-phase2-readiness-and-next-benchmark-slice.md` only.
+
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** A dedicated, audit-bounded `cod-test` chunk benchmark lane that restores truthful production of `output/cod-test/phase2-process/chunk-analysis.json`, reconnects the existing Phase 3/benchmark consumers to that real chunk artifact, and leaves the canonical whole-video lane explicitly out of chunk-equivalence claims.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-02`, `REF-03`, and `REF-04` remain satisfied through the bounded slice choice recorded in `docs/2026-04-28-phase2-readiness-audit.md` and `docs/2026-04-28-next-phase2-slice-decision.md`: the canonical `cod-test` config still points at whole-video, the dedicated slice config owns the restored chunk benchmark lane, and the benchmark/report worldview stays chunk-based for this slice without whole-video masquerade.
 
 **Commits:**
-- Pending
+- `429d95f6da5da81bb1af2c29d22c546799774b60` - Restore cod-test chunk benchmark lane
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** Contract-restoration success must stay distinct from benchmark-quality success. For `cod-test`, restoring a truthful chunk artifact and reconnecting downstream consumers was enough to pass this slice even though the benchmark remains red for real content differences and an unrelated config-loader fixture gap still needs separate cleanup.
 
 ---
 
-*Completed on Pending*
+*Completed on 2026-04-29*

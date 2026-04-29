@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-04-29  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -126,19 +126,60 @@ The implementation needs a clean coder → QA → auditor loop with direct regre
 
 ---
 
-## Final Results
+### Task 5: QA the short-circuit fix against targeted tests and chunk-0020 artifacts
 
-**Status:** ⏳ Pending
+**Bead ID:** `ee-w6im`  
+**SubAgent:** `primary` (for `qa` workflow role)  
+**Role:** `qa`  
+**References:** `REF-03`, `REF-04`, `REF-05`  
+**Prompt:** `Perform an independent QA verification of the validator acceptance short-circuit fix. Verify the bounded regression slice end-to-end using the strongest honest repo-local evidence available. Confirm immediate acceptance on first validator success with normalizedValue, preservation of same-turn metadata/completion behavior, intact pre-acceptance repair behavior, neutralization of the chunk-0020 failure mode, and no scope drift beyond the bounded regression.`
 
-**What We Built:** Pending.
+**Folders Created/Deleted/Modified:**
+- `.plans/`
 
-**Reference Check:** Pending.
+**Files Created/Deleted/Modified:**
+- `.plans/2026-04-29-validator-acceptance-short-circuit-fix.md`
 
-**Commits:**
-- Pending
+**Status:** ✅ Complete
 
-**Lessons Learned:** Pending.
+**Results:** Independent QA verified the bounded fix using repo-local evidence only. Commit inspection confirmed the production change is confined to `tools/lib/local-validator-tool-loop.cjs` with targeted regression coverage in `tools/test/emotion-lenses-tool.test.js`; the companion docs commit is confined to the plan plus audit/rollout docs, with no prompt/schema/runtime production drift outside the bounded slice. Validation commands: `node --test --test-name-pattern "executeEmotionAnalysisToolLoop" test/emotion-lenses-tool.test.js` ✅ pass; `node --test test/emotion-lenses-tool.test.js` ❌ still shows the two pre-existing prompt-formatting expectation failures already documented by the coder (`builds strict prompt with all sections`, `clips overlapping dialogue and music ranges to the active chunk window in the prompt`) plus their parent suite wrappers, outside this acceptance regression slice; and a targeted Node replay harness over `REF-04` and `REF-05` proved both captured attempt-01 and attempt-02 turn-1 tool envelopes now terminate immediately with `providerCalls=1`, `turns=1`, `validatorCalls=1`, `requestPrompt.mode="tool_loop"`, history `['model_output','validator_acceptance']`, and a single `tool.loop.complete` event carrying the acceptance-turn attempt metadata. QA conclusion: the old post-acceptance `final_artifact_revalidation` / validator-budget-exhaustion failure mode is neutralized for the observed chunk-0020 captures, and pre-acceptance invalid/repair behavior remains intact.
 
 ---
 
-*Completed on Pending*
+### Task 6: Audit the bounded short-circuit fix against code, tests, and captured failure artifacts
+
+**Bead ID:** `ee-917v`  
+**SubAgent:** `primary` (for `auditor` workflow role)  
+**Role:** `auditor`  
+**References:** `REF-03`, `REF-04`, `REF-05`, `REF-06`  
+**Prompt:** `Perform an independent audit of the validator acceptance short-circuit fix after coder and QA. Decide whether the bounded slice is actually done by checking the current shared loop implementation, targeted tests, capture-backed replay evidence for chunk-0020 attempt-01 and attempt-02, and the characterization of unrelated full-file test failures. Close the bead only if the slice truly passes without scope drift.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+
+**Files Created/Deleted/Modified:**
+- `.plans/2026-04-29-validator-acceptance-short-circuit-fix.md`
+
+**Status:** ✅ Complete
+
+**Results:** Independent audit passed. I verified the production change is still confined to `/home/derrick/.openclaw/workspace/projects/peanut-gallery/tools/lib/local-validator-tool-loop.cjs` and that the only targeted test changes are in `/home/derrick/.openclaw/workspace/projects/peanut-gallery/tools/test/emotion-lenses-tool.test.js`, matching the bounded rollout contract in `docs/2026-04-29-validator-acceptance-short-circuit-rollout.md`. I re-ran `node --test --test-name-pattern "executeEmotionAnalysisToolLoop" test/emotion-lenses-tool.test.js` (pass), re-ran `node --test test/emotion-lenses-tool.test.js` (same unrelated prompt-formatting failures outside this slice), inspected both chunk-0020 captures to confirm turn-1 `validator_acceptance` with `normalizedValue`, and replayed both real capture histories through the current shared loop implementation. Both attempt-01 and attempt-02 now terminate successfully on turn 1 with `providerCalls=1`, `validatorCalls=1`, history `['model_output','validator_acceptance']`, and a single `tool.loop.complete` event, which neutralizes the old post-acceptance validator-budget failure mode without changing pre-acceptance invalid/repair behavior.
+
+---
+
+## Final Results
+
+**Status:** ✅ Complete
+
+**What We Built:** The shared local validator loop now short-circuits immediately on the first validator-approved normalized emotion-analysis artifact, preserving same-turn completion metadata and diagnostics while removing the false post-acceptance validator-budget failure seen in chunk-0020.
+
+**Reference Check:** `REF-03` satisfied by the bounded shared-loop code change plus targeted regression coverage; `REF-04` and `REF-05` satisfied by direct capture inspection and replay through the current loop showing turn-1 success; `REF-06` satisfied by showing the old failure category/message correspond to a post-acceptance exhaustion mode that the new semantics eliminate. No production scope drift into prompts, schemas, chunk consumer logic, or English-only policy was found in this slice.
+
+**Commits:**
+- `334b7b9` - Short-circuit validator acceptance in tool loop
+- `4cd6699` - Document validator acceptance short-circuit fix
+
+**Lessons Learned:** When a local validator already returns a canonical normalized artifact, treating later provider turns as mandatory “confirmation” is a correctness bug, not just an efficiency bug. Capture-backed replay is a strong audit tool for proving semantic regressions are actually neutralized.
+
+---
+
+*Completed on 2026-04-29*

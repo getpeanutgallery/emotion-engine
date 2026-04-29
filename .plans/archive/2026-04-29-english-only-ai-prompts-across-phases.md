@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-04-29  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -139,19 +139,43 @@ The implementation should identify all AI-backed prompt surfaces, land the Engli
 
 **Results:** Added a shared English-only prompt block and reused it across every audited prompt/recovery surface from `REF-01`/`REF-02`: Phase 1 dialogue/music/music-vocals/visual-identity prompt builders, the canonical Phase 2 chunk prompt owner in `../tools/emotion-lenses-tool.cjs`, the Phase 2 whole-video MiMo prompt, the Phase 3 recommendation prompt, and both recovery/repair addenda in `server/lib/ai-recovery-runtime.cjs`. Added bounded validator/acceptance checks that reject obvious non-English free-text in model-authored fields while preserving literal source-authentic carve-outs for transcript/lyric text fields. Static validation passed via syntax checks plus direct validator probes showing English-only failures are rejected while literal non-English transcript text still passes where allowed. Runtime validation was mixed but audit-friendly: the exact required targeted rerun `node server/run-pipeline.cjs --config configs/cod-test-phase2-chunk-benchmark.yaml --verbose` improved chunks 1-4 but still failed at chunk 5 with a pre-existing `validate_emotion_analysis_json` tool-call-limit issue; a full `configs/cod-test.yaml` representative rerun was attempted and blocked early by an upstream `OpenRouter: No content in response` failure in Phase 1 dialogue. To still produce honest end-to-end artifact evidence after those external/runtime blockers, a temporary four-chunk slice config under `workspace/.temp/` was run against the current Phase 1 packet, completed Phase 2 + Phase 3 successfully into `output/cod-test-english-slice/`, and its raw captures plus normalized chunk/recommendation artifacts scanned clean for obvious non-English text. The current persisted Phase 1 packet in `output/cod-test/artifacts-complete.json` also scanned clean on the audited English-only fields.
 
+---
+
+### Task 5: Clarify pass criteria to exclude provider reasoning traces, then rerun QA
+
+**Bead ID:** `ee-2938`  
+**SubAgent:** `primary` (for `research` workflow role)  
+**Role:** `research`  
+**References:** `REF-01`, `REF-02`, `REF-03`, `REF-04`  
+**Prompt:** `Update the English-only rollout contract so pass/fail applies to final model-authored outputs and normalized artifacts, not provider-exposed raw reasoning traces. Keep the instruction asking the model to think/respond in English, but explicitly mark raw provider reasoning/debug traces as out of scope for pass/fail unless the product starts depending on them. Then update the plan/docs so QA can rerun against the clarified contract without broadening scope.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `docs/`
+
+**Files Created/Deleted/Modified:**
+- `.plans/2026-04-29-english-only-ai-prompts-across-phases.md`
+- `docs/2026-04-29-english-only-rule-rollout.md`
+
+**Status:** ✅ Complete
+
+**Results:** Clarified the rollout contract so QA pass/fail is now anchored to final model-authored outputs and normalized/carry-forward artifacts, not provider-exposed raw reasoning/debug traces by themselves. The plan/doc update preserves the prompt instruction to think and respond in English, preserves English-only requirements for final output fields plus carry-forward summaries/notes/recommendations, and explicitly marks raw provider reasoning/debug traces as out of scope unless a parsed/stored product artifact depends on them. The rollout doc now gives QA an immediate rerun rule: inspect normalized Phase 1 text, Phase 2 `chunk-analysis.json`, Phase 3 recommendation artifacts, and any stored carry-forward text; use raw captures only to determine whether non-English text leaked into those product artifacts.
+
 ## Final Results
 
-**Status:** ⚠️ Partial — coder implementation complete; QA/audit still pending
+**Status:** ✅ Auditor pass under clarified contract
 
 **What We Built:** A bounded English-only rollout contract for AI prompt/output behavior across phases 1-3, plus validator guardrails that block obvious non-English free-text in model-authored fields without blocking literal transcript/lyric carve-outs.
 
-**Reference Check:** `REF-01`/`REF-02` satisfied by prompt/recovery coverage across every audited surface. `REF-03`/`REF-04` addressed by the required targeted rerun attempt plus the successful four-chunk English validation slice, which showed raw captures and normalized Phase 2/3 artifacts in English after rollout.
+**Reference Check:** `REF-01`/`REF-02` satisfied by prompt/recovery coverage across every audited surface. Under the clarified output-only contract, `REF-03`/`REF-04` now pass with caveats: the required targeted rerun attempt is real and the chunk-5 `validate_emotion_analysis_json` tool-call-limit blocker is honestly captured in `output/cod-test/phase2-process/script-results/video-chunks.failure.json`, while the corresponding chunk-0000..0004 raw captures from that rerun scan clean for obvious non-English text in parsed/stored chunk outputs. The stale mixed-language `output/cod-test/phase2-process/chunk-analysis.json` predates that targeted rerun by about an hour, so it remains older residue rather than current failing output evidence. The fallback `output/cod-test-english-slice/` evidence is real and suitable for this bounded slice: its event timeline is internally coherent, it reuses an already-English Phase 1 packet, Phase 2 + Phase 3 complete successfully, and its normalized/stored artifacts plus parsed raw-capture payloads scan clean for obvious non-English text. Important audit nuance: `output/cod-test/artifacts-complete.json` is **not** globally English-only because it still embeds stale older Phase 2/3 residue, but the Phase 1 carry-forward subtrees actually reused for this audit (`dialogueData`, `musicData`, `musicVocalsData`) scan clean and the transcript/lyric carve-out still validates as intended.
+
+**Auditor Results:** Independent audit PASS. Static prompt coverage matches the clarified contract across the required Phase 1/2/3 and recovery surfaces. Validator probes confirm the clarified behavior: Chinese literal transcript/lyric text can still pass in source-authentic fields, while Chinese recommendation/output prose is rejected with `english_only_required`. Runtime evidence is sufficient for the clarified slice because the targeted benchmark rerun produced fresh English chunk outputs through chunk 4 before an honestly represented pre-existing tool-call-limit blocker at chunk 5, and the fallback English slice produced fresh English normalized/carry-forward Phase 2 + Phase 3 artifacts without relying on provider reasoning traces as pass/fail evidence.
 
 **Commits:**
 - `97cc31b` — Roll out English-only AI output contract (`emotion-engine`)
 - `11e70ea` — Enforce English-only chunk outputs (`tools`)
 
-**Lessons Learned:** The language-control slice is narrow and landed cleanly, but the strongest runtime validation path is currently limited by two separate upstream/runtime issues outside this rollout: Phase 1 dialogue can still fail with `OpenRouter: No content in response`, and the canonical chunk benchmark can still die on a validator tool-call-limit error at chunk 5 even after early English-only chunks succeed.
+**Lessons Learned:** The language-control slice clears independent audit under the clarified contract, but the strongest end-to-end rerun path is still constrained by two unrelated runtime blockers: a representative full rerun can still fail in Phase 1 dialogue with `OpenRouter: No content in response`, and the canonical Phase 2 benchmark lane can still stop at chunk 5 with a validator tool-call-limit failure even after earlier chunks produce English-only artifacts.
 
 ---
 
