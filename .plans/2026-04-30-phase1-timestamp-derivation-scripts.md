@@ -167,7 +167,7 @@ The key architectural question for this slice is not just “can Whisper timesta
 - `.plans/2026-04-30-phase1-timestamp-derivation-scripts.md`
 - QA/audit notes if needed
 
-**Status:** ❌ Failed
+**Status:** ⚠️ Partial
 
 **Results:**
 
@@ -317,20 +317,44 @@ NODE
 
 **Audit conclusion:** send Task 3 back for a small follow-up fix before considering the dialogue slice complete. The implementation is otherwise bounded and promising, but the persisted/runtime wiring claim is not yet fully true.
 
+### Retry status — 2026-04-30 late session wrap-up (Cookie / orchestrator)
+
+**Retry status:** ✅ Bounded coder retry landed, but **re-QA / re-audit are still pending** for the fixed dialogue slice.
+
+**What changed after the failed auditor pass:**
+- Reopened `ee-12u0` for the exact hydrated canonical reconciled source-resolution defect.
+- Landed follow-up commit `445eea1` (`Fix hydrated dialogue timestamp source resolution`).
+- The fix updates `get-dialogue-timestamps.cjs` so canonical reconciled dialogue can now be consumed from either `artifacts-complete.json` (`dialogueDataReconciled`) or in-memory `artifacts.dialogueDataReconciled` without first requiring `phase1-gather-context/dialogue-data.reconciled.json` on disk.
+- Added regressions for both hydrated canonical reconciled cases while keeping the prior fail-loud missing-reconciled behavior intact.
+
+**Validation rerun after retry:**
+- ✅ `node --test test/scripts/get-dialogue-timestamps.test.js test/lib/phase1-baseline-resolution.test.js test/scripts/tool-wrapper-contract.test.js`
+
+**Current stopping point / exact next step:**
+1. Re-run **QA** on the fixed dialogue slice against commit `445eea1`, specifically covering the two hydrated canonical reconciled entrypoints.
+2. Re-run the **auditor** pass on the same fixed slice.
+3. If dialogue then passes audit cleanly, continue to **Task 4** (`ee-669f`) for the bounded music-vocals timestamp lane.
+
+**Bead state at stop:**
+- `ee-12u0` — closed again after retry fix
+- `ee-ser0` — left in progress as the shared QA/audit bead because re-QA / re-audit still need to validate `445eea1`
+- `ee-669f` — still pending; not started
+
 ---
 
 ## Final Results
 
-**Status:** ⚠️ Draft
+**Status:** ⚠️ Partial
 
-**What We Built:** Pending.
+**What We Built:** The bounded Phase 1 **dialogue** timestamp derivation lane, including sibling timestamp artifact wiring, a new `get-dialogue-timestamps` script, and a follow-up fix for hydrated canonical reconciled source resolution. The corresponding **music-vocals** timestamp lane has not started yet.
 
-**Reference Check:** Pending.
+**Reference Check:** Dialogue-side contract work is implemented and partly validated, but the final re-QA / re-audit pass against retry commit `445eea1` is still outstanding before this slice can be called complete.
 
 **Commits:**
-- Pending.
+- `6b59e77` - Add phase1 dialogue timestamp derivation lane
+- `445eea1` - Fix hydrated dialogue timestamp source resolution
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** File-backed QA alone was not enough for this lane; hydrated/runtime entrypoints needed explicit audit coverage because canonical artifact resolution can succeed from in-memory or `artifacts-complete.json` surfaces even when a sibling reconciled file is absent on disk.
 
 ---
 
