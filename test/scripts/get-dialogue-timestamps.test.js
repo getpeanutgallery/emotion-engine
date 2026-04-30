@@ -132,6 +132,100 @@ test('get-dialogue-timestamps prefers reconciled dialogue when canonical surface
   assert.equal(persisted.dialogue_segments[0].text, 'Clean reconciled line');
 });
 
+test('get-dialogue-timestamps uses canonical reconciled dialogue from artifacts-complete.json without requiring the reconciled file on disk', async (t) => {
+  const outputDir = makeTempDir('ee-dialogue-ts-complete-');
+  t.after(() => fs.rmSync(outputDir, { recursive: true, force: true }));
+
+  writeJson(path.join(outputDir, 'artifacts-complete.json'), {
+    dialogueData: {
+      dialogue_segments: [
+        { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Raw mixed lyric line', confidence: 0.8 }
+      ],
+      summary: 'Raw dialogue',
+      totalDuration: 9
+    },
+    dialogueDataReconciled: {
+      dialogue_segments: [
+        { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hydrated reconciled line', confidence: 0.93 }
+      ],
+      summary: 'Reconciled dialogue',
+      totalDuration: 9
+    }
+  });
+
+  const script = loadScriptWithMock(async () => ({
+    artifacts: {
+      dialogueData: {
+        dialogue_segments: [
+          { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'hydrated reconciled line', start: 0.5, end: 1.8, confidence: 0.86 }
+        ],
+        summary: 'Timed dialogue',
+        totalDuration: 9
+      }
+    }
+  }));
+
+  const result = await script.run({
+    assetPath: '/tmp/fake-asset.mp4',
+    outputDir,
+    config: {
+      gather_context: [
+        'server/scripts/get-context/get-dialogue.cjs',
+        'server/scripts/get-context/reconcile-famous-song-phase1.cjs'
+      ]
+    }
+  });
+
+  assert.ok(result.artifacts.dialogueTimestampsDataReconciled);
+  assert.equal(result.artifacts.dialogueTimestampsDataReconciled.provenance.runtimeArtifactSurface, 'reconciled');
+  assert.equal(result.artifacts.dialogueTimestampsDataReconciled.provenance.sourceRuntimeKey, 'dialogueDataReconciled');
+  assert.equal(result.artifacts.dialogueTimestampsDataReconciled.provenance.sourcePath, 'phase1-gather-context/dialogue-data.reconciled.json');
+  assert.equal(result.artifacts.dialogueTimestampsDataReconciled.dialogue_segments[0].text, 'Hydrated reconciled line');
+});
+
+test('get-dialogue-timestamps uses in-memory canonical reconciled dialogue without requiring the reconciled file on disk', async (t) => {
+  const outputDir = makeTempDir('ee-dialogue-ts-runtime-');
+  t.after(() => fs.rmSync(outputDir, { recursive: true, force: true }));
+
+  const script = loadScriptWithMock(async () => ({
+    artifacts: {
+      dialogueData: {
+        dialogue_segments: [
+          { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'runtime reconciled line', start: 0.25, end: 1.1, confidence: 0.89 }
+        ],
+        summary: 'Timed dialogue',
+        totalDuration: 6
+      }
+    }
+  }));
+
+  const result = await script.run({
+    assetPath: '/tmp/fake-asset.mp4',
+    outputDir,
+    artifacts: {
+      dialogueDataReconciled: {
+        dialogue_segments: [
+          { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Runtime reconciled line', confidence: 0.95 }
+        ],
+        summary: 'Runtime reconciled dialogue',
+        totalDuration: 6
+      }
+    },
+    config: {
+      gather_context: [
+        'server/scripts/get-context/get-dialogue.cjs',
+        'server/scripts/get-context/reconcile-famous-song-phase1.cjs'
+      ]
+    }
+  });
+
+  assert.ok(result.artifacts.dialogueTimestampsDataReconciled);
+  assert.equal(result.artifacts.dialogueTimestampsDataReconciled.provenance.runtimeArtifactSurface, 'reconciled');
+  assert.equal(result.artifacts.dialogueTimestampsDataReconciled.provenance.sourceRuntimeKey, 'dialogueDataReconciled');
+  assert.equal(result.artifacts.dialogueTimestampsDataReconciled.provenance.sourcePath, 'phase1-gather-context/dialogue-data.reconciled.json');
+  assert.equal(result.artifacts.dialogueTimestampsDataReconciled.dialogue_segments[0].text, 'Runtime reconciled line');
+});
+
 test('get-dialogue-timestamps fails loudly when canonical/reconciled dialogue is expected but unavailable', async (t) => {
   const outputDir = makeTempDir('ee-dialogue-ts-missing-');
   t.after(() => fs.rmSync(outputDir, { recursive: true, force: true }));

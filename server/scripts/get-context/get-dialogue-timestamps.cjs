@@ -25,16 +25,17 @@ function ensureSourceDialogue({ artifacts, outputDir, config, runtimeArtifactSur
   });
   const pathResolution = resolvePhase1ArtifactPath(outputDir, 'dialogueData', {
     config,
-    strict: true,
+    strict: false,
     runtimeArtifactSurface
   });
+  const logicalSourcePath = pathResolution.resolvedPath;
 
   if (bagResolution.resolvedArtifact !== undefined) {
     return {
       sourceDialogueData: bagResolution.resolvedArtifact,
       sourceRuntimeKey: bagResolution.resolvedRuntimeKey,
       runtimeArtifactSurface: bagResolution.resolvedRuntimeSurface,
-      sourcePath: pathResolution.resolvedPath
+      sourcePath: logicalSourcePath
     };
   }
 
@@ -46,14 +47,22 @@ function ensureSourceDialogue({ artifacts, outputDir, config, runtimeArtifactSur
   });
 
   if (persisted.artifacts.dialogueData === undefined) {
-    throw new Error(`Missing persisted dialogueData artifact for ${SCRIPT_ID}: ${pathResolution.resolvedPath}`);
+    throw new Error(`Missing persisted dialogueData artifact for ${SCRIPT_ID}: ${logicalSourcePath}`);
   }
+
+  const sourceRuntimeKey = pathResolution.resolvedRuntimeSurface === 'reconciled'
+    ? 'dialogueDataReconciled'
+    : 'dialogueData';
+  const persistedSourcePath = persisted.sources.dialogueData;
+  const sourcePath = persistedSourcePath && path.basename(persistedSourcePath) !== 'artifacts-complete.json'
+    ? persistedSourcePath
+    : logicalSourcePath;
 
   return {
     sourceDialogueData: persisted.artifacts.dialogueData,
-    sourceRuntimeKey: bagResolution.shouldUseReconciled ? 'dialogueDataReconciled' : 'dialogueData',
+    sourceRuntimeKey,
     runtimeArtifactSurface: pathResolution.resolvedRuntimeSurface,
-    sourcePath: persisted.sources.dialogueData || pathResolution.resolvedPath
+    sourcePath
   };
 }
 

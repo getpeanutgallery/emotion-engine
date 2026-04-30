@@ -121,6 +121,8 @@ The key architectural question for this slice is not just “can Whisper timesta
 
 **Results:** Implemented the bounded dialogue timestamp lane first. Added the new `dialogueTimestampsData` / `dialogueTimestampsDataReconciled` artifact family to the shared raw/reconciled resolver seams (`phase1-baseline-resolution.cjs`, `persisted-artifacts.cjs`, `script-contract.cjs`) and added a small shared derivation helper in `server/lib/phase1-timestamp-derivation.cjs`. Shipped `server/scripts/get-context/get-dialogue-timestamps.cjs`, which resolves source dialogue with the same canonical/raw/reconciled selection logic as other Phase 1 artifacts, reruns `get-dialogue` in a temp output with an opt-in `preserveSegmentTiming` flag, aligns against that timed rerun without rewriting the chosen source transcript text, mirrors the selected runtime surface in persisted output/provenance, and fails loudly when reconciled/canonical dialogue is expected but missing. Focused regression coverage now proves raw vs reconciled source selection, reconciled path/runtime-key wiring, verbatim text preservation, and canonical-missing failure behavior. Validation run that passed: `node --test test/scripts/get-dialogue-timestamps.test.js test/lib/phase1-baseline-resolution.test.js test/scripts/tool-wrapper-contract.test.js`. Additional note: `node --test test/lib/script-contract.test.js` still has one unrelated pre-existing failure in the AI-recovery call-count assertion (`script-runner - executeScript performs one bounded AI recovery re-entry for eligible AI lanes`, expected provider call count `2`, got `1`); no code for that lane was changed in this slice.
 
+**Retry update (audit gap ee-12u0):** Fixed the hydrated canonical reconciled source-resolution gap in `get-dialogue-timestamps.cjs`. The script no longer hard-requires `phase1-gather-context/dialogue-data.reconciled.json` on disk before checking runtime/hydrated artifacts; it now accepts canonical reconciled dialogue from either `artifacts-complete.json` or `artifacts.dialogueDataReconciled`, while keeping `provenance.sourcePath` truthful to the logical reconciled source path (`phase1-gather-context/dialogue-data.reconciled.json`) for those hydrated runs. Added regressions covering both hydrated canonical cases and re-ran the focused dialogue timestamp suite successfully: `node --test test/scripts/get-dialogue-timestamps.test.js test/lib/phase1-baseline-resolution.test.js test/scripts/tool-wrapper-contract.test.js`.
+
 ---
 
 ### Task 4: Decide and, if viable, implement `get-music-vocals-timestamps`
@@ -165,9 +167,155 @@ The key architectural question for this slice is not just “can Whisper timesta
 - `.plans/2026-04-30-phase1-timestamp-derivation-scripts.md`
 - QA/audit notes if needed
 
-**Status:** ⏳ Pending
+**Status:** ❌ Failed
 
-**Results:** Pending.
+**Results:**
+
+### QA pass — 2026-04-30 (Cookie / `qa` role)
+
+**QA status:** ✅ Dialogue timestamp slice passes QA on the bounded contract. Auditor pass still pending; bead remains in progress for independent audit.
+
+**Scope executed:** dialogue timestamp lane only (`get-dialogue-timestamps`). I did **not** broaden into the pending music-vocals timestamp lane.
+
+**References checked:** `REF-02`, `REF-04`, `REF-05`, `REF-06`, plus the contract in `docs/2026-04-30-phase1-timestamp-derivation-contract.md` and feasibility memo `docs/2026-04-30-whisper-timestamp-feasibility.md`.
+
+**Commit inspected:** `6b59e77` (`Add phase1 dialogue timestamp derivation lane`).
+
+**Exact commands run:**
+
+```bash
+bd update ee-ser0 --status in_progress --json
+bd where --json
+bd context --json
+
+git show --stat --summary --oneline 6b59e77
+git show --name-only --format=fuller 6b59e77 | sed -n '1,120p'
+
+node --test test/scripts/get-dialogue-timestamps.test.js test/lib/phase1-baseline-resolution.test.js test/scripts/tool-wrapper-contract.test.js
+node --test test/lib/script-contract.test.js
+```
+
+**Representative COD-family E2E QA runs executed:**
+
+1. **Live canonical/reconciled run on copied `output/cod-test` Phase 1 artifacts** using `examples/videos/emotion-tests/cod.mp4` and `configs/cod-test.yaml`, invoking `server/scripts/get-context/get-dialogue-timestamps.cjs` programmatically with `runtimeArtifactSurface: 'canonical'`.
+   - temp run root: `/tmp/ee-qa-cod-live-NPmwjI`
+   - generated artifact: `/tmp/ee-qa-cod-live-NPmwjI/run/phase1-gather-context/dialogue-timestamps-data.reconciled.json`
+   - observed result: runtime key `dialogueTimestampsDataReconciled`, surface `reconciled`, source runtime key `dialogueDataReconciled`, source path `phase1-gather-context/dialogue-data.reconciled.json`
+   - alignment summary: `19` segments total, `15` aligned, `0` partial, `4` unresolved
+
+2. **Live raw-surface run on copied `output/cod-test` Phase 1 artifacts** using the same COD asset/config, invoking the same script with `runtimeArtifactSurface: 'raw'`.
+   - temp run root: `/tmp/ee-qa-cod-live-ECAZMe`
+   - generated artifact: `/tmp/ee-qa-cod-live-ECAZMe/run/phase1-gather-context/dialogue-timestamps-data.json`
+   - observed result: runtime key `dialogueTimestampsData`, surface `raw`, source runtime key `dialogueData`, source path `phase1-gather-context/dialogue-data.json`
+   - alignment summary: `29` segments total, `28` aligned, `1` partial, `0` unresolved
+
+3. **Strict canonical-missing verification on COD-family persisted artifacts** (copied raw dialogue + reconciliation marker, intentionally omitted `dialogue-data.reconciled.json`).
+   - temp run root: `/tmp/ee-qa-cod-missing-rec-qOSo3w`
+   - observed failure: `Famous-song reconciliation is configured, but the reconciled dialogueData artifact is missing: /tmp/ee-qa-cod-missing-rec-qOSo3w/run/phase1-gather-context/dialogue-data.reconciled.json`
+   - this matches the contract’s strict failure posture when canonical should resolve reconciled but the reconciled source artifact is absent.
+
+**Artifacts inspected/generated during QA:**
+- inspected source artifacts:
+  - `output/cod-test/phase1-gather-context/dialogue-data.json`
+  - `output/cod-test/phase1-gather-context/dialogue-data.reconciled.json`
+  - `output/cod-test/phase1-gather-context/famous-song-reconciliation.json`
+- generated QA artifacts:
+  - `/tmp/ee-qa-cod-live-NPmwjI/run/phase1-gather-context/dialogue-timestamps-data.reconciled.json`
+  - `/tmp/ee-qa-cod-live-ECAZMe/run/phase1-gather-context/dialogue-timestamps-data.json`
+
+**What QA proved:**
+- ✅ **Chooses reconciled artifacts when canonical resolves to reconciled.**
+  - Canonical COD run wrote only the reconciled timestamp artifact surface and reported `sourceRuntimeKey: dialogueDataReconciled` with `sourcePath: phase1-gather-context/dialogue-data.reconciled.json`.
+  - The source artifact family difference is real on COD: raw dialogue has `29` segments while reconciled dialogue has `19`, with raw-only lyric contamination lines such as `Obey your master.`, `Come crawling faster.`, and `Master, master.` absent from the reconciled source.
+- ✅ **Chooses raw artifacts when raw is selected.**
+  - Explicit raw COD run wrote `dialogue-timestamps-data.json` and reported `sourceRuntimeKey: dialogueData` with `runtimeArtifactSurface: raw`.
+- ✅ **Preserves source transcript text verbatim.**
+  - In both live runs, emitted segment text matched the selected source artifact text verbatim (for example the first persisted line remained `They want you afraid.`).
+  - Focused automated tests also cover punctuation/case-normalization only as internal alignment logic while persisted text stays untouched.
+- ✅ **Does not mutate the original canonical dialogue artifact.**
+  - I ran both live QA passes against copied COD artifact directories and SHA-256 checked `dialogue-data.json` and `dialogue-data.reconciled.json` before/after each run; both remained byte-identical (`rawUnchanged: true`, `reconciledUnchanged: true`).
+- ✅ **Writes the expected timestamp artifact surface/path/provenance.**
+  - Raw run wrote `phase1-gather-context/dialogue-timestamps-data.json`.
+  - Canonical/reconciled run wrote `phase1-gather-context/dialogue-timestamps-data.reconciled.json`.
+  - Both emitted provenance fields required by contract, including `derivationKind: phase1_timestamp_derivation`, `sourceTextIntegrity: verbatim`, `sourceTimingPolicy: source_artifact_was_untimed`, and `alignmentEngine: phase1_dialogue_asr_rerun`.
+- ✅ **Fails loudly when reconciled/canonical source is required but missing.**
+  - Verified on copied COD-family artifacts with the exact missing-reconciled error above.
+
+**Automated test result summary:**
+- ✅ `node --test test/scripts/get-dialogue-timestamps.test.js test/lib/phase1-baseline-resolution.test.js test/scripts/tool-wrapper-contract.test.js`
+  - passed (`19` tests, `0` failures)
+- ⚠️ `node --test test/lib/script-contract.test.js`
+  - still has the previously noted unrelated failure: `script-runner - executeScript performs one bounded AI recovery re-entry for eligible AI lanes` expected provider call count `2`, got `1`
+  - this failure is outside the dialogue timestamp slice; no QA evidence here suggests the new lane caused it
+
+**QA conclusion for auditor/coder:**
+- The bounded **dialogue** timestamp derivation lane introduced in `6b59e77` passes QA against the contract on representative COD-family assets.
+- No slice-local bugs were found in raw/reconciled source selection, verbatim text preservation, output path/runtime-surface selection, or non-mutation behavior.
+- Remaining caution for audit: the lane is proven for dialogue only; Task 4 / music-vocals remains pending and should not be conflated with this pass.
+- Separate, pre-existing issue remains in `test/lib/script-contract.test.js` and should stay isolated from this bead’s dialogue QA judgment.
+
+### Auditor result — 2026-04-30 (Cookie / `auditor` role)
+
+**Audit status:** ❌ FAIL — the dialogue slice is close, but it does **not** fully satisfy the approved contract yet because persisted/runtime wiring is incomplete for canonical reconciled inputs loaded from `artifacts-complete.json` or supplied via the runtime artifact bag.
+
+**Audit scope held:** dialogue timestamp slice only (`get-dialogue-timestamps`). Music-vocals timestamp work remains pending in `ee-669f` and was kept out of scope except to confirm it is still open.
+
+**Evidence reviewed:**
+- Plan: `.plans/2026-04-30-phase1-timestamp-derivation-scripts.md`
+- Contract: `docs/2026-04-30-phase1-timestamp-derivation-contract.md`
+- Feasibility memo: `docs/2026-04-30-whisper-timestamp-feasibility.md`
+- Commit: `6b59e77` (`Add phase1 dialogue timestamp derivation lane`)
+- Implementation: `server/scripts/get-context/get-dialogue-timestamps.cjs`, `server/lib/phase1-timestamp-derivation.cjs`, `server/lib/phase1-baseline-resolution.cjs`, `server/lib/persisted-artifacts.cjs`, `server/lib/script-contract.cjs`, `server/scripts/get-context/get-dialogue.cjs`
+- Tests: `test/scripts/get-dialogue-timestamps.test.js`, `test/lib/phase1-baseline-resolution.test.js`, `test/scripts/tool-wrapper-contract.test.js`
+
+**Independent findings:**
+- ✅ **Dialogue-only scope stayed bounded.** No `get-music-vocals-timestamps.cjs` implementation landed in `6b59e77`, and bead `ee-669f` remains open.
+- ✅ **Canonical/reconciled vs raw selection logic is implemented for file-backed runs.** The new script uses the shared baseline resolver and mirrors the selected output surface (`dialogue-timestamps-data.json` vs `dialogue-timestamps-data.reconciled.json`).
+- ✅ **Verbatim text preservation is real.** The derivation helper emits source segment `text` unchanged and only normalizes internally for matching.
+- ✅ **No mutation of canonical dialogue artifacts was introduced in code.** The lane writes a sibling timestamp artifact, and `get-dialogue.cjs` only skips timing stripping during the temp rerun when `preserveSegmentTiming: true` is explicitly passed.
+- ✅ **Fail-loudly behavior exists for missing reconciled file-backed source artifacts.** The missing-reconciled error seen in QA matches the contract for persisted canonical/reconciled file runs.
+- ❌ **Persisted/runtime wiring is incomplete and breaks a required contract case.** `ensureSourceDialogue()` calls `resolvePhase1ArtifactPath(... strict: true ...)` before it decides whether the selected source is already available in-memory or in `artifacts-complete.json`. As a result, canonical/reconciled runs fail unless `phase1-gather-context/dialogue-data.reconciled.json` exists on disk, even when the reconciled source artifact is already present in:
+  - `artifacts-complete.json` as `dialogueDataReconciled`, or
+  - the runtime artifact bag as `artifacts.dialogueDataReconciled`
+
+**Why this fails the contract:**
+- The contract says persisted loading should work through `persisted-artifacts.cjs`, including canonical raw/reconciled resolution.
+- The contract also says runtime artifact bag behavior should follow the existing pattern.
+- QA only proved copied-file runs, so it did not cover these hydrated/runtime entrypoints.
+- In the current implementation, both of these cases throw the same file-path error before the script can use the already-hydrated reconciled source.
+
+**Exact retry gaps:**
+1. Fix `server/scripts/get-context/get-dialogue-timestamps.cjs` so canonical/reconciled source resolution does **not** require the reconciled file path to exist when the selected source artifact is already available from the runtime artifact bag or `artifacts-complete.json`.
+2. Preserve truthful `provenance.sourcePath` for hydrated canonical runs. If the logical source surface is `dialogue-data.reconciled.json`, provenance should keep that logical source path rather than collapsing to `artifacts-complete.json` or failing before provenance can be built.
+3. Add regression coverage that proves:
+   - canonical reconciled derivation works when only `artifacts-complete.json` is present with `dialogueDataReconciled`
+   - canonical reconciled derivation works when `artifacts.dialogueDataReconciled` is provided in-memory
+   - provenance still reports the reconciled logical source path/runtime key correctly in those cases
+4. Re-run the focused dialogue timestamp test suite after the fix and refresh QA/audit evidence.
+
+**Exact commands run during audit:**
+```bash
+bd show ee-ser0 --json
+bd update ee-ser0 --status in_progress --json
+
+git show --stat --summary --oneline 6b59e77
+git show --name-only --format=fuller 6b59e77 | sed -n '1,160p'
+git diff 6b59e77^ 6b59e77 -- server/scripts/get-context/get-dialogue.cjs server/lib/phase1-baseline-resolution.cjs server/lib/persisted-artifacts.cjs server/lib/script-contract.cjs server/scripts/get-context/get-dialogue-timestamps.cjs server/lib/phase1-timestamp-derivation.cjs test/scripts/get-dialogue-timestamps.test.js test/lib/phase1-baseline-resolution.test.js test/scripts/tool-wrapper-contract.test.js | sed -n '1,260p'
+grep -nE "preserveSegmentTiming|stripDialogueSegmentTiming|async function run|module\.exports" server/scripts/get-context/get-dialogue.cjs | sed -n '1,120p'
+
+node --test test/scripts/get-dialogue-timestamps.test.js test/lib/phase1-baseline-resolution.test.js test/scripts/tool-wrapper-contract.test.js
+node --test test/lib/script-contract.test.js
+
+node - <<'NODE'
+# canonical reconciled derivation with only artifacts-complete.json present
+NODE
+
+node - <<'NODE'
+# canonical reconciled derivation with only in-memory artifacts.dialogueDataReconciled present
+NODE
+```
+
+**Audit conclusion:** send Task 3 back for a small follow-up fix before considering the dialogue slice complete. The implementation is otherwise bounded and promising, but the persisted/runtime wiring claim is not yet fully true.
 
 ---
 
