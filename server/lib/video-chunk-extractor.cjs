@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Video Chunk Extractor
- * Extracts video segments using ffmpeg without re-encoding for speed
- * 
+ * Extracts provider-facing video segments as independently decodable MP4 chunks.
+ *
  * Usage:
  *   const extractor = require('./video-chunk-extractor.cjs');
  *   const chunkPath = await extractor.extractVideoChunk('/path/to/video.mp4', 10, 30, '/output/dir', 0);
@@ -142,15 +142,25 @@ async function extractVideoChunk(videoPath, startTime, endTime, outputDir, chunk
     const durationSeconds = endTime - startTime;
 
     // Build FFmpeg command
-    // -ss: seek to start time (before -i for fast seek)
-    // -t: extract a bounded duration window relative to the seek point
-    // -c copy: copy streams without re-encoding (fast)
+    // -ss after -i: accurate trim at the requested source boundary
+    // -t: extract a bounded duration window relative to the trim point
+    // -map 0:v:0 + -map 0:a:0?: keep a single primary video stream and optional audio
+    // -c:v libx264 / -c:a aac: re-encode so each chunk is independently decodable even when
+    //   the requested trim starts between source keyframes
+    // -movflags +faststart / -pix_fmt yuv420p: conservative MP4 compatibility for multimodal ingest
     // -y: overwrite output file if exists
     const args = [
-        '-ss', startTime.toString(),
         '-i', videoPath,
+        '-ss', startTime.toString(),
         '-t', durationSeconds.toString(),
-        '-c', 'copy',
+        '-map', '0:v:0',
+        '-map', '0:a:0?',
+        '-c:v', 'libx264',
+        '-preset', 'veryfast',
+        '-pix_fmt', 'yuv420p',
+        '-c:a', 'aac',
+        '-b:a', '128k',
+        '-movflags', '+faststart',
         '-y',
         outputPath
     ];

@@ -51,14 +51,21 @@ test('video-chunk-extractor', async (t) => {
     }
   });
 
-  await t.test('uses a bounded duration slice via -t instead of an absolute -to end time', async () => {
+  await t.test('uses an accurately trimmed bounded duration re-encode for independently decodable provider chunks', async () => {
     const outputDir = path.join(tempDir, 'chunks');
     const result = await extractVideoChunk(sourcePath, 10, 15, outputDir, 1);
 
     assert.equal(result.success, true);
     assert.ok(lastSpawnArgs);
-    assert.deepEqual(lastSpawnArgs.args.slice(0, 6), ['-ss', '10', '-i', sourcePath, '-t', '5']);
+    assert.deepEqual(lastSpawnArgs.args.slice(0, 6), ['-i', sourcePath, '-ss', '10', '-t', '5']);
+    assert.ok(lastSpawnArgs.args.includes('-map'));
+    assert.ok(lastSpawnArgs.args.includes('0:v:0'));
+    assert.ok(lastSpawnArgs.args.includes('0:a:0?'));
+    assert.ok(lastSpawnArgs.args.includes('libx264'));
+    assert.ok(lastSpawnArgs.args.includes('aac'));
+    assert.ok(lastSpawnArgs.args.includes('+faststart'));
     assert.ok(!lastSpawnArgs.args.includes('-to'));
+    assert.ok(!lastSpawnArgs.args.includes('copy'));
     assert.ok(fs.existsSync(result.chunkPath));
   });
 });
