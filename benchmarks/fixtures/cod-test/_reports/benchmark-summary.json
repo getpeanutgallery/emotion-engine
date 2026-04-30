@@ -8,7 +8,7 @@
     "path": "benchmarks/fixtures/cod-test/fixture.json"
   },
   "run": {
-    "configName": "COD Test Phase 2 Chunk Benchmark Slice",
+    "configName": "COD Test Pipeline",
     "outputDir": "output/cod-test"
   },
   "status": "error",
@@ -658,16 +658,16 @@
       "artifactKey": "chunkAnalysis",
       "label": "Phase 2 chunk analysis",
       "status": "fail",
-      "accuracyRate": 0.6685185185185185,
+      "accuracyRate": 0.8481481481481481,
       "coverageRate": 0.9490333919156415,
       "ignoredDifferenceCount": 29,
       "comparisonBoundary": null,
       "mismatchClassificationCounts": {},
       "chunkAnalysisScoring": {
         "chunk_timeline_pct": 100,
-        "chunk_summary_pct": 0,
-        "chunk_emotion_scores_pct": 31,
-        "chunk_dominant_emotion_pct": 78.6,
+        "chunk_summary_pct": 60.7,
+        "chunk_emotion_scores_pct": 69,
+        "chunk_dominant_emotion_pct": 82.1,
         "chunk_persona_contract_pct": 100,
         "truth_chunk_count": 28,
         "output_chunk_count": 28,
@@ -678,8 +678,8 @@
       "artifactKey": "recommendationData",
       "label": "Phase 3 recommendation",
       "status": "error",
-      "accuracyRate": 0.15,
-      "coverageRate": 0.5555555555555556,
+      "accuracyRate": 0.13043478260869565,
+      "coverageRate": 0.6216216216216216,
       "ignoredDifferenceCount": 4,
       "comparisonBoundary": null,
       "mismatchClassificationCounts": {},
@@ -690,9 +690,9 @@
         "recommendation_suggestions_pct": 0,
         "recommendation_confidence_pct": 100,
         "key_findings_truth_count": 6,
-        "key_findings_output_count": 5,
+        "key_findings_output_count": 7,
         "suggestions_truth_count": 11,
-        "suggestions_output_count": 8,
+        "suggestions_output_count": 10,
         "list_alignment_strategy": "index-or-fuzzy-item"
       }
     },
@@ -700,7 +700,7 @@
       "artifactKey": "metricsData",
       "label": "Phase 3 metrics",
       "status": "fail",
-      "accuracyRate": 0.5428571428571428,
+      "accuracyRate": 0.7428571428571429,
       "coverageRate": 0.9722222222222222,
       "ignoredDifferenceCount": 1,
       "comparisonBoundary": null,
@@ -708,10 +708,10 @@
       "metricsScoring": {
         "metrics_summary_pct": 100,
         "metrics_implementation_status_pct": 100,
-        "metrics_averages_pct": 33.3,
-        "metrics_peak_moments_pct": 33.3,
-        "metrics_trends_pct": 58.3,
-        "friction_index_pct": 0,
+        "metrics_averages_pct": 100,
+        "metrics_peak_moments_pct": 58.3,
+        "metrics_trends_pct": 66.7,
+        "friction_index_pct": 100,
         "missing_metric_family_count": 0
       }
     },
@@ -719,15 +719,15 @@
       "artifactKey": "emotionalAnalysisData",
       "label": "Phase 3 emotional analysis",
       "status": "error",
-      "accuracyRate": 0.6594167078596145,
-      "coverageRate": 0.9911807937285644,
+      "accuracyRate": 0.6638655462184874,
+      "coverageRate": 0.9887585532746823,
       "ignoredDifferenceCount": 4,
       "comparisonBoundary": null,
       "mismatchClassificationCounts": {},
       "emotionalAnalysisScoring": {
         "emotional_summary_pct": 83.3,
-        "chunk_emotions_pct": 77.5,
-        "emotional_arc_pct": 56.4,
+        "chunk_emotions_pct": 76.1,
+        "emotional_arc_pct": 61.2,
         "scroll_risk_timeline_pct": 0,
         "critical_moments_pct": 0,
         "emotional_implementation_status_pct": 100,
@@ -735,7 +735,7 @@
         "truth_chunk_count": 28,
         "output_chunk_count": 28,
         "truth_critical_moment_count": 13,
-        "output_critical_moment_count": 7
+        "output_critical_moment_count": 12
       }
     }
   ],
@@ -744,26 +744,26 @@
     "artifactsPassed": 0,
     "artifactsFailed": 5,
     "artifactsErrored": 3,
-    "totalTruthFields": 3489,
-    "scoreableFields": 3282,
+    "totalTruthFields": 3495,
+    "scoreableFields": 3285,
     "skippedFields": 181,
-    "passedFields": 2072,
-    "failedFields": 1210,
-    "erroredFields": 26,
+    "passedFields": 2185,
+    "failedFields": 1100,
+    "erroredFields": 29,
     "ignoredDifferenceFields": 96,
     "mismatchClassificationCounts": {}
   },
   "accuracy": {
-    "passed": 2072,
-    "failed": 1210,
-    "rate": 0.6313223644119439
+    "passed": 2185,
+    "failed": 1100,
+    "rate": 0.665144596651446
   },
   "coverage": {
-    "scoreable": 3282,
+    "scoreable": 3285,
     "skipped": 181,
     "ignoredDifferences": 96,
-    "totalTruthFields": 3489,
-    "rate": 0.94067067927773
+    "totalTruthFields": 3495,
+    "rate": 0.9399141630901288
   },
   "mismatchClassificationCounts": {},
   "errors": [
@@ -851,24 +851,10 @@
     },
     {
       "artifactKey": "recommendationData",
-      "path": "keyFindings[5]",
+      "path": "keyFindings[6]",
       "rule": "structural",
-      "truthValue": "The end-slate/pre-order stretch weakens the final emotional payoff and likely causes scroll-off before the CTA lands.",
-      "reason": "Output array missing item present in truth"
-    },
-    {
-      "artifactKey": "recommendationData",
-      "path": "suggestions[8]",
-      "rule": "structural",
-      "truthValue": "Shorten the static pre-order/end-slate sequence and move key offer text over ongoing action if platform rules allow.",
-      "reason": "Output array missing item present in truth"
-    },
-    {
-      "artifactKey": "recommendationData",
-      "path": "suggestions[9]",
-      "rule": "structural",
-      "truthValue": "End on a final high-adrenaline gameplay beat before the logo/CTA so the viewer exits on excitement, not fine print.",
-      "reason": "Output array missing item present in truth"
+      "outputValue": "Friction index of 100 suggests high disengagement potential, especially in non-action segments.",
+      "reason": "Truth array missing item present in output"
     },
     {
       "artifactKey": "recommendationData",
@@ -876,6 +862,23 @@
       "rule": "structural",
       "truthValue": "If a CTA must remain, make it the shortest possible closing card after the franchise/title reveal rather than a prolonged information block.",
       "reason": "Output array missing item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=70,emotion=boredom,type=threshold-high,chunkIndex=14]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 70,
+        "emotion": "boredom",
+        "type": "threshold-high",
+        "score": 1,
+        "previousScore": 0.2,
+        "threshold": 0.7,
+        "chunkIndex": 14,
+        "severity": 0.75,
+        "context": "boredom threshold crossed. Emotional state: patience: 20%, boredom: 100%, excitement: 90%"
+      },
+      "reason": "Truth array missing keyed item present in output"
     },
     {
       "artifactKey": "emotionalAnalysisData",
@@ -890,58 +893,126 @@
         "threshold": 0.7,
         "chunkIndex": 21,
         "severity": 0.75,
-        "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 100%, excitement: 90%"
+        "context": "boredom threshold crossed. Emotional state: patience: 20%, boredom: 100%, excitement: 90%"
       },
       "reason": "Truth array missing keyed item present in output"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=110,emotion=boredom,type=threshold-low,chunkIndex=22]",
+      "path": "criticalMoments[timestamp=120,emotion=boredom,type=threshold-high,chunkIndex=24]",
       "rule": "structural",
       "outputValue": {
-        "timestamp": 110,
+        "timestamp": 120,
+        "emotion": "boredom",
+        "type": "threshold-high",
+        "score": 0.8,
+        "previousScore": 0.2,
+        "threshold": 0.7,
+        "chunkIndex": 24,
+        "severity": 0.75,
+        "context": "boredom threshold crossed. Emotional state: patience: 30%, boredom: 80%, excitement: 20%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=115,emotion=boredom,type=threshold-low,chunkIndex=23]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 115,
         "emotion": "boredom",
         "type": "threshold-low",
         "score": 0.2,
         "previousScore": 1,
         "threshold": 0.3,
-        "chunkIndex": 22,
+        "chunkIndex": 23,
         "severity": 0.65,
-        "context": "boredom threshold crossed. Emotional state: patience: 70%, boredom: 20%, excitement: 90%"
+        "context": "boredom threshold crossed. Emotional state: patience: 70%, boredom: 20%, excitement: 80%"
       },
       "reason": "Truth array missing keyed item present in output"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=100,emotion=excitement,type=threshold-high,chunkIndex=20]",
+      "path": "criticalMoments[timestamp=40,emotion=excitement,type=threshold-high,chunkIndex=8]",
       "rule": "structural",
       "outputValue": {
-        "timestamp": 100,
+        "timestamp": 40,
         "emotion": "excitement",
         "type": "threshold-high",
-        "score": 0.9,
-        "previousScore": 0.4,
+        "score": 0.8,
+        "previousScore": 0.5,
         "threshold": 0.7,
-        "chunkIndex": 20,
-        "severity": 0.6499999999999999,
-        "context": "excitement threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
+        "chunkIndex": 8,
+        "severity": 0.6,
+        "context": "excitement threshold crossed. Emotional state: patience: 70%, boredom: 20%, excitement: 80%"
       },
       "reason": "Truth array missing keyed item present in output"
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=15,emotion=excitement,type=threshold-high,chunkIndex=3]",
+      "path": "criticalMoments[timestamp=25,emotion=excitement,type=threshold-low,chunkIndex=5]",
       "rule": "structural",
       "outputValue": {
-        "timestamp": 15,
+        "timestamp": 25,
         "emotion": "excitement",
+        "type": "threshold-low",
+        "score": 0.3,
+        "previousScore": 0.8,
+        "threshold": 0.3,
+        "chunkIndex": 5,
+        "severity": 0.55,
+        "context": "excitement threshold crossed. Emotional state: patience: 40%, boredom: 60%, excitement: 30%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=30,emotion=boredom,type=threshold-high,chunkIndex=6]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 30,
+        "emotion": "boredom",
         "type": "threshold-high",
         "score": 0.7,
         "previousScore": 0.6,
         "threshold": 0.7,
-        "chunkIndex": 3,
+        "chunkIndex": 6,
         "severity": 0.55,
-        "context": "excitement threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 70%"
+        "context": "boredom threshold crossed. Emotional state: patience: 50%, boredom: 70%, excitement: 60%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=40,emotion=boredom,type=threshold-low,chunkIndex=8]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 40,
+        "emotion": "boredom",
+        "type": "threshold-low",
+        "score": 0.2,
+        "previousScore": 0.6,
+        "threshold": 0.3,
+        "chunkIndex": 8,
+        "severity": 0.44999999999999996,
+        "context": "boredom threshold crossed. Emotional state: patience: 70%, boredom: 20%, excitement: 80%"
+      },
+      "reason": "Truth array missing keyed item present in output"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=130,emotion=boredom,type=threshold-low,chunkIndex=26]",
+      "rule": "structural",
+      "outputValue": {
+        "timestamp": 130,
+        "emotion": "boredom",
+        "type": "threshold-low",
+        "score": 0.2,
+        "previousScore": 0.6,
+        "threshold": 0.3,
+        "chunkIndex": 26,
+        "severity": 0.44999999999999996,
+        "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
       },
       "reason": "Truth array missing keyed item present in output"
     },
@@ -981,18 +1052,18 @@
     },
     {
       "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=80,emotion=boredom,type=threshold-low,chunkIndex=16]",
+      "path": "criticalMoments[timestamp=100,emotion=boredom,type=threshold-low,chunkIndex=20]",
       "rule": "structural",
       "truthValue": {
-        "timestamp": 80,
+        "timestamp": 100,
         "emotion": "boredom",
         "type": "threshold-low",
         "score": 0.2,
         "previousScore": 1,
         "threshold": 0.3,
-        "chunkIndex": 16,
+        "chunkIndex": 20,
         "severity": 0.65,
-        "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 90%"
+        "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 20%, excitement: 80%"
       },
       "reason": "Output array missing keyed item present in truth"
     },
@@ -1027,23 +1098,6 @@
         "chunkIndex": 27,
         "severity": 0.6499999999999999,
         "context": "boredom threshold crossed. Emotional state: patience: 80%, boredom: 100%, excitement: 90%"
-      },
-      "reason": "Output array missing keyed item present in truth"
-    },
-    {
-      "artifactKey": "emotionalAnalysisData",
-      "path": "criticalMoments[timestamp=120,emotion=excitement,type=threshold-low,chunkIndex=24]",
-      "rule": "structural",
-      "truthValue": {
-        "timestamp": 120,
-        "emotion": "excitement",
-        "type": "threshold-low",
-        "score": 0.3,
-        "previousScore": 0.9,
-        "threshold": 0.3,
-        "chunkIndex": 24,
-        "severity": 0.6000000000000001,
-        "context": "excitement threshold crossed. Emotional state: patience: 20%, boredom: 80%, excitement: 30%"
       },
       "reason": "Output array missing keyed item present in truth"
     },
@@ -1100,6 +1154,23 @@
     },
     {
       "artifactKey": "emotionalAnalysisData",
+      "path": "criticalMoments[timestamp=95,emotion=boredom,type=threshold-high,chunkIndex=19]",
+      "rule": "structural",
+      "truthValue": {
+        "timestamp": 95,
+        "emotion": "boredom",
+        "type": "threshold-high",
+        "score": 1,
+        "previousScore": 0.6,
+        "threshold": 0.7,
+        "chunkIndex": 19,
+        "severity": 0.55,
+        "context": "boredom threshold crossed. Emotional state: patience: 90%, boredom: 100%, excitement: 90%"
+      },
+      "reason": "Output array missing keyed item present in truth"
+    },
+    {
+      "artifactKey": "emotionalAnalysisData",
       "path": "criticalMoments[timestamp=30,emotion=boredom,type=threshold-low,chunkIndex=6]",
       "rule": "structural",
       "truthValue": {
@@ -1116,5 +1187,5 @@
       "reason": "Output array missing keyed item present in truth"
     }
   ],
-  "summary": "0/8 artifacts passed. 2072/3282 scoreable fields passed. Truth coverage was 3282/3489 fields."
+  "summary": "0/8 artifacts passed. 2185/3285 scoreable fields passed. Truth coverage was 3285/3495 fields."
 }

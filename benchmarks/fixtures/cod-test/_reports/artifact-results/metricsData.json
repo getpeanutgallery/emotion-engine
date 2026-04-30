@@ -40,15 +40,15 @@
     "totalTruthFields": 36,
     "scoreableFields": 35,
     "skippedFields": 1,
-    "passedFields": 19,
-    "failedFields": 16,
+    "passedFields": 26,
+    "failedFields": 9,
     "erroredFields": 0,
     "ignoredDifferenceFields": 1
   },
   "accuracy": {
-    "passed": 19,
-    "failed": 16,
-    "rate": 0.5428571428571428
+    "passed": 26,
+    "failed": 9,
+    "rate": 0.7428571428571429
   },
   "coverage": {
     "scoreable": 35,
@@ -60,124 +60,75 @@
   "metricsScoring": {
     "metrics_summary_pct": 100,
     "metrics_implementation_status_pct": 100,
-    "metrics_averages_pct": 33.3,
-    "metrics_peak_moments_pct": 33.3,
-    "metrics_trends_pct": 58.3,
-    "friction_index_pct": 0,
+    "metrics_averages_pct": 100,
+    "metrics_peak_moments_pct": 58.3,
+    "metrics_trends_pct": 66.7,
+    "friction_index_pct": 100,
     "missing_metric_family_count": 0
   },
   "failures": [
     {
-      "path": "averages.patience",
-      "rule": "tolerant-number",
-      "truthValue": 0.6428571428571428,
-      "outputValue": 0.7499999999999987,
-      "reason": "Numeric delta 0.10714285714285587 exceeded tolerance 0.1"
-    },
-    {
-      "path": "averages.boredom",
-      "rule": "tolerant-number",
-      "truthValue": 0.42857142857142855,
-      "outputValue": 0.24999999999999994,
-      "reason": "Numeric delta 0.1785714285714286 exceeded tolerance 0.1"
-    },
-    {
       "path": "peakMoments.patience.highest.timestamp",
       "rule": "tolerant-time",
       "truthValue": 75,
-      "outputValue": 40,
-      "reason": "Time delta 35 exceeded tolerance 2"
+      "outputValue": 15,
+      "reason": "Time delta 60 exceeded tolerance 2"
     },
     {
       "path": "peakMoments.patience.lowest.timestamp",
       "rule": "tolerant-time",
       "truthValue": 0,
-      "outputValue": 85,
-      "reason": "Time delta 85 exceeded tolerance 2"
-    },
-    {
-      "path": "peakMoments.patience.lowest.score",
-      "rule": "tolerant-number",
-      "truthValue": 0.2,
-      "outputValue": 0.6,
-      "reason": "Numeric delta 0.39999999999999997 exceeded tolerance 0.1"
+      "outputValue": 70,
+      "reason": "Time delta 70 exceeded tolerance 2"
     },
     {
       "path": "peakMoments.boredom.highest.timestamp",
       "rule": "tolerant-time",
       "truthValue": 75,
-      "outputValue": 105,
-      "reason": "Time delta 30 exceeded tolerance 2"
+      "outputValue": 70,
+      "reason": "Time delta 5 exceeded tolerance 2"
     },
     {
       "path": "peakMoments.boredom.lowest.timestamp",
       "rule": "tolerant-time",
       "truthValue": 5,
-      "outputValue": 0,
+      "outputValue": 10,
       "reason": "Time delta 5 exceeded tolerance 2"
     },
     {
       "path": "peakMoments.excitement.highest.timestamp",
       "rule": "tolerant-time",
       "truthValue": 5,
-      "outputValue": 40,
-      "reason": "Time delta 35 exceeded tolerance 2"
-    },
-    {
-      "path": "peakMoments.excitement.lowest.timestamp",
-      "rule": "tolerant-time",
-      "truthValue": 120,
-      "outputValue": 95,
-      "reason": "Time delta 25 exceeded tolerance 2"
-    },
-    {
-      "path": "peakMoments.excitement.lowest.score",
-      "rule": "tolerant-number",
-      "truthValue": 0.3,
-      "outputValue": 0.4,
-      "reason": "Numeric delta 0.10000000000000003 exceeded tolerance 0.1"
+      "outputValue": 45,
+      "reason": "Time delta 40 exceeded tolerance 2"
     },
     {
       "path": "trends.patience.direction",
       "rule": "exact",
       "truthValue": "increasing",
-      "outputValue": "stable",
+      "outputValue": "decreasing",
       "reason": "Values differed"
     },
     {
-      "path": "trends.patience.firstHalfAverage",
+      "path": "trends.patience.change",
       "rule": "tolerant-number",
-      "truthValue": 0.6142857142857141,
-      "outputValue": 0.7642857142857139,
-      "reason": "Numeric delta 0.1499999999999998 exceeded tolerance 0.1"
+      "truthValue": 0.05714285714285705,
+      "outputValue": -0.0714285714285714,
+      "reason": "Numeric delta 0.12857142857142845 exceeded tolerance 0.1"
     },
     {
-      "path": "trends.boredom.change",
+      "path": "trends.patience.secondHalfAverage",
       "rule": "tolerant-number",
-      "truthValue": 0.24285714285714283,
-      "outputValue": 0.10000000000000009,
-      "reason": "Numeric delta 0.14285714285714274 exceeded tolerance 0.1"
+      "truthValue": 0.6714285714285712,
+      "outputValue": 0.5571428571428568,
+      "reason": "Numeric delta 0.11428571428571432 exceeded tolerance 0.1"
     },
     {
-      "path": "trends.boredom.firstHalfAverage",
-      "rule": "tolerant-number",
-      "truthValue": 0.3071428571428571,
-      "outputValue": 0.19999999999999973,
-      "reason": "Numeric delta 0.10714285714285737 exceeded tolerance 0.1"
-    },
-    {
-      "path": "trends.boredom.secondHalfAverage",
-      "rule": "tolerant-number",
-      "truthValue": 0.5499999999999999,
-      "outputValue": 0.2999999999999998,
-      "reason": "Numeric delta 0.2500000000000001 exceeded tolerance 0.1"
-    },
-    {
-      "path": "frictionIndex",
-      "rule": "tolerant-number",
-      "truthValue": 100,
-      "outputValue": 77.19940476190476,
-      "reason": "Numeric delta 22.80059523809524 exceeded tolerance 0.1"
+      "path": "trends.excitement.direction",
+      "rule": "exact",
+      "truthValue": "stable",
+      "outputValue": "increasing",
+      "reason": "Values differed"
     }
   ],
   "skips": [
@@ -191,7 +142,7 @@
     {
       "path": "generatedAt",
       "truthValue": "2026-03-26T13:35:12.112Z",
-      "outputValue": "2026-04-29T22:29:00.629Z",
+      "outputValue": "2026-04-30T14:25:00.245Z",
       "reason": "Ignored path values differed"
     }
   ],
@@ -203,7 +154,7 @@
       "status": "skip",
       "rule": "structural",
       "truthValue": "2026-03-26T13:35:12.112Z",
-      "outputValue": "2026-04-29T22:29:00.629Z",
+      "outputValue": "2026-04-30T14:25:00.245Z",
       "reason": "Comparator ignored benchmark path"
     },
     {
@@ -261,25 +212,23 @@
     },
     {
       "path": "averages.patience",
-      "status": "fail",
+      "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.6428571428571428,
-      "outputValue": 0.7499999999999987,
-      "reason": "Numeric delta 0.10714285714285587 exceeded tolerance 0.1",
+      "outputValue": 0.5928571428571426,
       "metrics": {
-        "delta": 0.10714285714285587,
+        "delta": 0.050000000000000155,
         "tolerance": 0.1
       }
     },
     {
       "path": "averages.boredom",
-      "status": "fail",
+      "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.42857142857142855,
-      "outputValue": 0.24999999999999994,
-      "reason": "Numeric delta 0.1785714285714286 exceeded tolerance 0.1",
+      "outputValue": 0.4035714285714291,
       "metrics": {
-        "delta": 0.1785714285714286,
+        "delta": 0.024999999999999467,
         "tolerance": 0.1
       }
     },
@@ -288,9 +237,9 @@
       "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.7821428571428576,
-      "outputValue": 0.8250000000000012,
+      "outputValue": 0.7857142857142869,
       "metrics": {
-        "delta": 0.04285714285714359,
+        "delta": 0.003571428571429336,
         "tolerance": 0.1
       }
     },
@@ -299,10 +248,10 @@
       "status": "fail",
       "rule": "tolerant-time",
       "truthValue": 75,
-      "outputValue": 40,
-      "reason": "Time delta 35 exceeded tolerance 2",
+      "outputValue": 15,
+      "reason": "Time delta 60 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 35,
+        "deltaSeconds": 60,
         "toleranceSeconds": 2
       }
     },
@@ -311,9 +260,9 @@
       "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.9,
-      "outputValue": 0.9,
+      "outputValue": 0.8,
       "metrics": {
-        "delta": 0,
+        "delta": 0.09999999999999998,
         "tolerance": 0.1
       }
     },
@@ -322,22 +271,21 @@
       "status": "fail",
       "rule": "tolerant-time",
       "truthValue": 0,
-      "outputValue": 85,
-      "reason": "Time delta 85 exceeded tolerance 2",
+      "outputValue": 70,
+      "reason": "Time delta 70 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 85,
+        "deltaSeconds": 70,
         "toleranceSeconds": 2
       }
     },
     {
       "path": "peakMoments.patience.lowest.score",
-      "status": "fail",
+      "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.2,
-      "outputValue": 0.6,
-      "reason": "Numeric delta 0.39999999999999997 exceeded tolerance 0.1",
+      "outputValue": 0.2,
       "metrics": {
-        "delta": 0.39999999999999997,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
@@ -346,10 +294,10 @@
       "status": "fail",
       "rule": "tolerant-time",
       "truthValue": 75,
-      "outputValue": 105,
-      "reason": "Time delta 30 exceeded tolerance 2",
+      "outputValue": 70,
+      "reason": "Time delta 5 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 30,
+        "deltaSeconds": 5,
         "toleranceSeconds": 2
       }
     },
@@ -369,7 +317,7 @@
       "status": "fail",
       "rule": "tolerant-time",
       "truthValue": 5,
-      "outputValue": 0,
+      "outputValue": 10,
       "reason": "Time delta 5 exceeded tolerance 2",
       "metrics": {
         "deltaSeconds": 5,
@@ -392,10 +340,10 @@
       "status": "fail",
       "rule": "tolerant-time",
       "truthValue": 5,
-      "outputValue": 40,
-      "reason": "Time delta 35 exceeded tolerance 2",
+      "outputValue": 45,
+      "reason": "Time delta 40 exceeded tolerance 2",
       "metrics": {
-        "deltaSeconds": 35,
+        "deltaSeconds": 40,
         "toleranceSeconds": 2
       }
     },
@@ -404,33 +352,31 @@
       "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.9,
-      "outputValue": 1,
+      "outputValue": 0.9,
       "metrics": {
-        "delta": 0.09999999999999998,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
     {
       "path": "peakMoments.excitement.lowest.timestamp",
-      "status": "fail",
+      "status": "pass",
       "rule": "tolerant-time",
       "truthValue": 120,
-      "outputValue": 95,
-      "reason": "Time delta 25 exceeded tolerance 2",
+      "outputValue": 120,
       "metrics": {
-        "deltaSeconds": 25,
+        "deltaSeconds": 0,
         "toleranceSeconds": 2
       }
     },
     {
       "path": "peakMoments.excitement.lowest.score",
-      "status": "fail",
+      "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.3,
-      "outputValue": 0.4,
-      "reason": "Numeric delta 0.10000000000000003 exceeded tolerance 0.1",
+      "outputValue": 0.2,
       "metrics": {
-        "delta": 0.10000000000000003,
+        "delta": 0.09999999999999998,
         "tolerance": 0.1
       }
     },
@@ -439,40 +385,41 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "increasing",
-      "outputValue": "stable",
+      "outputValue": "decreasing",
       "reason": "Values differed"
     },
     {
       "path": "trends.patience.change",
-      "status": "pass",
+      "status": "fail",
       "rule": "tolerant-number",
       "truthValue": 0.05714285714285705,
-      "outputValue": -0.028571428571428248,
+      "outputValue": -0.0714285714285714,
+      "reason": "Numeric delta 0.12857142857142845 exceeded tolerance 0.1",
       "metrics": {
-        "delta": 0.0857142857142853,
+        "delta": 0.12857142857142845,
         "tolerance": 0.1
       }
     },
     {
       "path": "trends.patience.firstHalfAverage",
-      "status": "fail",
+      "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.6142857142857141,
-      "outputValue": 0.7642857142857139,
-      "reason": "Numeric delta 0.1499999999999998 exceeded tolerance 0.1",
+      "outputValue": 0.6285714285714282,
       "metrics": {
-        "delta": 0.1499999999999998,
+        "delta": 0.014285714285714124,
         "tolerance": 0.1
       }
     },
     {
       "path": "trends.patience.secondHalfAverage",
-      "status": "pass",
+      "status": "fail",
       "rule": "tolerant-number",
       "truthValue": 0.6714285714285712,
-      "outputValue": 0.7357142857142857,
+      "outputValue": 0.5571428571428568,
+      "reason": "Numeric delta 0.11428571428571432 exceeded tolerance 0.1",
       "metrics": {
-        "delta": 0.0642857142857145,
+        "delta": 0.11428571428571432,
         "tolerance": 0.1
       }
     },
@@ -485,55 +432,53 @@
     },
     {
       "path": "trends.boredom.change",
-      "status": "fail",
+      "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.24285714285714283,
-      "outputValue": 0.10000000000000009,
-      "reason": "Numeric delta 0.14285714285714274 exceeded tolerance 0.1",
+      "outputValue": 0.19285714285714345,
       "metrics": {
-        "delta": 0.14285714285714274,
+        "delta": 0.04999999999999938,
         "tolerance": 0.1
       }
     },
     {
       "path": "trends.boredom.firstHalfAverage",
-      "status": "fail",
+      "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.3071428571428571,
-      "outputValue": 0.19999999999999973,
-      "reason": "Numeric delta 0.10714285714285737 exceeded tolerance 0.1",
+      "outputValue": 0.3071428571428568,
       "metrics": {
-        "delta": 0.10714285714285737,
+        "delta": 3.3306690738754696e-16,
         "tolerance": 0.1
       }
     },
     {
       "path": "trends.boredom.secondHalfAverage",
-      "status": "fail",
+      "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.5499999999999999,
-      "outputValue": 0.2999999999999998,
-      "reason": "Numeric delta 0.2500000000000001 exceeded tolerance 0.1",
+      "outputValue": 0.5000000000000002,
       "metrics": {
-        "delta": 0.2500000000000001,
+        "delta": 0.04999999999999971,
         "tolerance": 0.1
       }
     },
     {
       "path": "trends.excitement.direction",
-      "status": "pass",
+      "status": "fail",
       "rule": "exact",
       "truthValue": "stable",
-      "outputValue": "stable"
+      "outputValue": "increasing",
+      "reason": "Values differed"
     },
     {
       "path": "trends.excitement.change",
       "status": "pass",
       "rule": "tolerant-number",
       "truthValue": -0.007142857142856562,
-      "outputValue": 0.007142857142856673,
+      "outputValue": 0.07142857142857151,
       "metrics": {
-        "delta": 0.014285714285713236,
+        "delta": 0.07857142857142807,
         "tolerance": 0.1
       }
     },
@@ -542,9 +487,9 @@
       "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.7857142857142851,
-      "outputValue": 0.8214285714285711,
+      "outputValue": 0.7499999999999997,
       "metrics": {
-        "delta": 0.03571428571428592,
+        "delta": 0.035714285714285476,
         "tolerance": 0.1
       }
     },
@@ -553,26 +498,25 @@
       "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.7785714285714286,
-      "outputValue": 0.8285714285714277,
+      "outputValue": 0.8214285714285712,
       "metrics": {
-        "delta": 0.049999999999999156,
+        "delta": 0.042857142857142594,
         "tolerance": 0.1
       }
     },
     {
       "path": "frictionIndex",
-      "status": "fail",
+      "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 100,
-      "outputValue": 77.19940476190476,
-      "reason": "Numeric delta 22.80059523809524 exceeded tolerance 0.1",
+      "outputValue": 100,
       "metrics": {
-        "delta": 22.80059523809524,
+        "delta": 0,
         "tolerance": 0.1
       }
     }
   ],
-  "summary": "19/35 scoreable fields passed; 1/36 truth fields were skipped. metrics_summary_pct=100.0%; metrics_implementation_status_pct=100.0%; metrics_averages_pct=33.3%; metrics_peak_moments_pct=33.3%; metrics_trends_pct=58.3%; friction_index_pct=0.0%.",
+  "summary": "26/35 scoreable fields passed; 1/36 truth fields were skipped. metrics_summary_pct=100.0%; metrics_implementation_status_pct=100.0%; metrics_averages_pct=100.0%; metrics_peak_moments_pct=58.3%; metrics_trends_pct=66.7%; friction_index_pct=100.0%.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",
