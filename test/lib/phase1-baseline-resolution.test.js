@@ -5,7 +5,8 @@ const test = require('node:test');
 const {
   resolvePhase1ArtifactPath,
   selectCanonicalPhase1ArtifactFromBag,
-  normalizeRuntimeArtifactSurface
+  normalizeRuntimeArtifactSurface,
+  getReconciledArtifactRuntimeKey
 } = require('../../server/lib/phase1-baseline-resolution.cjs');
 
 function makeTempOutputDir(rootDir) {
@@ -82,4 +83,25 @@ test('phase1 baseline resolution - explicit reconciled bag routing can reuse a s
   assert.strictEqual(resolution.resolvedRuntimeSurface, 'reconciled');
   assert.strictEqual(resolution.resolvedRuntimeKey, 'dialogueV3SourceTruthReconciled');
   assert.deepStrictEqual(resolution.resolvedArtifact, { lane: 'reconciled' });
+});
+
+test('phase1 baseline resolution - dialogue timestamp artifact family exposes reconciled path/runtime wiring', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-phase1-baseline-dialogue-timestamps');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const outputDir = makeTempOutputDir(rootDir);
+  fs.writeFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-timestamps-data.json'), '{}');
+  fs.writeFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-timestamps-data.reconciled.json'), '{}');
+
+  const resolution = resolvePhase1ArtifactPath(outputDir, 'dialogueTimestampsData', {
+    runtimeArtifactSurface: 'reconciled',
+    config: {
+      gather_context: ['server/scripts/get-context/reconcile-famous-song-phase1.cjs']
+    }
+  });
+
+  assert.strictEqual(resolution.resolvedRuntimeSurface, 'reconciled');
+  assert.ok(resolution.resolvedPath.endsWith('dialogue-timestamps-data.reconciled.json'));
+  assert.strictEqual(getReconciledArtifactRuntimeKey('dialogueTimestampsData'), 'dialogueTimestampsDataReconciled');
 });

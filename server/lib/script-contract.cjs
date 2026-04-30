@@ -71,6 +71,7 @@ const DEFAULT_RECOVERY_CONFIG = Object.freeze({
 
 const PRIMARY_ARTIFACT_LOCATIONS = Object.freeze({
   dialogueData: 'phase1-gather-context/dialogue-data.json',
+  dialogueTimestampsData: 'phase1-gather-context/dialogue-timestamps-data.json',
   musicData: 'phase1-gather-context/music-data.json',
   musicVocalsData: 'phase1-gather-context/music-vocals-data.json',
   visualIdentityData: 'phase1-gather-context/visual-identity-data.json',

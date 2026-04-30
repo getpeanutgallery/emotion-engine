@@ -101,12 +101,14 @@ test('deterministic persistence helpers emit structured artifact failures', asyn
       dialogueDataReconciled: { summary: 'reconciled dialogue', dialogue_segments: [{ index: 0, text: 'reconciled line' }] },
       dialogueV3SourceTruth: { summary: 'raw dialogue v3', dialogue_segments: [{ index: 0, text: 'raw line', traits: { audibility: 'clear' } }] },
       dialogueV3SourceTruthReconciled: { summary: 'reconciled dialogue v3', dialogue_segments: [{ index: 0, text: 'reconciled line', traits: { audibility: 'clear' } }] },
+      dialogueTimestampsData: { summary: 'raw dialogue timestamps', dialogue_segments: [{ index: 0, text: 'raw line', start: 1, end: 2 }] },
+      dialogueTimestampsDataReconciled: { summary: 'reconciled dialogue timestamps', dialogue_segments: [{ index: 0, text: 'reconciled line', start: 1.2, end: 2.4 }] },
       musicVocalsData: { summary: 'raw vocals', vocal_segments: [{ index: 0, text: 'raw lyric' }] },
       musicVocalsDataReconciled: { summary: 'reconciled vocals', vocal_segments: [{ index: 0, text: 'reconciled lyric' }] }
     }, null, 2), 'utf8');
 
     const loaded = loadPersistedArtifacts(outputDir, {
-      keys: ['dialogueData', 'dialogueV3SourceTruth', 'musicVocalsData'],
+      keys: ['dialogueData', 'dialogueV3SourceTruth', 'dialogueTimestampsData', 'musicVocalsData'],
       config: {
         gather_context: ['server/scripts/get-context/reconcile-famous-song-phase1.cjs']
       }
@@ -116,6 +118,8 @@ test('deterministic persistence helpers emit structured artifact failures', asyn
     assert.equal(loaded.artifacts.dialogueData.dialogue_segments[0].text, 'reconciled line');
     assert.equal(loaded.artifacts.dialogueV3SourceTruth.summary, 'reconciled dialogue v3');
     assert.equal(loaded.artifacts.dialogueV3SourceTruth.dialogue_segments[0].text, 'reconciled line');
+    assert.equal(loaded.artifacts.dialogueTimestampsData.summary, 'reconciled dialogue timestamps');
+    assert.equal(loaded.artifacts.dialogueTimestampsData.dialogue_segments[0].start, 1.2);
     assert.equal(loaded.artifacts.musicVocalsData.summary, 'reconciled vocals');
     assert.equal(loaded.artifacts.musicVocalsData.vocal_segments[0].text, 'reconciled lyric');
   });

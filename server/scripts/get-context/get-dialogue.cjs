@@ -751,6 +751,7 @@ function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, events, phaseOutcom
  */
 async function run(input) {
   const { assetPath, outputDir, config } = input;
+  const preserveSegmentTiming = input?.preserveSegmentTiming === true;
   const recoveryRuntime = getRecoveryRuntime(input);
 
   console.log('   🎤 Extracting and transcribing dialogue from:', assetPath);
@@ -2060,7 +2061,9 @@ async function run(input) {
       });
     }
 
-    finalDialogueData = stripDialogueSegmentTiming(finalDialogueData);
+    if (!preserveSegmentTiming) {
+      finalDialogueData = stripDialogueSegmentTiming(finalDialogueData);
+    }
 
     response = chunkedDialogueResult?.response || wholeAssetDialogueResult?.response || response;
     model = chunkedDialogueResult?.model || wholeAssetDialogueResult?.model || model;

@@ -30,6 +30,7 @@ const {
 const DEFAULT_LOCATIONS = {
   dialogueData: ['phase1-gather-context', 'dialogue-data.json'],
   dialogueV3SourceTruth: ['phase1-gather-context', 'dialogue-v3-source-truth.json'],
+  dialogueTimestampsData: ['phase1-gather-context', 'dialogue-timestamps-data.json'],
   musicData: ['phase1-gather-context', 'music-data.json'],
   musicVocalsData: ['phase1-gather-context', 'music-vocals-data.json'],
   visualIdentityData: ['phase1-gather-context', 'visual-identity-data.json'],
@@ -64,7 +65,7 @@ function safeReadJson(filePath) {
  */
 function loadPersistedArtifacts(outputDir, options = {}) {
   const absoluteDir = path.resolve(outputDir);
-  const { keys, strict = false, config = {} } = options;
+  const { keys, strict = false, config = {}, runtimeArtifactSurface = 'canonical' } = options;
 
   if (!fs.existsSync(absoluteDir)) {
     if (strict) {
@@ -89,7 +90,7 @@ function loadPersistedArtifacts(outputDir, options = {}) {
     const artifacts = {};
 
     for (const key of wantedKeys) {
-      const resolution = selectCanonicalPhase1ArtifactFromBag(all, key, { config, strict });
+      const resolution = selectCanonicalPhase1ArtifactFromBag(all, key, { config, strict, runtimeArtifactSurface });
       if (resolution.resolvedArtifact !== undefined) {
         artifacts[key] = resolution.resolvedArtifact;
         sources[key] = completePath;
@@ -113,7 +114,7 @@ function loadPersistedArtifacts(outputDir, options = {}) {
     const rel = DEFAULT_LOCATIONS[key];
     if (!rel) continue;
 
-    const resolution = resolvePhase1ArtifactPath(absoluteDir, key, { config, strict });
+    const resolution = resolvePhase1ArtifactPath(absoluteDir, key, { config, strict, runtimeArtifactSurface });
     const candidate = resolution.resolvedPath || path.join(absoluteDir, ...rel);
     if (!fs.existsSync(candidate)) continue;
 
@@ -143,7 +144,7 @@ function getArtifactFileHints(outputDir, keys, options = {}) {
   for (const key of keys || []) {
     const rel = DEFAULT_LOCATIONS[key];
     if (!rel) continue;
-    const resolution = resolvePhase1ArtifactPath(absoluteDir, key, { config: options.config || {}, strict: false });
+    const resolution = resolvePhase1ArtifactPath(absoluteDir, key, { config: options.config || {}, strict: false, runtimeArtifactSurface: options.runtimeArtifactSurface || 'canonical' });
     hints[key] = resolution.resolvedPath || path.join(absoluteDir, ...rel);
   }
   return hints;
