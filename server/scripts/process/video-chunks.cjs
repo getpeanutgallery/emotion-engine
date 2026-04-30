@@ -195,6 +195,20 @@ function resolveVideoTransferConfig(config = {}, toolVariables = {}) {
   return { strategy, mimeType };
 }
 
+function resolveReportedChunkDurationSeconds(config = {}) {
+  const strategyDuration = Number(config?.tool_variables?.chunk_strategy?.config?.chunkDuration);
+  if (Number.isFinite(strategyDuration) && strategyDuration > 0) {
+    return strategyDuration;
+  }
+
+  const settingsDuration = Number(config?.settings?.chunk_duration);
+  if (Number.isFinite(settingsDuration) && settingsDuration > 0) {
+    return settingsDuration;
+  }
+
+  return 8;
+}
+
 const TERMINAL_MICRO_CHUNK_SKIP_SECONDS = 1;
 
 function trimPreviousSummary(summary, maxChars = 400) {
@@ -518,6 +532,7 @@ async function run(input) {
   const maxFileSize = resolveChunkMaxFileSize(config);
   const splitConfig = resolveSplitConfig(config);
   const videoTransferConfig = resolveVideoTransferConfig(config, normalizedToolVariables);
+  const reportedChunkDurationSeconds = resolveReportedChunkDurationSeconds(config);
 
   console.log(`   🔁 Retry config: attempts=${retryConfig.maxAttempts}, backoffMs=${retryConfig.backoffMs}, retryOnParseError=${retryConfig.retryOnParseError}, retryOnProviderError=${retryConfig.retryOnProviderError}`);
   console.log(`   🧰 Tool loop config: turns=${toolLoopConfig.maxTurns}, validatorCalls=${toolLoopConfig.maxValidatorCalls}`);
@@ -1018,7 +1033,7 @@ async function run(input) {
         soulPath: toolVariables.soulPath,
         goalPath: toolVariables.goalPath,
         config: {
-          chunkDuration: config?.settings?.chunk_duration || 8,
+          chunkDuration: reportedChunkDurationSeconds,
           numChunks
         }
       },

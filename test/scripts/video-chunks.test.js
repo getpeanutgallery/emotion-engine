@@ -431,7 +431,7 @@ test('Video Chunks Script', async (t) => {
       is(analyzeCalls[0].videoContext.transferStrategy, 'base64');
     });
 
-    await tNested.test('resolves staged public video URLs for OpenRouter targets via shared media refs', async () => {
+    await tNested.test('keeps chunk-analysis delivery grounded on the extracted chunk asset even when the shared source video ref prefers staged URLs', async () => {
       await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
@@ -476,10 +476,10 @@ test('Video Chunks Script', async (t) => {
       });
 
       is(analyzeCalls.length > 0, true);
-      is(analyzeCalls[0].videoContext.deliveryMode, 'url');
-      is(analyzeCalls[0].videoContext.transferStrategy, 'url');
-      is(analyzeCalls[0].videoContext.url, 'https://example.com/cod.mp4');
-      is('chunkPath' in analyzeCalls[0].videoContext, false);
+      is(analyzeCalls[0].videoContext.deliveryMode, 'inline');
+      is(analyzeCalls[0].videoContext.transferStrategy, 'base64');
+      is(analyzeCalls[0].videoContext.chunkPath.endsWith('chunk-0.mp4'), true);
+      is('url' in analyzeCalls[0].videoContext, false);
     });
 
     await tNested.test('honors per-target inline overrides when shared media refs allow multiple modes', async () => {
@@ -789,6 +789,34 @@ test('Video Chunks Script', async (t) => {
       is(result.artifacts.chunkAnalysis.chunks.length, 2);
       is(result.artifacts.chunkAnalysis.statusSummary.total, 2);
       is(result.artifacts.chunkAnalysis.chunks[1].chunkIndex, 1);
+    });
+
+
+    await tNested.test('reports chunkDuration from the active chunk strategy instead of stale settings metadata', async () => {
+      const result = await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+          },
+          settings: {
+            max_chunks: 1,
+            chunk_duration: 8
+          },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 5 } }
+          }
+        }
+      });
+
+      is(result.artifacts.chunkAnalysis.persona.config.chunkDuration, 5);
     });
 
     await tNested.test('uses canonical chunk split settings and flat maxFileSize when splitting oversized chunks', async () => {

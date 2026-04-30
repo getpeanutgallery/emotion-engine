@@ -35,6 +35,13 @@ function resolveRelativePath(candidatePath, baseDir = process.cwd()) {
     : path.resolve(baseDir, normalized);
 }
 
+function sameResolvedPath(leftPath, rightPath, baseDir = process.cwd()) {
+  const resolvedLeft = resolveRelativePath(leftPath, baseDir);
+  const resolvedRight = resolveRelativePath(rightPath, baseDir);
+  if (!resolvedLeft || !resolvedRight) return false;
+  return resolvedLeft === resolvedRight;
+}
+
 function inferKindFromDomain(domain) {
   if (domain === 'audio' || domain === 'music' || domain === 'dialogue') return 'audio';
   if (domain === 'image') return 'image';
@@ -500,14 +507,22 @@ function resolveVideoContextForTarget({ config = {}, target = {}, videoContext =
     : mediaRef?.delivery?.allowedModes);
   const allowFallback = override?.allowFallback ?? mediaRef?.delivery?.allowFallback ?? true;
 
-  const stagedUrl = compactString(videoContext?.url)
-    || compactString(mediaRef?.staged?.url)
-    || compactString(config?.asset?.stagedPublicUrl)
-    || null;
-
-  const sourcePath = compactString(videoContext?.chunkPath)
-    || compactString(mediaRef?.source?.path)
+  const explicitChunkPath = compactString(videoContext?.chunkPath) || null;
+  const configuredSourcePath = compactString(mediaRef?.source?.path)
     || compactString(config?.asset?.inputPath)
+    || null;
+  const usesConfiguredSourceAsset = !explicitChunkPath || sameResolvedPath(explicitChunkPath, configuredSourcePath);
+  const explicitChunkUrl = compactString(videoContext?.url) || null;
+
+  const stagedUrl = explicitChunkUrl
+    || (usesConfiguredSourceAsset
+      ? (compactString(mediaRef?.staged?.url)
+        || compactString(config?.asset?.stagedPublicUrl)
+        || null)
+      : null);
+
+  const sourcePath = explicitChunkPath
+    || configuredSourcePath
     || null;
 
   const inlineData = compactString(videoContext?.chunkBase64)
@@ -520,6 +535,10 @@ function resolveVideoContextForTarget({ config = {}, target = {}, videoContext =
     || compactString(config?.asset?.mimeType)
     || 'video/mp4';
 
+  const effectivePreferredMode = (!explicitChunkUrl && explicitChunkPath && !usesConfiguredSourceAsset && preferredMode === 'url')
+    ? hintedMode
+    : preferredMode;
+
   const candidateModes = [];
   const pushMode = (mode) => {
     if (mode && mode !== 'provider_default' && !candidateModes.includes(mode)) {
@@ -527,9 +546,9 @@ function resolveVideoContextForTarget({ config = {}, target = {}, videoContext =
     }
   };
 
-  if (preferredMode && preferredMode !== 'provider_default') {
-    pushMode(preferredMode);
-    if (allowFallback) pushMode(preferredMode === 'url' ? 'inline' : 'url');
+  if (effectivePreferredMode && effectivePreferredMode !== 'provider_default') {
+    pushMode(effectivePreferredMode);
+    if (allowFallback) pushMode(effectivePreferredMode === 'url' ? 'inline' : 'url');
   } else {
     pushMode(hintedMode || 'inline');
     if (allowFallback) pushMode((hintedMode || 'inline') === 'url' ? 'inline' : 'url');
@@ -539,8 +558,16 @@ function resolveVideoContextForTarget({ config = {}, target = {}, videoContext =
     ? candidateModes.filter((mode) => allowedModes.includes(mode))
     : candidateModes;
 
+  const scopedMediaRefConfig = refName
+    ? {
+        ...(mediaRef || {}),
+        source: sourcePath ? { ...(mediaRef?.source || {}), path: sourcePath } : (mediaRef?.source || {}),
+        staged: stagedUrl ? { ...(mediaRef?.staged || {}), url: stagedUrl } : {}
+      }
+    : null;
+
   const normalizedMediaRef = refName
-    ? normalizeMediaRef(refName, mediaRef || {}, { assetPath: config?.asset?.inputPath, domain: 'video' })
+    ? normalizeMediaRef(refName, scopedMediaRefConfig || {}, { assetPath: sourcePath || config?.asset?.inputPath, domain: 'video' })
     : null;
 
   for (const mode of filteredModes) {
@@ -564,7 +591,7 @@ function resolveVideoContextForTarget({ config = {}, target = {}, videoContext =
     if (mode === 'inline' && (inlineData || sourcePath)) {
       return {
         ...videoContext,
-        chunkPath: compactString(videoContext?.chunkPath) || sourcePath,
+        chunkPath: explicitChunkPath || sourcePath,
         deliveryMode: 'inline',
         transferStrategy: 'base64',
         mimeType,
@@ -578,7 +605,7 @@ function resolveVideoContextForTarget({ config = {}, target = {}, videoContext =
   const refLabel = refName ? `media ref "${refName}"` : 'video input';
   throw new Error(
     `Video delivery resolution failed for ${refLabel} on ${adapterName}: ` +
-    `preferredMode=${preferredMode}, allowFallback=${allowFallback}, stagedUrl=${stagedUrl ? 'present' : 'missing'}, sourcePath=${sourcePath ? 'present' : 'missing'}`
+    `preferredMode=${effectivePreferredMode}, allowFallback=${allowFallback}, stagedUrl=${stagedUrl ? 'present' : 'missing'}, sourcePath=${sourcePath ? 'present' : 'missing'}`
   );
 }
 

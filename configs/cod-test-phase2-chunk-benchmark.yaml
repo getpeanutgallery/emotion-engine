@@ -34,7 +34,7 @@ report:
 - server/scripts/report/summary.cjs
 - server/scripts/report/final-report.cjs
 settings:
-  chunk_duration: 8
+  chunk_duration: 5
   max_chunks: 100
   api_request_delay: 500
   phase1:

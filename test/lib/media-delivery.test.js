@@ -6,7 +6,8 @@ const path = require('path');
 
 const {
   validateMediaDeliveryConfig,
-  resolveMediaAttachmentsForTarget
+  resolveMediaAttachmentsForTarget,
+  resolveVideoContextForTarget
 } = require('../../server/lib/media-delivery.cjs');
 const { validateConfig } = require('../../server/lib/config-loader.cjs');
 
@@ -292,4 +293,86 @@ test('resolveMediaAttachmentsForTarget raises a capability mismatch when inline 
     assert.equal(error.mediaDelivery.ref, 'source_video');
     return true;
   });
+});
+
+
+test('resolveVideoContextForTarget keeps chunk-local video assets inline instead of reusing the staged full-source URL', (t) => {
+  const { tempDir } = makeTempFixture(t, { sizeBytes: 10 });
+  const chunkDir = path.join(tempDir, 'chunks');
+  fs.mkdirSync(chunkDir, { recursive: true });
+  const chunkPath = path.join(chunkDir, 'chunk-0.mp4');
+  fs.writeFileSync(chunkPath, Buffer.alloc(5, 3));
+
+  const config = makeConfig(tempDir, {
+    asset: {
+      media: {
+        refs: {
+          source_video: {
+            delivery: {
+              preferredMode: 'url',
+              allowedModes: ['url', 'inline'],
+              allowFallback: false
+            }
+          }
+        }
+      }
+    }
+  });
+
+  const resolved = resolveVideoContextForTarget({
+    config,
+    target: config.ai.video.targets[0],
+    videoContext: {
+      chunkPath,
+      transferStrategy: 'base64',
+      mimeType: 'video/mp4',
+      duration: 5,
+      startTime: 0,
+      endTime: 5
+    }
+  });
+
+  assert.equal(resolved.deliveryMode, 'inline');
+  assert.equal(resolved.transferStrategy, 'base64');
+  assert.equal(resolved.chunkPath, chunkPath);
+  assert.equal('url' in resolved, false);
+  assert.equal(resolved.resolvedAttachment?.path, chunkPath);
+  assert.equal(resolved.resolvedAttachment?.url, null);
+});
+
+test('resolveVideoContextForTarget still uses the staged URL when the active asset is the configured full-source video', (t) => {
+  const { tempDir, filePath } = makeTempFixture(t, { sizeBytes: 10 });
+  const config = makeConfig(tempDir, {
+    asset: {
+      inputPath: filePath,
+      media: {
+        refs: {
+          source_video: {
+            source: {
+              path: filePath
+            }
+          }
+        }
+      }
+    }
+  });
+
+  const resolved = resolveVideoContextForTarget({
+    config,
+    target: config.ai.video.targets[0],
+    videoContext: {
+      chunkPath: filePath,
+      transferStrategy: 'base64',
+      mimeType: 'video/mp4',
+      duration: 16,
+      startTime: 0,
+      endTime: 16
+    }
+  });
+
+  assert.equal(resolved.deliveryMode, 'url');
+  assert.equal(resolved.transferStrategy, 'url');
+  assert.equal(resolved.url, 'https://example.com/cod.mp4');
+  assert.equal('chunkPath' in resolved, false);
+  assert.equal(resolved.resolvedAttachment?.url, 'https://example.com/cod.mp4');
 });
