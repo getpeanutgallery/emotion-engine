@@ -502,10 +502,10 @@ function resolveVideoContextForTarget({ config = {}, target = {}, videoContext =
     || normalizeDeliveryMode(videoContext?.transferStrategy)
     || 'inline';
 
-  const allowedModes = normalizeAllowedModes(ensureArray(override?.allowedModes).length > 0
+  const configuredAllowedModes = normalizeAllowedModes(ensureArray(override?.allowedModes).length > 0
     ? override.allowedModes
     : mediaRef?.delivery?.allowedModes);
-  const allowFallback = override?.allowFallback ?? mediaRef?.delivery?.allowFallback ?? true;
+  const configuredAllowFallback = override?.allowFallback ?? mediaRef?.delivery?.allowFallback ?? true;
 
   const explicitChunkPath = compactString(videoContext?.chunkPath) || null;
   const configuredSourcePath = compactString(mediaRef?.source?.path)
@@ -513,6 +513,7 @@ function resolveVideoContextForTarget({ config = {}, target = {}, videoContext =
     || null;
   const usesConfiguredSourceAsset = !explicitChunkPath || sameResolvedPath(explicitChunkPath, configuredSourcePath);
   const explicitChunkUrl = compactString(videoContext?.url) || null;
+  const usesChunkLocalAssetPolicy = Boolean(explicitChunkPath && !usesConfiguredSourceAsset);
 
   const stagedUrl = explicitChunkUrl
     || (usesConfiguredSourceAsset
@@ -535,9 +536,16 @@ function resolveVideoContextForTarget({ config = {}, target = {}, videoContext =
     || compactString(config?.asset?.mimeType)
     || 'video/mp4';
 
-  const effectivePreferredMode = (!explicitChunkUrl && explicitChunkPath && !usesConfiguredSourceAsset && preferredMode === 'url')
+  const effectivePreferredMode = (!explicitChunkUrl && usesChunkLocalAssetPolicy && preferredMode === 'url')
     ? hintedMode
     : preferredMode;
+
+  const effectiveAllowedModes = usesChunkLocalAssetPolicy
+    ? (explicitChunkUrl ? ['url', 'inline'] : ['inline'])
+    : configuredAllowedModes;
+  const effectiveAllowFallback = usesChunkLocalAssetPolicy
+    ? Boolean(explicitChunkUrl)
+    : configuredAllowFallback;
 
   const candidateModes = [];
   const pushMode = (mode) => {
@@ -548,14 +556,14 @@ function resolveVideoContextForTarget({ config = {}, target = {}, videoContext =
 
   if (effectivePreferredMode && effectivePreferredMode !== 'provider_default') {
     pushMode(effectivePreferredMode);
-    if (allowFallback) pushMode(effectivePreferredMode === 'url' ? 'inline' : 'url');
+    if (effectiveAllowFallback) pushMode(effectivePreferredMode === 'url' ? 'inline' : 'url');
   } else {
     pushMode(hintedMode || 'inline');
-    if (allowFallback) pushMode((hintedMode || 'inline') === 'url' ? 'inline' : 'url');
+    if (effectiveAllowFallback) pushMode((hintedMode || 'inline') === 'url' ? 'inline' : 'url');
   }
 
-  const filteredModes = allowedModes.length > 0
-    ? candidateModes.filter((mode) => allowedModes.includes(mode))
+  const filteredModes = effectiveAllowedModes.length > 0
+    ? candidateModes.filter((mode) => effectiveAllowedModes.includes(mode))
     : candidateModes;
 
   const scopedMediaRefConfig = refName
@@ -605,7 +613,7 @@ function resolveVideoContextForTarget({ config = {}, target = {}, videoContext =
   const refLabel = refName ? `media ref "${refName}"` : 'video input';
   throw new Error(
     `Video delivery resolution failed for ${refLabel} on ${adapterName}: ` +
-    `preferredMode=${effectivePreferredMode}, allowFallback=${allowFallback}, stagedUrl=${stagedUrl ? 'present' : 'missing'}, sourcePath=${sourcePath ? 'present' : 'missing'}`
+    `preferredMode=${effectivePreferredMode}, allowFallback=${effectiveAllowFallback}, stagedUrl=${stagedUrl ? 'present' : 'missing'}, sourcePath=${sourcePath ? 'present' : 'missing'}`
   );
 }
 

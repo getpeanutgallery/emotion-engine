@@ -296,7 +296,7 @@ test('resolveMediaAttachmentsForTarget raises a capability mismatch when inline 
 });
 
 
-test('resolveVideoContextForTarget keeps chunk-local video assets inline instead of reusing the staged full-source URL', (t) => {
+test('resolveVideoContextForTarget lets chunk-local video assets use inline delivery even when the full-source ref is pinned to url-only delivery', (t) => {
   const { tempDir } = makeTempFixture(t, { sizeBytes: 10 });
   const chunkDir = path.join(tempDir, 'chunks');
   fs.mkdirSync(chunkDir, { recursive: true });
@@ -310,7 +310,7 @@ test('resolveVideoContextForTarget keeps chunk-local video assets inline instead
           source_video: {
             delivery: {
               preferredMode: 'url',
-              allowedModes: ['url', 'inline'],
+              allowedModes: ['url'],
               allowFallback: false
             }
           }
@@ -350,6 +350,11 @@ test('resolveVideoContextForTarget still uses the staged URL when the active ass
           source_video: {
             source: {
               path: filePath
+            },
+            delivery: {
+              preferredMode: 'url',
+              allowedModes: ['url'],
+              allowFallback: false
             }
           }
         }
