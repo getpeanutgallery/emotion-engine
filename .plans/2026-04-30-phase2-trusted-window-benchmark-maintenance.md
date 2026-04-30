@@ -100,9 +100,9 @@ This plan therefore focuses on updating benchmark/truth for the trusted windows 
 - fresh run logs
 - `.plans/2026-04-30-phase2-trusted-window-benchmark-maintenance.md`
 
-**Status:** ⏳ Pending
+**Status:** ❌ Failed
 
-**Results:** Pending.
+**Results:** QA confirms the committed trusted-window maintenance slice is honest and bounded, but a fresh bounded rerun does not reproduce the committed `chunkAnalysis` improvement. Fresh rerun command: `npm run pipeline -- --config configs/cod-test-phase2-chunk-benchmark.yaml --verbose` wrote `.logs/20260430-122953-qa-cod-test-phase2-chunk-benchmark.log` and regenerated benchmark artifacts showing `chunkAnalysis` accuracy `0.6833333333333333`, with failures spread across approved windows too. However, diff/audit evidence confirms the committed truth refresh itself only changed approved chunk indexes `3,4,8,9,10,11,12,13,14,15,17,22,23,24,25,26,27`, left excluded windows `0-2, 5-7, 16, 18-21` untouched, and aligned `persona.config.chunkDuration` from `8` to `5`. QA verdict: the maintenance slice is honest, but rerun reproducibility/stability remains an open blocker.
 
 ---
 
@@ -150,14 +150,14 @@ This plan therefore focuses on updating benchmark/truth for the trusted windows 
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Draft plan created; execution not started yet.
+**What We Built:** We completed a bounded benchmark-truth refresh for the approved trusted Phase 2 windows only, refreshed benchmark/report surfaces, and verified that the committed truth maintenance itself respected the quarantine boundaries. The slice did improve committed benchmark alignment for `chunkAnalysis`, but a fresh rerun did not reproduce that improved score and instead regressed across approved windows as well.
 
-**Reference Check:** `REF-01` defines the forensic trust model and skepticism shortlist. `REF-02` through `REF-05` define the live-output, benchmark, and chunk-asset surfaces to use during truth maintenance.
+**Reference Check:** `REF-01` defines the forensic trust model and skepticism shortlist. `REF-02` through `REF-05` define the live-output, benchmark, and chunk-asset surfaces used during bounded truth maintenance and QA verification.
 
 **Commits:**
-- Pending
+- `5776705947f9a051cfc2e3df66ee0c3eef26adda` - Refresh trusted Phase 2 benchmark windows
 
-**Lessons Learned:** A repaired live lane is not permission to rewrite all truth. Refresh only the windows that are visually trustworthy, and quarantine contaminated chunks until their own cleanup slice.
+**Lessons Learned:** A repaired live lane is not permission to rewrite all truth. Refresh only the windows that are visually trustworthy, quarantine contaminated chunks, and treat rerun reproducibility as a separate acceptance criterion from bounded benchmark honesty.
 
 ---
 
