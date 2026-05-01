@@ -105,3 +105,24 @@ test('phase1 baseline resolution - dialogue timestamp artifact family exposes re
   assert.ok(resolution.resolvedPath.endsWith('dialogue-timestamps-data.reconciled.json'));
   assert.strictEqual(getReconciledArtifactRuntimeKey('dialogueTimestampsData'), 'dialogueTimestampsDataReconciled');
 });
+
+test('phase1 baseline resolution - music-vocals timestamp artifact family exposes reconciled path/runtime wiring', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-phase1-baseline-music-vocals-timestamps');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const outputDir = makeTempOutputDir(rootDir);
+  fs.writeFileSync(path.join(outputDir, 'phase1-gather-context', 'music-vocals-timestamps-data.json'), '{}');
+  fs.writeFileSync(path.join(outputDir, 'phase1-gather-context', 'music-vocals-timestamps-data.reconciled.json'), '{}');
+
+  const resolution = resolvePhase1ArtifactPath(outputDir, 'musicVocalsTimestampsData', {
+    runtimeArtifactSurface: 'reconciled',
+    config: {
+      gather_context: ['server/scripts/get-context/reconcile-famous-song-phase1.cjs']
+    }
+  });
+
+  assert.strictEqual(resolution.resolvedRuntimeSurface, 'reconciled');
+  assert.ok(resolution.resolvedPath.endsWith('music-vocals-timestamps-data.reconciled.json'));
+  assert.strictEqual(getReconciledArtifactRuntimeKey('musicVocalsTimestampsData'), 'musicVocalsTimestampsDataReconciled');
+});

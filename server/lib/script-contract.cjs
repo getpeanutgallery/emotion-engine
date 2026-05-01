@@ -74,6 +74,7 @@ const PRIMARY_ARTIFACT_LOCATIONS = Object.freeze({
   dialogueTimestampsData: 'phase1-gather-context/dialogue-timestamps-data.json',
   musicData: 'phase1-gather-context/music-data.json',
   musicVocalsData: 'phase1-gather-context/music-vocals-data.json',
+  musicVocalsTimestampsData: 'phase1-gather-context/music-vocals-timestamps-data.json',
   visualIdentityData: 'phase1-gather-context/visual-identity-data.json',
   metadataData: 'phase1-gather-context/metadata.json',
   chunkAnalysis: 'phase2-process/chunk-analysis.json',

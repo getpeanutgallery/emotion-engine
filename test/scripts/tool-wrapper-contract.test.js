@@ -104,11 +104,13 @@ test('deterministic persistence helpers emit structured artifact failures', asyn
       dialogueTimestampsData: { summary: 'raw dialogue timestamps', dialogue_segments: [{ index: 0, text: 'raw line', start: 1, end: 2 }] },
       dialogueTimestampsDataReconciled: { summary: 'reconciled dialogue timestamps', dialogue_segments: [{ index: 0, text: 'reconciled line', start: 1.2, end: 2.4 }] },
       musicVocalsData: { summary: 'raw vocals', vocal_segments: [{ index: 0, text: 'raw lyric' }] },
-      musicVocalsDataReconciled: { summary: 'reconciled vocals', vocal_segments: [{ index: 0, text: 'reconciled lyric' }] }
+      musicVocalsDataReconciled: { summary: 'reconciled vocals', vocal_segments: [{ index: 0, text: 'reconciled lyric' }] },
+      musicVocalsTimestampsData: { summary: 'raw vocal timestamps', vocal_segments: [{ index: 0, text: 'raw lyric', start: 2, end: 3 }] },
+      musicVocalsTimestampsDataReconciled: { summary: 'reconciled vocal timestamps', vocal_segments: [{ index: 0, text: 'reconciled lyric', start: 2.2, end: 3.1 }] }
     }, null, 2), 'utf8');
 
     const loaded = loadPersistedArtifacts(outputDir, {
-      keys: ['dialogueData', 'dialogueV3SourceTruth', 'dialogueTimestampsData', 'musicVocalsData'],
+      keys: ['dialogueData', 'dialogueV3SourceTruth', 'dialogueTimestampsData', 'musicVocalsData', 'musicVocalsTimestampsData'],
       config: {
         gather_context: ['server/scripts/get-context/reconcile-famous-song-phase1.cjs']
       }
@@ -122,6 +124,8 @@ test('deterministic persistence helpers emit structured artifact failures', asyn
     assert.equal(loaded.artifacts.dialogueTimestampsData.dialogue_segments[0].start, 1.2);
     assert.equal(loaded.artifacts.musicVocalsData.summary, 'reconciled vocals');
     assert.equal(loaded.artifacts.musicVocalsData.vocal_segments[0].text, 'reconciled lyric');
+    assert.equal(loaded.artifacts.musicVocalsTimestampsData.summary, 'reconciled vocal timestamps');
+    assert.equal(loaded.artifacts.musicVocalsTimestampsData.vocal_segments[0].start, 2.2);
   });
 
   await t.test('loadPersistedArtifacts fails fast only when reconciliation is configured and reconciled output is missing', () => {

@@ -215,10 +215,147 @@ function buildDialogueTimestampArtifact({
   };
 }
 
+function isShortMusicPhrase(text) {
+  const tokens = tokenize(text);
+  return tokens.length <= 2 || normalizeText(text).length <= 12;
+}
+
+function countStrongCandidateWindows(sourceSegment, alignmentSegments, scoreThreshold = 0.75) {
+  if (!Array.isArray(alignmentSegments) || alignmentSegments.length === 0) return 0;
+  let matches = 0;
+  const maxWindowSize = Math.min(4, alignmentSegments.length);
+
+  for (let startIndex = 0; startIndex < alignmentSegments.length; startIndex += 1) {
+    for (let windowSize = 1; windowSize <= maxWindowSize && startIndex + windowSize - 1 < alignmentSegments.length; windowSize += 1) {
+      const endIndex = startIndex + windowSize - 1;
+      const candidateText = buildCandidateText(alignmentSegments, startIndex, endIndex);
+      const score = computeTokenOverlapScore(sourceSegment?.text, candidateText);
+      if (score >= scoreThreshold) {
+        matches += 1;
+      }
+    }
+  }
+
+  return matches;
+}
+
+function deriveMusicVocalsSegmentTimings(sourceSegments, alignmentSegments) {
+  const normalizedSourceSegments = Array.isArray(sourceSegments) ? sourceSegments : [];
+  const normalizedAlignmentSegments = Array.isArray(alignmentSegments)
+    ? alignmentSegments.filter((segment) => Number.isFinite(segment?.start) && Number.isFinite(segment?.end))
+    : [];
+
+  let cursor = 0;
+
+  return normalizedSourceSegments.map((segment, index) => {
+    const matchedWindow = chooseTimingWindow(segment, normalizedAlignmentSegments, cursor);
+    const strongCandidateCount = countStrongCandidateWindows(segment, normalizedAlignmentSegments);
+    const shortPhrase = isShortMusicPhrase(segment?.text);
+
+    const emitted = {
+      ...segment,
+      index: Number.isInteger(segment?.index) ? segment.index : index,
+      text: String(segment?.text || ''),
+      timing: {
+        status: 'unresolved',
+        confidence: 0,
+        method: 'lyric_alignment',
+        provenance: 'segment_level'
+      }
+    };
+
+    if (!matchedWindow) {
+      return emitted;
+    }
+
+    cursor = matchedWindow.endIndex + 1;
+    emitted.start = matchedWindow.start;
+    emitted.end = matchedWindow.end;
+
+    const exactTextMatch = normalizeText(segment?.text) === normalizeText(buildCandidateText(normalizedAlignmentSegments, matchedWindow.startIndex, matchedWindow.endIndex));
+    const ambiguousRepeat = strongCandidateCount > 1 && shortPhrase;
+
+    let status = 'partial';
+    if (matchedWindow.score >= 0.92 && exactTextMatch && !ambiguousRepeat) {
+      status = 'aligned';
+    } else if (matchedWindow.score < 0.6) {
+      status = 'unresolved';
+      delete emitted.start;
+      delete emitted.end;
+    }
+
+    emitted.timing = {
+      status,
+      confidence: roundNumber(matchedWindow.score, 4),
+      method: 'lyric_alignment',
+      provenance: 'segment_level'
+    };
+
+    return emitted;
+  });
+}
+
+function buildMusicVocalsTimestampArtifact({
+  sourceMusicVocalsData,
+  alignmentMusicVocalsData,
+  outputDir,
+  sourcePath,
+  runtimeArtifactSurface,
+  sourceRuntimeKey,
+  sourceArtifactKey = 'musicVocalsData'
+}) {
+  const vocalSegments = deriveMusicVocalsSegmentTimings(sourceMusicVocalsData?.vocal_segments, alignmentMusicVocalsData?.vocal_segments);
+  const totalDuration = Number.isFinite(sourceMusicVocalsData?.totalDuration)
+    ? sourceMusicVocalsData.totalDuration
+    : alignmentMusicVocalsData?.totalDuration;
+
+  const qualityNotes = normalizeQualityNotes([
+    'Timing was derived after transcript extraction; timestamps are a downstream alignment product, not source-captured timings.',
+    runtimeArtifactSurface === 'reconciled'
+      ? 'Reconciled music-vocals surface was selected before timing derivation, so any famous-song cleanup happened upstream of this alignment pass.'
+      : null,
+    'Music-vocals timing is more fragile than dialogue timing on sung, chant-like, rap, or overlap-heavy material.',
+    'Repeated hooks or short lyric fragments may remain partial or unresolved when multiple plausible placements exist.',
+    sourceMusicVocalsData?.recognizedSong
+      ? 'recognizedSong metadata informed provenance and quality notes only; it did not authorize lyric rewrites or fake exact placement.'
+      : null
+  ]);
+
+  return {
+    vocal_segments: vocalSegments,
+    summary: String(sourceMusicVocalsData?.summary || alignmentMusicVocalsData?.summary || ''),
+    hasVocals: Array.isArray(sourceMusicVocalsData?.vocal_segments)
+      ? sourceMusicVocalsData.vocal_segments.length > 0
+      : vocalSegments.length > 0,
+    totalDuration: roundNumber(totalDuration),
+    analysisMode: 'timestamp_derivation',
+    timingMode: 'full_timeline',
+    sourceStrategy: 'derived_from_phase1_artifact',
+    coverage: deriveCoverage(totalDuration),
+    provenance: {
+      derivationKind: 'phase1_timestamp_derivation',
+      runtimeArtifactSurface,
+      sourceArtifactKey,
+      sourceRuntimeKey,
+      sourcePath: toOutputRelativePath(outputDir, sourcePath),
+      sourceTextIntegrity: 'verbatim',
+      sourceTimingPolicy: 'source_artifact_was_untimed',
+      alignmentEngine: 'phase1_music_vocals_rerun',
+      alignmentEngineVersion: null,
+      recognizedSongUsedForTextRewrite: false
+    },
+    ...(sourceMusicVocalsData?.recognizedSong ? { recognizedSong: sourceMusicVocalsData.recognizedSong } : {}),
+    ...(Array.isArray(sourceMusicVocalsData?.recognitionNotes) ? { recognitionNotes: sourceMusicVocalsData.recognitionNotes } : {}),
+    qualityNotes
+  };
+}
+
 module.exports = {
   normalizeText,
   computeTokenOverlapScore,
   deriveDialogueSegmentTimings,
+  deriveMusicVocalsSegmentTimings,
   buildDialogueTimestampArtifact,
+  buildMusicVocalsTimestampArtifact,
   toOutputRelativePath
 };

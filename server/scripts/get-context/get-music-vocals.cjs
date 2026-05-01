@@ -427,6 +427,7 @@ function ensurePhaseErrorArtifacts({ captureRaw, rawMetaDir, events, phaseOutcom
  */
 async function run(input) {
   const { assetPath, outputDir, config } = input;
+  const preserveSegmentTiming = input?.preserveSegmentTiming === true;
   const recoveryRuntime = getRecoveryRuntime(input);
 
   console.log('   🎤 Extracting and analyzing music-led vocals from:', assetPath);
@@ -1022,7 +1023,9 @@ async function run(input) {
       recognitionNotes: finalRecognitionNotes
     });
 
-    const finalMusicVocalsData = stripMusicVocalSegmentTiming(musicVocalsData);
+    const finalMusicVocalsData = preserveSegmentTiming
+      ? musicVocalsData
+      : stripMusicVocalSegmentTiming(musicVocalsData);
 
     const artifactPath = path.join(phaseDir, 'music-vocals-data.json');
     fs.writeFileSync(artifactPath, JSON.stringify(finalMusicVocalsData, null, 2));

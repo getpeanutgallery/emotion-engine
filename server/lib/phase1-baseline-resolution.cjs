@@ -12,6 +12,7 @@ const RAW_PHASE1_PATHS = Object.freeze({
   dialogueTimestampsData: ['phase1-gather-context', 'dialogue-timestamps-data.json'],
   musicData: ['phase1-gather-context', 'music-data.json'],
   musicVocalsData: ['phase1-gather-context', 'music-vocals-data.json'],
+  musicVocalsTimestampsData: ['phase1-gather-context', 'music-vocals-timestamps-data.json'],
   visualIdentityData: ['phase1-gather-context', 'visual-identity-data.json'],
   metadataData: ['phase1-gather-context', 'metadata.json']
 });
@@ -21,6 +22,7 @@ const RECONCILED_PHASE1_PATHS = Object.freeze({
   dialogueV3SourceTruth: ['phase1-gather-context', 'dialogue-v3-source-truth.reconciled.json'],
   dialogueTimestampsData: ['phase1-gather-context', 'dialogue-timestamps-data.reconciled.json'],
   musicVocalsData: ['phase1-gather-context', 'music-vocals-data.reconciled.json'],
+  musicVocalsTimestampsData: ['phase1-gather-context', 'music-vocals-timestamps-data.reconciled.json'],
   famousSongReconciliation: ['phase1-gather-context', 'famous-song-reconciliation.json']
 });
 
@@ -29,6 +31,7 @@ const RECONCILED_PHASE1_RUNTIME_KEYS = Object.freeze({
   dialogueV3SourceTruth: 'dialogueV3SourceTruthReconciled',
   dialogueTimestampsData: 'dialogueTimestampsDataReconciled',
   musicVocalsData: 'musicVocalsDataReconciled',
+  musicVocalsTimestampsData: 'musicVocalsTimestampsDataReconciled',
   famousSongReconciliation: 'famousSongReconciliation'
 });
 
