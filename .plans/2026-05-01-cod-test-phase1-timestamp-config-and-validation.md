@@ -96,11 +96,48 @@ The likely shape is: duplicate `configs/cod-test.yaml`, append the two new Phase
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-01-cod-test-phase1-timestamp-config-and-validation.md`
-- run artifacts under a dedicated output folder to be finalized in execution
+- `output/cod-test-phase1-timestamp-validation/`
 
-**Status:** ⏳ Pending
+**Status:** ❌ Failed
 
-**Results:** Pending.
+**Results:** First real provider-backed execution was attempted and produced a durable partial-run evidence package, but the lane failed inside `get-dialogue-timestamps` before any timestamp artifacts were emitted. Exact commands run for QA were: `bd update ee-obf1 --status in_progress --json`; `node server/run-pipeline.cjs --config configs/cod-test-phase1-timestamp-validation.yaml`; `find output/cod-test-phase1-timestamp-validation -maxdepth 3 -type f | sort`; `find output/cod-test-phase1-timestamp-validation/phase1-gather-context -maxdepth 1 -type f -printf '%f\n' | sort`; targeted JSON inspection under `output/cod-test-phase1-timestamp-validation/phase1-gather-context/`; and direct comparisons against `benchmarks/fixtures/cod-test/truth/*`. Real-run outcome: Phase 1 executed `get-dialogue` ✅, `get-music` ✅, `get-music-vocals` ✅, `reconcile-famous-song-phase1` ✅, then failed in `get-dialogue-timestamps` with `OpenRouter: No content in response` (`output/cod-test-phase1-timestamp-validation/phase1-gather-context/script-results/get-dialogue-timestamps.failure.json`). Because the failure occurred before `get-music-vocals-timestamps`, neither `dialogue-timestamps-data.json` / `.reconciled.json` nor `music-vocals-timestamps-data.json` / `.reconciled.json` were created, so timestamp accuracy against golden truth could not be judged yet.
+
+Durable findings from the failed run: (1) the config ordering behaved correctly through the reachable portion of Phase 1 — `famous-song-reconciliation.json` exists, `script-results/reconcile-famous-song-phase1.success.json` completed at `2026-05-01T20:27:36.314Z`, and `script-results/get-dialogue-timestamps.failure.json` began immediately after at `2026-05-01T20:27:36.314Z`, so reconciliation did run before timestamp derivation as intended; (2) the pipeline never reached Phase 2 or report because the run terminated during Phase 1 and `_meta/events.jsonl` ends with `phase.end` outcome `failed` for `phase1-gather-context` plus `run.end` outcome `failed`, with no process/report artifacts created; (3) chosen-source-surface behavior is visible before the timestamp failure: reconciliation wrote `dialogue-data.reconciled.json`, `music-vocals-data.reconciled.json`, and `famous-song-reconciliation.json`, confirming the canonical reconciled surfaces the timestamp scripts were expected to consume; (4) the reconciliation itself removed the two lyric-contaminated dialogue lines (`Obey your master, master, come crawling faster, master, master...` and `Obey your master, master...`) while preserving music-vocals text without lyric rewrite, matching the approved Phase 1 contract.
+
+Golden-truth comparison on the reachable source artifacts shows the lane is not yet at parity even before timestamp derivation. Raw dialogue output (`21` segments) differs from `truth/dialogue-data.raw.json` (`18` segments) on several lines, including `Spectre One report.` vs truth `Specter one, report.`, `The hell it ain't!` vs truth `The hell it isn't!`, `So eager to leave, are we?` vs truth `So eager to leave, David?`, and the shipped lyric contamination lines that reconciliation later removes. Reconciled dialogue output (`19` segments) still differs from `truth/dialogue-data.json` (`20` segments), including segmentation/merge drift (`They want you afraid.` + `Fear makes you easier to control.` split into two segments instead of one combined truth segment) plus wording/punctuation drift (`Pull it together, man.` vs `Pull it together, man!`, `So eager to leave, are we?` vs `So eager to leave David.`). Music-vocals output (`15` segments) also drifts materially from `truth/music-vocals-data.json` (`12` segments): the run produced shorter fragmented lines such as `Twisting your mind`, `Smashing a dream`, `Blinding your eyes`, `Just call my name`, and `I'll hear you scream` where truth expects longer combined lyric surfaces like `Twisting your mind and smashing your dreams`, `Blinded by me, you can’t see a thing`, and `Just call my name, ‘cause I’ll hear you scream`. Those text mismatches matter because the timestamp scripts preserve source text verbatim, so any future timestamp quality judgment must be made against the reconciled/raw text the scripts actually timed, not idealized truth text.
+
+Grounded QA verdict for this bead at this stop point: the new config is structurally correct through reachable Phase 1 ordering and Phase-1-only stopping semantics, but the first real run did **not** complete the timestamp-validation mission because `get-dialogue-timestamps` hit a provider empty-response failure and blocked all timestamp artifact generation. Exact retry gap for coder/auditor: rerun or harden `get-dialogue-timestamps` against `OpenRouter: No content in response` in this real provider-backed path, then repeat the full config run and inspect the newly emitted `dialogue-timestamps-*` and `music-vocals-timestamps-*` artifacts before making any final accuracy claim.
+
+---
+
+### Task 3B: Debug the real provider-backed `get-dialogue-timestamps` failure and rerun Phase 1 validation
+
+**Bead ID:** `ee-pl3w`  
+**SubAgent:** `primary` (for `coder` workflow role)  
+**Role:** `coder`  
+**References:** `REF-01`, `REF-02`, `REF-03`, `REF-05`  
+**Prompt:** `Claim the assigned bead on start. Debug the real COD provider-backed failure in get-dialogue-timestamps exposed by configs/cod-test-phase1-timestamp-validation.yaml. Reproduce from the existing failure evidence, determine whether the fix belongs in failure classification/retry handling, target/runtime settings, or the timestamp lane’s dialogue rerun posture, and implement the smallest truthful repair that gets this Phase 1 validation lane past the empty-response failure without masking broader issues. Re-run the phase-1-only config after the fix far enough to confirm timestamp artifacts are emitted, update the active plan with exact findings, commit/push before handoff, and close the bead only when the retry path is durable enough for QA to reassess artifact accuracy.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `server/`
+- `configs/` (only if a narrow config/runtime adjustment is truly required)
+- `test/` (if regression coverage is added)
+
+**Files Created/Deleted/Modified:**
+- `.plans/2026-05-01-cod-test-phase1-timestamp-config-and-validation.md`
+- `server/scripts/get-context/get-dialogue-timestamps.cjs`
+- `test/scripts/get-dialogue-timestamps.test.js`
+
+**Status:** ✅ Complete
+
+**Results:** Root cause confirmed from the existing failure evidence rather than from a speculative transport rewrite: `get-dialogue-timestamps` delegates its alignment rerun to `get-dialogue.cjs`, and that rerun inherited `config.ai.dialogue.retry` exactly as configured. In `configs/cod-test-phase1-timestamp-validation.yaml`, dialogue had no explicit retry block, so the rerun posture was effectively `maxAttempts=1, backoffMs=0`. The captured failure at `output/cod-test-phase1-timestamp-validation/phase1-gather-context/script-results/get-dialogue-timestamps.failure.json` already showed the provider error was being classified by `aiTargets` as `retryable`; the pipeline still died because the timestamp rerun had no extra attempt budget, not because `no_content` was being misclassified. Narrow truthful repair chosen: harden only the timestamp lane’s dialogue alignment rerun by cloning config inside `server/scripts/get-context/get-dialogue-timestamps.cjs` and enforcing bounded minimum retry defaults of `maxAttempts=2` / `backoffMs=1000` for that rerun, while preserving any stronger caller-specified `config.ai.dialogue.retry` values and leaving the main dialogue lane/config untouched.
+
+Added regression coverage proves (1) the timestamp rerun now injects the bounded retry defaults without mutating the caller config and (2) stronger existing retry settings are preserved. Exact repo-local validation command: `node --test test/scripts/get-dialogue-timestamps.test.js test/lib/ai-targets.test.js` ✅.
+
+Real rerun command after the fix: `node server/run-pipeline.cjs --config configs/cod-test-phase1-timestamp-validation.yaml` ✅. Exact observed rerun outcome: the lane passed all six Phase 1 scripts, including `script-results/get-dialogue-timestamps.success.json` and `script-results/get-music-vocals-timestamps.success.json`; emitted artifacts now include `phase1-gather-context/dialogue-timestamps-data.reconciled.json` and `phase1-gather-context/music-vocals-timestamps-data.reconciled.json`. The pipeline log shows the timestamp alignment rerun is now intentionally running with `Dialogue retry config: attempts=2, backoffMs=1000`, while the main top-level `get-dialogue` lane still runs at `attempts=1, backoffMs=0`. This rerun did not need to consume the second attempt in practice, but it cleared the previously failing empty-response seam and reached the downstream music-vocals timestamp lane truthfully.
+
+Useful QA follow-up facts from the successful rerun: `dialogue-timestamps-data.reconciled.json` contains 19 dialogue segments with emitted timing fields; at least one segment remains honestly unresolved (`"So eager to leave, are we?"` has `timing.status: "unresolved"`), so the repair did not hide alignment gaps behind fake timestamps. `music-vocals-timestamps-data.reconciled.json` also emitted successfully and preserves the reconciled lyric text, but its `vocal_segments` remain unresolved in this run (`timing.status: "unresolved"` throughout), so QA should now evaluate timestamp artifact presence plus accuracy/coverage quality separately rather than treating emission as proof of alignment quality.
 
 ---
 

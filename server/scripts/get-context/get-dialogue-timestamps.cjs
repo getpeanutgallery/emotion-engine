@@ -16,6 +16,10 @@ const getDialogueScript = require('./get-dialogue.cjs');
 
 const PHASE_KEY = 'phase1-gather-context';
 const SCRIPT_ID = 'get-dialogue-timestamps';
+const TIMESTAMP_ALIGNMENT_RETRY_DEFAULTS = Object.freeze({
+  maxAttempts: 2,
+  backoffMs: 1000
+});
 
 function ensureSourceDialogue({ artifacts, outputDir, config, runtimeArtifactSurface }) {
   const bagResolution = selectCanonicalPhase1ArtifactFromBag(artifacts || {}, 'dialogueData', {
@@ -66,14 +70,40 @@ function ensureSourceDialogue({ artifacts, outputDir, config, runtimeArtifactSur
   };
 }
 
+function buildTimestampAlignmentConfig(config = {}) {
+  const sourceRetry = config?.ai?.dialogue?.retry || {};
+  const maxAttempts = Number.isInteger(sourceRetry.maxAttempts) && sourceRetry.maxAttempts > 0
+    ? Math.max(sourceRetry.maxAttempts, TIMESTAMP_ALIGNMENT_RETRY_DEFAULTS.maxAttempts)
+    : TIMESTAMP_ALIGNMENT_RETRY_DEFAULTS.maxAttempts;
+  const backoffMs = Number.isInteger(sourceRetry.backoffMs) && sourceRetry.backoffMs >= 0
+    ? Math.max(sourceRetry.backoffMs, TIMESTAMP_ALIGNMENT_RETRY_DEFAULTS.backoffMs)
+    : TIMESTAMP_ALIGNMENT_RETRY_DEFAULTS.backoffMs;
+
+  return {
+    ...config,
+    ai: {
+      ...(config?.ai || {}),
+      dialogue: {
+        ...((config?.ai && config.ai.dialogue) || {}),
+        retry: {
+          ...sourceRetry,
+          maxAttempts,
+          backoffMs
+        }
+      }
+    }
+  };
+}
+
 async function deriveAlignmentDialogue({ assetPath, config }) {
   const tempOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ee-dialogue-timestamps-'));
+  const alignmentConfig = buildTimestampAlignmentConfig(config);
 
   try {
     const result = await getDialogueScript.run({
       assetPath,
       outputDir: tempOutputDir,
-      config,
+      config: alignmentConfig,
       preserveSegmentTiming: true
     });
 

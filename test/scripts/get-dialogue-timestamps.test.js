@@ -33,6 +33,111 @@ function writeJson(filePath, payload) {
   fs.writeFileSync(filePath, JSON.stringify(payload, null, 2), 'utf8');
 }
 
+test('get-dialogue-timestamps applies bounded retry defaults to the alignment rerun without mutating the caller config', async (t) => {
+  const outputDir = makeTempDir('ee-dialogue-ts-retry-');
+  t.after(() => fs.rmSync(outputDir, { recursive: true, force: true }));
+
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.json'), {
+    dialogue_segments: [
+      { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hello, world!', confidence: 0.9 }
+    ],
+    summary: 'Raw dialogue',
+    totalDuration: 12.4
+  });
+
+  let capturedConfig = null;
+  const originalConfig = {
+    ai: {
+      dialogue: {
+        targets: [
+          {
+            adapter: {
+              name: 'openrouter',
+              model: 'xiaomi/mimo-v2-omni'
+            }
+          }
+        ]
+      }
+    },
+    gather_context: ['server/scripts/get-context/get-dialogue.cjs']
+  };
+
+  const script = loadScriptWithMock(async ({ config }) => {
+    capturedConfig = config;
+    return {
+      artifacts: {
+        dialogueData: {
+          dialogue_segments: [
+            { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'hello world', start: 1.1, end: 2.3, confidence: 0.8 }
+          ],
+          summary: 'Timed dialogue',
+          totalDuration: 12.4
+        }
+      }
+    };
+  });
+
+  await script.run({
+    assetPath: '/tmp/fake-asset.mp4',
+    outputDir,
+    config: originalConfig
+  });
+
+  assert.ok(capturedConfig);
+  assert.equal(capturedConfig.ai.dialogue.retry.maxAttempts, 2);
+  assert.equal(capturedConfig.ai.dialogue.retry.backoffMs, 1000);
+  assert.equal(originalConfig.ai.dialogue.retry, undefined);
+});
+
+test('get-dialogue-timestamps preserves stronger caller retry config on the alignment rerun', async (t) => {
+  const outputDir = makeTempDir('ee-dialogue-ts-retry-existing-');
+  t.after(() => fs.rmSync(outputDir, { recursive: true, force: true }));
+
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.json'), {
+    dialogue_segments: [
+      { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hello, world!', confidence: 0.9 }
+    ],
+    summary: 'Raw dialogue',
+    totalDuration: 12.4
+  });
+
+  let capturedConfig = null;
+  const script = loadScriptWithMock(async ({ config }) => {
+    capturedConfig = config;
+    return {
+      artifacts: {
+        dialogueData: {
+          dialogue_segments: [
+            { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'hello world', start: 1.1, end: 2.3, confidence: 0.8 }
+          ],
+          summary: 'Timed dialogue',
+          totalDuration: 12.4
+        }
+      }
+    };
+  });
+
+  await script.run({
+    assetPath: '/tmp/fake-asset.mp4',
+    outputDir,
+    config: {
+      ai: {
+        dialogue: {
+          retry: {
+            maxAttempts: 4,
+            backoffMs: 2500
+          }
+        }
+      },
+      gather_context: ['server/scripts/get-context/get-dialogue.cjs']
+    }
+  });
+
+  assert.ok(capturedConfig);
+  assert.equal(capturedConfig.ai.dialogue.retry.maxAttempts, 4);
+  assert.equal(capturedConfig.ai.dialogue.retry.backoffMs, 2500);
+});
+
 test('get-dialogue-timestamps derives raw-surface timestamps and preserves source text verbatim', async (t) => {
   const outputDir = makeTempDir('ee-dialogue-ts-raw-');
   t.after(() => fs.rmSync(outputDir, { recursive: true, force: true }));
