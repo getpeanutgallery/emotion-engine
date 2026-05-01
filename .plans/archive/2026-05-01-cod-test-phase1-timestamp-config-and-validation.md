@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-05-01  
-**Status:** Draft  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -156,25 +156,26 @@ Useful QA follow-up facts from the successful rerun: `dialogue-timestamps-data.r
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-01-cod-test-phase1-timestamp-config-and-validation.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit passed and `ee-od1v` was closed. The auditor confirmed the config is correct for the intended structural validation lane: reconciliation runs before both timestamp scripts, both reconciled timestamp artifacts are emitted, and Phase 2 / report do not execute any scripts even though the runner still records empty phase lifecycle events for `phase2-process` and `phase3-report` with `scriptsCount: 0`. Provenance/source-surface behavior is truthful in both artifacts, including reconciled source paths and verbatim text posture, plus `recognizedSongUsedForTextRewrite: false` for music-vocals. The auditor also agreed with the nuanced QA quality judgment: dialogue timestamp output is structurally credible and partly usable but inherits non-trivial reconciled-source wording/segmentation drift vs COD truth, while music-vocals timestamp output is an honest emitted artifact but not quality-passing because all 11 vocal segments remained unresolved and text drift vs truth still exists. Audit decision: PASS this lane as a config/runtime validation slice with mixed artifact quality, and treat any truth-surface cleanup or music-vocals alignment improvement as follow-on work rather than a blocking retry defect.
 
 ---
 
 ## Final Results
 
-**Status:** ⚠️ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** A dedicated Phase-1-only COD timestamp validation lane centered on `configs/cod-test-phase1-timestamp-validation.yaml`. This config cleanly copies `cod-test.yaml`, appends `get-dialogue-timestamps` and `get-music-vocals-timestamps` after `reconcile-famous-song-phase1`, disables benchmark scoring for this partial-run lane, writes to an isolated output root (`output/cod-test-phase1-timestamp-validation`), and stops practical execution after Phase 1 by using empty `process` / `report` arrays. We then validated the real runtime path, repaired the only blocking defect in that path (`12d9ab0` hardened the dialogue timestamp alignment rerun with a bounded retry floor), reran the config successfully, and emitted both reconciled timestamp artifacts.
 
-**Reference Check:** Pending.
+**Reference Check:** The validation lane achieved its intended purpose: prove that reconciliation runs before timestamp derivation, prove the config can execute end-to-end through both timestamp scripts without entering real Phase 2/report work, and produce inspectable timestamp artifacts under the isolated output root. The final evidence is intentionally nuanced: dialogue timestamp artifacts are structurally credible and mostly covered but are timing a reconciled dialogue surface that still drifts from COD truth, while music-vocals timestamp artifacts emit truthfully with correct provenance but remain non-passing quality because coverage is entirely unresolved in this run.
 
 **Commits:**
-- Pending
+- `2d049f9` - Add phase-1 COD timestamp validation config
+- `12d9ab0` - Harden dialogue timestamp alignment reruns
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** Config/runtime validation and artifact-quality validation are separate truths. This slice proved the wiring and real provider-backed path can work without prematurely coupling the new timestamp artifacts into Phase 2. It also exposed that a lane can be structurally correct while still producing outputs with mixed downstream value: dialogue timing can look believable while inheriting transcript drift, and music-vocals can emit an honest artifact that still fails the practical quality bar because unresolved segments dominate.
 
 ---
 
-*Draft created on 2026-05-01*
+*Completed on 2026-05-01*
