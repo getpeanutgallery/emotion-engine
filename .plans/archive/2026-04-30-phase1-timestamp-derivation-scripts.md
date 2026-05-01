@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-04-30  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -146,13 +146,13 @@ The key architectural question for this slice is not just “can Whisper timesta
 
 **Status:** ✅ Complete
 
-**Results:** Implemented the bounded music-vocals timestamp lane. Added the new `musicVocalsTimestampsData` / `musicVocalsTimestampsDataReconciled` artifact family to the shared raw/reconciled resolver seams (`phase1-baseline-resolution.cjs`, `persisted-artifacts.cjs`, `script-contract.cjs`) and extended the shared timestamp helper in `server/lib/phase1-timestamp-derivation.cjs` with a conservative lyric-alignment truth model. Shipped `server/scripts/get-context/get-music-vocals-timestamps.cjs`, which resolves source music-vocals with the same canonical/raw/reconciled contract as dialogue timestamping, reruns `get-music-vocals` in a temp output with opt-in `preserveSegmentTiming`, preserves selected source text verbatim in persisted output, mirrors the selected runtime surface in output/provenance, and carries `recognizedSong` / `recognitionNotes` through as metadata only while explicitly recording `recognizedSongUsedForTextRewrite: false`. The weaker timing posture is encoded intentionally: exact strong anchors can reach `aligned`, but repeated short hooks degrade to `partial` and weak anchors remain `unresolved` without fake placement. Focused regression coverage now proves raw vs reconciled selection, hydrated canonical reconciled loading from `artifacts-complete.json`, truthful provenance, verbatim text preservation, and partial/unresolved fallback semantics. Validation runs that passed: `node --test test/scripts/get-music-vocals-timestamps.test.js test/scripts/get-dialogue-timestamps.test.js test/lib/phase1-baseline-resolution.test.js test/scripts/tool-wrapper-contract.test.js` and `node --test test/scripts/get-music-vocals.test.js`.
+**Results:** Implemented the bounded music-vocals timestamp lane. Added the new `musicVocalsTimestampsData` / `musicVocalsTimestampsDataReconciled` artifact family to the shared raw/reconciled resolver seams (`phase1-baseline-resolution.cjs`, `persisted-artifacts.cjs`, `script-contract.cjs`) and extended the shared timestamp helper in `server/lib/phase1-timestamp-derivation.cjs` with a conservative lyric-alignment truth model. Shipped `server/scripts/get-context/get-music-vocals-timestamps.cjs`, which resolves source music-vocals with the same canonical/raw/reconciled contract as dialogue timestamping, reruns `get-music-vocals` in a temp output with opt-in `preserveSegmentTiming`, preserves selected source text verbatim in persisted output, mirrors the selected runtime surface in output/provenance, and carries `recognizedSong` / `recognitionNotes` through as metadata only while explicitly recording `recognizedSongUsedForTextRewrite: false`. The weaker timing posture is encoded intentionally: exact strong anchors can reach `aligned`, but repeated short hooks degrade to `partial` and weak anchors remain `unresolved` without fake placement. Focused regression coverage now proves raw vs reconciled selection, hydrated canonical reconciled loading from `artifacts-complete.json`, truthful provenance, verbatim text preservation, and partial/unresolved fallback semantics. Validation runs that passed: `node --test test/scripts/get-music-vocals-timestamps.test.js test/scripts/get-dialogue-timestamps.test.js test/lib/phase1-baseline-resolution.test.js test/scripts/tool-wrapper-contract.test.js` and `node --test test/scripts/get-music-vocals.test.js`. Commit/push landed as `64ee2c5` (`Add phase1 music-vocals timestamp derivation lane`).
 
 ---
 
 ### Task 5: QA and independent audit of the new timestamp lanes
 
-**Bead ID:** `ee-ser0`  
+**Bead ID:** `ee-ser0` (dialogue QA/audit, closed) / `ee-etaf` (music-vocals QA/audit, open)  
 **SubAgent:** `primary` (for `qa` then `auditor` workflow roles)  
 **Role:** `qa` / `auditor`  
 **References:** `REF-02`, `REF-03`, `REF-04`, `REF-05`, `REF-06`  
@@ -170,6 +170,11 @@ The key architectural question for this slice is not just “can Whisper timesta
 **Status:** ⚠️ Partial
 
 **Results:**
+
+**Task 5 bead split note — 2026-05-01:**
+- `ee-ser0` is now closed after the dialogue-only re-QA / re-audit cleared `445eea1`.
+- `ee-etaf` was created for the music-vocals QA / audit loop after coder completion of `ee-669f` so the new slice can be verified independently without reopening the dialogue bead.
+
 
 ### QA pass — 2026-04-30 (Cookie / `qa` role)
 
@@ -363,27 +368,61 @@ NODE
 
 **Bead action:**
 - `ee-ser0` was closed after the audit pass with an explicit dialogue-only completion reason.
-- `ee-669f` remains the active next implementation bead for music-vocals.
+- `ee-669f` remained the active next implementation bead for music-vocals at that stop point.
 
-**Next execution point:**
-- Continue to **Task 4** (`ee-669f`) for the bounded music-vocals timestamp lane.
+### Music-vocals QA result — 2026-05-01 (Cookie / `qa` role via subagent)
+
+**QA status:** ✅ PASS for the bounded music-vocals timestamp lane at `64ee2c5`.
+
+**What QA proved:**
+- Canonical/reconciled vs raw music-vocals source selection matches the approved contract.
+- Output surface mirrors the selected source surface (`music-vocals-timestamps-data.json` vs `music-vocals-timestamps-data.reconciled.json`).
+- Persisted source text remains verbatim from the selected source artifact.
+- `recognizedSong` / `recognitionNotes` stay metadata-only and do not authorize lyric rewrites.
+- Provenance truthfully records `recognizedSongUsedForTextRewrite: false`.
+- Conservative truth posture is real in the implementation: strong anchors may be `aligned`, repeated hooks degrade to `partial`, and weak anchors remain `unresolved` rather than getting fake exact placement.
+- Original canonical music-vocals artifacts were not mutated.
+- Focused validation passed at `26/26` for the timestamp/wiring suite and `8/8` for `get-music-vocals.test.js`.
+
+**QA caveat:**
+- QA used deterministic mocked E2E probes at the `get-music-vocals` rerun boundary rather than a live provider-backed audio rerun. That is a real coverage note for audit, but it was not treated as a contract failure.
+
+### Music-vocals audit result — 2026-05-01 (Cookie / `auditor` role via subagent)
+
+**Audit status:** ✅ PASS for the bounded music-vocals timestamp lane at `64ee2c5`.
+
+**What the auditor independently confirmed:**
+- Canonical/reconciled vs raw selection matches contract.
+- Output surface mirrors the selected source surface.
+- Persisted text remains verbatim from selected source artifacts.
+- `recognizedSong` / `recognitionNotes` remain metadata-only and provenance truthfully records `recognizedSongUsedForTextRewrite: false`.
+- Conservative partial/unresolved semantics are real and preferred over fake exact placement for repeated hooks or weak anchors.
+- Original canonical source artifacts remain unchanged.
+- Focused tests pass, and the unrelated `test/lib/script-contract.test.js` failure remains isolated from this slice.
+
+**Audit decision on the QA caveat:**
+- The mocked rerun-boundary coverage was accepted as sufficient for this bounded bead. The auditor judged that the new wrapper/contract behavior — source-surface selection, provenance, verbatim text preservation, conservative status assignment, and artifact writing — was the real thing that needed verification here, while provider-backed producer behavior remains owned by the pre-existing producer lane and its own tests.
+
+**Bead action:**
+- `ee-etaf` was closed after the audit pass with an explicit PASS reason.
 
 ---
 
 ## Final Results
 
-**Status:** ⚠️ Partial
+**Status:** ✅ Complete
 
-**What We Built:** The bounded Phase 1 **dialogue** timestamp derivation lane, including sibling timestamp artifact wiring, a new `get-dialogue-timestamps` script, and the follow-up fix for hydrated canonical reconciled source resolution. The dialogue slice is now re-QA'd and re-audited cleanly. The corresponding **music-vocals** timestamp lane has not started yet.
+**What We Built:** Bounded Phase 1 timestamp derivation for both **dialogue** and **music-vocals**, implemented as sibling artifact families rather than mutations of the existing canonical Phase 1 artifacts. Dialogue now ships through `get-dialogue-timestamps` with truthful raw/reconciled source resolution, hydrated canonical reconciled support, and re-cleared QA/audit at `445eea1`. Music-vocals now ships through `get-music-vocals-timestamps` with the same raw/reconciled source-selection contract, metadata-only recognized-song handling, and an intentionally conservative `aligned` / `partial` / `unresolved` truth model validated and audited at `64ee2c5`.
 
-**Reference Check:** Dialogue-side contract work is now implemented and cleared through re-QA / re-audit against retry commit `445eea1`. Overall plan status remains partial because Task 4 / music-vocals is still pending.
+**Reference Check:** The approved timestamp-derivation contract is now satisfied for both artifact families. Dialogue-side hydrated canonical reconciled resolution was explicitly re-verified after the retry fix, and music-vocals-side conservative fallback semantics were independently QA'd and audited without broadening into fake exactness.
 
 **Commits:**
 - `6b59e77` - Add phase1 dialogue timestamp derivation lane
 - `445eea1` - Fix hydrated dialogue timestamp source resolution
+- `64ee2c5` - Add phase1 music-vocals timestamp derivation lane
 
-**Lessons Learned:** File-backed QA alone was not enough for this lane; hydrated/runtime entrypoints needed explicit audit coverage because canonical artifact resolution can succeed from in-memory or `artifacts-complete.json` surfaces even when a sibling reconciled file is absent on disk.
+**Lessons Learned:** File-backed QA alone was not enough for timestamp derivation work; hydrated/runtime entrypoints needed explicit audit coverage because canonical artifact resolution can succeed from in-memory or `artifacts-complete.json` surfaces even when sibling reconciled files are absent on disk. For music-vocals specifically, the right product posture is truth over completeness: repeated hooks and weak anchors should remain `partial` or `unresolved` instead of being dressed up as exact timings.
 
 ---
 
-*Draft created on 2026-04-30*
+*Completed on 2026-05-01*
