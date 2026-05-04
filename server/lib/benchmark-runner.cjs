@@ -13,7 +13,9 @@ const DEFAULT_TOLERANT_NUMBER_FIELD_NAMES = new Set(['confidence']);
 const DEFAULT_FUZZY_STRING_FIELD_NAMES = new Set(['text', 'summary', 'description', 'reasoning', 'cleanedTranscript', 'handoffContext', 'label', 'note', 'keyFindings', 'suggestions']);
 const PROFILE_DEFAULT_IGNORE_PATHS = Object.freeze({
   'dialogue-default': ['$.totalDuration', '$.dialogue_segments[*].start', '$.dialogue_segments[*].end'],
-  'music-vocals-default': ['$.totalDuration', '$.vocal_segments[*].start', '$.vocal_segments[*].end', '$.vocal_segments[*].index']
+  'dialogue-timestamps-default': ['$.totalDuration', '$.dialogue_segments[*].start', '$.dialogue_segments[*].end', '$.dialogue_segments[*].index'],
+  'music-vocals-default': ['$.totalDuration', '$.vocal_segments[*].start', '$.vocal_segments[*].end', '$.vocal_segments[*].index'],
+  'music-vocals-timestamps-default': ['$.totalDuration', '$.vocal_segments[*].start', '$.vocal_segments[*].end', '$.vocal_segments[*].index']
 });
 
 function resolveBenchmarkConfig(config, options = {}) {
@@ -319,13 +321,35 @@ function getDialogueSegmentOrderValue(segment, fallbackIndex) {
   return fallbackIndex;
 }
 
+function getSegmentWindowBounds(segments, indexes) {
+  const starts = indexes
+    .map((index) => Number(segments[index]?.start))
+    .filter((value) => Number.isFinite(value));
+  const ends = indexes
+    .map((index) => Number(segments[index]?.end))
+    .filter((value) => Number.isFinite(value));
+
+  return {
+    start: starts.length > 0 ? Math.min(...starts) : null,
+    end: ends.length > 0 ? Math.max(...ends) : null
+  };
+}
+
+function hasResolvedSegmentTiming(segment) {
+  const timingStatus = typeof segment?.timing?.status === 'string' ? segment.timing.status : null;
+  return Number.isFinite(segment?.start)
+    && Number.isFinite(segment?.end)
+    && timingStatus !== 'unresolved';
+}
+
 function buildAlignedTextBoundaryScoring({
   truthSegments,
   outputSegments,
   normalizationProfile,
   transcriptFieldName,
   windowedFieldName,
-  boundaryFieldName
+  boundaryFieldName,
+  timestampScoring = null
 }) {
   const truthSegmentTokens = truthSegments.map((segment) => tokenizeDialogueTextForScoring(getDialogueSegmentText(segment)));
   const outputSegmentTokens = outputSegments.map((segment) => tokenizeDialogueTextForScoring(getDialogueSegmentText(segment)));
@@ -459,6 +483,7 @@ function buildAlignedTextBoundaryScoring({
   }, 0);
   const splitEventCount = matchedWindows.filter((step) => step.truthIndexes.length === 1 && step.outputIndexes.length > 1).length;
   const mergeEventCount = matchedWindows.filter((step) => step.truthIndexes.length > 1 && step.outputIndexes.length === 1).length;
+  const mixedResegmentationCount = matchedWindows.filter((step) => step.truthIndexes.length > 1 && step.outputIndexes.length > 1).length;
   const missingTruthWindowCount = windowSolution.steps.filter((step) => step.kind === 'missing_truth').length;
   const extraOutputWindowCount = windowSolution.steps.filter((step) => step.kind === 'extra_output').length;
 
@@ -496,36 +521,151 @@ function buildAlignedTextBoundaryScoring({
       };
     }
 
-    let boundaryStatus = 'aligned';
+    let boundaryStatus = 'boundary_exact';
     if (step.truthIndexes.length === 1 && step.outputIndexes.length > 1) {
       boundaryStatus = 'split';
     } else if (step.truthIndexes.length > 1 && step.outputIndexes.length === 1) {
       boundaryStatus = 'merge';
     } else if (step.truthIndexes.length > 1 && step.outputIndexes.length > 1) {
-      boundaryStatus = 'many_to_many';
+      boundaryStatus = 'mixed_resegmentation';
     }
+
+    const truthNormalizedText = normalizeDialogueTextForScoring(step.truthIndexes.map((index) => getDialogueSegmentText(truthSegments[index])).join(' '));
+    const outputNormalizedText = normalizeDialogueTextForScoring(step.outputIndexes.map((index) => getDialogueSegmentText(outputSegments[index])).join(' '));
+    const textMatch = truthNormalizedText === outputNormalizedText ? 'exact_normalized' : 'drift';
 
     return {
       truth_indexes: step.truthIndexes,
       output_indexes: step.outputIndexes,
       text_similarity_pct: roundPct(step.similarity * 100),
-      boundary_status: boundaryStatus
+      boundary_status: boundaryStatus,
+      text_match: textMatch
     };
   });
 
-  return {
+  const scoring = {
     [transcriptFieldName]: roundPct(fullTranscript.similarity * 100),
     [windowedFieldName]: totalWindowWeight > 0 ? roundPct((weightedSimilarity / totalWindowWeight) * 100) : 0,
     [boundaryFieldName]: roundPct(boundaryPct),
     truth_segment_count: truthSegments.length,
     output_segment_count: outputSegments.length,
+    comparison_unit_count: windowAlignments.length,
     split_event_count: splitEventCount,
     merge_event_count: mergeEventCount,
+    mixed_resegmentation_count: mixedResegmentationCount,
     missing_truth_window_count: missingTruthWindowCount,
     extra_output_window_count: extraOutputWindowCount,
     normalization_profile: normalizationProfile,
     window_alignments: windowAlignments
   };
+
+  if (timestampScoring) {
+    const timingToleranceSeconds = Number.isFinite(timestampScoring.timingToleranceSeconds)
+      ? timestampScoring.timingToleranceSeconds
+      : DEFAULT_TIMING_TOLERANCE_SECONDS;
+    const resolvedUnitScores = [];
+    let timingEligibleUnitCount = 0;
+    let timingResolvedUnitCount = 0;
+    let timingBlockedByTextDriftCount = 0;
+
+    windowAlignments.forEach((alignment) => {
+      const truthIndexes = alignment.truth_indexes || [];
+      const outputIndexes = alignment.output_indexes || [];
+      const truthHasRows = truthIndexes.length > 0;
+      const outputHasRows = outputIndexes.length > 0;
+      const truthBounds = getSegmentWindowBounds(truthSegments, truthIndexes);
+      const runtimeBounds = getSegmentWindowBounds(outputSegments, outputIndexes);
+      const isTextDrift = truthHasRows && outputHasRows && alignment.text_match === 'drift';
+      const isWindowComparable = truthHasRows
+        && outputHasRows
+        && ['boundary_exact', 'split', 'merge', 'mixed_resegmentation'].includes(alignment.boundary_status);
+
+      let timingEligibility = 'not_applicable';
+      if (isWindowComparable && alignment.text_match === 'exact_normalized') {
+        timingEligibility = alignment.boundary_status === 'boundary_exact' ? 'row_level' : 'window_level';
+      } else if (isTextDrift) {
+        timingEligibility = 'blocked_by_text_drift';
+        timingBlockedByTextDriftCount += 1;
+      }
+
+      const hasRuntimeBounds = Number.isFinite(runtimeBounds.start) && Number.isFinite(runtimeBounds.end);
+      const hasTruthBounds = Number.isFinite(truthBounds.start) && Number.isFinite(truthBounds.end);
+      const startDeltaSeconds = hasTruthBounds && hasRuntimeBounds ? Math.abs(runtimeBounds.start - truthBounds.start) : null;
+      const endDeltaSeconds = hasTruthBounds && hasRuntimeBounds ? Math.abs(runtimeBounds.end - truthBounds.end) : null;
+      const overlapSeconds = hasTruthBounds && hasRuntimeBounds
+        ? Math.max(0, Math.min(truthBounds.end, runtimeBounds.end) - Math.max(truthBounds.start, runtimeBounds.start))
+        : null;
+      const unionSeconds = hasTruthBounds && hasRuntimeBounds
+        ? Math.max(truthBounds.end, runtimeBounds.end) - Math.min(truthBounds.start, runtimeBounds.start)
+        : null;
+      const windowOverlapPct = unionSeconds === null
+        ? null
+        : unionSeconds > 0
+          ? roundPct((100 * overlapSeconds) / unionSeconds)
+          : 100;
+
+      let timingResolutionStatus = 'not_applicable';
+      if (timingEligibility === 'blocked_by_text_drift') {
+        timingResolutionStatus = 'blocked_by_text_drift';
+      } else if (timingEligibility === 'row_level' || timingEligibility === 'window_level') {
+        timingEligibleUnitCount += 1;
+        const resolved = outputIndexes.every((index) => hasResolvedSegmentTiming(outputSegments[index]))
+          && hasTruthBounds
+          && hasRuntimeBounds;
+        if (resolved) {
+          timingResolutionStatus = 'resolved';
+          timingResolvedUnitCount += 1;
+          resolvedUnitScores.push({
+            startPct: Math.max(0, 100 * (1 - (startDeltaSeconds / timingToleranceSeconds))),
+            endPct: Math.max(0, 100 * (1 - (endDeltaSeconds / timingToleranceSeconds))),
+            windowPct: unionSeconds > 0 ? (100 * overlapSeconds) / unionSeconds : 100
+          });
+        } else {
+          timingResolutionStatus = 'unresolved';
+        }
+      }
+
+      alignment.timing_eligibility = timingEligibility;
+      alignment.timing_resolution_status = timingResolutionStatus;
+      alignment.truth_window_start = truthBounds.start;
+      alignment.truth_window_end = truthBounds.end;
+      alignment.runtime_window_start = runtimeBounds.start;
+      alignment.runtime_window_end = runtimeBounds.end;
+      alignment.start_delta_seconds = startDeltaSeconds;
+      alignment.end_delta_seconds = endDeltaSeconds;
+      alignment.window_overlap_pct = windowOverlapPct;
+    });
+
+    const resolvedAverage = (fieldName) => {
+      if (resolvedUnitScores.length === 0) {
+        return null;
+      }
+      const total = resolvedUnitScores.reduce((sum, entry) => sum + entry[fieldName], 0);
+      return roundPct(total / resolvedUnitScores.length);
+    };
+
+    const timingUnresolvedUnitCount = Math.max(0, timingEligibleUnitCount - timingResolvedUnitCount);
+
+    scoring[timestampScoring.eligibleFieldName] = windowAlignments.length > 0
+      ? roundPct((timingEligibleUnitCount / windowAlignments.length) * 100)
+      : null;
+    scoring[timestampScoring.resolvedFieldName] = timingEligibleUnitCount > 0
+      ? roundPct((timingResolvedUnitCount / timingEligibleUnitCount) * 100)
+      : null;
+    scoring[timestampScoring.startFieldName] = resolvedAverage('startPct');
+    scoring[timestampScoring.endFieldName] = resolvedAverage('endPct');
+    scoring[timestampScoring.windowFieldName] = resolvedAverage('windowPct');
+    scoring[timestampScoring.blockedFieldName] = windowAlignments.length > 0
+      ? roundPct((timingBlockedByTextDriftCount / windowAlignments.length) * 100)
+      : null;
+    scoring.timing_eligible_unit_count = timingEligibleUnitCount;
+    scoring.timing_resolved_unit_count = timingResolvedUnitCount;
+    scoring.timing_unresolved_unit_count = timingUnresolvedUnitCount;
+    scoring.timing_blocked_by_text_drift_count = timingBlockedByTextDriftCount;
+    scoring.timing_tolerance_seconds = timingToleranceSeconds;
+  }
+
+  return scoring;
 }
 
 function buildDialogueScoring(truthData, outputData) {
@@ -536,6 +676,26 @@ function buildDialogueScoring(truthData, outputData) {
     transcriptFieldName: 'dialogue_text_full_transcript_pct',
     windowedFieldName: 'dialogue_text_windowed_pct',
     boundaryFieldName: 'dialogue_boundary_pct'
+  });
+}
+
+function buildDialogueTimestampScoring(truthData, outputData, timingToleranceSeconds = DEFAULT_TIMING_TOLERANCE_SECONDS) {
+  return buildAlignedTextBoundaryScoring({
+    truthSegments: Array.isArray(truthData?.dialogue_segments) ? truthData.dialogue_segments : [],
+    outputSegments: Array.isArray(outputData?.dialogue_segments) ? outputData.dialogue_segments : [],
+    normalizationProfile: 'dialogue-timestamp-text-v1',
+    transcriptFieldName: 'dialogue_text_full_transcript_pct',
+    windowedFieldName: 'dialogue_text_windowed_pct',
+    boundaryFieldName: 'dialogue_boundary_pct',
+    timestampScoring: {
+      timingToleranceSeconds,
+      eligibleFieldName: 'dialogue_timing_eligible_pct',
+      resolvedFieldName: 'dialogue_timing_resolved_pct',
+      startFieldName: 'dialogue_timing_start_pct',
+      endFieldName: 'dialogue_timing_end_pct',
+      windowFieldName: 'dialogue_timing_window_pct',
+      blockedFieldName: 'dialogue_timing_blocked_by_text_drift_pct'
+    }
   });
 }
 
@@ -561,6 +721,31 @@ function buildMusicVocalsScoring(truthData, outputData, fieldResults) {
   };
 }
 
+function buildMusicVocalsTimestampScoring(truthData, outputData, fieldResults, timingToleranceSeconds = DEFAULT_TIMING_TOLERANCE_SECONDS) {
+  const scoring = buildAlignedTextBoundaryScoring({
+    truthSegments: Array.isArray(truthData?.vocal_segments) ? truthData.vocal_segments : [],
+    outputSegments: Array.isArray(outputData?.vocal_segments) ? outputData.vocal_segments : [],
+    normalizationProfile: 'lyrics-timestamp-text-v1',
+    transcriptFieldName: 'vocal_text_full_transcript_pct',
+    windowedFieldName: 'vocal_text_windowed_pct',
+    boundaryFieldName: 'vocal_boundary_pct',
+    timestampScoring: {
+      timingToleranceSeconds,
+      eligibleFieldName: 'vocal_timing_eligible_pct',
+      resolvedFieldName: 'vocal_timing_resolved_pct',
+      startFieldName: 'vocal_timing_start_pct',
+      endFieldName: 'vocal_timing_end_pct',
+      windowFieldName: 'vocal_timing_window_pct',
+      blockedFieldName: 'vocal_timing_blocked_by_text_drift_pct'
+    }
+  });
+
+  return {
+    ...scoring,
+    vocal_attribution_pct: scoreFieldResults(fieldResults, (result) => /^vocal_segments\[truth=\d+,output=\d+\]\.(performer|performer_id|delivery)$/.test(result.path))
+  };
+}
+
 function normalizeTopLevelCount(value) {
   return Array.isArray(value) ? value.length : 0;
 }
@@ -578,9 +763,18 @@ function scoreFieldResults(fieldResults, predicate) {
   return roundPct((passed / relevant.length) * 100);
 }
 
-function buildArtifactScoring(comparatorProfile, truthData, outputData, fieldResults) {
+function buildArtifactScoring(comparatorConfig, truthData, outputData, fieldResults) {
+  const comparatorProfile = typeof comparatorConfig === 'string' ? comparatorConfig : comparatorConfig?.profile;
+  const timingToleranceSeconds = Number.isFinite(comparatorConfig?.resolvedOptions?.timingToleranceSeconds)
+    ? comparatorConfig.resolvedOptions.timingToleranceSeconds
+    : DEFAULT_TIMING_TOLERANCE_SECONDS;
+
   if (comparatorProfile === 'dialogue-default') {
     return { dialogueScoring: buildDialogueScoring(truthData, outputData) };
+  }
+
+  if (comparatorProfile === 'dialogue-timestamps-default') {
+    return { dialogueTimestampScoring: buildDialogueTimestampScoring(truthData, outputData, timingToleranceSeconds) };
   }
 
   if (comparatorProfile === 'music-default') {
@@ -607,6 +801,10 @@ function buildArtifactScoring(comparatorProfile, truthData, outputData, fieldRes
 
   if (comparatorProfile === 'music-vocals-default') {
     return { musicVocalsScoring: buildMusicVocalsScoring(truthData, outputData, fieldResults) };
+  }
+
+  if (comparatorProfile === 'music-vocals-timestamps-default') {
+    return { musicVocalsTimestampScoring: buildMusicVocalsTimestampScoring(truthData, outputData, fieldResults, timingToleranceSeconds) };
   }
 
   if (comparatorProfile === 'recommendation-default') {
@@ -691,6 +889,18 @@ function appendArtifactSpecificMarkdown(lines, artifact) {
     lines.push(`  - dialogue_boundary_pct=${formatPct(artifact.dialogueScoring.dialogue_boundary_pct)}`);
     lines.push(`  - splits=${artifact.dialogueScoring.split_event_count}, merges=${artifact.dialogueScoring.merge_event_count}, missingTruthWindows=${artifact.dialogueScoring.missing_truth_window_count}, extraOutputWindows=${artifact.dialogueScoring.extra_output_window_count}`);
   }
+  if (artifact.dialogueTimestampScoring) {
+    lines.push(`  - dialogue_text_full_transcript_pct=${formatPct(artifact.dialogueTimestampScoring.dialogue_text_full_transcript_pct)}`);
+    lines.push(`  - dialogue_text_windowed_pct=${formatPct(artifact.dialogueTimestampScoring.dialogue_text_windowed_pct)}`);
+    lines.push(`  - dialogue_boundary_pct=${formatPct(artifact.dialogueTimestampScoring.dialogue_boundary_pct)}`);
+    lines.push(`  - dialogue_timing_eligible_pct=${formatPct(artifact.dialogueTimestampScoring.dialogue_timing_eligible_pct)}`);
+    lines.push(`  - dialogue_timing_resolved_pct=${formatPct(artifact.dialogueTimestampScoring.dialogue_timing_resolved_pct)}`);
+    lines.push(`  - dialogue_timing_start_pct=${formatPct(artifact.dialogueTimestampScoring.dialogue_timing_start_pct)}`);
+    lines.push(`  - dialogue_timing_end_pct=${formatPct(artifact.dialogueTimestampScoring.dialogue_timing_end_pct)}`);
+    lines.push(`  - dialogue_timing_window_pct=${formatPct(artifact.dialogueTimestampScoring.dialogue_timing_window_pct)}`);
+    lines.push(`  - dialogue_timing_blocked_by_text_drift_pct=${formatPct(artifact.dialogueTimestampScoring.dialogue_timing_blocked_by_text_drift_pct)}`);
+    lines.push(`  - splits=${artifact.dialogueTimestampScoring.split_event_count}, merges=${artifact.dialogueTimestampScoring.merge_event_count}, mixed=${artifact.dialogueTimestampScoring.mixed_resegmentation_count}, timingEligible=${artifact.dialogueTimestampScoring.timing_eligible_unit_count}, timingResolved=${artifact.dialogueTimestampScoring.timing_resolved_unit_count}, timingBlocked=${artifact.dialogueTimestampScoring.timing_blocked_by_text_drift_count}`);
+  }
   if (artifact.musicScoring) {
     lines.push(`  - music_segment_timeline_pct=${formatPct(artifact.musicScoring.music_segment_timeline_pct)}`);
     lines.push(`  - music_segment_content_pct=${formatPct(artifact.musicScoring.music_segment_content_pct)}`);
@@ -706,6 +916,19 @@ function appendArtifactSpecificMarkdown(lines, artifact) {
     lines.push(`  - recognized_song_identity_pct=${formatPct(artifact.musicVocalsScoring.recognized_song_identity_pct)}`);
     lines.push(`  - recognized_song_support_pct=${formatPct(artifact.musicVocalsScoring.recognized_song_support_pct)}`);
     lines.push(`  - splits=${artifact.musicVocalsScoring.split_event_count}, merges=${artifact.musicVocalsScoring.merge_event_count}, missingTruthWindows=${artifact.musicVocalsScoring.missing_truth_window_count}, extraOutputWindows=${artifact.musicVocalsScoring.extra_output_window_count}`);
+  }
+  if (artifact.musicVocalsTimestampScoring) {
+    lines.push(`  - vocal_text_full_transcript_pct=${formatPct(artifact.musicVocalsTimestampScoring.vocal_text_full_transcript_pct)}`);
+    lines.push(`  - vocal_text_windowed_pct=${formatPct(artifact.musicVocalsTimestampScoring.vocal_text_windowed_pct)}`);
+    lines.push(`  - vocal_boundary_pct=${formatPct(artifact.musicVocalsTimestampScoring.vocal_boundary_pct)}`);
+    lines.push(`  - vocal_timing_eligible_pct=${formatPct(artifact.musicVocalsTimestampScoring.vocal_timing_eligible_pct)}`);
+    lines.push(`  - vocal_timing_resolved_pct=${formatPct(artifact.musicVocalsTimestampScoring.vocal_timing_resolved_pct)}`);
+    lines.push(`  - vocal_timing_start_pct=${formatPct(artifact.musicVocalsTimestampScoring.vocal_timing_start_pct)}`);
+    lines.push(`  - vocal_timing_end_pct=${formatPct(artifact.musicVocalsTimestampScoring.vocal_timing_end_pct)}`);
+    lines.push(`  - vocal_timing_window_pct=${formatPct(artifact.musicVocalsTimestampScoring.vocal_timing_window_pct)}`);
+    lines.push(`  - vocal_timing_blocked_by_text_drift_pct=${formatPct(artifact.musicVocalsTimestampScoring.vocal_timing_blocked_by_text_drift_pct)}`);
+    lines.push(`  - vocal_attribution_pct=${formatPct(artifact.musicVocalsTimestampScoring.vocal_attribution_pct)}`);
+    lines.push(`  - splits=${artifact.musicVocalsTimestampScoring.split_event_count}, merges=${artifact.musicVocalsTimestampScoring.merge_event_count}, mixed=${artifact.musicVocalsTimestampScoring.mixed_resegmentation_count}, timingEligible=${artifact.musicVocalsTimestampScoring.timing_eligible_unit_count}, timingResolved=${artifact.musicVocalsTimestampScoring.timing_resolved_unit_count}, timingBlocked=${artifact.musicVocalsTimestampScoring.timing_blocked_by_text_drift_count}`);
   }
   if (artifact.recommendationScoring) {
     lines.push(`  - recommendation_text_pct=${formatPct(artifact.recommendationScoring.recommendation_text_pct)}`);
@@ -771,6 +994,17 @@ function buildArtifactSummaryBits(artifactScoring) {
     bits.push(`dialogue_text_windowed_pct=${formatPct(artifactScoring.dialogueScoring.dialogue_text_windowed_pct)}`);
     bits.push(`dialogue_boundary_pct=${formatPct(artifactScoring.dialogueScoring.dialogue_boundary_pct)}`);
   }
+  if (artifactScoring.dialogueTimestampScoring) {
+    bits.push(`dialogue_text_full_transcript_pct=${formatPct(artifactScoring.dialogueTimestampScoring.dialogue_text_full_transcript_pct)}`);
+    bits.push(`dialogue_text_windowed_pct=${formatPct(artifactScoring.dialogueTimestampScoring.dialogue_text_windowed_pct)}`);
+    bits.push(`dialogue_boundary_pct=${formatPct(artifactScoring.dialogueTimestampScoring.dialogue_boundary_pct)}`);
+    bits.push(`dialogue_timing_eligible_pct=${formatPct(artifactScoring.dialogueTimestampScoring.dialogue_timing_eligible_pct)}`);
+    bits.push(`dialogue_timing_resolved_pct=${formatPct(artifactScoring.dialogueTimestampScoring.dialogue_timing_resolved_pct)}`);
+    bits.push(`dialogue_timing_start_pct=${formatPct(artifactScoring.dialogueTimestampScoring.dialogue_timing_start_pct)}`);
+    bits.push(`dialogue_timing_end_pct=${formatPct(artifactScoring.dialogueTimestampScoring.dialogue_timing_end_pct)}`);
+    bits.push(`dialogue_timing_window_pct=${formatPct(artifactScoring.dialogueTimestampScoring.dialogue_timing_window_pct)}`);
+    bits.push(`dialogue_timing_blocked_by_text_drift_pct=${formatPct(artifactScoring.dialogueTimestampScoring.dialogue_timing_blocked_by_text_drift_pct)}`);
+  }
   if (artifactScoring.musicScoring) {
     bits.push(`music_segment_timeline_pct=${formatPct(artifactScoring.musicScoring.music_segment_timeline_pct)}`);
     bits.push(`music_segment_content_pct=${formatPct(artifactScoring.musicScoring.music_segment_content_pct)}`);
@@ -785,6 +1019,18 @@ function buildArtifactSummaryBits(artifactScoring) {
     bits.push(`vocal_attribution_pct=${formatPct(artifactScoring.musicVocalsScoring.vocal_attribution_pct)}`);
     bits.push(`recognized_song_identity_pct=${formatPct(artifactScoring.musicVocalsScoring.recognized_song_identity_pct)}`);
     bits.push(`recognized_song_support_pct=${formatPct(artifactScoring.musicVocalsScoring.recognized_song_support_pct)}`);
+  }
+  if (artifactScoring.musicVocalsTimestampScoring) {
+    bits.push(`vocal_text_full_transcript_pct=${formatPct(artifactScoring.musicVocalsTimestampScoring.vocal_text_full_transcript_pct)}`);
+    bits.push(`vocal_text_windowed_pct=${formatPct(artifactScoring.musicVocalsTimestampScoring.vocal_text_windowed_pct)}`);
+    bits.push(`vocal_boundary_pct=${formatPct(artifactScoring.musicVocalsTimestampScoring.vocal_boundary_pct)}`);
+    bits.push(`vocal_timing_eligible_pct=${formatPct(artifactScoring.musicVocalsTimestampScoring.vocal_timing_eligible_pct)}`);
+    bits.push(`vocal_timing_resolved_pct=${formatPct(artifactScoring.musicVocalsTimestampScoring.vocal_timing_resolved_pct)}`);
+    bits.push(`vocal_timing_start_pct=${formatPct(artifactScoring.musicVocalsTimestampScoring.vocal_timing_start_pct)}`);
+    bits.push(`vocal_timing_end_pct=${formatPct(artifactScoring.musicVocalsTimestampScoring.vocal_timing_end_pct)}`);
+    bits.push(`vocal_timing_window_pct=${formatPct(artifactScoring.musicVocalsTimestampScoring.vocal_timing_window_pct)}`);
+    bits.push(`vocal_timing_blocked_by_text_drift_pct=${formatPct(artifactScoring.musicVocalsTimestampScoring.vocal_timing_blocked_by_text_drift_pct)}`);
+    bits.push(`vocal_attribution_pct=${formatPct(artifactScoring.musicVocalsTimestampScoring.vocal_attribution_pct)}`);
   }
   if (artifactScoring.recommendationScoring) {
     bits.push(`recommendation_text_pct=${formatPct(artifactScoring.recommendationScoring.recommendation_text_pct)}`);
@@ -1012,14 +1258,14 @@ function getArrayAlignmentKey(pathString, comparator, item) {
 
 function getTimeAwareArrayAlignmentConfig(pathString, comparator) {
   const comparablePath = normalizeComparablePath(pathString);
-  if (comparator.profile === 'dialogue-default' && comparablePath === 'dialogue_segments') {
+  if ((comparator.profile === 'dialogue-default' || comparator.profile === 'dialogue-timestamps-default') && comparablePath === 'dialogue_segments') {
     return {
       kind: 'time-aware-segments',
       label: 'dialogue_segments'
     };
   }
 
-  if (comparator.profile === 'music-vocals-default' && comparablePath === 'vocal_segments') {
+  if ((comparator.profile === 'music-vocals-default' || comparator.profile === 'music-vocals-timestamps-default') && comparablePath === 'vocal_segments') {
     return {
       kind: 'time-aware-segments',
       label: 'vocal_segments'
@@ -1238,7 +1484,7 @@ function createComparator(artifact, directives = {}) {
     throw new Error(`Unsupported comparator kind: ${artifact.comparator.kind}`);
   }
 
-  const supportedProfiles = new Set(['dialogue-default', 'music-default', 'music-vocals-default', 'recommendation-default', 'chunk-analysis-default', 'metrics-default', 'emotional-analysis-default']);
+  const supportedProfiles = new Set(['dialogue-default', 'dialogue-timestamps-default', 'music-default', 'music-vocals-default', 'music-vocals-timestamps-default', 'recommendation-default', 'chunk-analysis-default', 'metrics-default', 'emotional-analysis-default']);
   if (!supportedProfiles.has(artifact.comparator.profile)) {
     throw new Error(`Unsupported comparator profile for MVP: ${artifact.comparator.profile}`);
   }
@@ -2362,7 +2608,7 @@ function compareArtifact({ artifact, comparator, truthData, outputData, truthPat
   }
 
   const summaryPrefix = postureSummaryBits.length > 0 ? `${postureSummaryBits.join('; ')}. ` : '';
-  const artifactScoring = buildArtifactScoring(comparator.profile, truthData, outputData, fieldResults);
+  const artifactScoring = buildArtifactScoring(comparator, truthData, outputData, fieldResults);
   const artifactSummaryBits = buildArtifactSummaryBits(artifactScoring);
   const summary = hardError
     ? `${summaryPrefix}${counts.passedFields}/${counts.scoreableFields} scoreable fields passed; ${counts.skippedFields}/${counts.totalTruthFields} truth fields were skipped.${artifactSummaryBits.length ? ` ${artifactSummaryBits.join('; ')}.` : ''}`
@@ -2607,8 +2853,10 @@ function runBenchmarkStage({ config, configPath, outputDir }) {
       comparisonBoundary: result.comparisonBoundary,
       mismatchClassificationCounts: result.mismatchClassificationCounts,
       dialogueScoring: result.dialogueScoring,
+      dialogueTimestampScoring: result.dialogueTimestampScoring,
       musicScoring: result.musicScoring,
       musicVocalsScoring: result.musicVocalsScoring,
+      musicVocalsTimestampScoring: result.musicVocalsTimestampScoring,
       recommendationScoring: result.recommendationScoring,
       metricsScoring: result.metricsScoring,
       emotionalAnalysisScoring: result.emotionalAnalysisScoring,

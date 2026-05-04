@@ -87,6 +87,63 @@ function makeTempFixture(rootDir, options = {}) {
   return { configPath, benchmarkPath, fixturePath, outputDir };
 }
 
+function makeTempSingleArtifactFixture(rootDir, options = {}) {
+  const fixtureId = options.fixtureId || 'temp-single-artifact-fixture';
+  const configDir = path.join(rootDir, 'configs');
+  const benchmarkDir = path.join(rootDir, 'benchmarks', 'fixtures', fixtureId);
+  const outputDir = path.join(rootDir, 'output', 'temp-run');
+  const configPath = path.join(configDir, 'temp.yaml');
+  const benchmarkPath = path.join(benchmarkDir, 'benchmark.json');
+  const fixturePath = path.join(benchmarkDir, 'fixture.json');
+  const truthRelativePath = options.truthRelativePath || 'truth/artifact.json';
+  const outputRelativePath = options.outputRelativePath || 'phase1-gather-context/artifact.json';
+
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.writeFileSync(configPath, 'name: temp single artifact benchmark config\n', 'utf8');
+
+  writeJson(fixturePath, {
+    contractVersion: FIXTURE_CONTRACT_VERSION,
+    fixtureId,
+    asset: { repoPath: 'examples/videos/emotion-tests/cod.mp4' },
+    config: { repoPath: 'configs/temp.yaml' },
+    benchmark: { entryPath: 'benchmark.json' },
+    notes: ['temp single artifact fixture']
+  });
+
+  writeJson(benchmarkPath, {
+    contractVersion: MANIFEST_CONTRACT_VERSION,
+    fixtureId,
+    fixture: { path: 'fixture.json' },
+    reports: { outputDir: '_reports' },
+    artifacts: [
+      {
+        artifactKey: options.artifactKey || 'dialogueTimestampsData',
+        label: options.label || 'Temp artifact',
+        phase: options.phase || 'phase1-gather-context',
+        script: options.script || 'temp-script',
+        output: { path: outputRelativePath },
+        truth: { path: truthRelativePath },
+        comparator: {
+          kind: 'json-structured',
+          profile: options.profile,
+          options: {
+            timingToleranceSeconds: 2,
+            unknownSentinels: ['unknown', 'ambiguous'],
+            ...(options.comparatorOptions || {})
+          }
+        },
+        required: true,
+        ...(options.artifactOverrides || {})
+      }
+    ]
+  });
+
+  writeJson(path.join(benchmarkDir, truthRelativePath), options.truthPayload);
+  writeJson(path.join(outputDir, outputRelativePath), options.outputPayload);
+
+  return { configPath, benchmarkPath, fixturePath, outputDir };
+}
+
 test('benchmark runner - resolveBenchmarkConfig skips when benchmark block is absent', () => {
   const resolved = resolveBenchmarkConfig({}, { configPath: '/tmp/example/config.yaml' });
   assert.strictEqual(resolved.enabled, false);
@@ -1791,6 +1848,154 @@ test('benchmark runner - dialogue scoring surfaces penalize missing lines withou
   assert.strictEqual(artifact.dialogueScoring.merge_event_count, 0);
   assert(artifact.dialogueScoring.window_alignments.some((entry) => entry.boundary_status === 'missing_truth'));
   assert.match(artifact.summary, /dialogue_text_windowed_pct=/);
+});
+
+test('benchmark runner - dialogue timestamp scoring reports honest split merge timing percentages without inventing sub-line truth boundaries', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-dialogue-timestamp-scoring');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempSingleArtifactFixture(rootDir, {
+    fixtureId: 'temp-dialogue-timestamp-fixture',
+    artifactKey: 'dialogueTimestampsData',
+    label: 'Dialogue timestamps',
+    script: 'get-dialogue-timestamps',
+    profile: 'dialogue-timestamps-default',
+    truthRelativePath: 'truth/dialogue-timestamps-data.reconciled.json',
+    outputRelativePath: 'phase1-gather-context/dialogue-timestamps-data.reconciled.json',
+    truthPayload: {
+      _benchmark: {
+        ignorePaths: ['$.dialogue_segments[*].timing']
+      },
+      dialogue_segments: [
+        { index: 0, start: 0, end: 2, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'They want you afraid. Fear makes you easier to control.' },
+        { index: 1, start: 4, end: 5, speaker: 'Speaker 2', speaker_id: 'spk_002', text: 'Menendez is a terrorist.' },
+        { index: 2, start: 5, end: 7, speaker: 'Speaker 2', speaker_id: 'spk_002', text: "We're bringing peace and security to the world." }
+      ],
+      summary: 'Dialogue timestamp benchmark fixture.'
+    },
+    outputPayload: {
+      dialogue_segments: [
+        { index: 0, start: 0.2, end: 1, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'They want you afraid.', timing: { status: 'aligned' } },
+        { index: 1, start: 1.2, end: 2.5, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Fear makes you easier to control.', timing: { status: 'aligned' } },
+        { index: 2, start: 4.4, end: 7.4, speaker: 'Speaker 2', speaker_id: 'spk_002', text: "Menendez is a terrorist. We're bringing peace and security to the world.", timing: { status: 'aligned' } }
+      ],
+      summary: 'Dialogue timestamp benchmark fixture.'
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp dialogue timestamp scoring benchmark',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-dialogue-timestamp-fixture/benchmark.json'
+      },
+      gather_context: ['server/scripts/get-context/reconcile-famous-song-phase1.cjs']
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(artifact.status, 'fail');
+  assert(artifact.dialogueTimestampScoring, 'dialogue timestamp scoring block should be present');
+  assert.strictEqual(artifact.dialogueTimestampScoring.dialogue_text_full_transcript_pct, 100);
+  assert.strictEqual(artifact.dialogueTimestampScoring.dialogue_text_windowed_pct, 100);
+  assert.strictEqual(artifact.dialogueTimestampScoring.comparison_unit_count, 2);
+  assert.strictEqual(artifact.dialogueTimestampScoring.split_event_count, 1);
+  assert.strictEqual(artifact.dialogueTimestampScoring.merge_event_count, 1);
+  assert.strictEqual(artifact.dialogueTimestampScoring.mixed_resegmentation_count, 0);
+  assert.strictEqual(artifact.dialogueTimestampScoring.dialogue_timing_eligible_pct, 100);
+  assert.strictEqual(artifact.dialogueTimestampScoring.dialogue_timing_resolved_pct, 100);
+  assert.strictEqual(artifact.dialogueTimestampScoring.dialogue_timing_start_pct, 85);
+  assert.strictEqual(artifact.dialogueTimestampScoring.dialogue_timing_end_pct, 77.5);
+  assert.strictEqual(artifact.dialogueTimestampScoring.dialogue_timing_window_pct, 74.2);
+  assert.strictEqual(artifact.dialogueTimestampScoring.dialogue_timing_blocked_by_text_drift_pct, 0);
+  assert.strictEqual(artifact.dialogueTimestampScoring.timing_eligible_unit_count, 2);
+  assert.strictEqual(artifact.dialogueTimestampScoring.timing_resolved_unit_count, 2);
+  assert.strictEqual(artifact.dialogueTimestampScoring.timing_unresolved_unit_count, 0);
+  assert.strictEqual(artifact.dialogueTimestampScoring.timing_blocked_by_text_drift_count, 0);
+  assert(artifact.dialogueTimestampScoring.window_alignments.some((entry) => entry.boundary_status === 'split' && entry.timing_eligibility === 'window_level' && entry.timing_resolution_status === 'resolved'));
+  assert(artifact.dialogueTimestampScoring.window_alignments.some((entry) => entry.boundary_status === 'merge' && entry.window_overlap_pct === 76.5));
+
+  const summaryMd = fs.readFileSync(path.join(result.reportDir, 'benchmark-summary.md'), 'utf8');
+  assert.match(summaryMd, /dialogue_timing_start_pct=85\.0%/);
+  assert.match(summaryMd, /dialogue_timing_window_pct=74\.2%/);
+});
+
+test('benchmark runner - music vocals timestamp scoring separates blocked text drift from unresolved timing and renders accuracy as n\/a when nothing is resolved', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-music-vocals-timestamp-scoring');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempSingleArtifactFixture(rootDir, {
+    fixtureId: 'temp-music-vocals-timestamp-fixture',
+    artifactKey: 'musicVocalsTimestampsData',
+    label: 'Music vocals timestamps',
+    script: 'get-music-vocals-timestamps',
+    profile: 'music-vocals-timestamps-default',
+    truthRelativePath: 'truth/music-vocals-timestamps-data.json',
+    outputRelativePath: 'phase1-gather-context/music-vocals-timestamps-data.reconciled.json',
+    truthPayload: {
+      _benchmark: {
+        ignorePaths: ['$.recognizedSong', '$.recognitionNotes', '$.qualityNotes', '$.vocal_segments[*].timing']
+      },
+      vocal_segments: [
+        { index: 0, start: 1, end: 2, text: 'Master, master', performer: 'Lead vocal', performer_id: 'voc_001', delivery: 'sung' },
+        { index: 1, start: 3, end: 4, text: 'Obey your master', performer: 'Lead vocal', performer_id: 'voc_001', delivery: 'chant' },
+        { index: 2, start: 5, end: 6, text: 'Master of puppets', performer: 'Lead vocal', performer_id: 'voc_001', delivery: 'sung' }
+      ],
+      summary: 'Music vocals timestamp benchmark fixture.',
+      hasVocals: true
+    },
+    outputPayload: {
+      vocal_segments: [
+        { index: 0, text: 'Master, master', performer: 'Lead vocal', performer_id: 'voc_001', delivery: 'sung', timing: { status: 'unresolved' } },
+        { index: 1, text: 'Obey your master', performer: 'Lead vocal', performer_id: 'voc_001', delivery: 'chant', timing: { status: 'unresolved' } },
+        { index: 2, text: 'Master of disaster', performer: 'Lead vocal', performer_id: 'voc_001', delivery: 'sung', timing: { status: 'unresolved' } }
+      ],
+      summary: 'Music vocals timestamp benchmark fixture.',
+      hasVocals: true
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: {
+      name: 'Temp music vocals timestamp scoring benchmark',
+      benchmark: {
+        enabled: true,
+        path: '../benchmarks/fixtures/temp-music-vocals-timestamp-fixture/benchmark.json'
+      },
+      gather_context: ['server/scripts/get-context/reconcile-famous-song-phase1.cjs']
+    },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(artifact.status, 'fail');
+  assert(artifact.musicVocalsTimestampScoring, 'music vocals timestamp scoring block should be present');
+  assert(artifact.musicVocalsTimestampScoring.vocal_text_full_transcript_pct < 100);
+  assert(artifact.musicVocalsTimestampScoring.vocal_text_windowed_pct < 100);
+  assert.strictEqual(artifact.musicVocalsTimestampScoring.vocal_boundary_pct, 100);
+  assert.strictEqual(artifact.musicVocalsTimestampScoring.vocal_timing_eligible_pct, 66.7);
+  assert.strictEqual(artifact.musicVocalsTimestampScoring.vocal_timing_resolved_pct, 0);
+  assert.strictEqual(artifact.musicVocalsTimestampScoring.vocal_timing_start_pct, null);
+  assert.strictEqual(artifact.musicVocalsTimestampScoring.vocal_timing_end_pct, null);
+  assert.strictEqual(artifact.musicVocalsTimestampScoring.vocal_timing_window_pct, null);
+  assert.strictEqual(artifact.musicVocalsTimestampScoring.vocal_timing_blocked_by_text_drift_pct, 33.3);
+  assert.strictEqual(artifact.musicVocalsTimestampScoring.vocal_attribution_pct, 100);
+  assert.strictEqual(artifact.musicVocalsTimestampScoring.timing_eligible_unit_count, 2);
+  assert.strictEqual(artifact.musicVocalsTimestampScoring.timing_resolved_unit_count, 0);
+  assert.strictEqual(artifact.musicVocalsTimestampScoring.timing_unresolved_unit_count, 2);
+  assert.strictEqual(artifact.musicVocalsTimestampScoring.timing_blocked_by_text_drift_count, 1);
+  assert(artifact.musicVocalsTimestampScoring.window_alignments.some((entry) => entry.text_match === 'drift' && entry.timing_resolution_status === 'blocked_by_text_drift'));
+  assert(artifact.musicVocalsTimestampScoring.window_alignments.some((entry) => entry.text_match === 'exact_normalized' && entry.timing_resolution_status === 'unresolved'));
+
+  const summaryMd = fs.readFileSync(path.join(result.reportDir, 'benchmark-summary.md'), 'utf8');
+  assert.match(summaryMd, /vocal_timing_resolved_pct=0\.0%/);
+  assert.match(summaryMd, /vocal_timing_start_pct=n\/a/);
 });
 
 test('benchmark runner - dialogue comparator tolerates index-only outputs by ignoring non-authoritative timing and totalDuration fields', async (t) => {
