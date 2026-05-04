@@ -1,0 +1,177 @@
+{
+  "_benchmark": {
+    "ignorePaths": [
+      "$.analysisMode",
+      "$.timingMode",
+      "$.sourceStrategy",
+      "$.coverage",
+      "$.provenance",
+      "$.qualityNotes",
+      "$.dialogue_segments[*].timing"
+    ]
+  },
+  "dialogue_segments": [
+    {
+      "index": 0,
+      "text": "They want you afraid. Fear makes you easier to control.",
+      "speaker": "Speaker 1",
+      "speaker_id": "spk_001",
+      "start": 0,
+      "end": 5
+    },
+    {
+      "index": 1,
+      "text": "It's time to wake up.",
+      "speaker": "Speaker 1",
+      "speaker_id": "spk_001",
+      "start": 8,
+      "end": 10
+    },
+    {
+      "index": 2,
+      "text": "Your streets, shall once again run red with your blood.",
+      "speaker": "Speaker 2",
+      "speaker_id": "spk_002",
+      "start": 12,
+      "end": 17
+    },
+    {
+      "index": 3,
+      "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+      "speaker": "Speaker 3",
+      "speaker_id": "spk_003",
+      "start": 17,
+      "end": 21
+    },
+    {
+      "index": 4,
+      "text": "Menendez is a terrorist.",
+      "speaker": "Speaker 1",
+      "speaker_id": "spk_001",
+      "start": 22,
+      "end": 24
+    },
+    {
+      "index": 5,
+      "text": "We're bringing peace and security to the world.",
+      "speaker": "Speaker 1",
+      "speaker_id": "spk_001",
+      "start": 24,
+      "end": 26
+    },
+    {
+      "index": 6,
+      "text": "He refuses to let me go.",
+      "speaker": "Speaker 6",
+      "speaker_id": "spk_006",
+      "start": 28,
+      "end": 29
+    },
+    {
+      "index": 7,
+      "text": "Stop looking backwards, David. What matters is what we do next.",
+      "speaker": "Speaker 7",
+      "speaker_id": "spk_007",
+      "start": 30,
+      "end": 33
+    },
+    {
+      "index": 8,
+      "text": "A lot of people counting on us for answers.",
+      "speaker": "Speaker 6",
+      "speaker_id": "spk_006",
+      "start": 35,
+      "end": 36
+    },
+    {
+      "index": 9,
+      "text": "You shall know fear.",
+      "speaker": "Speaker 14",
+      "speaker_id": "spk_014",
+      "start": 45,
+      "end": 47
+    },
+    {
+      "index": 10,
+      "text": "Specter one, report.",
+      "speaker": "Speaker 8",
+      "speaker_id": "spk_008",
+      "start": 51,
+      "end": 52
+    },
+    {
+      "index": 11,
+      "text": "Need a sitrep.",
+      "speaker": "Speaker 8",
+      "speaker_id": "spk_008",
+      "start": 54,
+      "end": 55
+    },
+    {
+      "index": 12,
+      "text": "This isn't real.",
+      "speaker": "Speaker 9",
+      "speaker_id": "spk_009",
+      "start": 61,
+      "end": 62
+    },
+    {
+      "index": 13,
+      "text": "The hell it ain't!",
+      "speaker": "Speaker 10",
+      "speaker_id": "spk_010",
+      "start": 63,
+      "end": 64
+    },
+    {
+      "index": 14,
+      "text": "Pull it together, man!",
+      "speaker": "Speaker 12",
+      "speaker_id": "spk_012",
+      "start": 98,
+      "end": 99
+    },
+    {
+      "index": 15,
+      "text": "So eager to leave David.",
+      "speaker": "Speaker 2",
+      "speaker_id": "spk_002",
+      "start": 100,
+      "end": 102
+    },
+    {
+      "index": 16,
+      "text": "Killing a man is a hell of a lot easier than killing the idea.",
+      "speaker": "Speaker 13",
+      "speaker_id": "spk_013",
+      "start": 103,
+      "end": 105
+    },
+    {
+      "index": 17,
+      "text": "You were never cut out to be a Mason.",
+      "speaker": "Speaker 15",
+      "speaker_id": "spk_015",
+      "start": 108,
+      "end": 110
+    },
+    {
+      "index": 18,
+      "text": "No more games! This ends now.",
+      "speaker": "Speaker 6",
+      "speaker_id": "spk_006",
+      "start": 112,
+      "end": 114
+    },
+    {
+      "index": 19,
+      "text": "Get the Reznov challenge pack when you preorder now!",
+      "speaker": "Speaker 16",
+      "speaker_id": "spk_016",
+      "start": 122,
+      "end": 124
+    }
+  ],
+  "summary": "Human-reviewed spoken dialogue only for the cod-test trailer: tense trailer VO, antagonist taunts, squad chatter, filtered comms, and the closing promo read. Lyrics and chants remain in music-vocals-data.json.",
+  "totalDuration": 140.042449
+}

@@ -1,0 +1,128 @@
+{
+  "_benchmark": {
+    "ignorePaths": [
+      "$.analysisMode",
+      "$.timingMode",
+      "$.sourceStrategy",
+      "$.coverage",
+      "$.provenance",
+      "$.qualityNotes",
+      "$.recognitionNotes",
+      "$.recognizedSong",
+      "$.vocal_segments[*].timing"
+    ]
+  },
+  "vocal_segments": [
+    {
+      "index": 0,
+      "text": "Obey your master",
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "chant",
+      "start": 64,
+      "end": 65
+    },
+    {
+      "index": 1,
+      "text": "Your life burns faster",
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "chant",
+      "start": 68,
+      "end": 70
+    },
+    {
+      "index": 2,
+      "text": "Master of puppets I’m pulling your strings",
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung",
+      "start": 76,
+      "end": 78
+    },
+    {
+      "index": 3,
+      "text": "Twisting your mind and smashing your dreams",
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung",
+      "start": 80,
+      "end": 83
+    },
+    {
+      "index": 4,
+      "text": "Blinded by me, you can’t see a thing",
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung",
+      "start": 84,
+      "end": 86
+    },
+    {
+      "index": 5,
+      "text": "Just call my name, ‘cause I’ll hear you scream",
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung",
+      "start": 87,
+      "end": 88
+    },
+    {
+      "index": 6,
+      "text": "Master, master",
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung",
+      "start": 89,
+      "end": 91
+    },
+    {
+      "index": 7,
+      "text": "Where’s the dreams that I’ve been after?",
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung",
+      "start": 91,
+      "end": 94
+    },
+    {
+      "index": 8,
+      "text": "Master, master",
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung",
+      "start": 94,
+      "end": 95.5
+    },
+    {
+      "index": 9,
+      "text": "You promised only lies",
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "sung",
+      "start": 95.5,
+      "end": 98
+    },
+    {
+      "index": 10,
+      "text": "Obey your master",
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "chant",
+      "start": 116,
+      "end": 118
+    },
+    {
+      "index": 11,
+      "text": "Master, master",
+      "performer": "Metallica lead vocal",
+      "performer_id": "voc_001",
+      "delivery": "chant",
+      "start": 127,
+      "end": 130
+    }
+  ],
+  "summary": "Metallica vocal refrains and lyric lines from “Master of Puppets” drive the trailer's sung music-vocals lane from the first \"Obey your master\" chant through the recurring \"Master, master\" refrain.",
+  "hasVocals": true,
+  "totalDuration": 140.042449
+}
