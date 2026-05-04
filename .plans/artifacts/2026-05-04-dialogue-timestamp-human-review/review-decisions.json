@@ -43,7 +43,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 0.0,
-        "end": 6.0
+        "end": 3.8
       },
       "follow_on_owner": "none"
     },
@@ -63,7 +63,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 2.0,
-        "end": 11.0
+        "end": 5.0
       },
       "follow_on_owner": "none"
     },
@@ -83,7 +83,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 4.0,
-        "end": 18.0
+        "end": 9.0
       },
       "follow_on_owner": "none"
     },
@@ -103,7 +103,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 8.0,
-        "end": 22.0
+        "end": 13.0
       },
       "follow_on_owner": "none"
     },
@@ -124,7 +124,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 11.5,
-        "end": 27.0
+        "end": 16.0
       },
       "follow_on_owner": "none"
     },
@@ -144,7 +144,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 15.0,
-        "end": 30.0
+        "end": 18.5
       },
       "follow_on_owner": "none"
     },
@@ -164,7 +164,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 16.5,
-        "end": 34.5
+        "end": 22.5
       },
       "follow_on_owner": "dialogue_reconciliation"
     },
@@ -184,7 +184,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 20.5,
-        "end": 37.0
+        "end": 24.0
       },
       "follow_on_owner": "none"
     },
@@ -222,7 +222,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 22.5,
-        "end": 53.5
+        "end": 26.5
       },
       "follow_on_owner": "comparator_policy"
     },
@@ -242,7 +242,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 24.5,
-        "end": 56.0
+        "end": 27.5
       },
       "follow_on_owner": "none"
     },
@@ -262,7 +262,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 26.0,
-        "end": 63.0
+        "end": 29.0
       },
       "follow_on_owner": "none"
     },
@@ -282,7 +282,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 27.5,
-        "end": 65.0
+        "end": 30.5
       },
       "follow_on_owner": "none"
     },
@@ -302,7 +302,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 89.0,
-        "end": 100.0
+        "end": 93.0
       },
       "follow_on_owner": "none"
     },
@@ -342,7 +342,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 91.5,
-        "end": 106.5
+        "end": 99.5
       },
       "follow_on_owner": "dialogue_reconciliation"
     },
@@ -362,7 +362,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 98.0,
-        "end": 111.0
+        "end": 102.0
       },
       "follow_on_owner": "none"
     },
@@ -382,7 +382,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 101.0,
-        "end": 115.0
+        "end": 105.0
       },
       "follow_on_owner": "none"
     },
@@ -402,7 +402,7 @@
       "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
       "source_clip_checked": {
         "start": 107.0,
-        "end": 125.0
+        "end": 113.0
       },
       "follow_on_owner": "none"
     }

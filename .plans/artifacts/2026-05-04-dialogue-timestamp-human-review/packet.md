@@ -62,7 +62,7 @@
 - Runtime span: `0.000s` → `2.800s` (duration `2.800s`)
 - Start delta: `0.000s`
 - End delta: `-2.200s`
-- Suggested source clip: `0.000s` → `6.000s` (padding `1.0s`)
+- Suggested source clip: `0.000s` → `3.800s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `windowed_timing_review`
 - Review prompt: dlg-0001: Does the aggregated runtime window cover the same spoken content as the benchmark window, despite split segmentation drift? Judge the whole spoken window, not the child rows independently.
 - Notes: `[none]`
@@ -70,11 +70,11 @@
 Child rows for grouped window review:
 
 **Benchmark truth rows**
-- truth[0] 0.000s → 5.000s (duration 5.000s) — `They want you afraid. Fear makes you easier to control.`
+- truth[array 0 | row 0] 0.000s → 5.000s (duration 5.000s) — `They want you afraid. Fear makes you easier to control.`
 
 **Runtime rows**
-- runtime[0] 0.000s → 1.200s (duration 1.200s; timing `aligned` via `asr_alignment`) — `They want you afraid.`
-- runtime[1] 1.500s → 2.800s (duration 1.300s; timing `aligned` via `asr_alignment`) — `Fear makes you easier to control.`
+- runtime[array 0 | row 0] 0.000s → 1.200s (duration 1.200s; timing `aligned` via `asr_alignment`) — `They want you afraid.`
+- runtime[array 1 | row 1] 1.500s → 2.800s (duration 1.300s; timing `aligned` via `asr_alignment`) — `Fear makes you easier to control.`
 
 ---
 
@@ -94,7 +94,7 @@ Child rows for grouped window review:
 - Runtime span: `3.000s` → `4.000s` (duration `1.000s`)
 - Start delta: `-5.000s`
 - End delta: `-6.000s`
-- Suggested source clip: `2.000s` → `11.000s` (padding `1.0s`)
+- Suggested source clip: `2.000s` → `5.000s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `timing_review`
 - Review prompt: dlg-0002: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.
 - Notes: `[none]`
@@ -102,10 +102,10 @@ Child rows for grouped window review:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[1] 8.000s → 10.000s (duration 2.000s) — `It's time to wake up.`
+- truth[array 1 | row 1] 8.000s → 10.000s (duration 2.000s) — `It's time to wake up.`
 
 **Runtime rows**
-- runtime[2] 3.000s → 4.000s (duration 1.000s; timing `aligned` via `asr_alignment`) — `It's time to wake up.`
+- runtime[array 2 | row 2] 3.000s → 4.000s (duration 1.000s; timing `aligned` via `asr_alignment`) — `It's time to wake up.`
 
 ---
 
@@ -125,7 +125,7 @@ Unit rows:
 - Runtime span: `5.000s` → `8.000s` (duration `3.000s`)
 - Start delta: `-7.000s`
 - End delta: `-9.000s`
-- Suggested source clip: `4.000s` → `18.000s` (padding `1.0s`)
+- Suggested source clip: `4.000s` → `9.000s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `timing_review`
 - Review prompt: dlg-0003: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.
 - Notes: `[none]`
@@ -133,10 +133,10 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[2] 12.000s → 17.000s (duration 5.000s) — `Your streets, shall once again run red with your blood.`
+- truth[array 2 | row 2] 12.000s → 17.000s (duration 5.000s) — `Your streets, shall once again run red with your blood.`
 
 **Runtime rows**
-- runtime[3] 5.000s → 8.000s (duration 3.000s; timing `aligned` via `asr_alignment`) — `Your streets shall once again run red with your blood.`
+- runtime[array 3 | row 3] 5.000s → 8.000s (duration 3.000s; timing `aligned` via `asr_alignment`) — `Your streets shall once again run red with your blood.`
 
 ---
 
@@ -156,7 +156,7 @@ Unit rows:
 - Runtime span: `9.000s` → `12.000s` (duration `3.000s`)
 - Start delta: `-8.000s`
 - End delta: `-9.000s`
-- Suggested source clip: `8.000s` → `22.000s` (padding `1.0s`)
+- Suggested source clip: `8.000s` → `13.000s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `timing_review`
 - Review prompt: dlg-0004: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.
 - Notes: `[none]`
@@ -164,10 +164,10 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[3] 17.000s → 21.000s (duration 4.000s) — `Raul Menendez ignited global unrest on an unprecedented scale.`
+- truth[array 3 | row 3] 17.000s → 21.000s (duration 4.000s) — `Raul Menendez ignited global unrest on an unprecedented scale.`
 
 **Runtime rows**
-- runtime[4] 9.000s → 12.000s (duration 3.000s; timing `aligned` via `asr_alignment`) — `Raul Menendez ignited global unrest on an unprecedented scale.`
+- runtime[array 4 | row 4] 9.000s → 12.000s (duration 3.000s; timing `aligned` via `asr_alignment`) — `Raul Menendez ignited global unrest on an unprecedented scale.`
 
 ---
 
@@ -187,7 +187,7 @@ Unit rows:
 - Runtime span: `12.500s` → `15.000s` (duration `2.500s`)
 - Start delta: `-9.500s`
 - End delta: `-11.000s`
-- Suggested source clip: `11.500s` → `27.000s` (padding `1.0s`)
+- Suggested source clip: `11.500s` → `16.000s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `windowed_timing_review`
 - Review prompt: dlg-0005: Does the aggregated runtime window cover the same spoken content as the benchmark window, despite merge segmentation drift? Judge the whole spoken window, not the child rows independently.
 - Notes: `[none]`
@@ -195,11 +195,11 @@ Unit rows:
 Child rows for grouped window review:
 
 **Benchmark truth rows**
-- truth[4] 22.000s → 24.000s (duration 2.000s) — `Menendez is a terrorist.`
-- truth[5] 24.000s → 26.000s (duration 2.000s) — `We're bringing peace and security to the world.`
+- truth[array 4 | row 4] 22.000s → 24.000s (duration 2.000s) — `Menendez is a terrorist.`
+- truth[array 5 | row 5] 24.000s → 26.000s (duration 2.000s) — `We're bringing peace and security to the world.`
 
 **Runtime rows**
-- runtime[5] 12.500s → 15.000s (duration 2.500s; timing `aligned` via `asr_alignment`) — `Menendez is a terrorist. We're bringing peace and security to the world.`
+- runtime[array 5 | row 5] 12.500s → 15.000s (duration 2.500s; timing `aligned` via `asr_alignment`) — `Menendez is a terrorist. We're bringing peace and security to the world.`
 
 ---
 
@@ -219,7 +219,7 @@ Child rows for grouped window review:
 - Runtime span: `16.000s` → `17.500s` (duration `1.500s`)
 - Start delta: `-12.000s`
 - End delta: `-11.500s`
-- Suggested source clip: `15.000s` → `30.000s` (padding `1.0s`)
+- Suggested source clip: `15.000s` → `18.500s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `timing_review`
 - Review prompt: dlg-0006: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.
 - Notes: `[none]`
@@ -227,10 +227,10 @@ Child rows for grouped window review:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[6] 28.000s → 29.000s (duration 1.000s) — `He refuses to let me go.`
+- truth[array 6 | row 6] 28.000s → 29.000s (duration 1.000s) — `He refuses to let me go.`
 
 **Runtime rows**
-- runtime[6] 16.000s → 17.500s (duration 1.500s; timing `aligned` via `asr_alignment`) — `He refuses to let me go.`
+- runtime[array 6 | row 6] 16.000s → 17.500s (duration 1.500s; timing `aligned` via `asr_alignment`) — `He refuses to let me go.`
 
 ---
 
@@ -250,7 +250,7 @@ Unit rows:
 - Runtime span: `18.000s` → `21.000s` (duration `3.000s`)
 - Start delta: `-12.000s`
 - End delta: `-12.000s`
-- Suggested source clip: `16.500s` → `34.500s` (padding `1.5s`)
+- Suggested source clip: `16.500s` → `22.500s` (surface `runtime`, padding `1.5s` )
 - Default verdict bucket: `blocked_non_timing`
 - Review prompt: dlg-0007: Timing review is currently blocked by text drift. Confirm whether this should stay blocked, be treated as policy-normalizable, or be escalated as an upstream dialogue-surface defect. Boundary=boundary_exact; mismatch=text_drift.
 - Notes: `similarity=0.959`
@@ -258,10 +258,10 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[7] 30.000s → 33.000s (duration 3.000s) — `Stop looking backwards, David. What matters is what we do next.`
+- truth[array 7 | row 7] 30.000s → 33.000s (duration 3.000s) — `Stop looking backwards, David. What matters is what we do next.`
 
 **Runtime rows**
-- runtime[7] 18.000s → 21.000s (duration 3.000s; timing `aligned` via `asr_alignment`) — `Stop looking backwards, David. What matters is what you do next.`
+- runtime[array 7 | row 7] 18.000s → 21.000s (duration 3.000s; timing `aligned` via `asr_alignment`) — `Stop looking backwards, David. What matters is what you do next.`
 
 ---
 
@@ -281,7 +281,7 @@ Unit rows:
 - Runtime span: `21.500s` → `23.000s` (duration `1.500s`)
 - Start delta: `-13.500s`
 - End delta: `-13.000s`
-- Suggested source clip: `20.500s` → `37.000s` (padding `1.0s`)
+- Suggested source clip: `20.500s` → `24.000s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `timing_review`
 - Review prompt: dlg-0008: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.
 - Notes: `[none]`
@@ -289,10 +289,10 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[8] 35.000s → 36.000s (duration 1.000s) — `A lot of people counting on us for answers.`
+- truth[array 8 | row 8] 35.000s → 36.000s (duration 1.000s) — `A lot of people counting on us for answers.`
 
 **Runtime rows**
-- runtime[8] 21.500s → 23.000s (duration 1.500s; timing `aligned` via `asr_alignment`) — `A lot of people counting on us for answers.`
+- runtime[array 8 | row 8] 21.500s → 23.000s (duration 1.500s; timing `aligned` via `asr_alignment`) — `A lot of people counting on us for answers.`
 
 ---
 
@@ -312,7 +312,7 @@ Unit rows:
 - Runtime span: `n/a` → `n/a` (duration `n/a`)
 - Start delta: `n/a`
 - End delta: `n/a`
-- Suggested source clip: `43.500s` → `48.500s` (padding `1.5s`)
+- Suggested source clip: `43.500s` → `48.500s` (surface `truth`, padding `1.5s` )
 - Default verdict bucket: `blocked_non_timing`
 - Review prompt: dlg-0009: Timing review is currently blocked by missing runtime coverage. Confirm whether this should stay blocked, be treated as policy-normalizable, or be escalated as an upstream dialogue-surface defect. Boundary=missing_truth; mismatch=text_drift.
 - Notes: `[none]`
@@ -320,7 +320,7 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[9] 45.000s → 47.000s (duration 2.000s) — `You shall know fear.`
+- truth[array 9 | row 9] 45.000s → 47.000s (duration 2.000s) — `You shall know fear.`
 
 **Runtime rows**
 - `[none]`
@@ -343,7 +343,7 @@ Unit rows:
 - Runtime span: `24.000s` → `25.000s` (duration `1.000s`)
 - Start delta: `-27.000s`
 - End delta: `-27.000s`
-- Suggested source clip: `22.500s` → `53.500s` (padding `1.5s`)
+- Suggested source clip: `22.500s` → `26.500s` (surface `runtime`, padding `1.5s` )
 - Default verdict bucket: `blocked_non_timing`
 - Review prompt: dlg-0010: Timing review is currently blocked by normalization-policy ambiguity around Specter/Spectre plus punctuation/casing drift. Confirm whether this should stay blocked, be treated as policy-normalizable, or be escalated as an upstream dialogue-surface defect. Boundary=boundary_exact; mismatch=text_drift.
 - Notes: `similarity=0.944`
@@ -351,10 +351,10 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[10] 51.000s → 52.000s (duration 1.000s) — `Specter one, report.`
+- truth[array 10 | row 10] 51.000s → 52.000s (duration 1.000s) — `Specter one, report.`
 
 **Runtime rows**
-- runtime[9] 24.000s → 25.000s (duration 1.000s; timing `aligned` via `asr_alignment`) — `Spectre One report.`
+- runtime[array 9 | row 9] 24.000s → 25.000s (duration 1.000s; timing `aligned` via `asr_alignment`) — `Spectre One report.`
 
 ---
 
@@ -374,7 +374,7 @@ Unit rows:
 - Runtime span: `25.500s` → `26.500s` (duration `1.000s`)
 - Start delta: `-28.500s`
 - End delta: `-28.500s`
-- Suggested source clip: `24.500s` → `56.000s` (padding `1.0s`)
+- Suggested source clip: `24.500s` → `27.500s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `timing_review`
 - Review prompt: dlg-0011: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.
 - Notes: `[none]`
@@ -382,10 +382,10 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[11] 54.000s → 55.000s (duration 1.000s) — `Need a sitrep.`
+- truth[array 11 | row 11] 54.000s → 55.000s (duration 1.000s) — `Need a sitrep.`
 
 **Runtime rows**
-- runtime[10] 25.500s → 26.500s (duration 1.000s; timing `aligned` via `asr_alignment`) — `Need a sitrep.`
+- runtime[array 10 | row 10] 25.500s → 26.500s (duration 1.000s; timing `aligned` via `asr_alignment`) — `Need a sitrep.`
 
 ---
 
@@ -405,7 +405,7 @@ Unit rows:
 - Runtime span: `27.000s` → `28.000s` (duration `1.000s`)
 - Start delta: `-34.000s`
 - End delta: `-34.000s`
-- Suggested source clip: `26.000s` → `63.000s` (padding `1.0s`)
+- Suggested source clip: `26.000s` → `29.000s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `timing_review`
 - Review prompt: dlg-0012: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.
 - Notes: `[none]`
@@ -413,10 +413,10 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[12] 61.000s → 62.000s (duration 1.000s) — `This isn't real.`
+- truth[array 12 | row 12] 61.000s → 62.000s (duration 1.000s) — `This isn't real.`
 
 **Runtime rows**
-- runtime[11] 27.000s → 28.000s (duration 1.000s; timing `aligned` via `asr_alignment`) — `This isn't real.`
+- runtime[array 11 | row 11] 27.000s → 28.000s (duration 1.000s; timing `aligned` via `asr_alignment`) — `This isn't real.`
 
 ---
 
@@ -436,7 +436,7 @@ Unit rows:
 - Runtime span: `28.500s` → `29.500s` (duration `1.000s`)
 - Start delta: `-34.500s`
 - End delta: `-34.500s`
-- Suggested source clip: `27.500s` → `65.000s` (padding `1.0s`)
+- Suggested source clip: `27.500s` → `30.500s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `timing_review`
 - Review prompt: dlg-0013: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.
 - Notes: `[none]`
@@ -444,10 +444,10 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[13] 63.000s → 64.000s (duration 1.000s) — `The hell it ain't!`
+- truth[array 13 | row 13] 63.000s → 64.000s (duration 1.000s) — `The hell it ain't!`
 
 **Runtime rows**
-- runtime[12] 28.500s → 29.500s (duration 1.000s; timing `aligned` via `asr_alignment`) — `The hell it ain't!`
+- runtime[array 12 | row 12] 28.500s → 29.500s (duration 1.000s; timing `aligned` via `asr_alignment`) — `The hell it ain't!`
 
 ---
 
@@ -467,7 +467,7 @@ Unit rows:
 - Runtime span: `90.000s` → `92.000s` (duration `2.000s`)
 - Start delta: `-8.000s`
 - End delta: `-7.000s`
-- Suggested source clip: `89.000s` → `100.000s` (padding `1.0s`)
+- Suggested source clip: `89.000s` → `93.000s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `timing_review`
 - Review prompt: dlg-0014: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.
 - Notes: `[none]`
@@ -475,10 +475,10 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[14] 98.000s → 99.000s (duration 1.000s) — `Pull it together, man!`
+- truth[array 14 | row 14] 98.000s → 99.000s (duration 1.000s) — `Pull it together, man!`
 
 **Runtime rows**
-- runtime[16] 90.000s → 92.000s (duration 2.000s; timing `aligned` via `asr_alignment`) — `Pull it together, man.`
+- runtime[array 13 | row 16] 90.000s → 92.000s (duration 2.000s; timing `aligned` via `asr_alignment`) — `Pull it together, man.`
 
 ---
 
@@ -498,7 +498,7 @@ Unit rows:
 - Runtime span: `n/a` → `n/a` (duration `n/a`)
 - Start delta: `n/a`
 - End delta: `n/a`
-- Suggested source clip: `98.500s` → `103.500s` (padding `1.5s`)
+- Suggested source clip: `98.500s` → `103.500s` (surface `truth`, padding `1.5s` )
 - Default verdict bucket: `blocked_non_timing`
 - Review prompt: dlg-0015: Timing review is currently blocked by text drift with unresolved runtime timing. Confirm whether this should stay blocked, be treated as policy-normalizable, or be escalated as an upstream dialogue-surface defect. Boundary=boundary_exact; mismatch=text_drift.
 - Notes: `similarity=0.809; runtime includes unresolved timing status`
@@ -506,10 +506,10 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[15] 100.000s → 102.000s (duration 2.000s) — `So eager to leave David.`
+- truth[array 15 | row 15] 100.000s → 102.000s (duration 2.000s) — `So eager to leave David.`
 
 **Runtime rows**
-- runtime[17] n/a → n/a (duration n/a; timing `unresolved` via `asr_alignment`) — `So eager to leave, are we?`
+- runtime[array 14 | row 17] n/a → n/a (duration n/a; timing `unresolved` via `asr_alignment`) — `So eager to leave, are we?`
 
 ---
 
@@ -529,7 +529,7 @@ Unit rows:
 - Runtime span: `93.000s` → `98.000s` (duration `5.000s`)
 - Start delta: `-10.000s`
 - End delta: `-7.000s`
-- Suggested source clip: `91.500s` → `106.500s` (padding `1.5s`)
+- Suggested source clip: `91.500s` → `99.500s` (surface `runtime`, padding `1.5s` )
 - Default verdict bucket: `blocked_non_timing`
 - Review prompt: dlg-0016: Timing review is currently blocked by text drift. Confirm whether this should stay blocked, be treated as policy-normalizable, or be escalated as an upstream dialogue-surface defect. Boundary=boundary_exact; mismatch=text_drift.
 - Notes: `similarity=0.959`
@@ -537,10 +537,10 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[16] 103.000s → 105.000s (duration 2.000s) — `Killing a man is a hell of a lot easier than killing the idea.`
+- truth[array 16 | row 16] 103.000s → 105.000s (duration 2.000s) — `Killing a man is a hell of a lot easier than killing the idea.`
 
 **Runtime rows**
-- runtime[18] 93.000s → 98.000s (duration 5.000s; timing `aligned` via `asr_alignment`) — `Killing a man is a hell of a lot easier than killing an idea.`
+- runtime[array 15 | row 18] 93.000s → 98.000s (duration 5.000s; timing `aligned` via `asr_alignment`) — `Killing a man is a hell of a lot easier than killing an idea.`
 
 ---
 
@@ -560,7 +560,7 @@ Unit rows:
 - Runtime span: `99.000s` → `101.000s` (duration `2.000s`)
 - Start delta: `-9.000s`
 - End delta: `-9.000s`
-- Suggested source clip: `98.000s` → `111.000s` (padding `1.0s`)
+- Suggested source clip: `98.000s` → `102.000s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `timing_review`
 - Review prompt: dlg-0017: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.
 - Notes: `[none]`
@@ -568,10 +568,10 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[17] 108.000s → 110.000s (duration 2.000s) — `You were never cut out to be a Mason.`
+- truth[array 17 | row 17] 108.000s → 110.000s (duration 2.000s) — `You were never cut out to be a Mason.`
 
 **Runtime rows**
-- runtime[19] 99.000s → 101.000s (duration 2.000s; timing `aligned` via `asr_alignment`) — `You were never cut out to be a Mason.`
+- runtime[array 16 | row 19] 99.000s → 101.000s (duration 2.000s; timing `aligned` via `asr_alignment`) — `You were never cut out to be a Mason.`
 
 ---
 
@@ -591,7 +591,7 @@ Unit rows:
 - Runtime span: `102.000s` → `104.000s` (duration `2.000s`)
 - Start delta: `-10.000s`
 - End delta: `-10.000s`
-- Suggested source clip: `101.000s` → `115.000s` (padding `1.0s`)
+- Suggested source clip: `101.000s` → `105.000s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `timing_review`
 - Review prompt: dlg-0018: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.
 - Notes: `[none]`
@@ -599,10 +599,10 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[18] 112.000s → 114.000s (duration 2.000s) — `No more games! This ends now.`
+- truth[array 18 | row 18] 112.000s → 114.000s (duration 2.000s) — `No more games! This ends now.`
 
 **Runtime rows**
-- runtime[20] 102.000s → 104.000s (duration 2.000s; timing `aligned` via `asr_alignment`) — `No more games. This ends now.`
+- runtime[array 17 | row 20] 102.000s → 104.000s (duration 2.000s; timing `aligned` via `asr_alignment`) — `No more games. This ends now.`
 
 ---
 
@@ -622,7 +622,7 @@ Unit rows:
 - Runtime span: `108.000s` → `112.000s` (duration `4.000s`)
 - Start delta: `-14.000s`
 - End delta: `-12.000s`
-- Suggested source clip: `107.000s` → `125.000s` (padding `1.0s`)
+- Suggested source clip: `107.000s` → `113.000s` (surface `runtime`, padding `1.0s` )
 - Default verdict bucket: `timing_review`
 - Review prompt: dlg-0019: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.
 - Notes: `[none]`
@@ -630,9 +630,9 @@ Unit rows:
 Unit rows:
 
 **Benchmark truth rows**
-- truth[19] 122.000s → 124.000s (duration 2.000s) — `Get the Reznov challenge pack when you preorder now!`
+- truth[array 19 | row 19] 122.000s → 124.000s (duration 2.000s) — `Get the Reznov challenge pack when you preorder now!`
 
 **Runtime rows**
-- runtime[22] 108.000s → 112.000s (duration 4.000s; timing `aligned` via `asr_alignment`) — `Get the Reznov challenge pack when you pre-order now.`
+- runtime[array 18 | row 22] 108.000s → 112.000s (duration 4.000s; timing `aligned` via `asr_alignment`) — `Get the Reznov challenge pack when you pre-order now.`
 
 ---

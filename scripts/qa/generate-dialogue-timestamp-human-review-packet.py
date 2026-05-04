@@ -132,20 +132,30 @@ def build_unit_prompt(unit_id: str, review_mode: str, truth_text: str, runtime_t
 
 
 def clip_suggestion(truth_start: Any, truth_end: Any, runtime_start: Any, runtime_end: Any, review_mode: str, runtime_statuses: list[str]) -> dict[str, Any]:
-    candidates = [value for value in [truth_start, truth_end, runtime_start, runtime_end] if value is not None]
-    if not candidates:
+    pad = 1.0 if review_mode != 'blocked' else 1.5
+
+    runtime_bounds_available = runtime_start is not None and runtime_end is not None
+    truth_bounds_available = truth_start is not None and truth_end is not None
+
+    if runtime_bounds_available:
+        surface = 'runtime'
+        start = max(0.0, round(float(runtime_start) - pad, 3))
+        end = round(float(runtime_end) + pad, 3)
+    elif truth_bounds_available:
+        surface = 'truth'
+        start = max(0.0, round(float(truth_start) - pad, 3))
+        end = round(float(truth_end) + pad, 3)
+    else:
+        surface = 'unresolved'
         start = 0.0
         end = 0.0
-    else:
-        pad = 1.0 if review_mode != 'blocked' else 1.5
-        start = max(0.0, round(min(candidates) - pad, 3))
-        end = round(max(candidates) + pad, 3)
-        return {
-            'start': start,
-            'end': end,
-            'padding_seconds': pad,
-        }
-    return {'start': start, 'end': end, 'padding_seconds': 1.5 if 'unresolved' in runtime_statuses else 1.0}
+
+    return {
+        'surface': surface,
+        'start': start,
+        'end': end,
+        'padding_seconds': pad,
+    }
 
 
 def main() -> None:
@@ -214,6 +224,8 @@ def main() -> None:
             'notes': unit.get('notes', ''),
             'truth_rows': [
                 {
+                    'comparison_array_index': index,
+                    'native_index': row.get('index', index),
                     'index': row.get('index', index),
                     'text': row['text'],
                     'speaker': row.get('speaker'),
@@ -226,6 +238,8 @@ def main() -> None:
             ],
             'runtime_rows': [
                 {
+                    'comparison_array_index': index,
+                    'native_index': row.get('index', index),
                     'index': row.get('index', index),
                     'text': row['text'],
                     'speaker': row.get('speaker'),
@@ -351,7 +365,10 @@ def main() -> None:
         lines.append(f"- Start delta: `{fmt_delta(unit['start_delta_seconds'])}`")
         lines.append(f"- End delta: `{fmt_delta(unit['end_delta_seconds'])}`")
         clip = unit['source_clip_suggestion']
-        lines.append(f"- Suggested source clip: `{fmt_time(clip['start'])}` → `{fmt_time(clip['end'])}` (padding `{clip['padding_seconds']:.1f}s`)")
+        lines.append(
+            f"- Suggested source clip: `{fmt_time(clip['start'])}` → `{fmt_time(clip['end'])}` "
+            f"(surface `{clip['surface']}`, padding `{clip['padding_seconds']:.1f}s` )"
+        )
         lines.append(f"- Default verdict bucket: `{unit['default_verdict_bucket']}`")
         lines.append(f"- Review prompt: {unit['review_prompt']}")
         lines.append(f"- Notes: `{unit['notes'] or '[none]'}`")
@@ -364,7 +381,7 @@ def main() -> None:
         lines.append('**Benchmark truth rows**')
         for row in unit['truth_rows']:
             lines.append(
-                f"- truth[{row['index']}] {fmt_time(row['start'])} → {fmt_time(row['end'])} "
+                f"- truth[array {row['comparison_array_index']} | row {row['native_index']}] {fmt_time(row['start'])} → {fmt_time(row['end'])} "
                 f"(duration {fmt_time(row['duration'])}) — `{row['text']}`"
             )
         if not unit['truth_rows']:
@@ -373,7 +390,7 @@ def main() -> None:
         lines.append('**Runtime rows**')
         for row in unit['runtime_rows']:
             lines.append(
-                f"- runtime[{row['index']}] {fmt_time(row['start'])} → {fmt_time(row['end'])} "
+                f"- runtime[array {row['comparison_array_index']} | row {row['native_index']}] {fmt_time(row['start'])} → {fmt_time(row['end'])} "
                 f"(duration {fmt_time(row['duration'])}; timing `{row['timing_status']}` via `{row['timing_method']}`) — `{row['text']}`"
             )
         if not unit['runtime_rows']:
