@@ -1,0 +1,1286 @@
+{
+  "packet_version": 1,
+  "packet_kind": "dialogue_timestamp_human_review",
+  "benchmark_path": "benchmarks/fixtures/cod-test/truth/dialogue-timestamps-data.reconciled.json",
+  "runtime_timestamp_path": "output/cod-test-phase1-timestamp-validation/phase1-gather-context/dialogue-timestamps-data.reconciled.json",
+  "runtime_text_path": "output/cod-test-phase1-timestamp-validation/phase1-gather-context/dialogue-data.reconciled.json",
+  "comparison_path": "output/cod-test-phase1-timestamp-validation/phase1-gather-context/dialogue-timestamp-vs-truth.comparison.json",
+  "qa_summary_path": ".plans/artifacts/2026-05-04-timestamp-benchmark-surface-qa/summary.md",
+  "summary": {
+    "artifact_integrity_drift_count": 0,
+    "text_drift_count": 5,
+    "segmentation_drift_count": 2,
+    "timing_drift_count": 0,
+    "timing_unresolved_count": 0,
+    "timing_blocked_by_text_drift_count": 4,
+    "clean_match_count": 12
+  },
+  "review_mode_counts": {
+    "row": 12,
+    "window": 2,
+    "blocked": 5
+  },
+  "review_units": [
+    {
+      "comparison_unit_id": "dlg-0001",
+      "review_order": 1,
+      "review_mode": "window",
+      "truth_indexes": [
+        0
+      ],
+      "runtime_indexes": [
+        0,
+        1
+      ],
+      "boundary_class": "split",
+      "mismatch_class": "segmentation_drift",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "They want you afraid. Fear makes you easier to control.",
+      "runtime_text": "They want you afraid. Fear makes you easier to control.",
+      "truth_start": 0,
+      "truth_end": 5,
+      "runtime_start": 0,
+      "runtime_end": 2.8,
+      "truth_duration": 5.0,
+      "runtime_duration": 2.8,
+      "start_delta_seconds": 0.0,
+      "end_delta_seconds": -2.2,
+      "runtime_timing_statuses": [
+        "aligned",
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 0.0,
+        "end": 6.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0001: Does the aggregated runtime window cover the same spoken content as the benchmark window, despite split segmentation drift? Judge the whole spoken window, not the child rows independently.",
+      "default_verdict_bucket": "windowed_timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_window",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 0,
+          "text": "They want you afraid. Fear makes you easier to control.",
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
+          "start": 0,
+          "end": 5,
+          "duration": 5.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 0,
+          "text": "They want you afraid.",
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
+          "start": 0,
+          "end": 1.2,
+          "duration": 1.2,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "They want you afraid."
+        },
+        {
+          "index": 1,
+          "text": "Fear makes you easier to control.",
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
+          "start": 1.5,
+          "end": 2.8,
+          "duration": 1.3,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "Fear makes you easier to control."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0002",
+      "review_order": 2,
+      "review_mode": "row",
+      "truth_indexes": [
+        1
+      ],
+      "runtime_indexes": [
+        2
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "clean_match",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "It's time to wake up.",
+      "runtime_text": "It's time to wake up.",
+      "truth_start": 8,
+      "truth_end": 10,
+      "runtime_start": 3,
+      "runtime_end": 4,
+      "truth_duration": 2.0,
+      "runtime_duration": 1.0,
+      "start_delta_seconds": -5.0,
+      "end_delta_seconds": -6.0,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 2.0,
+        "end": 11.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0002: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.",
+      "default_verdict_bucket": "timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_row",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 1,
+          "text": "It's time to wake up.",
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
+          "start": 8,
+          "end": 10,
+          "duration": 2.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 2,
+          "text": "It's time to wake up.",
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
+          "start": 3,
+          "end": 4,
+          "duration": 1.0,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "It's time to wake up."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0003",
+      "review_order": 3,
+      "review_mode": "row",
+      "truth_indexes": [
+        2
+      ],
+      "runtime_indexes": [
+        3
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "clean_match",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "Your streets, shall once again run red with your blood.",
+      "runtime_text": "Your streets shall once again run red with your blood.",
+      "truth_start": 12,
+      "truth_end": 17,
+      "runtime_start": 5,
+      "runtime_end": 8,
+      "truth_duration": 5.0,
+      "runtime_duration": 3.0,
+      "start_delta_seconds": -7.0,
+      "end_delta_seconds": -9.0,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 4.0,
+        "end": 18.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0003: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.",
+      "default_verdict_bucket": "timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_row",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 2,
+          "text": "Your streets, shall once again run red with your blood.",
+          "speaker": "Speaker 2",
+          "speaker_id": "spk_002",
+          "start": 12,
+          "end": 17,
+          "duration": 5.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 3,
+          "text": "Your streets shall once again run red with your blood.",
+          "speaker": "Speaker 2",
+          "speaker_id": "spk_002",
+          "start": 5,
+          "end": 8,
+          "duration": 3.0,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "Your streets shall once again run red with your blood."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0004",
+      "review_order": 4,
+      "review_mode": "row",
+      "truth_indexes": [
+        3
+      ],
+      "runtime_indexes": [
+        4
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "clean_match",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+      "runtime_text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+      "truth_start": 17,
+      "truth_end": 21,
+      "runtime_start": 9,
+      "runtime_end": 12,
+      "truth_duration": 4.0,
+      "runtime_duration": 3.0,
+      "start_delta_seconds": -8.0,
+      "end_delta_seconds": -9.0,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 8.0,
+        "end": 22.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0004: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.",
+      "default_verdict_bucket": "timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_row",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 3,
+          "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+          "speaker": "Speaker 3",
+          "speaker_id": "spk_003",
+          "start": 17,
+          "end": 21,
+          "duration": 4.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 4,
+          "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+          "speaker": "Speaker 3",
+          "speaker_id": "spk_003",
+          "start": 9,
+          "end": 12,
+          "duration": 3.0,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "Raul Menendez ignited global unrest on an unprecedented scale."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0005",
+      "review_order": 5,
+      "review_mode": "window",
+      "truth_indexes": [
+        4,
+        5
+      ],
+      "runtime_indexes": [
+        5
+      ],
+      "boundary_class": "merge",
+      "mismatch_class": "segmentation_drift",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "Menendez is a terrorist. We're bringing peace and security to the world.",
+      "runtime_text": "Menendez is a terrorist. We're bringing peace and security to the world.",
+      "truth_start": 22,
+      "truth_end": 26,
+      "runtime_start": 12.5,
+      "runtime_end": 15,
+      "truth_duration": 4.0,
+      "runtime_duration": 2.5,
+      "start_delta_seconds": -9.5,
+      "end_delta_seconds": -11.0,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 11.5,
+        "end": 27.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0005: Does the aggregated runtime window cover the same spoken content as the benchmark window, despite merge segmentation drift? Judge the whole spoken window, not the child rows independently.",
+      "default_verdict_bucket": "windowed_timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_window",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 4,
+          "text": "Menendez is a terrorist.",
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
+          "start": 22,
+          "end": 24,
+          "duration": 2.0
+        },
+        {
+          "index": 5,
+          "text": "We're bringing peace and security to the world.",
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
+          "start": 24,
+          "end": 26,
+          "duration": 2.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 5,
+          "text": "Menendez is a terrorist. We're bringing peace and security to the world.",
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
+          "start": 12.5,
+          "end": 15,
+          "duration": 2.5,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "Menendez is a terrorist. We're bringing peace and security to the world."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0006",
+      "review_order": 6,
+      "review_mode": "row",
+      "truth_indexes": [
+        6
+      ],
+      "runtime_indexes": [
+        6
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "clean_match",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "He refuses to let me go.",
+      "runtime_text": "He refuses to let me go.",
+      "truth_start": 28,
+      "truth_end": 29,
+      "runtime_start": 16,
+      "runtime_end": 17.5,
+      "truth_duration": 1.0,
+      "runtime_duration": 1.5,
+      "start_delta_seconds": -12.0,
+      "end_delta_seconds": -11.5,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 15.0,
+        "end": 30.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0006: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.",
+      "default_verdict_bucket": "timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_row",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 6,
+          "text": "He refuses to let me go.",
+          "speaker": "Speaker 6",
+          "speaker_id": "spk_006",
+          "start": 28,
+          "end": 29,
+          "duration": 1.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 6,
+          "text": "He refuses to let me go.",
+          "speaker": "Speaker 4",
+          "speaker_id": "spk_004",
+          "start": 16,
+          "end": 17.5,
+          "duration": 1.5,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "He refuses to let me go."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0007",
+      "review_order": 7,
+      "review_mode": "blocked",
+      "truth_indexes": [
+        7
+      ],
+      "runtime_indexes": [
+        7
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "text_drift",
+      "text_match": "drift",
+      "timing_status": "timing_blocked_by_text_drift",
+      "truth_text": "Stop looking backwards, David. What matters is what we do next.",
+      "runtime_text": "Stop looking backwards, David. What matters is what you do next.",
+      "truth_start": 30,
+      "truth_end": 33,
+      "runtime_start": 18,
+      "runtime_end": 21,
+      "truth_duration": 3.0,
+      "runtime_duration": 3.0,
+      "start_delta_seconds": -12.0,
+      "end_delta_seconds": -12.0,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 16.5,
+        "end": 34.5,
+        "padding_seconds": 1.5
+      },
+      "review_prompt": "dlg-0007: Timing review is currently blocked by text drift. Confirm whether this should stay blocked, be treated as policy-normalizable, or be escalated as an upstream dialogue-surface defect. Boundary=boundary_exact; mismatch=text_drift.",
+      "default_verdict_bucket": "blocked_non_timing",
+      "default_decision_template": {
+        "verdict": "blocked_text_drift",
+        "follow_on_owner": "dialogue_reconciliation",
+        "confidence": "medium"
+      },
+      "notes": "similarity=0.959",
+      "truth_rows": [
+        {
+          "index": 7,
+          "text": "Stop looking backwards, David. What matters is what we do next.",
+          "speaker": "Speaker 7",
+          "speaker_id": "spk_007",
+          "start": 30,
+          "end": 33,
+          "duration": 3.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 7,
+          "text": "Stop looking backwards, David. What matters is what you do next.",
+          "speaker": "Speaker 5",
+          "speaker_id": "spk_005",
+          "start": 18,
+          "end": 21,
+          "duration": 3.0,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "Stop looking backwards, David. What matters is what you do next."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0008",
+      "review_order": 8,
+      "review_mode": "row",
+      "truth_indexes": [
+        8
+      ],
+      "runtime_indexes": [
+        8
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "clean_match",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "A lot of people counting on us for answers.",
+      "runtime_text": "A lot of people counting on us for answers.",
+      "truth_start": 35,
+      "truth_end": 36,
+      "runtime_start": 21.5,
+      "runtime_end": 23,
+      "truth_duration": 1.0,
+      "runtime_duration": 1.5,
+      "start_delta_seconds": -13.5,
+      "end_delta_seconds": -13.0,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 20.5,
+        "end": 37.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0008: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.",
+      "default_verdict_bucket": "timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_row",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 8,
+          "text": "A lot of people counting on us for answers.",
+          "speaker": "Speaker 6",
+          "speaker_id": "spk_006",
+          "start": 35,
+          "end": 36,
+          "duration": 1.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 8,
+          "text": "A lot of people counting on us for answers.",
+          "speaker": "Speaker 5",
+          "speaker_id": "spk_005",
+          "start": 21.5,
+          "end": 23,
+          "duration": 1.5,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "A lot of people counting on us for answers."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0009",
+      "review_order": 9,
+      "review_mode": "blocked",
+      "truth_indexes": [
+        9
+      ],
+      "runtime_indexes": [],
+      "boundary_class": "missing_truth",
+      "mismatch_class": "text_drift",
+      "text_match": "drift",
+      "timing_status": "not_applicable",
+      "truth_text": "You shall know fear.",
+      "runtime_text": "",
+      "truth_start": 45,
+      "truth_end": 47,
+      "runtime_start": null,
+      "runtime_end": null,
+      "truth_duration": 2.0,
+      "runtime_duration": null,
+      "start_delta_seconds": null,
+      "end_delta_seconds": null,
+      "runtime_timing_statuses": [],
+      "source_clip_suggestion": {
+        "start": 43.5,
+        "end": 48.5,
+        "padding_seconds": 1.5
+      },
+      "review_prompt": "dlg-0009: Timing review is currently blocked by missing runtime coverage. Confirm whether this should stay blocked, be treated as policy-normalizable, or be escalated as an upstream dialogue-surface defect. Boundary=missing_truth; mismatch=text_drift.",
+      "default_verdict_bucket": "blocked_non_timing",
+      "default_decision_template": {
+        "verdict": "blocked_missing_runtime",
+        "follow_on_owner": "dialogue_reconciliation",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 9,
+          "text": "You shall know fear.",
+          "speaker": "Speaker 14",
+          "speaker_id": "spk_014",
+          "start": 45,
+          "end": 47,
+          "duration": 2.0
+        }
+      ],
+      "runtime_rows": []
+    },
+    {
+      "comparison_unit_id": "dlg-0010",
+      "review_order": 10,
+      "review_mode": "blocked",
+      "truth_indexes": [
+        10
+      ],
+      "runtime_indexes": [
+        9
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "text_drift",
+      "text_match": "drift",
+      "timing_status": "timing_blocked_by_text_drift",
+      "truth_text": "Specter one, report.",
+      "runtime_text": "Spectre One report.",
+      "truth_start": 51,
+      "truth_end": 52,
+      "runtime_start": 24,
+      "runtime_end": 25,
+      "truth_duration": 1.0,
+      "runtime_duration": 1.0,
+      "start_delta_seconds": -27.0,
+      "end_delta_seconds": -27.0,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 22.5,
+        "end": 53.5,
+        "padding_seconds": 1.5
+      },
+      "review_prompt": "dlg-0010: Timing review is currently blocked by normalization-policy ambiguity around Specter/Spectre plus punctuation/casing drift. Confirm whether this should stay blocked, be treated as policy-normalizable, or be escalated as an upstream dialogue-surface defect. Boundary=boundary_exact; mismatch=text_drift.",
+      "default_verdict_bucket": "blocked_non_timing",
+      "default_decision_template": {
+        "verdict": "needs_normalization_policy",
+        "follow_on_owner": "comparator_policy",
+        "confidence": "medium"
+      },
+      "notes": "similarity=0.944",
+      "truth_rows": [
+        {
+          "index": 10,
+          "text": "Specter one, report.",
+          "speaker": "Speaker 8",
+          "speaker_id": "spk_008",
+          "start": 51,
+          "end": 52,
+          "duration": 1.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 9,
+          "text": "Spectre One report.",
+          "speaker": "Speaker 6",
+          "speaker_id": "spk_006",
+          "start": 24,
+          "end": 25,
+          "duration": 1.0,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "Spectre One report."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0011",
+      "review_order": 11,
+      "review_mode": "row",
+      "truth_indexes": [
+        11
+      ],
+      "runtime_indexes": [
+        10
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "clean_match",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "Need a sitrep.",
+      "runtime_text": "Need a sitrep.",
+      "truth_start": 54,
+      "truth_end": 55,
+      "runtime_start": 25.5,
+      "runtime_end": 26.5,
+      "truth_duration": 1.0,
+      "runtime_duration": 1.0,
+      "start_delta_seconds": -28.5,
+      "end_delta_seconds": -28.5,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 24.5,
+        "end": 56.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0011: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.",
+      "default_verdict_bucket": "timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_row",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 11,
+          "text": "Need a sitrep.",
+          "speaker": "Speaker 8",
+          "speaker_id": "spk_008",
+          "start": 54,
+          "end": 55,
+          "duration": 1.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 10,
+          "text": "Need a sitrep.",
+          "speaker": "Speaker 6",
+          "speaker_id": "spk_006",
+          "start": 25.5,
+          "end": 26.5,
+          "duration": 1.0,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "Need a sitrep."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0012",
+      "review_order": 12,
+      "review_mode": "row",
+      "truth_indexes": [
+        12
+      ],
+      "runtime_indexes": [
+        11
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "clean_match",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "This isn't real.",
+      "runtime_text": "This isn't real.",
+      "truth_start": 61,
+      "truth_end": 62,
+      "runtime_start": 27,
+      "runtime_end": 28,
+      "truth_duration": 1.0,
+      "runtime_duration": 1.0,
+      "start_delta_seconds": -34.0,
+      "end_delta_seconds": -34.0,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 26.0,
+        "end": 63.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0012: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.",
+      "default_verdict_bucket": "timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_row",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 12,
+          "text": "This isn't real.",
+          "speaker": "Speaker 9",
+          "speaker_id": "spk_009",
+          "start": 61,
+          "end": 62,
+          "duration": 1.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 11,
+          "text": "This isn't real.",
+          "speaker": "Speaker 7",
+          "speaker_id": "spk_007",
+          "start": 27,
+          "end": 28,
+          "duration": 1.0,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "This isn't real."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0013",
+      "review_order": 13,
+      "review_mode": "row",
+      "truth_indexes": [
+        13
+      ],
+      "runtime_indexes": [
+        12
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "clean_match",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "The hell it ain't!",
+      "runtime_text": "The hell it ain't!",
+      "truth_start": 63,
+      "truth_end": 64,
+      "runtime_start": 28.5,
+      "runtime_end": 29.5,
+      "truth_duration": 1.0,
+      "runtime_duration": 1.0,
+      "start_delta_seconds": -34.5,
+      "end_delta_seconds": -34.5,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 27.5,
+        "end": 65.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0013: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.",
+      "default_verdict_bucket": "timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_row",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 13,
+          "text": "The hell it ain't!",
+          "speaker": "Speaker 10",
+          "speaker_id": "spk_010",
+          "start": 63,
+          "end": 64,
+          "duration": 1.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 12,
+          "text": "The hell it ain't!",
+          "speaker": "Speaker 8",
+          "speaker_id": "spk_008",
+          "start": 28.5,
+          "end": 29.5,
+          "duration": 1.0,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "The hell it ain't!"
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0014",
+      "review_order": 14,
+      "review_mode": "row",
+      "truth_indexes": [
+        14
+      ],
+      "runtime_indexes": [
+        13
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "clean_match",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "Pull it together, man!",
+      "runtime_text": "Pull it together, man.",
+      "truth_start": 98,
+      "truth_end": 99,
+      "runtime_start": 90,
+      "runtime_end": 92,
+      "truth_duration": 1.0,
+      "runtime_duration": 2.0,
+      "start_delta_seconds": -8.0,
+      "end_delta_seconds": -7.0,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 89.0,
+        "end": 100.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0014: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.",
+      "default_verdict_bucket": "timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_row",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 14,
+          "text": "Pull it together, man!",
+          "speaker": "Speaker 12",
+          "speaker_id": "spk_012",
+          "start": 98,
+          "end": 99,
+          "duration": 1.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 16,
+          "text": "Pull it together, man.",
+          "speaker": "Speaker 10",
+          "speaker_id": "spk_010",
+          "start": 90,
+          "end": 92,
+          "duration": 2.0,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "Pull it together, man."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0015",
+      "review_order": 15,
+      "review_mode": "blocked",
+      "truth_indexes": [
+        15
+      ],
+      "runtime_indexes": [
+        14
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "text_drift",
+      "text_match": "drift",
+      "timing_status": "timing_blocked_by_text_drift",
+      "truth_text": "So eager to leave David.",
+      "runtime_text": "So eager to leave, are we?",
+      "truth_start": 100,
+      "truth_end": 102,
+      "runtime_start": null,
+      "runtime_end": null,
+      "truth_duration": 2.0,
+      "runtime_duration": null,
+      "start_delta_seconds": null,
+      "end_delta_seconds": null,
+      "runtime_timing_statuses": [
+        "unresolved"
+      ],
+      "source_clip_suggestion": {
+        "start": 98.5,
+        "end": 103.5,
+        "padding_seconds": 1.5
+      },
+      "review_prompt": "dlg-0015: Timing review is currently blocked by text drift with unresolved runtime timing. Confirm whether this should stay blocked, be treated as policy-normalizable, or be escalated as an upstream dialogue-surface defect. Boundary=boundary_exact; mismatch=text_drift.",
+      "default_verdict_bucket": "blocked_non_timing",
+      "default_decision_template": {
+        "verdict": "blocked_text_drift",
+        "follow_on_owner": "dialogue_reconciliation",
+        "confidence": "medium"
+      },
+      "notes": "similarity=0.809; runtime includes unresolved timing status",
+      "truth_rows": [
+        {
+          "index": 15,
+          "text": "So eager to leave David.",
+          "speaker": "Speaker 2",
+          "speaker_id": "spk_002",
+          "start": 100,
+          "end": 102,
+          "duration": 2.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 17,
+          "text": "So eager to leave, are we?",
+          "speaker": "Speaker 2",
+          "speaker_id": "spk_002",
+          "start": null,
+          "end": null,
+          "duration": null,
+          "timing_status": "unresolved",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "So eager to leave, are we?"
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0016",
+      "review_order": 16,
+      "review_mode": "blocked",
+      "truth_indexes": [
+        16
+      ],
+      "runtime_indexes": [
+        15
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "text_drift",
+      "text_match": "drift",
+      "timing_status": "timing_blocked_by_text_drift",
+      "truth_text": "Killing a man is a hell of a lot easier than killing the idea.",
+      "runtime_text": "Killing a man is a hell of a lot easier than killing an idea.",
+      "truth_start": 103,
+      "truth_end": 105,
+      "runtime_start": 93,
+      "runtime_end": 98,
+      "truth_duration": 2.0,
+      "runtime_duration": 5.0,
+      "start_delta_seconds": -10.0,
+      "end_delta_seconds": -7.0,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 91.5,
+        "end": 106.5,
+        "padding_seconds": 1.5
+      },
+      "review_prompt": "dlg-0016: Timing review is currently blocked by text drift. Confirm whether this should stay blocked, be treated as policy-normalizable, or be escalated as an upstream dialogue-surface defect. Boundary=boundary_exact; mismatch=text_drift.",
+      "default_verdict_bucket": "blocked_non_timing",
+      "default_decision_template": {
+        "verdict": "blocked_text_drift",
+        "follow_on_owner": "dialogue_reconciliation",
+        "confidence": "medium"
+      },
+      "notes": "similarity=0.959",
+      "truth_rows": [
+        {
+          "index": 16,
+          "text": "Killing a man is a hell of a lot easier than killing the idea.",
+          "speaker": "Speaker 13",
+          "speaker_id": "spk_013",
+          "start": 103,
+          "end": 105,
+          "duration": 2.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 18,
+          "text": "Killing a man is a hell of a lot easier than killing an idea.",
+          "speaker": "Speaker 2",
+          "speaker_id": "spk_002",
+          "start": 93,
+          "end": 98,
+          "duration": 5.0,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "Killing a man is a hell of a lot easier than killing an idea."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0017",
+      "review_order": 17,
+      "review_mode": "row",
+      "truth_indexes": [
+        17
+      ],
+      "runtime_indexes": [
+        16
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "clean_match",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "You were never cut out to be a Mason.",
+      "runtime_text": "You were never cut out to be a Mason.",
+      "truth_start": 108,
+      "truth_end": 110,
+      "runtime_start": 99,
+      "runtime_end": 101,
+      "truth_duration": 2.0,
+      "runtime_duration": 2.0,
+      "start_delta_seconds": -9.0,
+      "end_delta_seconds": -9.0,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 98.0,
+        "end": 111.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0017: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.",
+      "default_verdict_bucket": "timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_row",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 17,
+          "text": "You were never cut out to be a Mason.",
+          "speaker": "Speaker 15",
+          "speaker_id": "spk_015",
+          "start": 108,
+          "end": 110,
+          "duration": 2.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 19,
+          "text": "You were never cut out to be a Mason.",
+          "speaker": "Speaker 1",
+          "speaker_id": "spk_001",
+          "start": 99,
+          "end": 101,
+          "duration": 2.0,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "You were never cut out to be a Mason."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0018",
+      "review_order": 18,
+      "review_mode": "row",
+      "truth_indexes": [
+        18
+      ],
+      "runtime_indexes": [
+        17
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "clean_match",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "No more games! This ends now.",
+      "runtime_text": "No more games. This ends now.",
+      "truth_start": 112,
+      "truth_end": 114,
+      "runtime_start": 102,
+      "runtime_end": 104,
+      "truth_duration": 2.0,
+      "runtime_duration": 2.0,
+      "start_delta_seconds": -10.0,
+      "end_delta_seconds": -10.0,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 101.0,
+        "end": 115.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0018: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.",
+      "default_verdict_bucket": "timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_row",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 18,
+          "text": "No more games! This ends now.",
+          "speaker": "Speaker 6",
+          "speaker_id": "spk_006",
+          "start": 112,
+          "end": 114,
+          "duration": 2.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 20,
+          "text": "No more games. This ends now.",
+          "speaker": "Speaker 11",
+          "speaker_id": "spk_011",
+          "start": 102,
+          "end": 104,
+          "duration": 2.0,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "No more games. This ends now."
+        }
+      ]
+    },
+    {
+      "comparison_unit_id": "dlg-0019",
+      "review_order": 19,
+      "review_mode": "row",
+      "truth_indexes": [
+        19
+      ],
+      "runtime_indexes": [
+        18
+      ],
+      "boundary_class": "boundary_exact",
+      "mismatch_class": "clean_match",
+      "text_match": "exact_normalized",
+      "timing_status": "timing_ok",
+      "truth_text": "Get the Reznov challenge pack when you preorder now!",
+      "runtime_text": "Get the Reznov challenge pack when you pre-order now.",
+      "truth_start": 122,
+      "truth_end": 124,
+      "runtime_start": 108,
+      "runtime_end": 112,
+      "truth_duration": 2.0,
+      "runtime_duration": 4.0,
+      "start_delta_seconds": -14.0,
+      "end_delta_seconds": -12.0,
+      "runtime_timing_statuses": [
+        "aligned"
+      ],
+      "source_clip_suggestion": {
+        "start": 107.0,
+        "end": 125.0,
+        "padding_seconds": 1.0
+      },
+      "review_prompt": "dlg-0019: Does the runtime span for this exact matched line start and end on the correct spoken line without clipping or overspan? Benchmark and runtime are text-clean; verify the single-line timing directly.",
+      "default_verdict_bucket": "timing_review",
+      "default_decision_template": {
+        "verdict": "timing_pass_row",
+        "follow_on_owner": "none",
+        "confidence": "medium"
+      },
+      "notes": "",
+      "truth_rows": [
+        {
+          "index": 19,
+          "text": "Get the Reznov challenge pack when you preorder now!",
+          "speaker": "Speaker 16",
+          "speaker_id": "spk_016",
+          "start": 122,
+          "end": 124,
+          "duration": 2.0
+        }
+      ],
+      "runtime_rows": [
+        {
+          "index": 22,
+          "text": "Get the Reznov challenge pack when you pre-order now.",
+          "speaker": "Speaker 12",
+          "speaker_id": "spk_012",
+          "start": 108,
+          "end": 112,
+          "duration": 4.0,
+          "timing_status": "aligned",
+          "timing_method": "asr_alignment",
+          "runtime_text_surface_text": "Get the Reznov challenge pack when you pre-order now."
+        }
+      ]
+    }
+  ]
+}

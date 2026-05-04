@@ -1,0 +1,410 @@
+{
+  "packet_version": 1,
+  "packet_kind": "dialogue_timestamp_human_review_decisions",
+  "source_packet": ".plans/artifacts/2026-05-04-dialogue-timestamp-human-review/packet.json",
+  "verdict_enum": [
+    "timing_pass_row",
+    "timing_pass_window",
+    "timing_fail_clipped_start",
+    "timing_fail_clipped_end",
+    "timing_fail_overspan",
+    "timing_fail_misplaced",
+    "timing_fail_order_defect",
+    "blocked_text_drift",
+    "blocked_missing_runtime",
+    "blocked_unresolved_runtime",
+    "needs_normalization_policy"
+  ],
+  "template_status": "pending_human_review",
+  "decision_totals": {
+    "timing_pass_row_count": 0,
+    "timing_pass_window_count": 0,
+    "timing_fail_count": 0,
+    "blocked_text_drift_count": 0,
+    "blocked_missing_runtime_count": 0,
+    "blocked_unresolved_runtime_count": 0,
+    "needs_normalization_policy_count": 0
+  },
+  "decisions": [
+    {
+      "comparison_unit_id": "dlg-0001",
+      "review_mode": "window",
+      "truth_indexes": [
+        0
+      ],
+      "runtime_indexes": [
+        0,
+        1
+      ],
+      "verdict": "timing_pass_window",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 0.0,
+        "end": 6.0
+      },
+      "follow_on_owner": "none"
+    },
+    {
+      "comparison_unit_id": "dlg-0002",
+      "review_mode": "row",
+      "truth_indexes": [
+        1
+      ],
+      "runtime_indexes": [
+        2
+      ],
+      "verdict": "timing_pass_row",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 2.0,
+        "end": 11.0
+      },
+      "follow_on_owner": "none"
+    },
+    {
+      "comparison_unit_id": "dlg-0003",
+      "review_mode": "row",
+      "truth_indexes": [
+        2
+      ],
+      "runtime_indexes": [
+        3
+      ],
+      "verdict": "timing_pass_row",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 4.0,
+        "end": 18.0
+      },
+      "follow_on_owner": "none"
+    },
+    {
+      "comparison_unit_id": "dlg-0004",
+      "review_mode": "row",
+      "truth_indexes": [
+        3
+      ],
+      "runtime_indexes": [
+        4
+      ],
+      "verdict": "timing_pass_row",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 8.0,
+        "end": 22.0
+      },
+      "follow_on_owner": "none"
+    },
+    {
+      "comparison_unit_id": "dlg-0005",
+      "review_mode": "window",
+      "truth_indexes": [
+        4,
+        5
+      ],
+      "runtime_indexes": [
+        5
+      ],
+      "verdict": "timing_pass_window",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 11.5,
+        "end": 27.0
+      },
+      "follow_on_owner": "none"
+    },
+    {
+      "comparison_unit_id": "dlg-0006",
+      "review_mode": "row",
+      "truth_indexes": [
+        6
+      ],
+      "runtime_indexes": [
+        6
+      ],
+      "verdict": "timing_pass_row",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 15.0,
+        "end": 30.0
+      },
+      "follow_on_owner": "none"
+    },
+    {
+      "comparison_unit_id": "dlg-0007",
+      "review_mode": "blocked",
+      "truth_indexes": [
+        7
+      ],
+      "runtime_indexes": [
+        7
+      ],
+      "verdict": "blocked_text_drift",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 16.5,
+        "end": 34.5
+      },
+      "follow_on_owner": "dialogue_reconciliation"
+    },
+    {
+      "comparison_unit_id": "dlg-0008",
+      "review_mode": "row",
+      "truth_indexes": [
+        8
+      ],
+      "runtime_indexes": [
+        8
+      ],
+      "verdict": "timing_pass_row",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 20.5,
+        "end": 37.0
+      },
+      "follow_on_owner": "none"
+    },
+    {
+      "comparison_unit_id": "dlg-0009",
+      "review_mode": "blocked",
+      "truth_indexes": [
+        9
+      ],
+      "runtime_indexes": [],
+      "verdict": "blocked_missing_runtime",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 43.5,
+        "end": 48.5
+      },
+      "follow_on_owner": "dialogue_reconciliation"
+    },
+    {
+      "comparison_unit_id": "dlg-0010",
+      "review_mode": "blocked",
+      "truth_indexes": [
+        10
+      ],
+      "runtime_indexes": [
+        9
+      ],
+      "verdict": "needs_normalization_policy",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 22.5,
+        "end": 53.5
+      },
+      "follow_on_owner": "comparator_policy"
+    },
+    {
+      "comparison_unit_id": "dlg-0011",
+      "review_mode": "row",
+      "truth_indexes": [
+        11
+      ],
+      "runtime_indexes": [
+        10
+      ],
+      "verdict": "timing_pass_row",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 24.5,
+        "end": 56.0
+      },
+      "follow_on_owner": "none"
+    },
+    {
+      "comparison_unit_id": "dlg-0012",
+      "review_mode": "row",
+      "truth_indexes": [
+        12
+      ],
+      "runtime_indexes": [
+        11
+      ],
+      "verdict": "timing_pass_row",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 26.0,
+        "end": 63.0
+      },
+      "follow_on_owner": "none"
+    },
+    {
+      "comparison_unit_id": "dlg-0013",
+      "review_mode": "row",
+      "truth_indexes": [
+        13
+      ],
+      "runtime_indexes": [
+        12
+      ],
+      "verdict": "timing_pass_row",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 27.5,
+        "end": 65.0
+      },
+      "follow_on_owner": "none"
+    },
+    {
+      "comparison_unit_id": "dlg-0014",
+      "review_mode": "row",
+      "truth_indexes": [
+        14
+      ],
+      "runtime_indexes": [
+        13
+      ],
+      "verdict": "timing_pass_row",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 89.0,
+        "end": 100.0
+      },
+      "follow_on_owner": "none"
+    },
+    {
+      "comparison_unit_id": "dlg-0015",
+      "review_mode": "blocked",
+      "truth_indexes": [
+        15
+      ],
+      "runtime_indexes": [
+        14
+      ],
+      "verdict": "blocked_text_drift",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 98.5,
+        "end": 103.5
+      },
+      "follow_on_owner": "dialogue_reconciliation"
+    },
+    {
+      "comparison_unit_id": "dlg-0016",
+      "review_mode": "blocked",
+      "truth_indexes": [
+        16
+      ],
+      "runtime_indexes": [
+        15
+      ],
+      "verdict": "blocked_text_drift",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 91.5,
+        "end": 106.5
+      },
+      "follow_on_owner": "dialogue_reconciliation"
+    },
+    {
+      "comparison_unit_id": "dlg-0017",
+      "review_mode": "row",
+      "truth_indexes": [
+        17
+      ],
+      "runtime_indexes": [
+        16
+      ],
+      "verdict": "timing_pass_row",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 98.0,
+        "end": 111.0
+      },
+      "follow_on_owner": "none"
+    },
+    {
+      "comparison_unit_id": "dlg-0018",
+      "review_mode": "row",
+      "truth_indexes": [
+        18
+      ],
+      "runtime_indexes": [
+        17
+      ],
+      "verdict": "timing_pass_row",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 101.0,
+        "end": 115.0
+      },
+      "follow_on_owner": "none"
+    },
+    {
+      "comparison_unit_id": "dlg-0019",
+      "review_mode": "row",
+      "truth_indexes": [
+        19
+      ],
+      "runtime_indexes": [
+        18
+      ],
+      "verdict": "timing_pass_row",
+      "reviewed_by": "Derrick",
+      "reviewed_at": "YYYY-MM-DDTHH:MM:SSZ",
+      "confidence": "medium",
+      "notes": "TEMPLATE DEFAULT ONLY \u2014 replace after human review.",
+      "source_clip_checked": {
+        "start": 107.0,
+        "end": 125.0
+      },
+      "follow_on_owner": "none"
+    }
+  ]
+}
