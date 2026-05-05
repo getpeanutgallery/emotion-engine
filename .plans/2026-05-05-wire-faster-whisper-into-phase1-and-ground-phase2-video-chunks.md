@@ -115,28 +115,36 @@ This plan intentionally keeps music-vocals more conservative than dialogue. Fast
 **Status:** ✅ Complete
 
 **Results:**
-- Replaced only the Phase 1 dialogue timestamp birth path in `server/scripts/get-context/get-dialogue-timestamps.cjs`. The script still resolves canonical raw/reconciled `dialogueData` exactly as before, still emits the same `dialogueTimestampsData` / `dialogueTimestampsDataReconciled` artifact family, and still delegates line attachment to `buildDialogueTimestampArtifact()`. The old `get-dialogue.cjs` rerun with `preserveSegmentTiming: true` is gone from this path.
-- Added `server/lib/faster-whisper-dialogue-timing.cjs` as the narrow Node bridge that:
-  - invokes the repo-local interpreter directly at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.venv-faster-whisper/bin/python`;
-  - sets `HF_HOME=/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.cache/huggingface`;
-  - passes `.cache/faster-whisper` as the download root;
-  - defaults to model `small.en`;
-  - requires the Python bridge to return timed segments before continuing.
-- Added `server/scripts/get-context/faster-whisper-transcribe.py` as the tiny repo-owned Python entrypoint. It keeps the approved posture: `word_timestamps=True`, `vad_filter=False`, runtime fallback order `cuda/float16` then `cpu/int8`, and it returns timing JSON only. It does not rewrite transcript text or broaden into a service architecture.
-- Updated `server/lib/phase1-timestamp-derivation.cjs` narrowly so the existing artifact builder can record honest faster-whisper provenance (`alignmentEngine`, `alignmentEngineVersion`, and `alignmentRuntime`) without changing the downstream segment/text attachment contract.
-- Added targeted regression coverage in:
-  - `test/scripts/get-dialogue-timestamps.test.js` for raw/reconciled source selection, verbatim text preservation, persisted artifact behavior, and faster-whisper provenance/runtime capture.
-  - `test/lib/faster-whisper-dialogue-timing.test.js` for the Node bridge env/argument contract, non-zero bridge failure behavior, and the Python fallback order (`cuda/float16` → `cpu/int8`).
+- **Implementation completed:** `server/scripts/get-context/get-dialogue-timestamps.cjs` still serves as the entrypoint, still resolves canonical raw/reconciled `dialogueData`, and still emits `dialogueTimestampsData` / `dialogueTimestampsDataReconciled` through `buildDialogueTimestampArtifact()`. The old `get-dialogue.cjs` rerun with `preserveSegmentTiming: true` has been removed from this path and replaced with the faster-whisper timing source. (`REF-04`, `REF-06`)
+- **Partial helper reused and finished:** `server/lib/faster-whisper-dialogue-timing.cjs` remains the narrow Node-side bridge. It invokes the repo-local interpreter at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.venv-faster-whisper/bin/python`, creates/uses repo-local caches at `.cache/huggingface` and `.cache/faster-whisper`, passes model `small.en`, validates that timed segments were returned, and now hands `{ dialogueData, metadata }` back to the existing artifact builder so provenance can be recorded honestly. (`REF-04`, `REF-10`)
+- **Python bridge finished:** `server/scripts/get-context/faster-whisper-transcribe.py` now matches the approved narrow contract: `word_timestamps=True`, `vad_filter=False`, fallback `cuda/float16` then `cpu/int8`, and JSON output containing `dialogue_segments`, `summary`, `totalDuration`, `runtime`, `engine`, and `warnings`. Successful CPU fallback now emits an explicit warning trail describing the failed earlier runtime attempts. (`REF-10`)
+- **Regression coverage added:**
+  - `test/scripts/get-dialogue-timestamps.test.js` now mocks the faster-whisper helper instead of the old rerun path, verifies helper invocation, preserves verbatim source text across raw/reconciled selection, and asserts persisted faster-whisper provenance/runtime metadata.
+  - `test/lib/faster-whisper-dialogue-timing.test.js` was added to cover the helper directly: spawn args/env/cache behavior, rejection when no timed segments come back, and non-zero bridge failure surfacing. (`REF-04`, `REF-06`, `REF-10`)
+- **Files changed:**
+  - `.plans/2026-05-05-wire-faster-whisper-into-phase1-and-ground-phase2-video-chunks.md`
+  - `server/lib/faster-whisper-dialogue-timing.cjs`
+  - `server/scripts/get-context/faster-whisper-transcribe.py`
+  - `server/scripts/get-context/get-dialogue-timestamps.cjs`
+  - `test/lib/faster-whisper-dialogue-timing.test.js`
+  - `test/scripts/get-dialogue-timestamps.test.js`
 - **Commands run:**
+  - `bd update ee-94py --status in_progress --json`
   - `node --test test/scripts/get-dialogue-timestamps.test.js test/lib/faster-whisper-dialogue-timing.test.js`
-  - End-to-end smoke validation against the real COD asset with a temporary `dialogue-data.json` source artifact and `node` invoking `server/scripts/get-context/get-dialogue-timestamps.cjs` on `examples/videos/emotion-tests/cod.mp4`.
+  - `.venv-faster-whisper/bin/python -m py_compile server/scripts/get-context/faster-whisper-transcribe.py`
+  - `.venv-faster-whisper/bin/python server/scripts/get-context/faster-whisper-transcribe.py --asset-path examples/videos/emotion-tests/cod.mp4 --model small.en --download-root .cache/faster-whisper >/tmp/ee-faster-whisper-cod.json`
+  - `node server/scripts/get-context/get-dialogue-timestamps.cjs examples/videos/emotion-tests/cod.mp4 "$tmpdir"` against a temporary synthetic `dialogue-data.json` fixture
 - **Validation performed:**
-  - Focused node tests passed (`9/9`).
-  - Real smoke run succeeded on `cod.mp4` with `alignmentRuntime.device="cuda"`, `computeType="float16"`, and aligned the opening lines `They want you afraid.` and `Fear makes you easier to control.` to real timeline windows while preserving source text verbatim in the emitted artifact.
+  - Focused Node regression suite passed (`9/9`).
+  - Python bridge syntax validation passed via `py_compile`.
+  - Live faster-whisper transcription against `examples/videos/emotion-tests/cod.mp4` succeeded in about `4.851s` on `cuda/float16`, yielding `31` timed segments with engine `faster_whisper@1.2.1`.
+  - Live end-to-end `get-dialogue-timestamps.cjs` validation succeeded against a temp output dir seeded with synthetic source transcript lines, preserving source text verbatim while grounding the first line `They want you afraid.` to `0.000`–`1.940` and persisting faster-whisper provenance/runtime metadata on the output artifact.
 - **Caveats:**
-  - This bead intentionally does **not** improve the matching heuristic inside `buildDialogueTimestampArtifact()`; it only replaces the source timing clock.
-  - The helper hard-fails if the repo-local faster-whisper Python or bridge script is missing, by design.
-  - Phase 2 `video-chunks` grounding and music-vocals redesign remain out of scope for this change.
+  - This bead intentionally does **not** broaden into WhisperX, music-vocals redesign, or Phase 2 chunk grounding.
+  - The live end-to-end check used a tiny synthetic source transcript seed rather than a full production Phase 1 artifact set; full benchmark/product QA remains Task 3.
+  - `server/lib/faster-whisper-dialogue-timing.cjs` already existed as partial work before this retry lane and was finalized rather than rewritten from scratch.
+- **Commit / push:** pending at the time of this plan update; will be recorded after the repo-specific commit/push is complete.
+- **Bead status:** ready to close once the commit/push step is finished for this coder lane.
 
 ---
 
