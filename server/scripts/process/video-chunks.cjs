@@ -485,8 +485,10 @@ async function run(input) {
 
   // Get context from previous phases (single canonical artifact per lane: reconciled preferred, raw/final fallback)
   const dialogueData = selectCanonicalLaneArtifact(artifacts, 'dialogueData', { fallback: { dialogue_segments: [], summary: '' } });
+  const dialogueTimestampsData = selectCanonicalLaneArtifact(artifacts, 'dialogueTimestampsData', { fallback: null });
   const musicData = selectCanonicalLaneArtifact(artifacts, 'musicData', { fallback: { segments: [], summary: '' } });
   const musicVocalsData = selectCanonicalLaneArtifact(artifacts, 'musicVocalsData', { fallback: { vocal_segments: [], summary: '' } });
+  const musicVocalsTimestampsData = selectCanonicalLaneArtifact(artifacts, 'musicVocalsTimestampsData', { fallback: null });
 
   const primaryAdapter = getPrimaryVideoAdapter(config);
   const videoModel = primaryAdapter?.model;
@@ -679,10 +681,19 @@ async function run(input) {
           continue;
         }
 
-        // Use full global lane datasets as support context (chunk media remains authoritative evidence)
-        const dialogueContext = getGlobalDialogueContext(dialogueData);
+        const dialogueContext = buildChunkDialogueContext({
+          sourceDialogueData: dialogueData,
+          timestampDialogueData: dialogueTimestampsData,
+          startTime: splitStartTime,
+          endTime: splitEndTime
+        });
         const musicContext = getGlobalMusicContext(musicData);
-        const musicVocalsContext = getGlobalMusicVocalsContext(musicVocalsData);
+        const musicVocalsContext = buildChunkMusicVocalsContext({
+          sourceMusicVocalsData: musicVocalsData,
+          timestampMusicVocalsData: musicVocalsTimestampsData,
+          startTime: splitStartTime,
+          endTime: splitEndTime
+        });
 
         const chunkLabel = `Chunk ${chunkIndex + 1}${splitIndex > 0 ? `.${splitIndex + 1}` : ''}`;
 
@@ -697,22 +708,13 @@ async function run(input) {
             transferStrategy: videoTransferConfig.strategy,
             mimeType: videoTransferConfig.mimeType
           },
-          dialogueContext: {
-            summary: typeof dialogueData?.summary === 'string' ? dialogueData.summary : '',
-            segments: dialogueContext,
-            totalSegments: Array.isArray(dialogueData?.dialogue_segments) ? dialogueData.dialogue_segments.length : 0,
-            speakers: Array.isArray(dialogueData?.speaker_profiles) ? dialogueData.speaker_profiles : []
-          },
+          dialogueContext,
           musicContext: {
             summary: typeof musicData?.summary === 'string' ? musicData.summary : '',
             segments: musicContext,
             totalSegments: Array.isArray(musicData?.segments) ? musicData.segments.length : 0
           },
-          musicVocalsContext: {
-            summary: typeof musicVocalsData?.summary === 'string' ? musicVocalsData.summary : '',
-            segments: musicVocalsContext,
-            totalSegments: Array.isArray(musicVocalsData?.vocal_segments) ? musicVocalsData.vocal_segments.length : 0
-          },
+          musicVocalsContext,
           previousState: {
             summary: trimPreviousSummary(previousSummary),
             emotions: results.length > 0 ? results[results.length - 1].emotions : {}
@@ -1155,19 +1157,6 @@ async function getVideoDuration(videoPath, rawLogger) {
 }
 
 /**
- * Get global dialogue support context (ordered lane dataset).
- *
- * @function getGlobalDialogueContext
- * @param {Object} dialogueData - Dialogue data from get-dialogue.cjs
- * @returns {Array}
- */
-function getGlobalDialogueContext(dialogueData) {
-  return Array.isArray(dialogueData?.dialogue_segments)
-    ? dialogueData.dialogue_segments
-    : [];
-}
-
-/**
  * Get global music support context (ordered lane dataset).
  *
  * @function getGlobalMusicContext
@@ -1180,21 +1169,246 @@ function getGlobalMusicContext(musicData) {
     : [];
 }
 
-/**
- * Get global music-vocals support context (ordered lane dataset).
- *
- * @function getGlobalMusicVocalsContext
- * @param {Object} musicVocalsData - Music-vocals data from get-music-vocals.cjs
- * @returns {Array}
- */
-function getGlobalMusicVocalsContext(musicVocalsData) {
-  return Array.isArray(musicVocalsData?.vocal_segments)
-    ? musicVocalsData.vocal_segments
+function hasFiniteSegmentWindow(segment) {
+  return Number.isFinite(segment?.start)
+    && Number.isFinite(segment?.end)
+    && segment.end > segment.start;
+}
+
+function segmentOverlapsWindow(segment, startTime, endTime) {
+  if (!hasFiniteSegmentWindow(segment)) return false;
+  return segment.start < endTime && segment.end > startTime;
+}
+
+function getSegmentIndex(segment, fallbackIndex) {
+  return Number.isInteger(segment?.index) ? segment.index : fallbackIndex;
+}
+
+function cloneSegment(segment) {
+  return segment && typeof segment === 'object'
+    ? JSON.parse(JSON.stringify(segment))
+    : segment;
+}
+
+function selectChunkLocalTimedSegments(timedSegments, startTime, endTime) {
+  const normalizedSegments = Array.isArray(timedSegments) ? timedSegments : [];
+  const overlappingTimedSegments = normalizedSegments
+    .map((segment, position) => ({
+      segment,
+      position,
+      sourceIndex: getSegmentIndex(segment, position)
+    }))
+    .filter(({ segment }) => segmentOverlapsWindow(segment, startTime, endTime));
+
+  if (overlappingTimedSegments.length === 0) {
+    return {
+      segments: [],
+      timedOverlapCount: 0,
+      usedBoundedIndexFallback: false
+    };
+  }
+
+  const minSourceIndex = Math.min(...overlappingTimedSegments.map((entry) => entry.sourceIndex));
+  const maxSourceIndex = Math.max(...overlappingTimedSegments.map((entry) => entry.sourceIndex));
+
+  const boundedSegments = normalizedSegments
+    .map((segment, position) => ({ segment, sourceIndex: getSegmentIndex(segment, position) }))
+    .filter(({ sourceIndex }) => sourceIndex >= minSourceIndex && sourceIndex <= maxSourceIndex)
+    .map(({ segment }) => cloneSegment(segment));
+
+  return {
+    segments: boundedSegments,
+    timedOverlapCount: overlappingTimedSegments.length,
+    usedBoundedIndexFallback: boundedSegments.some((segment) => !hasFiniteSegmentWindow(segment))
+  };
+}
+
+function selectChunkLocalSourceSegments(sourceSegments, startTime, endTime) {
+  return (Array.isArray(sourceSegments) ? sourceSegments : [])
+    .filter((segment) => segmentOverlapsWindow(segment, startTime, endTime))
+    .map((segment) => cloneSegment(segment));
+}
+
+function filterSpeakerProfilesForSegments(speakerProfiles, selectedSegments) {
+  const normalizedProfiles = Array.isArray(speakerProfiles) ? speakerProfiles : [];
+  const normalizedSegments = Array.isArray(selectedSegments) ? selectedSegments : [];
+
+  if (normalizedProfiles.length === 0 || normalizedSegments.length === 0) {
+    return [];
+  }
+
+  const speakerIds = new Set(
+    normalizedSegments
+      .map((segment, index) => getSegmentIndex(segment, index))
+      .filter(Number.isInteger)
+  );
+  const presentSpeakerIds = new Set(
+    normalizedSegments
+      .map((segment) => String(segment?.speaker_id || '').trim())
+      .filter(Boolean)
+  );
+
+  return normalizedProfiles.filter((profile) => {
+    const profileSpeakerId = String(profile?.speaker_id || '').trim();
+    if (profileSpeakerId && presentSpeakerIds.has(profileSpeakerId)) {
+      return true;
+    }
+
+    const linkedIndexes = Array.isArray(profile?.grounded?.linked_segment_indexes)
+      ? profile.grounded.linked_segment_indexes.filter(Number.isInteger)
+      : [];
+
+    return linkedIndexes.some((linkedIndex) => speakerIds.has(linkedIndex));
+  }).map((profile) => cloneSegment(profile));
+}
+
+function buildChunkGroundingMetadata({
+  lane,
+  strategy,
+  startTime,
+  endTime,
+  selectedSegments,
+  totalSegments,
+  timedOverlapCount,
+  usedBoundedIndexFallback,
+  fallbackReason = null
+}) {
+  return {
+    lane,
+    scope: 'chunk_window',
+    strategy,
+    window: {
+      start: Number(startTime),
+      end: Number(endTime)
+    },
+    selectedSegmentCount: Array.isArray(selectedSegments) ? selectedSegments.length : 0,
+    totalSegments: Number.isInteger(totalSegments) ? totalSegments : 0,
+    timedOverlapCount: Number.isInteger(timedOverlapCount) ? timedOverlapCount : 0,
+    usedBoundedIndexFallback: usedBoundedIndexFallback === true,
+    fallbackReason: fallbackReason || null
+  };
+}
+
+function buildChunkDialogueContext({ sourceDialogueData, timestampDialogueData, startTime, endTime }) {
+  const timestampSegments = Array.isArray(timestampDialogueData?.dialogue_segments)
+    ? timestampDialogueData.dialogue_segments
     : [];
+  const sourceSegments = Array.isArray(sourceDialogueData?.dialogue_segments)
+    ? sourceDialogueData.dialogue_segments
+    : [];
+
+  let selectedSegments = [];
+  let strategy = 'empty';
+  let timedOverlapCount = 0;
+  let usedBoundedIndexFallback = false;
+  let fallbackReason = null;
+
+  if (timestampSegments.length > 0) {
+    const timedSelection = selectChunkLocalTimedSegments(timestampSegments, startTime, endTime);
+    selectedSegments = timedSelection.segments;
+    timedOverlapCount = timedSelection.timedOverlapCount;
+    usedBoundedIndexFallback = timedSelection.usedBoundedIndexFallback;
+
+    if (selectedSegments.length > 0) {
+      strategy = 'phase1_timestamp_overlap';
+    } else {
+      fallbackReason = 'timestamp_artifact_present_but_no_overlapping_timed_dialogue';
+    }
+  } else {
+    fallbackReason = 'timestamp_artifact_missing';
+  }
+
+  if (selectedSegments.length === 0) {
+    const fallbackSegments = selectChunkLocalSourceSegments(sourceSegments, startTime, endTime);
+    if (fallbackSegments.length > 0) {
+      selectedSegments = fallbackSegments;
+      strategy = 'source_segment_timing_overlap_fallback';
+      fallbackReason = fallbackReason || 'used_source_segment_timing_overlap';
+    }
+  }
+
+  return {
+    summary: '',
+    segments: selectedSegments,
+    totalSegments: timestampSegments.length || sourceSegments.length,
+    speakers: filterSpeakerProfilesForSegments(sourceDialogueData?.speaker_profiles, selectedSegments),
+    grounding: buildChunkGroundingMetadata({
+      lane: 'dialogue',
+      strategy,
+      startTime,
+      endTime,
+      selectedSegments,
+      totalSegments: timestampSegments.length || sourceSegments.length,
+      timedOverlapCount,
+      usedBoundedIndexFallback,
+      fallbackReason
+    })
+  };
+}
+
+function buildChunkMusicVocalsContext({ sourceMusicVocalsData, timestampMusicVocalsData, startTime, endTime }) {
+  const timestampSegments = Array.isArray(timestampMusicVocalsData?.vocal_segments)
+    ? timestampMusicVocalsData.vocal_segments
+    : [];
+  const sourceSegments = Array.isArray(sourceMusicVocalsData?.vocal_segments)
+    ? sourceMusicVocalsData.vocal_segments
+    : [];
+
+  let selectedSegments = [];
+  let strategy = 'empty';
+  let timedOverlapCount = 0;
+  let usedBoundedIndexFallback = false;
+  let fallbackReason = null;
+
+  if (timestampSegments.length > 0) {
+    const timedSelection = selectChunkLocalTimedSegments(timestampSegments, startTime, endTime);
+    selectedSegments = timedSelection.segments;
+    timedOverlapCount = timedSelection.timedOverlapCount;
+    usedBoundedIndexFallback = timedSelection.usedBoundedIndexFallback;
+
+    if (selectedSegments.length > 0) {
+      strategy = 'phase1_timestamp_overlap';
+    } else {
+      fallbackReason = 'timestamp_artifact_present_but_no_overlapping_timed_music_vocals';
+    }
+  } else {
+    fallbackReason = 'timestamp_artifact_missing';
+  }
+
+  if (selectedSegments.length === 0) {
+    const fallbackSegments = selectChunkLocalSourceSegments(sourceSegments, startTime, endTime);
+    if (fallbackSegments.length > 0) {
+      selectedSegments = fallbackSegments;
+      strategy = 'source_segment_timing_overlap_fallback';
+      fallbackReason = fallbackReason || 'used_source_segment_timing_overlap';
+    }
+  }
+
+  return {
+    summary: '',
+    segments: selectedSegments,
+    totalSegments: timestampSegments.length || sourceSegments.length,
+    grounding: buildChunkGroundingMetadata({
+      lane: 'music_vocals',
+      strategy,
+      startTime,
+      endTime,
+      selectedSegments,
+      totalSegments: timestampSegments.length || sourceSegments.length,
+      timedOverlapCount,
+      usedBoundedIndexFallback,
+      fallbackReason
+    })
+  };
 }
 
 module.exports = {
   run,
+  __test: {
+    buildChunkDialogueContext,
+    buildChunkMusicVocalsContext,
+    selectChunkLocalTimedSegments
+  },
   aiRecovery: {
     guidance: 'Repair malformed or validator-rejected emotion-analysis JSON while preserving the same chunk-evaluation task, lenses, and upstream artifacts.',
     reentry: {

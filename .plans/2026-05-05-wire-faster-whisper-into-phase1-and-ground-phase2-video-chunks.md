@@ -162,11 +162,13 @@ This plan intentionally keeps music-vocals more conservative than dialogue. Fast
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-05-wire-faster-whisper-into-phase1-and-ground-phase2-video-chunks.md`
-- possible bounded QA note/artifact if useful
+- `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics-faster-whisper-rerun-2026-05-05-1427/`
+- `output/cod-test-phase1-timestamp-validation/phase1-gather-context/`
+- `.logs/ee-6jcj-phase1-timestamp-validation-20260505-142742.log`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed `ee-6jcj`, reran the real Phase 1 lane with `node server/run-pipeline.cjs --config configs/cod-test-phase1-timestamp-validation.yaml 2>&1 | tee .logs/ee-6jcj-phase1-timestamp-validation-20260505-142742.log`, then executed a QA-only benchmark fixture against `output/cod-test-phase1-timestamp-validation` and persisted the rerun evidence under `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics-faster-whisper-rerun-2026-05-05-1427/` (`qa-run-result.json`, `reports/benchmark-summary.{json,md}`, and `2026-05-05-faster-whisper-dialogue-timestamp-rerun-qa.md`). Fresh runtime provenance from `phase1-gather-context/dialogue-timestamps-data.reconciled.json` / `script-results/get-dialogue-timestamps.success.json`: `alignmentEngine=faster_whisper@1.2.1`, `device=cuda`, `computeType=float16`, `model=small.en`, `wordTimestamps=true`, `vadFilter=false`, `durationMs=2858`, `dialogue_segments=19`. Benchmark verdict versus `REF-08`: the fresh rerun materially improved dialogue timing while preserving a clean 19-row spoken-dialogue surface — `dialogue_text_full_transcript_pct 93.6% -> 95.0%`, `dialogue_text_windowed_pct 93.6% -> 95.0%`, `dialogue_timing_eligible_pct 72.2% -> 77.8%`, `dialogue_timing_resolved_pct 100.0% -> 100.0%`, `dialogue_timing_start_pct 7.7% -> 72.0%`, `dialogue_timing_end_pct 0.0% -> 76.1%`, and `dialogue_timing_window_pct 4.3% -> 60.4%`; blocked-by-text-drift also improved `27.8% -> 22.2%`. Remaining benchmark failures are now bounded and explicit: `dialogue_boundary_pct` is still `0.0%` (1 split, 2 merges), four windows remain blocked by text drift (notably the 35s-47s band missing `You shall know fear.`, `Spectre One, report.`, the `killing an idea` line, and the promo wording), and speaker/speaker_id mismatches still keep the artifact in overall `error` status. Important QA finding: an earlier same-day interrupted packet under `qa-timestamp-metrics-faster-whisper-2026-05-05/` showed a 31-row lyric-leak surface, but this fresh rerun did **not** reproduce it; the final QA verdict for this task should follow the rerun evidence in `...faster-whisper-rerun-2026-05-05-1427/`. Practical posture call: keep `vadFilter=false` for now — the rerun’s remaining misses look like split/merge, text drift, and attribution problems rather than silence-trimming failures, so no-VAD still appears necessary in practice.
 
 ---
 
@@ -185,13 +187,12 @@ This plan intentionally keeps music-vocals more conservative than dialogue. Fast
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-05-wire-faster-whisper-into-phase1-and-ground-phase2-video-chunks.md`
-- likely `server/scripts/process/video-chunks.cjs`
-- possible shared helper(s)
-- relevant tests
+- `server/scripts/process/video-chunks.cjs`
+- `test/scripts/video-chunks.test.js`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed `ee-ksgg` and tightened Phase 2 chunk grounding inside `server/scripts/process/video-chunks.cjs` so the `dialogueContext` and `musicVocalsContext` handed to the emotion lane are now chunk-local rather than whole-run surfaces. Exact selection behavior: (1) prefer canonical Phase 1 timestamp artifacts via `dialogueTimestampsData` / `musicVocalsTimestampsData` (reconciled-first because `selectCanonicalLaneArtifact(...)` already resolves that surface); (2) select only timestamp segments whose timed windows overlap the provider-facing chunk window; (3) if overlapping timed segments bracket untimed entries in the same timestamp artifact, include that bounded index span as an explicit narrow fallback so unresolved middle entries can still ride along without widening to full-run baggage; (4) if timestamp artifacts are missing or unusable for the current chunk, fall back only to source lane segments that already carry real `start/end` timing; (5) otherwise pass an empty chunk-local context and emit explicit `grounding` metadata instead of reviving whole-transcript / whole-vocals context. Dialogue speaker profiles are now filtered down to only speakers linked to the selected chunk-local dialogue segments. The contract is explicit in-band through `dialogueContext.grounding` / `musicVocalsContext.grounding` (`scope=chunk_window`, `strategy`, `window`, `selectedSegmentCount`, `timedOverlapCount`, `usedBoundedIndexFallback`, `fallbackReason`). Targeted tests added in `test/scripts/video-chunks.test.js` cover timestamp-overlap grounding for music-vocals, timestamp-overlap grounding for dialogue, bounded untimed-index carry-through inside a timestamp-bracketed chunk window, source-timed fallback when timestamp artifacts are missing, and honest empty-context fallback when a chunk has no overlapping timestamp coverage. Commands run: `bd update ee-ksgg --status in_progress --json`; `node --test test/scripts/video-chunks.test.js`. Validation: the focused `video-chunks` suite passed (`41` tests). Caveats: `musicContext` remains the existing full global score/cue support layer because this bead was intentionally scoped only to dialogue + music-vocals chunk-local grounding; no WhisperX path, lyric-aligner redesign, or broader prompt-contract rewrite was introduced here.
 
 ---
 

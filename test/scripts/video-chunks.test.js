@@ -580,7 +580,7 @@ test('Video Chunks Script', async (t) => {
       ok(String(analyzeCalls[0].basePrompt).includes('Music details: Opening pulse | Escalates into pounding percussion'));
     });
 
-    await tNested.test('passes global music-vocals context into the emotion lane', async () => {
+    await tNested.test('passes chunk-local music-vocals context grounded by Phase 1 timestamp windows into the emotion lane', async () => {
       await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
@@ -589,7 +589,15 @@ test('Video Chunks Script', async (t) => {
             summary: 'Lyric-bearing cues recur in a chant pattern.',
             vocal_segments: [
               { index: 0, performer: 'Vocal Lead', text: 'Obey your master' },
-              { index: 1, performer: 'Vocal Lead', text: 'Master, master' }
+              { index: 1, performer: 'Vocal Lead', text: 'Master, master' },
+              { index: 2, performer: 'Vocal Lead', text: 'Nothing else matters' }
+            ]
+          },
+          musicVocalsTimestampsData: {
+            vocal_segments: [
+              { index: 0, performer: 'Vocal Lead', text: 'Obey your master', start: 0.2, end: 1.0 },
+              { index: 1, performer: 'Vocal Lead', text: 'Master, master', start: 7.2, end: 7.9 },
+              { index: 2, performer: 'Vocal Lead', text: 'Nothing else matters', start: 8.4, end: 9.2 }
             ]
           }
         },
@@ -610,10 +618,13 @@ test('Video Chunks Script', async (t) => {
       });
 
       is(promptBuildInputs.length > 0, true);
-      is(promptBuildInputs[0].musicVocalsContext.summary, 'Lyric-bearing cues recur in a chant pattern.');
+      is(promptBuildInputs[0].musicVocalsContext.summary, '');
       is(Array.isArray(promptBuildInputs[0].musicVocalsContext.segments), true);
       is(promptBuildInputs[0].musicVocalsContext.segments.length, 2);
       is(promptBuildInputs[0].musicVocalsContext.segments[0].text, 'Obey your master');
+      is(promptBuildInputs[0].musicVocalsContext.segments[1].text, 'Master, master');
+      is(promptBuildInputs[0].musicVocalsContext.grounding.strategy, 'phase1_timestamp_overlap');
+      is(promptBuildInputs[0].musicVocalsContext.grounding.scope, 'chunk_window');
     });
 
     await tNested.test('uses one canonical lane artifact (reconciled preferred over raw/final) for chunk prompt context', async () => {
@@ -656,14 +667,14 @@ test('Video Chunks Script', async (t) => {
       is(promptBuildInputs[0].musicContext.segments[0].description, 'RECONCILED segment');
     });
 
-    await tNested.test('falls back to lane final artifact when reconciled/raw are unavailable', async () => {
+    await tNested.test('falls back to lane final artifact timing when reconciled/raw are unavailable', async () => {
       await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         artifacts: {
           musicVocalsDataFinal: {
             summary: 'FINAL vocals summary',
-            vocal_segments: [{ index: 0, performer: 'Vocal Lead', text: 'FINAL vocal segment' }]
+            vocal_segments: [{ index: 0, performer: 'Vocal Lead', text: 'FINAL vocal segment', start: 0.5, end: 1.5 }]
           }
         },
         toolVariables: {
@@ -683,19 +694,23 @@ test('Video Chunks Script', async (t) => {
       });
 
       is(promptBuildInputs.length > 0, true);
-      is(promptBuildInputs[0].musicVocalsContext.summary, 'FINAL vocals summary');
+      is(promptBuildInputs[0].musicVocalsContext.summary, '');
       is(promptBuildInputs[0].musicVocalsContext.segments.length, 1);
       is(promptBuildInputs[0].musicVocalsContext.segments[0].text, 'FINAL vocal segment');
+      is(promptBuildInputs[0].musicVocalsContext.grounding.strategy, 'source_segment_timing_overlap_fallback');
+      is(promptBuildInputs[0].musicVocalsContext.grounding.fallbackReason, 'timestamp_artifact_missing');
     });
 
-    await tNested.test('passes grounded speaker profiles into the emotion lane alongside dialogue segments', async () => {
+    await tNested.test('passes chunk-local dialogue context grounded by Phase 1 timestamp windows into the emotion lane', async () => {
       await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',
         outputDir: testOutputDir,
         artifacts: {
           dialogueData: {
             dialogue_segments: [
-              { start: 0, end: 4, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hello', confidence: 0.92 }
+              { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hello there' },
+              { index: 1, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'General Kenobi' },
+              { index: 2, speaker: 'Speaker 2', speaker_id: 'spk_002', text: 'You are a bold one' }
             ],
             speaker_profiles: [
               {
@@ -703,8 +718,20 @@ test('Video Chunks Script', async (t) => {
                 label: 'Speaker 1',
                 grounded: {
                   confidence: 0.81,
-                  linked_segment_indexes: [0],
+                  linked_segment_indexes: [0, 1],
                   acoustic_descriptors: [{ label: 'measured delivery', confidence: 0.58 }]
+                },
+                inferred_traits: {
+                  traits: []
+                }
+              },
+              {
+                speaker_id: 'spk_002',
+                label: 'Speaker 2',
+                grounded: {
+                  confidence: 0.74,
+                  linked_segment_indexes: [2],
+                  acoustic_descriptors: [{ label: 'sharp response', confidence: 0.55 }]
                 },
                 inferred_traits: {
                   traits: []
@@ -712,6 +739,13 @@ test('Video Chunks Script', async (t) => {
               }
             ],
             summary: 'Dialogue summary'
+          },
+          dialogueTimestampsData: {
+            dialogue_segments: [
+              { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hello there', start: 0.4, end: 1.1 },
+              { index: 1, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'General Kenobi' },
+              { index: 2, speaker: 'Speaker 2', speaker_id: 'spk_002', text: 'You are a bold one', start: 6.3, end: 7.4 }
+            ]
           }
         },
         toolVariables: {
@@ -732,9 +766,104 @@ test('Video Chunks Script', async (t) => {
 
       is(promptBuildInputs.length > 0, true);
       is(Array.isArray(promptBuildInputs[0].dialogueContext.segments), true);
+      is(promptBuildInputs[0].dialogueContext.segments.length, 3);
+      is(promptBuildInputs[0].dialogueContext.segments[1].text, 'General Kenobi');
+      is(promptBuildInputs[0].dialogueContext.grounding.strategy, 'phase1_timestamp_overlap');
+      is(promptBuildInputs[0].dialogueContext.grounding.usedBoundedIndexFallback, true);
       is(Array.isArray(promptBuildInputs[0].dialogueContext.speakers), true);
+      is(promptBuildInputs[0].dialogueContext.speakers.length, 2);
       is(promptBuildInputs[0].dialogueContext.speakers[0].speaker_id, 'spk_001');
-      is(promptBuildInputs[0].dialogueContext.speakers[0].grounded.linked_segment_indexes[0], 0);
+      is(promptBuildInputs[0].dialogueContext.speakers[1].speaker_id, 'spk_002');
+    });
+
+    await tNested.test('falls back to source-timed dialogue overlap when timestamp artifacts are missing', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {
+          dialogueData: {
+            dialogue_segments: [
+              { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hello there', start: 0.3, end: 1.1 },
+              { index: 1, speaker: 'Speaker 2', speaker_id: 'spk_002', text: 'Ignored later line', start: 9.0, end: 10.0 }
+            ],
+            speaker_profiles: [
+              { speaker_id: 'spk_001', label: 'Speaker 1', grounded: { linked_segment_indexes: [0] } },
+              { speaker_id: 'spk_002', label: 'Speaker 2', grounded: { linked_segment_indexes: [1] } }
+            ]
+          }
+        },
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+          },
+          settings: { max_chunks: 1 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          }
+        }
+      });
+
+      is(promptBuildInputs.length > 0, true);
+      is(promptBuildInputs[0].dialogueContext.segments.length, 1);
+      is(promptBuildInputs[0].dialogueContext.segments[0].text, 'Hello there');
+      is(promptBuildInputs[0].dialogueContext.grounding.strategy, 'source_segment_timing_overlap_fallback');
+      is(promptBuildInputs[0].dialogueContext.grounding.fallbackReason, 'timestamp_artifact_missing');
+      is(promptBuildInputs[0].dialogueContext.speakers.length, 1);
+      is(promptBuildInputs[0].dialogueContext.speakers[0].speaker_id, 'spk_001');
+    });
+
+    await tNested.test('falls back honestly to empty chunk-local dialogue context when timestamp coverage is missing for the window', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {
+          dialogueData: {
+            dialogue_segments: [
+              { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hello there' }
+            ],
+            speaker_profiles: [
+              {
+                speaker_id: 'spk_001',
+                label: 'Speaker 1',
+                grounded: {
+                  confidence: 0.81,
+                  linked_segment_indexes: [0]
+                }
+              }
+            ]
+          },
+          dialogueTimestampsData: {
+            dialogue_segments: [
+              { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hello there', start: 10.2, end: 11.0 }
+            ]
+          }
+        },
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+          },
+          settings: { max_chunks: 1 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          }
+        }
+      });
+
+      is(promptBuildInputs.length > 0, true);
+      is(promptBuildInputs[0].dialogueContext.segments.length, 0);
+      is(promptBuildInputs[0].dialogueContext.speakers.length, 0);
+      is(promptBuildInputs[0].dialogueContext.grounding.strategy, 'empty');
+      is(promptBuildInputs[0].dialogueContext.grounding.fallbackReason, 'timestamp_artifact_present_but_no_overlapping_timed_dialogue');
     });
 
     await tNested.test('skips a final provider-facing video chunk shorter than 1 second', async () => {
