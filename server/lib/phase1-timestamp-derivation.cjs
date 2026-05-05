@@ -177,7 +177,8 @@ function buildDialogueTimestampArtifact({
   sourcePath,
   runtimeArtifactSurface,
   sourceRuntimeKey,
-  sourceArtifactKey = 'dialogueData'
+  sourceArtifactKey = 'dialogueData',
+  alignmentMetadata = null
 }) {
   const dialogueSegments = deriveDialogueSegmentTimings(sourceDialogueData?.dialogue_segments, alignmentDialogueData?.dialogue_segments);
   const totalDuration = Number.isFinite(sourceDialogueData?.totalDuration)
@@ -208,8 +209,9 @@ function buildDialogueTimestampArtifact({
       sourcePath: toOutputRelativePath(outputDir, sourcePath),
       sourceTextIntegrity: 'verbatim',
       sourceTimingPolicy: 'source_artifact_was_untimed',
-      alignmentEngine: 'phase1_dialogue_asr_rerun',
-      alignmentEngineVersion: null
+      alignmentEngine: alignmentMetadata?.engine?.name || 'phase1_dialogue_asr_rerun',
+      alignmentEngineVersion: alignmentMetadata?.engine?.version || null,
+      alignmentRuntime: alignmentMetadata?.runtime || null
     },
     qualityNotes
   };

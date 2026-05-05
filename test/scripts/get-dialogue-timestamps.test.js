@@ -15,12 +15,14 @@ function mockModule(modulePath, mockExports) {
   };
 }
 
-function loadScriptWithMock(mockRun) {
-  const getDialoguePath = require.resolve('../../server/scripts/get-context/get-dialogue.cjs', { paths: [__dirname] });
+function loadScriptWithMock(mockDeriveFasterWhisperDialogueTiming) {
+  const helperPath = require.resolve('../../server/lib/faster-whisper-dialogue-timing.cjs', { paths: [__dirname] });
   const targetPath = require.resolve('../../server/scripts/get-context/get-dialogue-timestamps.cjs', { paths: [__dirname] });
-  delete require.cache[getDialoguePath];
+  delete require.cache[helperPath];
   delete require.cache[targetPath];
-  mockModule('../../server/scripts/get-context/get-dialogue.cjs', { run: mockRun });
+  mockModule('../../server/lib/faster-whisper-dialogue-timing.cjs', {
+    deriveFasterWhisperDialogueTiming: mockDeriveFasterWhisperDialogueTiming
+  });
   return require('../../server/scripts/get-context/get-dialogue-timestamps.cjs');
 }
 
@@ -33,8 +35,8 @@ function writeJson(filePath, payload) {
   fs.writeFileSync(filePath, JSON.stringify(payload, null, 2), 'utf8');
 }
 
-test('get-dialogue-timestamps applies bounded retry defaults to the alignment rerun without mutating the caller config', async (t) => {
-  const outputDir = makeTempDir('ee-dialogue-ts-retry-');
+test('get-dialogue-timestamps invokes faster-whisper timing with the asset path', async (t) => {
+  const outputDir = makeTempDir('ee-dialogue-ts-whisper-call-');
   t.after(() => fs.rmSync(outputDir, { recursive: true, force: true }));
 
   writeJson(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.json'), {
@@ -45,97 +47,32 @@ test('get-dialogue-timestamps applies bounded retry defaults to the alignment re
     totalDuration: 12.4
   });
 
-  let capturedConfig = null;
-  const originalConfig = {
-    ai: {
-      dialogue: {
-        targets: [
-          {
-            adapter: {
-              name: 'openrouter',
-              model: 'xiaomi/mimo-v2-omni'
-            }
-          }
-        ]
-      }
-    },
-    gather_context: ['server/scripts/get-context/get-dialogue.cjs']
-  };
-
-  const script = loadScriptWithMock(async ({ config }) => {
-    capturedConfig = config;
+  const captured = [];
+  const script = loadScriptWithMock(async (input) => {
+    captured.push(input);
     return {
-      artifacts: {
-        dialogueData: {
-          dialogue_segments: [
-            { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'hello world', start: 1.1, end: 2.3, confidence: 0.8 }
-          ],
-          summary: 'Timed dialogue',
-          totalDuration: 12.4
-        }
-      }
-    };
-  });
-
-  await script.run({
-    assetPath: '/tmp/fake-asset.mp4',
-    outputDir,
-    config: originalConfig
-  });
-
-  assert.ok(capturedConfig);
-  assert.equal(capturedConfig.ai.dialogue.retry.maxAttempts, 2);
-  assert.equal(capturedConfig.ai.dialogue.retry.backoffMs, 1000);
-  assert.equal(originalConfig.ai.dialogue.retry, undefined);
-});
-
-test('get-dialogue-timestamps preserves stronger caller retry config on the alignment rerun', async (t) => {
-  const outputDir = makeTempDir('ee-dialogue-ts-retry-existing-');
-  t.after(() => fs.rmSync(outputDir, { recursive: true, force: true }));
-
-  writeJson(path.join(outputDir, 'phase1-gather-context', 'dialogue-data.json'), {
-    dialogue_segments: [
-      { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'Hello, world!', confidence: 0.9 }
-    ],
-    summary: 'Raw dialogue',
-    totalDuration: 12.4
-  });
-
-  let capturedConfig = null;
-  const script = loadScriptWithMock(async ({ config }) => {
-    capturedConfig = config;
-    return {
-      artifacts: {
-        dialogueData: {
-          dialogue_segments: [
-            { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'hello world', start: 1.1, end: 2.3, confidence: 0.8 }
-          ],
-          summary: 'Timed dialogue',
-          totalDuration: 12.4
-        }
-      }
-    };
-  });
-
-  await script.run({
-    assetPath: '/tmp/fake-asset.mp4',
-    outputDir,
-    config: {
-      ai: {
-        dialogue: {
-          retry: {
-            maxAttempts: 4,
-            backoffMs: 2500
-          }
-        }
+      dialogueData: {
+        dialogue_segments: [
+          { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'hello world', start: 1.1, end: 2.3, confidence: 0.8 }
+        ],
+        summary: 'Timed dialogue',
+        totalDuration: 12.4
       },
-      gather_context: ['server/scripts/get-context/get-dialogue.cjs']
-    }
+      metadata: {
+        runtime: { device: 'cuda', computeType: 'float16', model: 'small.en', wordTimestamps: true, vadFilter: false },
+        engine: { name: 'faster_whisper', version: '1.2.3' },
+        warnings: []
+      }
+    };
   });
 
-  assert.ok(capturedConfig);
-  assert.equal(capturedConfig.ai.dialogue.retry.maxAttempts, 4);
-  assert.equal(capturedConfig.ai.dialogue.retry.backoffMs, 2500);
+  await script.run({
+    assetPath: '/tmp/fake-asset.mp4',
+    outputDir,
+    config: { gather_context: ['server/scripts/get-context/get-dialogue.cjs'] }
+  });
+
+  assert.deepEqual(captured, [{ assetPath: '/tmp/fake-asset.mp4' }]);
 });
 
 test('get-dialogue-timestamps derives raw-surface timestamps and preserves source text verbatim', async (t) => {
@@ -152,15 +89,18 @@ test('get-dialogue-timestamps derives raw-surface timestamps and preserves sourc
   });
 
   const script = loadScriptWithMock(async () => ({
-    artifacts: {
-      dialogueData: {
-        dialogue_segments: [
-          { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'hello world', start: 1.1, end: 2.3, confidence: 0.8 },
-          { index: 1, speaker: 'Speaker 2', speaker_id: 'spk_002', text: 'general kenobi', start: 3.0, end: 4.5, confidence: 0.81 }
-        ],
-        summary: 'Timed dialogue',
-        totalDuration: 12.4
-      }
+    dialogueData: {
+      dialogue_segments: [
+        { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'hello world', start: 1.1, end: 2.3, confidence: 0.8 },
+        { index: 1, speaker: 'Speaker 2', speaker_id: 'spk_002', text: 'general kenobi', start: 3.0, end: 4.5, confidence: 0.81 }
+      ],
+      summary: 'Timed dialogue',
+      totalDuration: 12.4
+    },
+    metadata: {
+      runtime: { device: 'cuda', computeType: 'float16', model: 'small.en', wordTimestamps: true, vadFilter: false },
+      engine: { name: 'faster_whisper', version: '1.2.3' },
+      warnings: []
     }
   }));
 
@@ -174,6 +114,15 @@ test('get-dialogue-timestamps derives raw-surface timestamps and preserves sourc
   assert.ok(result.artifacts.dialogueTimestampsData);
   assert.equal(result.artifacts.dialogueTimestampsData.provenance.runtimeArtifactSurface, 'raw');
   assert.equal(result.artifacts.dialogueTimestampsData.provenance.sourceRuntimeKey, 'dialogueData');
+  assert.equal(result.artifacts.dialogueTimestampsData.provenance.alignmentEngine, 'faster_whisper');
+  assert.equal(result.artifacts.dialogueTimestampsData.provenance.alignmentEngineVersion, '1.2.3');
+  assert.deepEqual(result.artifacts.dialogueTimestampsData.provenance.alignmentRuntime, {
+    device: 'cuda',
+    computeType: 'float16',
+    model: 'small.en',
+    wordTimestamps: true,
+    vadFilter: false
+  });
   assert.equal(result.artifacts.dialogueTimestampsData.dialogue_segments[0].text, 'Hello, world!');
   assert.equal(result.artifacts.dialogueTimestampsData.dialogue_segments[1].text, 'General Kenobi.');
   assert.equal(result.artifacts.dialogueTimestampsData.dialogue_segments[0].start, 1.1);
@@ -204,14 +153,17 @@ test('get-dialogue-timestamps prefers reconciled dialogue when canonical surface
   });
 
   const script = loadScriptWithMock(async () => ({
-    artifacts: {
-      dialogueData: {
-        dialogue_segments: [
-          { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'clean reconciled line', start: 0.5, end: 1.8, confidence: 0.86 }
-        ],
-        summary: 'Timed dialogue',
-        totalDuration: 9
-      }
+    dialogueData: {
+      dialogue_segments: [
+        { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'clean reconciled line', start: 0.5, end: 1.8, confidence: 0.86 }
+      ],
+      summary: 'Timed dialogue',
+      totalDuration: 9
+    },
+    metadata: {
+      runtime: { device: 'cpu', computeType: 'int8', model: 'small.en', wordTimestamps: true, vadFilter: false },
+      engine: { name: 'faster_whisper', version: '1.2.3' },
+      warnings: ['Fallback from cuda/float16 due to RuntimeError: GPU unavailable']
     }
   }));
 
@@ -235,6 +187,13 @@ test('get-dialogue-timestamps prefers reconciled dialogue when canonical surface
 
   const persisted = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'dialogue-timestamps-data.reconciled.json'), 'utf8'));
   assert.equal(persisted.dialogue_segments[0].text, 'Clean reconciled line');
+  assert.deepEqual(persisted.provenance.alignmentRuntime, {
+    device: 'cpu',
+    computeType: 'int8',
+    model: 'small.en',
+    wordTimestamps: true,
+    vadFilter: false
+  });
 });
 
 test('get-dialogue-timestamps uses canonical reconciled dialogue from artifacts-complete.json without requiring the reconciled file on disk', async (t) => {
@@ -259,14 +218,17 @@ test('get-dialogue-timestamps uses canonical reconciled dialogue from artifacts-
   });
 
   const script = loadScriptWithMock(async () => ({
-    artifacts: {
-      dialogueData: {
-        dialogue_segments: [
-          { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'hydrated reconciled line', start: 0.5, end: 1.8, confidence: 0.86 }
-        ],
-        summary: 'Timed dialogue',
-        totalDuration: 9
-      }
+    dialogueData: {
+      dialogue_segments: [
+        { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'hydrated reconciled line', start: 0.5, end: 1.8, confidence: 0.86 }
+      ],
+      summary: 'Timed dialogue',
+      totalDuration: 9
+    },
+    metadata: {
+      runtime: { device: 'cuda', computeType: 'float16', model: 'small.en', wordTimestamps: true, vadFilter: false },
+      engine: { name: 'faster_whisper', version: '1.2.3' },
+      warnings: []
     }
   }));
 
@@ -293,14 +255,17 @@ test('get-dialogue-timestamps uses in-memory canonical reconciled dialogue witho
   t.after(() => fs.rmSync(outputDir, { recursive: true, force: true }));
 
   const script = loadScriptWithMock(async () => ({
-    artifacts: {
-      dialogueData: {
-        dialogue_segments: [
-          { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'runtime reconciled line', start: 0.25, end: 1.1, confidence: 0.89 }
-        ],
-        summary: 'Timed dialogue',
-        totalDuration: 6
-      }
+    dialogueData: {
+      dialogue_segments: [
+        { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'runtime reconciled line', start: 0.25, end: 1.1, confidence: 0.89 }
+      ],
+      summary: 'Timed dialogue',
+      totalDuration: 6
+    },
+    metadata: {
+      runtime: { device: 'cuda', computeType: 'float16', model: 'small.en', wordTimestamps: true, vadFilter: false },
+      engine: { name: 'faster_whisper', version: '1.2.3' },
+      warnings: []
     }
   }));
 
@@ -342,14 +307,17 @@ test('get-dialogue-timestamps fails loudly when canonical/reconciled dialogue is
   });
 
   const script = loadScriptWithMock(async () => ({
-    artifacts: {
-      dialogueData: {
-        dialogue_segments: [
-          { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'only raw line', start: 0.3, end: 1.2, confidence: 0.75 }
-        ],
-        summary: 'Timed dialogue',
-        totalDuration: 7
-      }
+    dialogueData: {
+      dialogue_segments: [
+        { index: 0, speaker: 'Speaker 1', speaker_id: 'spk_001', text: 'only raw line', start: 0.3, end: 1.2, confidence: 0.75 }
+      ],
+      summary: 'Timed dialogue',
+      totalDuration: 7
+    },
+    metadata: {
+      runtime: { device: 'cuda', computeType: 'float16', model: 'small.en', wordTimestamps: true, vadFilter: false },
+      engine: { name: 'faster_whisper', version: '1.2.3' },
+      warnings: []
     }
   }));
 

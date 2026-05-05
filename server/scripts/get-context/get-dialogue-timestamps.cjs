@@ -2,7 +2,6 @@
 'use strict';
 
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const { loadPersistedArtifacts } = require('../../lib/persisted-artifacts.cjs');
 const {
@@ -12,14 +11,11 @@ const {
 const {
   buildDialogueTimestampArtifact
 } = require('../../lib/phase1-timestamp-derivation.cjs');
-const getDialogueScript = require('./get-dialogue.cjs');
+const {
+  deriveFasterWhisperDialogueTiming
+} = require('../../lib/faster-whisper-dialogue-timing.cjs');
 
-const PHASE_KEY = 'phase1-gather-context';
 const SCRIPT_ID = 'get-dialogue-timestamps';
-const TIMESTAMP_ALIGNMENT_RETRY_DEFAULTS = Object.freeze({
-  maxAttempts: 2,
-  backoffMs: 1000
-});
 
 function ensureSourceDialogue({ artifacts, outputDir, config, runtimeArtifactSurface }) {
   const bagResolution = selectCanonicalPhase1ArtifactFromBag(artifacts || {}, 'dialogueData', {
@@ -70,56 +66,8 @@ function ensureSourceDialogue({ artifacts, outputDir, config, runtimeArtifactSur
   };
 }
 
-function buildTimestampAlignmentConfig(config = {}) {
-  const sourceRetry = config?.ai?.dialogue?.retry || {};
-  const maxAttempts = Number.isInteger(sourceRetry.maxAttempts) && sourceRetry.maxAttempts > 0
-    ? Math.max(sourceRetry.maxAttempts, TIMESTAMP_ALIGNMENT_RETRY_DEFAULTS.maxAttempts)
-    : TIMESTAMP_ALIGNMENT_RETRY_DEFAULTS.maxAttempts;
-  const backoffMs = Number.isInteger(sourceRetry.backoffMs) && sourceRetry.backoffMs >= 0
-    ? Math.max(sourceRetry.backoffMs, TIMESTAMP_ALIGNMENT_RETRY_DEFAULTS.backoffMs)
-    : TIMESTAMP_ALIGNMENT_RETRY_DEFAULTS.backoffMs;
-
-  return {
-    ...config,
-    ai: {
-      ...(config?.ai || {}),
-      dialogue: {
-        ...((config?.ai && config.ai.dialogue) || {}),
-        retry: {
-          ...sourceRetry,
-          maxAttempts,
-          backoffMs
-        }
-      }
-    }
-  };
-}
-
-async function deriveAlignmentDialogue({ assetPath, config }) {
-  const tempOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ee-dialogue-timestamps-'));
-  const alignmentConfig = buildTimestampAlignmentConfig(config);
-
-  try {
-    const result = await getDialogueScript.run({
-      assetPath,
-      outputDir: tempOutputDir,
-      config: alignmentConfig,
-      preserveSegmentTiming: true
-    });
-
-    const alignmentDialogueData = result?.artifacts?.dialogueData;
-    const timedSegmentCount = Array.isArray(alignmentDialogueData?.dialogue_segments)
-      ? alignmentDialogueData.dialogue_segments.filter((segment) => Number.isFinite(segment?.start) && Number.isFinite(segment?.end)).length
-      : 0;
-
-    if (!alignmentDialogueData || timedSegmentCount === 0) {
-      throw new Error('Dialogue alignment rerun did not yield any timed dialogue segments.');
-    }
-
-    return alignmentDialogueData;
-  } finally {
-    fs.rmSync(tempOutputDir, { recursive: true, force: true });
-  }
+async function deriveAlignmentDialogue({ assetPath }) {
+  return deriveFasterWhisperDialogueTiming({ assetPath });
 }
 
 async function run(input) {
@@ -136,16 +84,17 @@ async function run(input) {
   }
 
   const source = ensureSourceDialogue({ artifacts, outputDir, config, runtimeArtifactSurface });
-  const alignmentDialogueData = await deriveAlignmentDialogue({ assetPath, config });
+  const alignment = await deriveAlignmentDialogue({ assetPath });
 
   const artifact = buildDialogueTimestampArtifact({
     sourceDialogueData: source.sourceDialogueData,
-    alignmentDialogueData,
+    alignmentDialogueData: alignment.dialogueData,
     outputDir,
     sourcePath: source.sourcePath,
     runtimeArtifactSurface: source.runtimeArtifactSurface,
     sourceRuntimeKey: source.sourceRuntimeKey,
-    sourceArtifactKey: 'dialogueData'
+    sourceArtifactKey: 'dialogueData',
+    alignmentMetadata: alignment.metadata
   });
 
   const outputResolution = resolvePhase1ArtifactPath(outputDir, 'dialogueTimestampsData', {
@@ -171,7 +120,7 @@ async function run(input) {
 module.exports = {
   run,
   aiRecovery: {
-    guidance: 'Timestamp derivation must preserve the selected dialogue artifact text verbatim while aligning against a fresh timed dialogue rerun.',
+    guidance: 'Timestamp derivation must preserve the selected dialogue artifact text verbatim while aligning against a faster-whisper timing pass.',
     reentry: {
       allowedMutableInputs: ['repairInstructions', 'boundedContextSummary'],
       forbiddenMutableInputs: ['upstreamArtifacts', 'artifactPaths', 'runtimeBudgets']
