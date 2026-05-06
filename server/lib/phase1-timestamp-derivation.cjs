@@ -241,10 +241,36 @@ function countStrongCandidateWindows(sourceSegment, alignmentSegments, scoreThre
   return matches;
 }
 
-function deriveMusicVocalsSegmentTimings(sourceSegments, alignmentSegments) {
+function findDialogueAssistedTimingMatch(sourceSegment, dialogueSegments) {
+  const sourceNormalized = normalizeText(sourceSegment?.text);
+  if (!sourceNormalized) return null;
+
+  const matches = (Array.isArray(dialogueSegments) ? dialogueSegments : [])
+    .filter((segment) => Number.isFinite(segment?.start) && Number.isFinite(segment?.end) && segment.end > segment.start)
+    .filter((segment) => normalizeText(segment?.text) === sourceNormalized)
+    .map((segment) => ({
+      index: Number.isInteger(segment?.index) ? segment.index : null,
+      speaker: String(segment?.speaker || '').trim() || null,
+      speaker_id: String(segment?.speaker_id || '').trim() || null,
+      text: String(segment?.text || ''),
+      start: roundNumber(segment.start),
+      end: roundNumber(segment.end)
+    }));
+
+  if (matches.length !== 1) {
+    return null;
+  }
+
+  return matches[0];
+}
+
+function deriveMusicVocalsSegmentTimings(sourceSegments, alignmentSegments, dialogueSegments) {
   const normalizedSourceSegments = Array.isArray(sourceSegments) ? sourceSegments : [];
   const normalizedAlignmentSegments = Array.isArray(alignmentSegments)
     ? alignmentSegments.filter((segment) => Number.isFinite(segment?.start) && Number.isFinite(segment?.end))
+    : [];
+  const normalizedDialogueSegments = Array.isArray(dialogueSegments)
+    ? dialogueSegments.filter((segment) => Number.isFinite(segment?.start) && Number.isFinite(segment?.end))
     : [];
 
   let cursor = 0;
@@ -267,6 +293,26 @@ function deriveMusicVocalsSegmentTimings(sourceSegments, alignmentSegments) {
     };
 
     if (!matchedWindow) {
+      const dialogueAssistedMatch = findDialogueAssistedTimingMatch(segment, normalizedDialogueSegments);
+      if (!dialogueAssistedMatch) {
+        return emitted;
+      }
+
+      emitted.start = dialogueAssistedMatch.start;
+      emitted.end = dialogueAssistedMatch.end;
+      emitted.timing = {
+        status: 'aligned',
+        confidence: 1,
+        method: 'dialogue_assisted_anchor',
+        provenance: 'dialogue_text_match',
+        support: {
+          lane: 'dialogue',
+          segmentIndex: dialogueAssistedMatch.index,
+          speaker: dialogueAssistedMatch.speaker,
+          speaker_id: dialogueAssistedMatch.speaker_id,
+          text: dialogueAssistedMatch.text
+        }
+      };
       return emitted;
     }
 
@@ -300,6 +346,7 @@ function deriveMusicVocalsSegmentTimings(sourceSegments, alignmentSegments) {
 function buildMusicVocalsTimestampArtifact({
   sourceMusicVocalsData,
   alignmentMusicVocalsData,
+  dialogueTimingData = null,
   outputDir,
   sourcePath,
   runtimeArtifactSurface,
@@ -307,7 +354,12 @@ function buildMusicVocalsTimestampArtifact({
   sourceArtifactKey = 'musicVocalsData',
   alignmentMetadata = null
 }) {
-  const vocalSegments = deriveMusicVocalsSegmentTimings(sourceMusicVocalsData?.vocal_segments, alignmentMusicVocalsData?.vocal_segments);
+  const vocalSegments = deriveMusicVocalsSegmentTimings(
+    sourceMusicVocalsData?.vocal_segments,
+    alignmentMusicVocalsData?.vocal_segments,
+    dialogueTimingData?.dialogue_segments
+  );
+  const dialogueAssistedAnchorCount = vocalSegments.filter((segment) => segment?.timing?.method === 'dialogue_assisted_anchor').length;
   const totalDuration = Number.isFinite(sourceMusicVocalsData?.totalDuration)
     ? sourceMusicVocalsData.totalDuration
     : alignmentMusicVocalsData?.totalDuration;
@@ -319,6 +371,9 @@ function buildMusicVocalsTimestampArtifact({
       : null,
     'Music-vocals timing is more fragile than dialogue timing on sung, chant-like, rap, or overlap-heavy material.',
     'Repeated hooks or short lyric fragments may remain partial or unresolved when multiple plausible placements exist.',
+    dialogueAssistedAnchorCount > 0
+      ? 'Dialogue timing may assist unresolved lyric rows only when a dialogue-timed row exactly matches the existing music-vocals lyric after normalization; dialogue never rewrites lyric text or row order.'
+      : null,
     sourceMusicVocalsData?.recognizedSong
       ? 'recognizedSong metadata informed provenance and quality notes only; it did not authorize lyric rewrites or fake exact placement.'
       : null
@@ -346,7 +401,12 @@ function buildMusicVocalsTimestampArtifact({
       alignmentEngine: alignmentMetadata?.engine?.name || 'phase1_music_vocals_rerun',
       alignmentEngineVersion: alignmentMetadata?.engine?.version || null,
       alignmentRuntime: alignmentMetadata?.runtime || null,
-      recognizedSongUsedForTextRewrite: false
+      recognizedSongUsedForTextRewrite: false,
+      dialogueTimingAssist: {
+        enabled: dialogueAssistedAnchorCount > 0,
+        assistedSegmentCount: dialogueAssistedAnchorCount,
+        policy: 'timing_only_exact_normalized_text_match'
+      }
     },
     ...(sourceMusicVocalsData?.recognizedSong ? { recognizedSong: sourceMusicVocalsData.recognizedSong } : {}),
     ...(Array.isArray(sourceMusicVocalsData?.recognitionNotes) ? { recognitionNotes: sourceMusicVocalsData.recognitionNotes } : {}),

@@ -627,6 +627,51 @@ test('Video Chunks Script', async (t) => {
       is(promptBuildInputs[0].musicVocalsContext.grounding.scope, 'chunk_window');
     });
 
+    await tNested.test('surfaces a dialogue-assisted music-vocals anchor in the 80s chunk without pulling dialogue text into the vocals lane', () => {
+      const musicVocalsContext = videoChunksScript.__test.buildChunkMusicVocalsContext({
+        sourceMusicVocalsData: {
+          vocal_segments: [
+            { index: 5, performer: 'Vocal Lead', text: 'Master! Master!' },
+            { index: 6, performer: 'Vocal Lead', text: 'Twisting your mind and smashing your dreams' },
+            { index: 7, performer: 'Vocal Lead', text: 'Obey your master!' }
+          ]
+        },
+        timestampMusicVocalsData: {
+          vocal_segments: [
+            { index: 5, performer: 'Vocal Lead', text: 'Master! Master!', start: 89.8, end: 91.68, timing: { status: 'partial', method: 'lyric_alignment', provenance: 'segment_level' } },
+            {
+              index: 6,
+              performer: 'Vocal Lead',
+              text: 'Twisting your mind and smashing your dreams',
+              start: 80.5,
+              end: 82.5,
+              timing: {
+                status: 'aligned',
+                confidence: 1,
+                method: 'dialogue_assisted_anchor',
+                provenance: 'dialogue_text_match',
+                support: {
+                  lane: 'dialogue',
+                  segmentIndex: 14,
+                  text: 'Twisting your mind and smashing your dreams.'
+                }
+              }
+            },
+            { index: 7, performer: 'Vocal Lead', text: 'Obey your master!', timing: { status: 'unresolved', method: 'lyric_alignment', provenance: 'segment_level' } }
+          ]
+        },
+        startTime: 80,
+        endTime: 85
+      });
+
+      is(musicVocalsContext.grounding.strategy, 'phase1_timestamp_overlap');
+      is(musicVocalsContext.grounding.scope, 'chunk_window');
+      is(musicVocalsContext.segments.length, 1);
+      is(musicVocalsContext.segments[0].text, 'Twisting your mind and smashing your dreams');
+      is(musicVocalsContext.segments[0].timing.method, 'dialogue_assisted_anchor');
+      is(musicVocalsContext.segments[0].timing.support.lane, 'dialogue');
+    });
+
     await tNested.test('uses one canonical lane artifact (reconciled preferred over raw/final) for chunk prompt context', async () => {
       await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',

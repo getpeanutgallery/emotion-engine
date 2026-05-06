@@ -292,3 +292,131 @@ test('get-music-vocals-timestamps marks repeated short hooks as partial and weak
   assert.equal(Object.prototype.hasOwnProperty.call(weak, 'end'), false);
   assert.ok(result.artifacts.musicVocalsTimestampsData.qualityNotes.some((note) => note.includes('Repeated hooks')));
 });
+
+test('get-music-vocals-timestamps adds dialogue-assisted timing anchors for unresolved exact lyric matches without rewriting lyric text', async (t) => {
+  const outputDir = makeTempDir('ee-music-vocals-ts-dialogue-anchor-');
+  t.after(() => fs.rmSync(outputDir, { recursive: true, force: true }));
+
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.reconciled.json'), {
+    vocal_segments: [
+      { index: 6, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'Twisting your mind and smashing your dreams', confidence: 0.95 },
+      { index: 7, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'Blinding your light I can\'t see you', confidence: 0.95 }
+    ],
+    summary: 'Reconciled vocals',
+    totalDuration: 140.042
+  });
+
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'dialogue-timestamps-data.reconciled.json'), {
+    dialogue_segments: [
+      { index: 14, speaker: 'Speaker 6', speaker_id: 'spk_006', text: 'Twisting your mind and smashing your dreams.', start: 80.5, end: 82.5 },
+      { index: 20, speaker: 'Speaker 5', speaker_id: 'spk_005', text: 'Pull it together, man.', start: 96.96, end: 99.16 }
+    ],
+    totalDuration: 140.042
+  });
+
+  const script = loadScriptWithMock(async () => ({
+    musicVocalsData: {
+      vocal_segments: [
+        { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'master master', start: 89.8, end: 91.68, confidence: 0.87 }
+      ],
+      summary: 'Timed vocals',
+      totalDuration: 140.042
+    },
+    metadata: {
+      runtime: { device: 'cuda', computeType: 'float16', model: 'small.en', wordTimestamps: true, vadFilter: false },
+      engine: { name: 'faster_whisper', version: '1.2.3' },
+      warnings: []
+    }
+  }));
+
+  const result = await script.run({
+    assetPath: '/tmp/fake-asset.mp4',
+    outputDir,
+    runtimeArtifactSurface: 'reconciled',
+    config: { gather_context: ['server/scripts/get-context/reconcile-famous-song-phase1.cjs'] }
+  });
+
+  const [anchored, unresolved] = result.artifacts.musicVocalsTimestampsDataReconciled.vocal_segments;
+  assert.equal(anchored.text, 'Twisting your mind and smashing your dreams');
+  assert.equal(anchored.start, 80.5);
+  assert.equal(anchored.end, 82.5);
+  assert.deepEqual(anchored.timing, {
+    status: 'aligned',
+    confidence: 1,
+    method: 'dialogue_assisted_anchor',
+    provenance: 'dialogue_text_match',
+    support: {
+      lane: 'dialogue',
+      segmentIndex: 14,
+      speaker: 'Speaker 6',
+      speaker_id: 'spk_006',
+      text: 'Twisting your mind and smashing your dreams.'
+    }
+  });
+  assert.equal(unresolved.text, 'Blinding your light I can\'t see you');
+  assert.equal(unresolved.timing.status, 'unresolved');
+  assert.equal(Object.prototype.hasOwnProperty.call(unresolved, 'start'), false);
+  assert.equal(result.artifacts.musicVocalsTimestampsDataReconciled.provenance.sourceTextIntegrity, 'verbatim');
+  assert.deepEqual(result.artifacts.musicVocalsTimestampsDataReconciled.provenance.dialogueTimingAssist, {
+    enabled: true,
+    assistedSegmentCount: 1,
+    policy: 'timing_only_exact_normalized_text_match'
+  });
+  assert.ok(
+    result.artifacts.musicVocalsTimestampsDataReconciled.qualityNotes
+      .some((note) => note.includes('Dialogue timing may assist unresolved lyric rows only'))
+  );
+});
+
+test('get-music-vocals-timestamps refuses ambiguous repeated dialogue lyric matches', async (t) => {
+  const outputDir = makeTempDir('ee-music-vocals-ts-dialogue-ambiguous-');
+  t.after(() => fs.rmSync(outputDir, { recursive: true, force: true }));
+
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.reconciled.json'), {
+    vocal_segments: [
+      { index: 1, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'Master! Master!', confidence: 0.95 }
+    ],
+    summary: 'Reconciled vocals',
+    totalDuration: 140.042
+  });
+
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'dialogue-timestamps-data.reconciled.json'), {
+    dialogue_segments: [
+      { index: 17, speaker: 'Speaker 6', speaker_id: 'spk_006', text: 'Master. Master.', start: 89.8, end: 91.68 },
+      { index: 19, speaker: 'Speaker 6', speaker_id: 'spk_006', text: 'Master. Master.', start: 92.22, end: 96.36 }
+    ],
+    totalDuration: 140.042
+  });
+
+  const script = loadScriptWithMock(async () => ({
+    musicVocalsData: {
+      vocal_segments: [
+        { index: 99, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'crowd wash', start: 10, end: 11, confidence: 0.2 }
+      ],
+      summary: 'Timed vocals',
+      totalDuration: 140.042
+    },
+    metadata: {
+      runtime: { device: 'cpu', computeType: 'int8', model: 'small.en', wordTimestamps: true, vadFilter: false },
+      engine: { name: 'faster_whisper', version: '1.2.3' },
+      warnings: []
+    }
+  }));
+
+  const result = await script.run({
+    assetPath: '/tmp/fake-asset.mp4',
+    outputDir,
+    runtimeArtifactSurface: 'reconciled',
+    config: { gather_context: ['server/scripts/get-context/reconcile-famous-song-phase1.cjs'] }
+  });
+
+  const [segment] = result.artifacts.musicVocalsTimestampsDataReconciled.vocal_segments;
+  assert.equal(segment.text, 'Master! Master!');
+  assert.equal(segment.timing.status, 'unresolved');
+  assert.equal(Object.prototype.hasOwnProperty.call(segment, 'start'), false);
+  assert.deepEqual(result.artifacts.musicVocalsTimestampsDataReconciled.provenance.dialogueTimingAssist, {
+    enabled: false,
+    assistedSegmentCount: 0,
+    policy: 'timing_only_exact_normalized_text_match'
+  });
+});

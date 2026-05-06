@@ -66,6 +66,30 @@ function ensureSourceMusicVocals({ artifacts, outputDir, config, runtimeArtifact
   };
 }
 
+function loadOptionalDialogueTimingData({ artifacts, outputDir, config, runtimeArtifactSurface }) {
+  const bagResolution = selectCanonicalPhase1ArtifactFromBag(artifacts || {}, 'dialogueTimestampsData', {
+    config,
+    strict: false,
+    runtimeArtifactSurface
+  });
+
+  if (bagResolution.resolvedArtifact !== undefined) {
+    return bagResolution.resolvedArtifact;
+  }
+
+  try {
+    const persisted = loadPersistedArtifacts(outputDir, {
+      keys: ['dialogueTimestampsData'],
+      strict: false,
+      config,
+      runtimeArtifactSurface
+    });
+    return persisted.artifacts.dialogueTimestampsData || null;
+  } catch {
+    return null;
+  }
+}
+
 async function deriveAlignmentMusicVocals({ assetPath }) {
   return deriveFasterWhisperMusicVocalsTiming({ assetPath });
 }
@@ -84,11 +108,18 @@ async function run(input) {
   }
 
   const source = ensureSourceMusicVocals({ artifacts, outputDir, config, runtimeArtifactSurface });
+  const dialogueTimingData = loadOptionalDialogueTimingData({
+    artifacts,
+    outputDir,
+    config,
+    runtimeArtifactSurface: source.runtimeArtifactSurface
+  });
   const alignment = await deriveAlignmentMusicVocals({ assetPath });
 
   const artifact = buildMusicVocalsTimestampArtifact({
     sourceMusicVocalsData: source.sourceMusicVocalsData,
     alignmentMusicVocalsData: alignment.musicVocalsData,
+    dialogueTimingData,
     outputDir,
     sourcePath: source.sourcePath,
     runtimeArtifactSurface: source.runtimeArtifactSurface,
