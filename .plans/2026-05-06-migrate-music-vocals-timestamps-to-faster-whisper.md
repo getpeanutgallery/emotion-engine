@@ -186,6 +186,9 @@ The success bar is product-facing: not just “timestamp artifact exists,” but
 
 **Assessment:** this did materially improve the known failure from an all-unresolved state, but only partially. The migration surfaced usable timing anchors in the `~90s–96s` window without changing the source lyric text contract, while most of the 11 lyric rows still remain unresolved.
 
+**Commit / push:**
+- `58cfb52` — `Switch music-vocals timestamps to faster-whisper` (pushed to `origin/main`)
+
 ---
 
 ### Task 3: QA the faster-whisper music-vocals rerun and prompt grounding
