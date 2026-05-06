@@ -255,15 +255,31 @@ This keeps music-vocals benchmark creation execution-ready and bounded. Any late
 
 **Folders Created/Deleted/Modified:**
 - `.plans/`
+- `.plans/artifacts/2026-05-04-timestamp-benchmark-surface-qa/`
 - `benchmarks/fixtures/cod-test/truth/` (inspection)
 - `output/cod-test-phase1-timestamp-validation/phase1-gather-context/` (inspection)
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-04-recover-dialogue-timing-truth-and-split-timestamp-benchmarks.md`
+- `.plans/artifacts/2026-05-04-timestamp-benchmark-surface-qa/summary.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** QA validated the new benchmark files as the correct truth surfaces for benchmark-anchored review and future comparator work. Durable evidence was recorded in `.plans/artifacts/2026-05-04-timestamp-benchmark-surface-qa/summary.md`.
+
+**Validation run:**
+- `node scripts/qa/derive-cod-timestamp-benchmark-truth.cjs check`
+- `node --test test/scripts/derive-cod-timestamp-benchmark-truth.test.js`
+- ad-hoc JSON inspection comparing benchmark vs emitted artifact surfaces for row counts, field ownership, text alignment, and sequence drift
+
+**Exact findings:**
+- Dialogue benchmark is correctly a `20`-row truth surface (`dialogue_segments`) while the current emitted dialogue timestamp artifact and reconciled dialogue output are still `19` rows. This is intentional and correct: truth stays pinned to the 20-row spoken-dialogue gold surface instead of absorbing runtime drift.
+- Dialogue shape check passed. Benchmark rows own only `index`, `text`, `speaker`, `speaker_id`, `start`, `end`; emitted runtime rows additionally carry runtime-only fields such as `confidence` and `timing`.
+- Dialogue drift posture was confirmed and documented: benchmark row 0 (`They want you afraid. Fear makes you easier to control.`) is emitted as two rows; benchmark rows 4-5 are merged into one emitted row; benchmark rows 9-10 are compressed into `Spectre One report.`; additional punctuation/wording drift remains elsewhere (`we` vs `you`, `the idea` vs `an idea`, `preorder` vs `pre-order`, etc.).
+- Practical comparison consequence: direct `index -> index` timing comparison is only valid where text alignment still holds. Human review and future comparator wiring must keep the 20-row dialogue benchmark as authority and use split/merge-tolerant matching windows for drifted regions rather than forcing truth onto the 19-row runtime surface.
+- Music-vocals benchmark is faithfully extracted from current truth: it stays at `12` rows while the current emitted runtime artifact is `11` rows, keeps stable synthesized `index`, preserves current truth text/timing semantics, and excludes runtime metadata such as `confidence`, `timing`, recognition notes, and provenance-style fields.
+- Music-vocals top-level ownership is also correct: `summary`, `hasVocals`, and `totalDuration` in the benchmark match the current truth surface; `hasVocals` remains `true` in both benchmark and artifact.
+- Remaining limitation: current emitted music-vocals runtime order/compression still drifts from the benchmark truth order, so comparison/review must treat the benchmark as truth and the emitted artifact as a candidate surface rather than as the row authority.
 
 ---
 
@@ -282,25 +298,35 @@ This keeps music-vocals benchmark creation execution-ready and bounded. Any late
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-04-recover-dialogue-timing-truth-and-split-timestamp-benchmarks.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit completed against the plan contract, benchmark files, emitted artifact surfaces, generator, tests, and QA artifact. Evidence-backed verdict: the repo is now **ready for benchmark-anchored human timing review**, provided the review treats the new benchmark files as row authority and treats current emitted artifacts as candidate runtime surfaces that still require split/merge-tolerant alignment windows.
+
+**Audit evidence:**
+- Re-ran `node scripts/qa/derive-cod-timestamp-benchmark-truth.cjs check` and `node --test test/scripts/derive-cod-timestamp-benchmark-truth.test.js`; both passed.
+- Independently verified the dialogue benchmark is a deterministic `20`-row join between current `truth/dialogue-data.json` and historical timed truth from commit `1771225`: all `20/20` rows still match exactly by index/text, and the persisted benchmark copies only `speaker`, `speaker_id`, `start`, and `end` from history while keeping the current truth text/index surface verbatim.
+- Independently verified the music-vocals benchmark is a faithful `12`-row projection of current `truth/music-vocals-data.json`, with synthesized stable `index` and exact preservation of `text`, `performer`, `performer_id`, `delivery`, `start`, and `end` while excluding runtime-only metadata.
+- Confirmed the benchmark files intentionally remain cleaner than the emitted runtime artifacts: dialogue benchmark `20` rows vs emitted dialogue artifact `19`, and music-vocals benchmark `12` rows vs emitted music-vocals artifact `11`. This is correct because truth must not absorb runtime split/merge/order drift.
+
+**Readiness recommendation:** proceed with benchmark-anchored human review now, but anchor the review to the dedicated benchmark files and preserve the comparison posture already documented in `REF-01`: use direct row-level timing comparison only for text-clean `1:1` matches, and use aggregated split/merge window spans where runtime segmentation drifts from truth. Do **not** hand-split benchmark timing boundaries or collapse truth to the current emitted runtime rowing.
+
+**Critical caveat to preserve for the next lane:** split/merge tolerance is not optional. The dialogue benchmark is intentionally a `20`-row truth surface even though the current emitted runtime artifact is `19` rows, and the music-vocals benchmark is intentionally `12` rows while the emitted artifact is `11`. Any next-lane comparator or human review that falls back to naïve `index -> index` timing judgment across drifted regions will produce false timing conclusions by blaming runtime segmentation/text drift as timing drift.
 
 ---
 
 ## Final Results
 
-**Status:** ⚠️ Partial
+**Status:** ✅ Complete
 
-**What We Built:** Tasks 1 and 2 are complete. The repo now has durable dedicated timestamp benchmark truth files for both dialogue and music-vocals, plus a reproducible generator/validator and targeted automated coverage proving the files regenerate cleanly and that the dialogue recovery path still holds exact 20-row parity against commit `1771225` before any timing fields are copied.
+**What We Built:** The repo now has durable dedicated timestamp benchmark truth files for both dialogue and music-vocals, a reproducible generator/validator, targeted automated coverage, QA evidence, and an independent audit confirming those benchmark files are the correct anchors for benchmark-anchored human timing review. Dialogue truth now preserves historical timing without copying runtime drift into truth; music-vocals truth now has its own dedicated timestamp benchmark separated from runtime-only metadata.
 
-**Reference Check:** `REF-02` and `REF-04` were used for the locked benchmark contract and current dialogue truth anchoring; `REF-06` remains the direct music-vocals truth source; `REF-07` / `REF-08` kept the new benchmark file family aligned with the runtime timestamp artifact shapes without copying runtime-only metadata into truth; `REF-09` is now enforced in code as the historical dialogue timing source, with parity failure on any row-count/index/text break.
+**Reference Check:** `REF-02` and `REF-04` were used to lock the dialogue recovery contract and current dialogue truth anchoring; `REF-06` remained the direct music-vocals truth source; `REF-07` / `REF-08` kept the new benchmark file family aligned with the emitted runtime timestamp artifact lanes without copying runtime-only metadata into truth; `REF-09` remained the emitted reconciled dialogue text surface used for direct QA comparison against the 20-row dialogue benchmark posture. The audit also directly revalidated commit `1771225` as the historical dialogue timing source.
 
 **Commits:**
-- Pending coder commit/push before QA handoff.
+- None in this slice (`do not commit` respected).
 
-**Lessons Learned:** Keeping benchmark generation scripted matters here because the dialogue surface must stay pinned to the current 20-row truth wording while timing stays pinned to the historical commit; a manual copy would make future parity drift too easy to miss.
+**Lessons Learned:** The scripted benchmark generator is the right long-term guardrail here. Dialogue timing truth must stay pinned to historical timing while text stays pinned to the current 20-row gold wording, and review/comparator work must stay split/merge tolerant instead of forcing truth onto the currently drifted runtime row shapes.
 
 ---
 
-*Completed on YYYY-MM-DD*
+*Completed on 2026-05-04*

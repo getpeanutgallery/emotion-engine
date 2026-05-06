@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-05-06  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -160,11 +160,45 @@ Durable repo changes needed for this task were config/documentation only: new co
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-06-phase2-cod-test-retest-after-chunk-grounding.md`
-- fresh QA notes/artifacts under `output/`
+- `output/cod-test-phase2-only-retest-qa-2026-05-06-0907/qa-summary.md`
+- `output/cod-test-phase2-only-retest-qa-2026-05-06-0907/chunk-grounding-rerun-evidence.json`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** QA completed with a **partial / not-yet-valid dialogue-grounding verdict**. Evidence packet:
+- summary: `output/cod-test-phase2-only-retest-qa-2026-05-06-0907/qa-summary.md`
+- structured evidence: `output/cod-test-phase2-only-retest-qa-2026-05-06-0907/chunk-grounding-rerun-evidence.json`
+
+**Core finding:** the rerun is cleaner than the old whole-run baggage behavior, but it does **not** demonstrate chunk-local dialogue grounding in practice because the real Phase 2 prompts did not actually receive dialogue-context sections.
+
+**Exact prompt-layer evidence:** across the 28 successful provider-facing chunk prompts captured under `output/cod-test-phase2-only-retest-2026-05-06/_meta/ai/_prompts/`, the QA packet found:
+- `27 / 28` prompts included `Previous Summary`
+- `0 / 28` prompts included `Global Dialogue Context`
+- `0 / 28` prompts included `Global Music Vocals Context`
+
+Representative prompt captures:
+- chunk `0`: `output/cod-test-phase2-only-retest-2026-05-06/_meta/ai/_prompts/8f6b0fd756e745ce6dc9a23bfafc42a58ff6b7d931b8a0bc9c28fe23604690c9.json` — no previous summary, no dialogue context, no music-vocals context
+- chunk `20`: `output/cod-test-phase2-only-retest-2026-05-06/_meta/ai/_prompts/8255b38f7ba13586eba646137c95e37be14ac9868172ca1253e730d2930d095d.json` — previous summary present, but still no dialogue context and no music-vocals context despite REF-02 expecting dialogue support in this window
+- chunk `24`: `output/cod-test-phase2-only-retest-2026-05-06/_meta/ai/_prompts/37508b0e3cdefd5f650f48749fbec5ce17c7245844ecb800cd90d6083f55e7af.json` — previous summary present, still no dialogue or lyric context
+
+**Comparison to REF-02:** yesterday's bounded grounding packet documented that `18 / 29` chunks should have non-empty dialogueContext after chunk grounding. The fresh rerun delivered `0 / 28` prompts with a dialogue-context section, so the core success criterion from REF-02 was **not** met in actual production artifacts.
+
+**Why this matches the upstream artifacts:**
+- `output/cod-test-phase2-only-retest-2026-05-06/phase1-gather-context/dialogue-data.json` has `19` dialogue segments with text plus generic `speaker` / `speaker_id`, but `0 / 19` segments have non-null `start_time` or `end_time`
+- `output/cod-test-phase2-only-retest-2026-05-06/phase1-gather-context/music-vocals-data.json` has `14` lyric segments with `performer` / `performer_id`, but `0 / 14` segments have non-null `start_time` or `end_time`
+
+**Downstream cleanliness verdict:** the rerun **did** improve behavior versus the known pre-grounding whole-run baggage failure mode. Known dialogue-empty windows stayed mostly clean and visually grounded in `output/cod-test-phase2-only-retest-2026-05-06/phase2-process/chunk-analysis.json`, without old-style full-transcript smearing across every chunk. Representative clean empty-window summaries:
+- chunk `13` (`65`–`70`s): `A high-octane action chunk showing soldiers battling in a chaotic environment with explosions, floating debris, and a crashed aircraft, ending in a first-person combat view.`
+- chunk `18` (`90`–`95`s): `Fast-paced action sequence with soldiers using wingsuits and engaging in combat, set to aggressive heavy metal music.`
+- chunk `26` (`130`–`135`s): `This chunk displays intense action sequences with characters in combat gear and masks, featuring rapid cuts and dramatic visuals.`
+- chunk `27` (`135`–`140`s): `The chunk features intense action with explosions and combat, culminating in the Xbox logo for brand promotion.`
+
+**Honest caveats preserved for audit:**
+- music-vocals timing weakness remains unresolved; lyric context stayed absent in practice
+- lingering boundary drift risk still exists through continuity summaries even when chunk-local dialogue support is absent; for example, chunk `13`'s prompt (`output/cod-test-phase2-only-retest-2026-05-06/_meta/ai/_prompts/a4e684b372e5919277b93cb572429a5560ae8ece5a4315f022a7136c912474c1.json`) carries previous-summary text about `urgent dialogue` from chunk `12` even though REF-02 expected chunk `13` to be dialogue-empty
+- speaker / `speaker_id` weirdness remains visible upstream in `phase1-gather-context/dialogue-data.json` (`Speaker 1`, `spk_001`, etc.), but because dialogue context never reached the Phase 2 prompts, that issue was mostly masked rather than truly fixed downstream
+
+**QA bottom line:** this rerun is a **cleanliness improvement** but **not yet proof of actual chunk-local dialogue grounding in the real Phase 2 prompt path**. Audit should treat it as "less wrong / less smeared" rather than as a successful grounding pass.
 
 ---
 
@@ -182,25 +216,55 @@ Durable repo changes needed for this task were config/documentation only: new co
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-06-phase2-cod-test-retest-after-chunk-grounding.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independently audited the fresh bounded rerun against the active plan, the committed rerun config, the actual Phase 1/Phase 2 artifacts, the prompt captures, `video-chunks.cjs`, and the QA packet. The honest verdict is more precise than either a clean pass or a simple regression: **the rerun improved downstream cleanliness, but it did not validate real chunk-local dialogue grounding because the rerun contract never supplied the timestamp artifacts that the grounded prompt path actually depends on.**
+
+**Evidence-backed findings:**
+- **The bounded rerun config omitted the required timestamp scripts.** `configs/cod-test-phase2-only-retest-2026-05-06.yaml` runs only:
+  - `server/scripts/get-context/get-dialogue.cjs`
+  - `server/scripts/get-context/get-music.cjs`
+  - `server/scripts/get-context/get-music-vocals.cjs`
+  - `server/scripts/get-context/reconcile-famous-song-phase1.cjs`
+  It does **not** run `get-dialogue-timestamps.cjs` or `get-music-vocals-timestamps.cjs`.
+- **The fresh Phase 1 artifact set confirms those timestamp outputs were absent.** `output/cod-test-phase2-only-retest-2026-05-06/phase1-gather-context/` contains `dialogue-data*.json` and `music-vocals-data*.json`, but no `dialogue-timestamps-data*.json` and no `music-vocals-timestamps-data*.json`.
+- **Phase 2 grounding code is implemented, but it needs timestamp artifacts to populate chunk-local prompt sections.** In `server/scripts/process/video-chunks.cjs`, `buildChunkDialogueContext(...)` and `buildChunkMusicVocalsContext(...)` first prefer timestamp artifacts and otherwise fall back only to source segments that already have real `start`/`end` windows. The fresh source artifacts do not have those fields: the rerun's `phase1-gather-context/dialogue-data.json` dialogue rows contain only `speaker`, `speaker_id`, `text`, `confidence`, `index`, and `music-vocals-data.json` vocal rows contain only `performer`, `performer_id`, `text`, `confidence`, `delivery`, `index`.
+- **That directly explains the prompt-layer outcome.** The QA packet and direct prompt spot-checks show the real provider-facing prompts under `output/cod-test-phase2-only-retest-2026-05-06/_meta/ai/_prompts/` had `27/28` successful prompts with `Previous Summary`, but `0/28` with `Global Dialogue Context` and `0/28` with `Global Music Vocals Context`. Representative prompt: chunk `20` prompt `output/cod-test-phase2-only-retest-2026-05-06/_meta/ai/_prompts/8255b38f7ba13586eba646137c95e37be14ac9868172ca1253e730d2930d095d.json` shows `Previous Summary` and `Global Music Context`, but no dialogue/vocals support sections.
+- **This means dialogue-grounding failed in production artifacts for this rerun.** REF-02 expected `18/29` chunks to carry non-empty dialogue context when timestamp artifacts were present; the fresh rerun delivered `0/28` provider-facing prompts with a dialogue-context section.
+- **What actually improved is cleanliness, not successful grounding.** The absence of whole-run transcript baggage is real: known empty windows in `output/cod-test-phase2-only-retest-2026-05-06/phase2-process/chunk-analysis.json` stayed mostly visual/clean instead of carrying the entire transcript history. Representative clean windows remain chunk `13` (`65-70s`), chunk `18` (`90-95s`), chunk `26` (`130-135s`), and chunk `27` (`135-140s`).
+- **Continuity-summary drift is still a real contaminant.** Because `Previous Summary` was present on `27/28` successful prompts, narrative carry-forward can still leak dialogue-ish baggage into otherwise empty windows. Example: chunk `13` prompt `output/cod-test-phase2-only-retest-2026-05-06/_meta/ai/_prompts/a4e684b372e5919277b93cb572429a5560ae8ece5a4315f022a7136c912474c1.json` carries previous-summary text about `urgent dialogue` from chunk `12` even though REF-02 expected chunk `13` to be dialogue-empty.
+- **Music-vocals timing remains unresolved.** Even aside from the omitted timestamp script in this rerun config, the current lane still has weak lyric timing evidence from the earlier validated packet in REF-01/REF-02; this rerun provides no new evidence that lyric-aware chunk grounding is working in practice.
+
+**Audit interpretation:** yesterday's readiness framing was **too optimistic in operational practice**. The grounded Phase 2 selection logic itself was not disproved; the bounded QA replay from REF-02 still shows that logic can select chunk-local dialogue correctly when timestamp artifacts exist. What this rerun disproved is the assumption that the approved bounded Phase 1→Phase 2 execution contract would naturally exercise that grounded path. It did not. The config omitted the timestamp-producing Phase 1 steps, so the rerun could only validate a narrower claim: **the system is less wrong because it no longer smears whole-run transcript/lyric baggage everywhere, but it is not yet a production-proof chunk-local dialogue-grounding pass.**
+
+**Exact recommended next lane:**
+1. **Coder lane first:** fix the canonical rerun contract so any Phase 2 `video-chunks` validation run generates and persists the timestamp artifacts that the prompt path actually consumes. At minimum, add the Phase 1 timestamp scripts to the bounded rerun contract:
+   - `server/scripts/get-context/get-dialogue-timestamps.cjs`
+   - `server/scripts/get-context/get-music-vocals-timestamps.cjs`
+   and verify the run root now contains `dialogue-timestamps-data(.reconciled).json` before Phase 2 starts.
+2. **Then QA lane:** rerun the same bounded Phase 2 retest and audit the real provider-facing prompts again, with the success criterion narrowed to: do dialogue-bearing windows now emit `Global Dialogue Context` in practice, while empty windows stay clean?
+3. **Keep music-vocals caveated, not blocking.** Do **not** broaden the immediate next lane into lyric timing redesign unless the dialogue timestamp artifacts are present and dialogue prompt sections still fail. If that second bounded rerun still shows `0` dialogue-context prompt sections despite present timestamp artifacts, then the next escalation should be a code-path audit inside Phase 2 prompt assembly rather than another config-only retry.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ⚠️ Partial
 
-**What We Built:** Pending.
+**What We Built:** Produced a clean bounded Phase 1→Phase 2 rerun and a useful QA packet, but the rerun did **not** validate the intended production chunk-local dialogue-grounding behavior. It validated a narrower improvement: the system no longer sprays whole-run transcript/lyric baggage across empty windows, yet it still failed to inject chunk-local dialogue or lyric support into the real Phase 2 prompts for this run.
 
-**Reference Check:** Pending.
+**Reference Check:**
+- `REF-01`: partially satisfied. The rerun did test the post-faster-whisper/post-grounding lane, but it did **not** reproduce the timestamp-artifact precondition that made yesterday's bounded grounding replay succeed.
+- `REF-02`: not satisfied for the main dialogue-grounding success criterion in real prompts. REF-02 showed `18/29` chunks should receive non-empty chunk-local dialogue context when timestamp artifacts are available; this rerun delivered `0/28` successful prompts with `Global Dialogue Context`.
+- `REF-04`: satisfied at code level. `video-chunks.cjs` does implement chunk-local selection behavior, but this rerun did not feed it the required timestamp artifacts.
+- `REF-05`: the dedicated rerun config worked as written, but that config itself is now part of the problem statement because it omitted timestamp-generation steps.
+- `REF-06`: satisfied for bounded pipeline execution. The pipeline ran successfully; the failure was validation-contract completeness, not pipeline stability.
 
 **Commits:**
-- Pending.
+- `3dcf699` - Add bounded cod Phase 2 retest config
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** The production truth surface is not just `video-chunks.cjs` correctness in isolation. A bounded rerun only proves chunk-local grounding if the run contract actually generates the timestamp artifacts that Phase 2 grounding consumes. Without those artifacts, the system can look cleaner simply because context went empty, which is an improvement over whole-run baggage but not proof that dialogue grounding is truly working end-to-end.
 
 ---
 
-*Completed on YYYY-MM-DD*
+*Completed on 2026-05-06*

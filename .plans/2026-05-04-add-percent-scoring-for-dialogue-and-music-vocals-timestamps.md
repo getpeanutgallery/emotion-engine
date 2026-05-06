@@ -344,11 +344,25 @@ That is the intended honesty: poor timing availability should show up as poor re
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-04-add-percent-scoring-for-dialogue-and-music-vocals-timestamps.md`
-- QA artifacts if useful
+- `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics/fixture/benchmark.json`
+- `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics/fixture/fixture.json`
+- `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics/fixture/qa-config.yaml`
+- `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics/qa-run-result.json`
+- `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics/reports/benchmark-summary.json`
+- `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics/reports/benchmark-summary.md`
+- `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics/reports/artifact-results/dialogueTimestampsData.json`
+- `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics/reports/artifact-results/musicVocalsTimestampsData.json`
+- `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics/2026-05-04-timestamp-metrics-qa.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Ran benchmark-style QA directly against the real cod-test timestamp truth/output surfaces by creating a QA-only fixture under `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics/fixture/` and executing `runBenchmarkStage()` against `output/cod-test-phase1-timestamp-validation`. The resulting summary/report artifacts prove that the new percentage blocks populate in real benchmark output: `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics/reports/benchmark-summary.{json,md}` plus per-artifact reports in `.../artifact-results/`. Added a durable QA note at `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics/2026-05-04-timestamp-metrics-qa.md` capturing the exact commands, output paths, percentages, and interpretation.
+
+**Observed dialogue timestamp percentages (real cod-test timestamp-validation output):** `dialogue_text_full_transcript_pct=93.6%`, `dialogue_text_windowed_pct=93.6%`, `dialogue_boundary_pct=0.0%`, `dialogue_timing_eligible_pct=72.2%`, `dialogue_timing_resolved_pct=100.0%`, `dialogue_timing_start_pct=7.7%`, `dialogue_timing_end_pct=0.0%`, `dialogue_timing_window_pct=4.3%`, `dialogue_timing_blocked_by_text_drift_pct=27.8%` with `timing_eligible_unit_count=13`, `timing_resolved_unit_count=13`, `timing_blocked_by_text_drift_count=5`. QA verdict: the metrics are benchmark-honest. They show that most dialogue text is alignable, blocked text-drift regions are surfaced explicitly instead of depressing timing accuracy directly, and the emitted runtime timestamps are resolvable but land far away from the benchmark truth windows on this artifact pair (hence the near-zero start/end/window scores).
+
+**Observed music-vocals timestamp percentages (real cod-test timestamp-validation output):** `vocal_text_full_transcript_pct=50.8%`, `vocal_text_windowed_pct=54.9%`, `vocal_boundary_pct=33.3%`, `vocal_timing_eligible_pct=10.0%`, `vocal_timing_resolved_pct=0.0%`, `vocal_timing_start_pct=n/a`, `vocal_timing_end_pct=n/a`, `vocal_timing_window_pct=n/a`, `vocal_timing_blocked_by_text_drift_pct=40.0%`, `vocal_attribution_pct=57.6%` with `timing_eligible_unit_count=1`, `timing_resolved_unit_count=0`, `timing_blocked_by_text_drift_count=4`. QA verdict: this is exactly the intended honesty posture for unresolved lyric timing — the system does not invent fake timing-accuracy percentages when no eligible unit resolves, and it exposes a large blocked slice separately via `vocal_timing_blocked_by_text_drift_pct`.
+
+**QA caveat deliberately documented, not repaired:** both QA artifacts still reported overall artifact status `error` because the real timestamp truth surfaces omit fields like output `confidence`, so the raw structured comparator still records schema/field mismatches outside the new scoring block. That did not prevent the new timestamp percentage metrics from appearing and being interpretable, but it is relevant audit context for Task 4.
 
 ---
 
@@ -367,24 +381,42 @@ That is the intended honesty: poor timing availability should show up as poor re
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-04-add-percent-scoring-for-dialogue-and-music-vocals-timestamps.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit passed. Re-read the active scoring contract, implementation in `server/lib/benchmark-runner.cjs`, focused regression coverage in `test/lib/benchmark-runner.test.js`, the QA note, the QA compact result, the benchmark summary markdown, and the per-artifact report JSONs for both timestamp artifacts. Also re-ran the focused benchmark-runner suite with `node --test test/lib/benchmark-runner.test.js --test-name-pattern 'timestamp scoring|time-aware alignment|split merge timing percentages|separates blocked text drift'` and confirmed all targeted tests passed.
+
+**Audit verdict on score honesty / compatibility:**
+- The new timestamp percentages are **benchmark-honest and compatible with the repo’s existing `% out of 100` model**. They follow the same artifact-specific pattern established in `REF-07`: explicit percentage families, no composite/master score, raw counts retained beside the percentages, and markdown/json summary surfaces that print `n/a` rather than fake `0.0%` timing-quality numbers when nothing resolved.
+- Dialogue results are honest on the real cod artifact pair: strong text similarity (`93.6%`) coexists with explicit blocked text drift (`27.8%`) and terrible timing closeness (`7.7 / 0.0 / 4.3`), so the scoring does **not** confuse “we found timestamps” with “the timestamps are close to truth.”
+- Music-vocals results are also honest: only `10.0%` of units are timing-eligible, `0.0%` of those resolve, and the start/end/window timing fields render `n/a`, which is the correct posture for unresolved lyric timing rather than fake precision.
+
+**Audit verdict on usefulness:**
+- The scores are **useful for judging closeness** because they separate the three things a reviewer actually needs to know: text fidelity, how much of the artifact was even timing-judgeable, and how good the resolved timing was.
+- `*_timing_blocked_by_text_drift_pct` is doing real work here. It prevents blocked regions from silently depressing timing accuracy means while still making the blocker visible. That keeps the scores readable without hiding upstream drift.
+- The split/merge window treatment is also ready for next-session decision-making: the tests prove window-level timing percentages can be emitted without inventing sub-line truth boundaries, so these scores remain compatible with the repo’s established benchmark-authoritative split/merge posture instead of regressing to naive index math.
+
+**QA caveat resolved at the audit level (not repaired in code):**
+- The overall artifact `status=error` seen in QA is currently driven by **non-timestamp structural/schema mismatches outside the new scoring block**, most visibly output-only per-segment `confidence` fields that the dedicated timestamp truth files intentionally omit. The per-artifact report JSONs confirm this directly: the `errors[]` arrays are confidence-field structural misses, while the new timestamp scoring blocks and `window_alignments` still populate correctly and remain interpretable.
+- Recommendation: preserve this as the **one caveat for next session**. If we want the overall benchmark artifact status to stop reading as `error` for these timestamp surfaces, we should do a narrow follow-up on comparator posture / ignore-path policy for output-only metadata like `confidence`. That is a cleanup/readability slice, not a reason to distrust the new percentage metrics.
+
+**Readiness recommendation:**
+- This scoring slice is **complete enough to hand off for next-session review and decision-making now**. The metrics are honest, the regression tests cover the critical split/merge and unresolved-timing cases, and the real cod QA surfaces demonstrate that the scores communicate the right story.
+- Next users should rely on the timestamp percentage blocks for closeness judgment, while remembering that current raw artifact `error` status still includes unrelated schema noise from omitted non-owned fields like `confidence`.
 
 ---
 
 ## Final Results
 
-**Status:** ⚠️ Partial
+**Status:** ✅ Complete
 
-**What We Built:** The scoring-design lane and coder implementation lane are complete. The benchmark runner can now emit dedicated timestamp percentage scoring blocks for dialogue and music-vocals, including text, boundary, timing eligibility/resolution, start/end/window accuracy, blocked-by-text-drift percentages, diagnostic counts, and enriched `window_alignments` timing fields with no composite score.
+**What We Built:** The repo now has a complete timestamp-percentage scoring slice for dialogue and music-vocals benchmark artifacts. The benchmark runner emits dedicated `dialogueTimestampScoring` / `musicVocalsTimestampScoring` blocks with explicit text, boundary, timing-eligibility, timing-resolution, start-edge, end-edge, window-overlap, blocked-by-text-drift, and attribution percentages; enriched window-alignment diagnostics; and no composite/master score.
 
-**Reference Check:** Implementation follows the contract locked against `REF-04`, `REF-05`, `REF-07`, and `REF-08`, and the test cases explicitly exercise the honesty rules called out by `REF-06` (blocked text drift, split/merge windows, unresolved timing -> `n/a` accuracy metrics). The real cod-test benchmark fixture (`REF-09`) was intentionally left unwired for these new artifacts in this bead.
+**Reference Check:** The final audit revalidated the contract and implementation against `REF-04`, `REF-05`, `REF-07`, and `REF-08`, and revalidated the practical honesty of the scores against the real cod QA surfaces. The focused test coverage explicitly proves the intended honesty rules from `REF-06`: split/merge timing is judged at the window level, blocked text drift is surfaced separately, and unresolved timing yields `n/a` timing-quality percentages rather than fake zeros.
 
 **Commits:**
-- Pending coder commit/push after QA handoff gating is cleared.
+- None in this audit lane (`do not commit` respected here). The plan reflects the completed audit/readiness verdict only.
 
-**Lessons Learned:** The safest place to judge unresolved timestamp quality is the artifact-specific scoring block, not raw leaf-by-leaf structured comparison. Ignoring raw `start`/`end` leaf checks for timestamp profiles keeps missing timing from masquerading as a malformed artifact while still surfacing the problem honestly through `*_timing_resolved_pct` and the per-window timing metadata.
+**Lessons Learned:** The right place to summarize timestamp quality is the artifact-specific scoring block, not the raw structured-compare status. The remaining confusion comes from schema noise such as output-only `confidence` fields causing overall artifact `error`, while the new percentage metrics themselves already tell the truth clearly. That caveat should be preserved for the next session as a comparator/readability cleanup, not as a knock against the scoring model.
 
 ---
 

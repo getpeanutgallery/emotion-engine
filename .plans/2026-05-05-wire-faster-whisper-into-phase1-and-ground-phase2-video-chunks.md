@@ -210,11 +210,42 @@ This plan intentionally keeps music-vocals more conservative than dialogue. Fast
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-05-wire-faster-whisper-into-phase1-and-ground-phase2-video-chunks.md`
-- possible QA artifact/note
+- `output/cod-test-phase2-chunk-grounding-qa-2026-05-05-1626/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed `ee-tw0v` and performed a bounded QA replay against the fresh Task 3 Phase 1 COD packet without broadening into a paid/provider rerun yet. The key check used the real Task 4 selection helpers exported from `server/scripts/process/video-chunks.cjs` and the real refreshed Phase 1 artifacts under `output/cod-test-phase1-timestamp-validation/phase1-gather-context/` to compute what each 5-second COD chunk would now hand to the persona-facing lane.
+
+- **Exact commands run:**
+  - `bd update ee-tw0v --status in_progress --json`
+  - `node - <<'NODE' > output/cod-test-phase2-chunk-grounding-qa-2026-05-05-1626/chunk-grounding-evidence.json` using `require('./server/scripts/process/video-chunks.cjs').__test.buildChunkDialogueContext` and `.__test.buildChunkMusicVocalsContext` against:
+    - `output/cod-test-phase1-timestamp-validation/phase1-gather-context/dialogue-data.reconciled.json`
+    - `output/cod-test-phase1-timestamp-validation/phase1-gather-context/dialogue-timestamps-data.reconciled.json`
+    - `output/cod-test-phase1-timestamp-validation/phase1-gather-context/music-vocals-data.reconciled.json`
+    - `output/cod-test-phase1-timestamp-validation/phase1-gather-context/music-vocals-timestamps-data.reconciled.json`
+  - `python3 - <<'PY'` to summarize that JSON into `output/cod-test-phase2-chunk-grounding-qa-2026-05-05-1626/qa-summary.md`
+  - `node --test test/scripts/video-chunks.test.js > output/cod-test-phase2-chunk-grounding-qa-2026-05-05-1626/video-chunks.test.log 2>&1`
+- **Output paths / evidence:**
+  - `output/cod-test-phase2-chunk-grounding-qa-2026-05-05-1626/chunk-grounding-evidence.json`
+  - `output/cod-test-phase2-chunk-grounding-qa-2026-05-05-1626/qa-summary.md`
+  - `output/cod-test-phase2-chunk-grounding-qa-2026-05-05-1626/video-chunks.test.log`
+- **Concrete chunk-local evidence (dialogue):** the old baggage surface would have handed every chunk all `19` dialogue rows from the whole run. The new grounding is chunk-local and bounded to overlapping windows:
+  - chunk `0` (`0-5s`) now gets only `['They want you afraid.', 'Fear makes you easier to control.']`
+  - chunk `1` (`5-10s`) gets only `['Fear makes you easier to control.', "It's time to wake up."]`
+  - chunk `10` (`50-55s`) gets only `['Spectre One, report.', 'Need a sitrep.']`
+  - chunk `12` (`60-65s`) gets only `['This isn't real.', "The hell it ain't!"]`
+  - chunk `20` (`100-105s`) gets only `['So eager to leave, David.', 'Killing a man is a hell of a lot easier than killing an idea.']`
+  - chunk `24` (`120-125s`) gets only `['Get the Rezno... challenge pack when you pre-order now.']`
+  - empty windows now stay honestly empty instead of receiving transcript baggage, e.g. chunk `8` (`40-45s`), chunk `9` (`45-50s`), chunks `13-18` (`65-95s`), chunk `26` (`130-135s`), chunk `27` (`135-140s`), and the terminal micro-chunk `28` (`140-140.042s`).
+- **Concrete chunk-local evidence (music-vocals):** the old baggage surface would have handed every chunk all `10` lyric rows. The new grounding no longer does that. In this fresh COD packet, however, `music-vocals-timestamps-data.reconciled.json` currently contains `10` lyric rows but `0` rows with finite `start/end` windows, so the new lane correctly passes **empty chunk-local music-vocals context** across the bounded replay instead of spraying unresolved whole-run lyrics into every chunk. Grounding metadata consistently reports `strategy=empty` with `fallbackReason=timestamp_artifact_present_but_no_overlapping_timed_music_vocals`.
+- **Quantified surface change across the full bounded replay (`29` chunks at `5s`):**
+  - prior per-chunk dialogue baggage: `19` rows every chunk
+  - new grounded dialogue surface: non-empty on `18/29` chunks, `0-2` rows per chunk in this packet
+  - prior per-chunk music-vocals baggage: `10` rows every chunk
+  - new grounded music-vocals surface: non-empty on `0/29` chunks because timed overlap evidence is currently absent, but importantly also no longer polluted by whole-run lyric spill
+- **Persona-facing cleanliness / grounding assessment:** for dialogue, the lane is much cleaner and better grounded. The persona prompt input is now localized to the chunk’s own spoken evidence instead of seeing irrelevant future/past transcript lines. This is especially visible in silent/non-dialogue windows, which now stay empty instead of being contaminated by the full-run transcript. For music-vocals, the context is also cleaner in the narrow sense that irrelevant lyric baggage is gone, but it is not yet richer: current COD music-vocals timing coverage is too weak to contribute chunk-local lyric evidence in the bounded replay.
+- **Bounded cod-test rerun readiness call:** **ready for a bounded Phase 2 cod-test rerun if the goal is to validate chunk-local dialogue grounding and verify that empty/quiet windows stay clean.** Dialogue grounding is behaving as intended, the focused regression suite still passes, and the bounded replay shows no regression back to whole-run transcript leakage. **Caveat:** expect `musicVocalsContext` to be mostly or entirely empty on COD until Phase 1 music-vocals timing produces real windows; that does not block the bounded rerun for dialogue-grounding QA, but it does limit what that rerun can tell us about lyric-aware chunk behavior.
+- **Notable QA nuance:** this fresh COD packet did not exercise the bounded-index fallback path in real data because the current dialogue timestamp artifact already has finite windows for all `19` surfaced dialogue rows. The bounded-index fallback remains covered by `test/scripts/video-chunks.test.js`, but the real bounded replay mostly exercised the direct `phase1_timestamp_overlap` and honest `empty` paths.
 
 ---
 
@@ -232,24 +263,34 @@ This plan intentionally keeps music-vocals more conservative than dialogue. Fast
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-05-wire-faster-whisper-into-phase1-and-ground-phase2-video-chunks.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independently audited the landed faster-whisper Phase 1 integration (`52f8d4e`) plus the Phase 2 chunk-grounding change (`8971e35`) against the actual code, targeted tests, and the fresh QA packets from Tasks 3–5.
+
+- **Phase 1 implementation is real and correctly scoped:** `server/scripts/get-context/get-dialogue-timestamps.cjs` now sources timing from `deriveFasterWhisperDialogueTiming(...)` instead of the old `get-dialogue.cjs` rerun, while `server/lib/faster-whisper-dialogue-timing.cjs` enforces the repo-local `.venv-faster-whisper` Python path, repo-local caches, and a hard failure if no timed segments come back. The emitted artifact still preserves source text verbatim and records honest faster-whisper provenance/runtime metadata in the persisted output. This matches the narrow contract from Task 1 rather than broadening architecture. (`REF-04`, `REF-06`, `REF-10`)
+- **Fresh Phase 1 evidence is materially better than the pre-faster-whisper baseline:** the rerun packet under `output/cod-test-phase1-timestamp-validation/qa-timestamp-metrics-faster-whisper-rerun-2026-05-05-1427/` shows `dialogue_text_full_transcript_pct 95.0%`, `dialogue_timing_eligible_pct 77.8%`, `dialogue_timing_start_pct 72.0%`, `dialogue_timing_end_pct 76.1%`, and `dialogue_timing_window_pct 60.4%`, versus the prior surface `93.6%`, `72.2%`, `7.7%`, `0.0%`, and `4.3%`. The final rerun artifact has `19` dialogue rows, all `19` with finite windows, and runtime provenance `faster_whisper@1.2.1`, `device=cuda`, `computeType=float16`, `model=small.en`, `wordTimestamps=true`, `vadFilter=false`. That is strong enough evidence that the new clock is substantially better for dialogue timing. (`REF-03`, `REF-08`, `REF-09`, `REF-10`)
+- **What is still weak in Phase 1:** the benchmark artifact status is still `error`, not pass. `dialogue_boundary_pct` remains `0.0%` because one split and two merges still differ from truth; four windows are still blocked by text drift; and speaker/speaker_id mismatches remain. So this lane is not benchmark-clean and should not be presented as solved. The improvement is substantial, but it is bounded to timing quality and transcript cleanliness, not full truth parity.
+- **Music-vocals timing remains weak but no longer pollutes Phase 2:** the same fresh COD packet still shows `music-vocals-timestamps-data.reconciled.json` with `10` lyric rows and `0` finite `start/end` windows, and the benchmark summary still reports `vocal_timing_resolved_pct=0.0%`. That means lyric timing is not ready to carry semantic weight in the next rerun. However, because Phase 2 now grounds by overlapping windows and falls back honestly to empty context, the weak music-vocals timing now produces absence instead of whole-run lyric contamination.
+- **Phase 2 grounding behavior is ready for rerun use:** `server/scripts/process/video-chunks.cjs` now selects canonical timestamp artifacts, filters to chunk-overlapping windows, carries bounded untimed spans only inside timestamp brackets, falls back to source-timed overlap when needed, and otherwise stays empty with explicit grounding metadata. The focused regression suite passed (`41/41`), and the bounded QA replay under `output/cod-test-phase2-chunk-grounding-qa-2026-05-05-1626/` shows dialogue context dropping from whole-run `19` rows per chunk to chunk-local `0-2` rows across the 29 COD chunks, with silent windows staying empty. Music-vocals context is `0/29` chunks on this packet, but critically it is now empty rather than polluted. (`REF-07`, `REF-09`)
+- **Audit verdict / rerun-readiness decision:** **ready for the next cod-test rerun with video-chunks in place, with an explicit caveat rather than a block.** The evidence is strong enough to justify a bounded rerun immediately and a fuller rerun if the goal is to measure the effect of chunk-local dialogue grounding and cleaner empty windows. **Music-vocals timing limitations should not block that rerun** because the new system degrades honestly to empty lyric context instead of smearing unresolved lyrics across every chunk. But those limitations **must be called out** in the readout: the rerun can validate dialogue-grounding improvements and cleaner chunk inputs, not strong lyric-aware chunk grounding.
+- **Recommended interpretation for the next rerun:** treat success as “does chunk-local dialogue grounding improve downstream chunk behavior without transcript baggage?” not “have we solved music-vocals timestamping?” If the next rerun underperforms, the likely remaining causes are dialogue boundary/text-attribution mismatches or unrelated downstream prompt/model behavior, not a regression back to whole-run transcript leakage.
 
 ---
 
 ## Final Results
 
-**Status:** ⚠️ Partial
+**Status:** ✅ Complete
 
-**What We Built:** Draft execution plan for wiring faster-whisper into Phase 1 dialogue timestamps and using Phase 1 timestamp windows to ground Phase 2 video-chunks.
+**What We Built:** Landed a faster-whisper-backed Phase 1 dialogue timestamp source and a Phase 2 `video-chunks` grounding path that limits dialogue/music-vocals context to chunk-local overlap windows instead of spraying whole-run transcript baggage into every chunk.
 
-**Reference Check:** Draft only.
+**Reference Check:** `REF-03`, `REF-04`, `REF-06`, `REF-07`, `REF-08`, `REF-09`, and `REF-10` were validated directly through landed code, fresh rerun artifacts, and the bounded QA replay. Deliberate deviation remains on music-vocals maturity: this plan improved dialogue-grounding readiness first and left lyric timing as a caveated weak point rather than solving it here.
 
 **Commits:**
-- None.
+- `52f8d4e` - Wire faster-whisper into dialogue timestamps
+- `559e071` - Document faster-whisper timestamp validation handoff
+- `8971e35` - Ground phase2 chunk context by timestamp windows
 
-**Lessons Learned:** The real product win is not just better timestamp scores; it is chunk-local grounding for Phase 2 so the persona layers stop seeing irrelevant transcript baggage.
+**Lessons Learned:** The win condition for this slice was not a perfect timestamp benchmark pass. It was replacing the unstable dialogue source clock with a materially better one and then using those timings to stop feeding irrelevant transcript baggage into Phase 2. Music-vocals timing is still weak, but once chunk grounding became honest-empty instead of whole-run noisy, that weakness became a caveat for rerun interpretation instead of a blocker.
 
 ---
 

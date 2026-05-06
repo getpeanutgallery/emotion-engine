@@ -439,6 +439,36 @@ Secondary clarity cleanup included in the same packet-only lane:
 - review-unit order still matches `output/cod-test-phase1-timestamp-validation/phase1-gather-context/dialogue-timestamp-vs-truth.comparison.json`
 - every repaired `source_clip_suggestion` now has a declared `surface` and matches only that surface's bounds plus the documented padding rule
 
+### Task 4b: QA the repaired packet for final handoff usability
+
+**Bead ID:** `ee-84pf`  
+**SubAgent:** `primary` (for `qa` workflow role)  
+**Role:** `qa`  
+**References:** `REF-03`, `REF-04`, `REF-05`, `REF-06`  
+**Prompt:** `Claim bead ee-84pf on start with bd update ee-84pf --status in_progress --json. QA the repaired dialogue timestamp human-review packet after the clip-suggestion fix. Confirm the packet still preserves the 19-unit contract and 12/2/5 split, confirm source_clip_suggestion is no longer mixed-surface and is practical for handoff, confirm the repaired examples remain correct (dlg-0002, dlg-0010, dlg-0015), confirm the added comparison-array-index vs native-index labeling improves clarity without confusing the worksheet, update the active plan with exact findings and commands used, and close bead ee-84pf with bd close ee-84pf --reason "Repaired dialogue human-review packet QA-validated" --json only when validation is fully documented.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `.plans/artifacts/2026-05-04-dialogue-timestamp-human-review/` (inspection + QA notes)
+
+**Files Created/Deleted/Modified:**
+- `.plans/2026-05-04-dialogue-timestamp-human-review-against-benchmark.md`
+- `.plans/artifacts/2026-05-04-dialogue-timestamp-human-review/qa-summary.md`
+
+**Status:** ✅ Complete
+
+**Results:** Repaired-packet QA confirms the handoff blocker is fixed. `packet.json.review_units` still contains all `19` comparison units, `packet.json.review_mode_counts` remains exactly `12 row / 2 window / 5 blocked`, and `review-decisions.json.decisions` still contains one durable template record per unit. `source_clip_suggestion` is now practical for handoff because every unit stays on one declared surface only: runtime-bounded clips when runtime timing exists, truth-bounded clips when runtime timing is missing/unresolved. The repaired spot checks match the intended rule exactly: `dlg-0002` = `2.0s → 5.0s` on `runtime`, `dlg-0010` = `22.5s → 26.5s` on `runtime`, and `dlg-0015` = `98.5s → 103.5s` on `truth` because runtime timing is unresolved.
+
+The comparison-array-index vs native-index clarity fix also holds up in direct worksheet review: `packet.json` now includes both `comparison_array_index` and `native_index` in `truth_rows` / `runtime_rows`, and `packet.md` renders rows as `array X | row Y`, which improves traceability on later drifted rows without making the worksheet harder to follow. Updated QA artifact: `.plans/artifacts/2026-05-04-dialogue-timestamp-human-review/qa-summary.md`.
+
+**Commands used during repaired QA:**
+- `bd update ee-84pf --status in_progress --json`
+- `python3 - <<'PY' ... PY` — asserted packet/review-decision counts, preserved comparison order, verified the locked `12/2/5` mode split, validated the single-surface clip rule across all units, and confirmed `comparison_array_index` + `native_index` labeling exists for every truth/runtime row while spot-checking `dlg-0002`, `dlg-0010`, and `dlg-0015`
+
+**QA conclusion:** **READY** to hand directly to Derrick from a QA perspective. No packet-level caveat remains from this lane.
+
+### Historical audit before repair (superseded by Task 4a + Task 4b)
+
 **Bead ID:** `ee-bsux`  
 **SubAgent:** `primary` (for `auditor` workflow role)  
 **Role:** `auditor`  
@@ -458,20 +488,64 @@ Secondary clarity cleanup included in the same packet-only lane:
 
 ---
 
+### Task 4c: Audit the repaired packet for Derrick handoff readiness
+
+**Bead ID:** `ee-3zly`  
+**SubAgent:** `primary` (for `auditor` workflow role)  
+**Role:** `auditor`  
+**References:** `REF-01`, `REF-02`, `REF-03`, `REF-04`, `REF-06`  
+**Prompt:** `Claim bead ee-3zly on start with bd update ee-3zly --status in_progress --json. Audit the repaired dialogue timestamp human-review packet after the clip-suggestion fix and determine whether it is truly ready to hand directly to Derrick. Confirm the repair fixed the blocking usability issue, confirm the packet remains benchmark-anchored, split/merge-tolerant, and structurally consistent, then update the active plan with the final verdict. Close bead ee-3zly with bd close ee-3zly --reason "Repaired dialogue packet handoff audited" --json only when the verdict is evidence-backed.`
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `.plans/artifacts/` (inspection)
+- `scripts/qa/` (inspection)
+
+**Files Created/Deleted/Modified:**
+- `.plans/2026-05-04-dialogue-timestamp-human-review-against-benchmark.md`
+
+**Status:** ✅ Complete
+
+**Results:** Final audit re-checked the repaired packet bundle directly against `REF-06`, the generator, and the emitted artifacts. The blocking usability issue is fixed: `source_clip_suggestion` now stays on a **single declared timing surface per unit** (`runtime` when runtime timing exists; `truth` when runtime timing is missing/unresolved), and the known inflated examples are repaired exactly as intended (`dlg-0002` now `2.0s → 5.0s`, `dlg-0010` now `22.5s → 26.5s`, `dlg-0015` truth-fallback `98.5s → 103.5s`). The secondary clarity issue is also reduced: packet rows now show `array X | row Y`, and `packet.json` preserves both `comparison_array_index` and row-native `native_index` inside `truth_rows` / `runtime_rows`.
+
+Structural/truth checks passed in the repaired state:
+- `packet.json` still contains the required top-level contract keys and preserves all `19` comparison units in exact `REF-06` order.
+- The locked review split remains exactly `12 row / 2 window / 5 blocked`.
+- The grouped windows remain `dlg-0001` and `dlg-0005`; the blocked units remain `dlg-0007`, `dlg-0009`, `dlg-0010`, `dlg-0015`, `dlg-0016`.
+- `review-decisions.json` remains a durable `pending_human_review` template with one decision object per packet unit and the expected verdict enum.
+
+**Commands used during final audit:**
+- `bd update ee-3zly --status in_progress --json`
+- targeted Python assertions validating required packet fields, unit order parity with `REF-06`, locked mode counts, one-decision-per-unit durability, and single-surface clip-bounds behavior for every review unit
+- `git log --oneline --decorate -n 5` to confirm the repaired packet state is present on `main` (`1d9a2ba Repair dialogue review packet clip suggestions`)
+
+**Exact caveat language for Derrick:** “This packet is benchmark-anchored, but the benchmark and runtime timestamps live on different absolute time surfaces. Use the declared source-clip surface and the review mode/prompt for judgment; do not treat the raw truth-vs-runtime start/end deltas as a pass/fail signal by themselves.”
+
+Audit verdict: **READY NOW** for direct handoff to Derrick.
+
+---
+
 ## Final Results
 
-**Status:** ❌ Blocked
+**Status:** ✅ Complete
 
-**What We Built:** Built and audited the first-pass durable dialogue timestamp human-review bundle for Derrick: `.plans/artifacts/2026-05-04-dialogue-timestamp-human-review/packet.md`, `.plans/artifacts/2026-05-04-dialogue-timestamp-human-review/packet.json`, `.plans/artifacts/2026-05-04-dialogue-timestamp-human-review/review-decisions.json`, plus the generator helper `scripts/qa/generate-dialogue-timestamp-human-review-packet.py` and the QA finding artifact `.plans/artifacts/2026-05-04-dialogue-timestamp-human-review/qa-summary.md`. Audit confirmed the packet preserves all `19` machine comparison units, matches `REF-06` order exactly, exposes the locked `12`/`2`/`5` row-vs-window-vs-blocked split, and carries a durable review-decision template with one record per unit.
+**What We Built:** Built, repaired, QA-checked, and audited the durable dialogue timestamp human-review bundle for Derrick: `.plans/artifacts/2026-05-04-dialogue-timestamp-human-review/packet.md`, `.plans/artifacts/2026-05-04-dialogue-timestamp-human-review/packet.json`, `.plans/artifacts/2026-05-04-dialogue-timestamp-human-review/review-decisions.json`, plus the generator helper `scripts/qa/generate-dialogue-timestamp-human-review-packet.py` and the QA artifact `.plans/artifacts/2026-05-04-dialogue-timestamp-human-review/qa-summary.md`. The final packet preserves all `19` machine comparison units, matches `REF-06` order exactly, keeps the locked `12`/`2`/`5` row-vs-window-vs-blocked split, and now provides practical clip suggestions without mixing truth/runtime absolute time surfaces.
 
-**Reference Check:** `REF-03` remains the benchmark anchor, `REF-04` / `REF-05` remain the emitted runtime text/timestamp surfaces, and `REF-06` remains the authoritative split/merge-tolerant comparison map. The packet satisfies the structural contract from this plan, including required top-level keys and per-unit fields, but fails the practical handoff bar because the current clip guidance is misleading.
+**Reference Check:** `REF-03` remains the benchmark anchor, `REF-04` / `REF-05` remain the emitted runtime text/timestamp surfaces, and `REF-06` remains the authoritative split/merge-tolerant comparison map. The repaired packet satisfies the structural contract from this plan, preserves split/merge-tolerant grouped review where required, keeps blocked non-timing units clearly separated from timing-reviewable units, and is now ready for direct human use.
 
-**Audit Verdict:** **NOT READY** for direct handoff to Derrick. The blocker is packet-only: `source_clip_suggestion` currently combines benchmark-truth and runtime absolute time surfaces when computing clip bounds. That inflates review targets materially (for example `dlg-0002` suggests `2.0s → 11.0s`; `dlg-0010` suggests `22.5s → 53.5s`) and makes the worksheet look more actionable than it really is. Narrowest required fix: regenerate the packet so clip suggestions stay on one time surface per unit, or emit separately labeled truth/runtime clip suggestions instead of one merged span.
+**Audit Verdict:** **READY NOW** for direct handoff to Derrick.
 
-**Non-Blocking Caveat:** The comparison-array-index vs row-native runtime `index` display mismatch is confusing but traceable. It should be cleaned up, but it is not the audit blocker once clip suggestions are fixed.
+**Say This Out Loud:** “This packet is benchmark-anchored, but the benchmark and runtime timestamps live on different absolute time surfaces. Use the declared source-clip surface and the review mode/prompt for judgment; do not treat the raw truth-vs-runtime start/end deltas as a pass/fail signal by themselves.”
+
+**Next Move After Human Review:**
+- Mostly `timing_fail_*` on text-clean `row` / `window` units → `timestamp_alignment`
+- Mostly `blocked_*` decisions → `dialogue_reconciliation`
+- Only `needs_normalization_policy` remains → `comparator_policy`
+- All timing-reviewable units pass and blocked units are accepted as blocked → no immediate code-change lane required
 
 **Commits:**
-- `aee851f` - Build dialogue timestamp human review packet
+- `8ba15c5` - Build dialogue timestamp human review packet
+- `1d9a2ba` - Repair dialogue review packet clip suggestions
 
 **Lessons Learned:** The human review surface must preserve benchmark authority and comparison windows explicitly; otherwise a reviewer will accidentally judge segmentation/text drift as if it were pure timing drift. Also, when truth and runtime live on different absolute time surfaces, any derived clip-suggestion field has to stay on one surface or be explicitly split/labeled; otherwise the worksheet implies false precision and becomes a usability defect.
 

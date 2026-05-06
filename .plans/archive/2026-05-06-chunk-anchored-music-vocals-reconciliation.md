@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-05-06  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -162,11 +162,14 @@ Validated against `REF-03`, `REF-04`, `REF-05`, `REF-06`, `REF-07`, and `REF-08`
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-06-chunk-anchored-music-vocals-reconciliation.md`
-- fresh QA notes/artifacts under `output/`
+- `output/cod-test-phase2-only-retest-qa-2026-05-06-dialogue-assisted-anchor/qa-summary.md`
+- `output/cod-test-phase2-only-retest-qa-2026-05-06-dialogue-assisted-anchor/chunk-grounding-rerun-evidence.json`
+- `output/cod-test-phase2-only-retest-qa-2026-05-06-dialogue-assisted-anchor/phase1-gather-context/music-vocals-timestamps-data.reconciled.json`
+- representative prompt captures under `output/cod-test-phase2-only-retest-qa-2026-05-06-dialogue-assisted-anchor/reconstructed-prompts/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** QA packet created at `output/cod-test-phase2-only-retest-qa-2026-05-06-dialogue-assisted-anchor/` with fresh prompt/artifact evidence. Re-ran the targeted validation suite (`node --test test/scripts/get-music-vocals-timestamps.test.js test/scripts/video-chunks.test.js`) and confirmed 50/50 passing. Verified the concrete fix in chunk 16: `Twisting your mind and smashing your dreams` is now anchored at `80.5s-82.5s` via `timing.method = "dialogue_assisted_anchor"`, `timing.provenance = "dialogue_text_match"`, and `timing.support.segmentIndex = 14`; the reconstructed 80s–85s prompt now contains both timestamp-grounded dialogue support and a chunk-local music-vocals entry for that lyric (`REF-03`, `REF-04`, `REF-05`, `REF-08`). Prompt-level music-vocals support across the 76s–98s region is broader than the stale baseline artifact: reconstructed chunks `80.0s-85.0s`, `85.0s-90.0s`, `90.0s-95.0s`, and `95.0s-100.0s` now carry music-vocals context, while `75.0s-80.0s` remains clean/empty; the clean no-dialogue regression window `40.0s-45.0s` also remains empty for both dialogue and music-vocals context (`REF-03`, `REF-04`, `REF-06`). Honest QA verdict: this is a meaningful **partial improvement**, not yet a strong/full fix. The new dialogue-assisted anchor repairs the known 80s win and broadens nearby prompt support, but only one previously unresolved lyric gained a trustworthy timestamp and chunk `90.0s-95.0s` still includes multiple unresolved index-only lyric entries alongside the timed hooks, so the broader region is improved but not fully grounded.
 
 ---
 
@@ -184,25 +187,51 @@ Validated against `REF-03`, `REF-04`, `REF-05`, `REF-06`, `REF-07`, and `REF-08`
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-06-chunk-anchored-music-vocals-reconciliation.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit says the new lane is **worth keeping as a bounded building block, but not sufficient as the main fix**.
+
+**What the chunk-anchored assist clearly improved:**
+- The fresh artifact now has **3 timed music-vocals rows instead of 2**, with exactly **1 dialogue-assisted anchor** (`output/cod-test-phase2-only-retest-qa-2026-05-06-dialogue-assisted-anchor/phase1-gather-context/music-vocals-timestamps-data.reconciled.json`).
+- The targeted win is real and trustworthy: music-vocals row `index=6`, `Twisting your mind and smashing your dreams`, now carries `start=80.5`, `end=82.5`, `timing.method="dialogue_assisted_anchor"`, `timing.provenance="dialogue_text_match"`, and support pointing to dialogue segment `14` in the QA evidence JSON (`output/cod-test-phase2-only-retest-qa-2026-05-06-dialogue-assisted-anchor/chunk-grounding-rerun-evidence.json`).
+- That anchor changes prompt behavior in a useful product-facing way: chunk `16` (`80.0s-85.0s`) now includes both the timestamp-grounded dialogue entry and a dedicated `music-vocals` entry for the same lyric, whereas the faster-whisper-only baseline had dialogue support there but **no** music-vocals support (`REF-05` vs. `output/cod-test-phase2-only-retest-qa-2026-05-06-dialogue-assisted-anchor/qa-summary.md`).
+
+**What still fails:**
+- The broader `76s-98s` gap is still not robustly grounded. The improved region now has music-vocals support in chunks `16-19`, but chunk `15` (`75.0s-80.0s`) remains empty and chunk `18` (`90.0s-95.0s`) still contains multiple unresolved index-only lyric rows: `Come crawling faster`, `Obey your master!`, and `Master of puppets I'm pulling your strings` remain unresolved in the fresh artifact and prompt evidence (`chunk-grounding-rerun-evidence.json`, `reconstructed-prompts/chunk-0018-90s-95s.prompt.txt`).
+- Only **one previously unresolved lyric** gained a trustworthy timestamp in this pass. That is enough to prove the contract works, but not enough to call the overall music-vocals grounding problem solved.
+
+**Is the remaining gap incremental or architectural?**
+- For the narrow contract, the result is a success.
+- For the broader late-window grounding goal, the remaining gap looks **architectural enough to warrant another escalation**. The current dialogue-assisted rule depends on exact normalized lyric/dialogue text matches. That works for `Twisting your mind and smashing your dreams`, but it does not naturally solve the repeated-hook / in-between-line problem around chunk `18`, where the unresolved rows do not have enough unique timed evidence and repeated `Master` hooks are inherently ambiguous. Repeating the same exact-match assist will likely produce only small isolated wins, not a full reconciliation of the section.
+
+**Preserved dialogue behavior audit:**
+- Dialogue gating still looks solid. The clean regression window `40.0s-45.0s` remains empty for both dialogue and music-vocals context in the fresh QA packet, matching the expected non-smearing behavior.
+- The late-window dialogue behavior also appears preserved rather than degraded: the new music-vocals anchor did **not** remove or distort the existing dialogue entries in chunks `16-19`; it only added bounded music-vocals support beside them.
+- I independently re-ran the targeted suite — `node --test test/scripts/get-music-vocals-timestamps.test.js test/scripts/video-chunks.test.js` — and it passed `50/50`, including the new exact-match anchor and anti-ambiguity coverage.
+
+**Audit verdict / recommendation:**
+- **Do keep this path.** The dialogue-assisted anchor rule is now a valid bounded tool in the pipeline and should remain in place.
+- **Do not treat this path as sufficient to continue forward unaided.** Another escalation is still warranted if the goal remains broad, trustworthy music-vocals grounding across the late music-led region.
+- **Exact next lane Derrick should take:** escalate from single-row dialogue-assist to a **bounded sequence-reconciliation lane for recognized-song lyrics**, using the newly trusted anchors (`80.5s-82.5s`, `89.8s-91.68s`, `92.22s-96.36s`) as guardrails to place the unresolved in-between lyric rows without rewriting canonical text. In practice that means a narrow plan focused on chunk `18` / the `Master of Puppets` run: preserve the current assist, keep dialogue timing as support only, and add a deterministic sequence/interpolation rule for unresolved neighboring lyrics between trusted anchors. If that stronger lane is not acceptable, the honest alternative is to escalate to a product decision that the music-vocals lane will stay intentionally partial in this trailer.
+
+Bottom line: **meaningful partial improvement, preserved dialogue safety, but still not a strong/full fix**. Keep the hybrid assist as a building block and escalate the reconciliation strategy for the unresolved middle lyrics.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ⚠️ Partial
 
-**What We Built:** Pending.
+**What We Built:** A bounded dialogue-assisted timing path for unresolved `music-vocals` rows that safely adds one trustworthy new lyric anchor in chunk `16` and broadens prompt-level music-vocals support from the faster-whisper-only `85s-100s` slice to `80s-100s`, without regressing clean dialogue gating or no-dialogue windows.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-03`, `REF-04`, `REF-05`, `REF-06`, `REF-07`, and `REF-08` were satisfied for the narrow contract: canonical lyric text stayed verbatim, dialogue was used as timing support only, chunk `16` gained the expected anchored lyric, and regression checks stayed clean. Deliberate honest deviation from the larger goal: the broader `76s-98s` region is still only partially grounded, so the original product goal is only partially met.
 
 **Commits:**
-- Pending.
+- `0339f4a` - Add dialogue-assisted anchors for music vocals timing
+- `e0898d6` - Record coder validation for dialogue-assisted anchor work
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** The narrow hybrid is safe and useful, but exact dialogue-text matching is too sparse to solve repeated-hook and mid-sequence lyric placement by itself. The next real gain probably requires bounded sequence reconciliation between trusted anchors rather than more isolated exact-match assists.
 
 ---
 
-*Completed on YYYY-MM-DD*
+*Completed on 2026-05-06*

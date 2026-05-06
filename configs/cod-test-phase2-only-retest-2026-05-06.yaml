@@ -1,9 +1,9 @@
 name: COD Test Phase 2 Only Retest 2026-05-06
-description: Dedicated bounded rerun for cod.mp4 with fresh Phase 1 gather, grounded chunk-local Phase 2 processing, Phase 3 skipped, and benchmarking disabled
+description: Dedicated bounded rerun for cod.mp4 with fresh Phase 1 gather plus timestamp artifact generation before grounded chunk-local Phase 2 processing, Phase 3 skipped, and benchmarking disabled
 version: '1.0'
 asset:
   inputPath: examples/videos/emotion-tests/cod.mp4
-  outputDir: output/cod-test-phase2-only-retest-2026-05-06
+  outputDir: output/cod-test-phase2-only-retest-2026-05-06-with-timestamps
   media:
     refs:
       source_video:
@@ -28,6 +28,8 @@ gather_context:
 - server/scripts/get-context/get-music.cjs
 - server/scripts/get-context/get-music-vocals.cjs
 - server/scripts/get-context/reconcile-famous-song-phase1.cjs
+- server/scripts/get-context/get-dialogue-timestamps.cjs
+- server/scripts/get-context/get-music-vocals-timestamps.cjs
 process:
 - server/scripts/process/video-chunks.cjs
 report: []

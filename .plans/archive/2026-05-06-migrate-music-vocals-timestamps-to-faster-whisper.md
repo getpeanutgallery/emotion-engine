@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-05-06  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -205,11 +205,37 @@ The success bar is product-facing: not just “timestamp artifact exists,” but
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-06-migrate-music-vocals-timestamps-to-faster-whisper.md`
-- fresh QA notes/artifacts under `output/`
+- `output/cod-test-phase2-only-retest-qa-2026-05-06-1229-faster-whisper/qa-summary.md`
+- `output/cod-test-phase2-only-retest-qa-2026-05-06-1229-faster-whisper/chunk-grounding-rerun-evidence.json`
+- `output/cod-test-phase2-only-retest-qa-2026-05-06-1229-faster-whisper/reconstructed-prompts/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Produced a fresh QA packet at `output/cod-test-phase2-only-retest-qa-2026-05-06-1229-faster-whisper/` and re-checked current prompt grounding against the latest faster-whisper-backed Phase 1 artifacts without doing implementation work.
+
+**Evidence packet contents:**
+- `output/cod-test-phase2-only-retest-qa-2026-05-06-1229-faster-whisper/qa-summary.md`
+- `output/cod-test-phase2-only-retest-qa-2026-05-06-1229-faster-whisper/chunk-grounding-rerun-evidence.json`
+- reconstructed prompt samples under `output/cod-test-phase2-only-retest-qa-2026-05-06-1229-faster-whisper/reconstructed-prompts/`
+
+**What QA verified:**
+- `phase1-gather-context/music-vocals-timestamps-data.reconciled.json` now has `11` lyric rows with `2` numeric-timed anchors and `9` still lacking numeric timings.
+- The two numeric anchors are:
+  - index `1` — `Master! Master!` → `89.8s` to `91.68s`
+  - index `5` — `Master! Master!` → `92.22s` to `96.36s`
+- Reconstructing Phase 2 prompts from the current `video-chunks.cjs` + `emotion-lenses-tool.cjs` prompt builder against those latest artifacts now yields `Global Music-Vocals Context` in `3 / 28` chunks: `17`, `18`, and `19` (windows `85s-90s`, `90s-95s`, `95s-100s`).
+- That means the dedicated music-vocals lane now does create real prompt text around the `Master! Master!` hook, but only in the late part of the requested `76s-98s` window.
+- The strongest prompt is chunk `18` (`90s-95s`): it contains the two timed `Master! Master!` anchors plus three unresolved index-only lyric rows (`Come crawling faster`, `Obey your master!`, `Master of puppets I'm pulling your strings`).
+
+**Dialogue / clean-window regression check:**
+- Prompt gating remains clean: dialogue context appears in exactly the timed-overlap chunk set `0-7, 16-25`, with `28 / 28` parity between overlap expectation and prompt presence.
+- No-dialogue windows remain clean: chunks `8-15` and `26-27` do not gain stray dialogue sections.
+- However, the late music window is still semantically imperfect because lyric lines also appear in the dialogue timestamp lane (`Twisting your mind and smashing your dreams.`, `Master. Master.`), so dialogue gating is preserved but some lyric bleed-through remains.
+
+**QA verdict:**
+- **Partial success.** The faster-whisper migration is now meaningful enough to change prompt text in the `85s-100s` region and especially the `90s-95s` chunk, so the music-vocals lane is no longer completely dead.
+- **Not enough yet for a strong Phase 2 fix.** Coverage is still too narrow for the full `76s-98s` music-led section: the early `75s-85s` portion still gets no dedicated lyric support, and even the best chunk mixes two true timed anchors with three unresolved placeholders.
+- **Net:** dialogue/no-dialogue behavior is preserved at the chunk-gating level, but the dedicated music-vocals improvement is still too partial to treat as a fully solved grounding lane.
 
 ---
 
@@ -227,25 +253,72 @@ The success bar is product-facing: not just “timestamp artifact exists,” but
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-06-migrate-music-vocals-timestamps-to-faster-whisper.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit completed against the active plan, the new timestamp artifact, and the QA packet. Verdict: **faster-whisper is a meaningful improvement, but not a sufficient end-state for the music-vocals lane.** It proved that repo-local ASR timing can recover some real lyric anchors, but the remaining gap now looks more **architectural than incremental** for this music-heavy window.
+
+**What faster-whisper clearly improved:**
+- It broke the prior all-dead state. The known artifact improved from `11/11` unresolved to `9/11` unresolved plus `2/11` partial segments with numeric timings in `output/cod-test-phase2-only-retest-2026-05-06-with-timestamps/phase1-gather-context/music-vocals-timestamps-data.reconciled.json`.
+- Those two anchors are real and usable:
+  - index `1` — `Master! Master!` → `89.8s-91.68s`
+  - index `5` — `Master! Master!` → `92.22s-96.36s`
+- Phase 2 prompt reconstruction now surfaces dedicated `Global Music-Vocals Context` in `3/28` chunks (`17`, `18`, `19`) instead of the earlier dead lane, as shown in `output/cod-test-phase2-only-retest-qa-2026-05-06-1229-faster-whisper/qa-summary.md` and `.../chunk-grounding-rerun-evidence.json`.
+- Provenance is now truthful (`alignmentEngine: faster_whisper`), which matters for honest future debugging.
+
+**What still fails:**
+- Coverage is still too sparse for the target `76s-98s` music-led section.
+  - chunk `15` (`75s-80s`) has no dedicated music-vocals support
+  - chunk `16` (`80s-85s`) has no dedicated music-vocals support
+  - chunk `18` (`90s-95s`) is the best case, but even there only `2/5` selected lyric rows are truly timed and the other `3/5` are unresolved index-only carry-throughs
+- The artifact still leaves `9/11` lyric rows without numeric timing, including non-hook lines such as `Come crawling faster`, `Obey your master!`, `Master of puppets I'm pulling your strings`, and later sung lines.
+- Prompt usefulness is therefore still narrow and hook-centric rather than broad lyric grounding across the whole section.
+
+**Why the remaining gap looks architectural, not just incremental tuning:**
+- The lines that timed successfully are both the same repeated hook (`Master! Master!`), i.e. the easiest ASR-alignment case.
+- The unresolved lines are exactly the harder sung-lyric cases: repeated phrases, overlap-heavy material, punctuation/text-variant mismatch, and denser multi-line lyric spans.
+- QA evidence shows chunk `18` needs bounded index fallback to carry unresolved neighboring lyric rows even after faster-whisper timing is present. That means prompt improvement is currently piggybacking on a couple of anchors, not on robust line-level lyric timing.
+- Dialogue prompt reconstruction also still carries lyric-like material (`Twisting your mind and smashing your dreams.`, `Master. Master.`), which confirms the current system still does not cleanly separate sung-lyric grounding from dialogue semantics in this section.
+- Taken together, this suggests plain faster-whisper-as-alignment is useful as an anchor source, but **not strong enough by itself to become the final music-vocals timing strategy**.
+
+**Dialogue behavior audit:**
+- Preserved and still solid at the gating level.
+- QA showed `28/28` dialogue overlap parity and clean no-dialogue windows in chunks `8-15` and `26-27`.
+- No evidence of regression in dialogue chunk selection or silent-window contamination.
+- Important caveat: semantic cleanliness is still imperfect because some sung lyrics are also surfacing through the dialogue lane, but this is a content-separation issue, **not** a regression in dialogue gating correctness.
+
+**Recommendation / exact next lane:**
+- **Do not keep iterating on the current faster-whisper-only alignment path as the primary fix lane.**
+- Treat this migration as a **useful stepping stone** that proved local ASR timing can seed anchors.
+- The next lane should escalate to the broader fallback/redesign from `REF-01`: make `music-vocals` timing **chunk-anchored first**, then reconcile lyric rows onto chunk windows using chunk membership plus any available faster-whisper anchors as supporting evidence rather than as the sole source of truth.
+- Concretely: redesign the lane so the primary timed unit is the chunk/window where vocals are known to exist, then attach/reconcile lyric rows within that window. Preserve the current faster-whisper anchors where they help, but stop requiring line-perfect ASR alignment to unlock prompt grounding.
+- Rationale: the product goal is robust prompt-level lyric support across the full `76s-98s` music section, and the evidence here says line-level ASR alignment alone is too brittle on chant-like repeated lyrics and overlap-heavy audio.
+
+**Bottom line:** continue forward, but **not** by polishing this exact lane in place. Escalate now to the chunk-anchored / fallback-redesign lane, using the faster-whisper result as supporting infrastructure rather than the final architecture.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ⚠️ Partial
 
-**What We Built:** Pending.
+**What We Built:** We successfully migrated the `music-vocals` timestamp lane off the dead rerun-alignment contract and onto a repo-local faster-whisper timing path, then reran QA to measure product impact. That migration produced truthful faster-whisper provenance, recovered two real numeric lyric anchors for the `Master! Master!` hook, and made dedicated `Global Music-Vocals Context` appear in chunks `17-19`. However, the lane still does not provide strong enough lyric coverage across the full `76s-98s` music-heavy section to count as a complete fix.
 
-**Reference Check:** Pending.
+**Reference Check:**
+- `REF-03`, `REF-04`, `REF-05`: satisfied for the intended migration shape — music-vocals now uses the analogous faster-whisper path and records truthful timing provenance.
+- `REF-07`: improved materially — the timestamp artifact is no longer `11/11` unresolved and now includes two numeric anchors, but still leaves `9/11` rows unresolved.
+- `REF-08`: downstream prompt grounding now reflects the new anchors, but only partially (`3/28` chunks with dedicated music-vocals support), so the product-level success bar is only partially met.
+- `REF-01`: audit verdict is to escalate from this stepping-stone result to the next fallback/redesign lane rather than treating faster-whisper alignment alone as sufficient.
 
 **Commits:**
-- Pending.
+- `58cfb52` - `Switch music-vocals timestamps to faster-whisper`
+- `331244e` - `Update music-vocals faster-whisper plan evidence`
 
-**Lessons Learned:** Pending.
+**Lessons Learned:**
+- Faster-whisper is useful for seeding real anchors and for replacing a broken empty-timing contract.
+- For sung, repeated, overlap-heavy lyrics, plain ASR-style line alignment appears too brittle to be the final grounding strategy.
+- Dialogue gating stayed healthy, so the next iteration should target music-vocals architecture specifically rather than reopening dialogue timing.
+- The next best lane is a chunk-anchored music-vocals redesign that uses chunk/window truth first and faster-whisper anchors second.
 
 ---
 
-*Completed on YYYY-MM-DD*
+*Completed on 2026-05-06*

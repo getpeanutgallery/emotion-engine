@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-05-06  
-**Status:** Draft  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -113,11 +113,22 @@ Validation/evidence: `node --test test/scripts/video-chunks.test.js test/scripts
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-06-fix-dialogue-placeholder-leak-and-prompt-heading.md`
-- fresh QA notes/artifacts under `output/`
+- `output/qa-placeholder-heading-2026-05-06/qa-summary.md`
+- `output/qa-placeholder-heading-2026-05-06/qa-evidence.json`
+- `output/qa-placeholder-heading-2026-05-06/placeholder-leak-window.prompt.txt`
+- `output/qa-placeholder-heading-2026-05-06/dialogue-overlap-window.prompt.txt`
+- `output/qa-placeholder-heading-2026-05-06/no-dialogue-window.prompt.txt`
+- `output/qa-placeholder-heading-2026-05-06/test-output.txt`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Claimed bead `ee-m2p7` and completed a narrow QA pass against the real prompt-building path using the current `server/scripts/process/video-chunks.cjs` + sibling `tools/emotion-lenses-tool.cjs` code, seeded with the same validated Phase 1 dialogue artifacts from `REF-04` that previously produced the leaked prompt in `REF-05`. Fresh QA packet written to `output/qa-placeholder-heading-2026-05-06/qa-summary.md` with machine-readable detail in `output/qa-placeholder-heading-2026-05-06/qa-evidence.json`, plus rebuilt prompt artifacts for the representative windows under that same folder.
+
+Exact findings: for the former leak window `25.0s-30.0s`, the rebuilt prompt now renders the dialogue block as exactly `Timestamp-Grounded Dialogue Context`, preserves `phase1_timestamp_overlap` grounding with `timedOverlapCount: 2` and `usedBoundedIndexFallback: true`, but only surfaces prompt-safe timed rows `5` and `7` (`Menendez is a terrorist.` / `He refuses to let me go.`). The old unresolved placeholder line from `REF-05` — `index 6: Speaker 3: We're bringing peace and security to the world.` — is absent from both `dialogueContext.segments` and the fresh prompt output. This is the key proof that the leak is gone without losing the intended chunk-local support behavior.
+
+Regression checks also passed on both sides of the contract. For the healthy overlap window `0.0s-5.0s` (parallel to `REF-06`), the rebuilt prompt still includes the expected two timestamp-grounded lines (`They want you afraid.` and `Fear makes you easier to control.`) with `strategy: phase1_timestamp_overlap` and no placeholder leakage. For the clean no-dialogue window `40.0s-45.0s` (parallel to `REF-07`), `dialogueContext.segments` stays empty, grounding reports `strategy: empty` with `fallbackReason: timestamp_artifact_present_but_no_overlapping_timed_dialogue`, and the prompt emits no dialogue heading at all. That confirms no-overlap windows remain honest and clean.
+
+Targeted automated regression coverage was rerun and passed: `node --test test/scripts/video-chunks.test.js test/scripts/emotion-lenses-tool.test.js` (`59` tests passed, `0` failed). The test log is stored at `output/qa-placeholder-heading-2026-05-06/test-output.txt`. Verdict: ✅ QA pass; the placeholder leak fix and exact heading rename are behaving correctly in the verified prompt path, with overlap support preserved and clean-window behavior intact.
 
 ---
 
@@ -135,25 +146,36 @@ Validation/evidence: `node --test test/scripts/video-chunks.test.js test/scripts
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-06-fix-dialogue-placeholder-leak-and-prompt-heading.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit verdict: ✅ this bead is complete, and the dialogue grounding slice is now human-verified enough to leave behind while attention shifts to music-vocals timing. I re-verified the exact seam in `REF-08` rather than relying only on QA prose: `buildChunkDialogueContext(...)` in `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/server/scripts/process/video-chunks.cjs` now keeps the bounded timestamp-selection metadata (`timedOverlapCount`, `usedBoundedIndexFallback`, strategy `phase1_timestamp_overlap`) but filters prompt-visible dialogue rows through `hasFiniteSegmentWindow(...)` before exposing `dialogueContext.segments`. Direct reproduction against `REF-04` confirms the underlying bounded selector still returns raw indexes `[5, 6, 7]` for the former leak window `25.0s-30.0s`, while the audited prompt-visible dialogue context now returns only `[5, 7]` with texts `Menendez is a terrorist.` and `He refuses to let me go.` and retains `usedBoundedIndexFallback: true`. That is the narrow behavior we wanted: preserve overlap grounding metadata, suppress unresolved placeholder rows.
+
+Evidence for each requested distinction:
+- **Placeholder leak status:** fixed. The former leaked line from `REF-05` (`index 6: Speaker 3: We're bringing peace and security to the world.`) is absent in the rebuilt prompt `output/qa-placeholder-heading-2026-05-06/placeholder-leak-window.prompt.txt` and in QA packet `output/qa-placeholder-heading-2026-05-06/qa-evidence.json` (`promptHasIndexPlaceholder: false`).
+- **Heading correctness:** fixed exactly. The sibling prompt owner `/home/derrick/.openclaw/workspace/projects/peanut-gallery/tools/emotion-lenses-tool.cjs` now emits `## Timestamp-Grounded Dialogue Context`, and the rebuilt overlap prompts under `output/qa-placeholder-heading-2026-05-06/` show the exact string while omitting the old `Global Dialogue Context (ordered support only)` heading.
+- **Preserved dialogue overlap grounding:** confirmed. The audited `0.0s-5.0s` overlap window still selects indexes `[0, 1]`, keeps strategy `phase1_timestamp_overlap`, and the rebuilt prompt `output/qa-placeholder-heading-2026-05-06/dialogue-overlap-window.prompt.txt` still contains `They want you afraid.` and `Fear makes you easier to control.`.
+- **Preserved clean-window behavior:** confirmed. The audited `40.0s-45.0s` window remains empty with strategy `empty` and fallback reason `timestamp_artifact_present_but_no_overlapping_timed_dialogue`; `output/qa-placeholder-heading-2026-05-06/no-dialogue-window.prompt.txt` contains no dialogue heading at all.
+- **Remaining dialogue caveats worth carrying forward:** there is still bounded unresolved-span carry-through inside the shared helper itself; the dialogue fix intentionally filters those unresolved rows only at the dialogue prompt-exposure seam instead of changing the shared selector contract. That is acceptable for this bead and is visible in the preserved `usedBoundedIndexFallback: true` metadata for the 25s-30s window. If a future lane reuses `selectChunkLocalTimedSegments(...)` directly for prompt-visible content, it must make its own explicit decision about unresolved rows. Also, this audit does **not** newly certify music-vocals timing quality; it only says the dialogue slice is clean enough to stop spending more cycles here unless a new dialogue-specific regression appears.
+
+Independent validation rerun: `node --test test/scripts/video-chunks.test.js test/scripts/emotion-lenses-tool.test.js` passed under audit (`59` tests passed, `0` failed), including the targeted assertions at `test/scripts/video-chunks.test.js:704`, `:780`, and `:859`, plus the exact heading assertion at `test/scripts/emotion-lenses-tool.test.js:133`. Recommendation: close `ee-3t6j`, treat the dialogue grounding slice as sufficiently audited, and move the next human-review energy into music-vocals timing rather than reworking dialogue further right now.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** We finished a narrow dialogue-grounding cleanup pass that removes unresolved placeholder dialogue rows from prompt-visible chunk context and renames the dialogue section heading to the exact contract text `Timestamp-Grounded Dialogue Context`. The audited result is that the known `index 6` leak is gone, healthy overlap windows still receive the right timestamp-grounded dialogue support, and honest no-dialogue windows remain empty instead of inventing context.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-04` and `REF-05` were satisfied by the fix: the bounded unresolved carry-through still exists internally for the 25s-30s reproduction, but the prompt-visible dialogue context now excludes unresolved placeholder row `index 6`, as confirmed by `output/qa-placeholder-heading-2026-05-06/placeholder-leak-window.prompt.txt` and `output/qa-placeholder-heading-2026-05-06/qa-evidence.json`. `REF-06` remains satisfied: the 0s-5s overlap window still shows the expected timestamp-grounded support lines. `REF-07` remains satisfied: the 40s-45s clean window still emits no dialogue section. `REF-08` was audited directly in code and by rerunning `node --test test/scripts/video-chunks.test.js test/scripts/emotion-lenses-tool.test.js` with a passing result of `59` tests, `0` failed. Deliberate non-expansion: we did **not** alter the shared bounded-selector contract itself; the accepted fix is dialogue-lane prompt filtering at the exposure seam. That is adequate for this bead. Recommendation accepted: the dialogue grounding slice is now human-verified enough to leave behind and shift focus into music-vocals timing.
 
 **Commits:**
-- Pending.
+- `9179d9b` - Rename timestamp-grounded dialogue prompt heading
+- `67c70fc` - Filter unresolved dialogue placeholders from chunk prompts
+- `5e561d5` - Update plan with placeholder-fix commit evidence
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** The failure mode was not broad transcript spill; it was a narrow mismatch between an intentionally permissive bounded overlap selector and a prompt renderer that treated unresolved rows like display-safe evidence. Preserving the selector metadata while filtering prompt-visible dialogue rows was the right seam-level fix. Carry forward one explicit caveat into future lane work: any lane that uses `selectChunkLocalTimedSegments(...)` for prompt-visible support must decide intentionally how to handle unresolved rows instead of assuming the helper output is display-safe by default.
 
 ---
 
-*Completed on YYYY-MM-DD*
+*Completed on 2026-05-06*
