@@ -22,6 +22,10 @@ dist/
 # Dependencies
 node_modules/
 
+# Local Python environments
+.venv/
+.venv-*/
+
 # Cache and Temporary Files
 /.tmp/
 *.tmp
