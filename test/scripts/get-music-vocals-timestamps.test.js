@@ -15,12 +15,14 @@ function mockModule(modulePath, mockExports) {
   };
 }
 
-function loadScriptWithMock(mockRun) {
-  const getMusicVocalsPath = require.resolve('../../server/scripts/get-context/get-music-vocals.cjs', { paths: [__dirname] });
+function loadScriptWithMock(mockDeriveFasterWhisperMusicVocalsTiming) {
+  const helperPath = require.resolve('../../server/lib/faster-whisper-music-vocals-timing.cjs', { paths: [__dirname] });
   const targetPath = require.resolve('../../server/scripts/get-context/get-music-vocals-timestamps.cjs', { paths: [__dirname] });
-  delete require.cache[getMusicVocalsPath];
+  delete require.cache[helperPath];
   delete require.cache[targetPath];
-  mockModule('../../server/scripts/get-context/get-music-vocals.cjs', { run: mockRun });
+  mockModule('../../server/lib/faster-whisper-music-vocals-timing.cjs', {
+    deriveFasterWhisperMusicVocalsTiming: mockDeriveFasterWhisperMusicVocalsTiming
+  });
   return require('../../server/scripts/get-context/get-music-vocals-timestamps.cjs');
 }
 
@@ -32,6 +34,46 @@ function writeJson(filePath, payload) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, JSON.stringify(payload, null, 2), 'utf8');
 }
+
+test('get-music-vocals-timestamps invokes faster-whisper timing with the asset path', async (t) => {
+  const outputDir = makeTempDir('ee-music-vocals-ts-whisper-call-');
+  t.after(() => fs.rmSync(outputDir, { recursive: true, force: true }));
+
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.json'), {
+    vocal_segments: [
+      { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'Hello from the chorus', confidence: 0.9 }
+    ],
+    summary: 'Raw vocals',
+    totalDuration: 12.4
+  });
+
+  const captured = [];
+  const script = loadScriptWithMock(async (input) => {
+    captured.push(input);
+    return {
+      musicVocalsData: {
+        vocal_segments: [
+          { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'hello from the chorus', start: 1.1, end: 2.3, confidence: 0.8 }
+        ],
+        summary: 'Timed vocals',
+        totalDuration: 12.4
+      },
+      metadata: {
+        runtime: { device: 'cuda', computeType: 'float16', model: 'small.en', wordTimestamps: true, vadFilter: false },
+        engine: { name: 'faster_whisper', version: '1.2.3' },
+        warnings: []
+      }
+    };
+  });
+
+  await script.run({
+    assetPath: '/tmp/fake-asset.mp4',
+    outputDir,
+    config: { gather_context: ['server/scripts/get-context/get-music-vocals.cjs'] }
+  });
+
+  assert.deepEqual(captured, [{ assetPath: '/tmp/fake-asset.mp4' }]);
+});
 
 test('get-music-vocals-timestamps derives raw-surface timestamps, preserves source text verbatim, and keeps song metadata truthful', async (t) => {
   const outputDir = makeTempDir('ee-music-vocals-ts-raw-');
@@ -53,15 +95,18 @@ test('get-music-vocals-timestamps derives raw-surface timestamps, preserves sour
   });
 
   const script = loadScriptWithMock(async () => ({
-    artifacts: {
-      musicVocalsData: {
-        vocal_segments: [
-          { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'master master', start: 1.2, end: 2.6, confidence: 0.87 },
-          { index: 1, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'chant', text: 'obey your master', start: 3.4, end: 4.4, confidence: 0.88 }
-        ],
-        summary: 'Timed vocals',
-        totalDuration: 18
-      }
+    musicVocalsData: {
+      vocal_segments: [
+        { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'master master', start: 1.2, end: 2.6, confidence: 0.87 },
+        { index: 1, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'chant', text: 'obey your master', start: 3.4, end: 4.4, confidence: 0.88 }
+      ],
+      summary: 'Timed vocals',
+      totalDuration: 18
+    },
+    metadata: {
+      runtime: { device: 'cuda', computeType: 'float16', model: 'small.en', wordTimestamps: true, vadFilter: false },
+      engine: { name: 'faster_whisper', version: '1.2.3' },
+      warnings: []
     }
   }));
 
@@ -75,6 +120,15 @@ test('get-music-vocals-timestamps derives raw-surface timestamps, preserves sour
   assert.ok(result.artifacts.musicVocalsTimestampsData);
   assert.equal(result.artifacts.musicVocalsTimestampsData.provenance.runtimeArtifactSurface, 'raw');
   assert.equal(result.artifacts.musicVocalsTimestampsData.provenance.sourceRuntimeKey, 'musicVocalsData');
+  assert.equal(result.artifacts.musicVocalsTimestampsData.provenance.alignmentEngine, 'faster_whisper');
+  assert.equal(result.artifacts.musicVocalsTimestampsData.provenance.alignmentEngineVersion, '1.2.3');
+  assert.deepEqual(result.artifacts.musicVocalsTimestampsData.provenance.alignmentRuntime, {
+    device: 'cuda',
+    computeType: 'float16',
+    model: 'small.en',
+    wordTimestamps: true,
+    vadFilter: false
+  });
   assert.equal(result.artifacts.musicVocalsTimestampsData.provenance.recognizedSongUsedForTextRewrite, false);
   assert.equal(result.artifacts.musicVocalsTimestampsData.vocal_segments[0].text, 'Master, master');
   assert.equal(result.artifacts.musicVocalsTimestampsData.vocal_segments[1].text, 'Obey your master!');
@@ -107,14 +161,17 @@ test('get-music-vocals-timestamps prefers reconciled music-vocals when canonical
   });
 
   const script = loadScriptWithMock(async () => ({
-    artifacts: {
-      musicVocalsData: {
-        vocal_segments: [
-          { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'clean reconciled lyric', start: 0.4, end: 1.9, confidence: 0.86 }
-        ],
-        summary: 'Timed vocals',
-        totalDuration: 12
-      }
+    musicVocalsData: {
+      vocal_segments: [
+        { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'clean reconciled lyric', start: 0.4, end: 1.9, confidence: 0.86 }
+      ],
+      summary: 'Timed vocals',
+      totalDuration: 12
+    },
+    metadata: {
+      runtime: { device: 'cpu', computeType: 'int8', model: 'small.en', wordTimestamps: true, vadFilter: false },
+      engine: { name: 'faster_whisper', version: '1.2.3' },
+      warnings: ['Fallback from cuda/float16 due to RuntimeError: GPU unavailable']
     }
   }));
 
@@ -137,6 +194,13 @@ test('get-music-vocals-timestamps prefers reconciled music-vocals when canonical
 
   const persisted = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'music-vocals-timestamps-data.reconciled.json'), 'utf8'));
   assert.equal(persisted.vocal_segments[0].text, 'Clean reconciled lyric');
+  assert.deepEqual(persisted.provenance.alignmentRuntime, {
+    device: 'cpu',
+    computeType: 'int8',
+    model: 'small.en',
+    wordTimestamps: true,
+    vadFilter: false
+  });
 });
 
 test('get-music-vocals-timestamps resolves canonical reconciled source from artifacts-complete.json without requiring the reconciled file on disk', async (t) => {
@@ -157,12 +221,15 @@ test('get-music-vocals-timestamps resolves canonical reconciled source from arti
   });
 
   const script = loadScriptWithMock(async () => ({
-    artifacts: {
-      musicVocalsData: {
-        vocal_segments: [{ index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'hydrated reconciled lyric', start: 0.8, end: 2.1, confidence: 0.86 }],
-        summary: 'Timed vocals',
-        totalDuration: 10
-      }
+    musicVocalsData: {
+      vocal_segments: [{ index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'hydrated reconciled lyric', start: 0.8, end: 2.1, confidence: 0.86 }],
+      summary: 'Timed vocals',
+      totalDuration: 10
+    },
+    metadata: {
+      runtime: { device: 'cuda', computeType: 'float16', model: 'small.en', wordTimestamps: true, vadFilter: false },
+      engine: { name: 'faster_whisper', version: '1.2.3' },
+      warnings: []
     }
   }));
 
@@ -192,16 +259,19 @@ test('get-music-vocals-timestamps marks repeated short hooks as partial and weak
   });
 
   const script = loadScriptWithMock(async () => ({
-    artifacts: {
-      musicVocalsData: {
-        vocal_segments: [
-          { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'chant', text: 'master master', start: 1.0, end: 1.7, confidence: 0.82 },
-          { index: 1, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'chant', text: 'crowd noise', start: 3.0, end: 3.5, confidence: 0.3 },
-          { index: 2, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'chant', text: 'master master', start: 5.0, end: 5.8, confidence: 0.81 }
-        ],
-        summary: 'Timed vocals',
-        totalDuration: 14
-      }
+    musicVocalsData: {
+      vocal_segments: [
+        { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'chant', text: 'master master', start: 1.0, end: 1.7, confidence: 0.82 },
+        { index: 1, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'chant', text: 'crowd noise', start: 3.0, end: 3.5, confidence: 0.3 },
+        { index: 2, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'chant', text: 'master master', start: 5.0, end: 5.8, confidence: 0.81 }
+      ],
+      summary: 'Timed vocals',
+      totalDuration: 14
+    },
+    metadata: {
+      runtime: { device: 'cpu', computeType: 'int8', model: 'small.en', wordTimestamps: true, vadFilter: false },
+      engine: { name: 'faster_whisper', version: '1.2.3' },
+      warnings: []
     }
   }));
 

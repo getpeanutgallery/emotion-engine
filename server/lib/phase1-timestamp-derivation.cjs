@@ -304,7 +304,8 @@ function buildMusicVocalsTimestampArtifact({
   sourcePath,
   runtimeArtifactSurface,
   sourceRuntimeKey,
-  sourceArtifactKey = 'musicVocalsData'
+  sourceArtifactKey = 'musicVocalsData',
+  alignmentMetadata = null
 }) {
   const vocalSegments = deriveMusicVocalsSegmentTimings(sourceMusicVocalsData?.vocal_segments, alignmentMusicVocalsData?.vocal_segments);
   const totalDuration = Number.isFinite(sourceMusicVocalsData?.totalDuration)
@@ -342,8 +343,9 @@ function buildMusicVocalsTimestampArtifact({
       sourcePath: toOutputRelativePath(outputDir, sourcePath),
       sourceTextIntegrity: 'verbatim',
       sourceTimingPolicy: 'source_artifact_was_untimed',
-      alignmentEngine: 'phase1_music_vocals_rerun',
-      alignmentEngineVersion: null,
+      alignmentEngine: alignmentMetadata?.engine?.name || 'phase1_music_vocals_rerun',
+      alignmentEngineVersion: alignmentMetadata?.engine?.version || null,
+      alignmentRuntime: alignmentMetadata?.runtime || null,
       recognizedSongUsedForTextRewrite: false
     },
     ...(sourceMusicVocalsData?.recognizedSong ? { recognizedSong: sourceMusicVocalsData.recognizedSong } : {}),

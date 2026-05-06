@@ -2,7 +2,6 @@
 'use strict';
 
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const { loadPersistedArtifacts } = require('../../lib/persisted-artifacts.cjs');
 const {
@@ -12,7 +11,9 @@ const {
 const {
   buildMusicVocalsTimestampArtifact
 } = require('../../lib/phase1-timestamp-derivation.cjs');
-const getMusicVocalsScript = require('./get-music-vocals.cjs');
+const {
+  deriveFasterWhisperMusicVocalsTiming
+} = require('../../lib/faster-whisper-music-vocals-timing.cjs');
 
 const SCRIPT_ID = 'get-music-vocals-timestamps';
 
@@ -65,21 +66,8 @@ function ensureSourceMusicVocals({ artifacts, outputDir, config, runtimeArtifact
   };
 }
 
-async function deriveAlignmentMusicVocals({ assetPath, config }) {
-  const tempOutputDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ee-music-vocals-timestamps-'));
-
-  try {
-    const result = await getMusicVocalsScript.run({
-      assetPath,
-      outputDir: tempOutputDir,
-      config,
-      preserveSegmentTiming: true
-    });
-
-    return result?.artifacts?.musicVocalsData || null;
-  } finally {
-    fs.rmSync(tempOutputDir, { recursive: true, force: true });
-  }
+async function deriveAlignmentMusicVocals({ assetPath }) {
+  return deriveFasterWhisperMusicVocalsTiming({ assetPath });
 }
 
 async function run(input) {
@@ -96,16 +84,17 @@ async function run(input) {
   }
 
   const source = ensureSourceMusicVocals({ artifacts, outputDir, config, runtimeArtifactSurface });
-  const alignmentMusicVocalsData = await deriveAlignmentMusicVocals({ assetPath, config });
+  const alignment = await deriveAlignmentMusicVocals({ assetPath });
 
   const artifact = buildMusicVocalsTimestampArtifact({
     sourceMusicVocalsData: source.sourceMusicVocalsData,
-    alignmentMusicVocalsData,
+    alignmentMusicVocalsData: alignment.musicVocalsData,
     outputDir,
     sourcePath: source.sourcePath,
     runtimeArtifactSurface: source.runtimeArtifactSurface,
     sourceRuntimeKey: source.sourceRuntimeKey,
-    sourceArtifactKey: 'musicVocalsData'
+    sourceArtifactKey: 'musicVocalsData',
+    alignmentMetadata: alignment.metadata
   });
 
   const outputResolution = resolvePhase1ArtifactPath(outputDir, 'musicVocalsTimestampsData', {
