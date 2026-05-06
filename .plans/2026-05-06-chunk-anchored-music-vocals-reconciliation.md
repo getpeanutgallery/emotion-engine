@@ -144,7 +144,7 @@ Validated against `REF-03`, `REF-04`, `REF-05`, `REF-06`, `REF-07`, and `REF-08`
 - **Dialogue non-regression checks:** chunk-local dialogue context for `80s–85s` is unchanged and still contains the dialogue row `Twisting your mind and smashing your dreams.`; a clean no-dialogue window `40s–45s` remains empty
 - **Boundedness check:** ambiguous repeated dialogue lyric rows remain unresolved and do not receive speculative anchors
 
-**Commit / push:** completed after this plan update; see final commit entry below once recorded.
+**Commit / push:** `0339f4a` (`Add dialogue-assisted anchors for music vocals timing`) pushed to `origin/main`.
 
 ---
 
