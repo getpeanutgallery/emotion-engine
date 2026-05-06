@@ -130,7 +130,8 @@ test('Emotion Lenses Tool', async (t) => {
       ok(prompt.includes('"patience"'));
       ok(prompt.includes('"boredom"'));
       ok(prompt.includes('Previous Summary'));
-      ok(prompt.includes('Global Dialogue Context (ordered support only)'));
+      ok(prompt.includes('Timestamp-Grounded Dialogue Context'));
+      ok(!prompt.includes('Global Dialogue Context (ordered support only)'));
       ok(prompt.includes('Speaker 1'));
       ok(prompt.includes('Global Music Context (support only)'));
       ok(prompt.includes('Trailer-wide context: Trailer-wide music stays tense and cinematic.'));

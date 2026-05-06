@@ -1305,7 +1305,8 @@ function buildChunkDialogueContext({ sourceDialogueData, timestampDialogueData, 
 
   if (timestampSegments.length > 0) {
     const timedSelection = selectChunkLocalTimedSegments(timestampSegments, startTime, endTime);
-    selectedSegments = timedSelection.segments;
+    const promptSafeTimedSegments = timedSelection.segments.filter(hasFiniteSegmentWindow);
+    selectedSegments = promptSafeTimedSegments;
     timedOverlapCount = timedSelection.timedOverlapCount;
     usedBoundedIndexFallback = timedSelection.usedBoundedIndexFallback;
 

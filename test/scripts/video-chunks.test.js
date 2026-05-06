@@ -766,14 +766,53 @@ test('Video Chunks Script', async (t) => {
 
       is(promptBuildInputs.length > 0, true);
       is(Array.isArray(promptBuildInputs[0].dialogueContext.segments), true);
-      is(promptBuildInputs[0].dialogueContext.segments.length, 3);
-      is(promptBuildInputs[0].dialogueContext.segments[1].text, 'General Kenobi');
+      is(promptBuildInputs[0].dialogueContext.segments.length, 2);
+      is(promptBuildInputs[0].dialogueContext.segments[0].text, 'Hello there');
+      is(promptBuildInputs[0].dialogueContext.segments[1].text, 'You are a bold one');
       is(promptBuildInputs[0].dialogueContext.grounding.strategy, 'phase1_timestamp_overlap');
       is(promptBuildInputs[0].dialogueContext.grounding.usedBoundedIndexFallback, true);
       is(Array.isArray(promptBuildInputs[0].dialogueContext.speakers), true);
       is(promptBuildInputs[0].dialogueContext.speakers.length, 2);
       is(promptBuildInputs[0].dialogueContext.speakers[0].speaker_id, 'spk_001');
       is(promptBuildInputs[0].dialogueContext.speakers[1].speaker_id, 'spk_002');
+    });
+
+    await tNested.test('filters unresolved bounded timestamp dialogue placeholders before prompt assembly', () => {
+      const dialogueContext = videoChunksScript.__test.buildChunkDialogueContext({
+        sourceDialogueData: {
+          dialogue_segments: [
+            { index: 5, speaker: 'Speaker 3', speaker_id: 'spk_003', text: 'Menendez is a terrorist.' },
+            { index: 6, speaker: 'Speaker 3', speaker_id: 'spk_003', text: "We're bringing peace and security to the world." },
+            { index: 7, speaker: 'Speaker 3', speaker_id: 'spk_003', text: 'You think I am evil.' }
+          ],
+          speaker_profiles: [
+            { speaker_id: 'spk_003', label: 'Speaker 3', grounded: { linked_segment_indexes: [5, 6, 7] } }
+          ]
+        },
+        timestampDialogueData: {
+          dialogue_segments: [
+            { index: 5, speaker: 'Speaker 3', speaker_id: 'spk_003', text: 'Menendez is a terrorist.', start: 23.22, end: 27.02 },
+            {
+              index: 6,
+              speaker: 'Speaker 3',
+              speaker_id: 'spk_003',
+              text: "We're bringing peace and security to the world.",
+              timing: { status: 'unresolved' }
+            },
+            { index: 7, speaker: 'Speaker 3', speaker_id: 'spk_003', text: 'You think I am evil.', start: 27.88, end: 29.88 }
+          ]
+        },
+        startTime: 25,
+        endTime: 30
+      });
+
+      is(dialogueContext.grounding.strategy, 'phase1_timestamp_overlap');
+      is(dialogueContext.grounding.usedBoundedIndexFallback, true);
+      is(dialogueContext.segments.length, 2);
+      is(dialogueContext.segments[0].index, 5);
+      is(dialogueContext.segments[1].index, 7);
+      is(dialogueContext.speakers.length, 1);
+      is(dialogueContext.speakers[0].speaker_id, 'spk_003');
     });
 
     await tNested.test('falls back to source-timed dialogue overlap when timestamp artifacts are missing', async () => {
