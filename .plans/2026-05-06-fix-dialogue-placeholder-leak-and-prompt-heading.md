@@ -95,7 +95,7 @@ The heading/copy fix stayed exactly where that prompt text is owned: `/home/derr
 
 Targeted regression coverage was updated in-repo: `test/scripts/video-chunks.test.js` now verifies that the bounded `[5, 6, 7]` reproduction still reports `usedBoundedIndexFallback: true` and `phase1_timestamp_overlap`, but only prompt-safe timed rows `5` and `7` survive into `dialogueContext.segments`; it also adds a direct helper test for the exact unresolved-placeholder reproduction from `REF-04`/`REF-05`. `test/scripts/emotion-lenses-tool.test.js` now asserts the new exact heading text and rejects the old `Global Dialogue Context (ordered support only)` wording.
 
-Validation/evidence: `node --test test/scripts/video-chunks.test.js test/scripts/emotion-lenses-tool.test.js` passed (`59` tests, `0` failed) after the patch. The passing assertions are the bounded evidence that the coder lane preserved the already-working overlap behavior from `REF-06`, kept clean no-dialogue windows aligned with the existing fallback contract from `REF-07`, and removed the unresolved placeholder leak reproduced from `REF-04`/`REF-05`.
+Validation/evidence: `node --test test/scripts/video-chunks.test.js test/scripts/emotion-lenses-tool.test.js` passed (`59` tests, `0` failed) after the patch. The passing assertions are the bounded evidence that the coder lane preserved the already-working overlap behavior from `REF-06`, kept clean no-dialogue windows aligned with the existing fallback contract from `REF-07`, and removed the unresolved placeholder leak reproduced from `REF-04`/`REF-05`. The engine-side fix/plan/test update is committed/pushed as `emotion-engine@67c70fc` (`Filter unresolved dialogue placeholders from chunk prompts`).
 
 ---
 
