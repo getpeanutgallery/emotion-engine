@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import contextlib
 import json
 import sys
 from importlib import metadata
@@ -116,15 +117,16 @@ def main():
 
     for device, compute_type in attempts:
         try:
-            result = run_attempt(
-                args.asset_path,
-                args.model,
-                args.download_root,
-                args.batch_size,
-                device,
-                compute_type,
-                prior_failures=failures
-            )
+            with contextlib.redirect_stdout(sys.stderr):
+                result = run_attempt(
+                    args.asset_path,
+                    args.model,
+                    args.download_root,
+                    args.batch_size,
+                    device,
+                    compute_type,
+                    prior_failures=failures
+                )
             sys.stdout.write(json.dumps(result))
             return 0
         except Exception as exc:  # noqa: BLE001 - we want the honest fallback details

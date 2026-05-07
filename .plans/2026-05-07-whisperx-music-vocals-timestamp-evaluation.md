@@ -123,6 +123,46 @@ Success here is not “WhisperX exists.” Success is having a configurable timi
 
 ---
 
+### Task 2.5: Bootstrap repo-local WhisperX runtime for QA
+
+**Bead ID:** `ee-5fq5`  
+**SubAgent:** `primary` (for `coder` workflow role)  
+**Role:** `coder`  
+**References:** `REF-02`, `REF-03`, `REF-05`, `REF-07`  
+**Prompt:** Bootstrap the repo-local WhisperX runtime needed for real-media QA on the configurable music-vocals timestamp backend. Claim the assigned bead on start with `bd update <BEAD_ID> --status in_progress --json`. Create or document the repo-local `.venv-whisperx` setup needed by `server/scripts/get-context/whisperx-transcribe.py`, verify that the runtime can import WhisperX and execute the bridge helpfully on this host, and keep any setup bounded to what the new configurable backend actually needs for QA. Record exact install/bootstrap commands, dependency assumptions, and smoke-test evidence. If bootstrap is not feasible, fail honestly with the exact blocker instead of papering over it.
+
+**Folders Created/Deleted/Modified:**
+- `.plans/`
+- `server/scripts/get-context/`
+- repo-local runtime/bootstrap surfaces as needed
+
+**Files Created/Deleted/Modified:**
+- `.plans/2026-05-07-whisperx-music-vocals-timestamp-evaluation.md`
+- `server/scripts/get-context/whisperx-transcribe.py`
+- repo-local `.venv-whisperx/` runtime (untracked, host-local bootstrap state)
+
+**Status:** ✅ Complete
+
+**Results:** Repo-local WhisperX runtime bootstrapped on this host for QA and validated end-to-end against the real bridge path.
+- **Python/runtime choice:** used host `/usr/bin/python3.12` instead of the repo-default Python 3.14 because current Torch/WhisperX wheels are available and imported cleanly on 3.12 here.
+- **Exact bootstrap commands used:**
+  - `uv venv --python /usr/bin/python3.12 .venv-whisperx`
+  - `.venv-whisperx/bin/python -m ensurepip --upgrade`
+  - `.venv-whisperx/bin/python -m pip install --upgrade pip setuptools wheel`
+  - `.venv-whisperx/bin/python -m pip install whisperx`
+- **Repo-local cache/runtime assumptions confirmed:** the JS helper expects repo-local `.venv-whisperx/bin/python`, repo-local model cache roots under `.cache/huggingface` and `.cache/whisperx`, host `ffmpeg`, and a CUDA-capable Torch runtime when available with CPU/int8 fallback still preserved in the Python bridge.
+- **Import verification:** `.venv-whisperx/bin/python` successfully imported `torch` and `whisperx` on this host; observed runtime was Torch `2.8.0+cu128`, `torch.cuda.is_available() == True`, WhisperX `3.8.5`.
+- **Bounded bridge smoke test:** ran the actual bridge on `output/_archives/cod-test-optimized-mp4-source/phase1-gather-context/raw/ffmpeg/music/chunks/chunk_000.mp3` using `small.en` and batch size `4`. The bridge completed on CUDA/float16 and returned 8 timed segments over `29.478s`; first segment was `I want you afraid.` at `1.013s–1.993s`.
+- **Validation commands used:**
+  - `.venv-whisperx/bin/python - <<'PY' ... import torch, whisperx ... PY`
+  - `.venv-whisperx/bin/python server/scripts/get-context/whisperx-transcribe.py --asset-path output/_archives/cod-test-optimized-mp4-source/phase1-gather-context/raw/ffmpeg/music/chunks/chunk_000.mp3 --download-root .cache/whisperx-models --batch-size 4`
+  - `node - <<'JS' ... require('./server/lib/whisperx-music-vocals-timing.cjs') ... deriveWhisperXMusicVocalsTiming(...) ... JS`
+- **Important runtime fix discovered during bootstrap:** the first real run showed WhisperX/torchaudio progress chatter leaking to stdout during model/bootstrap downloads, which broke the JS wrapper's `JSON.parse(stdout)` assumption. Fixed this narrowly in `server/scripts/get-context/whisperx-transcribe.py` by redirecting third-party stdout noise to stderr during the run so the wrapper contract remains `stdout = JSON payload`, `stderr = diagnostics/progress`.
+- **Smoke-test evidence after fix:** the Python bridge now emits clean JSON on stdout, and the Node helper `deriveWhisperXMusicVocalsTiming(...)` completed successfully with engine `{ name: 'whisperx', version: '3.8.5' }`, runtime `{ device: 'cuda', computeType: 'float16', model: 'small.en', batchSize: 4, language: 'en' }`, `segmentCount: 8`, `warnings: []`, `totalDuration: 29.478`.
+- **Scope note:** bootstrap stayed bounded to the music-vocals QA slice; no broader runtime packaging or workflow redesign was attempted.
+
+---
+
 ### Task 3: QA both timing backends against representative media
 
 **Bead ID:** `ee-3z03`  
@@ -170,12 +210,12 @@ Success here is not “WhisperX exists.” Success is having a configurable timi
 
 **Status:** ⚠️ Partial
 
-**What We Built:** Execution plan plus completed audit of the current music-vocals timestamp path, including the exact backend seam, the stable downstream artifact contract, the recommended config surface for backend selection, current runtime/config/output constraints, and the QA comparison method for faster-whisper vs WhisperX.
+**What We Built:** Execution plan, completed audit of the current music-vocals timestamp path, and a configurable faster-whisper/WhisperX backend implementation. A repo-local WhisperX runtime bootstrap task was added after verification showed the code path exists but `.venv-whisperx` is not yet installed on this host, so QA cannot honestly run the side-by-side comparison until that blocker is cleared.
 
 **Reference Check:** `REF-01` carries forward the earlier fallback contract; `REF-02` through `REF-07` were traced concretely in the Task 1 audit results and now define the exact code, config, artifact, and QA surfaces the implementation must respect.
 
 **Commits:**
-- Pending
+- `d6acd659c2a62b22f499a01f1473473e1b7b9670` - Add configurable music-vocals timestamp backends
 
 **Lessons Learned:** For this lane, “better timestamps” only counts if the swap improves real segment anchoring on mixed trailer audio without silently inventing timings.
 
