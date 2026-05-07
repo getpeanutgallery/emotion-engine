@@ -15,13 +15,17 @@ function mockModule(modulePath, mockExports) {
   };
 }
 
-function loadScriptWithMock(mockDeriveFasterWhisperMusicVocalsTiming) {
-  const helperPath = require.resolve('../../server/lib/faster-whisper-music-vocals-timing.cjs', { paths: [__dirname] });
+function loadScriptWithMock({
+  mockDeriveMusicVocalsTiming,
+  mockGetConfiguredMusicVocalsTimestampBackend = () => 'faster_whisper'
+}) {
+  const helperPath = require.resolve('../../server/lib/music-vocals-timestamp-backend.cjs', { paths: [__dirname] });
   const targetPath = require.resolve('../../server/scripts/get-context/get-music-vocals-timestamps.cjs', { paths: [__dirname] });
   delete require.cache[helperPath];
   delete require.cache[targetPath];
-  mockModule('../../server/lib/faster-whisper-music-vocals-timing.cjs', {
-    deriveFasterWhisperMusicVocalsTiming: mockDeriveFasterWhisperMusicVocalsTiming
+  mockModule('../../server/lib/music-vocals-timestamp-backend.cjs', {
+    deriveMusicVocalsTiming: mockDeriveMusicVocalsTiming,
+    getConfiguredMusicVocalsTimestampBackend: mockGetConfiguredMusicVocalsTimestampBackend
   });
   return require('../../server/scripts/get-context/get-music-vocals-timestamps.cjs');
 }
@@ -48,22 +52,24 @@ test('get-music-vocals-timestamps invokes faster-whisper timing with the asset p
   });
 
   const captured = [];
-  const script = loadScriptWithMock(async (input) => {
-    captured.push(input);
-    return {
-      musicVocalsData: {
-        vocal_segments: [
-          { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'hello from the chorus', start: 1.1, end: 2.3, confidence: 0.8 }
-        ],
-        summary: 'Timed vocals',
-        totalDuration: 12.4
-      },
-      metadata: {
-        runtime: { device: 'cuda', computeType: 'float16', model: 'small.en', wordTimestamps: true, vadFilter: false },
-        engine: { name: 'faster_whisper', version: '1.2.3' },
-        warnings: []
-      }
-    };
+  const script = loadScriptWithMock({
+    mockDeriveMusicVocalsTiming: async (input) => {
+      captured.push(input);
+      return {
+        musicVocalsData: {
+          vocal_segments: [
+            { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'hello from the chorus', start: 1.1, end: 2.3, confidence: 0.8 }
+          ],
+          summary: 'Timed vocals',
+          totalDuration: 12.4
+        },
+        metadata: {
+          runtime: { device: 'cuda', computeType: 'float16', model: 'small.en', wordTimestamps: true, vadFilter: false },
+          engine: { name: 'faster_whisper', version: '1.2.3' },
+          warnings: []
+        }
+      };
+    }
   });
 
   await script.run({
@@ -72,7 +78,59 @@ test('get-music-vocals-timestamps invokes faster-whisper timing with the asset p
     config: { gather_context: ['server/scripts/get-context/get-music-vocals.cjs'] }
   });
 
-  assert.deepEqual(captured, [{ assetPath: '/tmp/fake-asset.mp4' }]);
+  assert.equal(captured.length, 1);
+  assert.equal(captured[0].assetPath, '/tmp/fake-asset.mp4');
+  assert.deepEqual(captured[0].config, { gather_context: ['server/scripts/get-context/get-music-vocals.cjs'] });
+  assert.equal(captured[0].onDebugEvidence, null);
+});
+
+test('get-music-vocals-timestamps writes backend-specific raw evidence only when debug.captureRaw is enabled', async (t) => {
+  const outputDir = makeTempDir('ee-music-vocals-ts-whisperx-raw-');
+  t.after(() => fs.rmSync(outputDir, { recursive: true, force: true }));
+
+  writeJson(path.join(outputDir, 'phase1-gather-context', 'music-vocals-data.json'), {
+    vocal_segments: [
+      { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'Hello from the chorus', confidence: 0.9 }
+    ],
+    summary: 'Raw vocals',
+    totalDuration: 12.4
+  });
+
+  const script = loadScriptWithMock({
+    mockGetConfiguredMusicVocalsTimestampBackend: () => 'whisperx',
+    mockDeriveMusicVocalsTiming: async ({ onDebugEvidence }) => {
+      onDebugEvidence({ backend: 'whisperx', bridgePayload: { engine: { name: 'whisperx' }, dialogue_segments: [{ text: 'hello from the chorus', start: 1.1, end: 2.3 }] } });
+      return {
+        musicVocalsData: {
+          vocal_segments: [
+            { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'hello from the chorus', start: 1.1, end: 2.3, confidence: 0.8 }
+          ],
+          summary: 'Timed vocals',
+          totalDuration: 12.4
+        },
+        metadata: {
+          runtime: { device: 'cuda', computeType: 'float16', model: 'small.en', batchSize: 16, wordTimestamps: true, vadFilter: false },
+          engine: { name: 'whisperx', version: '3.3.1' },
+          warnings: []
+        }
+      };
+    }
+  });
+
+  const result = await script.run({
+    assetPath: '/tmp/fake-asset.mp4',
+    outputDir,
+    config: {
+      gather_context: ['server/scripts/get-context/get-music-vocals.cjs'],
+      debug: { captureRaw: true },
+      settings: { phase1: { music_vocals: { timestamp_backend: 'whisperx' } } }
+    }
+  });
+
+  assert.equal(result.artifacts.musicVocalsTimestampsData.provenance.alignmentEngine, 'whisperx');
+  const rawPayload = JSON.parse(fs.readFileSync(path.join(outputDir, 'phase1-gather-context', 'raw', 'music-vocals-timestamps', 'whisperx-alignment.json'), 'utf8'));
+  assert.equal(rawPayload.backend, 'whisperx');
+  assert.equal(rawPayload.bridgePayload.engine.name, 'whisperx');
 });
 
 test('get-music-vocals-timestamps derives raw-surface timestamps, preserves source text verbatim, and keeps song metadata truthful', async (t) => {
@@ -94,7 +152,8 @@ test('get-music-vocals-timestamps derives raw-surface timestamps, preserves sour
     recognitionNotes: ['Short refrain only.']
   });
 
-  const script = loadScriptWithMock(async () => ({
+  const script = loadScriptWithMock({
+    mockDeriveMusicVocalsTiming: async () => ({
     musicVocalsData: {
       vocal_segments: [
         { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'master master', start: 1.2, end: 2.6, confidence: 0.87 },
@@ -108,7 +167,8 @@ test('get-music-vocals-timestamps derives raw-surface timestamps, preserves sour
       engine: { name: 'faster_whisper', version: '1.2.3' },
       warnings: []
     }
-  }));
+    })
+  });
 
   const result = await script.run({
     assetPath: '/tmp/fake-asset.mp4',
@@ -160,7 +220,8 @@ test('get-music-vocals-timestamps prefers reconciled music-vocals when canonical
     totalDuration: 12
   });
 
-  const script = loadScriptWithMock(async () => ({
+  const script = loadScriptWithMock({
+    mockDeriveMusicVocalsTiming: async () => ({
     musicVocalsData: {
       vocal_segments: [
         { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'clean reconciled lyric', start: 0.4, end: 1.9, confidence: 0.86 }
@@ -173,7 +234,8 @@ test('get-music-vocals-timestamps prefers reconciled music-vocals when canonical
       engine: { name: 'faster_whisper', version: '1.2.3' },
       warnings: ['Fallback from cuda/float16 due to RuntimeError: GPU unavailable']
     }
-  }));
+    })
+  });
 
   const result = await script.run({
     assetPath: '/tmp/fake-asset.mp4',
@@ -220,7 +282,8 @@ test('get-music-vocals-timestamps resolves canonical reconciled source from arti
     }
   });
 
-  const script = loadScriptWithMock(async () => ({
+  const script = loadScriptWithMock({
+    mockDeriveMusicVocalsTiming: async () => ({
     musicVocalsData: {
       vocal_segments: [{ index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'hydrated reconciled lyric', start: 0.8, end: 2.1, confidence: 0.86 }],
       summary: 'Timed vocals',
@@ -231,7 +294,8 @@ test('get-music-vocals-timestamps resolves canonical reconciled source from arti
       engine: { name: 'faster_whisper', version: '1.2.3' },
       warnings: []
     }
-  }));
+    })
+  });
 
   const result = await script.run({
     assetPath: '/tmp/fake-asset.mp4',
@@ -258,7 +322,8 @@ test('get-music-vocals-timestamps marks repeated short hooks as partial and weak
     totalDuration: 14
   });
 
-  const script = loadScriptWithMock(async () => ({
+  const script = loadScriptWithMock({
+    mockDeriveMusicVocalsTiming: async () => ({
     musicVocalsData: {
       vocal_segments: [
         { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'chant', text: 'master master', start: 1.0, end: 1.7, confidence: 0.82 },
@@ -273,7 +338,8 @@ test('get-music-vocals-timestamps marks repeated short hooks as partial and weak
       engine: { name: 'faster_whisper', version: '1.2.3' },
       warnings: []
     }
-  }));
+    })
+  });
 
   const result = await script.run({
     assetPath: '/tmp/fake-asset.mp4',
@@ -314,7 +380,8 @@ test('get-music-vocals-timestamps adds dialogue-assisted timing anchors for unre
     totalDuration: 140.042
   });
 
-  const script = loadScriptWithMock(async () => ({
+  const script = loadScriptWithMock({
+    mockDeriveMusicVocalsTiming: async () => ({
     musicVocalsData: {
       vocal_segments: [
         { index: 0, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'master master', start: 89.8, end: 91.68, confidence: 0.87 }
@@ -327,7 +394,8 @@ test('get-music-vocals-timestamps adds dialogue-assisted timing anchors for unre
       engine: { name: 'faster_whisper', version: '1.2.3' },
       warnings: []
     }
-  }));
+    })
+  });
 
   const result = await script.run({
     assetPath: '/tmp/fake-asset.mp4',
@@ -388,7 +456,8 @@ test('get-music-vocals-timestamps refuses ambiguous repeated dialogue lyric matc
     totalDuration: 140.042
   });
 
-  const script = loadScriptWithMock(async () => ({
+  const script = loadScriptWithMock({
+    mockDeriveMusicVocalsTiming: async () => ({
     musicVocalsData: {
       vocal_segments: [
         { index: 99, performer: 'Vocalist 1', performer_id: 'voc_001', delivery: 'sung', text: 'crowd wash', start: 10, end: 11, confidence: 0.2 }
@@ -401,7 +470,8 @@ test('get-music-vocals-timestamps refuses ambiguous repeated dialogue lyric matc
       engine: { name: 'faster_whisper', version: '1.2.3' },
       warnings: []
     }
-  }));
+    })
+  });
 
   const result = await script.run({
     assetPath: '/tmp/fake-asset.mp4',

@@ -44,6 +44,8 @@ settings:
       max_whole_asset_duration_seconds: 180
       fallback_to_chunked: false
       preserve_chunk_plan_metadata: true
+    music_vocals:
+      timestamp_backend: faster_whisper
   retry_strategy:
     type: exponential-backoff
     config:

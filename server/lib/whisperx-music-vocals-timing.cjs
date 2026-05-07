@@ -5,11 +5,12 @@ const path = require('path');
 const { spawn } = require('child_process');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
-const FASTER_WHISPER_PYTHON = path.join(REPO_ROOT, '.venv-faster-whisper', 'bin', 'python');
-const FASTER_WHISPER_SCRIPT = path.join(REPO_ROOT, 'server', 'scripts', 'get-context', 'faster-whisper-transcribe.py');
-const FASTER_WHISPER_HF_HOME = path.join(REPO_ROOT, '.cache', 'huggingface');
-const FASTER_WHISPER_DOWNLOAD_ROOT = path.join(REPO_ROOT, '.cache', 'faster-whisper');
-const FASTER_WHISPER_MODEL = 'small.en';
+const WHISPERX_PYTHON = path.join(REPO_ROOT, '.venv-whisperx', 'bin', 'python');
+const WHISPERX_SCRIPT = path.join(REPO_ROOT, 'server', 'scripts', 'get-context', 'whisperx-transcribe.py');
+const WHISPERX_HF_HOME = path.join(REPO_ROOT, '.cache', 'huggingface');
+const WHISPERX_DOWNLOAD_ROOT = path.join(REPO_ROOT, '.cache', 'whisperx');
+const WHISPERX_MODEL = 'small.en';
+const WHISPERX_BATCH_SIZE = 16;
 
 function parseJson(text, label) {
   try {
@@ -24,7 +25,7 @@ function parseJson(text, label) {
 
 function createTimingFailure({ message, stdout, stderr, cause, exitCode = null }) {
   const error = new Error(message);
-  error.name = 'FasterWhisperMusicVocalsTimingError';
+  error.name = 'WhisperXMusicVocalsTimingError';
   error.stdout = stdout;
   error.stderr = stderr;
   error.exitCode = exitCode;
@@ -34,26 +35,30 @@ function createTimingFailure({ message, stdout, stderr, cause, exitCode = null }
   return error;
 }
 
-async function deriveFasterWhisperMusicVocalsTiming({
+async function deriveWhisperXMusicVocalsTiming({
   assetPath,
   spawnImpl = spawn,
-  pythonPath = FASTER_WHISPER_PYTHON,
-  scriptPath = FASTER_WHISPER_SCRIPT,
-  hfHome = FASTER_WHISPER_HF_HOME,
-  downloadRoot = FASTER_WHISPER_DOWNLOAD_ROOT,
-  model = FASTER_WHISPER_MODEL,
+  pythonPath = WHISPERX_PYTHON,
+  scriptPath = WHISPERX_SCRIPT,
+  hfHome = WHISPERX_HF_HOME,
+  downloadRoot = WHISPERX_DOWNLOAD_ROOT,
+  model = WHISPERX_MODEL,
+  batchSize = WHISPERX_BATCH_SIZE,
   onDebugEvidence = null
 }) {
   if (!assetPath) {
-    throw new Error('deriveFasterWhisperMusicVocalsTiming requires assetPath.');
+    throw new Error('deriveWhisperXMusicVocalsTiming requires assetPath.');
   }
 
   if (!fs.existsSync(pythonPath)) {
-    throw new Error(`Repo-local faster-whisper Python is missing: ${pythonPath}`);
+    throw new Error(
+      `Repo-local WhisperX Python is missing: ${pythonPath}. `
+      + 'Create .venv-whisperx and install whisperx before selecting settings.phase1.music_vocals.timestamp_backend=whisperx.'
+    );
   }
 
   if (!fs.existsSync(scriptPath)) {
-    throw new Error(`faster-whisper bridge script is missing: ${scriptPath}`);
+    throw new Error(`WhisperX bridge script is missing: ${scriptPath}`);
   }
 
   fs.mkdirSync(hfHome, { recursive: true });
@@ -64,7 +69,8 @@ async function deriveFasterWhisperMusicVocalsTiming({
       scriptPath,
       '--asset-path', assetPath,
       '--model', model,
-      '--download-root', downloadRoot
+      '--download-root', downloadRoot,
+      '--batch-size', String(batchSize)
     ];
 
     const child = spawnImpl(pythonPath, args, {
@@ -88,7 +94,7 @@ async function deriveFasterWhisperMusicVocalsTiming({
 
     child.on('error', (cause) => {
       reject(createTimingFailure({
-        message: `Failed to launch faster-whisper bridge: ${cause.message}`,
+        message: `Failed to launch WhisperX bridge: ${cause.message}`,
         stdout,
         stderr,
         cause
@@ -98,7 +104,7 @@ async function deriveFasterWhisperMusicVocalsTiming({
     child.on('close', (code) => {
       if (code !== 0) {
         reject(createTimingFailure({
-          message: `faster-whisper bridge exited with code ${code}`,
+          message: `WhisperX bridge exited with code ${code}`,
           stdout,
           stderr,
           exitCode: code
@@ -108,7 +114,7 @@ async function deriveFasterWhisperMusicVocalsTiming({
 
       let payload;
       try {
-        payload = parseJson(stdout, 'faster-whisper bridge stdout');
+        payload = parseJson(stdout, 'WhisperX bridge stdout');
       } catch (cause) {
         reject(createTimingFailure({
           message: cause.message,
@@ -126,7 +132,7 @@ async function deriveFasterWhisperMusicVocalsTiming({
 
       if (!rawSegments || timedSegmentCount === 0) {
         reject(createTimingFailure({
-          message: 'faster-whisper bridge did not return any timed music-vocals segments.',
+          message: 'WhisperX bridge did not return any timed music-vocals segments.',
           stdout,
           stderr
         }));
@@ -135,7 +141,7 @@ async function deriveFasterWhisperMusicVocalsTiming({
 
       if (typeof onDebugEvidence === 'function') {
         onDebugEvidence({
-          backend: 'faster_whisper',
+          backend: 'whisperx',
           bridgePayload: payload,
           bridgeStderr: stderr || null
         });
@@ -158,10 +164,11 @@ async function deriveFasterWhisperMusicVocalsTiming({
 }
 
 module.exports = {
-  deriveFasterWhisperMusicVocalsTiming,
-  FASTER_WHISPER_PYTHON,
-  FASTER_WHISPER_SCRIPT,
-  FASTER_WHISPER_HF_HOME,
-  FASTER_WHISPER_DOWNLOAD_ROOT,
-  FASTER_WHISPER_MODEL
+  deriveWhisperXMusicVocalsTiming,
+  WHISPERX_PYTHON,
+  WHISPERX_SCRIPT,
+  WHISPERX_HF_HOME,
+  WHISPERX_DOWNLOAD_ROOT,
+  WHISPERX_MODEL,
+  WHISPERX_BATCH_SIZE
 };

@@ -12,10 +12,17 @@ const {
   buildMusicVocalsTimestampArtifact
 } = require('../../lib/phase1-timestamp-derivation.cjs');
 const {
-  deriveFasterWhisperMusicVocalsTiming
-} = require('../../lib/faster-whisper-music-vocals-timing.cjs');
+  shouldCaptureRaw,
+  getRawPhaseDir,
+  writeRawJson
+} = require('../../lib/raw-capture.cjs');
+const {
+  deriveMusicVocalsTiming,
+  getConfiguredMusicVocalsTimestampBackend
+} = require('../../lib/music-vocals-timestamp-backend.cjs');
 
 const SCRIPT_ID = 'get-music-vocals-timestamps';
+const PHASE_KEY = 'phase1-gather-context';
 
 function ensureSourceMusicVocals({ artifacts, outputDir, config, runtimeArtifactSurface }) {
   const bagResolution = selectCanonicalPhase1ArtifactFromBag(artifacts || {}, 'musicVocalsData', {
@@ -90,8 +97,22 @@ function loadOptionalDialogueTimingData({ artifacts, outputDir, config, runtimeA
   }
 }
 
-async function deriveAlignmentMusicVocals({ assetPath }) {
-  return deriveFasterWhisperMusicVocalsTiming({ assetPath });
+async function deriveAlignmentMusicVocals({ assetPath, config, outputDir }) {
+  const captureRaw = shouldCaptureRaw(config);
+  const selectedBackend = getConfiguredMusicVocalsTimestampBackend(config);
+  const rawDir = captureRaw
+    ? getRawPhaseDir(outputDir, PHASE_KEY)
+    : null;
+
+  return deriveMusicVocalsTiming({
+    assetPath,
+    config,
+    onDebugEvidence: captureRaw
+      ? (payload) => {
+        writeRawJson(rawDir, path.join('music-vocals-timestamps', `${selectedBackend}-alignment.json`), payload);
+      }
+      : null
+  });
 }
 
 async function run(input) {
@@ -114,7 +135,7 @@ async function run(input) {
     config,
     runtimeArtifactSurface: source.runtimeArtifactSurface
   });
-  const alignment = await deriveAlignmentMusicVocals({ assetPath });
+  const alignment = await deriveAlignmentMusicVocals({ assetPath, config, outputDir });
 
   const artifact = buildMusicVocalsTimestampArtifact({
     sourceMusicVocalsData: source.sourceMusicVocalsData,
