@@ -7,6 +7,8 @@ const {
   deriveWhisperXMusicVocalsTiming
 } = require('./whisperx-music-vocals-timing.cjs');
 
+// Product default stays on faster-whisper. WhisperX remains opt-in for bounded
+// experiments only unless future QA evidence proves it should be promoted.
 const DEFAULT_TIMESTAMP_BACKEND = 'faster_whisper';
 const SUPPORTED_TIMESTAMP_BACKENDS = new Set(['faster_whisper', 'whisperx']);
 
@@ -24,7 +26,8 @@ async function deriveMusicVocalsTiming({ assetPath, config = {}, onDebugEvidence
   if (!SUPPORTED_TIMESTAMP_BACKENDS.has(backend)) {
     throw new Error(
       `Unsupported music-vocals timestamp backend: ${backend}. `
-      + `Expected one of: ${Array.from(SUPPORTED_TIMESTAMP_BACKENDS).join(', ')}`
+      + `Expected one of: ${Array.from(SUPPORTED_TIMESTAMP_BACKENDS).join(', ')}. `
+      + 'Use faster_whisper for the practical default; whisperx is experimental.'
     );
   }
 

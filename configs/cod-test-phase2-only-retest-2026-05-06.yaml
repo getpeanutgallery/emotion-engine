@@ -45,6 +45,8 @@ settings:
       fallback_to_chunked: false
       preserve_chunk_plan_metadata: true
     music_vocals:
+      # Practical default stays on faster_whisper. Only switch to whisperx for
+      # bounded comparison/experimental runs; it is not the preferred backend.
       timestamp_backend: faster_whisper
   retry_strategy:
     type: exponential-backoff

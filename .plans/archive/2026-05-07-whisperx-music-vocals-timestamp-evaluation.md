@@ -180,9 +180,62 @@ Success here is not “WhisperX exists.” Success is having a configurable timi
 - fresh output artifacts/logs/comparison notes
 - `.plans/2026-05-07-whisperx-music-vocals-timestamp-evaluation.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** QA completed with a bounded side-by-side rerun that changed only `settings.phase1.music_vocals.timestamp_backend` while keeping the same timestamp-enabled config, same COD asset, and the same precomputed Phase 1 source packet.
+- **Comparison method:** reused `output/cod-test-phase1-timestamp-validation/` as the fixed input packet because it already contains the reconciled/raw music-vocals source artifacts and dialogue timestamp assist surface. Cloned that packet into two fresh output dirs, removed the prior `music-vocals-timestamps-data.reconciled.json` artifact plus prior raw timestamp debug folder in each clone, then reran **only** `get-music-vocals-timestamps.cjs` against each clone with the same loaded `configs/cod-test-phase1-timestamp-validation.yaml` config object and only the backend field changed.
+- **Exact commands used:**
+  - `cp -a output/cod-test-phase1-timestamp-validation output/cod-test-phase1-backend-qa-2026-05-07-faster-whisper`
+  - `cp -a output/cod-test-phase1-timestamp-validation output/cod-test-phase1-backend-qa-2026-05-07-whisperx`
+  - `rm -f output/cod-test-phase1-backend-qa-2026-05-07-faster-whisper/phase1-gather-context/music-vocals-timestamps-data.reconciled.json`
+  - `rm -f output/cod-test-phase1-backend-qa-2026-05-07-whisperx/phase1-gather-context/music-vocals-timestamps-data.reconciled.json`
+  - `rm -rf output/cod-test-phase1-backend-qa-2026-05-07-faster-whisper/phase1-gather-context/raw/music-vocals-timestamps output/cod-test-phase1-backend-qa-2026-05-07-whisperx/phase1-gather-context/raw/music-vocals-timestamps`
+  - `rm -rf output/cod-test-phase1-backend-qa-2026-05-07-faster-whisper/qa-timestamp-metrics/reports output/cod-test-phase1-backend-qa-2026-05-07-whisperx/qa-timestamp-metrics/reports`
+  - `rm -f output/cod-test-phase1-backend-qa-2026-05-07-faster-whisper/qa-timestamp-metrics/qa-run-result.json output/cod-test-phase1-backend-qa-2026-05-07-whisperx/qa-timestamp-metrics/qa-run-result.json`
+  - `/usr/bin/time -f 'elapsed_seconds=%e' -o .logs/ee-3z03-faster-whisper.time node - <<'JS' > .logs/ee-3z03-faster-whisper.log 2>&1` → loaded `configs/cod-test-phase1-timestamp-validation.yaml`, set `config.asset.outputDir='output/cod-test-phase1-backend-qa-2026-05-07-faster-whisper'`, set `config.settings.phase1.music_vocals.timestamp_backend='faster_whisper'`, then called `require('./server/scripts/get-context/get-music-vocals-timestamps.cjs').run({ assetPath, outputDir, config })`
+  - `/usr/bin/time -f 'elapsed_seconds=%e' -o .logs/ee-3z03-whisperx.time node - <<'JS' > .logs/ee-3z03-whisperx.log 2>&1` → loaded `configs/cod-test-phase1-timestamp-validation.yaml`, set `config.asset.outputDir='output/cod-test-phase1-backend-qa-2026-05-07-whisperx'`, set `config.settings.phase1.music_vocals.timestamp_backend='whisperx'`, then called `require('./server/scripts/get-context/get-music-vocals-timestamps.cjs').run({ assetPath, outputDir, config })`
+  - `node - <<'JS' ... runBenchmarkStage(...) ... JS` for each compare dir using the copied `qa-timestamp-metrics/fixture/benchmark.json` and the full timestamp-validation config loaded from YAML, producing fresh reports under each compare dir’s `qa-timestamp-metrics/reports/`
+- **Backend-selection settings and output locations:**
+  - `faster_whisper` → `output/cod-test-phase1-backend-qa-2026-05-07-faster-whisper/`
+  - `whisperx` → `output/cod-test-phase1-backend-qa-2026-05-07-whisperx/`
+  - comparison summary artifact: `output/cod-test-phase1-backend-qa-2026-05-07-comparison.json`
+  - run logs: `.logs/ee-3z03-faster-whisper.log`, `.logs/ee-3z03-whisperx.log`
+  - runtime timing logs: `.logs/ee-3z03-faster-whisper.time` (`3.12s`), `.logs/ee-3z03-whisperx.time` (`7.43s`)
+- **Reconciled-first fallback verified:** both outputs report `provenance.runtimeArtifactSurface='reconciled'`, `sourceRuntimeKey='musicVocalsDataReconciled'`, and `sourcePath='phase1-gather-context/music-vocals-data.reconciled.json'`, confirming the timestamp pass consumed the reconciled surface first.
+- **Source text remained verbatim:** verified row-by-row that both derived timestamp artifacts preserved the source lyric text exactly; no line text was rewritten. Provenance also reports `sourceTextIntegrity='verbatim'` and `recognizedSongUsedForTextRewrite=false` for both backends.
+- **Resolved / partial / unresolved comparison (artifact `timing.status` counts):**
+  - `faster_whisper`: `0 resolved / 2 partial / 8 unresolved`
+  - `whisperx`: `0 resolved / 0 partial / 10 unresolved`
+  - Important nuance: the two faster-whisper partial rows carried finite windows, but the artifact still marked them `partial` rather than `resolved`, so the system preserved ambiguity instead of over-claiming success.
+- **Repeated-hook ambiguity behavior:**
+  - The repeated `Master, master` hook appears twice in the reconciled source (`vocal_segments[1]` and `vocal_segments[8]`).
+  - `faster_whisper` produced two ambiguous partial anchors for those repeated hooks: `89.8–91.68` with `timing.confidence=1` and `92.22–96.36` with `timing.confidence=0.8`. This is directionally useful as a rough “hook lives around here” signal, but still not strong enough to count as resolved timing.
+  - `whisperx` left both `Master, master` rows fully unresolved and produced no comparable hook anchor in the derived artifact.
+- **Backend-specific raw debug evidence:**
+  - `faster_whisper` raw debug: `output/cod-test-phase1-backend-qa-2026-05-07-faster-whisper/phase1-gather-context/raw/music-vocals-timestamps/faster_whisper-alignment.json`
+    - raw bridge payload contained `31` segments and explicitly emitted lyric-near strings including `"Master, master!"` (`89.8–91.68`) and `"Master, master, master!"` (`93.52–96.36`).
+    - `bridgeStderr` was empty.
+  - `whisperx` raw debug: `output/cod-test-phase1-backend-qa-2026-05-07-whisperx/phase1-gather-context/raw/music-vocals-timestamps/whisperx-alignment.json`
+    - raw bridge payload contained only `20` segments and did **not** emit any `master`/`puppets`/`obey` lyric-near segment in the key music-vocals region.
+    - `bridgeStderr` captured runtime chatter (`909` chars) from VAD / pyannote / Lightning warnings, but the bridge still completed successfully and returned valid JSON.
+- **Provenance / runtime comparison:**
+  - `faster_whisper`: `alignmentEngineVersion='1.2.1'`, runtime `{ device: 'cuda', computeType: 'float16', model: 'small.en', wordTimestamps: true, vadFilter: false }`
+  - `whisperx`: `alignmentEngineVersion='3.8.5'`, runtime `{ device: 'cuda', computeType: 'float16', model: 'small.en', batchSize: 16, language: 'en', alignmentModel: null, wordTimestamps: true, vadFilter: false }`
+  - Both backends completed successfully on this host; no backend-specific hard failure occurred in the QA run.
+- **Benchmark/scoring evidence:** both compare dirs were benchmarked with the timestamp QA fixture. The overall benchmark artifact status is still noisy because the truth fixture does not yet mirror every added runtime field (for example per-row `confidence` fields), so the percentage block is more informative than the top-level pass/fail bit for this slice.
+  - `faster_whisper` report: `output/cod-test-phase1-backend-qa-2026-05-07-faster-whisper/qa-timestamp-metrics/reports/artifact-results/musicVocalsTimestampsData.json`
+    - `vocal_timing_resolved_pct = 0.0%`
+    - `vocal_timing_window_pct = n/a`
+    - `vocal_timing_blocked_by_text_drift_pct = 50.0%`
+    - `timing_eligible_unit_count = 2`, `timing_resolved_unit_count = 0`, `timing_unresolved_unit_count = 2`
+    - `vocal_attribution_pct = 63.0%`
+  - `whisperx` report: `output/cod-test-phase1-backend-qa-2026-05-07-whisperx/qa-timestamp-metrics/reports/artifact-results/musicVocalsTimestampsData.json`
+    - `vocal_timing_resolved_pct = 0.0%`
+    - `vocal_timing_window_pct = n/a`
+    - `vocal_timing_blocked_by_text_drift_pct = 50.0%`
+    - `timing_eligible_unit_count = 2`, `timing_resolved_unit_count = 0`, `timing_unresolved_unit_count = 2`
+    - `vocal_attribution_pct = 60.0%`
+- **Bounded QA verdict:** WhisperX did **not** materially improve timestamp usefulness on this COD-style music-vocals slice. Both backends still landed at `0.0%` resolved timing with `50.0%` of timing windows blocked by text drift, but faster-whisper at least surfaced two ambiguous partial `Master, master` anchors and more lyric-near raw debug evidence. Recommendation signal for audit: **do not switch the default from faster-whisper to WhisperX for music-vocals based on this slice**. Keep WhisperX available as a configurable experimental path, but current evidence does not justify preferring it over faster-whisper here.
 
 ---
 
@@ -200,19 +253,26 @@ Success here is not “WhisperX exists.” Success is having a configurable timi
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-07-whisperx-music-vocals-timestamp-evaluation.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit completed against the implementation and produced artifacts, not just the QA summary.
+- **Reconciled-first contract preserved:** the entrypoint still resolves source input through `selectCanonicalPhase1ArtifactFromBag(...)` / `resolvePhase1ArtifactPath(...)` for `musicVocalsData`, and both comparison outputs independently prove the selected source stayed reconciled: `provenance.runtimeArtifactSurface='reconciled'`, `sourceRuntimeKey='musicVocalsDataReconciled'`, `sourcePath='phase1-gather-context/music-vocals-data.reconciled.json'`.
+- **High-level script behavior stayed stable across backend choice:** `get-music-vocals-timestamps.cjs` still performs the same top-level flow (canonical source selection → optional dialogue timing load → backend alignment pass → `buildMusicVocalsTimestampArtifact(...)` → canonical artifact write). The new dispatcher only swaps the alignment engine. Both backend outputs retained the same primary artifact shape, the same 10 source rows, the same verbatim lyric text, and the same downstream provenance/coverage contract; only alignment metadata and per-row timing outcomes changed.
+- **Unresolved timings were handled honestly:** `buildMusicVocalsTimestampArtifact(...)` still defaults each row to `timing.status='unresolved'` and only upgrades when the match quality/ambiguity rules allow it. The repeated short-hook safeguard remained intact: faster-whisper surfaced two `Master, master` windows but kept both as `partial` rather than falsely marking them `aligned`; WhisperX left all rows unresolved. No fabricated timestamps or text rewrites were found.
+- **Side-by-side evidence sanity check:** the raw debug artifacts support the QA claim. Faster-whisper emitted `31` raw timed segments including lyric-near `Master, master!` windows at `89.8–91.68` and `93.52–96.36`, which explains the two downstream partial anchors. WhisperX emitted only `20` raw segments and no comparable `master` / `puppets` / `obey` lyric-near segment in that region, so its fully unresolved output is consistent with the bridge evidence.
+- **Benchmark interpretation:** the benchmark reports are useful for the timing-signal subfields but noisy at the top level. Both reports show `status: error` because the truth fixture still disagrees on structural/annotation fields (for example 12 truth rows vs 10 output rows, performer/delivery labels, and other non-backend timing details). Those top-level error bits do **not** indicate a backend regression within this slice. The actual timing signal is the same on both backends for scored eligible rows (`vocal_timing_resolved_pct=0.0%`, `vocal_timing_blocked_by_text_drift_pct=50.0%`), with faster-whisper slightly ahead only in qualitative usefulness because it preserved two ambiguous partial anchors and slightly higher attribution (`63%` vs `60%`).
+- **Audit verdict for this slice:** **pass**. The configurable backend implementation preserved the required contracts and exposed WhisperX honestly without overstating its quality.
+- **Default-backend recommendation:** keep `faster_whisper` as the default for music-vocals timestamps and expose `whisperx` only as a non-default experimental path. Current COD music-vocals evidence does not justify switching the default to WhisperX.
 
 ---
 
 ## Final Results
 
-**Status:** ⚠️ Partial
+**Status:** ✅ Complete
 
-**What We Built:** Execution plan, completed audit of the current music-vocals timestamp path, and a configurable faster-whisper/WhisperX backend implementation. A repo-local WhisperX runtime bootstrap task was added after verification showed the code path exists but `.venv-whisperx` is not yet installed on this host, so QA cannot honestly run the side-by-side comparison until that blocker is cleared.
+**What We Built:** Execution plan, completed audit of the current music-vocals timestamp path, a configurable faster-whisper/WhisperX backend implementation, repo-local WhisperX runtime bootstrap on this host, a bounded QA side-by-side rerun, and an independent audit confirming that the reconciled-first contract and honest unresolved-timing behavior were preserved while WhisperX failed to beat faster-whisper on this COD music-vocals slice.
 
-**Reference Check:** `REF-01` carries forward the earlier fallback contract; `REF-02` through `REF-07` were traced concretely in the Task 1 audit results and now define the exact code, config, artifact, and QA surfaces the implementation must respect.
+**Reference Check:** `REF-01` carries forward the earlier fallback contract; `REF-02` through `REF-07` were traced concretely in the Task 1 audit results and then exercised in Task 3’s real-media comparison, including reconciled-first artifact selection, verbatim source-text preservation, raw debug evidence capture, and timestamp benchmark reporting.
 
 **Commits:**
 - `d6acd659c2a62b22f499a01f1473473e1b7b9670` - Add configurable music-vocals timestamp backends
