@@ -128,10 +128,24 @@ Concise closed-bead list:
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-12-phase1-phase2-current-state-cleanup-and-rerun.md`
+- `.plans/artifacts/2026-05-12-cleanup-audit/post-cleanup-audit.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent post-cleanup audit completed and recorded durably at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-12-cleanup-audit/post-cleanup-audit.md`.
+
+What actually happened:
+- Verified the top-level `.plans` surface now contains only this May 12 rerun plan, which is the honest current-story surface intended by the cleanup.
+- Rechecked the canonical May 6–7 truth from the archived plan chain plus the May 6 and May 7 memory handoffs: `faster_whisper` became the real default, `whisperx` stayed experimental only, and the only still-credible bounded follow-up prototype remained the archived separation-first idea.
+- Rechecked the current implementation/config truth surfaces and confirmed they still encode that same decision: `server/lib/music-vocals-timestamp-backend.cjs` defaults to `faster_whisper`, and both timestamp-enabled COD configs still pin `music_vocals.timestamp_backend: faster_whisper`.
+- Rechecked current Beads state after cleanup. The active rerun lane is correctly visible as `ee-9ii2`, `ee-agni`, `ee-wne9`, and `ee-jk95`, with the unrelated backlog preserved separately.
+- Found one residual tracker caveat: three unrelated older beads are still marked `in_progress` (`ee-a82e`, `ee-9hzh`, `ee-ns9e`). They do not belong to the May 6–7 -> May 12 rerun surface and are still misleading as execution-state metadata.
+
+Audit verdict:
+- **Pass with residual caveats.**
+- No evidence that genuinely active May 6–7 work was incorrectly archived or closed.
+- The repo is now **clean enough to proceed with the fresh Phase 1 -> Phase 2 rerun**.
+- Residual caveat: manually restage the three unrelated `in_progress` beads later so tracker state is fully normalized, but this is not a blocker for the rerun.
 
 ---
 
@@ -149,11 +163,26 @@ Concise closed-bead list:
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-12-phase1-phase2-current-state-cleanup-and-rerun.md`
+- `.plans/artifacts/2026-05-12-rerun/summary.md`
 - fresh output run directory and artifacts
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Completed the fresh bounded Phase 1 -> Phase 2 rerun from the repo’s current post-May-7 state using the existing default `faster_whisper` music-vocals timestamp backend, with the durable execution summary captured at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-12-rerun/summary.md`.
+
+What actually happened:
+- Validated configs successfully with `npm run validate-configs` before execution.
+- Ran the canonical bounded rerun command exactly as `npm run pipeline -- --config configs/cod-test-phase2-only-retest-2026-05-06.yaml --verbose`.
+- The config remained pinned to `settings.phase1.music_vocals.timestamp_backend: faster_whisper`, and the runtime default in `server/lib/music-vocals-timestamp-backend.cjs` remained `faster_whisper`; no WhisperX promotion or architecture broadening was introduced.
+- The run executed all six Phase 1 gather scripts plus the single Phase 2 chunk-processing script and completed successfully with exit code 0.
+- Output landed at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-only-retest-2026-05-06-with-timestamps`.
+- Runtime window observed in the captured log: start `2026-05-12T18:07:32-04:00`, finish by `2026-05-12T18:26:11-04:00`.
+- Phase 1 completed dialogue, music, music-vocals, famous-song reconciliation, dialogue timestamps, and music-vocals timestamps generation. The fresh run emitted the timestamp artifacts under the current reconciled filenames: `dialogue-timestamps-data.reconciled.json` and `music-vocals-timestamps-data.reconciled.json`.
+- Phase 2 processed 29 calculated chunks and analyzed 28 provider-facing chunks successfully; the terminal `0.017s` micro-chunk was intentionally skipped under the existing guardrail (`Skipping terminal provider-facing micro-chunk under 1s`).
+- Phase 2 reported `Total tokens used: 225210` and `Average per successful chunk: 8043 tokens`.
+- Observed runtime note: the digital-twin router logged record-mode activity against cassette `cod-test-record-20260318-202023` during the run.
+- Verified the fresh output includes the Phase 1 artifacts QA will need (`dialogue-data.json`, `music-data.json`, `music-vocals-data.json`, `dialogue-timestamps-data.reconciled.json`, `music-vocals-timestamps-data.reconciled.json`) and the Phase 2 artifacts QA will need (`phase2-process/chunk-analysis.json`, `phase2-process/script-results/video-chunks.success.json`).
+- No fatal failures occurred. Practical warnings/notes were limited to the intentional sub-1s terminal micro-chunk skip, benchmarking remaining disabled by config, and Phase 3 being empty/skipped by config design.
 
 ---
 
