@@ -58,7 +58,7 @@ test('validateEmotionStateObject preserves restored persona fields', async (t) =
     assert.ok(result.summary.includes('continuationThought'));
   });
 
-  await t.test('rejects local-relative numeric timestamp phrasing in thought fields', () => {
+  await t.test('rejects local-relative numeric timestamp and countdown phrasing in thought fields', () => {
     const thoughtResult = validateEmotionStateObject({
       summary: 'An over-timestamped opener.',
       thought: '0.0s in and this already wants applause.',
@@ -82,6 +82,30 @@ test('validateEmotionStateObject preserves restored persona fields', async (t) =
       confidence: 0.64
     }, ['patience', 'boredom']);
 
+    const countdownResult = validateEmotionStateObject({
+      summary: 'A countdown-framed continuation.',
+      thought: 'Still curious.',
+      continuationThought: 'If the next 5 seconds land, I stay in.',
+      emotions: {
+        patience: { score: 5, reasoning: 'The pace stays readable.' },
+        boredom: { score: 2, reasoning: 'The visuals keep moving.' }
+      },
+      dominant_emotion: 'patience',
+      confidence: 0.66
+    }, ['patience', 'boredom']);
+
+    const fewSecondsResult = validateEmotionStateObject({
+      summary: 'A loose countdown continuation.',
+      thought: 'The build is finally working.',
+      continuationThought: 'Next few seconds decide whether this really pays off.',
+      emotions: {
+        patience: { score: 6, reasoning: 'The pacing keeps moving.' },
+        boredom: { score: 2, reasoning: 'The reveal keeps building.' }
+      },
+      dominant_emotion: 'patience',
+      confidence: 0.71
+    }, ['patience', 'boredom']);
+
     const naturalLanguageResult = validateEmotionStateObject({
       summary: 'A naturally framed continuation.',
       thought: 'Still with me by this point.',
@@ -98,6 +122,10 @@ test('validateEmotionStateObject preserves restored persona fields', async (t) =
     assert.ok(thoughtResult.summary.includes('$.thought'));
     assert.ok(!continuationResult.ok);
     assert.ok(continuationResult.summary.includes('$.continuationThought'));
+    assert.ok(!countdownResult.ok);
+    assert.ok(countdownResult.summary.includes('$.continuationThought'));
+    assert.ok(!fewSecondsResult.ok);
+    assert.ok(fewSecondsResult.summary.includes('$.continuationThought'));
     assert.ok(naturalLanguageResult.ok);
   });
 });
