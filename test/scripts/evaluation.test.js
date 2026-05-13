@@ -137,6 +137,9 @@ test('Evaluation Report Script', async (t) => {
               startTime: 0,
               endTime: 8,
               summary: 'First chunk summary',
+              thought: 'I am into this more than I expected.',
+              continuationThought: 'Do not fumble the next beat.',
+              personaMeta: { scrollRisk: 'medium' },
               emotions: { patience: { score: 7, reasoning: 'Test' } },
               dominant_emotion: 'patience',
               tokens: 250
@@ -151,6 +154,9 @@ test('Evaluation Report Script', async (t) => {
       const content = fs.readFileSync(path.join(testOutputDir, 'FINAL-REPORT.md'), 'utf8');
       ok(content.includes('Chunk-by-Chunk Analysis'));
       ok(content.includes('First chunk summary'));
+      ok(content.includes('**Thought:** I am into this more than I expected.'));
+      ok(content.includes('**Continuation Thought:** Do not fumble the next beat.'));
+      ok(content.includes('**Scroll Risk:** medium'));
     });
   });
 

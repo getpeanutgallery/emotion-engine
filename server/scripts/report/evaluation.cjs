@@ -158,6 +158,15 @@ function buildSimpleReport(payload, config) {
       report += `### Chunk ${chunk.chunkIndex + 1}\n\n`;
       report += `**Time:** ${formatTime(chunk.startTime)} - ${formatTime(chunk.endTime)}\n\n`;
       report += `**Summary:** ${chunk.summary || ''}\n\n`;
+      if (chunk.thought) {
+        report += `**Thought:** ${chunk.thought}\n\n`;
+      }
+      if (chunk.continuationThought) {
+        report += `**Continuation Thought:** ${chunk.continuationThought}\n\n`;
+      }
+      if (chunk.personaMeta?.scrollRisk) {
+        report += `**Scroll Risk:** ${chunk.personaMeta.scrollRisk}\n\n`;
+      }
       if (chunk.dominant_emotion) {
         report += `**Dominant Emotion:** ${chunk.dominant_emotion}\n\n`;
       }

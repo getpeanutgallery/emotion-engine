@@ -43,6 +43,9 @@ test('Final Report Script', async (t) => {
               startTime: 0,
               endTime: 6,
               summary: 'Strong opening',
+              thought: 'This actually grabs me right away.',
+              continuationThought: 'If it keeps this up, I am staying.',
+              personaMeta: { scrollRisk: 'low' },
               emotions: { excitement: { score: 7 }, boredom: { score: 3 } },
               dominant_emotion: 'excitement'
             }
@@ -73,6 +76,9 @@ test('Final Report Script', async (t) => {
     ok(report.includes('Metrics: `../metrics/metrics.json`'));
     ok(report.includes('ID: impatient-teenager'));
     ok(report.includes('SOUL Asset: ../../assets/input/personas/SOUL.md'));
+    ok(report.includes('**Thought:** This actually grabs me right away.'));
+    ok(report.includes('**Continuation Thought:** If it keeps this up, I am staying.'));
+    ok(report.includes('**Scroll Risk:** low'));
 
     const analysisData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
     property(analysisData, 'metadata');

@@ -15,7 +15,8 @@ const PROFILE_DEFAULT_IGNORE_PATHS = Object.freeze({
   'dialogue-default': ['$.totalDuration', '$.dialogue_segments[*].start', '$.dialogue_segments[*].end'],
   'dialogue-timestamps-default': ['$.totalDuration', '$.dialogue_segments[*].start', '$.dialogue_segments[*].end', '$.dialogue_segments[*].index'],
   'music-vocals-default': ['$.totalDuration', '$.vocal_segments[*].start', '$.vocal_segments[*].end', '$.vocal_segments[*].index'],
-  'music-vocals-timestamps-default': ['$.totalDuration', '$.vocal_segments[*].start', '$.vocal_segments[*].end', '$.vocal_segments[*].index']
+  'music-vocals-timestamps-default': ['$.totalDuration', '$.vocal_segments[*].start', '$.vocal_segments[*].end', '$.vocal_segments[*].index'],
+  'chunk-analysis-default': ['$.chunks[*].thought', '$.chunks[*].continuationThought', '$.chunks[*].personaMeta', '$.chunks[*].personaMeta.scrollRisk']
 });
 
 function resolveBenchmarkConfig(config, options = {}) {

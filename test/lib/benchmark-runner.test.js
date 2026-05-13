@@ -3077,6 +3077,98 @@ test('benchmark runner - chunk analysis scoring surfaces expose percentage famil
   assert.strictEqual(artifact.chunkAnalysisScoring.chunk_persona_contract_pct, 100);
 });
 
+test('benchmark runner - chunk analysis ignores Phase 2 thought-layer fields while preserving existing scoring families', async (t) => {
+  const rootDir = path.join(__dirname, 'tmp-benchmark-chunk-thought-ignore');
+  fs.rmSync(rootDir, { recursive: true, force: true });
+  t.after(() => fs.rmSync(rootDir, { recursive: true, force: true }));
+
+  const { configPath, outputDir } = makeTempChunkAnalysisFixture(rootDir, {
+    outputPayload: {
+      chunks: [
+        {
+          chunkIndex: 0,
+          splitIndex: 0,
+          startTime: 0,
+          endTime: 5,
+          status: 'success',
+          summary: 'Opening action beat with glitchy text.',
+          thought: 'This intro is trying, but it still feels too generic.',
+          continuationThought: 'If the next beat pops harder, I might stay.',
+          personaMeta: { scrollRisk: 'high' },
+          emotions: {
+            patience: { score: 2, reasoning: 'The opening text feels generic.' },
+            boredom: { score: 8, reasoning: 'The hook is weak.' },
+            excitement: { score: 4, reasoning: 'Action exists but does not fully land yet.' }
+          },
+          dominant_emotion: 'boredom',
+          confidence: 0.9,
+          tokens: 1000,
+          persona: {
+            soulPath: '../cast/impatient-teenager/SOUL.md',
+            goalPath: '../goals/video-ad-evaluation.md',
+            lenses: ['patience', 'boredom', 'excitement']
+          }
+        },
+        {
+          chunkIndex: 1,
+          splitIndex: 0,
+          startTime: 5,
+          endTime: 10,
+          status: 'success',
+          summary: 'Spectacle ramps up immediately.',
+          thought: 'Okay, there we go — now it is finally doing something for me.',
+          emotions: {
+            patience: { score: 8, reasoning: 'Rapid visual novelty keeps attention.' },
+            boredom: { score: 2, reasoning: 'No dead air.' },
+            excitement: { score: 9, reasoning: 'Big surreal visual moment lands.' }
+          },
+          dominant_emotion: 'excitement',
+          confidence: 0.95,
+          tokens: 2000,
+          persona: {
+            soulPath: '../cast/impatient-teenager/SOUL.md',
+            goalPath: '../goals/video-ad-evaluation.md',
+            lenses: ['patience', 'boredom', 'excitement']
+          }
+        }
+      ],
+      totalTokens: 3000,
+      statusSummary: {
+        total: 2,
+        successful: 2,
+        failed: 0,
+        failedChunkIndexes: []
+      },
+      persona: {
+        soulPath: '../cast/impatient-teenager/SOUL.md',
+        goalPath: '../goals/video-ad-evaluation.md',
+        config: {
+          chunkDuration: 8,
+          numChunks: 2
+        }
+      },
+      videoDuration: 10
+    }
+  });
+
+  const result = runBenchmarkStage({
+    config: { name: 'Temp benchmark chunk thought ignore', benchmark: { enabled: true, path: '../benchmarks/fixtures/temp-chunk-analysis-fixture/benchmark.json' } },
+    configPath,
+    outputDir
+  });
+
+  const artifact = result.artifactResults[0];
+  assert.strictEqual(result.status, 'pass');
+  assert.strictEqual(artifact.status, 'pass');
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'chunks[chunkIndex=0,splitIndex=0].thought'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'chunks[chunkIndex=0,splitIndex=0].continuationThought'));
+  assert(artifact.ignoredDifferences.some((entry) => entry.path === 'chunks[chunkIndex=0,splitIndex=0].personaMeta'));
+  assert.strictEqual(artifact.chunkAnalysisScoring.chunk_summary_pct, 100);
+  assert.strictEqual(artifact.chunkAnalysisScoring.chunk_emotion_scores_pct, 100);
+  assert.strictEqual(artifact.chunkAnalysisScoring.chunk_dominant_emotion_pct, 100);
+  assert.strictEqual(artifact.chunkAnalysisScoring.chunk_persona_contract_pct, 100);
+});
+
 test('benchmark runner - lyric leakage regression fails dialogue while preserving music-vocals scoring surfaces', async (t) => {
   const rootDir = path.join(__dirname, 'tmp-benchmark-lyric-leakage-regression');
   fs.rmSync(rootDir, { recursive: true, force: true });

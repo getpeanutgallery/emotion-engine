@@ -220,6 +220,18 @@ function buildReport(data) {
       report += `**Time:** ${formatTime(chunk.startTime)} - ${formatTime(chunk.endTime)}\n\n`;
       report += `**Summary:** ${chunk.summary}\n\n`;
 
+      if (chunk.thought) {
+        report += `**Thought:** ${chunk.thought}\n\n`;
+      }
+
+      if (chunk.continuationThought) {
+        report += `**Continuation Thought:** ${chunk.continuationThought}\n\n`;
+      }
+
+      if (chunk.personaMeta?.scrollRisk) {
+        report += `**Scroll Risk:** ${chunk.personaMeta.scrollRisk}\n\n`;
+      }
+
       // Emotions for this chunk
       if (chunk.emotions) {
         report += `**Emotions:**\n\n`;

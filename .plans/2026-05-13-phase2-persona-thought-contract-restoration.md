@@ -110,15 +110,23 @@ The work should preserve compatibility with the current benchmark and reporting 
 
 **Folders Created/Deleted/Modified:**
 - `server/lib/`
+- `server/scripts/report/`
+- `test/lib/`
+- `test/scripts/`
 - `.plans/`
 
 **Files Created/Deleted/Modified:**
-- benchmark/report files to be identified during implementation
+- `server/lib/benchmark-runner.cjs`
+- `server/scripts/report/final-report.cjs`
+- `server/scripts/report/evaluation.cjs`
+- `test/lib/benchmark-runner.test.js`
+- `test/scripts/final-report.test.js`
+- `test/scripts/evaluation.test.js`
 - `.plans/2026-05-13-phase2-persona-thought-contract-restoration.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Updated the chunk-analysis benchmark profile with default ignore paths for `chunks[*].thought`, `chunks[*].continuationThought`, and `chunks[*].personaMeta{,.scrollRisk}` so new Phase 2 persona-thought fields remain non-scored and do not fail structural comparison against older truth/output artifacts. Kept the existing scored families unchanged (`summary`, emotion scores, dominant emotion, persona contract) to preserve run comparability per `REF-03` while allowing ignored-difference visibility in artifact reports. Updated both the canonical final report and the legacy evaluation report to render `Thought`, optional `Continuation Thought`, and optional `Scroll Risk` when present, while remaining silent and non-breaking when absent. Focused validation passed: `node --test test/lib/benchmark-runner.test.js test/scripts/final-report.test.js test/scripts/evaluation.test.js`. Rerun handoff for `ee-q2uu`: the next pass should regenerate a bounded Phase 2 output and inspect `phase2-process/chunk-analysis.json`, `phase3-report/summary/FINAL-REPORT.md`, and benchmark artifact reports to confirm the thought-layer now survives end-to-end as informational output without affecting benchmark percentages.
 
 ---
 
