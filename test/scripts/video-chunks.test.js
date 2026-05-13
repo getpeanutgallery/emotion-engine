@@ -284,6 +284,40 @@ test('Video Chunks Script', async (t) => {
       property(result.artifacts.chunkAnalysis, 'persona');
     });
 
+    await tNested.test('carries forward compact viewer continuity state between chunks', async () => {
+      await videoChunksScript.run({
+        assetPath: '/path/to/test-video.mp4',
+        outputDir: testOutputDir,
+        artifacts: {},
+        toolVariables: {
+          soulPath: '/path/to/SOUL.md',
+          goalPath: '/path/to/GOAL.md',
+          variables: { lenses: ['patience', 'boredom', 'excitement'] }
+        },
+        config: {
+          ai: {
+            video: { targets: [ { adapter: { name: 'openrouter', model: 'yaml-video-model' } } ] }
+          },
+          settings: { max_chunks: 2 },
+          tool_variables: {
+            chunk_strategy: { type: 'duration-based', config: { chunkDuration: 8 } }
+          }
+        }
+      });
+
+      is(promptBuildInputs.length, 2);
+      is(promptBuildInputs[0].previousState.summary, '');
+      is(promptBuildInputs[1].previousState.summary, 'Test chunk summary');
+      is(promptBuildInputs[1].previousState.thought, 'That lands cleanly enough to keep me watching.');
+      is(promptBuildInputs[1].previousState.continuationThought, 'One more strong beat and I am fully in.');
+      is(promptBuildInputs[1].previousState.dominantEmotion, 'patience');
+      is(promptBuildInputs[1].previousState.scrollRisk, 'medium');
+      is(promptBuildInputs[1].previousState.chunkIndex, 0);
+      is(promptBuildInputs[1].previousState.startTime, 0);
+      is(promptBuildInputs[1].previousState.endTime, 8);
+      is(promptBuildInputs[1].previousState.emotions.patience.score, 7);
+    });
+
     await tNested.test('writes chunk-analysis.json to phase output directory', async () => {
       await videoChunksScript.run({
         assetPath: '/path/to/test-video.mp4',

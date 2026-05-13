@@ -218,6 +218,35 @@ function trimPreviousSummary(summary, maxChars = 400) {
   return `${trimmed.slice(0, Math.max(0, maxChars - 1)).trimEnd()}…`;
 }
 
+function buildPreviousStateForPrompt(previousChunkResult) {
+  if (!previousChunkResult || typeof previousChunkResult !== 'object') {
+    return {
+      summary: '',
+      emotions: {}
+    };
+  }
+
+  const scrollRisk = typeof previousChunkResult?.personaMeta?.scrollRisk === 'string'
+    ? previousChunkResult.personaMeta.scrollRisk.trim()
+    : '';
+
+  return {
+    summary: trimPreviousSummary(previousChunkResult.summary),
+    thought: typeof previousChunkResult.thought === 'string' ? previousChunkResult.thought.trim() : '',
+    ...(typeof previousChunkResult.continuationThought === 'string' && previousChunkResult.continuationThought.trim().length > 0
+      ? { continuationThought: previousChunkResult.continuationThought.trim() }
+      : {}),
+    dominantEmotion: typeof previousChunkResult.dominant_emotion === 'string' ? previousChunkResult.dominant_emotion.trim() : '',
+    ...(scrollRisk ? { scrollRisk } : {}),
+    chunkIndex: Number.isInteger(previousChunkResult.chunkIndex) ? previousChunkResult.chunkIndex : null,
+    startTime: Number.isFinite(previousChunkResult.startTime) ? previousChunkResult.startTime : null,
+    endTime: Number.isFinite(previousChunkResult.endTime) ? previousChunkResult.endTime : null,
+    emotions: previousChunkResult.emotions && typeof previousChunkResult.emotions === 'object'
+      ? previousChunkResult.emotions
+      : {}
+  };
+}
+
 function shouldSkipTerminalProviderChunk({
   chunkIndex,
   numChunks,
@@ -515,7 +544,7 @@ async function run(input) {
 
   const results = [];
   let totalTokens = 0;
-  let previousSummary = '';
+  let previousChunkResult = null;
 
   // Create phase directory for artifacts
   const phaseDir = outputManager.createPhaseDirectory(outputDir, 'phase2-process');
@@ -715,10 +744,7 @@ async function run(input) {
             totalSegments: Array.isArray(musicData?.segments) ? musicData.segments.length : 0
           },
           musicVocalsContext,
-          previousState: {
-            summary: trimPreviousSummary(previousSummary),
-            emotions: results.length > 0 ? results[results.length - 1].emotions : {}
-          }
+          previousState: buildPreviousStateForPrompt(previousChunkResult)
         };
 
         try {
@@ -1000,7 +1026,7 @@ async function run(input) {
 
           results.push(chunkResult);
           totalTokens += chunkResult.tokens;
-          previousSummary = chunkResult.summary;
+          previousChunkResult = chunkResult;
 
           console.log(`      ✅ ${chunkLabel} analyzed (${chunkResult.tokens} tokens)${meta.attempt > 1 ? ` after ${meta.attempt} attempts` : ''}`);
         } catch (error) {
