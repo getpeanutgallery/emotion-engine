@@ -146,9 +146,9 @@ The work should preserve compatibility with the current benchmark and reporting 
 - `.plans/2026-05-13-phase2-persona-thought-contract-restoration.md`
 - `.plans/artifacts/2026-05-13-phase2-persona-contract-rerun/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Ran a bounded representative rerun and left the durable evidence under `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-persona-contract-rerun/summary.md`. I first attempted the smallest whole-video reuse path by hydrating the refreshed Phase 1 packet from `REF-05` and rerunning Phase 2 + Phase 3 only, but the later whole-asset lane repeatedly stalled in the digital-twin record path. To keep the proof honest while bounded, I switched to representative micro-runs on exact COD windows: intro `0s-10s` (2 chunks), middle action beat `75s-80s` (1 chunk), and promo dip `125s-130s` (1 chunk). The resulting Phase 2 artifacts confirmed `thought` is present in all representative chunks, `continuationThought` appears when warranted by real sequence continuity (intro chunk 2), and `personaMeta` stayed bounded to `scrollRisk` with values including `medium`, `low`, and `SCROLLING`. Phase 3 reports now render `Thought`, optional `Continuation Thought`, and `Scroll Risk` when present, with non-breaking silence when absent. Key output roots: `output/cod-thought-contract-intro-0s-10s/`, `output/cod-thought-contract-middle-75s-80s/`, and `output/cod-thought-contract-promo-125s-130s/`. QA handoff for `ee-oz5u`: review the persona usefulness of those representative chunks, especially whether intro chunk 2’s `continuationThought` adds value versus redundancy and whether the promo `SCROLLING` call is appropriately sharp.
 
 ---
 
