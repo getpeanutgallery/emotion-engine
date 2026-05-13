@@ -81,9 +81,9 @@ This follow-up should stay narrow. We do not need another schema pass or broad r
 - `.plans/2026-05-13-phase2-continuity-guardrail-followup.md`
 - `.plans/artifacts/2026-05-13-phase2-continuity-guardrail-rerun/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Ran the smallest honest rerun as a bounded Phase 2-only pass capped at `max_chunks: 17`, which rebuilds continuity from chunk 0 through chunk 16 while avoiding another unnecessary full 28-chunk sweep. To keep the run truthful but narrow, I reused the already-proven Phase 1 packet from `output/cod-test-phase2-full-thought-rerun-2026-05-13/` by copying `phase1-gather-context/` and `assets/` into a fresh output root, then executed `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-guardrail-rerun/chunk14-16-phase2-only.fast-config.yaml` with `node server/run-pipeline.cjs --config ... --clean-live-digital-twin --verbose`. The rerun completed successfully at `output/cod-test-phase2-continuity-guardrail-rerun-2026-05-13/phase2-process/chunk-analysis.json` with `17/17` successful chunks, `0` failures, and `211416` total tokens (`.logs/20260513-165939-ee-u2ct-continuity-guardrail-rerun.time`: `real 1461.38`). Durable evidence lives under `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-guardrail-rerun/` in `summary.md` and `evidence.json`. The old audit-blocking continuation line in chunk 14 — `If the next 5 seconds hit hard, I'm sharing this.` — is gone, replaced by `If the jungle scene hits as hard as the city one, I'm locked in.` A pattern sweep across rerun `thought` / `continuationThought` found `0` hits for the widened local-countdown guardrail class (`next <number> seconds`, `in the next second`, `next few seconds`, and numeric `0.0s`-style tokens), down from the prior rerun's chunk-0 `next few seconds` residue plus the chunk-14 `next 5 seconds` miss. Adjacent sanity windows 13, 15, and 16 stayed low-risk and did not introduce new countdown phrasing, preserving the continuity-state gains already achieved. QA handoff for `ee-ieux`: verify chunk 14 no longer contains the residual phrase or a nearby substitute, read chunks 13-16 together for lived-sequence continuity, and spot-check chunk 0 to confirm the earlier `next few seconds` residue is also gone.
 
 ---
 
@@ -104,25 +104,26 @@ This follow-up should stay narrow. We do not need another schema pass or broad r
 - `.plans/artifacts/2026-05-13-phase2-continuity-guardrail-qa/`
 - `.plans/artifacts/2026-05-13-phase2-continuity-guardrail-audit/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** QA completed for the follow-up guardrail fix and produced durable artifacts under `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-guardrail-qa/` (`qa-summary.md`, `evidence.json`). QA confirmed the exact audit-blocking chunk 14 line `If the next 5 seconds hit hard, I'm sharing this.` is gone from the bounded rerun and replaced by `If the jungle scene hits as hard as the city one, I'm locked in.` Pattern-sweep evidence from the rerun remained at `afterHitCount: 0` for the widened local-countdown class, and a manual read of chunks 13-16 found the lane still plays like one lived trailer watch rather than four fresh micro-clips. Chunk 0 was also spot-checked against the prior full-thought rerun: the old natural-language miss `Unless Will Smith does something wild in the next second, I'm already scrolling.` is gone from `continuationThought`, now replaced with `If the next beat drops hard enough, I might stick around to see who's actually fighting.` The final audit then independently checked the source artifacts plus the actual rerun output and both cited implementation commits (`51f6898` in `tools`, `4e76e3b` in `emotion-engine`). Durable audit artifacts were written under `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-guardrail-audit/` (`audit-summary.md`, `evidence.json`). Audit confirmed the exact blocked chunk 14 bug is gone, the widened prompt/validator guardrail now covers the intended natural-language countdown class, and chunks 13-16 still preserve lived-sequence continuity without obvious regressions. The remaining generic `seconds` mentions in `thought` fields (for example chunk 0, 4, and 9) were judged non-blocking because they read as persona or full-watch duration commentary rather than local next-chunk reset framing. Outcome: this follow-up plan passed audit, and the larger continuity-state lane can now be closed cleanly.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Narrow follow-up closure for the Phase 2 continuity-state lane: the prompt/validator guardrail was widened to reject natural-language local countdown phrasing alongside numeric local timestamps, the affected chunk 14/15 lane was rerun with a bounded Phase 2-only pass through chunk 16, QA verified the old phrase was gone, and the final audit confirmed the bug class is closed without reopening continuity regressions.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-03`, `REF-04`, and `REF-05` were satisfied by the rerun, QA, and final audit evidence showing the prior chunk 14 miss is gone and the intended bug class now sweeps cleanly. `REF-06`, `REF-07`, and `REF-08` were satisfied by the actual prompt/validator widening in commits `51f6898` and `4e76e3b`. `REF-01` and `REF-02` remain satisfied because the follow-up preserved the larger continuity-state gains and allows that lane to close cleanly.
 
 **Commits:**
-- Pending.
+- `51f6898` - Widen local countdown phrasing guardrail
+- `4e76e3b` - Tighten continuity countdown guardrail follow-up
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** Numeric-token bans were not enough for this contract; the real behavioral bug class included natural-language local countdown framing too. The durable fix was to encode that class explicitly in both prompt and validator layers, then prove closure with the smallest honest continuity-preserving rerun rather than another full sweep.
 
 ---
 
-*Completed on Pending*
+*Completed on 2026-05-13*

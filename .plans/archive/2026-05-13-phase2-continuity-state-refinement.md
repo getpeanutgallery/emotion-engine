@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-05-13  
-**Status:** Draft  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -108,9 +108,9 @@ This pass should not redesign the full schema again. Instead, it should tighten 
 - `.plans/2026-05-13-phase2-continuity-state-refinement.md`
 - `.plans/artifacts/2026-05-13-phase2-continuity-state-rerun/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Ran the smallest honest rerun that still exercised the real symptom path by doing a fresh full-video Phase 2 + Phase 3 rerun while reusing the already-proven Phase 1 packet from `REF-03`. The continuity-specific config lives at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-state-rerun/full-video-phase2-report.fast-config.yaml`, and the resulting runtime landed at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-continuity-rerun-2026-05-13/`. The main artifact is `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-continuity-rerun-2026-05-13/phase2-process/chunk-analysis.json`; durable rerun notes and before/after evidence were captured in `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-state-rerun/summary.md` and `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-state-rerun/evidence.json`. Required windows covered: intro continuity (chunks 0-2), dialogue-relevant transition (chunks 4-5 with overlapping dialogue timing evidence), late-action continuity (chunk 18), and promo/end-card lane (chunks 24-25). The explicit local-relative timestamp phrasing materially dropped from `5` hits in the prior full rerun (`0, 4, 13, 14, 16`) to `0` hits in the rerun artifact. Targeted before/after reads showed better cumulative watch-state carryover: intro chunk 1 now explicitly says the generic intro is over, chunk 18 dropped the false-local `No intro fluff` reset and now says it is seeing the sequence through to the end card, and chunk 25 carries forward the date-focused end-card state from chunk 24 instead of reacting like a fresh cold open. Dialogue-informed thoughts improved in the 20s-30s lane without overcommitting to exposition: chunk 4 now reacts more naturally to the speaking/implant/robot beat, while chunk 5 still stays skeptical about the talking-head cut. Sanity checks also confirmed Phase 3 output shape stayed intact: `summary.json` and `emotional-data.json` preserved their expected top-level keys and `FINAL-REPORT.md` still rendered `Thought`, optional `Continuation Thought`, and `Scroll Risk`. No additional immediate full rerun is justified before QA because this pass already covered the real full-video continuity path.
 
 ---
 
@@ -131,9 +131,9 @@ This pass should not redesign the full schema again. Instead, it should tighten 
 - `.plans/2026-05-13-phase2-continuity-state-refinement.md`
 - `.plans/artifacts/2026-05-13-phase2-continuity-state-qa/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** QA completed and a durable artifact was added at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-state-qa/qa-summary.md`. The continuity refinement was judged to be a real lived-sequence improvement, not merely a regex cleanup: chunk 1 now carries forward the weak-intro reaction, chunks 4-5 use dialogue-supported context naturally without overclaiming, chunk 18 now reads as a late-trailer payoff (`through to the end card`) instead of a cold open, and chunks 24-25 preserve end-card awareness while still acknowledging promo clutter. However, QA found one residual audit-blocking continuity-language issue in the rerun artifact: chunk 14 `continuationThought` still says `If the next 5 seconds hit hard, I'm sharing this.`, which is local-relative timing language inside the thought layer. No obvious grounding regressions were found in the targeted windows or broader thought sweep. Audit handoff: treat the continuity-state refinement as materially improved but not fully complete until the prompt/validator guardrail is widened beyond numeric-second tokens (for example `0.0s`) to also catch natural-language variants like `next 5 seconds`. 
 
 ---
 
@@ -153,25 +153,28 @@ This pass should not redesign the full schema again. Instead, it should tighten 
 - `.plans/2026-05-13-phase2-continuity-state-refinement.md`
 - `.plans/artifacts/2026-05-13-phase2-continuity-state-audit/`
 
-**Status:** ⏳ Pending
+**Status:** ❌ Failed
 
-**Results:** Pending.
+**Results:** Independent audit completed and a durable artifact was added at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-state-audit/audit-summary.md`. Audit confirmed the continuity-state refinement is a real lived-sequence improvement, not a fake regex win: the rerun removed all prior numeric `0.0s` / `2.0s` timestamp leakage, chunk 1 now explicitly carries forward intro memory, chunk 18 dropped the false-local `No intro fluff` reset and now reads as late-trailer payoff, and chunks 24-25 preserve end-card/date awareness. However, the audit agreed with QA that the residual chunk 14 `continuationThought` — `If the next 5 seconds hit hard, I'm sharing this.` — is still audit-blocking because it reintroduces local 5-second micro-video framing inside the thought layer. The smallest required follow-up is narrow: widen the prompt + validator guardrail beyond numeric-second tokens so it also rejects natural-language local countdown phrasing like `next 5 seconds`, `in the next second`, and similar beat-count language, then rerun the smallest honest validation centered on that lane before re-audit. Bead `ee-8leh` was intentionally left open because the work is materially improved but not yet complete.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** A materially better Phase 2 continuity-state seam: the runner now carries forward compact viewer continuity state, the prompt now frames `thought` as one continuous trailer watch, dialogue-supported thought phrasing improved, and micro-video reset language was eliminated first at the numeric-token layer and then fully closed with the follow-up natural-language countdown guardrail pass. The reruns showed real lived-sequence gains in the intro, late-action, and end-card windows, and the follow-up closure removed the last blocked chunk-14 countdown phrase.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-04`, `REF-05`, and `REF-06` were satisfied for the implemented continuity-state carryover, prompt reframing, and validator path. `REF-02`, `REF-03`, and `REF-07` were initially only partially satisfied at first audit time because chunk 14 still contained `next 5 seconds` phrasing, but they were fully satisfied after the narrow follow-up plan `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/2026-05-13-phase2-continuity-guardrail-followup.md` widened the guardrail and cleared the rerun/audit sweep.
 
 **Commits:**
-- Pending.
+- `a4751f3` - Refine phase2 continuity state prompts
+- `0ef9cf2` - Refine emotion continuity prompt framing
+- `51f6898` - Widen local countdown phrasing guardrail
+- `4e76e3b` - Tighten continuity countdown guardrail follow-up
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** Fixing the continuity seam required more than removing explicit `0.0s`-style timestamps. The real bug class also included natural-language local countdown phrasing, so the durable closure had to encode that class explicitly in both prompt and validator layers and then prove it with the smallest honest continuity-preserving rerun.
 
 ---
 
-*Completed on Pending*
+*Completed on 2026-05-13*

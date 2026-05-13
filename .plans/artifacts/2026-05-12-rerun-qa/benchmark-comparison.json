@@ -1,0 +1,1023 @@
+{
+  "outputDir": "output/cod-test-phase2-only-retest-2026-05-06-with-timestamps",
+  "truthPath": "benchmarks/fixtures/cod-test/truth/chunk-analysis.json",
+  "truthLimitations": {
+    "note": "This truth surface is only partially human-trusted. The fixture notes say chunk-analysis truth is bootstrap, and the 2026-04-30 maintenance note says only approved windows were refreshed/trusted: 3-4, 8-15, 17, 22-27.",
+    "trustedChunkIndexes": [
+      3,
+      4,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      17,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ],
+    "excludedChunkIndexes": [
+      0,
+      1,
+      2,
+      5,
+      6,
+      7,
+      16,
+      18,
+      19,
+      20,
+      21
+    ]
+  },
+  "metrics": {
+    "overall": {
+      "chunkCount": 28,
+      "dominantExact": 25,
+      "dominantRate": 0.8928571428571429,
+      "scoreExact": 40,
+      "scoreWithin1": 71,
+      "scoreWithin2": 76,
+      "scoreTotal": 84,
+      "avgAbsDiff": {
+        "patience": 1.1785714285714286,
+        "boredom": 0.7857142857142857,
+        "excitement": 0.75,
+        "overall": 0.9047619047619048
+      },
+      "summaryTokenF1Avg": 0.3488142857142858,
+      "practicalPassCount": 4,
+      "practicalPassRate": 0.14285714285714285
+    },
+    "trusted": {
+      "chunkCount": 17,
+      "dominantExact": 17,
+      "dominantRate": 1,
+      "scoreExact": 31,
+      "scoreWithin1": 47,
+      "scoreWithin2": 49,
+      "scoreTotal": 51,
+      "avgAbsDiff": {
+        "patience": 1.0588235294117647,
+        "boredom": 0.35294117647058826,
+        "excitement": 0.4117647058823529,
+        "overall": 0.6078431372549019
+      },
+      "summaryTokenF1Avg": 0.4111470588235294,
+      "practicalPassCount": 4,
+      "practicalPassRate": 0.23529411764705882
+    },
+    "excluded": {
+      "chunkCount": 11,
+      "dominantExact": 8,
+      "dominantRate": 0.7272727272727273,
+      "scoreExact": 9,
+      "scoreWithin1": 24,
+      "scoreWithin2": 27,
+      "scoreTotal": 33,
+      "avgAbsDiff": {
+        "patience": 1.3636363636363635,
+        "boredom": 1.4545454545454546,
+        "excitement": 1.2727272727272727,
+        "overall": 1.3636363636363635
+      },
+      "summaryTokenF1Avg": 0.2524818181818182,
+      "practicalPassCount": 0,
+      "practicalPassRate": 0
+    }
+  },
+  "dominantMismatches": [
+    {
+      "chunkIndex": 0,
+      "classification": "excluded_window",
+      "truthDominant": "boredom",
+      "outputDominant": "excitement",
+      "scoreDiffs": {
+        "patience": {
+          "truth": 2,
+          "output": 4,
+          "diff": 2,
+          "abs": 2
+        },
+        "boredom": {
+          "truth": 8,
+          "output": 2,
+          "diff": -6,
+          "abs": 6
+        },
+        "excitement": {
+          "truth": 4,
+          "output": 7,
+          "diff": 3,
+          "abs": 3
+        }
+      },
+      "truthSummary": "The video opens with glitchy visuals and the text 'RISING TENSIONS', triggering immediate skepticism before transitioning to high-fidelity game cinematics of destruction and armored characters.",
+      "outputSummary": "The video chunk opens with a glitchy 'RISING TENSIONS' interface and quick cuts to dark, action-oriented scenes, accompanied by ominous dialogue about fear and control."
+    },
+    {
+      "chunkIndex": 5,
+      "classification": "excluded_window",
+      "truthDominant": "excitement",
+      "outputDominant": "patience",
+      "scoreDiffs": {
+        "patience": {
+          "truth": 4,
+          "output": 6,
+          "diff": 2,
+          "abs": 2
+        },
+        "boredom": {
+          "truth": 5,
+          "output": 4,
+          "diff": -1,
+          "abs": 1
+        },
+        "excitement": {
+          "truth": 6,
+          "output": 5,
+          "diff": -1,
+          "abs": 1
+        }
+      },
+      "truthSummary": "Massive 'GUILD' robots activate in formation, cutting to a serious conversation between two men outdoors.",
+      "outputSummary": "The video chunk transitions from a display of robotic soldiers to an intense dialogue between two characters, highlighting themes of control and conflict."
+    },
+    {
+      "chunkIndex": 18,
+      "classification": "excluded_window",
+      "truthDominant": "patience",
+      "outputDominant": "excitement",
+      "scoreDiffs": {
+        "patience": {
+          "truth": 5,
+          "output": 8,
+          "diff": 3,
+          "abs": 3
+        },
+        "boredom": {
+          "truth": 6,
+          "output": 2,
+          "diff": -4,
+          "abs": 4
+        },
+        "excitement": {
+          "truth": 5,
+          "output": 9,
+          "diff": 4,
+          "abs": 4
+        }
+      },
+      "truthSummary": "Hawaii location title card transitions from Alaska with futuristic cityscape and combat-ready soldiers on circular platform, maintaining trailer intensity.",
+      "outputSummary": "A fast-paced action sequence with characters wingsuit flying through a city and engaging in indoor shooting, accompanied by intense heavy metal music."
+    }
+  ],
+  "worstSummaryDrift": [
+    {
+      "chunkIndex": 7,
+      "classification": "excluded_window",
+      "summaryTokenF1": 0.0952,
+      "truthSummary": "Futuristic aircraft flies near a structure, cutting to soldiers prepping in a transport, then rapidly deploying into a firefight with muzzle flashes.",
+      "outputSummary": "This chunk features tense dialogue about responsibility, quickly transitioning to rapid action sequences with combat and explosions, supported by rising musical tension."
+    },
+    {
+      "chunkIndex": 18,
+      "classification": "excluded_window",
+      "summaryTokenF1": 0.0952,
+      "truthSummary": "Hawaii location title card transitions from Alaska with futuristic cityscape and combat-ready soldiers on circular platform, maintaining trailer intensity.",
+      "outputSummary": "A fast-paced action sequence with characters wingsuit flying through a city and engaging in indoor shooting, accompanied by intense heavy metal music."
+    },
+    {
+      "chunkIndex": 4,
+      "classification": "trusted_window",
+      "summaryTokenF1": 0.1395,
+      "truthSummary": "Glitchy visuals of a villain's face and global unrest data culminate in an explosion, intensifying the threat.",
+      "outputSummary": "The chunk features rapid military action with explosions and the year '2035,' transitioning to a character stating Menendez is a terrorist and promising peace, all under tense music."
+    },
+    {
+      "chunkIndex": 1,
+      "classification": "excluded_window",
+      "summaryTokenF1": 0.1569,
+      "truthSummary": "The video showcases a chaotic, gravity-defying sequence where a city bends and cars fly through the air, accompanied by intense cinematic music and dramatic voiceover.",
+      "outputSummary": "This chunk continues with fast-paced action visuals, including a wide city shot with smoke and dynamic scenes, ending with the dialogue 'It's time to wake up' to build tension."
+    },
+    {
+      "chunkIndex": 21,
+      "classification": "excluded_window",
+      "summaryTokenF1": 0.1622,
+      "truthSummary": "A tombstone for Frank Woods, a mysterious metallic sphere, and soldiers in tactical gear appear amidst high-intensity cinematic music.",
+      "outputSummary": "A rapid sequence from a memorial tombstone to dark, industrial environments and armed characters, creating a tense and action-oriented atmosphere."
+    },
+    {
+      "chunkIndex": 5,
+      "classification": "excluded_window",
+      "summaryTokenF1": 0.2162,
+      "truthSummary": "Massive 'GUILD' robots activate in formation, cutting to a serious conversation between two men outdoors.",
+      "outputSummary": "The video chunk transitions from a display of robotic soldiers to an intense dialogue between two characters, highlighting themes of control and conflict."
+    },
+    {
+      "chunkIndex": 16,
+      "classification": "excluded_window",
+      "summaryTokenF1": 0.24,
+      "truthSummary": "Rooftop parkour into pink smoke transitions instantly to futuristic aircraft combat over water, ending on a snowy location title card.",
+      "outputSummary": "A high-energy action chunk with rapid cuts from a neon-lit city scene featuring a character and large screen, to an aircraft causing explosions on water, ending with a serene Alaskan landscape with aurora."
+    },
+    {
+      "chunkIndex": 20,
+      "classification": "excluded_window",
+      "summaryTokenF1": 0.2609,
+      "truthSummary": "Rapid cuts of soldiers breaching, a glowing sword, a strange robotic sphere, and a jungle soldier, accompanied by dramatic dialogue.",
+      "outputSummary": "A rapid montage of action-packed scenes including tactical movement, a knife, a shadowy figure, high-tech machinery, and an intense jungle character, with dialogue about leaving and the nature of killing."
+    }
+  ],
+  "representativeEvidence": [
+    {
+      "chunkIndex": 0,
+      "window": {
+        "start": 0,
+        "end": 5
+      },
+      "classification": "excluded_window",
+      "truthSummary": "The video opens with glitchy visuals and the text 'RISING TENSIONS', triggering immediate skepticism before transitioning to high-fidelity game cinematics of destruction and armored characters.",
+      "outputSummary": "The video chunk opens with a glitchy 'RISING TENSIONS' interface and quick cuts to dark, action-oriented scenes, accompanied by ominous dialogue about fear and control.",
+      "truthDominant": "boredom",
+      "outputDominant": "excitement",
+      "scoreDiffs": {
+        "patience": {
+          "truth": 2,
+          "output": 4,
+          "diff": 2,
+          "abs": 2
+        },
+        "boredom": {
+          "truth": 8,
+          "output": 2,
+          "diff": -6,
+          "abs": 6
+        },
+        "excitement": {
+          "truth": 4,
+          "output": 7,
+          "diff": 3,
+          "abs": 3
+        }
+      },
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 0,
+            "end": 5
+          },
+          "selectedSegmentCount": 2,
+          "totalSegments": 19,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 0,
+            "speaker": "Speaker 1",
+            "text": "They want you afraid.",
+            "start": 0,
+            "end": 1.94,
+            "overlapSeconds": 1.94
+          },
+          {
+            "index": 1,
+            "speaker": "Speaker 1",
+            "text": "Fear makes you easier to control.",
+            "start": 3.82,
+            "end": 5.48,
+            "overlapSeconds": 1.18
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 0.0s-1.9s: Speaker 1: They want you afraid.",
+          "- 3.8s-5.5s: Speaker 1: Fear makes you easier to control."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 0,
+            "end": 5
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "previousSummary": null
+    },
+    {
+      "chunkIndex": 5,
+      "window": {
+        "start": 25,
+        "end": 30
+      },
+      "classification": "excluded_window",
+      "truthSummary": "Massive 'GUILD' robots activate in formation, cutting to a serious conversation between two men outdoors.",
+      "outputSummary": "The video chunk transitions from a display of robotic soldiers to an intense dialogue between two characters, highlighting themes of control and conflict.",
+      "truthDominant": "excitement",
+      "outputDominant": "patience",
+      "scoreDiffs": {
+        "patience": {
+          "truth": 4,
+          "output": 6,
+          "diff": 2,
+          "abs": 2
+        },
+        "boredom": {
+          "truth": 5,
+          "output": 4,
+          "diff": -1,
+          "abs": 1
+        },
+        "excitement": {
+          "truth": 6,
+          "output": 5,
+          "diff": -1,
+          "abs": 1
+        }
+      },
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 25,
+            "end": 30
+          },
+          "selectedSegmentCount": 2,
+          "totalSegments": 19,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 5,
+            "speaker": "Speaker 1",
+            "text": "Menendez is a terrorist. We're bringing peace and security to the world.",
+            "start": 23.22,
+            "end": 27.02,
+            "overlapSeconds": 2.02
+          },
+          {
+            "index": 6,
+            "speaker": "Speaker 4",
+            "text": "He refuses to let me go.",
+            "start": 27.88,
+            "end": 29.88,
+            "overlapSeconds": 2
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 23.2s-27.0s: Speaker 1: Menendez is a terrorist. We're bringing peace and security to the world.",
+          "- 27.9s-29.9s: Speaker 4: He refuses to let me go."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 25,
+            "end": 30
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "previousSummary": "The chunk features rapid military action with explosions and the year '2035,' transitioning to a character stating Menendez is a terrorist and promising peace, all under tense music."
+    },
+    {
+      "chunkIndex": 6,
+      "window": {
+        "start": 30,
+        "end": 35
+      },
+      "classification": "excluded_window",
+      "truthSummary": "The video cuts rapidly from soldiers on an airfield to a brief dialogue scene, then to a futuristic aircraft flying over a city, all driven by intense music.",
+      "outputSummary": "This 5-second chunk features an intense dialogue where one character urges another to stop dwelling on the past and focus on future actions, accompanied by tense background music.",
+      "truthDominant": "excitement",
+      "outputDominant": "excitement",
+      "scoreDiffs": {
+        "patience": {
+          "truth": 4,
+          "output": 4,
+          "diff": 0,
+          "abs": 0
+        },
+        "boredom": {
+          "truth": 3,
+          "output": 3,
+          "diff": 0,
+          "abs": 0
+        },
+        "excitement": {
+          "truth": 7,
+          "output": 6,
+          "diff": -1,
+          "abs": 1
+        }
+      },
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 30,
+            "end": 35
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 19,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 7,
+            "speaker": "Speaker 5",
+            "text": "Stop looking backwards, David. What matters is what you do next.",
+            "start": 30.4,
+            "end": 33.1,
+            "overlapSeconds": 2.7
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 30.4s-33.1s: Speaker 5: Stop looking backwards, David. What matters is what you do next."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 30,
+            "end": 35
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "previousSummary": "The video chunk transitions from a display of robotic soldiers to an intense dialogue between two characters, highlighting themes of control and conflict."
+    },
+    {
+      "chunkIndex": 16,
+      "window": {
+        "start": 80,
+        "end": 85
+      },
+      "classification": "excluded_window",
+      "truthSummary": "Rooftop parkour into pink smoke transitions instantly to futuristic aircraft combat over water, ending on a snowy location title card.",
+      "outputSummary": "A high-energy action chunk with rapid cuts from a neon-lit city scene featuring a character and large screen, to an aircraft causing explosions on water, ending with a serene Alaskan landscape with aurora.",
+      "truthDominant": "excitement",
+      "outputDominant": "excitement",
+      "scoreDiffs": {
+        "patience": {
+          "truth": 8,
+          "output": 8,
+          "diff": 0,
+          "abs": 0
+        },
+        "boredom": {
+          "truth": 2,
+          "output": 2,
+          "diff": 0,
+          "abs": 0
+        },
+        "excitement": {
+          "truth": 9,
+          "output": 9,
+          "diff": 0,
+          "abs": 0
+        }
+      },
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 80,
+            "end": 85
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 19,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_dialogue"
+        },
+        "selectedSegments": [],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 80,
+            "end": 85
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "previousSummary": "Intense jungle combat with soldiers and explosions transitions to a futuristic aircraft flying over a city, with 'TOKYO' text appearing, maintaining high-paced action throughout."
+    },
+    {
+      "chunkIndex": 18,
+      "window": {
+        "start": 90,
+        "end": 95
+      },
+      "classification": "excluded_window",
+      "truthSummary": "Hawaii location title card transitions from Alaska with futuristic cityscape and combat-ready soldiers on circular platform, maintaining trailer intensity.",
+      "outputSummary": "A fast-paced action sequence with characters wingsuit flying through a city and engaging in indoor shooting, accompanied by intense heavy metal music.",
+      "truthDominant": "patience",
+      "outputDominant": "excitement",
+      "scoreDiffs": {
+        "patience": {
+          "truth": 5,
+          "output": 8,
+          "diff": 3,
+          "abs": 3
+        },
+        "boredom": {
+          "truth": 6,
+          "output": 2,
+          "diff": -4,
+          "abs": 4
+        },
+        "excitement": {
+          "truth": 5,
+          "output": 9,
+          "diff": 4,
+          "abs": 4
+        }
+      },
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 90,
+            "end": 95
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 19,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_dialogue"
+        },
+        "selectedSegments": [],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 90,
+            "end": 95
+          },
+          "selectedSegmentCount": 9,
+          "totalSegments": 12,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": true,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 1,
+            "performer": "Vocalist 1",
+            "text": "Master! Master!",
+            "start": 89.8,
+            "end": 91.68,
+            "timingStatus": "partial",
+            "overlapsWindow": true
+          },
+          {
+            "index": 2,
+            "performer": "Vocalist 1",
+            "text": "Come crawling faster",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 3,
+            "performer": "Vocalist 1",
+            "text": "Obey your master!",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 4,
+            "performer": "Vocalist 1",
+            "text": "Master of puppets I pull your strings",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 5,
+            "performer": "Vocalist 1",
+            "text": "Obey your master!",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 6,
+            "performer": "Vocalist 1",
+            "text": "Twisting your mind and smashing your dreams",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 7,
+            "performer": "Vocalist 1",
+            "text": "Blinded by me you can't see a thing",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 8,
+            "performer": "Vocalist 1",
+            "text": "Just call my name 'cause I'll hear you scream",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 9,
+            "performer": "Vocalist 1",
+            "text": "Master, master",
+            "start": 92.22,
+            "end": 96.36,
+            "timingStatus": "partial",
+            "overlapsWindow": true
+          }
+        ],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 7,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- Relevant global support entries:",
+          "- 89.8s-91.7s: Vocalist 1: Master! Master!",
+          "- index 2: Vocalist 1: Come crawling faster",
+          "- index 3: Vocalist 1: Obey your master!",
+          "- index 4: Vocalist 1: Master of puppets I pull your strings",
+          "- index 5: Vocalist 1: Obey your master!",
+          "- index 6: Vocalist 1: Twisting your mind and smashing your dreams",
+          "- index 7: Vocalist 1: Blinded by me you can't see a thing",
+          "- index 8: Vocalist 1: Just call my name 'cause I'll hear you scream",
+          "- 92.2s-96.4s: Vocalist 1: Master, master"
+        ]
+      },
+      "previousSummary": "The video chunk opens with an 'ALASKA' title card over a snowy landscape, then quickly cuts to a character in tactical gear amidst aircraft and explosions, delivering high-octane action in a frozen environment."
+    },
+    {
+      "chunkIndex": 19,
+      "window": {
+        "start": 95,
+        "end": 100
+      },
+      "classification": "excluded_window",
+      "truthSummary": "High-intensity action sequence with combat mechs and soldiers featuring rapid cuts and dramatic audio cues.",
+      "outputSummary": "A rapid sequence of action shots with futuristic combat, intense character moments, and urgent dialogue, sustaining high energy without lulls.",
+      "truthDominant": "excitement",
+      "outputDominant": "excitement",
+      "scoreDiffs": {
+        "patience": {
+          "truth": 9,
+          "output": 7,
+          "diff": -2,
+          "abs": 2
+        },
+        "boredom": {
+          "truth": 1,
+          "output": 2,
+          "diff": 1,
+          "abs": 1
+        },
+        "excitement": {
+          "truth": 9,
+          "output": 8,
+          "diff": -1,
+          "abs": 1
+        }
+      },
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 95,
+            "end": 100
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 19,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 16,
+            "speaker": "Speaker 5",
+            "text": "Pull it together, man!",
+            "start": 96.96,
+            "end": 99.16,
+            "overlapSeconds": 2.2
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 97.0s-99.2s: Speaker 5: Pull it together, man!"
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 95,
+            "end": 100
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 12,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 9,
+            "performer": "Vocalist 1",
+            "text": "Master, master",
+            "start": 92.22,
+            "end": 96.36,
+            "timingStatus": "partial",
+            "overlapsWindow": true
+          }
+        ],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- Relevant global support entries:",
+          "- 92.2s-96.4s: Vocalist 1: Master, master"
+        ]
+      },
+      "previousSummary": "A fast-paced action sequence with characters wingsuit flying through a city and engaging in indoor shooting, accompanied by intense heavy metal music."
+    },
+    {
+      "chunkIndex": 24,
+      "window": {
+        "start": 120,
+        "end": 125
+      },
+      "classification": "trusted_window",
+      "truthSummary": "This chunk displays promotional screens for Call of Duty Black Ops 7 pre-order and the Reznov Challenge Pack, featuring static images and text overlays.",
+      "outputSummary": "Promotional segment displaying pre-order incentives and character packs for Call of Duty Black Ops 7, with static title cards and text overlays.",
+      "truthDominant": "boredom",
+      "outputDominant": "boredom",
+      "scoreDiffs": {
+        "patience": {
+          "truth": 3,
+          "output": 3,
+          "diff": 0,
+          "abs": 0
+        },
+        "boredom": {
+          "truth": 8,
+          "output": 7,
+          "diff": -1,
+          "abs": 1
+        },
+        "excitement": {
+          "truth": 2,
+          "output": 4,
+          "diff": 2,
+          "abs": 2
+        }
+      },
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 120,
+            "end": 125
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 19,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 22,
+            "speaker": "Speaker 9",
+            "text": "Get the Reznov challenge pack when you pre-order now.",
+            "start": 121.72,
+            "end": 125.3,
+            "overlapSeconds": 3.28
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 121.7s-125.3s: Speaker 9: Get the Reznov challenge pack when you pre-order now."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 120,
+            "end": 125
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "previousSummary": "A high-intensity action sequence featuring explosions, a giant hand emerging from water, close-up of a soldier's face, and a promotional title card for Call of Duty Black Ops 7."
+    },
+    {
+      "chunkIndex": 25,
+      "window": {
+        "start": 125,
+        "end": 130
+      },
+      "classification": "trusted_window",
+      "truthSummary": "This chunk displays promotional screens for Call of Duty Black Ops 7 pre-order, followed by brief action sequences with characters and robotic combat.",
+      "outputSummary": "The video chunk begins with static promotional images for the Vault Edition, then shifts to fast-paced action sequences featuring characters and a robot dog in combat.",
+      "truthDominant": "excitement",
+      "outputDominant": "excitement",
+      "scoreDiffs": {
+        "patience": {
+          "truth": 4,
+          "output": 5,
+          "diff": 1,
+          "abs": 1
+        },
+        "boredom": {
+          "truth": 6,
+          "output": 4,
+          "diff": -2,
+          "abs": 2
+        },
+        "excitement": {
+          "truth": 7,
+          "output": 7,
+          "diff": 0,
+          "abs": 0
+        }
+      },
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 125,
+            "end": 130
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 19,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 22,
+            "speaker": "Speaker 9",
+            "text": "Get the Reznov challenge pack when you pre-order now.",
+            "start": 121.72,
+            "end": 125.3,
+            "overlapSeconds": 0.3
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 121.7s-125.3s: Speaker 9: Get the Reznov challenge pack when you pre-order now."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 125,
+            "end": 130
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "previousSummary": "Promotional segment displaying pre-order incentives and character packs for Call of Duty Black Ops 7, with static title cards and text overlays."
+    }
+  ]
+}

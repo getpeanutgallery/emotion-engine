@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-05-13  
-**Status:** Draft  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -73,25 +73,25 @@ This plan should first determine the safest honest rerun path for the full video
 - `.plans/2026-05-13-phase2-full-thought-rerun-and-digest.md`
 - `.plans/artifacts/2026-05-13-phase2-full-thought-digest/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Built the durable digest artifact at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-full-thought-digest/full-thought-digest.md` from the successful full rerun artifact at `output/cod-test-phase2-full-thought-rerun-2026-05-13/phase2-process/chunk-analysis.json`. The digest preserves every chunk's `chunkIndex`, time window, `thought`, optional `continuationThought`, and `personaMeta.scrollRisk` in a compact reviewable markdown format so Derrick can read the entire run without opening raw JSON. It covers all 28 chunks across the 2:20 video, summarizes the continuation-thought count (`25/28`), and records the scroll-risk distribution (`SCROLLING=1`, `high=4`, `low=18`, `medium=5`).
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Completed an honest full-video Phase 2 rerun using the restored persona-thought contract, then turned the resulting `chunk-analysis.json` into a durable chunk-by-chunk markdown digest for Derrick review. The final digest covers all 28 analyzed chunks and preserves the exact persona `thought` line for each chunk, plus optional `continuationThought` and `scrollRisk` where present, in a compact readable artifact under `.plans/artifacts/2026-05-13-phase2-full-thought-digest/`.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-01` was satisfied by building directly on the restored thought-contract work and preserving the same fields that were reintroduced there. `REF-02` was satisfied by extending the earlier bounded evidence into a complete full-run review surface. `REF-03` was satisfied by giving Derrick a whole-run readability artifact to compare tone against the current comparison material. `REF-04` was satisfied indirectly through the successful runtime output produced by the live Phase 2 path. `REF-05` was satisfied by using the canonical rerun output structure and storing the digest as a durable plan artifact.
 
 **Commits:**
 - Pending.
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** Once the contract was restored and a clean live full-run path succeeded, the missing piece was not more schema work but a readable review surface. A compact per-chunk markdown digest is enough to make a 28-chunk run human-reviewable without forcing Derrick to inspect raw JSON or generated reports.
 
 ---
 
-*Completed on Pending*
+*Completed on 2026-05-13*

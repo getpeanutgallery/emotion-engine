@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-05-13  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -168,9 +168,9 @@ The work should preserve compatibility with the current benchmark and reporting 
 - `.plans/2026-05-13-phase2-persona-thought-contract-restoration.md`
 - `.plans/artifacts/2026-05-13-phase2-persona-contract-qa/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** QA completed and a durable artifact was added at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-persona-contract-qa/qa-summary.md`. I reviewed the plan/design/rerun artifacts plus the representative rerun outputs for intro `0s-10s`, middle `75s-80s`, and promo `125s-130s`, and compared tone/utility against `REF-06`. Verdict: keep the restored contract shape. Required `thought` is doing real persona-voice work and is grounded in chunk content; optional `continuationThought` is justified but should remain sparse because the intro example is only mildly additive; optional `personaMeta` stayed bounded to `scrollRisk` only across all inspected reruns; and `scrollRisk` was useful rather than noisy, especially the promo `SCROLLING` case. The main weakness is tone calibration, not schema: the new lines are readable and useful but slightly smoother / less sharp than the stronger older `REF-06` style, so the next follow-up should refine prompt voice rather than roll back the contract. Audit handoff: verify bounded field shape in the rerun artifacts, confirm `continuationThought` remains optional + rare, and treat the remaining gap as prompt tuning instead of contract failure.
 
 ---
 
@@ -189,25 +189,27 @@ The work should preserve compatibility with the current benchmark and reporting 
 - `.plans/2026-05-13-phase2-persona-thought-contract-restoration.md`
 - `.plans/artifacts/2026-05-13-phase2-persona-contract-audit/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit completed and a durable artifact was added at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-persona-contract-audit/audit-summary.md`. I audited the design note, rerun summary, QA summary, representative Phase 2 chunk artifacts, representative Phase 3 reports, and the implementation diffs/commits (`1afbadb`, `e491bbf`, `365d7bf`; requested `366ad70` was not present in this repo). Verdict: pass and ready to land for the stated scope. The restored contract genuinely brought back the missing persona reaction layer by wiring required `thought`, optional sparse `continuationThought`, and optional bounded `personaMeta.scrollRisk` through prompt, validation, artifact projection, and report rendering. Benchmark utility was not harmed: `server/lib/benchmark-runner.cjs` explicitly ignores the new informational fields for chunk-analysis comparisons, and the dedicated benchmark regression test plus a fresh local run of the focused suite (`node --test test/lib/structured-output-emotion.test.js test/lib/benchmark-runner.test.js test/scripts/emotion-lenses-tool.test.js test/scripts/video-chunks.test.js test/scripts/evaluation.test.js test/scripts/final-report.test.js`) passed with 119/119 tests green. The honest remaining gap is prompt calibration, not contract shape: the new thought lines are useful and human-readable but still slightly smoother than the sharper older `REF-06` tone, and the single observed `continuationThought` is acceptable but only mildly additive. That follow-up should be treated as a separate prompt-tuning pass rather than a blocker on this restoration bead.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Restored the missing Phase 2 persona reaction layer in a controlled way by making `thought` required, keeping `continuationThought` optional, and keeping `personaMeta` optional and bounded to `scrollRisk` only. The implementation now preserves those fields from prompt contract through validator/normalizer, chunk-analysis artifact output, and Phase 3 report rendering. A bounded rerun across intro, action-middle, and promo-dip COD windows proved the fields survive end-to-end in real outputs, and QA plus audit both concluded the restored layer is useful rather than schema noise.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-01` and `REF-02` were satisfied by restoring the persona-thought behavior at the live prompt/validator seam rather than the legacy loader alone. `REF-03` was satisfied because benchmark scoring families remained intact while the new fields were added as explicit ignore-path informational data. `REF-04` was satisfied because the live Phase 2 chunk runtime now projects the restored fields into final artifacts. `REF-05` and `REF-06` were used as comparators: the new contract clearly restores missing persona readability over the benchmark-only artifact shape in `REF-05`, while the honest remaining gap versus `REF-06` is tone sharpness, not contract completeness.
 
 **Commits:**
-- Pending
+- `1afbadb` - Restore Phase 2 persona thought contract
+- `e491bbf` - Update benchmark/reporting for Phase 2 thought fields
+- `365d7bf` - docs: capture phase2 thought contract rerun evidence
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** The contract loss was architectural, not mysterious: once the active Phase 2 path narrowed the prompt + validator + projection shape, persona reaction lines had nowhere durable to survive. The safest fix was to restore a narrow first-class persona seam while explicitly keeping those fields non-scored. Also, this pass showed that bounded representative reruns are enough to prove contract survival when a whole-video lane is flaky, but prompt calibration still matters because structure can be correct before voice is fully sharp.
 
 ---
 
-*Completed on Pending*
+*Completed on 2026-05-13*

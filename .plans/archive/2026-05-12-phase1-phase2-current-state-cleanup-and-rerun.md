@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-05-12  
-**Status:** In Progress  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -200,11 +200,14 @@ What actually happened:
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-12-phase1-phase2-current-state-cleanup-and-rerun.md`
-- fresh QA summary/artifact packet under `output/`
+- `.plans/artifacts/2026-05-12-rerun-qa/qa-summary.md`
+- `.plans/artifacts/2026-05-12-rerun-qa/chunk-context-audit.json`
+- `.plans/artifacts/2026-05-12-rerun-qa/benchmark-comparison.json`
+- `.plans/artifacts/2026-05-12-rerun-qa/qa-analyze.cjs`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** QA completed and captured durably under `.plans/artifacts/2026-05-12-rerun-qa/`. The fresh rerun is **not good enough as a gold-truth / benchmark-quality Phase 2 pass yet**, although it is directionally useful in the repo’s trusted action/promo windows. Representative findings: dominant emotion stayed aligned on all 17 trusted benchmark windows with low average score drift (`0.61` average absolute lens-score difference), but summary-level grounding remains weak and excluded/skeptical windows still show material misses, especially chunk `18` (`90-95s`), which output as wingsuit-city action / `excitement` instead of the truth’s Hawaii-card / soldier-platform window with `patience` dominant. Prompt/context audit found **no evidence of cross-window dialogue leakage**: timestamp-grounded dialogue lines were correctly filtered by overlap and only overlapping lines appeared in sampled prompts. Music-vocals grounding is improved but still mixed: the current prompt path can still include untimed ordered lyric entries alongside timed overlap (for example chunk `18`), so leakage risk is not fully eliminated. That residual vocals weakness does **not appear to be the main downstream blocker** in this rerun; the stronger issue is chunk interpretation / continuity drift in the skeptical windows. See `qa-summary.md` for the operator verdict and `chunk-context-audit.json` / `benchmark-comparison.json` for evidence.
 
 ---
 
@@ -222,25 +225,42 @@ What actually happened:
 
 **Files Created/Deleted/Modified:**
 - `.plans/2026-05-12-phase1-phase2-current-state-cleanup-and-rerun.md`
+- `.plans/artifacts/2026-05-12-final-audit/decision.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent final audit completed and captured durably at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-12-final-audit/decision.md`.
+
+What actually happened:
+- Re-checked the May 6-7 canonical decision surface (`faster_whisper` default, `whisperx` experimental only, optional separation-first prototype as the only archived bounded follow-up) against the fresh May 12 rerun evidence.
+- Re-reviewed the rerun QA packet and confirmed the key distinction: **Phase 2 is not benchmark-quality overall yet, but the residual music-vocals timestamp weakness is no longer the main downstream bottleneck.**
+- Confirmed the strongest evidence for that conclusion is the split between trustworthy timestamp/context behavior and remaining interpretation drift:
+  - trusted benchmark windows stayed directionally strong with dominant emotion exact on `17/17` trusted windows and low average score drift (`0.61` overall across trusted windows),
+  - dialogue overlap grounding behaved correctly with no observed cross-window leakage,
+  - music-vocals leakage risk is now localized rather than systemic, with chunk `18` as the main residual problem case because its prompt still included timed overlap plus seven unresolved ordered lyric entries,
+  - the broader miss pattern is still better explained by chunk interpretation / continuity drift than by lyric contamination.
+- Final product decision: **do not greenlight one more music-vocals prototype right now**. The separation-first prototype remains intellectually plausible, but the fresh evidence says it is no longer the next highest-value move.
+- Final next-lane recommendation: **Phase 2 prompt/goal refinement should be next**, specifically around visual-vs-support prioritization, previous-summary influence, and chunk objective clarity.
+- Final wait recommendation: **Phase 3/reporting cleanup should wait** until after at least one bounded Phase 2 refinement pass, because polishing the reporting surface now would freeze the wrong capability ceiling.
+- Final two-part verdict for Derrick:
+  - **Good enough to stop immediate music-vocals timestamp R&D:** yes.
+  - **Good enough to call benchmark-quality overall:** no.
 
 ---
 
 ## Final Results
 
-**Status:** ⚪ Not started
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Cleaned the repo’s active plan/bead surface back to the honest May 6-7 -> May 12 story, reran the canonical faster-whisper-backed Phase 1 -> Phase 2 lane from the current default state, QA’d the fresh output against the benchmark/context reality, and completed the decision audit that answers the real next-lane question.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-01`, `REF-03`, and `REF-05` remained the canonical timestamp truth chain and historical decision surface; `REF-07`, `REF-08`, and `REF-09` stayed aligned with the live code/config/rerun path. Fresh evidence from the May 12 rerun plus QA packet supports a narrowed update to the May 7 optional-prototype recommendation: the residual music-vocals timestamp weakness is still real, but it is no longer the main downstream blocker, so the honest next lane is Phase 2 prompt/goal refinement rather than another immediate timestamp prototype.
 
 **Commits:**
-- Pending
+- `1592ed0` - Archive stale plans and clean stale beads
+- `a6a37d4` - Document faster-whisper phase1-phase2 rerun
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** The important distinction is not “Phase 2 is done” versus “Phase 2 is broken.” The honest state is narrower: the timestamp lane is now good enough to stop being the immediate research priority, while the product-level quality gap has shifted to Phase 2 interpretation and continuity behavior. That means the next useful work should optimize how Phase 2 weighs local visuals, dialogue, music-vocals support, and previous-summary context before we spend time polishing reporting or reopening timestamp R&D.
 
 ---
 

@@ -1,0 +1,79 @@
+{
+  "artifactKind": "phase2_continuity_guardrail_followup_qa",
+  "date": "2026-05-13",
+  "beadId": "ee-ieux",
+  "sourcePlan": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/2026-05-13-phase2-continuity-guardrail-followup.md",
+  "artifactsChecked": {
+    "rerunSummary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-guardrail-rerun/summary.md",
+    "rerunEvidence": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-guardrail-rerun/evidence.json",
+    "priorAudit": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-state-audit/audit-summary.md",
+    "boundedRerunChunkAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-continuity-guardrail-rerun-2026-05-13/phase2-process/chunk-analysis.json",
+    "priorFullThoughtChunkAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-full-thought-rerun-2026-05-13/phase2-process/chunk-analysis.json"
+  },
+  "checks": {
+    "exactResidualBugGone": {
+      "status": "pass",
+      "previousBlockedText": "Music is about to drop. If the next 5 seconds hit hard, I'm sharing this.",
+      "currentChunk14Continuation": "If the jungle scene hits as hard as the city one, I'm locked in."
+    },
+    "guardrailSweep": {
+      "status": "pass",
+      "beforeHitCount": 3,
+      "afterHitCount": 0,
+      "patternsValidatedFromRerunEvidence": [
+        "old_exact_phrase",
+        "next_number_seconds",
+        "in_the_next_second",
+        "next_few_seconds",
+        "numeric_seconds_token"
+      ]
+    },
+    "chunk13to16ContinuityRead": {
+      "status": "pass",
+      "assessment": "Chunks 13-16 read like one lived trailer watch with ongoing escalation and payoff-seeking, not four cold-open micro-clips.",
+      "chunks": {
+        "13": "Every time I think I know what this game is, they throw something even weirder at me. I'm definitely watching to the end.",
+        "14": "If the jungle scene hits as hard as the city one, I'm locked in.",
+        "15": "If they keep switching locations this fast, I need to see where we go next.",
+        "16": "Where are we going next? I need to see the payoff."
+      }
+    },
+    "chunk0SpotCheck": {
+      "status": "pass",
+      "previousFullThoughtContinuation": "Unless Will Smith does something wild in the next second, I'm already scrolling.",
+      "currentBoundedRerunContinuation": "If the next beat drops hard enough, I might stick around to see who's actually fighting.",
+      "note": "The earlier natural-language countdown miss is gone from continuationThought."
+    },
+    "obviousRegressionCheck": {
+      "status": "pass",
+      "notes": [
+        "No numeric local timestamp leakage appears in the bounded rerun artifact.",
+        "Chunk 14 remains low scroll-risk and energetic.",
+        "Adjacent chunks 13, 15, and 16 remain natural and continuous.",
+        "Persona voice remains intact after the narrow follow-up."
+      ]
+    },
+    "remainingSecondsMentions": {
+      "status": "watch",
+      "note": "Generic seconds language remains in some thoughts (for example chunk 0, 4, and 9), but QA judged these as persona commentary rather than the blocked local-countdown continuation bug class.",
+      "examples": [
+        {
+          "chunkIndex": 0,
+          "field": "thought",
+          "text": "Okay, you bought yourself a few more seconds, but don't get comfy."
+        },
+        {
+          "chunkIndex": 4,
+          "field": "thought",
+          "text": "She better not start monologuing for 30 seconds."
+        },
+        {
+          "chunkIndex": 9,
+          "field": "thought",
+          "text": "45 seconds in and we're still in the thick of it. ... I'll give it two seconds."
+        }
+      ]
+    }
+  },
+  "overallVerdict": "pass_for_audit_handoff"
+}

@@ -1,0 +1,94 @@
+{
+  "artifactKind": "phase2_continuity_guardrail_followup_audit",
+  "date": "2026-05-13",
+  "beadId": "ee-jca2",
+  "sourcePlan": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/2026-05-13-phase2-continuity-guardrail-followup.md",
+  "artifactsChecked": {
+    "followupPlan": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/2026-05-13-phase2-continuity-guardrail-followup.md",
+    "rerunSummary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-guardrail-rerun/summary.md",
+    "rerunEvidence": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-guardrail-rerun/evidence.json",
+    "qaSummary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-guardrail-qa/qa-summary.md",
+    "qaEvidence": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-guardrail-qa/evidence.json",
+    "priorAudit": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-state-audit/audit-summary.md",
+    "boundedRerunChunkAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-continuity-guardrail-rerun-2026-05-13/phase2-process/chunk-analysis.json"
+  },
+  "commitsChecked": [
+    {
+      "repo": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/tools",
+      "commit": "51f6898",
+      "summary": "Widen local countdown phrasing guardrail"
+    },
+    {
+      "repo": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine",
+      "commit": "4e76e3b",
+      "summary": "Tighten continuity countdown guardrail follow-up"
+    }
+  ],
+  "checks": {
+    "chunk14ExactBlockedBugGone": {
+      "status": "pass",
+      "previousBlockedText": "Music is about to drop. If the next 5 seconds hit hard, I'm sharing this.",
+      "currentChunk14Continuation": "If the jungle scene hits as hard as the city one, I'm locked in."
+    },
+    "widenedGuardrailMatchesRequestedFix": {
+      "status": "pass",
+      "promptBanExpanded": true,
+      "validatorsExpanded": true,
+      "newValidatorRegex": "\\b(?:in\\s+)?(?:the\\s+)?next\\s+(?:(?:\\d+\\s+)?seconds?|few\\s+seconds?|couple\\s+seconds?)\\b",
+      "testsAddedForNaturalLanguageCountdowns": true
+    },
+    "rerunSweep": {
+      "status": "pass",
+      "beforeHitCount": 3,
+      "afterHitCount": 0,
+      "patterns": [
+        "old_exact_phrase",
+        "next_number_seconds",
+        "in_the_next_second",
+        "next_few_seconds",
+        "numeric_seconds_token"
+      ]
+    },
+    "chunk13to16ContinuityLane": {
+      "status": "pass",
+      "assessment": "Chunks 13-16 still read as one carried trailer watch with escalating payoff-seeking, not reset micro-clips.",
+      "continuations": {
+        "13": "Every time I think I know what this game is, they throw something even weirder at me. I'm definitely watching to the end.",
+        "14": "If the jungle scene hits as hard as the city one, I'm locked in.",
+        "15": "If they keep switching locations this fast, I need to see where we go next.",
+        "16": "Where are we going next? I need to see the payoff."
+      }
+    },
+    "remainingGenericSecondsMentions": {
+      "status": "pass_non_blocking",
+      "decision": "acceptable_persona_commentary",
+      "examples": [
+        {
+          "chunkIndex": 0,
+          "field": "thought",
+          "text": "Okay, you bought yourself a few more seconds, but don't get comfy."
+        },
+        {
+          "chunkIndex": 4,
+          "field": "thought",
+          "text": "She better not start monologuing for 30 seconds."
+        },
+        {
+          "chunkIndex": 9,
+          "field": "thought",
+          "text": "45 seconds in and we're still in the thick of it. ... I'll give it two seconds."
+        }
+      ],
+      "reasoning": [
+        "These do not use the blocked next-chunk local-countdown framing.",
+        "They do not recreate the chunk-reset continuation bug class.",
+        "Chunk 9's elapsed-trailer phrasing is consistent with full-watch continuity commentary rather than micro-clip timing."
+      ]
+    },
+    "continuityStateLaneClosure": {
+      "status": "pass",
+      "decision": "close_cleanly"
+    }
+  },
+  "overallVerdict": "pass_close_bead"
+}

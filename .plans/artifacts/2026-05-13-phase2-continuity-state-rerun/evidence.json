@@ -1,0 +1,152 @@
+{
+  "artifactKind": "phase2_continuity_state_rerun_evidence",
+  "date": "2026-05-13",
+  "sourceBefore": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-full-thought-rerun-2026-05-13/phase2-process/chunk-analysis.json",
+  "sourceAfter": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-continuity-rerun-2026-05-13/phase2-process/chunk-analysis.json",
+  "config": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-state-rerun/full-video-phase2-report.fast-config.yaml",
+  "phase3Outputs": {
+    "finalReport": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-continuity-rerun-2026-05-13/phase3-report/summary/FINAL-REPORT.md",
+    "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-continuity-rerun-2026-05-13/phase3-report/summary/summary.json",
+    "emotionalAnalysis": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-continuity-rerun-2026-05-13/phase3-report/emotional-analysis/emotional-data.json",
+    "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-continuity-rerun-2026-05-13/phase3-report/metrics/metrics.json",
+    "recommendation": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-continuity-rerun-2026-05-13/phase3-report/recommendation/recommendation.json"
+  },
+  "runSummary": {
+    "chunks": 28,
+    "successful": 28,
+    "failed": 0,
+    "videoDuration": 140.017,
+    "totalTokens": 282283,
+    "fullRerunNeededNext": false,
+    "fullRerunNote": "No additional full rerun is justified immediately; this pass already exercised the real full-video continuity path with Phase 2 plus report stages while reusing the proven Phase 1 packet."
+  },
+  "timestampPhraseCheck": {
+    "pattern": "\\b\\d+(?:\\.\\d+)?s\\b",
+    "beforeHitChunkIndexes": [0, 4, 13, 14, 16],
+    "afterHitChunkIndexes": [],
+    "beforeHitCount": 5,
+    "afterHitCount": 0
+  },
+  "shapeChecks": {
+    "summaryTopLevelKeys": ["keyMetrics", "metadata", "recommendation", "reportPaths"],
+    "emotionalAnalysisTopLevelKeys": ["chunkAnalysis", "criticalMoments", "emotionalArc", "failedChunkDetails", "generatedAt", "implementationStatus", "pipelineVersion", "scrollRiskTimeline", "summary"],
+    "finalReportThoughtFieldsPresent": true
+  },
+  "windows": [
+    {
+      "label": "intro-continuity-0",
+      "chunkIndex": 0,
+      "startTime": 0,
+      "endTime": 5,
+      "before": {
+        "thought": "0.0s and it's already a dark, cluttered mess with generic 'RISING TENSIONS' corporate buzzwords. Hard pass.",
+        "continuationThought": "Unless Will Smith does something wild in the next second, I'm already scrolling."
+      },
+      "after": {
+        "thought": "Right away I see that generic 'RISING TENSIONS' text and I am already rolling my eyes. That is exactly the kind of corporate intro I hate. The cuts are fast though, so I have not scrolled yet. The soldier running keeps me watching for now, but if this feels like a generic military shooter, I am out.",
+        "continuationThought": "If the next few seconds do not show something unique or actually explain the stakes, I am gone.",
+        "scrollRisk": "high"
+      },
+      "notes": [
+        "Still skeptical, but no local timestamp phrasing remains.",
+        "Continuation thought now looks ahead naturally instead of naming a fake local second count."
+      ]
+    },
+    {
+      "label": "intro-continuity-1",
+      "chunkIndex": 1,
+      "startTime": 5,
+      "endTime": 10,
+      "before": {
+        "thought": "Okay, that flipping car shot was actually sick. The pacing is fast enough to keep me from swiping. Let's see where this goes.",
+        "continuationThought": "The hook worked, now they just need to keep this energy up."
+      },
+      "after": {
+        "thought": "Okay, the generic intro is over. Now we're talking. Crashing planes? Flying cars? This actually looks like a movie, not a corporate slideshow. Still waiting to see what the actual plot is, but visually I'm stuck.",
+        "continuationThought": "If they keep this pace up without explaining why this is happening, I might still bounce, but I need to see where that plane crash leads.",
+        "scrollRisk": "low"
+      },
+      "notes": [
+        "The thought explicitly carries forward the intro reaction instead of acting like a fresh standalone clip.",
+        "Continuity is cumulative: the persona says the intro is over and reacts to the escalation."
+      ]
+    },
+    {
+      "label": "dialogue-transition-4-5",
+      "chunkIndexes": [4, 5],
+      "dialogueEvidence": [
+        "17.42s-21.46s: 'Raul Menendez ignited global unrest on an unprecedented scale.'",
+        "23.22s-27.02s: 'Menendez is a terrorist. We're bringing peace and security to the world.'",
+        "27.88s-29.88s: 'He refuses to let me go.'"
+      ],
+      "before": {
+        "chunk4Thought": "0.0s and it's military trucks? We just had explosions. Now a talking head? The music is still chill. My thumb is itching.",
+        "chunk4ContinuationThought": "If she doesn't say something wild in the next 2 seconds, I'm out.",
+        "chunk5Thought": "Okay, the robot reveal actually hits hard. That Guild logo is clear. But now we're cutting to two guys talking? Don't bore me with exposition.",
+        "chunk5ContinuationThought": "If the dialogue snaps, I stay. If it drags, I'm out."
+      },
+      "after": {
+        "chunk4Thought": "Okay, 2035. Near future stuff. Wait, what is on that lady's neck? Cyber implants? And now we got combat robots dropping in. The pacing is actually keeping up with my brain. Don't slow down now.",
+        "chunk4ContinuationThought": "If we get to see those robots actually fight, this is an easy finish.",
+        "chunk4ScrollRisk": "low",
+        "chunk5Thought": "Okay, the robot army shot is actually sick. 'GUILD' branding feels corporate but the scale is there. Wait, why are we cutting to two guys talking in a field? We just saw an army of killer robots. Don't bore me with exposition.",
+        "chunk5ContinuationThought": "If the next beat doesn't bring the action back or make this conversation matter, I'm out.",
+        "chunk5ScrollRisk": "medium"
+      },
+      "notes": [
+        "Dialogue-supported context shapes the thought more naturally in chunk 4 without inventing unsourced exposition.",
+        "Chunk 5 stays skeptical about the talking-head turn, so dialogue influence appears bounded by the actual cut instead of over-dominating the reaction."
+      ]
+    },
+    {
+      "label": "late-action-continuity-chunk-18",
+      "chunkIndex": 18,
+      "startTime": 90,
+      "endTime": 95,
+      "before": {
+        "thought": "Avalon drops and we're immediately wingsuiting? No intro fluff. Robots at the end? Okay, you got my attention.",
+        "continuationThought": "If the next clip keeps this energy, I might actually watch the whole thing."
+      },
+      "after": {
+        "thought": "Okay, 'Avalon' hits right away, no guessing. Three guys jumping off a skyscraper in wingsuits? That's the kind of stunt that stops the scroll. Then we're instantly in a hallway firefight. Zero downtime between the jump and the gunplay. I'm locked in.",
+        "continuationThought": "As long as the next beat doesn't drag, I'm seeing this through to the end card.",
+        "scrollRisk": "low"
+      },
+      "notes": [
+        "The false-local opener ('No intro fluff') is gone.",
+        "The continuation thought is now correctly late-trailer aware ('through to the end card')."
+      ]
+    },
+    {
+      "label": "promo-endcard-24-25",
+      "chunkIndexes": [24, 25],
+      "before": {
+        "chunk24Thought": "Title card hit. Usually my cue to bounce. Wait, Reznov? That's a deep cut. But now it's just lists of guns and 'Vault Edition' clutter. Too much text, too static.",
+        "chunk24ContinuationThought": "If the beta access date was bigger, maybe I'd care. Otherwise, I'm out.",
+        "chunk25Thought": "Static screen for 3 seconds? That's an eternity. My thumb is already moving. Then suddenly gameplay? Why is the action after the 'buy now' screen? Confusing.",
+        "chunk25ContinuationThought": "If this was the start of the video, I'd be gone. Since it's the end, I'm just waiting for it to finish so I can click the link or leave."
+      },
+      "after": {
+        "chunk24Thought": "Title dropped. Now the pre-order spam. Reznov pack is a nice touch for the heads. Vault Edition screen is cluttered but I need the date. November 14. Got it. Would I click? Yeah, if I'm into COD.",
+        "chunk24ContinuationThought": "This is the info I actually came for at the end. Not scrolling yet.",
+        "chunk24ScrollRisk": "low",
+        "chunk25Thought": "Vault Edition screen is cluttered but I need the date. November 14. Got it. Wait, gameplay again? Thought we were done. Train jump is clean though. Robot dog? Okay, that's new. Final hype reel energy. I'll watch this out.",
+        "chunk25ContinuationThought": "If this is the last burst before the logo, I'll stick for it. Looks like pure chaos.",
+        "chunk25ScrollRisk": "low"
+      },
+      "notes": [
+        "The end-card lane now preserves end-of-trailer intent instead of reacting as if the promo card were a fresh opening screen.",
+        "Chunk 25 inherits the date-focused state from chunk 24 before reacting to the surprise gameplay tag."
+      ]
+    }
+  ],
+  "qaHandoff": {
+    "beadId": "ee-aqg0",
+    "focus": [
+      "Confirm the targeted-window continuity gains feel real in the human read, not just regex-clean.",
+      "Stress-check chunk 4 and chunk 5 for dialogue-informed thoughts: natural when supported, still skeptical when the cut goes back to exposition.",
+      "Check chunk 18 and chunks 24-25 for genuine lived-sequence awareness, especially the 'through to the end card' and date-carryover behavior.",
+      "Verify the summary/emotional-analysis outputs are consumable and no report regressions slipped in while continuity improved."
+    ]
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "artifactKind": "phase2_continuity_guardrail_rerun_evidence",
+  "date": "2026-05-13",
+  "sourceBefore": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-continuity-rerun-2026-05-13/phase2-process/chunk-analysis.json",
+  "sourceAfter": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-phase2-continuity-guardrail-rerun-2026-05-13/phase2-process/chunk-analysis.json",
+  "config": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-13-phase2-continuity-guardrail-rerun/chunk14-16-phase2-only.fast-config.yaml",
+  "logPath": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.logs/20260513-165939-ee-u2ct-continuity-guardrail-rerun.log",
+  "timePath": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.logs/20260513-165939-ee-u2ct-continuity-guardrail-rerun.time",
+  "runSummary": {
+    "chunkCount": 17,
+    "successful": 17,
+    "failed": 0,
+    "failedChunkIndexes": [],
+    "totalTokens": 211416,
+    "videoDuration": 140.017,
+    "runtime": "real 1461.38\nuser 181.39\nsys 6.35",
+    "rationale": "Smallest honest rerun was Phase 2 only with max_chunks=17, which rebuilds continuity from chunk 0 through chunk 16 so the affected chunk 14/15 lane is exercised with real accumulated state plus adjacent sanity windows."
+  },
+  "guardrailSweep": {
+    "patterns": [
+      {
+        "label": "old_exact_phrase",
+        "regex": "/If the next 5 seconds hit hard, I'm sharing this\\./i"
+      },
+      {
+        "label": "next_number_seconds",
+        "regex": "/next\\s+\\d+(?:\\.\\d+)?\\s+seconds?/i"
+      },
+      {
+        "label": "in_the_next_second",
+        "regex": "/in\\s+the\\s+next\\s+second/i"
+      },
+      {
+        "label": "next_few_seconds",
+        "regex": "/next\\s+few\\s+seconds/i"
+      },
+      {
+        "label": "numeric_seconds_token",
+        "regex": "/\\b\\d+(?:\\.\\d+)?s\\b/i"
+      }
+    ],
+    "beforeHitCount": 3,
+    "afterHitCount": 0,
+    "beforeHits": [
+      {
+        "chunkIndex": 0,
+        "field": "continuationThought",
+        "pattern": "next_few_seconds",
+        "text": "If the next few seconds do not show something unique or actually explain the stakes, I am gone."
+      },
+      {
+        "chunkIndex": 14,
+        "field": "continuationThought",
+        "pattern": "old_exact_phrase",
+        "text": "Music is about to drop. If the next 5 seconds hit hard, I'm sharing this."
+      },
+      {
+        "chunkIndex": 14,
+        "field": "continuationThought",
+        "pattern": "next_number_seconds",
+        "text": "Music is about to drop. If the next 5 seconds hit hard, I'm sharing this."
+      }
+    ],
+    "afterHits": []
+  },
+  "targetWindow": {
+    "before": {
+      "chunkIndex": 14,
+      "startTime": 70,
+      "endTime": 75,
+      "thought": "Okay, we got the shooting. Sparks flying, soldier running—this is what I wanted. The glitchy text is trippy but doesn't kill the momentum.",
+      "continuationThought": "Music is about to drop. If the next 5 seconds hit hard, I'm sharing this.",
+      "scrollRisk": "low",
+      "status": "success"
+    },
+    "after": {
+      "chunkIndex": 14,
+      "startTime": 70,
+      "endTime": 75,
+      "thought": "Okay, city battle is intense, but then—wait, floating islands? And 'ANGOLA'? They're jumping locations fast. The glitch effect was cool. Still watching.",
+      "continuationThought": "If the jungle scene hits as hard as the city one, I'm locked in.",
+      "scrollRisk": "low",
+      "status": "success"
+    }
+  },
+  "adjacentWindows": [
+    {
+      "before": {
+        "chunkIndex": 13,
+        "startTime": 65,
+        "endTime": 70,
+        "thought": "Wait, that's LA? They just dropped floating islands and giant sky structures into Los Angeles. The pacing is frantic and I am totally here for it.",
+        "continuationThought": "That first-person shot at the end looks like actual gameplay. Let's see some shooting.",
+        "scrollRisk": "low",
+        "status": "success"
+      },
+      "after": {
+        "chunkIndex": 13,
+        "startTime": 65,
+        "endTime": 70,
+        "thought": "Wait, now we're in LA? And there's a giant curved highway in the sky? The pacing on this is actually insane. They are not letting up at all.",
+        "continuationThought": "Every time I think I know what this game is, they throw something even weirder at me. I'm definitely watching to the end.",
+        "scrollRisk": "low",
+        "status": "success"
+      }
+    },
+    {
+      "before": {
+        "chunkIndex": 15,
+        "startTime": 75,
+        "endTime": 80,
+        "thought": "Okay, jungle run is standard, but switching to FPS view actually catches me off guard. Then boom—aircraft launch, night city, Tokyo text. The cuts are fast enough that I didn't even think about scrolling.",
+        "continuationThought": "The beat better drop hard on that city shot or this whiplash was for nothing.",
+        "scrollRisk": "low",
+        "status": "success"
+      },
+      "after": {
+        "chunkIndex": 15,
+        "startTime": 75,
+        "endTime": 80,
+        "thought": "Okay, jungle fight is actually insane. Zipline shot? Nice. Wait, Tokyo already? They're not wasting time. This hits different.",
+        "continuationThought": "If they keep switching locations this fast, I need to see where we go next.",
+        "scrollRisk": "low",
+        "status": "success"
+      }
+    },
+    {
+      "before": {
+        "chunkIndex": 16,
+        "startTime": 80,
+        "endTime": 85,
+        "thought": "Rooftop jump straight into pink chaos—okay, that visual slap works. Now we're strafing a boat in the dark? The location whiplash is crazy but the metal track is pushing me through it. I'm locked in.",
+        "continuationThought": "If that '4' means a countdown, I need to see what 3, 2, 1 are.",
+        "scrollRisk": "low",
+        "status": "success"
+      },
+      "after": {
+        "chunkIndex": 16,
+        "startTime": 80,
+        "endTime": 85,
+        "thought": "Okay, Tokyo rooftop parkour is clean. Neon vibes hit. Boom—jet strike. Now snow? They're not letting me breathe. This actually keeps moving.",
+        "continuationThought": "Where are we going next? I need to see the payoff.",
+        "scrollRisk": "low",
+        "status": "success"
+      }
+    }
+  ],
+  "continuityGainSanity": {
+    "chunk0After": {
+      "chunkIndex": 0,
+      "startTime": 0,
+      "endTime": 5,
+      "thought": "Right away it's a dark, cluttered mess with generic 'RISING TENSIONS' corporate buzzwords. Hard pass... wait, the eye zoom hits hard, and now we've got floating debris and soldiers. Okay, you bought yourself a few more seconds, but don't get comfy.",
+      "continuationThought": "If the next beat drops hard enough, I might stick around to see who's actually fighting.",
+      "scrollRisk": "high",
+      "status": "success"
+    },
+    "note": "Chunk 0 no longer uses numeric-second or next-few-seconds phrasing; it now looks ahead with next-beat wording instead."
+  },
+  "qaHandoff": {
+    "beadId": "ee-ieux",
+    "focus": [
+      "Confirm chunk 14 no longer contains the exact residual phrase or any local-countdown phrasing in thought/continuationThought.",
+      "Read chunks 13-16 together to verify the lane still feels like one continuous trailer watch rather than reset micro-clips.",
+      "Spot-check chunk 0 to confirm the widened guardrail removed the earlier next-few-seconds residue without flattening persona voice.",
+      "No new report-stage validation is needed here; this was intentionally a bounded Phase 2-only rerun."
+    ]
+  }
+}

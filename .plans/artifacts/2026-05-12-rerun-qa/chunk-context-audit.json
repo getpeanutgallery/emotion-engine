@@ -1,0 +1,2013 @@
+{
+  "outputDir": "output/cod-test-phase2-only-retest-2026-05-06-with-timestamps",
+  "dialogueTimestampPath": "output/cod-test-phase2-only-retest-2026-05-06-with-timestamps/phase1-gather-context/dialogue-timestamps-data.reconciled.json",
+  "musicVocalsTimestampPath": "output/cod-test-phase2-only-retest-2026-05-06-with-timestamps/phase1-gather-context/music-vocals-timestamps-data.reconciled.json",
+  "rows": [
+    {
+      "chunkIndex": 0,
+      "window": {
+        "start": 0,
+        "end": 5
+      },
+      "classification": "excluded_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 0,
+            "end": 5
+          },
+          "selectedSegmentCount": 2,
+          "totalSegments": 19,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 0,
+            "speaker": "Speaker 1",
+            "text": "They want you afraid.",
+            "start": 0,
+            "end": 1.94,
+            "overlapSeconds": 1.94
+          },
+          {
+            "index": 1,
+            "speaker": "Speaker 1",
+            "text": "Fear makes you easier to control.",
+            "start": 3.82,
+            "end": 5.48,
+            "overlapSeconds": 1.18
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 0.0s-1.9s: Speaker 1: They want you afraid.",
+          "- 3.8s-5.5s: Speaker 1: Fear makes you easier to control."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 0,
+            "end": 5
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": null,
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "The video chunk opens with a glitchy 'RISING TENSIONS' interface and quick cuts to dark, action-oriented scenes, accompanied by ominous dialogue about fear and control.",
+      "capturePromptSha": "a1daef980a00fb36481845a1fa841c1b266655dc6f964c1684a121ccfdc1e44a"
+    },
+    {
+      "chunkIndex": 1,
+      "window": {
+        "start": 5,
+        "end": 10
+      },
+      "classification": "excluded_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 5,
+            "end": 10
+          },
+          "selectedSegmentCount": 2,
+          "totalSegments": 19,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 1,
+            "speaker": "Speaker 1",
+            "text": "Fear makes you easier to control.",
+            "start": 3.82,
+            "end": 5.48,
+            "overlapSeconds": 0.48
+          },
+          {
+            "index": 2,
+            "speaker": "Speaker 1",
+            "text": "It's time to wake up.",
+            "start": 9.06,
+            "end": 10.84,
+            "overlapSeconds": 0.94
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 3.8s-5.5s: Speaker 1: Fear makes you easier to control.",
+          "- 9.1s-10.8s: Speaker 1: It's time to wake up."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 5,
+            "end": 10
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThe video chunk opens with a glitchy 'RISING TENSIONS' interface and quick cuts to dark, action-oriented scenes, accompanied by ominous dialogue about fear and control.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "This chunk continues with fast-paced action visuals, including a wide city shot with smoke and dynamic scenes, ending with the dialogue 'It's time to wake up' to build tension.",
+      "capturePromptSha": "0c48a3b35a950964997b3e52d2d27382b6eda60d5cc1efba8ccfa907a63d165d"
+    },
+    {
+      "chunkIndex": 2,
+      "window": {
+        "start": 10,
+        "end": 15
+      },
+      "classification": "excluded_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 10,
+            "end": 15
+          },
+          "selectedSegmentCount": 2,
+          "totalSegments": 19,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 2,
+            "speaker": "Speaker 1",
+            "text": "It's time to wake up.",
+            "start": 9.06,
+            "end": 10.84,
+            "overlapSeconds": 0.84
+          },
+          {
+            "index": 3,
+            "speaker": "Speaker 2",
+            "text": "Your streets shall once again run red with your blood.",
+            "start": 13.06,
+            "end": 17.04,
+            "overlapSeconds": 1.94
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 9.1s-10.8s: Speaker 1: It's time to wake up.",
+          "- 13.1s-17.0s: Speaker 2: Your streets shall once again run red with your blood."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 10,
+            "end": 15
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThis chunk continues with fast-paced action visuals, including a wide city shot with smoke and dynamic scenes, ending with the dialogue 'It's time to wake up' to build tension.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "The video chunk displays the 'Call of Duty Black Ops 7' title card and then cuts to a close-up of a face on a screen with fire and debris, creating a tense and action-packed atmosphere.",
+      "capturePromptSha": "0b9f0c7df0d2cb15b1df2085c23429054748154ab14a71b10def8e6dd4ea151f"
+    },
+    {
+      "chunkIndex": 3,
+      "window": {
+        "start": 15,
+        "end": 20
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 15,
+            "end": 20
+          },
+          "selectedSegmentCount": 2,
+          "totalSegments": 19,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 3,
+            "speaker": "Speaker 2",
+            "text": "Your streets shall once again run red with your blood.",
+            "start": 13.06,
+            "end": 17.04,
+            "overlapSeconds": 2.04
+          },
+          {
+            "index": 4,
+            "speaker": "Speaker 3",
+            "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+            "start": 17.42,
+            "end": 21.46,
+            "overlapSeconds": 2.58
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 13.1s-17.0s: Speaker 2: Your streets shall once again run red with your blood.",
+          "- 17.4s-21.5s: Speaker 3: Raul Menendez ignited global unrest on an unprecedented scale."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 15,
+            "end": 20
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThe video chunk displays the 'Call of Duty Black Ops 7' title card and then cuts to a close-up of a face on a screen with fire and debris, creating a tense and action-packed atmosphere.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "The video chunk displays intense visuals of a face on a screen with fire and debris, followed by a map with red highlights and explosions, while dramatic dialogue about blood and global unrest plays.",
+      "capturePromptSha": "b288093842da32699b29bcf29e1c0d9e67d3422344563f44d5ad22627081f510"
+    },
+    {
+      "chunkIndex": 4,
+      "window": {
+        "start": 20,
+        "end": 25
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 20,
+            "end": 25
+          },
+          "selectedSegmentCount": 2,
+          "totalSegments": 19,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 4,
+            "speaker": "Speaker 3",
+            "text": "Raul Menendez ignited global unrest on an unprecedented scale.",
+            "start": 17.42,
+            "end": 21.46,
+            "overlapSeconds": 1.46
+          },
+          {
+            "index": 5,
+            "speaker": "Speaker 1",
+            "text": "Menendez is a terrorist. We're bringing peace and security to the world.",
+            "start": 23.22,
+            "end": 27.02,
+            "overlapSeconds": 1.78
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 17.4s-21.5s: Speaker 3: Raul Menendez ignited global unrest on an unprecedented scale.",
+          "- 23.2s-27.0s: Speaker 1: Menendez is a terrorist. We're bringing peace and security to the world."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 20,
+            "end": 25
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThe video chunk displays intense visuals of a face on a screen with fire and debris, followed by a map with red highlights and explosions, while dramatic dialogue about blood and global unrest plays.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "The chunk features rapid military action with explosions and the year '2035,' transitioning to a character stating Menendez is a terrorist and promising peace, all under tense music.",
+      "capturePromptSha": "a1256eff02ab86b1205268afcdf670bb8a0357126d6e5d32ec5f7f9c87121740"
+    },
+    {
+      "chunkIndex": 5,
+      "window": {
+        "start": 25,
+        "end": 30
+      },
+      "classification": "excluded_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 25,
+            "end": 30
+          },
+          "selectedSegmentCount": 2,
+          "totalSegments": 19,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 5,
+            "speaker": "Speaker 1",
+            "text": "Menendez is a terrorist. We're bringing peace and security to the world.",
+            "start": 23.22,
+            "end": 27.02,
+            "overlapSeconds": 2.02
+          },
+          {
+            "index": 6,
+            "speaker": "Speaker 4",
+            "text": "He refuses to let me go.",
+            "start": 27.88,
+            "end": 29.88,
+            "overlapSeconds": 2
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 23.2s-27.0s: Speaker 1: Menendez is a terrorist. We're bringing peace and security to the world.",
+          "- 27.9s-29.9s: Speaker 4: He refuses to let me go."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 25,
+            "end": 30
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThe chunk features rapid military action with explosions and the year '2035,' transitioning to a character stating Menendez is a terrorist and promising peace, all under tense music.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "The video chunk transitions from a display of robotic soldiers to an intense dialogue between two characters, highlighting themes of control and conflict.",
+      "capturePromptSha": "80d2f4b57f9b75c82220663aa9e4126293bef5aff0db7292eb9ab2ace7da2d1a"
+    },
+    {
+      "chunkIndex": 6,
+      "window": {
+        "start": 30,
+        "end": 35
+      },
+      "classification": "excluded_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 30,
+            "end": 35
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 19,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 7,
+            "speaker": "Speaker 5",
+            "text": "Stop looking backwards, David. What matters is what you do next.",
+            "start": 30.4,
+            "end": 33.1,
+            "overlapSeconds": 2.7
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 30.4s-33.1s: Speaker 5: Stop looking backwards, David. What matters is what you do next."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 30,
+            "end": 35
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThe video chunk transitions from a display of robotic soldiers to an intense dialogue between two characters, highlighting themes of control and conflict.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "This 5-second chunk features an intense dialogue where one character urges another to stop dwelling on the past and focus on future actions, accompanied by tense background music.",
+      "capturePromptSha": "1cb3704920ce69a851a13f6c0109e548a6fe85574accb1413aefc7b0fe75a59e"
+    },
+    {
+      "chunkIndex": 7,
+      "window": {
+        "start": 35,
+        "end": 40
+      },
+      "classification": "excluded_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 35,
+            "end": 40
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 19,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 8,
+            "speaker": "Speaker 5",
+            "text": "A lot of people counting on us for answers.",
+            "start": 35.06,
+            "end": 36.9,
+            "overlapSeconds": 1.84
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 35.1s-36.9s: Speaker 5: A lot of people counting on us for answers."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 35,
+            "end": 40
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThis 5-second chunk features an intense dialogue where one character urges another to stop dwelling on the past and focus on future actions, accompanied by tense background music.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "This chunk features tense dialogue about responsibility, quickly transitioning to rapid action sequences with combat and explosions, supported by rising musical tension.",
+      "capturePromptSha": "9ae28a3c9e917b5fd3fb1d0ab080b5f3b753e41c3513e3a8083cfad8ea390782"
+    },
+    {
+      "chunkIndex": 8,
+      "window": {
+        "start": 40,
+        "end": 45
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 40,
+            "end": 45
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 19,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_dialogue"
+        },
+        "selectedSegments": [],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 40,
+            "end": 45
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThis chunk features tense dialogue about responsibility, quickly transitioning to rapid action sequences with combat and explosions, supported by rising musical tension.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "This chunk features fast-paced combat action with explosions, a character falling amidst red butterflies, and concludes with two characters in a futuristic setting.",
+      "capturePromptSha": "3c40bdf66b2b07ce86f8e7721b4f21c10fc430e75d85f8aa8092f405eb7917e0"
+    },
+    {
+      "chunkIndex": 9,
+      "window": {
+        "start": 45,
+        "end": 50
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 45,
+            "end": 50
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 19,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_dialogue"
+        },
+        "selectedSegments": [],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 45,
+            "end": 50
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThis chunk features fast-paced combat action with explosions, a character falling amidst red butterflies, and concludes with two characters in a futuristic setting.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "A high-octane sequence featuring soldiers in tactical gear amidst futuristic settings, with rapid scene transitions and dramatic shifts to red lighting, suggesting imminent combat.",
+      "capturePromptSha": "62bbd8c008585f857651a975cc8e87218d03ac2c0e7810266bec9c019cb47a79"
+    },
+    {
+      "chunkIndex": 10,
+      "window": {
+        "start": 50,
+        "end": 55
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 50,
+            "end": 55
+          },
+          "selectedSegmentCount": 2,
+          "totalSegments": 19,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 9,
+            "speaker": "Speaker 6",
+            "text": "Spectre one report.",
+            "start": 51.32,
+            "end": 52.44,
+            "overlapSeconds": 1.12
+          },
+          {
+            "index": 10,
+            "speaker": "Speaker 6",
+            "text": "Need a sitrep.",
+            "start": 54.42,
+            "end": 55.22,
+            "overlapSeconds": 0.58
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 51.3s-52.4s: Speaker 6: Spectre one report.",
+          "- 54.4s-55.2s: Speaker 6: Need a sitrep."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 50,
+            "end": 55
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nA high-octane sequence featuring soldiers in tactical gear amidst futuristic settings, with rapid scene transitions and dramatic shifts to red lighting, suggesting imminent combat.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "Soldiers in tactical gear engage in urgent radio communication amidst a high-tension action sequence with rising musical score.",
+      "capturePromptSha": "dd08fcc4be730129f97ca9ea0913dfde2ec7592ef188df44c00cf64b2e4861e9"
+    },
+    {
+      "chunkIndex": 11,
+      "window": {
+        "start": 55,
+        "end": 60
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 55,
+            "end": 60
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 19,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 10,
+            "speaker": "Speaker 6",
+            "text": "Need a sitrep.",
+            "start": 54.42,
+            "end": 55.22,
+            "overlapSeconds": 0.22
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 54.4s-55.2s: Speaker 6: Need a sitrep."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 55,
+            "end": 60
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nSoldiers in tactical gear engage in urgent radio communication amidst a high-tension action sequence with rising musical score.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "A rapid montage of action scenes including soldiers running, characters falling, a 'NICARAGUA' title card, and street combat.",
+      "capturePromptSha": "8cb131735738d27df84a336de28131a6756ce53de05d614720dbf882c08426ed"
+    },
+    {
+      "chunkIndex": 12,
+      "window": {
+        "start": 60,
+        "end": 65
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 60,
+            "end": 65
+          },
+          "selectedSegmentCount": 2,
+          "totalSegments": 19,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 11,
+            "speaker": "Speaker 4",
+            "text": "This isn't real.",
+            "start": 61.74,
+            "end": 62.88,
+            "overlapSeconds": 1.14
+          },
+          {
+            "index": 12,
+            "speaker": "Speaker 7",
+            "text": "The hell it ain't!",
+            "start": 63.36,
+            "end": 64.22,
+            "overlapSeconds": 0.86
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 61.7s-62.9s: Speaker 4: This isn't real.",
+          "- 63.4s-64.2s: Speaker 7: The hell it ain't!"
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 60,
+            "end": 65
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nA rapid montage of action scenes including soldiers running, characters falling, a 'NICARAGUA' title card, and street combat.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "Soldiers experience intense action with a giant sword explosion and discover a surreal floating island, prompting urgent movement.",
+      "capturePromptSha": "c142c20b6e05f7791a2e041fb166e07796d0574fedd03aab2501bef0c7e56f13"
+    },
+    {
+      "chunkIndex": 13,
+      "window": {
+        "start": 65,
+        "end": 70
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 65,
+            "end": 70
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 19,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_dialogue"
+        },
+        "selectedSegments": [],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 65,
+            "end": 70
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nSoldiers experience intense action with a giant sword explosion and discover a surreal floating island, prompting urgent movement.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "The video chunk features rapid action sequences with soldiers in a chaotic, war-torn Los Angeles, including explosions, a crashed aircraft, and surreal sky structures, maintaining high visual intensity.",
+      "capturePromptSha": "2498b05932ba55425b2cc7a7430ea0b36f2ecb8b54ebf5bab662da139b65563e"
+    },
+    {
+      "chunkIndex": 14,
+      "window": {
+        "start": 70,
+        "end": 75
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 70,
+            "end": 75
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 19,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_dialogue"
+        },
+        "selectedSegments": [],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 70,
+            "end": 75
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThe video chunk features rapid action sequences with soldiers in a chaotic, war-torn Los Angeles, including explosions, a crashed aircraft, and surreal sky structures, maintaining high visual intensity.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "The chunk features rapid action with soldiers running and shooting, followed by a title card 'ANGOLA' and a jungle scene, sustaining high visual intensity.",
+      "capturePromptSha": "3aa5abcbd27dd1a741dab1d1ed007d09d927ff4afadcc129bb5e47c19c7d7ccc"
+    },
+    {
+      "chunkIndex": 15,
+      "window": {
+        "start": 75,
+        "end": 80
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 75,
+            "end": 80
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 19,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_dialogue"
+        },
+        "selectedSegments": [],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 75,
+            "end": 80
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThe chunk features rapid action with soldiers running and shooting, followed by a title card 'ANGOLA' and a jungle scene, sustaining high visual intensity.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "Intense jungle combat with soldiers and explosions transitions to a futuristic aircraft flying over a city, with 'TOKYO' text appearing, maintaining high-paced action throughout.",
+      "capturePromptSha": "d29a266d1896b1771dfa82a0978e98be5556c7528ca0846a25980a6d793a5578"
+    },
+    {
+      "chunkIndex": 16,
+      "window": {
+        "start": 80,
+        "end": 85
+      },
+      "classification": "excluded_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 80,
+            "end": 85
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 19,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_dialogue"
+        },
+        "selectedSegments": [],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 80,
+            "end": 85
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nIntense jungle combat with soldiers and explosions transitions to a futuristic aircraft flying over a city, with 'TOKYO' text appearing, maintaining high-paced action throughout.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "A high-energy action chunk with rapid cuts from a neon-lit city scene featuring a character and large screen, to an aircraft causing explosions on water, ending with a serene Alaskan landscape with aurora.",
+      "capturePromptSha": "5178a660e4147745070ce67bbc8d19890cf62760273721747f2416d62e529fef"
+    },
+    {
+      "chunkIndex": 17,
+      "window": {
+        "start": 85,
+        "end": 90
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 85,
+            "end": 90
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 19,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_dialogue"
+        },
+        "selectedSegments": [],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 85,
+            "end": 90
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 12,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 1,
+            "performer": "Vocalist 1",
+            "text": "Master! Master!",
+            "start": 89.8,
+            "end": 91.68,
+            "timingStatus": "partial",
+            "overlapsWindow": true
+          }
+        ],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- Relevant global support entries:",
+          "- 89.8s-91.7s: Vocalist 1: Master! Master!"
+        ]
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nA high-energy action chunk with rapid cuts from a neon-lit city scene featuring a character and large screen, to an aircraft causing explosions on water, ending with a serene Alaskan landscape with aurora.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": "## Global Music-Vocals Context (ordered support only)\nThis music-vocals context comes from the full asset. It is a global ordered support layer for lyric-bearing vocal continuity and repeated hooks.\n- Relevant global support entries:\n  - 89.8s-91.7s: Vocalist 1: Master! Master!"
+      },
+      "outputSummary": "The video chunk opens with an 'ALASKA' title card over a snowy landscape, then quickly cuts to a character in tactical gear amidst aircraft and explosions, delivering high-octane action in a frozen environment.",
+      "capturePromptSha": "c960ab3f29c03de901381b18012232c3f600271decc145f4207872dbfa089268"
+    },
+    {
+      "chunkIndex": 18,
+      "window": {
+        "start": 90,
+        "end": 95
+      },
+      "classification": "excluded_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 90,
+            "end": 95
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 19,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_dialogue"
+        },
+        "selectedSegments": [],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 90,
+            "end": 95
+          },
+          "selectedSegmentCount": 9,
+          "totalSegments": 12,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": true,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 1,
+            "performer": "Vocalist 1",
+            "text": "Master! Master!",
+            "start": 89.8,
+            "end": 91.68,
+            "timingStatus": "partial",
+            "overlapsWindow": true
+          },
+          {
+            "index": 2,
+            "performer": "Vocalist 1",
+            "text": "Come crawling faster",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 3,
+            "performer": "Vocalist 1",
+            "text": "Obey your master!",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 4,
+            "performer": "Vocalist 1",
+            "text": "Master of puppets I pull your strings",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 5,
+            "performer": "Vocalist 1",
+            "text": "Obey your master!",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 6,
+            "performer": "Vocalist 1",
+            "text": "Twisting your mind and smashing your dreams",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 7,
+            "performer": "Vocalist 1",
+            "text": "Blinded by me you can't see a thing",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 8,
+            "performer": "Vocalist 1",
+            "text": "Just call my name 'cause I'll hear you scream",
+            "start": null,
+            "end": null,
+            "timingStatus": "unresolved",
+            "overlapsWindow": null
+          },
+          {
+            "index": 9,
+            "performer": "Vocalist 1",
+            "text": "Master, master",
+            "start": 92.22,
+            "end": 96.36,
+            "timingStatus": "partial",
+            "overlapsWindow": true
+          }
+        ],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 7,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- Relevant global support entries:",
+          "- 89.8s-91.7s: Vocalist 1: Master! Master!",
+          "- index 2: Vocalist 1: Come crawling faster",
+          "- index 3: Vocalist 1: Obey your master!",
+          "- index 4: Vocalist 1: Master of puppets I pull your strings",
+          "- index 5: Vocalist 1: Obey your master!",
+          "- index 6: Vocalist 1: Twisting your mind and smashing your dreams",
+          "- index 7: Vocalist 1: Blinded by me you can't see a thing",
+          "- index 8: Vocalist 1: Just call my name 'cause I'll hear you scream",
+          "- 92.2s-96.4s: Vocalist 1: Master, master"
+        ]
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThe video chunk opens with an 'ALASKA' title card over a snowy landscape, then quickly cuts to a character in tactical gear amidst aircraft and explosions, delivering high-octane action in a frozen environment.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": "## Global Music-Vocals Context (ordered support only)\nThis music-vocals context comes from the full asset. It is a global ordered support layer for lyric-bearing vocal continuity and repeated hooks.\n- Relevant global support entries:\n  - 89.8s-91.7s: Vocalist 1: Master! Master!\n  - index 2: Vocalist 1: Come crawling faster\n  - index 3: Vocalist 1: Obey your master!\n  - index 4: Vocalist 1: Master of puppets I pull your strings\n  - index 5: Vocalist 1: Obey your master!\n  - index 6: Vocalist 1: Twisting your mind and smashing your dreams\n  - index 7: Vocalist 1: Blinded by me you can't see a thing\n  - index 8: Vocalist 1: Just call my name 'cause I'll hear you scream\n  - 92.2s-96.4s: Vocalist 1: Master, master"
+      },
+      "outputSummary": "A fast-paced action sequence with characters wingsuit flying through a city and engaging in indoor shooting, accompanied by intense heavy metal music.",
+      "capturePromptSha": "1c67fb8d1c5521e8e12eba91652afdb40d19f35d42891e801fd78d9c5c64296e"
+    },
+    {
+      "chunkIndex": 19,
+      "window": {
+        "start": 95,
+        "end": 100
+      },
+      "classification": "excluded_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 95,
+            "end": 100
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 19,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 16,
+            "speaker": "Speaker 5",
+            "text": "Pull it together, man!",
+            "start": 96.96,
+            "end": 99.16,
+            "overlapSeconds": 2.2
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 97.0s-99.2s: Speaker 5: Pull it together, man!"
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 95,
+            "end": 100
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 12,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 9,
+            "performer": "Vocalist 1",
+            "text": "Master, master",
+            "start": 92.22,
+            "end": 96.36,
+            "timingStatus": "partial",
+            "overlapsWindow": true
+          }
+        ],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- Relevant global support entries:",
+          "- 92.2s-96.4s: Vocalist 1: Master, master"
+        ]
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nA fast-paced action sequence with characters wingsuit flying through a city and engaging in indoor shooting, accompanied by intense heavy metal music.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": "## Global Music-Vocals Context (ordered support only)\nThis music-vocals context comes from the full asset. It is a global ordered support layer for lyric-bearing vocal continuity and repeated hooks.\n- Relevant global support entries:\n  - 92.2s-96.4s: Vocalist 1: Master, master"
+      },
+      "outputSummary": "A rapid sequence of action shots with futuristic combat, intense character moments, and urgent dialogue, sustaining high energy without lulls.",
+      "capturePromptSha": "52fe8744f7c4357ad1b481b5387a66fe7827617528446b7a276368eea985d8bf"
+    },
+    {
+      "chunkIndex": 20,
+      "window": {
+        "start": 100,
+        "end": 105
+      },
+      "classification": "excluded_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 100,
+            "end": 105
+          },
+          "selectedSegmentCount": 2,
+          "totalSegments": 19,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 17,
+            "speaker": "Speaker 2",
+            "text": "So eager to leave, David.",
+            "start": 100.42,
+            "end": 102.14,
+            "overlapSeconds": 1.72
+          },
+          {
+            "index": 18,
+            "speaker": "Speaker 2",
+            "text": "Killing a man is a hell of a lot easier than killing an idea.",
+            "start": 103.2,
+            "end": 105.88,
+            "overlapSeconds": 1.8
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 100.4s-102.1s: Speaker 2: So eager to leave, David.",
+          "- 103.2s-105.9s: Speaker 2: Killing a man is a hell of a lot easier than killing an idea."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 100,
+            "end": 105
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nA rapid sequence of action shots with futuristic combat, intense character moments, and urgent dialogue, sustaining high energy without lulls.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "A rapid montage of action-packed scenes including tactical movement, a knife, a shadowy figure, high-tech machinery, and an intense jungle character, with dialogue about leaving and the nature of killing.",
+      "capturePromptSha": "d25703b5ca3f46a1c2fe9cd5e71b6cfdfa95f5d222285bcc3227cc06e2d72c53"
+    },
+    {
+      "chunkIndex": 21,
+      "window": {
+        "start": 105,
+        "end": 110
+      },
+      "classification": "excluded_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 105,
+            "end": 110
+          },
+          "selectedSegmentCount": 2,
+          "totalSegments": 19,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 18,
+            "speaker": "Speaker 2",
+            "text": "Killing a man is a hell of a lot easier than killing an idea.",
+            "start": 103.2,
+            "end": 105.88,
+            "overlapSeconds": 0.88
+          },
+          {
+            "index": 19,
+            "speaker": "Speaker 1",
+            "text": "You were never cut out to be a Mason.",
+            "start": 108.08,
+            "end": 110.06,
+            "overlapSeconds": 1.92
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 103.2s-105.9s: Speaker 2: Killing a man is a hell of a lot easier than killing an idea.",
+          "- 108.1s-110.1s: Speaker 1: You were never cut out to be a Mason."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 105,
+            "end": 110
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nA rapid montage of action-packed scenes including tactical movement, a knife, a shadowy figure, high-tech machinery, and an intense jungle character, with dialogue about leaving and the nature of killing.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "A rapid sequence from a memorial tombstone to dark, industrial environments and armed characters, creating a tense and action-oriented atmosphere.",
+      "capturePromptSha": "f1fafa97836874b97fd4c545b8b673709109e75f260ba165aaefbc7f77b23f7b"
+    },
+    {
+      "chunkIndex": 22,
+      "window": {
+        "start": 110,
+        "end": 115
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 110,
+            "end": 115
+          },
+          "selectedSegmentCount": 2,
+          "totalSegments": 19,
+          "timedOverlapCount": 2,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 19,
+            "speaker": "Speaker 1",
+            "text": "You were never cut out to be a Mason.",
+            "start": 108.08,
+            "end": 110.06,
+            "overlapSeconds": 0.06
+          },
+          {
+            "index": 20,
+            "speaker": "Speaker 4",
+            "text": "No more games. This ends now.",
+            "start": 112.5,
+            "end": 115.18,
+            "overlapSeconds": 2.5
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 108.1s-110.1s: Speaker 1: You were never cut out to be a Mason.",
+          "- 112.5s-115.2s: Speaker 4: No more games. This ends now."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 110,
+            "end": 115
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nA rapid sequence from a memorial tombstone to dark, industrial environments and armed characters, creating a tense and action-oriented atmosphere.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "An intense action sequence featuring explosions, a mech, and a character declaring 'No more games. This ends now.'",
+      "capturePromptSha": "eafcb4cb4ede063d89aba29f5b338a94ec060bbaa27bb9e017e0c2fdae0c8242"
+    },
+    {
+      "chunkIndex": 23,
+      "window": {
+        "start": 115,
+        "end": 120
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 115,
+            "end": 120
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 19,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 20,
+            "speaker": "Speaker 4",
+            "text": "No more games. This ends now.",
+            "start": 112.5,
+            "end": 115.18,
+            "overlapSeconds": 0.18
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 112.5s-115.2s: Speaker 4: No more games. This ends now."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 115,
+            "end": 120
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nAn intense action sequence featuring explosions, a mech, and a character declaring 'No more games. This ends now.'",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "A high-intensity action sequence featuring explosions, a giant hand emerging from water, close-up of a soldier's face, and a promotional title card for Call of Duty Black Ops 7.",
+      "capturePromptSha": "fc283fe3918599e820833466c960ea08ec93519abdb6255270343dc6b7e33c6d"
+    },
+    {
+      "chunkIndex": 24,
+      "window": {
+        "start": 120,
+        "end": 125
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 120,
+            "end": 125
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 19,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 22,
+            "speaker": "Speaker 9",
+            "text": "Get the Reznov challenge pack when you pre-order now.",
+            "start": 121.72,
+            "end": 125.3,
+            "overlapSeconds": 3.28
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 121.7s-125.3s: Speaker 9: Get the Reznov challenge pack when you pre-order now."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 120,
+            "end": 125
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nA high-intensity action sequence featuring explosions, a giant hand emerging from water, close-up of a soldier's face, and a promotional title card for Call of Duty Black Ops 7.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "Promotional segment displaying pre-order incentives and character packs for Call of Duty Black Ops 7, with static title cards and text overlays.",
+      "capturePromptSha": "931b8d0a222cce9c2c22e1679bef2b660bf99571d1ccd156925400be6266a326"
+    },
+    {
+      "chunkIndex": 25,
+      "window": {
+        "start": 125,
+        "end": 130
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "phase1_timestamp_overlap",
+          "window": {
+            "start": 125,
+            "end": 130
+          },
+          "selectedSegmentCount": 1,
+          "totalSegments": 19,
+          "timedOverlapCount": 1,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": null
+        },
+        "selectedSegments": [
+          {
+            "index": 22,
+            "speaker": "Speaker 9",
+            "text": "Get the Reznov challenge pack when you pre-order now.",
+            "start": 121.72,
+            "end": 125.3,
+            "overlapSeconds": 0.3
+          }
+        ],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": true,
+        "promptBulletEntries": [
+          "- 121.7s-125.3s: Speaker 9: Get the Reznov challenge pack when you pre-order now."
+        ]
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 125,
+            "end": 130
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nPromotional segment displaying pre-order incentives and character packs for Call of Duty Black Ops 7, with static title cards and text overlays.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "The video chunk begins with static promotional images for the Vault Edition, then shifts to fast-paced action sequences featuring characters and a robot dog in combat.",
+      "capturePromptSha": "2e02d6eba72296a9a8734bd14f9b4c42440df0b3d4cfe8b41830fb540c494176"
+    },
+    {
+      "chunkIndex": 26,
+      "window": {
+        "start": 130,
+        "end": 135
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 130,
+            "end": 135
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 19,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_dialogue"
+        },
+        "selectedSegments": [],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 130,
+            "end": 135
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThe video chunk begins with static promotional images for the Vault Edition, then shifts to fast-paced action sequences featuring characters and a robot dog in combat.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "This 5-second chunk features rapid cuts of action-packed scenes including tactical combat, high-tech environments, monstrous figures, and chaotic outdoor sequences.",
+      "capturePromptSha": "ecf98cab702b9ddb8a0944c3637bd1021171be381303b4aaa6af6fdd3cc2ed65"
+    },
+    {
+      "chunkIndex": 27,
+      "window": {
+        "start": 135,
+        "end": 140
+      },
+      "classification": "trusted_window",
+      "dialogueGrounding": {
+        "grounding": {
+          "lane": "dialogue",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 135,
+            "end": 140
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 19,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_dialogue"
+        },
+        "selectedSegments": [],
+        "allSelectedSegmentsOverlapWindow": true,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "musicVocalsGrounding": {
+        "grounding": {
+          "lane": "music_vocals",
+          "scope": "chunk_window",
+          "strategy": "empty",
+          "window": {
+            "start": 135,
+            "end": 140
+          },
+          "selectedSegmentCount": 0,
+          "totalSegments": 12,
+          "timedOverlapCount": 0,
+          "usedBoundedIndexFallback": false,
+          "fallbackReason": "timestamp_artifact_present_but_no_overlapping_timed_music_vocals"
+        },
+        "selectedSegments": [],
+        "allTimedSelectedSegmentsOverlapWindow": true,
+        "unresolvedSelectedSegmentCount": 0,
+        "promptSectionPresent": false,
+        "promptBulletEntries": []
+      },
+      "promptSections": {
+        "previousSummary": "## Previous Summary (continuity only — do not let this override fresh evidence)\nThis 5-second chunk features rapid cuts of action-packed scenes including tactical combat, high-tech environments, monstrous figures, and chaotic outdoor sequences.",
+        "globalMusic": "## Global Music Context (support only)\nThis music context summarizes the broader score/cue arc for the full asset.\n- Trailer-wide context: A high-energy trailer blending intense dialogue, building musical tension, and a prominent heavy metal segment, leading to action-packed sequences and a promotional close.\n- Relevant global support entries:\n  - 0.0s-35.0s: music, detail: Tense underscore with spoken dialogue overlays, mood: tense, intensity: 5\n  - 35.0s-76.0s: music, detail: Rising action score with increasing percussion and dialogue, mood: anticipatory, intensity: 7\n  - 76.0s-98.0s: music, detail: Heavy metal track with vocal chants driving the climax, mood: aggressive, intensity: 9\n  - 98.0s-120.0s: music, detail: Post-climax score with dialogue and sound effects, mood: intense, intensity: 8\n  - 120.0s-140.0s: music, detail: Promotional segment with fading music and final cues, mood: conclusive, intensity: 6",
+        "globalMusicVocals": null
+      },
+      "outputSummary": "This 5-second chunk features a rapid montage of explosive action scenes culminating in the Xbox logo, maintaining high energy until the promotional close.",
+      "capturePromptSha": "8b930d80e41a9997e7f37ab25e7bb75ea9494f23cdd7d20b4d364357d1576efa"
+    }
+  ],
+  "leakRiskMusicVocalsChunks": [
+    {
+      "chunkIndex": 18,
+      "classification": "excluded_window",
+      "window": {
+        "start": 90,
+        "end": 95
+      },
+      "promptBulletEntries": [
+        "- Relevant global support entries:",
+        "- 89.8s-91.7s: Vocalist 1: Master! Master!",
+        "- index 2: Vocalist 1: Come crawling faster",
+        "- index 3: Vocalist 1: Obey your master!",
+        "- index 4: Vocalist 1: Master of puppets I pull your strings",
+        "- index 5: Vocalist 1: Obey your master!",
+        "- index 6: Vocalist 1: Twisting your mind and smashing your dreams",
+        "- index 7: Vocalist 1: Blinded by me you can't see a thing",
+        "- index 8: Vocalist 1: Just call my name 'cause I'll hear you scream",
+        "- 92.2s-96.4s: Vocalist 1: Master, master"
+      ]
+    }
+  ]
+}
