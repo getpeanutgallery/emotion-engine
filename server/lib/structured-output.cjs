@@ -86,6 +86,33 @@ function summarizeValidationErrors(prefix, errors = []) {
   return `${prefix} ${parts.join(' | ')}${suffix} Return corrected JSON only.`;
 }
 
+function validateEmotionPersonaMeta(value, path, errors) {
+  if (value === undefined || value === null) return null;
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    pushError(errors, path, 'invalid_type', 'personaMeta must be a JSON object when present.');
+    return null;
+  }
+
+  const allowedKeys = new Set(['scrollRisk']);
+  const unknownKeys = Object.keys(value).filter((key) => !allowedKeys.has(key));
+  if (unknownKeys.length > 0) {
+    pushError(errors, path, 'invalid_key', `personaMeta only allows: ${Array.from(allowedKeys).join(', ')}.`);
+  }
+
+  let scrollRisk = null;
+  if (Object.prototype.hasOwnProperty.call(value, 'scrollRisk')) {
+    scrollRisk = validateNonEmptyString(value.scrollRisk, `${path}.scrollRisk`, 'personaMeta.scrollRisk', errors);
+    if (scrollRisk && !['low', 'medium', 'high', 'SCROLLING'].includes(scrollRisk)) {
+      pushError(errors, `${path}.scrollRisk`, 'invalid_enum', 'personaMeta.scrollRisk must be one of: low, medium, high, SCROLLING.');
+      scrollRisk = null;
+    }
+  }
+
+  return {
+    ...(scrollRisk ? { scrollRisk } : {})
+  };
+}
+
 function buildAnonymousSpeakerId(index) {
   return `spk_${String(index + 1).padStart(3, '0')}`;
 }
@@ -1119,8 +1146,11 @@ function validateEmotionStateObject(input, lenses = []) {
   }
 
   const summary = validateNonEmptyString(input.summary, '$.summary', 'summary', errors);
+  const thought = validateNonEmptyString(input.thought, '$.thought', 'thought', errors);
+  const continuationThought = validateOptionalNonEmptyString(input.continuationThought, '$.continuationThought', 'continuationThought', errors);
   const dominantEmotion = validateNonEmptyString(input.dominant_emotion, '$.dominant_emotion', 'dominant_emotion', errors);
   const confidence = validateFiniteNumber(input.confidence, '$.confidence', 'confidence', errors, { min: 0, max: 1 });
+  const personaMeta = validateEmotionPersonaMeta(input.personaMeta, '$.personaMeta', errors);
 
   const emotionsInput = input.emotions;
   if (!emotionsInput || typeof emotionsInput !== 'object' || Array.isArray(emotionsInput)) {
@@ -1144,14 +1174,28 @@ function validateEmotionStateObject(input, lenses = []) {
   }
 
   pushEnglishOnlyError(errors, '$.summary', 'summary', summary);
+  pushEnglishOnlyError(errors, '$.thought', 'thought', thought);
+  if (continuationThought) {
+    pushEnglishOnlyError(errors, '$.continuationThought', 'continuationThought', continuationThought);
+    if (thought && continuationThought === thought) {
+      pushError(errors, '$.continuationThought', 'redundant_value', 'continuationThought must add sequence value instead of duplicating thought.');
+    }
+  }
+
+  if (dominantEmotion && Array.isArray(lenses) && lenses.length > 0 && !lenses.includes(dominantEmotion)) {
+    pushError(errors, '$.dominant_emotion', 'invalid_enum', `dominant_emotion must be one of: ${lenses.join(', ')}.`);
+  }
 
   return {
     ok: errors.length === 0,
     value: errors.length === 0 ? {
       summary,
+      thought,
+      ...(continuationThought ? { continuationThought } : {}),
       emotions,
       dominant_emotion: dominantEmotion,
-      confidence
+      confidence,
+      ...(personaMeta && Object.keys(personaMeta).length > 0 ? { personaMeta } : {})
     } : null,
     errors,
     summary: summarizeValidationErrors('Emotion JSON validation failed.', errors),

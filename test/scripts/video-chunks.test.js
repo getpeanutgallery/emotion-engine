@@ -42,25 +42,31 @@ let analyzeImplementation = async (input) => {
     completion: {
       content: JSON.stringify({
         summary: 'Test chunk summary',
+        thought: 'That lands cleanly enough to keep me watching.',
+        continuationThought: 'One more strong beat and I am fully in.',
         emotions: {
           patience: { score: 7, reasoning: 'Test reasoning' },
           boredom: { score: 3, reasoning: 'Test reasoning' },
           excitement: { score: 6, reasoning: 'Test reasoning' }
         },
         dominant_emotion: 'patience',
-        confidence: 0.85
+        confidence: 0.85,
+        personaMeta: { scrollRisk: 'medium' }
       }),
       usage: { input: 150, output: 100 }
     },
     parsed: {
       summary: 'Test chunk summary',
+      thought: 'That lands cleanly enough to keep me watching.',
+      continuationThought: 'One more strong beat and I am fully in.',
       emotions: {
         patience: { score: 7, reasoning: 'Test reasoning' },
         boredom: { score: 3, reasoning: 'Test reasoning' },
         excitement: { score: 6, reasoning: 'Test reasoning' }
       },
       dominant_emotion: 'patience',
-      confidence: 0.85
+      confidence: 0.85,
+      personaMeta: { scrollRisk: 'medium' }
     },
     toolLoop: {
       toolName: 'validate_emotion_analysis_json',
@@ -125,25 +131,31 @@ test('Video Chunks Script', async (t) => {
         completion: {
           content: JSON.stringify({
             summary: 'Test chunk summary',
+            thought: 'That lands cleanly enough to keep me watching.',
+            continuationThought: 'One more strong beat and I am fully in.',
             emotions: {
               patience: { score: 7, reasoning: 'Test reasoning' },
               boredom: { score: 3, reasoning: 'Test reasoning' },
               excitement: { score: 6, reasoning: 'Test reasoning' }
             },
             dominant_emotion: 'patience',
-            confidence: 0.85
+            confidence: 0.85,
+            personaMeta: { scrollRisk: 'medium' }
           }),
           usage: { input: 150, output: 100 }
         },
         parsed: {
           summary: 'Test chunk summary',
+          thought: 'That lands cleanly enough to keep me watching.',
+          continuationThought: 'One more strong beat and I am fully in.',
           emotions: {
             patience: { score: 7, reasoning: 'Test reasoning' },
             boredom: { score: 3, reasoning: 'Test reasoning' },
             excitement: { score: 6, reasoning: 'Test reasoning' }
           },
           dominant_emotion: 'patience',
-          confidence: 0.85
+          confidence: 0.85,
+          personaMeta: { scrollRisk: 'medium' }
         },
         toolLoop: {
           toolName: 'validate_emotion_analysis_json',
@@ -1057,6 +1069,7 @@ test('Video Chunks Script', async (t) => {
             completion: {
               content: JSON.stringify({
                 summary: 'Split chunk summary',
+                thought: 'That cut finally gives me something to react to.',
                 emotions: { patience: { score: 7, reasoning: 'Visible evidence' } },
                 dominant_emotion: 'patience',
                 confidence: 0.8
@@ -1065,6 +1078,7 @@ test('Video Chunks Script', async (t) => {
             },
             parsed: {
               summary: 'Split chunk summary',
+              thought: 'That cut finally gives me something to react to.',
               emotions: { patience: { score: 7, reasoning: 'Visible evidence' } },
               dominant_emotion: 'patience',
               confidence: 0.8
@@ -1498,23 +1512,29 @@ test('Video Chunks Script', async (t) => {
           completion: {
             content: JSON.stringify({
               summary: 'Valid chunk summary',
+              thought: 'Okay, that hook actually works.',
+              continuationThought: 'If it keeps escalating like this, I am not bailing.',
               emotions: {
                 patience: { score: 8, reasoning: 'Solid hook' },
                 boredom: { score: 2, reasoning: 'Engaging' }
               },
               dominant_emotion: 'patience',
-              confidence: 0.9
+              confidence: 0.9,
+              personaMeta: { scrollRisk: 'low' }
             }),
             usage: { input: 100, output: 50 }
           },
           parsed: {
             summary: 'Valid chunk summary',
+            thought: 'Okay, that hook actually works.',
+            continuationThought: 'If it keeps escalating like this, I am not bailing.',
             emotions: {
               patience: { score: 8, reasoning: 'Solid hook' },
               boredom: { score: 2, reasoning: 'Engaging' }
             },
             dominant_emotion: 'patience',
-            confidence: 0.9
+            confidence: 0.9,
+            personaMeta: { scrollRisk: 'low' }
           },
           toolLoop: {
             toolName: 'validate_emotion_analysis_json',
@@ -1557,6 +1577,9 @@ test('Video Chunks Script', async (t) => {
       is(result.artifacts.chunkAnalysis.statusSummary.successful, 1);
       is(result.artifacts.chunkAnalysis.statusSummary.failed, 0);
       is(result.artifacts.chunkAnalysis.chunks[0].summary, 'Valid chunk summary');
+      is(result.artifacts.chunkAnalysis.chunks[0].thought, 'Okay, that hook actually works.');
+      is(result.artifacts.chunkAnalysis.chunks[0].continuationThought, 'If it keeps escalating like this, I am not bailing.');
+      is(result.artifacts.chunkAnalysis.chunks[0].personaMeta.scrollRisk, 'low');
     });
 
     await tNested.test('hard-fails run after repeated provider errors', async () => {
@@ -1613,6 +1636,7 @@ test('Video Chunks Script', async (t) => {
           completion: {
             content: JSON.stringify({
               summary: 'Fallback chunk summary',
+              thought: 'Fallback path saved this beat.',
               emotions: {
                 patience: { score: 8, reasoning: 'Recovered on fallback' },
                 boredom: { score: 2, reasoning: 'Still engaging' }
@@ -1624,6 +1648,7 @@ test('Video Chunks Script', async (t) => {
           },
           parsed: {
             summary: 'Fallback chunk summary',
+            thought: 'Fallback path saved this beat.',
             emotions: {
               patience: { score: 8, reasoning: 'Recovered on fallback' },
               boredom: { score: 2, reasoning: 'Still engaging' }

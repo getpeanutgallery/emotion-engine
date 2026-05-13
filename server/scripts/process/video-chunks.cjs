@@ -848,9 +848,12 @@ async function run(input) {
                   endTime: splitEndTime,
                   status: 'success',
                   summary: toolLoopResult?.parsed?.summary,
+                  thought: toolLoopResult?.parsed?.thought,
+                  ...(toolLoopResult?.parsed?.continuationThought ? { continuationThought: toolLoopResult.parsed.continuationThought } : {}),
                   emotions: toolLoopResult?.parsed?.emotions,
                   dominant_emotion: toolLoopResult?.parsed?.dominant_emotion,
                   confidence: toolLoopResult?.parsed?.confidence,
+                  ...(toolLoopResult?.parsed?.personaMeta ? { personaMeta: toolLoopResult.parsed.personaMeta } : {}),
                   tokens: (toolLoopResult?.completion?.usage?.input || 0) + (toolLoopResult?.completion?.usage?.output || 0),
                   persona: {
                     soulPath: toolVariables.soulPath,

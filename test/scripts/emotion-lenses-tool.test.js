@@ -19,6 +19,7 @@ const mockAIProvider = {
       return {
         content: JSON.stringify({
           summary: 'Test chunk analysis',
+          thought: 'That beat lands better than I expected.',
           emotions: {
             patience: { score: 7, reasoning: 'Calm pacing' },
             boredom: { score: 3, reasoning: 'Still engaging' },
@@ -226,6 +227,9 @@ test('Emotion Lenses Tool', async (t) => {
       is(contract.argumentKey, 'emotionAnalysis');
       is(contract.canonicalEnvelope.tool, 'validate_emotion_analysis_json');
       property(contract.canonicalEnvelope, 'emotionAnalysis');
+      property(contract.canonicalEnvelope.emotionAnalysis, 'thought');
+      property(contract.canonicalEnvelope.emotionAnalysis, 'continuationThought');
+      is(contract.canonicalEnvelope.emotionAnalysis.personaMeta.scrollRisk, 'medium');
       property(contract.canonicalEnvelope.emotionAnalysis.emotions, 'patience');
       property(contract.canonicalEnvelope.emotionAnalysis.emotions, 'boredom');
     });
@@ -234,12 +238,15 @@ test('Emotion Lenses Tool', async (t) => {
       const result = emotionLensesTool.executeEmotionAnalysisValidatorTool({
         emotionAnalysis: {
           summary: 'Steady and focused.',
+          thought: 'Okay, this finally feels composed.',
+          continuationThought: 'Keep this rhythm and I stay with it.',
           emotions: {
             patience: { score: 8, reasoning: 'Measured delivery.' },
             boredom: { score: 2, reasoning: 'Momentum stays intact.' }
           },
           dominant_emotion: 'patience',
-          confidence: 0.9
+          confidence: 0.9,
+          personaMeta: { scrollRisk: 'low' }
         }
       }, {
         lenses: ['patience', 'boredom']
@@ -247,12 +254,16 @@ test('Emotion Lenses Tool', async (t) => {
 
       ok(result.valid);
       is(result.normalizedValue.summary, 'Steady and focused.');
+      is(result.normalizedValue.thought, 'Okay, this finally feels composed.');
+      is(result.normalizedValue.continuationThought, 'Keep this rhythm and I stay with it.');
+      is(result.normalizedValue.personaMeta.scrollRisk, 'low');
     });
 
     await tNested.test('rejects missing required lens entries', () => {
       const result = emotionLensesTool.executeEmotionAnalysisValidatorTool({
         emotionAnalysis: {
           summary: 'Incomplete payload.',
+          thought: 'This is missing required fields.',
           emotions: {
             patience: { score: 8, reasoning: 'Present.' }
           },
