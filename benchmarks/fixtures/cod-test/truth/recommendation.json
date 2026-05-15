@@ -1,41 +1,27 @@
 {
-  "_benchmark": {
-    "ignorePaths": [
-      "$.generatedAt",
-      "$.ai"
-    ]
-  },
-  "generatedAt": "2026-03-26T13:35:50.598Z",
+  "generatedAt": "2026-05-15T00:11:24.685Z",
   "pipelineVersion": "1.0",
-  "text": "Front-load the strongest surreal/action imagery and strip out the generic trailer setup, because the biggest retention leak is the opening and any later exposition/title-card stretches. The edit already proves it can hold attention when it delivers rapid visual novelty, so the goal is to re-cut around those peaks and compress the corporate CTA material at the end. Keep the emotional profile as high-intensity, but create clearer spike-and-release pacing so the second half feels escalatory instead of long.",
-  "reasoning": "The weakest point is the first 0-5 seconds: patience is at its lowest there (0.2) while boredom is high (0.8), driven by the glitchy 'RISING TENSIONS' style setup that reads as generic. Retention improves immediately at 5-10 seconds, where excitement hits its peak (0.9) and boredom drops to its minimum (0.2), showing the audience responds to the city-bending, reality-breaking spectacle much more than exposition. Across the full piece, excitement stays strong on average (0.782) and remains stable, but boredom rises materially in the second half from 0.307 to 0.55, which suggests fatigue from repeated title cards, dialogue beats, and end-slate information. Specific mid/late dips align with title/exposition moments like 25-35 seconds and 85-95 seconds, where talking-head or location-card structure softens momentum. The final CTA section also hurts emotional finish: excitement bottoms out at 120 seconds (0.3) and boredom jumps again on the pre-order screens. With a friction index of 100, the cut is asking viewers to work too hard through promo structure despite having many genuinely high-performing action beats.",
-  "confidence": 0.92,
+  "text": "The video successfully builds and maintains high excitement through rapid action sequences, but suffers from pacing issues during static title cards and extended pre-order screens. To improve retention, condense the early title card and integrate the pre-order information more dynamically to prevent viewer drop-off before the final post-credits scene.",
+  "reasoning": "Patience hits its lowest point (0.3) at 10 seconds (Chunk 3) due to an extended, static title card. Conversely, excitement peaks at 55 seconds (1.0) during rapid transitions between red-lit corridors and desert environments. The pre-order screens at 120-130 seconds (Chunks 25 and 26) cause a massive spike in boredom (0.8) and a drop in excitement (0.2). The post-credits action scene at 130 seconds is highly effective but risks being unseen if viewers drop off during the static promo screens.",
+  "confidence": 0.9,
   "keyFindings": [
-    "The opening 0-5s is the biggest retention risk: lowest patience and high boredom despite expensive visuals.",
-    "The 5-10s segment is the clearest hook model, with peak excitement and minimal boredom.",
-    "Excitement is consistently high overall, so the core creative works when it prioritizes spectacle over exposition.",
-    "Boredom increases significantly in the second half, indicating pacing fatigue rather than lack of action quality.",
-    "Title cards, talking-head dialogue, and location reveals repeatedly correlate with softer engagement.",
-    "The end-slate/pre-order stretch weakens the final emotional payoff and likely causes scroll-off before the CTA lands."
+    "Early static title cards (Chunk 3) significantly drop patience and increase boredom.",
+    "Rapid environmental transitions and high-octane combat (Chunks 11-16) drive peak excitement.",
+    "Static pre-order screens (Chunks 25-26) cause the highest boredom levels in the entire video.",
+    "Post-promo action (Chunks 27-28) successfully re-engages viewers but risks low viewership due to preceding boredom."
   ],
   "suggestions": [
-    "Replace the current first frame/text-led intro with one of the strongest surreal action shots now appearing later, especially the reality-breaking or impossible-environment imagery.",
-    "Cut or heavily shorten the 'RISING TENSIONS' style opening text so the video starts on immediate spectacle rather than trailer language.",
-    "Move one of the standout 'wtf' visuals from the 60-85s run into the first 3-5 seconds to create instant curiosity.",
-    "Reduce title cards and location cards throughout, or overlay them on active gameplay/action instead of letting them become standalone beats.",
-    "Trim the 25-35s exposition stretch by minimizing static conversation shots and keeping only dialogue that adds immediate stakes.",
-    "At the 85-95s section, compress the Alaska/Hawaii transition so the audience gets to playable action faster.",
-    "Use more pattern interrupts in the back half: alternate combat scale, color palette, or perspective to offset boredom growth.",
-    "Preserve the strongest high-retention run from roughly 40-80s as the pacing template: fast cuts, visual novelty, and clear escalation.",
-    "Shorten the static pre-order/end-slate sequence and move key offer text over ongoing action if platform rules allow.",
-    "End on a final high-adrenaline gameplay beat before the logo/CTA so the viewer exits on excitement, not fine print.",
-    "If a CTA must remain, make it the shortest possible closing card after the franchise/title reveal rather than a prolonged information block."
+    "Shorten the 'Call of Duty: Black Ops 7' title card in Chunk 3 to under 2 seconds.",
+    "Overlay the 'RISING TENSIONS' text in Chunk 1 directly onto action footage rather than using a standalone card.",
+    "Animate the pre-order incentive screens in Chunks 25-26 to maintain visual momentum.",
+    "Condense the pre-order promo duration from 10 seconds to 5 seconds.",
+    "Move a snippet of the post-promo action (Chunk 27) into the pre-order screen as a background video to retain viewers."
   ],
   "failedChunks": 0,
   "ai": {
     "attempt": 1,
     "provider": "openrouter",
-    "model": "openai/gpt-5.4",
+    "model": "google/gemini-3.1-pro-preview",
     "failover": null,
     "toolLoop": {
       "toolName": "validate_recommendation_json",
@@ -45,8 +31,14 @@
       "validatorCalls": 2
     },
     "usage": {
-      "input": 11416,
-      "output": 841
+      "input": 11331,
+      "output": 491
     }
+  },
+  "_benchmark": {
+    "ignorePaths": [
+      "$.generatedAt",
+      "$.ai"
+    ]
   }
 }

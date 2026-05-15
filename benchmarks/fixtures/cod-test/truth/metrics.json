@@ -1,10 +1,5 @@
 {
-  "_benchmark": {
-    "ignorePaths": [
-      "$.generatedAt"
-    ]
-  },
-  "generatedAt": "2026-03-26T13:35:12.112Z",
+  "generatedAt": "2026-05-15T00:11:00.096Z",
   "pipelineVersion": "1.0",
   "summary": {
     "totalChunks": 28,
@@ -17,61 +12,66 @@
     "dataSource": "derived-from-phase2.chunkAnalysis"
   },
   "averages": {
-    "patience": 0.6428571428571428,
-    "boredom": 0.42857142857142855,
-    "excitement": 0.7821428571428576
+    "patience": 0.6928571428571423,
+    "boredom": 0.26428571428571423,
+    "excitement": 0.792857142857144
   },
   "peakMoments": {
     "patience": {
       "highest": {
-        "timestamp": 75,
+        "timestamp": 55,
         "score": 0.9
       },
       "lowest": {
-        "timestamp": 0,
-        "score": 0.2
+        "timestamp": 10,
+        "score": 0.3
       }
     },
     "boredom": {
       "highest": {
-        "timestamp": 75,
-        "score": 1
+        "timestamp": 125,
+        "score": 0.8
       },
       "lowest": {
-        "timestamp": 5,
-        "score": 0.2
+        "timestamp": 95,
+        "score": 0.1
       }
     },
     "excitement": {
       "highest": {
-        "timestamp": 5,
-        "score": 0.9
+        "timestamp": 55,
+        "score": 1
       },
       "lowest": {
-        "timestamp": 120,
-        "score": 0.3
+        "timestamp": 125,
+        "score": 0.2
       }
     }
   },
   "trends": {
     "patience": {
       "direction": "increasing",
-      "change": 0.05714285714285705,
-      "firstHalfAverage": 0.6142857142857141,
-      "secondHalfAverage": 0.6714285714285712
+      "change": 0.08571428571428563,
+      "firstHalfAverage": 0.6499999999999995,
+      "secondHalfAverage": 0.7357142857142851
     },
     "boredom": {
-      "direction": "increasing",
-      "change": 0.24285714285714283,
-      "firstHalfAverage": 0.3071428571428571,
-      "secondHalfAverage": 0.5499999999999999
+      "direction": "stable",
+      "change": 0,
+      "firstHalfAverage": 0.2642857142857141,
+      "secondHalfAverage": 0.2642857142857141
     },
     "excitement": {
-      "direction": "stable",
-      "change": -0.007142857142856562,
-      "firstHalfAverage": 0.7857142857142851,
-      "secondHalfAverage": 0.7785714285714286
+      "direction": "increasing",
+      "change": 0.0857142857142853,
+      "firstHalfAverage": 0.7499999999999999,
+      "secondHalfAverage": 0.8357142857142852
     }
   },
-  "frictionIndex": 100
+  "frictionIndex": 100,
+  "_benchmark": {
+    "ignorePaths": [
+      "$.generatedAt"
+    ]
+  }
 }
