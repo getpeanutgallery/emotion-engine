@@ -76,7 +76,7 @@ async function run(input) {
 
 function normalizeScore(rawScore) {
   if (typeof rawScore !== 'number' || Number.isNaN(rawScore)) return 0;
-  if (rawScore <= 1) return Math.max(0, rawScore);
+  if (rawScore < 1) return Math.max(0, rawScore);
   return Math.max(0, Math.min(1, rawScore / 10));
 }
 
@@ -138,11 +138,11 @@ function buildSimpleReport(payload, config) {
 
   report += `---\n\n`;
   report += `## Key Metrics\n\n`;
-  report += `| Emotion | Average Score (1-10) | Visual |\n`;
+  report += `| Emotion | Average Score (${detectMetricScaleLabel(averages)}) | Visual |\n`;
   report += `|---------|---------------------|--------|\n`;
 
   for (const [emotion, score] of Object.entries(averages)) {
-    report += `| ${capitalize(emotion)} | ${score.toFixed(1)} | ${buildEmojiBar(Math.round(score))} |\n`;
+    report += `| ${capitalize(emotion)} | ${score.toFixed(1)} | ${buildMetricEmojiBar(score, averages)} |\n`;
   }
   if (Object.keys(averages).length === 0) {
     report += `| N/A | 0.0 | ⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪ |\n`;
@@ -204,6 +204,21 @@ function calculateEmotionAverages(points) {
     averages[name] = sums[name] / counts[name];
   }
   return averages;
+}
+
+function buildMetricEmojiBar(score, metrics) {
+  const scale = detectMetricScale(metrics);
+  return buildEmojiBar(scale === 'normalized' ? score * 10 : score);
+}
+
+function detectMetricScale(metrics) {
+  const values = Object.values(metrics || {}).filter((value) => typeof value === 'number' && Number.isFinite(value));
+  if (values.length === 0) return 'normalized';
+  return values.some((value) => value > 1) ? 'raw-10' : 'normalized';
+}
+
+function detectMetricScaleLabel(metrics) {
+  return detectMetricScale(metrics) === 'normalized' ? '0-1 normalized' : '1-10';
 }
 
 function buildEmojiBar(score) {

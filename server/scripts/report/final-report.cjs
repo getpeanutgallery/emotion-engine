@@ -175,20 +175,22 @@ function buildReport(data) {
 
   // AI Recommendation
   report += `## AI Recommendation\n\n`;
-  report += `> ${recommendation.text}\n\n`;
-  report += `*${recommendation.reasoning}*\n\n`;
+  const displayRecommendationText = humanizeChunkReferences(recommendation.text || '');
+  const displayRecommendationReasoning = humanizeChunkReferences(recommendation.reasoning || '');
+  report += `> ${displayRecommendationText}\n\n`;
+  report += `*${displayRecommendationReasoning}*\n\n`;
 
   report += `---\n\n`;
 
   // Key Metrics with visual bars
   report += `## Key Metrics\n\n`;
-  report += `| Emotion | Average Score (1-10) | Visual |\n`;
-  report += `|---------|---------------------|--------|\n`;
 
   const emotionOrder = ['boredom', 'excitement', 'curiosity', 'tension', 'satisfaction', 'patience'];
 
   // Extract averages from keyMetrics (handles both flat object and nested structure)
   const metricsToUse = keyMetrics.averages || keyMetrics;
+  report += `| Emotion | Average Score (${detectMetricScaleLabel(metricsToUse)}) | Visual |\n`;
+  report += `|---------|---------------------|--------|\n`;
   const metricsEntries = Object.entries(metricsToUse);
 
   // Sort metrics by emotion order if possible
@@ -203,8 +205,7 @@ function buildReport(data) {
 
   for (const [metric, value] of sortedMetrics) {
     const emotion = metric.replace('avg', '').toLowerCase();
-    const score = Math.round(value);
-    const bar = buildEmojiBar(score);
+    const bar = buildMetricEmojiBar(value, metricsToUse);
     report += `| ${capitalize(emotion)} | ${value.toFixed(1)} | ${bar} |\n`;
   }
   report += '\n';
@@ -404,6 +405,40 @@ function formatPersonaName(id) {
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(' ');
+}
+
+function humanizeChunkReferences(text) {
+  if (typeof text !== 'string' || text.length === 0) return text;
+
+  return text.replace(/\b(chunks?)\s+((?:\d+(?:\s*-\s*\d+)?)(?:\s*(?:,\s*|,\s*and\s*|and\s*)\d+(?:\s*-\s*\d+)?)*)/gi, (_, label, refs) => {
+    const humanized = refs.replace(/\d+(?:\s*-\s*\d+)?/g, (token) => {
+      if (token.includes('-')) {
+        const [start, end] = token.split(/\s*-\s*/).map((part) => Number.parseInt(part, 10));
+        if (!Number.isFinite(start) || !Number.isFinite(end)) return token;
+        return `${start + 1}-${end + 1}`;
+      }
+
+      const value = Number.parseInt(token, 10);
+      return Number.isFinite(value) ? String(value + 1) : token;
+    });
+
+    return `${label} ${humanized}`;
+  });
+}
+
+function detectMetricScale(metrics) {
+  const values = Object.values(metrics || {}).filter((value) => typeof value === 'number' && Number.isFinite(value));
+  if (values.length === 0) return 'normalized';
+  return values.some((value) => value > 1) ? 'raw-10' : 'normalized';
+}
+
+function detectMetricScaleLabel(metrics) {
+  return detectMetricScale(metrics) === 'normalized' ? '0-1 normalized' : '1-10';
+}
+
+function buildMetricEmojiBar(score, metrics) {
+  const scale = detectMetricScale(metrics);
+  return buildEmojiBar(scale === 'normalized' ? score * 10 : score);
 }
 
 /**

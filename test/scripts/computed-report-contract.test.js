@@ -47,6 +47,54 @@ test('computed/report scripts emit universal script-result envelopes', async (t)
   t.beforeEach(clean);
   t.afterEach(() => fs.rmSync(testOutputDir, { recursive: true, force: true }));
 
+  await t.test('metrics and emotional-analysis treat an exact upstream score of 1 as 0.1, not 1.0', async () => {
+    const chunkAnalysis = {
+      chunks: [
+        {
+          chunkIndex: 0,
+          startTime: 0,
+          endTime: 5,
+          emotions: { boredom: { score: 1 }, excitement: { score: 10 } },
+          dominant_emotion: 'excitement',
+          confidence: 0.9
+        },
+        {
+          chunkIndex: 1,
+          startTime: 5,
+          endTime: 10,
+          emotions: { boredom: { score: 8 }, excitement: { score: 2 } },
+          dominant_emotion: 'boredom',
+          confidence: 0.9
+        }
+      ],
+      totalTokens: 50,
+      videoDuration: 10
+    };
+
+    const metricsResult = await executeScript({
+      phase: 'phase3-report',
+      scriptPath: 'server/scripts/report/metrics.cjs',
+      input: { outputDir: testOutputDir, artifacts: { chunkAnalysis }, config: { name: 'test', version: 'test' } }
+    });
+
+    const metricsPath = metricsResult.scriptResult.payload.data.path;
+    const metrics = JSON.parse(fs.readFileSync(metricsPath, 'utf8'));
+    is(metrics.averages.boredom, 0.45);
+    is(metrics.peakMoments.boredom.highest.timestamp, 5);
+    is(metrics.trends.boredom.direction, 'increasing');
+
+    const emotionalResult = await executeScript({
+      phase: 'phase3-report',
+      scriptPath: 'server/scripts/report/emotional-analysis.cjs',
+      input: { outputDir: testOutputDir, artifacts: { chunkAnalysis }, config: { name: 'test', version: 'test' } }
+    });
+
+    const emotionalPath = emotionalResult.scriptResult.payload.data.path;
+    const emotional = JSON.parse(fs.readFileSync(emotionalPath, 'utf8'));
+    ok(!emotional.criticalMoments.some((moment) => moment.timestamp === 0 && moment.emotion === 'boredom' && moment.type === 'threshold-high'));
+    ok(emotional.criticalMoments.some((moment) => moment.timestamp === 5 && moment.emotion === 'boredom' && moment.type === 'threshold-high'));
+  });
+
   await t.test('metrics records chunk-derived computation as degraded success', async () => {
     const result = await executeScript({
       phase: 'phase3-report',

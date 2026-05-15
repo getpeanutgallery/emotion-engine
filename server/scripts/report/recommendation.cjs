@@ -127,6 +127,7 @@ function buildPrompt({ chunks, metricsData, config, recoveryRuntime = null }) {
 
   const chunkSummaries = (chunks || []).map((chunk) => ({
     chunkIndex: typeof chunk?.chunkIndex === 'number' ? chunk.chunkIndex : null,
+    chunkNumber: typeof chunk?.chunkIndex === 'number' ? chunk.chunkIndex + 1 : null,
     startTime: typeof chunk?.startTime === 'number' ? chunk.startTime : null,
     endTime: typeof chunk?.endTime === 'number' ? chunk.endTime : null,
     summary: typeof chunk?.summary === 'string' ? chunk.summary : null,
@@ -161,6 +162,7 @@ function buildPrompt({ chunks, metricsData, config, recoveryRuntime = null }) {
     'Rules:',
     buildEnglishOnlyOutputRuleBlock(),
     '- Keep it specific (talk about the start/hook, pacing, emotional beats).',
+    '- If you reference chunks in prose, use human-facing one-based chunk numbers from chunkNumber, not internal zero-based chunkIndex values.',
     '- If data is insufficient, say so and provide next steps.',
     '- Do not invent timestamps or quotes not present in the input.',
     '- Return JSON only. No markdown fences or commentary.',

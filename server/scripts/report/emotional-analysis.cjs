@@ -141,7 +141,7 @@ async function run(input) {
 
 function normalizeScore(rawScore) {
   if (typeof rawScore !== 'number' || Number.isNaN(rawScore)) return 0;
-  if (rawScore <= 1) return Math.max(0, rawScore);
+  if (rawScore < 1) return Math.max(0, rawScore);
   return Math.max(0, Math.min(1, rawScore / 10));
 }
 

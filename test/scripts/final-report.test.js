@@ -86,6 +86,36 @@ test('Final Report Script', async (t) => {
     property(analysisData, 'data');
   });
 
+  await t.test('labels normalized averages honestly and humanizes chunk references in recommendation prose', async () => {
+    await finalReportScript.run({
+      outputDir: testOutputDir,
+      artifacts: {
+        summary: {
+          duration: 10,
+          totalTokens: 100,
+          keyMetrics: { averages: { boredom: 0.3, excitement: 0.8, patience: 0.7 } },
+          recommendation: {
+            text: 'Trim the drag around chunks 2, 24, and 25.',
+            reasoning: 'Boredom rises in chunks 5-6 while the action in chunk 2 still lands.'
+          }
+        },
+        chunkAnalysis: {
+          chunks: [],
+          totalTokens: 100,
+          videoDuration: 10,
+          persona: {}
+        }
+      },
+      config: { version: '1.0', name: 'Normalized Metrics Test' }
+    });
+
+    const report = fs.readFileSync(path.join(testOutputDir, 'phase3-report', 'summary', 'FINAL-REPORT.md'), 'utf8');
+    ok(report.includes('Average Score (0-1 normalized)'));
+    ok(report.includes('chunks 3, 25, and 26'));
+    ok(report.includes('chunks 6-7'));
+    ok(report.includes('chunk 3 still lands'));
+  });
+
   await t.test('renders explicit missing persona file messaging when assets are absent', async () => {
     await finalReportScript.run({
       outputDir: testOutputDir,
