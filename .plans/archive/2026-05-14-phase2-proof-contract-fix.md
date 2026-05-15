@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-05-14  
-**Status:** Draft  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -103,9 +103,9 @@ Once that contract is repaired, the work should immediately resume the blocked p
 - `.plans/artifacts/2026-05-14-phase2-proof-contract-fix/rerun-summary.md`
 - new output folder(s) under `output/`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Re-ran the canonical full proof lane with the exact repo-documented command `npm run pipeline -- --config configs/cod-test.yaml --verbose` after first moving the prior `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test` aside to `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test-pre-proof-contract-rerun-20260514-184119` so the repaired lane wrote a fresh packet. The rerun now correctly executes Phase 2 through `server/scripts/process/video-chunks.cjs` and produces the required proof artifact at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase2-process/chunk-analysis.json` with `28` chunks and `statusSummary.failed = 0`, satisfying the specific contract-repair objective from `REF-02`, `REF-03`, and `REF-05`. The full pipeline still exits `1`, but the blocker moved downstream exactly as hoped: the old artifact-missing contradiction is gone, and the remaining failure is benchmark-quality red (`Benchmark error: 0/8 artifacts passed. 2268/3270 scoreable fields passed. Truth coverage was 3270/3477 fields.`). Durable rerun notes were written to `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-14-phase2-proof-contract-fix/rerun-summary.md`, including the exact command, fresh output path, runtime duration (`1052356ms`), and the precise next blocker.
 
 ---
 
@@ -126,9 +126,9 @@ Once that contract is repaired, the work should immediately resume the blocked p
 - `.plans/2026-05-14-phase2-proof-contract-fix.md`
 - `.plans/artifacts/2026-05-14-phase2-proof-contract-fix/qa-summary.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** QA was performed directly against the fresh repaired artifact at `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase2-process/chunk-analysis.json`, with broad continuity sampling across opener (`0-5`), middle (`6-12`), the chunk-18 canary window (`17-20`), and the end-card tail (`23-27`) plus targeted phrase checks for the prior blocker class from `REF-04` and `REF-05`. Durable findings were written to `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-14-phase2-proof-contract-fix/qa-summary.md`. The verdict for this repaired proof surface is **GO** on the original continuity blocker class: local countdown / micro-clip reset phrasing is gone, chunk 18 no longer frames itself like a cold open, the earlier title-awareness contradiction is gone, and the late-end continuity regression is reduced below blocker level. Remaining concerns are now polish/templating issues rather than readiness-blocking contradictions, so this fresh `chunk-analysis.json` packet is acceptable for Phase 3 readiness review on that specific QA surface.
 
 ---
 
@@ -149,25 +149,25 @@ Once that contract is repaired, the work should immediately resume the blocked p
 - `.plans/2026-05-14-phase2-proof-contract-fix.md`
 - `.plans/artifacts/2026-05-14-phase2-proof-contract-fix/audit-summary.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Independent audit completed and durable findings were written to `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-14-phase2-proof-contract-fix/audit-summary.md`. The audit confirms that the proof-lane contract issue was **fully fixed**, not merely rerouted: `configs/cod-test.yaml` now truthfully restores the canonical Phase 2 lane to `server/scripts/process/video-chunks.cjs`, and the fresh canonical rerun again produces `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase2-process/chunk-analysis.json` with `28` successful chunks and `0` failures. Independent inspection of the fresh artifact matched QA on the earlier blocker class: the local countdown/micro-clip reset phrasing is gone, chunk 18 no longer reads like a cold open, the title-awareness contradiction is gone, and the late-end continuity regression is reduced below blocker level. The auditor therefore judged the fresh proof artifact a truthful **Phase 2 go for graduation toward Phase 3** on the repaired proof surface. Important caveat preserved in the audit: the full pipeline still ends benchmark-red downstream (`0/8 artifacts passed; 2268/3270 scoreable fields passed; truth coverage 3270/3477`), so the repo should not claim a full benchmark-green packet yet. That remaining benchmark/truth-parity work is real, but it is a separate issue class from the fixed proof-lane contract and the cleared Phase 2 continuity blocker.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Repaired the canonical `cod-test` proof-lane contract so Phase 2 again runs through the truthful `chunk-analysis` surface, then completed a fresh full rerun, direct QA, and independent audit on the repaired artifact. The original blocker was not a substantive new Phase 2 crash; it was a contradiction between canonical config and benchmark/proof expectations. That contradiction is now gone, the fresh rerun produces `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase2-process/chunk-analysis.json`, and the new packet clears the earlier continuity blocker class strongly enough to graduate toward Phase 3.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-02`, `REF-03`, and `REF-05` are now satisfied at the proof-lane surface: the canonical config once again targets `video-chunks`, the fresh rerun emits the required `chunk-analysis.json`, and the restored artifact shape matches the historical proof lane described in the prior rerun evidence. `REF-04` is also satisfied: the narrowly scoped follow-up requested by the readiness audit — one fresh full proof rerun plus QA/audit on that packet — was completed. No deliberate deviations were introduced; the key scope decision was explicitly to restore chunk-analysis as canonical and leave whole-video as a non-canonical/test lane.
 
 **Commits:**
-- Pending
+- `7066ba7` - Restore cod-test chunk-analysis proof lane
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** The repo cannot treat a benchmark expectation and a canonical config as loosely coupled; when those surfaces drift, the pipeline can fail dishonestly before any real product-quality question is answered. The correct repair was narrow: restore the canonical proof lane to chunk-analysis instead of rewriting consumers around the whole-video prototype. Also, Phase 2 proof readiness and full benchmark-green status are different truths: this work cleared the former, while the latter still needs separate downstream parity work.
 
 ---
 
-*Completed on Pending*
+*Completed on 2026-05-14*

@@ -1,77 +1,77 @@
 {
   "metadata": {
-    "generatedAt": "2026-04-29T22:29:31.152Z",
+    "generatedAt": "2026-05-15T00:11:24.692Z",
     "pipelineVersion": "1.0",
-    "pipelineName": "COD Test Phase 2 Chunk Benchmark Slice",
+    "pipelineName": "COD Test Pipeline (Phase 3 only)",
     "videoDuration": 140.017,
     "chunksAnalyzed": 28,
-    "totalTokens": 1308654
+    "totalTokens": 247332
   },
   "summary": {
     "keyMetrics": {
       "averages": {
-        "patience": 0.7499999999999987,
-        "boredom": 0.24999999999999994,
-        "excitement": 0.8250000000000012
+        "patience": 0.6928571428571423,
+        "boredom": 0.26428571428571423,
+        "excitement": 0.792857142857144
       },
       "peakMoments": {
         "patience": {
           "highest": {
-            "timestamp": 40,
+            "timestamp": 55,
             "score": 0.9
           },
           "lowest": {
-            "timestamp": 85,
-            "score": 0.6
+            "timestamp": 10,
+            "score": 0.3
           }
         },
         "boredom": {
           "highest": {
-            "timestamp": 105,
-            "score": 1
+            "timestamp": 125,
+            "score": 0.8
           },
           "lowest": {
-            "timestamp": 0,
-            "score": 0.2
+            "timestamp": 95,
+            "score": 0.1
           }
         },
         "excitement": {
           "highest": {
-            "timestamp": 40,
+            "timestamp": 55,
             "score": 1
           },
           "lowest": {
-            "timestamp": 95,
-            "score": 0.4
+            "timestamp": 125,
+            "score": 0.2
           }
         }
       },
       "trends": {
         "patience": {
-          "direction": "stable",
-          "change": -0.028571428571428248,
-          "firstHalfAverage": 0.7642857142857139,
-          "secondHalfAverage": 0.7357142857142857
+          "direction": "increasing",
+          "change": 0.08571428571428563,
+          "firstHalfAverage": 0.6499999999999995,
+          "secondHalfAverage": 0.7357142857142851
         },
         "boredom": {
-          "direction": "increasing",
-          "change": 0.10000000000000009,
-          "firstHalfAverage": 0.19999999999999973,
-          "secondHalfAverage": 0.2999999999999998
+          "direction": "stable",
+          "change": 0,
+          "firstHalfAverage": 0.2642857142857141,
+          "secondHalfAverage": 0.2642857142857141
         },
         "excitement": {
-          "direction": "stable",
-          "change": 0.007142857142856673,
-          "firstHalfAverage": 0.8214285714285711,
-          "secondHalfAverage": 0.8285714285714277
+          "direction": "increasing",
+          "change": 0.0857142857142853,
+          "firstHalfAverage": 0.7499999999999999,
+          "secondHalfAverage": 0.8357142857142852
         }
       },
-      "frictionIndex": 77.19940476190476
+      "frictionIndex": 100
     },
     "recommendation": {
-      "text": "To improve viewer retention, immediately eliminate the static establishing shot at 95-100 seconds and replace it with high-energy action to counter the boredom spike. Maintain the fast-paced, excitement-driven editing from the successful chunks to keep the impatient-teenager audience engaged throughout.",
-      "reasoning": "The data shows boredom increasing in the second half, with a peak at chunk 19 (95-100s) where boredom scores 1.0 and excitement drops to 0.4, contrasting with surrounding chunks that have high excitement (9-10) and low boredom (1-2). The high friction index of 77.2 indicates significant viewer drop-off risk, and the impatient persona requires constant stimulation. By addressing this lull, the video can sustain the adrenaline rush that hooks viewers, as seen in chunks with dominant excitement emotions.",
-      "confidence": 0.85
+      "text": "The video successfully builds and maintains high excitement through rapid action sequences, but suffers from pacing issues during static title cards and extended pre-order screens. To improve retention, condense the early title card and integrate the pre-order information more dynamically to prevent viewer drop-off before the final post-credits scene.",
+      "reasoning": "Patience hits its lowest point (0.3) at 10 seconds (Chunk 3) due to an extended, static title card. Conversely, excitement peaks at 55 seconds (1.0) during rapid transitions between red-lit corridors and desert environments. The pre-order screens at 120-130 seconds (Chunks 25 and 26) cause a massive spike in boredom (0.8) and a drop in excitement (0.2). The post-credits action scene at 130 seconds is highly effective but risks being unseen if viewers drop off during the static promo screens.",
+      "confidence": 0.9
     }
   },
   "data": {
@@ -83,24 +83,29 @@
           "startTime": 0,
           "endTime": 5,
           "status": "success",
-          "summary": "The video chunk opens with an intense, fast-paced hook featuring close-up visuals of an eye, a soldier in a red-tinted scene, and a voiceover about fear, immediately grabbing attention.",
+          "summary": "The video opens with a futuristic cityscape and 'RISING TENSIONS' text, followed by quick cuts of characters and dramatic dialogue about fear, setting a tense mood.",
+          "thought": "Ugh, 'RISING TENSIONS'? Seriously? But okay, the visuals are kinda cool with the glowing eyes and stuff. Still, if this doesn't pick up soon, I'm out.",
+          "continuationThought": "Let's see if this goes somewhere or just more corporate fluff.",
           "emotions": {
             "patience": {
-              "score": 8,
-              "reasoning": "The hook is immediate and compelling, with no slow buildup, so the viewer is likely to stay engaged."
+              "score": 4,
+              "reasoning": "The chunk starts with 'RISING TENSIONS' text, which is a generic intro that the persona dislikes, lowering patience. However, the rapid visual cuts to futuristic elements and character close-ups maintain some willingness to continue."
             },
             "boredom": {
-              "score": 2,
-              "reasoning": "Fast cuts, dramatic visuals, and a tense voiceover keep boredom very low."
+              "score": 3,
+              "reasoning": "Visuals are dynamic with changes every second, and dramatic voiceover prevents boredom from setting in, but the theme might feel familiar."
             },
             "excitement": {
-              "score": 9,
-              "reasoning": "High-energy action, explosions, and intense dialogue create strong excitement."
+              "score": 5,
+              "reasoning": "Dramatic dialogue about fear and control, combined with futuristic action visuals, builds intrigue and moderate excitement."
             }
           },
-          "dominant_emotion": "excitement",
-          "confidence": 0.9,
-          "tokens": 46573,
+          "dominant_emotion": "patience",
+          "confidence": 0.7,
+          "personaMeta": {
+            "scrollRisk": "medium"
+          },
+          "tokens": 9367,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -117,24 +122,29 @@
           "startTime": 5,
           "endTime": 10,
           "status": "success",
-          "summary": "The video chunk features a fast-paced action sequence with explosions, soldiers, and intense music, designed to maintain viewer engagement.",
+          "summary": "This chunk features rapid cuts of intense action scenes, including a soldier in a war-torn city, futuristic devices, car crashes on a highway, and a dystopian cityscape with smoke plumes.",
+          "thought": "Okay, this is getting intense. All the chaos and destruction is actually holding my attention now. The visuals are crazy with the falling cars and stuff. Still no clear story, but I'm not bored yet.",
+          "continuationThought": "If they keep this energy and add some context, I might watch till the end.",
           "emotions": {
             "patience": {
-              "score": 8,
-              "reasoning": "The rapid cuts and immediate action prevent impatience, as there is no slow buildup or filler content."
+              "score": 7,
+              "reasoning": "Patience is maintained as the fast-paced action and quick visual cuts, like the soldier kneeling in rubble and cars crashing, keep the viewer engaged and willing to continue watching."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "High-intensity visuals and audio stimulation leave little room for boredom to develop."
+              "reasoning": "Boredom is low due to the absence of slow or static shots; every frame is dynamic, such as the chaotic highway scene and dark corridor with red lights, preventing disengagement."
             },
             "excitement": {
-              "score": 9,
-              "reasoning": "Explosions, combat scenes, and a driving musical score create a high level of excitement and engagement."
+              "score": 8,
+              "reasoning": "Excitement is high from the thrilling and visually stimulating content, including the futuristic device close-up, dramatic city destruction, and intense lighting effects that evoke a sense of action and curiosity."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.9,
-          "tokens": 46559,
+          "confidence": 0.85,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8753,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -151,24 +161,29 @@
           "startTime": 10,
           "endTime": 15,
           "status": "success",
-          "summary": "The chunk opens with the 'Call of Duty: Black Ops 7' title card, then cuts to a large, damaged screen displaying a man's face delivering a threatening monologue amidst a burning, chaotic street scene.",
+          "summary": "This chunk features a dramatic cityscape and the 'Call of Duty: Black Ops 7' title card for several seconds, followed by a brief action scene with a face on a screen and someone running through fire.",
+          "thought": "A title card right after the action? That's a buzzkill. But that face on the screen with the chaos... okay, now I'm curious again.",
+          "continuationThought": "Don't lose me with more logos; show me what that face means.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "The immediate cut from title to a high-stakes, visually dense scene with a clear threat maintains engagement. No slow logos or generic intros to trigger impatience."
+              "score": 3,
+              "reasoning": "The extended title card (visible from 00:00 to 00:02 in the chunk) feels like a slow, corporate intro, which the persona strongly dislikes, reducing patience."
             },
             "boredom": {
-              "score": 2,
-              "reasoning": "The combination of a burning cityscape, a menacing close-up on a screen, and a direct, violent threat creates immediate tension and visual interest, leaving no room for boredom."
+              "score": 6,
+              "reasoning": "Title card is static and unengaging, causing boredom to rise, but the action scene at 00:03 with fire and movement provides a pattern interrupt."
             },
             "excitement": {
               "score": 6,
-              "reasoning": "The high-risk narrative setup ('streets run red with blood') and the chaotic, fiery visuals create a sense of impending action and stakes, generating moderate excitement to see what happens next."
+              "reasoning": "Action scene with fire, running, and a mysterious face on screen (visible at 00:03-00:04) generates excitement, but the preceding title card tempers it."
             }
           },
-          "dominant_emotion": "patience",
-          "confidence": 0.85,
-          "tokens": 46540,
+          "dominant_emotion": "boredom",
+          "confidence": 0.8,
+          "personaMeta": {
+            "scrollRisk": "medium"
+          },
+          "tokens": 10579,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -185,24 +200,29 @@
           "startTime": 15,
           "endTime": 20,
           "status": "success",
-          "summary": "A close-up of a man's face on a shattered screen amidst a burning street delivers a violent threat, followed by rapid cuts showing global casualty maps and large-scale destruction.",
+          "summary": "The chunk displays a fast-paced sequence with a giant eye on a screen, a glitchy face, a global map marked with red dots, and explosions, establishing a tense and action-driven narrative.",
+          "thought": "Okay, that giant eye is unsettling, and now we're seeing global chaos with explosions? This is way more engaging than the title card. I'm actually invested now.",
+          "continuationThought": "If the action continues like this, I'll stick around to see the full story.",
           "emotions": {
             "patience": {
               "score": 8,
-              "reasoning": "The immediate, high-stakes visual and threatening dialogue ('run red with your blood') provides a clear and compelling hook. The rapid cuts to global-scale destruction maintain a sense of urgency and narrative progression, preventing impatience."
+              "reasoning": "Rapid visual changes from the eye to the face to the map and explosions maintain high engagement, preventing impatience from setting in."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "There is no dead air or static shot. The visuals are intense and constantly changing (face, map, explosions), and the audio is layered with impactful dialogue and sound effects. Boredom is very low."
+              "reasoning": "No slow or static moments; every second features dramatic imagery such as fire, debris, and explosions, keeping boredom low."
             },
             "excitement": {
-              "score": 7,
-              "reasoning": "The combination of a personal threat and visuals of worldwide catastrophe creates high stakes and dramatic tension. The fast-paced editing and ominous score build excitement for the conflict being established."
+              "score": 9,
+              "reasoning": "The presence of explosions, global conflict visuals, and intense imagery like the giant eye creates a high level of excitement and thrill."
             }
           },
-          "dominant_emotion": "patience",
-          "confidence": 0.85,
-          "tokens": 46450,
+          "dominant_emotion": "excitement",
+          "confidence": 0.9,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 9105,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -219,24 +239,29 @@
           "startTime": 20,
           "endTime": 25,
           "status": "success",
-          "summary": "A building collapses, the year 2035 is displayed, a character speaks about terrorism and peace, and robotic soldiers are shown.",
+          "summary": "The chunk cuts rapidly between a military vehicle firing, circuit board close-ups, flames, and the year '2035,' before landing on a female character stating 'Menedez is a terrorist.'",
+          "thought": "Okay, back to the action and tech stuff. The cuts are fast—military hardware, circuits, fire, and a future date. That's a lot of info in a few seconds. The woman dropping that line about Menedez being a terrorist? That's the hook. Now I know who the bad guy is. This is moving.",
+          "continuationThought": "Alright, you've got my attention with that reveal. Show me why he's a terrorist.",
           "emotions": {
             "patience": {
               "score": 7,
-              "reasoning": "The chunk has quick cuts and visual interest, maintaining attention without dragging."
+              "reasoning": "The rapid cuts between military, tech, and fire visuals maintain a high pace that doesn't test my patience. The static shot of the woman speaking is brief and delivers a key line, so it doesn't feel like a stall."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "Action-packed visuals and dialogue prevent boredom; no slow or static moments."
+              "reasoning": "No dead air or slow moments. Every shot is visually dense and thematically charged—weaponry, technology, destruction, a future date, and a direct character accusation. There's nothing boring here."
             },
             "excitement": {
               "score": 8,
-              "reasoning": "Building music, dramatic destruction, and narrative stakes create high excitement."
+              "reasoning": "The combination of aggressive military imagery, high-tech close-ups, apocalyptic fire, and the stark '2035' title card builds intense atmosphere. The direct dialogue reveal ('Menedez is a terrorist') provides a clear narrative stake, significantly boosting engagement."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.85,
-          "tokens": 47179,
+          "confidence": 0.9,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 7579,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -253,24 +278,29 @@
           "startTime": 25,
           "endTime": 30,
           "status": "success",
-          "summary": "A futuristic city lies in ruins as a VTOL aircraft flies through the devastation under a dramatic sunset sky, with ominous music building anticipation.",
+          "summary": "The chunk shows detailed robot visuals followed by a tense dialogue between two men, revealing personal conflict about being held against one's will.",
+          "thought": "Okay, the robots look sick, but now we're talking? Still, that line about being refused to go—that's personal. I'm curious.",
+          "continuationThought": "If this leads to more action, I'm sticking around.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "The dynamic visuals of the aircraft moving through a detailed, destroyed cityscape and the building musical score maintain viewer attention without static shots or dead air."
+              "score": 6,
+              "reasoning": "The static robot shots at the start could test patience, but the dialogue scene introduces stakes that maintain interest."
             },
             "boredom": {
-              "score": 2,
-              "reasoning": "The high-production-value scene of large-scale destruction and the escalating, anticipatory music provide strong visual and auditory stimulation, leaving little room for disengagement."
+              "score": 4,
+              "reasoning": "The dialogue reduces boredom by adding narrative tension, though the robot visuals are less dynamic."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "The dramatic reveal of a devastated future metropolis, combined with intense, building percussion and synth melodies, creates a strong sense of scale, tension, and impending action."
+              "score": 5,
+              "reasoning": "Excitement dips from previous high due to slower pacing, but the conflict in dialogue keeps it engaging."
             }
           },
-          "dominant_emotion": "excitement",
-          "confidence": 0.85,
-          "tokens": 46516,
+          "dominant_emotion": "patience",
+          "confidence": 0.8,
+          "personaMeta": {
+            "scrollRisk": "medium"
+          },
+          "tokens": 8435,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -287,24 +317,29 @@
           "startTime": 30,
           "endTime": 35,
           "status": "success",
-          "summary": "A rapid-fire montage of chaotic action sequences featuring futuristic soldiers, explosions, and high-tech combat in various global locations, driven by intense music and urgent dialogue.",
+          "summary": "The chunk continues the tense dialogue with the older man speaking about future actions, maintaining focus on character interaction.",
+          "thought": "Okay, he's talking about what to do next. That's a shift from just complaining. I'm listening because it feels personal and real.",
+          "continuationThought": "If this leads to a concrete plan or some action, I'm still engaged.",
           "emotions": {
             "patience": {
               "score": 7,
-              "reasoning": "The rapid cuts and constant action prevent patience from dropping too low, but the sheer volume of information and lack of a single clear focus slightly tests my willingness to follow every detail."
+              "reasoning": "The dialogue is engaging and reveals character motivation, with visual evidence of close-up shots on the speakers' faces showing serious expressions, keeping me patient."
             },
             "boredom": {
-              "score": 2,
-              "reasoning": "There is zero chance of boredom here. The visual stimuli are constant, the action is high-stakes, and the pacing is relentless. My thumb is nowhere near the scroll button."
+              "score": 3,
+              "reasoning": "No slow or static visuals; the conversation is tense and moving forward, with inferred dynamic camera cuts between characters maintaining attention."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "This is pure, high-octane spectacle. The explosions, futuristic tech, global settings, and aggressive music create a powerful sense of hype and adrenaline. It's exactly the kind of over-the-top action that grabs my attention."
+              "score": 5,
+              "reasoning": "The tense atmosphere and dialogue hint at upcoming conflict, but no immediate action is shown visually, leading to moderate excitement."
             }
           },
-          "dominant_emotion": "excitement",
-          "confidence": 0.85,
-          "tokens": 46582,
+          "dominant_emotion": "patience",
+          "confidence": 0.75,
+          "personaMeta": {
+            "scrollRisk": "medium"
+          },
+          "tokens": 9492,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -321,24 +356,29 @@
           "startTime": 35,
           "endTime": 40,
           "status": "success",
-          "summary": "A rapid-fire montage of intense combat sequences featuring soldiers in futuristic gear, explosions, and chaotic firefights across various indoor and outdoor environments, driven by aggressive music.",
+          "summary": "The video shifts from a tense dialogue to rapid action sequences, including weapon preparation and an explosive combat scene.",
+          "thought": "Alright, the talking is done, and now it's action time. That slide-and-shoot move was actually cool. Still hooked for now.",
+          "continuationThought": "If the next part keeps this energy, I'm definitely staying.",
           "emotions": {
             "patience": {
-              "score": 8,
-              "reasoning": "The constant visual stimulation and rapid scene changes prevent any drop in attention. There's no slow buildup or static shots to test patience."
+              "score": 7,
+              "reasoning": "The quick transition from dialogue to action maintains viewer interest, with no slow moments in the chunk."
             },
             "boredom": {
-              "score": 2,
-              "reasoning": "Boredom is virtually impossible with this density of action. Every second introduces a new explosive or high-stakes visual, leaving no room for disengagement."
+              "score": 3,
+              "reasoning": "Constant visual changes and high-energy action prevent any boredom from setting in."
             },
             "excitement": {
-              "score": 9,
-              "reasoning": "The combination of high-intensity action, futuristic combat, rapid editing, and aggressive music creates a peak excitement state. This is the core emotional payload of the trailer segment."
+              "score": 8,
+              "reasoning": "The explosion and combat sequences are visually thrilling, amplified by the building musical score."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.95,
-          "tokens": 46637,
+          "confidence": 0.85,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8366,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -355,24 +395,29 @@
           "startTime": 40,
           "endTime": 45,
           "status": "success",
-          "summary": "This chunk features rapid-fire combat sequences with soldiers in futuristic gear, intense gunfire, and explosions, all set to aggressive music.",
+          "summary": "The chunk maintains high-energy action with firing sequences and a dramatic hit, interspersed with a surreal red butterfly visual, ending on a calmer transition.",
+          "thought": "Action's still going strong, but that butterfly drop was unexpected. Keeping me engaged, but don't slow down now.",
+          "continuationThought": "If the next part doesn't ramp back up, I might lose interest.",
           "emotions": {
             "patience": {
-              "score": 9,
-              "reasoning": "The immediate action and quick cuts keep me engaged without any lull, so I'm patient and willing to continue watching."
+              "score": 7,
+              "reasoning": "The continuous action and visual surprises like the red butterflies sustain engagement, though the brief calm with soldiers walking at the end slightly tests patience."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "The high-octane visuals and sound prevent any disengagement; boredom is minimal."
+              "reasoning": "No dead air or slow moments; the fast-paced cuts and striking visuals, such as the soldier thrown back and the butterfly effect, prevent disengagement."
             },
             "excitement": {
-              "score": 10,
-              "reasoning": "The explosive action and energetic pacing create a thrilling experience that maximizes excitement."
+              "score": 8,
+              "reasoning": "Intense combat scenes, explosive effects, and dramatic impacts, like the soldier being hurled against a teal background, keep arousal high."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.95,
-          "tokens": 46778,
+          "confidence": 0.75,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 9041,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -389,24 +434,29 @@
           "startTime": 45,
           "endTime": 50,
           "status": "success",
-          "summary": "This chunk features intense, rapid-fire action with soldiers running through red-lit corridors, explosions, and first-person shooter perspectives, maintaining high energy and visual stimulation.",
+          "summary": "The chunk shows soldiers in a futuristic room with a dramatic shift to red lighting, escalating action and tension.",
+          "thought": "Alright, the red lights just kicked in and everyone's moving into combat mode. This is the energy I need to stay hooked after that butterfly slowdown.",
+          "continuationThought": "If this action keeps building, I'm definitely not scrolling away.",
           "emotions": {
             "patience": {
-              "score": 8,
-              "reasoning": "The relentless pace and constant visual changes (running, explosions, gunfire) prevent any lull, keeping the viewer engaged and willing to continue watching."
+              "score": 6,
+              "reasoning": "Soldiers aiming weapons and the overhead shots of preparation maintain a steady build-up, keeping me patient for the next beat without boredom."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "There is no static or slow moment; every second is filled with high-intensity action, explosions, or urgent movement, leaving no room for disengagement."
+              "reasoning": "Dynamic camera angles and the visual shift from green to red lighting prevent any static moments, eliminating boredom risks."
             },
             "excitement": {
-              "score": 9,
-              "reasoning": "The combination of chaotic combat, dramatic red lighting, explosive effects, and fast cuts creates a highly stimulating and adrenaline-pumping experience."
+              "score": 7,
+              "reasoning": "The transition to red-lit combat stances and active movement heightens the excitement, matching the building anticipation in the scene."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.95,
-          "tokens": 46428,
+          "confidence": 0.8,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 9081,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -423,24 +473,29 @@
           "startTime": 50,
           "endTime": 55,
           "status": "success",
-          "summary": "This 5-second chunk shows soldiers rapidly running through a red-lit corridor, maintaining the high-energy, fast-paced action established in the previous segment.",
+          "summary": "The chunk features a rapid action sequence with soldiers in a red-lit corridor, floating debris, and intense close-ups, sustaining high energy without lulls.",
+          "thought": "Debris is floating, red lights are flashing, and everyone's in full combat mode – this is the chaos I live for. No way I'm looking away now.",
+          "continuationThought": "If this leads to a massive showdown or plot twist, I'm hooked for the rest.",
           "emotions": {
             "patience": {
-              "score": 8,
-              "reasoning": "The rapid movement and clear action maintain viewer engagement. There is no slow buildup or static shot that would trigger impatience for this persona."
+              "score": 3,
+              "reasoning": "The immediate action and fast pacing eliminate any need for patience; the viewer is captivated without waiting."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "The continuous motion, dramatic lighting, and clear sense of urgency provide strong visual stimulation, leaving little room for disengagement or boredom."
+              "reasoning": "Continuous movement, visual effects like floating debris, and tense atmosphere keep disengagement at bay."
             },
             "excitement": {
-              "score": 7,
-              "reasoning": "The fast-paced action and tense atmosphere are engaging, but the lack of a new narrative beat or major visual spectacle within this specific 5-second window keeps excitement from peaking."
+              "score": 8,
+              "reasoning": "High-stakes combat visuals, red alert lighting, and dynamic debris create an exhilarating, immersive experience."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.85,
-          "tokens": 46487,
+          "confidence": 0.8,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 9482,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -457,24 +512,29 @@
           "startTime": 55,
           "endTime": 60,
           "status": "success",
-          "summary": "A high-energy action shot of soldiers sprinting through a red-lit corridor, maintaining the fast-paced intensity established in the previous segment.",
+          "summary": "A rapid sequence of action scenes transitioning from a red-lit corridor to a desert environment, featuring soldiers running, falling, and a location title card.",
+          "thought": "Okay, this is non-stop chaos – soldiers running, falling through debris, skydiving into a desert, and a title drop. No time to breathe, just pure adrenaline. I'm not looking away.",
+          "continuationThought": "If the next beat maintains this pace, I'm hooked for the rest.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "The continuous, fast-paced motion and clear action provide enough stimulus to maintain viewer patience for this short duration. There's no static or slow moment that would trigger abandonment."
+              "score": 9,
+              "reasoning": "Continuous action with no pauses, such as soldiers running in the corridor at 0s, falling through red debris at 1s, and transitioning to desert at 3s, keeping attention fully engaged without lulls."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "The intense visual of soldiers running urgently through a dramatic red-lit environment is inherently engaging and leaves little room for boredom to set in within 5 seconds."
+              "reasoning": "Visuals are highly dynamic with rapid cuts between scenes, high-energy combat and falls, and no static shots or slow moments observed in the chunk."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "The rapid movement, dramatic lighting, and context of a high-stakes military operation create a strong sense of urgency and excitement, pulling the viewer into the action."
+              "score": 10,
+              "reasoning": "Intense action sequences like falling through the sky at 2s, dramatic landing in desert at 3s, and the reveal of the 'NICARAGUA' title card at 4s create a thrilling spectacle."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.85,
-          "tokens": 46599,
+          "confidence": 0.95,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 9146,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -491,24 +551,29 @@
           "startTime": 60,
           "endTime": 65,
           "status": "success",
-          "summary": "A high-energy action shot of soldiers sprinting through a red-lit corridor, maintaining the fast-paced intensity established in the previous segment.",
+          "summary": "A high-octane action sequence with soldiers running through a desert, explosions, and a reveal of a floating island, accompanied by urgent dialogue.",
+          "thought": "Okay, still non-stop action with floating islands and characters freaking out. This is actually insane – I'm not scrolling away now.",
+          "continuationThought": "If the next part keeps this energy, I'm locked in for the rest.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "The rapid movement and urgent visual of soldiers running through a confined, dramatically lit space sustains attention. The established pattern of quick cuts and high stakes keeps the viewer engaged, preventing a drop in patience."
+              "score": 8,
+              "reasoning": "The continuous action and dialogue maintain engagement, with no slow moments that test patience. Visual evidence includes soldiers running and reacting without pause."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "The scene is visually dynamic with strong color contrast (red lighting) and clear forward momentum. There is no static imagery or slow buildup, which are primary triggers for boredom in this persona."
+              "reasoning": "Boredom is minimal due to rapid visual changes, explosions, and character interactions. Every second has something new, like the floating island reveal."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "The combination of urgent action, dramatic lighting, and the continuation of a high-intensity sequence creates a strong sense of adrenaline and anticipation. The visual punch and clear stakes align with what keeps this persona watching."
+              "score": 9,
+              "reasoning": "High excitement from adrenaline-pumping scenes: explosions, shocked facial expressions, and the surreal floating island. Dialogue like 'This isn't real' adds to the thrill."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.85,
-          "tokens": 46487,
+          "confidence": 0.9,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8416,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -525,24 +590,29 @@
           "startTime": 65,
           "endTime": 70,
           "status": "success",
-          "summary": "A fast-paced action shot of soldiers sprinting through a red-lit corridor, maintaining the intense, high-energy momentum.",
+          "summary": "A high-intensity action sequence with soldiers, explosions, text overlays, and first-person combat, maintaining rapid pacing throughout the 5-second chunk.",
+          "thought": "Whoa, still non-stop action with that 'LOS ANGELES' text and first-person shots. I'm locked in, not scrolling away.",
+          "continuationThought": "If the next part keeps this energy, I'm watching till the end.",
           "emotions": {
             "patience": {
-              "score": 8,
-              "reasoning": "The continuous, urgent action provides no lull or static moment that would test patience. The viewer is carried forward by the momentum."
+              "score": 9,
+              "reasoning": "The chunk from 0s to 4s shows continuous action—soldiers running, explosions, text reveal, and first-person combat—leaving no room for impatience; viewer is fully engaged."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "The rapid movement, chaotic environment, and intense music leave no room for disengagement or boredom to set in within this short clip."
+              "reasoning": "Every second is filled with dynamic visuals: floating islands at 0s, 'LOS ANGELES' text at 1s, crashed aircraft at 2s, and immersive gunplay at 3s-4s, minimizing boredom."
             },
             "excitement": {
               "score": 9,
-              "reasoning": "High-octane action, dramatic red lighting, and aggressive music create a strong sense of adrenaline and engagement, hitting the excitement threshold."
+              "reasoning": "High-energy scenes like explosions at 0s, dramatic text reveal at 1s, and first-person shooter perspectives at 3s-4s create intense arousal and excitement."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.9,
-          "tokens": 46605,
+          "confidence": 0.95,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8934,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -559,24 +629,29 @@
           "startTime": 70,
           "endTime": 75,
           "status": "success",
-          "summary": "A fast-paced action sequence showing soldiers sprinting through a red-lit corridor, accompanied by intense heavy metal music with repeated vocal chants.",
+          "summary": "This chunk maintains high-intensity action with soldiers in combat, transitioning to a jungle setting with 'ANGOLA' text, keeping the pacing rapid and engaging.",
+          "thought": "Still non-stop action with that jungle switch-up. The explosions and quick cuts are holding my attention—I'm not scrolling away.",
+          "continuationThought": "If the next part keeps this energy and location variety, I'm locked in till the end.",
           "emotions": {
             "patience": {
               "score": 8,
-              "reasoning": "The rapid cuts, constant motion, and high-energy music maintain a pace that holds attention. There are no slow moments or unclear visuals to trigger impatience."
+              "reasoning": "Continuous action with soldiers running, shooting, and explosions, as seen in the chunk, with no slow moments or static shots to test patience."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "The scene is visually dynamic with clear action and a strong, driving soundtrack. There is no dead air, static shots, or ambiguous content that would lead to disengagement."
+              "reasoning": "Dynamic visuals like fast-paced combat, sparks flying, and rapid scene transitions prevent any boredom, evident from the chunk's constant movement."
             },
             "excitement": {
               "score": 9,
-              "reasoning": "The combination of urgent action, dramatic red lighting, and aggressive metal music creates a high-intensity, visceral moment. This is the kind of explosive, pattern-interrupting content that aligns with the persona's preference for immediate visual punch and high stakes."
+              "reasoning": "Thrilling combat sequences, explosive effects, and the dramatic reveal of 'ANGOLA' text in a new jungle environment, all visible in the chunk, drive high excitement."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.9,
-          "tokens": 46531,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8905,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -593,24 +668,29 @@
           "startTime": 75,
           "endTime": 80,
           "status": "success",
-          "summary": "A high-intensity action sequence showing soldiers sprinting through a red-lit corridor, accompanied by aggressive heavy metal music with vocal chants.",
+          "summary": "The video continues high-intensity jungle combat with shooting and explosions, introduces a futuristic vehicle, and abruptly shifts to a night cityscape labeled 'TOKYO'.",
+          "thought": "Still in the jungle chaos, but that vehicle drop and the Tokyo switch-up? Yeah, I'm not going anywhere—this is hitting all the right notes.",
+          "continuationThought": "Now I'm curious to see what happens in Tokyo; hope it keeps this pace.",
           "emotions": {
             "patience": {
-              "score": 8,
-              "reasoning": "The chunk is pure, non-stop action from the first frame. There's no slow intro or exposition to test my patience. As a viewer who abandons slow content, this immediate visual and auditory punch keeps me locked in."
+              "score": 9,
+              "reasoning": "Non-stop action with quick cuts and no slow moments keeps my patience high as I'm fully engaged, evidenced by rapid transitions from jungle combat to vehicle introduction."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "Boredom is virtually impossible here. The rapid movement, intense red lighting, and pounding music create a sensory overload that actively fights disengagement. There's no dead air or static shot to trigger a scroll."
+              "reasoning": "Constant visual stimuli like explosions, first-person shooting, and dynamic scene changes prevent any boredom, with no static shots or dead air visible."
             },
             "excitement": {
-              "score": 9,
-              "reasoning": "This is peak excitement fuel. The combination of urgent movement, combat-ready visuals, and the aggressive, chant-heavy metal track creates a visceral, high-energy hit. It's the kind of clip that makes me want to see what happens next."
+              "score": 10,
+              "reasoning": "Explosions, intense first-person combat, a futuristic vehicle appearing, and a dramatic shift to a night cityscape with 'TOKYO' text spike excitement to the maximum."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.95,
-          "tokens": 46494,
+          "confidence": 0.9,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8019,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -627,24 +707,29 @@
           "startTime": 80,
           "endTime": 85,
           "status": "success",
-          "summary": "A high-intensity action sequence in a neon-lit urban environment, accompanied by aggressive heavy metal music with vocal chants.",
+          "summary": "The chunk shows intense action in a futuristic city with a spaceship crash and pink effects, then abruptly cuts to a snowy Alaskan landscape with aurora borealis.",
+          "thought": "Whoa, that crash was insane! And now Alaska? This trailer keeps switching it up, but I'm not bored yet—it's keeping me glued.",
+          "continuationThought": "What's in Alaska? This better not slow down; I need to see how this connects.",
           "emotions": {
             "patience": {
               "score": 8,
-              "reasoning": "The fast-paced visuals and music maintain engagement, keeping the viewer patient."
+              "reasoning": "The rapid visual changes from cityscape to action crash to new location maintain high engagement; no static shots or slow builds to test my patience."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "The dynamic action and intense soundtrack minimize boredom."
+              "reasoning": "Constant new visuals—neon city, character jump, spaceship flight, explosion, snowy shift—prevent any boredom from setting in; every second is packed."
             },
             "excitement": {
               "score": 9,
-              "reasoning": "The combination of combat, futuristic setting, and heavy metal music creates high excitement."
+              "reasoning": "High-energy elements like the spaceship crash, vibrant pink effects, and unexpected location cut, paired with aggressive thrash-metal music, spike excitement levels."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.9,
-          "tokens": 46797,
+          "confidence": 0.85,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 9078,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -661,24 +746,29 @@
           "startTime": 85,
           "endTime": 90,
           "status": "success",
-          "summary": "A fast-paced action sequence in Alaska with quick cuts of combat, explosions, and a mech suit, accompanied by heavy metal music.",
+          "summary": "The chunk displays high-octane action in an Alaskan setting, featuring soldiers, explosions, and a mech robot, sustaining intense visual engagement.",
+          "thought": "Alaska's not just pretty anymore—it's full-on combat! This is exactly the kind of chaos that keeps me glued.",
+          "continuationThought": "If they keep this pace, I'm definitely watching to the end.",
           "emotions": {
             "patience": {
-              "score": 6,
-              "reasoning": "The rapid cuts and high energy keep me engaged, but I'm still impatient by nature, so patience is moderate."
+              "score": 7,
+              "reasoning": "The rapid cuts and constant action prevent any feeling of impatience; I'm willing to keep watching."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "No slow moments or boring visuals; constant action and visual variety prevent boredom."
+              "reasoning": "With explosions, fighting, and dynamic camera work, there's no moment for boredom to set in."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "Intense action, impressive visuals like the mech suit, and the heavy metal soundtrack create high excitement."
+              "score": 9,
+              "reasoning": "Intense combat sequences, dramatic visuals like the aurora and mech, and high stakes drive excitement levels up."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.85,
-          "tokens": 47239,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8777,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -695,24 +785,29 @@
           "startTime": 90,
           "endTime": 95,
           "status": "success",
-          "summary": "A high-intensity action sequence featuring soldiers in a red-lit corridor, a rapid visual shock of an exploding red core, and a character moving quickly through a dark hallway.",
+          "summary": "The video shifts to a futuristic city with an aerial view labeled 'AVALON', then shows soldiers jumping from a helipad with wingsuits, flying through the sky, entering a building to shoot, and mechs with red eyes appearing.",
+          "thought": "Whoa, now we're in a city with wingsuits and mechs? This is non-stop action—no time to even think about scrolling.",
+          "continuationThought": "If they keep this pace with new visuals, I'm definitely watching to the end.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "The rapid cuts and constant action prevent boredom, but the red-lit corridor setting is a familiar action trope that could risk slight impatience if extended."
+              "score": 8,
+              "reasoning": "The chunk starts with an immediate aerial city view and cuts to soldiers jumping with wingsuits, providing a visual hook that maintains willingness to continue watching without delay."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "The high-energy visuals, dramatic lighting, and explosive centerpiece are the opposite of boring. There's no dead air or slow buildup."
+              "reasoning": "Rapid transitions from cityscape to wingsuit flight to indoor shooting and mech reveals leave no static moments, minimizing disengagement."
             },
             "excitement": {
               "score": 9,
-              "reasoning": "The explosive red core visual is a major pattern interrupt. Combined with the urgent music and fast-paced action, it creates a strong spike of excitement and engagement."
+              "reasoning": "High-energy elements like wingsuit flying, gunfire, and mechs with red eyes create intense visual stimulation, amplified by the aggressive thrash-metal music in the background."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.9,
-          "tokens": 46518,
+          "confidence": 0.85,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8667,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -729,24 +824,29 @@
           "startTime": 95,
           "endTime": 100,
           "status": "success",
-          "summary": "A high-quality establishing shot of a futuristic cityscape with smoke and flying vehicles, serving as a visual transition but lacking immediate action or narrative progression.",
+          "summary": "Intense action sequence with mechs and soldiers in combat, featuring a character shouting 'Pull it together, man,' maintaining fast pacing and high energy.",
+          "thought": "Whoa, still non-stop—mechs, explosions, and that line? I'm not even thinking about scrolling; this is pure adrenaline.",
+          "continuationThought": "If they keep this intensity, I'm definitely watching all the way through.",
           "emotions": {
             "patience": {
-              "score": 6,
-              "reasoning": "The high production value and clear context of a major game trailer maintain some patience, but the static nature of the establishing shot begins to test my limit."
+              "score": 9,
+              "reasoning": "Visual evidence shows continuous high-octane action with mechs and soldiers fighting, quick cuts, and no lulls, keeping the viewer engaged and patient."
             },
             "boredom": {
-              "score": 7,
-              "reasoning": "This is a slow, scenic establishing shot with no characters, dialogue, or immediate stakes. It feels like filler between action beats, and my attention is drifting."
+              "score": 1,
+              "reasoning": "No static shots or slow moments; every frame has dynamic movement, such as mechs advancing and characters in combat, preventing any disengagement."
             },
             "excitement": {
-              "score": 4,
-              "reasoning": "The visuals are impressive but passive. There's no conflict, movement, or hook within this specific chunk to generate excitement."
+              "score": 10,
+              "reasoning": "Chunk-local visuals include mechs with red eyes, explosions, and characters in high-stakes combat, creating a thrilling and immersive experience that peaks excitement."
             }
           },
-          "dominant_emotion": "boredom",
-          "confidence": 0.85,
-          "tokens": 46563,
+          "dominant_emotion": "excitement",
+          "confidence": 0.9,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8411,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -763,24 +863,29 @@
           "startTime": 100,
           "endTime": 105,
           "status": "success",
-          "summary": "Intense action sequence with urgent dialogue and heavy metal music, maintaining high viewer engagement.",
+          "summary": "A rapid montage of action-packed scenes with quick cuts, including a character running, a knife, shadowy figures, and high-tech elements, maintaining high energy and engagement.",
+          "thought": "Whoa, these cuts are insane—knife, shadows, tech stuff—I'm not bored yet, keep it coming.",
+          "continuationThought": "If they keep this pace, I'm definitely sticking around.",
           "emotions": {
             "patience": {
               "score": 8,
-              "reasoning": "Fast-paced action and urgent dialogue keep the viewer engaged, preventing abandonment."
+              "reasoning": "Fast-paced visuals with no slow moments, as seen in the quick transitions between running, knife close-up, and other intense scenes, keeping me engaged and patient to see more."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "Dynamic visuals and intense atmosphere minimize disengagement."
+              "reasoning": "Rapid cuts and varied scenes, such as the shift from action to shadowy figures and tech devices, prevent any boredom from setting in."
             },
             "excitement": {
               "score": 9,
-              "reasoning": "Heavy metal music, action-packed scenes, and dramatic lighting create high arousal and thrill."
+              "reasoning": "Action-oriented content with dramatic music and intense imagery, like the knife and high-tech device, heightens excitement and arousal."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.9,
-          "tokens": 47023,
+          "confidence": 0.8,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8876,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -797,24 +902,29 @@
           "startTime": 105,
           "endTime": 110,
           "status": "success",
-          "summary": "Fast-paced action sequence in a futuristic Los Angeles with heavy metal music, featuring soldiers in combat and crashing vehicles.",
+          "summary": "A rapid montage of action and narrative shots, including a futuristic tunnel, tombstone, and armed characters, maintaining high energy and engagement.",
+          "thought": "Still nailing the pace—tunnel, tombstone, soldiers—I'm not bored, keep it coming.",
+          "continuationThought": "If this builds to something epic, I'm sticking around.",
           "emotions": {
             "patience": {
               "score": 8,
-              "reasoning": "The chunk delivers immediate action with no slow buildup, matching the persona's preference for instant engagement."
+              "reasoning": "Fast-paced cuts and engaging visuals, such as the futuristic tunnel and armed characters, maintain high willingness to continue watching."
             },
             "boredom": {
-              "score": 1,
-              "reasoning": "Constant visual changes, intense music, and high-stakes action eliminate any chance of boredom."
+              "score": 2,
+              "reasoning": "Quick scene changes from tunnel to tombstone to action shots prevent any static moments, keeping boredom low."
             },
             "excitement": {
               "score": 9,
-              "reasoning": "The combination of heavy metal music, rapid cuts, and futuristic combat creates a high-energy, dopamine-inducing experience."
+              "reasoning": "Dramatic visuals like the tombstone memorial and close-up face in blue lighting heighten emotional arousal and excitement."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.95,
-          "tokens": 46822,
+          "confidence": 0.9,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8955,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -831,24 +941,29 @@
           "startTime": 110,
           "endTime": 115,
           "status": "success",
-          "summary": "This chunk features intense combat action with rapid cuts, heavy metal music, and chaotic visuals, maintaining high energy.",
+          "summary": "An intense action sequence featuring soldiers in combat, explosions, a large mech, and a character declaring 'No more games. This ends now.'",
+          "thought": "Okay, the pace is insane—explosions, a mech, and that line just raised the stakes. I'm not going anywhere.",
+          "continuationThought": "If this builds to a massive climax, I'm all in.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "The fast-paced action and immediate visual punch align with the persona's preference for quick hooks, holding attention despite impatience."
+              "score": 9,
+              "reasoning": "The chunk maintains high visual energy with constant movement and action, keeping my attention firmly held."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "No slow moments or static shots; constant movement and combat prevent disengagement."
+              "reasoning": "Every frame is filled with dynamic elements like sparks, debris, and character actions, leaving no room for boredom."
             },
             "excitement": {
-              "score": 9,
-              "reasoning": "Heavy metal music, explosions, and rapid combat scenes create a thrilling experience that matches the persona's excitement threshold."
+              "score": 10,
+              "reasoning": "The appearance of the mech, explosive effects, and the character's decisive dialogue create a peak moment of excitement."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.85,
-          "tokens": 46518,
+          "confidence": 0.9,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8551,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -865,24 +980,29 @@
           "startTime": 115,
           "endTime": 120,
           "status": "success",
-          "summary": "A soldier engages in fast-paced combat in a futuristic setting, with rapid cuts and intense action.",
+          "summary": "The trailer's final moments feature rapid action cuts with explosions and a giant hand, culminating in a pre-order call-to-action screen.",
+          "thought": "Whoa, that was non-stop—explosions, a massive hand, and now it's straight to the pre-order. I'm hyped.",
+          "continuationThought": "I'm definitely checking this out as soon as the video ends.",
           "emotions": {
             "patience": {
-              "score": 6,
-              "reasoning": "Continuous action maintains attention, but the persona's inherent impatience keeps them on the verge of scrolling if pacing dips."
+              "score": 7,
+              "reasoning": "The continuous high-energy visuals from the action shots to the end card keep me engaged, so I'm patient enough to watch through the conclusion."
             },
             "boredom": {
-              "score": 2,
-              "reasoning": "High-energy visuals, constant movement, and combat minimize boredom; no lulls detected."
+              "score": 1,
+              "reasoning": "No static or slow moments; every second is filled with dynamic action, explosions, or the end card, eliminating any chance of boredom."
             },
             "excitement": {
-              "score": 8,
-              "reasoning": "Intense combat, quick cuts, and high stakes create strong excitement, aligning with the persona's preference for immediate visual punch."
+              "score": 9,
+              "reasoning": "Intense action sequences with explosions, dramatic character expressions, and a climactic pre-order prompt create peak excitement."
             }
           },
           "dominant_emotion": "excitement",
-          "confidence": 0.8,
-          "tokens": 47029,
+          "confidence": 0.9,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8374,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -899,24 +1019,29 @@
           "startTime": 120,
           "endTime": 125,
           "status": "success",
-          "summary": "The video chunk shows a scene with residual tension and focused dialogue, maintaining viewer engagement through visual effects and narrative progression.",
+          "summary": "The video chunk displays static promotional screens for pre-order incentives, including character packs and edition details.",
+          "thought": "Alright, the action's over, now it's just throwing offers at me. Kinda boring, but I might check the pre-order if it's worth it.",
+          "continuationThought": "Still, I'm curious about what's included.",
           "emotions": {
             "patience": {
-              "score": 7,
-              "reasoning": "The viewer remains patient due to the ongoing narrative and visual interest from previous action sequences, expecting further developments."
+              "score": 3,
+              "reasoning": "Static shots with text overlays after high-action sequences test my patience; no visual movement to hold attention."
             },
             "boredom": {
-              "score": 3,
-              "reasoning": "Boredom is low as the scene retains tension and avoids static shots, keeping the viewer's attention with dynamic elements."
+              "score": 7,
+              "reasoning": "Information-heavy screens with no dynamic elements or pattern interrupts lead to disengagement."
             },
             "excitement": {
-              "score": 6,
-              "reasoning": "Excitement is moderate, driven by the resolved mood and residual intensity from earlier high-energy segments, but not at peak levels."
+              "score": 5,
+              "reasoning": "Pre-order incentives are shown, but the static presentation dampens the excitement from earlier action."
             }
           },
-          "dominant_emotion": "patience",
-          "confidence": 0.7,
-          "tokens": 48558,
+          "dominant_emotion": "boredom",
+          "confidence": 0.8,
+          "personaMeta": {
+            "scrollRisk": "medium"
+          },
+          "tokens": 8776,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -933,24 +1058,29 @@
           "startTime": 125,
           "endTime": 130,
           "status": "success",
-          "summary": "A rapid-fire montage of global action set-pieces (Nicaragua, Los Angeles, Angola, Tokyo, Alaska, Avalon) synchronized to aggressive metal music, featuring futuristic combat, explosions, and high-tech weaponry with no narrative downtime.",
+          "summary": "The video chunk displays static promotional screens for pre-order incentives with fading background music, continuing the outro sequence.",
+          "thought": "Ugh, still just throwing deals at me. I'm losing patience; this is dragging on.",
+          "continuationThought": "If it doesn't wrap up soon, I'm scrolling away.",
           "emotions": {
             "patience": {
-              "score": 8,
-              "reasoning": "The relentless pace and constant visual stimulation (location jumps, explosions, combat) prevent any patience from dropping. There's no slow moment to trigger abandonment."
+              "score": 3,
+              "reasoning": "Visual evidence from the chunk shows static screens with no dynamic content or new hooks, leading to low patience as the viewer's attention wanes quickly."
             },
             "boredom": {
-              "score": 2,
-              "reasoning": "Boredom is virtually non-existent. Every second is packed with new, high-intensity action beats, visual effects, or location changes, leaving no room for disengagement."
+              "score": 8,
+              "reasoning": "The lack of action, pattern interrupts, or engaging visuals in the promotional screens increases boredom, consistent with the persona's high threshold for scrolling."
             },
             "excitement": {
-              "score": 9,
-              "reasoning": "Peak excitement. The combination of fast cuts, heavy music, global scale action, and futuristic combat creates a sensory overload designed to thrill. This is the 'hook' that keeps me watching."
+              "score": 2,
+              "reasoning": "No exciting visuals, music peaks, or narrative progression are present in this chunk; the fading score and static imagery do not generate excitement."
             }
           },
-          "dominant_emotion": "excitement",
-          "confidence": 0.9,
-          "tokens": 46589,
+          "dominant_emotion": "boredom",
+          "confidence": 0.7,
+          "personaMeta": {
+            "scrollRisk": "high"
+          },
+          "tokens": 8786,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -967,24 +1097,29 @@
           "startTime": 130,
           "endTime": 135,
           "status": "success",
-          "summary": "Soldiers leap from a skyscraper in Avalon, engage in rapid combat with futuristic weapons and robots, featuring quick scene cuts and high-energy action.",
+          "summary": "A rapid action sequence featuring armored characters, monstrous figures, and intense combat with glowing visual effects.",
+          "thought": "Finally, some action! This is grabbing my attention with all the fast cuts and cool visuals.",
+          "continuationThought": "If the next part maintains this energy, I'm definitely sticking around.",
           "emotions": {
             "patience": {
               "score": 8,
-              "reasoning": "The relentless pace and lack of downtime keep the viewer fully engaged, sustaining patience as there are no slow or boring segments to test tolerance."
+              "reasoning": "The quick pacing and engaging visuals, such as the character with a glowing sword and chaotic combat scenes, keep me willing to continue watching."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "Constant visual stimulation through fast cuts, dramatic stunts, and intense combat minimizes any opportunity for boredom to arise."
+              "reasoning": "Dynamic scenes with constant movement, like the close-up of a helmeted character with glowing eyes, prevent any boredom from setting in."
             },
             "excitement": {
               "score": 9,
-              "reasoning": "The thrilling sequence of building jumps, aerial maneuvers, and close-quarters combat generates a high level of adrenaline and excitement."
+              "reasoning": "Intense combat, glowing effects, and fast edits, as seen in the monstrous figure and action-packed shots, create high excitement and engagement."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.9,
-          "tokens": 47054,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8849,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -1001,24 +1136,29 @@
           "startTime": 135,
           "endTime": 140,
           "status": "success",
-          "summary": "Soldiers leap from a skyscraper in Avalon, engaging in rapid, high-intensity combat with futuristic weapons, featuring quick cuts and explosive action that immediately grabs attention.",
+          "summary": "The video chunk shows intense action with explosions and combat, transitioning to the Xbox logo as the trailer concludes.",
+          "thought": "Okay, that was a solid finish—non-stop action kept me hooked, and even the logo didn't ruin it. I'm still feeling the adrenaline from all those visuals.",
+          "continuationThought": "I might actually search for this game later; it left a strong impression.",
           "emotions": {
             "patience": {
               "score": 8,
-              "reasoning": "The immediate high-stakes action (jumping from a building) and rapid cuts prevent any patience from dropping. There's no slow buildup; it's all forward momentum."
+              "reasoning": "The chunk maintains high-energy visuals with fast cuts and no slow moments, as seen in the explosions and combat scenes, keeping me patient and engaged until the end."
             },
             "boredom": {
               "score": 2,
-              "reasoning": "Constant motion, explosions, and combat eliminate any chance of boredom. The visual spectacle and pacing are perfectly aligned with short-form, high-energy content."
+              "reasoning": "Dynamic action sequences, such as the overhead shots of characters in combat and glowing effects, prevent any boredom from setting in."
             },
             "excitement": {
-              "score": 9,
-              "reasoning": "The sheer audacity of the skyscraper jump, combined with the fast-paced combat and explosive visuals, creates a peak excitement moment. This is the kind of 'never seen before' stunt that hooks viewers."
+              "score": 8,
+              "reasoning": "Climactic visuals like explosions and the transition to the Xbox logo sustain high excitement, building on the previous action-packed chunk."
             }
           },
           "dominant_emotion": "excitement",
           "confidence": 0.9,
-          "tokens": 46499,
+          "personaMeta": {
+            "scrollRisk": "low"
+          },
+          "tokens": 8532,
           "persona": {
             "soulPath": "../cast/impatient-teenager/SOUL.md",
             "goalPath": "../goals/video-ad-evaluation.md",
@@ -1030,7 +1170,7 @@
           }
         }
       ],
-      "totalTokens": 1308654,
+      "totalTokens": 247332,
       "statusSummary": {
         "total": 28,
         "successful": 28,
@@ -1041,7 +1181,7 @@
         "soulPath": "../cast/impatient-teenager/SOUL.md",
         "goalPath": "../goals/video-ad-evaluation.md",
         "config": {
-          "chunkDuration": 8,
+          "chunkDuration": 5,
           "numChunks": 29
         }
       },
@@ -1049,78 +1189,78 @@
     },
     "summary": {
       "metadata": {
-        "generatedAt": "2026-04-29T22:29:31.151Z",
+        "generatedAt": "2026-05-15T00:11:24.691Z",
         "pipelineVersion": "1.0",
         "videoDuration": 140.017,
         "chunksAnalyzed": 28,
         "failedChunks": 0,
         "totalSeconds": 140,
-        "totalTokens": 1308654
+        "totalTokens": 247332
       },
       "keyMetrics": {
         "averages": {
-          "patience": 0.7499999999999987,
-          "boredom": 0.24999999999999994,
-          "excitement": 0.8250000000000012
+          "patience": 0.6928571428571423,
+          "boredom": 0.26428571428571423,
+          "excitement": 0.792857142857144
         },
         "peakMoments": {
           "patience": {
             "highest": {
-              "timestamp": 40,
+              "timestamp": 55,
               "score": 0.9
             },
             "lowest": {
-              "timestamp": 85,
-              "score": 0.6
+              "timestamp": 10,
+              "score": 0.3
             }
           },
           "boredom": {
             "highest": {
-              "timestamp": 105,
-              "score": 1
+              "timestamp": 125,
+              "score": 0.8
             },
             "lowest": {
-              "timestamp": 0,
-              "score": 0.2
+              "timestamp": 95,
+              "score": 0.1
             }
           },
           "excitement": {
             "highest": {
-              "timestamp": 40,
+              "timestamp": 55,
               "score": 1
             },
             "lowest": {
-              "timestamp": 95,
-              "score": 0.4
+              "timestamp": 125,
+              "score": 0.2
             }
           }
         },
         "trends": {
           "patience": {
-            "direction": "stable",
-            "change": -0.028571428571428248,
-            "firstHalfAverage": 0.7642857142857139,
-            "secondHalfAverage": 0.7357142857142857
+            "direction": "increasing",
+            "change": 0.08571428571428563,
+            "firstHalfAverage": 0.6499999999999995,
+            "secondHalfAverage": 0.7357142857142851
           },
           "boredom": {
-            "direction": "increasing",
-            "change": 0.10000000000000009,
-            "firstHalfAverage": 0.19999999999999973,
-            "secondHalfAverage": 0.2999999999999998
+            "direction": "stable",
+            "change": 0,
+            "firstHalfAverage": 0.2642857142857141,
+            "secondHalfAverage": 0.2642857142857141
           },
           "excitement": {
-            "direction": "stable",
-            "change": 0.007142857142856673,
-            "firstHalfAverage": 0.8214285714285711,
-            "secondHalfAverage": 0.8285714285714277
+            "direction": "increasing",
+            "change": 0.0857142857142853,
+            "firstHalfAverage": 0.7499999999999999,
+            "secondHalfAverage": 0.8357142857142852
           }
         },
-        "frictionIndex": 77.19940476190476
+        "frictionIndex": 100
       },
       "recommendation": {
-        "text": "To improve viewer retention, immediately eliminate the static establishing shot at 95-100 seconds and replace it with high-energy action to counter the boredom spike. Maintain the fast-paced, excitement-driven editing from the successful chunks to keep the impatient-teenager audience engaged throughout.",
-        "reasoning": "The data shows boredom increasing in the second half, with a peak at chunk 19 (95-100s) where boredom scores 1.0 and excitement drops to 0.4, contrasting with surrounding chunks that have high excitement (9-10) and low boredom (1-2). The high friction index of 77.2 indicates significant viewer drop-off risk, and the impatient persona requires constant stimulation. By addressing this lull, the video can sustain the adrenaline rush that hooks viewers, as seen in chunks with dominant excitement emotions.",
-        "confidence": 0.85
+        "text": "The video successfully builds and maintains high excitement through rapid action sequences, but suffers from pacing issues during static title cards and extended pre-order screens. To improve retention, condense the early title card and integrate the pre-order information more dynamically to prevent viewer drop-off before the final post-credits scene.",
+        "reasoning": "Patience hits its lowest point (0.3) at 10 seconds (Chunk 3) due to an extended, static title card. Conversely, excitement peaks at 55 seconds (1.0) during rapid transitions between red-lit corridors and desert environments. The pre-order screens at 120-130 seconds (Chunks 25 and 26) cause a massive spike in boredom (0.8) and a drop in excitement (0.2). The post-credits action scene at 130 seconds is highly effective but risks being unseen if viewers drop off during the static promo screens.",
+        "confidence": 0.9
       },
       "reportPaths": {
         "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",
@@ -1131,7 +1271,7 @@
         "summary": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json"
       },
       "path": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/summary.json",
-      "generatedAt": "2026-04-29T22:29:31.151Z"
+      "generatedAt": "2026-05-15T00:11:24.691Z"
     }
   }
 }

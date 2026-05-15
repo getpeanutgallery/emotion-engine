@@ -1,77 +1,77 @@
 {
   "metadata": {
-    "generatedAt": "2026-04-29T22:29:31.151Z",
+    "generatedAt": "2026-05-15T00:11:24.691Z",
     "pipelineVersion": "1.0",
     "videoDuration": 140.017,
     "chunksAnalyzed": 28,
     "failedChunks": 0,
     "totalSeconds": 140,
-    "totalTokens": 1308654
+    "totalTokens": 247332
   },
   "keyMetrics": {
     "averages": {
-      "patience": 0.7499999999999987,
-      "boredom": 0.24999999999999994,
-      "excitement": 0.8250000000000012
+      "patience": 0.6928571428571423,
+      "boredom": 0.26428571428571423,
+      "excitement": 0.792857142857144
     },
     "peakMoments": {
       "patience": {
         "highest": {
-          "timestamp": 40,
+          "timestamp": 55,
           "score": 0.9
         },
         "lowest": {
-          "timestamp": 85,
-          "score": 0.6
+          "timestamp": 10,
+          "score": 0.3
         }
       },
       "boredom": {
         "highest": {
-          "timestamp": 105,
-          "score": 1
+          "timestamp": 125,
+          "score": 0.8
         },
         "lowest": {
-          "timestamp": 0,
-          "score": 0.2
+          "timestamp": 95,
+          "score": 0.1
         }
       },
       "excitement": {
         "highest": {
-          "timestamp": 40,
+          "timestamp": 55,
           "score": 1
         },
         "lowest": {
-          "timestamp": 95,
-          "score": 0.4
+          "timestamp": 125,
+          "score": 0.2
         }
       }
     },
     "trends": {
       "patience": {
-        "direction": "stable",
-        "change": -0.028571428571428248,
-        "firstHalfAverage": 0.7642857142857139,
-        "secondHalfAverage": 0.7357142857142857
+        "direction": "increasing",
+        "change": 0.08571428571428563,
+        "firstHalfAverage": 0.6499999999999995,
+        "secondHalfAverage": 0.7357142857142851
       },
       "boredom": {
-        "direction": "increasing",
-        "change": 0.10000000000000009,
-        "firstHalfAverage": 0.19999999999999973,
-        "secondHalfAverage": 0.2999999999999998
+        "direction": "stable",
+        "change": 0,
+        "firstHalfAverage": 0.2642857142857141,
+        "secondHalfAverage": 0.2642857142857141
       },
       "excitement": {
-        "direction": "stable",
-        "change": 0.007142857142856673,
-        "firstHalfAverage": 0.8214285714285711,
-        "secondHalfAverage": 0.8285714285714277
+        "direction": "increasing",
+        "change": 0.0857142857142853,
+        "firstHalfAverage": 0.7499999999999999,
+        "secondHalfAverage": 0.8357142857142852
       }
     },
-    "frictionIndex": 77.19940476190476
+    "frictionIndex": 100
   },
   "recommendation": {
-    "text": "To improve viewer retention, immediately eliminate the static establishing shot at 95-100 seconds and replace it with high-energy action to counter the boredom spike. Maintain the fast-paced, excitement-driven editing from the successful chunks to keep the impatient-teenager audience engaged throughout.",
-    "reasoning": "The data shows boredom increasing in the second half, with a peak at chunk 19 (95-100s) where boredom scores 1.0 and excitement drops to 0.4, contrasting with surrounding chunks that have high excitement (9-10) and low boredom (1-2). The high friction index of 77.2 indicates significant viewer drop-off risk, and the impatient persona requires constant stimulation. By addressing this lull, the video can sustain the adrenaline rush that hooks viewers, as seen in chunks with dominant excitement emotions.",
-    "confidence": 0.85
+    "text": "The video successfully builds and maintains high excitement through rapid action sequences, but suffers from pacing issues during static title cards and extended pre-order screens. To improve retention, condense the early title card and integrate the pre-order information more dynamically to prevent viewer drop-off before the final post-credits scene.",
+    "reasoning": "Patience hits its lowest point (0.3) at 10 seconds (Chunk 3) due to an extended, static title card. Conversely, excitement peaks at 55 seconds (1.0) during rapid transitions between red-lit corridors and desert environments. The pre-order screens at 120-130 seconds (Chunks 25 and 26) cause a massive spike in boredom (0.8) and a drop in excitement (0.2). The post-credits action scene at 130 seconds is highly effective but risks being unseen if viewers drop off during the static promo screens.",
+    "confidence": 0.9
   },
   "reportPaths": {
     "metrics": "/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json",

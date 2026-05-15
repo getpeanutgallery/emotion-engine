@@ -1,31 +1,27 @@
 {
-  "generatedAt": "2026-04-29T22:29:31.145Z",
+  "generatedAt": "2026-05-15T00:11:24.685Z",
   "pipelineVersion": "1.0",
-  "text": "To improve viewer retention, immediately eliminate the static establishing shot at 95-100 seconds and replace it with high-energy action to counter the boredom spike. Maintain the fast-paced, excitement-driven editing from the successful chunks to keep the impatient-teenager audience engaged throughout.",
-  "reasoning": "The data shows boredom increasing in the second half, with a peak at chunk 19 (95-100s) where boredom scores 1.0 and excitement drops to 0.4, contrasting with surrounding chunks that have high excitement (9-10) and low boredom (1-2). The high friction index of 77.2 indicates significant viewer drop-off risk, and the impatient persona requires constant stimulation. By addressing this lull, the video can sustain the adrenaline rush that hooks viewers, as seen in chunks with dominant excitement emotions.",
-  "confidence": 0.85,
+  "text": "The video successfully builds and maintains high excitement through rapid action sequences, but suffers from pacing issues during static title cards and extended pre-order screens. To improve retention, condense the early title card and integrate the pre-order information more dynamically to prevent viewer drop-off before the final post-credits scene.",
+  "reasoning": "Patience hits its lowest point (0.3) at 10 seconds (Chunk 3) due to an extended, static title card. Conversely, excitement peaks at 55 seconds (1.0) during rapid transitions between red-lit corridors and desert environments. The pre-order screens at 120-130 seconds (Chunks 25 and 26) cause a massive spike in boredom (0.8) and a drop in excitement (0.2). The post-credits action scene at 130 seconds is highly effective but risks being unseen if viewers drop off during the static promo screens.",
+  "confidence": 0.9,
   "keyFindings": [
-    "Boredom trend is increasing from first half average (0.2) to second half average (0.3).",
-    "Chunk 19 (95-100s) has dominant boredom emotion with a boredom score of 7 and excitement score of 4.",
-    "Peak excitement occurs at 40s (score 1.0) and is maintained in most action chunks, but dips at 95s (score 0.4).",
-    "Friction index is high at 77.2, suggesting retention issues despite overall high excitement.",
-    "The impatient-teenager persona shows low patience for static shots, as evidenced by boredom spikes in non-action segments."
+    "Early static title cards (Chunk 3) significantly drop patience and increase boredom.",
+    "Rapid environmental transitions and high-octane combat (Chunks 11-16) drive peak excitement.",
+    "Static pre-order screens (Chunks 25-26) cause the highest boredom levels in the entire video.",
+    "Post-promo action (Chunks 27-28) successfully re-engages viewers but risks low viewership due to preceding boredom."
   ],
   "suggestions": [
-    "Replace the static cityscape shot at 95-100s with a rapid combat sequence or a character-driven action beat to maintain momentum.",
-    "Add quick cuts or visual effects to any segment longer than 5 seconds without action, such as in chunk 19.",
-    "Ensure narrative progression is clear in fast-paced montages by using voiceovers or on-screen text to guide the viewer.",
-    "Use consistent audio cues like heavy metal music to match high-energy visuals and prevent disengagement.",
-    "Test the edited video with the target persona to validate improved retention after changes.",
-    "Shorten or re-edit chunks with lower excitement scores, like chunk 18 (90-95s), to include more pattern interrupts.",
-    "Incorporate more explosive visuals or stunts, similar to the exploding red core at 90-95s, to sustain excitement levels.",
-    "Review pacing in the middle sections (around 85-100s) to ensure no segment exceeds the persona's patience threshold."
+    "Shorten the 'Call of Duty: Black Ops 7' title card in Chunk 3 to under 2 seconds.",
+    "Overlay the 'RISING TENSIONS' text in Chunk 1 directly onto action footage rather than using a standalone card.",
+    "Animate the pre-order incentive screens in Chunks 25-26 to maintain visual momentum.",
+    "Condense the pre-order promo duration from 10 seconds to 5 seconds.",
+    "Move a snippet of the post-promo action (Chunk 27) into the pre-order screen as a background video to retain viewers."
   ],
   "failedChunks": 0,
   "ai": {
     "attempt": 1,
     "provider": "openrouter",
-    "model": "xiaomi/mimo-v2-omni",
+    "model": "google/gemini-3.1-pro-preview",
     "failover": null,
     "toolLoop": {
       "toolName": "validate_recommendation_json",
@@ -35,8 +31,8 @@
       "validatorCalls": 2
     },
     "usage": {
-      "input": 10956,
-      "output": 627
+      "input": 11331,
+      "output": 491
     }
   }
 }

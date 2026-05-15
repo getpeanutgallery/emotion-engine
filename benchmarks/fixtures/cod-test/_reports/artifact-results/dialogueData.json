@@ -45,34 +45,36 @@
     "runtimeArtifactKey": "dialogueV3SourceTruth"
   },
   "counts": {
-    "totalTruthFields": 330,
-    "scoreableFields": 315,
-    "skippedFields": 15,
-    "passedFields": 129,
-    "failedFields": 186,
+    "totalTruthFields": 314,
+    "scoreableFields": 300,
+    "skippedFields": 14,
+    "passedFields": 132,
+    "failedFields": 168,
     "erroredFields": 0,
     "ignoredDifferenceFields": 0
   },
   "accuracy": {
-    "passed": 129,
-    "failed": 186,
-    "rate": 0.4095238095238095
+    "passed": 132,
+    "failed": 168,
+    "rate": 0.44
   },
   "coverage": {
-    "scoreable": 315,
-    "skipped": 15,
-    "totalTruthFields": 330,
-    "rate": 0.9545454545454546
+    "scoreable": 300,
+    "skipped": 14,
+    "totalTruthFields": 314,
+    "rate": 0.9554140127388535
   },
   "mismatchClassificationCounts": {},
   "dialogueScoring": {
-    "dialogue_text_full_transcript_pct": 95,
-    "dialogue_text_windowed_pct": 95,
+    "dialogue_text_full_transcript_pct": 94.3,
+    "dialogue_text_windowed_pct": 94.3,
     "dialogue_boundary_pct": 0,
     "truth_segment_count": 20,
-    "output_segment_count": 19,
+    "output_segment_count": 18,
+    "comparison_unit_count": 17,
     "split_event_count": 1,
-    "merge_event_count": 2,
+    "merge_event_count": 3,
+    "mixed_resegmentation_count": 0,
     "missing_truth_window_count": 0,
     "extra_output_window_count": 0,
     "normalization_profile": "dialogue-text-v1",
@@ -86,7 +88,8 @@
           1
         ],
         "text_similarity_pct": 100,
-        "boundary_status": "split"
+        "boundary_status": "split",
+        "text_match": "exact_normalized"
       },
       {
         "truth_indexes": [
@@ -96,7 +99,8 @@
           2
         ],
         "text_similarity_pct": 100,
-        "boundary_status": "aligned"
+        "boundary_status": "boundary_exact",
+        "text_match": "exact_normalized"
       },
       {
         "truth_indexes": [
@@ -106,7 +110,8 @@
           3
         ],
         "text_similarity_pct": 100,
-        "boundary_status": "aligned"
+        "boundary_status": "boundary_exact",
+        "text_match": "exact_normalized"
       },
       {
         "truth_indexes": [
@@ -116,7 +121,8 @@
           4
         ],
         "text_similarity_pct": 100,
-        "boundary_status": "aligned"
+        "boundary_status": "boundary_exact",
+        "text_match": "exact_normalized"
       },
       {
         "truth_indexes": [
@@ -127,7 +133,8 @@
           5
         ],
         "text_similarity_pct": 100,
-        "boundary_status": "merge"
+        "boundary_status": "merge",
+        "text_match": "exact_normalized"
       },
       {
         "truth_indexes": [
@@ -137,7 +144,8 @@
           6
         ],
         "text_similarity_pct": 100,
-        "boundary_status": "aligned"
+        "boundary_status": "boundary_exact",
+        "text_match": "exact_normalized"
       },
       {
         "truth_indexes": [
@@ -146,8 +154,9 @@
         "output_indexes": [
           7
         ],
-        "text_similarity_pct": 90.9,
-        "boundary_status": "aligned"
+        "text_similarity_pct": 100,
+        "boundary_status": "boundary_exact",
+        "text_match": "exact_normalized"
       },
       {
         "truth_indexes": [
@@ -158,7 +167,8 @@
           8
         ],
         "text_similarity_pct": 69.2,
-        "boundary_status": "merge"
+        "boundary_status": "merge",
+        "text_match": "drift"
       },
       {
         "truth_indexes": [
@@ -168,7 +178,8 @@
           9
         ],
         "text_similarity_pct": 66.7,
-        "boundary_status": "aligned"
+        "boundary_status": "boundary_exact",
+        "text_match": "drift"
       },
       {
         "truth_indexes": [
@@ -178,7 +189,8 @@
           10
         ],
         "text_similarity_pct": 100,
-        "boundary_status": "aligned"
+        "boundary_status": "boundary_exact",
+        "text_match": "exact_normalized"
       },
       {
         "truth_indexes": [
@@ -188,7 +200,8 @@
           11
         ],
         "text_similarity_pct": 100,
-        "boundary_status": "aligned"
+        "boundary_status": "boundary_exact",
+        "text_match": "exact_normalized"
       },
       {
         "truth_indexes": [
@@ -198,7 +211,8 @@
           12
         ],
         "text_similarity_pct": 100,
-        "boundary_status": "aligned"
+        "boundary_status": "boundary_exact",
+        "text_match": "exact_normalized"
       },
       {
         "truth_indexes": [
@@ -208,57 +222,53 @@
           13
         ],
         "text_similarity_pct": 100,
-        "boundary_status": "aligned"
+        "boundary_status": "boundary_exact",
+        "text_match": "exact_normalized"
       },
       {
         "truth_indexes": [
-          15
+          15,
+          16
         ],
         "output_indexes": [
           14
         ],
-        "text_similarity_pct": 100,
-        "boundary_status": "aligned"
-      },
-      {
-        "truth_indexes": [
-          16
-        ],
-        "output_indexes": [
-          15
-        ],
-        "text_similarity_pct": 92.9,
-        "boundary_status": "aligned"
+        "text_similarity_pct": 85,
+        "boundary_status": "merge",
+        "text_match": "drift"
       },
       {
         "truth_indexes": [
           17
         ],
         "output_indexes": [
-          16
+          15
         ],
         "text_similarity_pct": 100,
-        "boundary_status": "aligned"
+        "boundary_status": "boundary_exact",
+        "text_match": "exact_normalized"
       },
       {
         "truth_indexes": [
           18
         ],
         "output_indexes": [
-          17
+          16
         ],
         "text_similarity_pct": 100,
-        "boundary_status": "aligned"
+        "boundary_status": "boundary_exact",
+        "text_match": "exact_normalized"
       },
       {
         "truth_indexes": [
           19
         ],
         "output_indexes": [
-          18
+          17
         ],
         "text_similarity_pct": 100,
-        "boundary_status": "aligned"
+        "boundary_status": "boundary_exact",
+        "text_match": "exact_normalized"
       }
     ]
   },
@@ -267,7 +277,7 @@
       "path": "summary",
       "rule": "fuzzy-string",
       "truthValue": "Human-reviewed spoken dialogue only for the cod-test trailer: tense trailer VO, antagonist taunts, squad chatter, filtered comms, and the closing promo read. Lyrics and chants remain in music-vocals-data.json.",
-      "outputValue": "A dramatic trailer featuring dialogue about fear, control, and conflict, with references to Raul Menendez and global unrest, interspersed with rock song lyrics and action-oriented lines from multiple speakers.",
+      "outputValue": "A dramatic trailer dialogue featuring themes of fear, control, terrorism, and personal conflict, with characters discussing global unrest, tactical operations, and philosophical ideas, interspersed with rock song lyrics about obedience and mastery, concluding with a promotional message.",
       "reason": "Normalized strings differed"
     },
     {
@@ -277,9 +287,9 @@
         "length": 20
       },
       "outputValue": {
-        "length": 19
+        "length": 18
       },
-      "reason": "Array length mismatch: truth=20 output=19"
+      "reason": "Array length mismatch: truth=20 output=18"
     },
     {
       "path": "dialogue_segments[truth=0,output=0].text",
@@ -287,6 +297,13 @@
       "truthValue": "They want you afraid. Fear makes you easier to control.",
       "outputValue": "They want you afraid.",
       "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[truth=0,output=0].traits.audibility",
+      "rule": "exact",
+      "truthValue": "clear",
+      "outputValue": "partially_masked",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=0,output=0].traits.gender_presentation",
@@ -313,7 +330,7 @@
       "path": "dialogue_segments[truth=0,output=0].traits.energy",
       "rule": "exact",
       "truthValue": "steady",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -327,7 +344,7 @@
       "path": "dialogue_segments[truth=0,output=0].traits.affect",
       "rule": "exact",
       "truthValue": "serious",
-      "outputValue": "fearful",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -343,6 +360,13 @@
       "truthValue": "It's time to wake up.",
       "outputValue": "Fear makes you easier to control.",
       "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[truth=1,output=1].traits.audibility",
+      "rule": "exact",
+      "truthValue": "clear",
+      "outputValue": "partially_masked",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=1,output=1].traits.gender_presentation",
@@ -369,7 +393,7 @@
       "path": "dialogue_segments[truth=1,output=1].traits.energy",
       "rule": "exact",
       "truthValue": "steady",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -383,7 +407,7 @@
       "path": "dialogue_segments[truth=1,output=1].traits.affect",
       "rule": "exact",
       "truthValue": "determined",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -399,6 +423,13 @@
       "truthValue": "Your streets, shall once again run red with your blood.",
       "outputValue": "It's time to wake up.",
       "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[truth=2,output=2].traits.audibility",
+      "rule": "exact",
+      "truthValue": "clear",
+      "outputValue": "partially_masked",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=2,output=2].traits.gender_presentation",
@@ -432,7 +463,7 @@
       "path": "dialogue_segments[truth=2,output=2].traits.energy",
       "rule": "exact",
       "truthValue": "intense",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -453,7 +484,7 @@
       "path": "dialogue_segments[truth=2,output=2].traits.affect",
       "rule": "exact",
       "truthValue": "angry",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -471,16 +502,9 @@
       "reason": "Normalized strings differed"
     },
     {
-      "path": "dialogue_segments[truth=3,output=3].traits.audibility",
+      "path": "dialogue_segments[truth=3,output=3].traits.age_impression",
       "rule": "exact",
-      "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=3,output=3].traits.pitch_band",
-      "rule": "exact",
-      "truthValue": "low",
+      "truthValue": "adult",
       "outputValue": "unknown",
       "reason": "Values differed"
     },
@@ -495,7 +519,7 @@
       "path": "dialogue_segments[truth=3,output=3].traits.pace",
       "rule": "exact",
       "truthValue": "measured",
-      "outputValue": "unknown",
+      "outputValue": "slow",
       "reason": "Values differed"
     },
     {
@@ -586,7 +610,7 @@
       "path": "dialogue_segments[truth=4,output=4].traits.interpersonal_stance",
       "rule": "exact",
       "truthValue": "confrontational",
-      "outputValue": "neutral",
+      "outputValue": "directive",
       "reason": "Values differed"
     },
     {
@@ -597,16 +621,16 @@
       "reason": "Normalized strings differed"
     },
     {
-      "path": "dialogue_segments[truth=5,output=5].traits.audibility",
-      "rule": "exact",
-      "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
-    },
-    {
       "path": "dialogue_segments[truth=5,output=5].traits.gender_presentation",
       "rule": "exact",
       "truthValue": "feminine",
+      "outputValue": "unknown",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[truth=5,output=5].traits.age_impression",
+      "rule": "exact",
+      "truthValue": "adult",
       "outputValue": "unknown",
       "reason": "Values differed"
     },
@@ -688,13 +712,6 @@
       "reason": "Values differed"
     },
     {
-      "path": "dialogue_segments[truth=6,output=6].traits.phonation",
-      "rule": "exact",
-      "truthValue": "strained",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
       "path": "dialogue_segments[truth=6,output=6].traits.pace",
       "rule": "exact",
       "truthValue": "measured",
@@ -716,24 +733,17 @@
       "reason": "Values differed"
     },
     {
-      "path": "dialogue_segments[truth=7,output=7].text",
-      "rule": "fuzzy-string",
-      "truthValue": "Stop looking backwards, David. What matters is what we do next.",
-      "outputValue": "Stop looking backwards, David. What matters is what you do next.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "dialogue_segments[truth=7,output=7].traits.audibility",
+      "path": "dialogue_segments[truth=7,output=7].traits.gender_presentation",
       "rule": "exact",
-      "truthValue": "clear",
-      "outputValue": "partially_masked",
+      "truthValue": "masculine",
+      "outputValue": "unknown",
       "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=7,output=7].traits.age_impression",
       "rule": "exact",
       "truthValue": "older_adult",
-      "outputValue": "adult",
+      "outputValue": "unknown",
       "reason": "Values differed"
     },
     {
@@ -761,21 +771,14 @@
       "path": "dialogue_segments[truth=7,output=7].traits.energy",
       "rule": "exact",
       "truthValue": "steady",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=7,output=7].traits.affect",
       "rule": "exact",
       "truthValue": "serious",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=7,output=7].traits.interpersonal_stance",
-      "rule": "exact",
-      "truthValue": "supportive",
-      "outputValue": "directive",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -824,21 +827,14 @@
       "path": "dialogue_segments[truth=8,output=8].traits.energy",
       "rule": "exact",
       "truthValue": "steady",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=8,output=8].traits.affect",
       "rule": "exact",
       "truthValue": "tense",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=8,output=8].traits.interpersonal_stance",
-      "rule": "exact",
-      "truthValue": "supportive",
-      "outputValue": "neutral",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -884,13 +880,6 @@
       "reason": "Values differed"
     },
     {
-      "path": "dialogue_segments[truth=9,output=9].traits.energy",
-      "rule": "exact",
-      "truthValue": "intense",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
       "path": "dialogue_segments[truth=9,output=9].traits.transmission_medium",
       "rule": "exact",
       "truthValue": "processed_or_synthetic",
@@ -908,7 +897,7 @@
       "path": "dialogue_segments[truth=9,output=9].traits.affect",
       "rule": "exact",
       "truthValue": "angry",
-      "outputValue": "unknown",
+      "outputValue": "tense",
       "reason": "Values differed"
     },
     {
@@ -972,13 +961,6 @@
       "rule": "exact",
       "truthValue": "steady",
       "outputValue": "intense",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=10,output=10].traits.transmission_medium",
-      "rule": "exact",
-      "truthValue": "radio",
-      "outputValue": "direct",
       "reason": "Values differed"
     },
     {
@@ -1048,7 +1030,7 @@
       "path": "dialogue_segments[truth=11,output=11].traits.pitch_band",
       "rule": "exact",
       "truthValue": "mid",
-      "outputValue": "unknown",
+      "outputValue": "high",
       "reason": "Values differed"
     },
     {
@@ -1122,20 +1104,6 @@
       "reason": "Normalized strings differed"
     },
     {
-      "path": "dialogue_segments[truth=12,output=12].traits.audibility",
-      "rule": "exact",
-      "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=12,output=12].traits.gender_presentation",
-      "rule": "exact",
-      "truthValue": "masculine",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
       "path": "dialogue_segments[truth=12,output=12].traits.age_impression",
       "rule": "exact",
       "truthValue": "adult",
@@ -1153,7 +1121,7 @@
       "path": "dialogue_segments[truth=12,output=12].traits.phonation",
       "rule": "exact",
       "truthValue": "clear",
-      "outputValue": "unknown",
+      "outputValue": "raspy",
       "reason": "Values differed"
     },
     {
@@ -1192,13 +1160,6 @@
       "reason": "Normalized strings differed"
     },
     {
-      "path": "dialogue_segments[truth=13,output=13].traits.audibility",
-      "rule": "exact",
-      "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
-    },
-    {
       "path": "dialogue_segments[truth=13,output=13].traits.age_impression",
       "rule": "exact",
       "truthValue": "adult",
@@ -1227,17 +1188,10 @@
       "reason": "Values differed"
     },
     {
-      "path": "dialogue_segments[truth=13,output=13].traits.energy",
-      "rule": "exact",
-      "truthValue": "intense",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
       "path": "dialogue_segments[truth=13,output=13].traits.affect",
       "rule": "exact",
       "truthValue": "angry",
-      "outputValue": "unknown",
+      "outputValue": "tense",
       "reason": "Values differed"
     },
     {
@@ -1251,21 +1205,21 @@
       "path": "dialogue_segments[truth=14,output=14].text",
       "rule": "fuzzy-string",
       "truthValue": "Pull it together, man!",
-      "outputValue": "So eager to leave, David.",
+      "outputValue": "So eager to leave, are we? Killing a man is a hell of a lot easier than killing an idea.",
       "reason": "Normalized strings differed"
-    },
-    {
-      "path": "dialogue_segments[truth=14,output=14].traits.audibility",
-      "rule": "exact",
-      "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=14,output=14].traits.gender_presentation",
       "rule": "exact",
       "truthValue": "feminine",
-      "outputValue": "unknown",
+      "outputValue": "masculine",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[truth=14,output=14].traits.age_impression",
+      "rule": "exact",
+      "truthValue": "adult",
+      "outputValue": "older_adult",
       "reason": "Values differed"
     },
     {
@@ -1286,14 +1240,14 @@
       "path": "dialogue_segments[truth=14,output=14].traits.pace",
       "rule": "exact",
       "truthValue": "fast",
-      "outputValue": "unknown",
+      "outputValue": "measured",
       "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=14,output=14].traits.energy",
       "rule": "exact",
       "truthValue": "intense",
-      "outputValue": "unknown",
+      "outputValue": "steady",
       "reason": "Values differed"
     },
     {
@@ -1314,14 +1268,21 @@
       "path": "dialogue_segments[truth=15,output=15].text",
       "rule": "fuzzy-string",
       "truthValue": "So eager to leave David.",
-      "outputValue": "Killing a man is a hell of a lot easier than killing an idea.",
+      "outputValue": "You were never cut out to be a Mason.",
       "reason": "Normalized strings differed"
     },
     {
-      "path": "dialogue_segments[truth=15,output=15].traits.audibility",
+      "path": "dialogue_segments[truth=15,output=15].traits.gender_presentation",
       "rule": "exact",
-      "truthValue": "clear",
-      "outputValue": "partially_masked",
+      "truthValue": "masculine",
+      "outputValue": "unknown",
+      "reason": "Values differed"
+    },
+    {
+      "path": "dialogue_segments[truth=15,output=15].traits.age_impression",
+      "rule": "exact",
+      "truthValue": "adult",
+      "outputValue": "older_adult",
       "reason": "Values differed"
     },
     {
@@ -1335,20 +1296,6 @@
       "path": "dialogue_segments[truth=15,output=15].traits.phonation",
       "rule": "exact",
       "truthValue": "raspy",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=15,output=15].traits.pace",
-      "rule": "exact",
-      "truthValue": "measured",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=15,output=15].traits.energy",
-      "rule": "exact",
-      "truthValue": "steady",
       "outputValue": "unknown",
       "reason": "Values differed"
     },
@@ -1370,15 +1317,8 @@
       "path": "dialogue_segments[truth=16,output=16].text",
       "rule": "fuzzy-string",
       "truthValue": "Killing a man is a hell of a lot easier than killing the idea.",
-      "outputValue": "You were never cut out to be a Mason.",
+      "outputValue": "No more games. This ends now.",
       "reason": "Normalized strings differed"
-    },
-    {
-      "path": "dialogue_segments[truth=16,output=16].traits.audibility",
-      "rule": "exact",
-      "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=16,output=16].traits.gender_presentation",
@@ -1391,7 +1331,7 @@
       "path": "dialogue_segments[truth=16,output=16].traits.age_impression",
       "rule": "exact",
       "truthValue": "older_adult",
-      "outputValue": "adult",
+      "outputValue": "unknown",
       "reason": "Values differed"
     },
     {
@@ -1416,25 +1356,25 @@
       "reason": "Values differed"
     },
     {
-      "path": "dialogue_segments[truth=16,output=16].traits.energy",
-      "rule": "exact",
-      "truthValue": "steady",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
       "path": "dialogue_segments[truth=16,output=16].traits.affect",
       "rule": "exact",
       "truthValue": "serious",
-      "outputValue": "unknown",
+      "outputValue": "determined",
       "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=17,output=17].text",
       "rule": "fuzzy-string",
       "truthValue": "You were never cut out to be a Mason.",
-      "outputValue": "No more games. This ends now.",
+      "outputValue": "Get the Reznov challenge pack when you pre-order now.",
       "reason": "Normalized strings differed"
+    },
+    {
+      "path": "dialogue_segments[truth=17,output=17].traits.audibility",
+      "rule": "exact",
+      "truthValue": "partially_masked",
+      "outputValue": "clear",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=17,output=17].traits.overlap",
@@ -1461,7 +1401,7 @@
       "path": "dialogue_segments[truth=17,output=17].traits.phonation",
       "rule": "exact",
       "truthValue": "mixed",
-      "outputValue": "unknown",
+      "outputValue": "clear",
       "reason": "Values differed"
     },
     {
@@ -1489,78 +1429,41 @@
       "path": "dialogue_segments[truth=17,output=17].traits.affect",
       "rule": "exact",
       "truthValue": "tense",
-      "outputValue": "determined",
+      "outputValue": "unknown",
       "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=17,output=17].traits.interpersonal_stance",
       "rule": "exact",
       "truthValue": "confrontational",
-      "outputValue": "neutral",
+      "outputValue": "performative",
       "reason": "Values differed"
     },
     {
-      "path": "dialogue_segments[truth=18,output=18].text",
-      "rule": "fuzzy-string",
-      "truthValue": "No more games! This ends now.",
-      "outputValue": "Get the Reznov Challenge Pack when you pre-order now.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.gender_presentation",
-      "rule": "exact",
-      "truthValue": "masculine",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.age_impression",
-      "rule": "exact",
-      "truthValue": "young_adult",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.pitch_band",
-      "rule": "exact",
-      "truthValue": "mid",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.phonation",
-      "rule": "exact",
-      "truthValue": "strained",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.pace",
-      "rule": "exact",
-      "truthValue": "fast",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.energy",
-      "rule": "exact",
-      "truthValue": "intense",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.affect",
-      "rule": "exact",
-      "truthValue": "angry",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.interpersonal_stance",
-      "rule": "exact",
-      "truthValue": "confrontational",
-      "outputValue": "directive",
-      "reason": "Values differed"
+      "path": "dialogue_segments[truth=18]",
+      "rule": "structural",
+      "truthValue": {
+        "index": 18,
+        "text": "No more games! This ends now.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "young_adult",
+          "pitch_band": "mid",
+          "phonation": "strained",
+          "pace": "fast",
+          "energy": "intense",
+          "transmission_medium": "direct",
+          "spatial_texture": "unknown",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "angry",
+          "interpersonal_stance": "confrontational",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      "reason": "Unmatched truth segment: no plausible time-aware output match"
     },
     {
       "path": "dialogue_segments[truth=19]",
@@ -1657,11 +1560,6 @@
     },
     {
       "path": "dialogue_segments[truth=17,output=17].traits.accent_family",
-      "truthValue": "unknown",
-      "reason": "Explicit truth sentinel"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.spatial_texture",
       "truthValue": "unknown",
       "reason": "Explicit truth sentinel"
     }
@@ -1869,20 +1767,34 @@
           "endDelta": null,
           "indexDelta": 0,
           "score": 1000
-        },
-        {
-          "truthIndex": 18,
-          "outputIndex": 18,
-          "overlapSeconds": null,
-          "overlapRatio": null,
-          "centerDelta": null,
-          "startDelta": null,
-          "endDelta": null,
-          "indexDelta": 0,
-          "score": 1000
         }
       ],
       "unmatchedTruth": [
+        {
+          "truthIndex": 18,
+          "reason": "no plausible time-aware output match",
+          "segment": {
+            "index": 18,
+            "text": "No more games! This ends now.",
+            "traits": {
+              "audibility": "clear",
+              "overlap": "single_voice",
+              "gender_presentation": "masculine",
+              "age_impression": "young_adult",
+              "pitch_band": "mid",
+              "phonation": "strained",
+              "pace": "fast",
+              "energy": "intense",
+              "transmission_medium": "direct",
+              "spatial_texture": "unknown",
+              "accent_strength": "none_apparent",
+              "accent_family": "neutral_or_unmarked",
+              "affect": "angry",
+              "interpersonal_stance": "confrontational",
+              "delivery_overlay": "none_apparent"
+            }
+          }
+        },
         {
           "truthIndex": 19,
           "reason": "no plausible time-aware output match",
@@ -1947,9 +1859,9 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Human-reviewed spoken dialogue only for the cod-test trailer: tense trailer VO, antagonist taunts, squad chatter, filtered comms, and the closing promo read. Lyrics and chants remain in music-vocals-data.json.",
-      "outputValue": "A dramatic trailer featuring dialogue about fear, control, and conflict, with references to Raul Menendez and global unrest, interspersed with rock song lyrics and action-oriented lines from multiple speakers.",
+      "outputValue": "A dramatic trailer dialogue featuring themes of fear, control, terrorism, and personal conflict, with characters discussing global unrest, tactical operations, and philosophical ideas, interspersed with rock song lyrics about obedience and mastery, concluding with a promotional message.",
       "normalizedTruthValue": "human reviewed spoken dialogue only for the cod test trailer tense trailer vo antagonist taunts squad chatter filtered comms and the closing promo read lyrics and chants remain in music vocals data json",
-      "normalizedOutputValue": "a dramatic trailer featuring dialogue about fear control and conflict with references to raul menendez and global unrest interspersed with rock song lyrics and action oriented lines from multiple speakers",
+      "normalizedOutputValue": "a dramatic trailer dialogue featuring themes of fear control terrorism and personal conflict with characters discussing global unrest tactical operations and philosophical ideas interspersed with rock song lyrics about obedience and mastery concluding with a promotional message",
       "reason": "Normalized strings differed"
     },
     {
@@ -1960,9 +1872,9 @@
         "length": 20
       },
       "outputValue": {
-        "length": 19
+        "length": 18
       },
-      "reason": "Array length mismatch: truth=20 output=19"
+      "reason": "Array length mismatch: truth=20 output=18"
     },
     {
       "path": "dialogue_segments[truth=0,output=0].index",
@@ -1983,10 +1895,11 @@
     },
     {
       "path": "dialogue_segments[truth=0,output=0].traits.audibility",
-      "status": "pass",
+      "status": "fail",
       "rule": "exact",
       "truthValue": "clear",
-      "outputValue": "clear"
+      "outputValue": "partially_masked",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=0,output=0].traits.overlap",
@@ -2038,7 +1951,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "steady",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -2075,7 +1988,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "serious",
-      "outputValue": "fearful",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -2112,10 +2025,11 @@
     },
     {
       "path": "dialogue_segments[truth=1,output=1].traits.audibility",
-      "status": "pass",
+      "status": "fail",
       "rule": "exact",
       "truthValue": "clear",
-      "outputValue": "clear"
+      "outputValue": "partially_masked",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=1,output=1].traits.overlap",
@@ -2167,7 +2081,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "steady",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -2204,7 +2118,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "determined",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -2241,10 +2155,11 @@
     },
     {
       "path": "dialogue_segments[truth=2,output=2].traits.audibility",
-      "status": "pass",
+      "status": "fail",
       "rule": "exact",
       "truthValue": "clear",
-      "outputValue": "clear"
+      "outputValue": "partially_masked",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=2,output=2].traits.overlap",
@@ -2297,7 +2212,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "intense",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -2335,7 +2250,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "angry",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -2372,11 +2287,10 @@
     },
     {
       "path": "dialogue_segments[truth=3,output=3].traits.audibility",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
+      "outputValue": "clear"
     },
     {
       "path": "dialogue_segments[truth=3,output=3].traits.overlap",
@@ -2394,18 +2308,18 @@
     },
     {
       "path": "dialogue_segments[truth=3,output=3].traits.age_impression",
-      "status": "pass",
+      "status": "fail",
       "rule": "exact",
       "truthValue": "adult",
-      "outputValue": "adult"
+      "outputValue": "unknown",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=3,output=3].traits.pitch_band",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "low",
-      "outputValue": "unknown",
-      "reason": "Values differed"
+      "outputValue": "low"
     },
     {
       "path": "dialogue_segments[truth=3,output=3].traits.phonation",
@@ -2420,7 +2334,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "measured",
-      "outputValue": "unknown",
+      "outputValue": "slow",
       "reason": "Values differed"
     },
     {
@@ -2605,7 +2519,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "confrontational",
-      "outputValue": "neutral",
+      "outputValue": "directive",
       "reason": "Values differed"
     },
     {
@@ -2634,11 +2548,10 @@
     },
     {
       "path": "dialogue_segments[truth=5,output=5].traits.audibility",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
+      "outputValue": "clear"
     },
     {
       "path": "dialogue_segments[truth=5,output=5].traits.overlap",
@@ -2657,10 +2570,11 @@
     },
     {
       "path": "dialogue_segments[truth=5,output=5].traits.age_impression",
-      "status": "pass",
+      "status": "fail",
       "rule": "exact",
       "truthValue": "adult",
-      "outputValue": "adult"
+      "outputValue": "unknown",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=5,output=5].traits.pitch_band",
@@ -2803,11 +2717,10 @@
     },
     {
       "path": "dialogue_segments[truth=6,output=6].traits.phonation",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "strained",
-      "outputValue": "unknown",
-      "reason": "Values differed"
+      "outputValue": "strained"
     },
     {
       "path": "dialogue_segments[truth=6,output=6].traits.pace",
@@ -2885,21 +2798,19 @@
     },
     {
       "path": "dialogue_segments[truth=7,output=7].text",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
       "truthValue": "Stop looking backwards, David. What matters is what we do next.",
-      "outputValue": "Stop looking backwards, David. What matters is what you do next.",
+      "outputValue": "Stop looking backwards, David. What matters is what we do next.",
       "normalizedTruthValue": "stop looking backwards david what matters is what we do next",
-      "normalizedOutputValue": "stop looking backwards david what matters is what you do next",
-      "reason": "Normalized strings differed"
+      "normalizedOutputValue": "stop looking backwards david what matters is what we do next"
     },
     {
       "path": "dialogue_segments[truth=7,output=7].traits.audibility",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
+      "outputValue": "clear"
     },
     {
       "path": "dialogue_segments[truth=7,output=7].traits.overlap",
@@ -2910,17 +2821,18 @@
     },
     {
       "path": "dialogue_segments[truth=7,output=7].traits.gender_presentation",
-      "status": "pass",
+      "status": "fail",
       "rule": "exact",
       "truthValue": "masculine",
-      "outputValue": "masculine"
+      "outputValue": "unknown",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=7,output=7].traits.age_impression",
       "status": "fail",
       "rule": "exact",
       "truthValue": "older_adult",
-      "outputValue": "adult",
+      "outputValue": "unknown",
       "reason": "Values differed"
     },
     {
@@ -2952,7 +2864,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "steady",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -2988,16 +2900,15 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "serious",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=7,output=7].traits.interpersonal_stance",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "supportive",
-      "outputValue": "directive",
-      "reason": "Values differed"
+      "outputValue": "supportive"
     },
     {
       "path": "dialogue_segments[truth=7,output=7].traits.delivery_overlay",
@@ -3082,7 +2993,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "steady",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
@@ -3119,16 +3030,15 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "tense",
-      "outputValue": "unknown",
+      "outputValue": "calm",
       "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=8,output=8].traits.interpersonal_stance",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "supportive",
-      "outputValue": "neutral",
-      "reason": "Values differed"
+      "outputValue": "supportive"
     },
     {
       "path": "dialogue_segments[truth=8,output=8].traits.delivery_overlay",
@@ -3210,11 +3120,10 @@
     },
     {
       "path": "dialogue_segments[truth=9,output=9].traits.energy",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "intense",
-      "outputValue": "unknown",
-      "reason": "Values differed"
+      "outputValue": "intense"
     },
     {
       "path": "dialogue_segments[truth=9,output=9].traits.transmission_medium",
@@ -3253,7 +3162,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "angry",
-      "outputValue": "unknown",
+      "outputValue": "tense",
       "reason": "Values differed"
     },
     {
@@ -3353,11 +3262,10 @@
     },
     {
       "path": "dialogue_segments[truth=10,output=10].traits.transmission_medium",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "radio",
-      "outputValue": "direct",
-      "reason": "Values differed"
+      "outputValue": "radio"
     },
     {
       "path": "dialogue_segments[truth=10,output=10].traits.spatial_texture",
@@ -3459,7 +3367,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "mid",
-      "outputValue": "unknown",
+      "outputValue": "high",
       "reason": "Values differed"
     },
     {
@@ -3560,11 +3468,10 @@
     },
     {
       "path": "dialogue_segments[truth=12,output=12].traits.audibility",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
+      "outputValue": "clear"
     },
     {
       "path": "dialogue_segments[truth=12,output=12].traits.overlap",
@@ -3575,11 +3482,10 @@
     },
     {
       "path": "dialogue_segments[truth=12,output=12].traits.gender_presentation",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "masculine",
-      "outputValue": "unknown",
-      "reason": "Values differed"
+      "outputValue": "masculine"
     },
     {
       "path": "dialogue_segments[truth=12,output=12].traits.age_impression",
@@ -3602,7 +3508,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "clear",
-      "outputValue": "unknown",
+      "outputValue": "raspy",
       "reason": "Values differed"
     },
     {
@@ -3691,11 +3597,10 @@
     },
     {
       "path": "dialogue_segments[truth=13,output=13].traits.audibility",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
+      "outputValue": "clear"
     },
     {
       "path": "dialogue_segments[truth=13,output=13].traits.overlap",
@@ -3745,11 +3650,10 @@
     },
     {
       "path": "dialogue_segments[truth=13,output=13].traits.energy",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "intense",
-      "outputValue": "unknown",
-      "reason": "Values differed"
+      "outputValue": "intense"
     },
     {
       "path": "dialogue_segments[truth=13,output=13].traits.transmission_medium",
@@ -3784,7 +3688,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "angry",
-      "outputValue": "unknown",
+      "outputValue": "tense",
       "reason": "Values differed"
     },
     {
@@ -3814,18 +3718,17 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Pull it together, man!",
-      "outputValue": "So eager to leave, David.",
+      "outputValue": "So eager to leave, are we? Killing a man is a hell of a lot easier than killing an idea.",
       "normalizedTruthValue": "pull it together man",
-      "normalizedOutputValue": "so eager to leave david",
+      "normalizedOutputValue": "so eager to leave are we killing a man is a hell of a lot easier than killing an idea",
       "reason": "Normalized strings differed"
     },
     {
       "path": "dialogue_segments[truth=14,output=14].traits.audibility",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
+      "outputValue": "clear"
     },
     {
       "path": "dialogue_segments[truth=14,output=14].traits.overlap",
@@ -3839,15 +3742,16 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "feminine",
-      "outputValue": "unknown",
+      "outputValue": "masculine",
       "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=14,output=14].traits.age_impression",
-      "status": "pass",
+      "status": "fail",
       "rule": "exact",
       "truthValue": "adult",
-      "outputValue": "adult"
+      "outputValue": "older_adult",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=14,output=14].traits.pitch_band",
@@ -3870,7 +3774,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "fast",
-      "outputValue": "unknown",
+      "outputValue": "measured",
       "reason": "Values differed"
     },
     {
@@ -3878,7 +3782,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "intense",
-      "outputValue": "unknown",
+      "outputValue": "steady",
       "reason": "Values differed"
     },
     {
@@ -3946,18 +3850,17 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "So eager to leave David.",
-      "outputValue": "Killing a man is a hell of a lot easier than killing an idea.",
+      "outputValue": "You were never cut out to be a Mason.",
       "normalizedTruthValue": "so eager to leave david",
-      "normalizedOutputValue": "killing a man is a hell of a lot easier than killing an idea",
+      "normalizedOutputValue": "you were never cut out to be a mason",
       "reason": "Normalized strings differed"
     },
     {
       "path": "dialogue_segments[truth=15,output=15].traits.audibility",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
+      "outputValue": "clear"
     },
     {
       "path": "dialogue_segments[truth=15,output=15].traits.overlap",
@@ -3968,17 +3871,19 @@
     },
     {
       "path": "dialogue_segments[truth=15,output=15].traits.gender_presentation",
-      "status": "pass",
+      "status": "fail",
       "rule": "exact",
       "truthValue": "masculine",
-      "outputValue": "masculine"
+      "outputValue": "unknown",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=15,output=15].traits.age_impression",
-      "status": "pass",
+      "status": "fail",
       "rule": "exact",
       "truthValue": "adult",
-      "outputValue": "adult"
+      "outputValue": "older_adult",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=15,output=15].traits.pitch_band",
@@ -3998,19 +3903,17 @@
     },
     {
       "path": "dialogue_segments[truth=15,output=15].traits.pace",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "measured",
-      "outputValue": "unknown",
-      "reason": "Values differed"
+      "outputValue": "measured"
     },
     {
       "path": "dialogue_segments[truth=15,output=15].traits.energy",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "steady",
-      "outputValue": "unknown",
-      "reason": "Values differed"
+      "outputValue": "steady"
     },
     {
       "path": "dialogue_segments[truth=15,output=15].traits.transmission_medium",
@@ -4077,18 +3980,17 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "Killing a man is a hell of a lot easier than killing the idea.",
-      "outputValue": "You were never cut out to be a Mason.",
+      "outputValue": "No more games. This ends now.",
       "normalizedTruthValue": "killing a man is a hell of a lot easier than killing the idea",
-      "normalizedOutputValue": "you were never cut out to be a mason",
+      "normalizedOutputValue": "no more games this ends now",
       "reason": "Normalized strings differed"
     },
     {
       "path": "dialogue_segments[truth=16,output=16].traits.audibility",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "clear",
-      "outputValue": "partially_masked",
-      "reason": "Values differed"
+      "outputValue": "clear"
     },
     {
       "path": "dialogue_segments[truth=16,output=16].traits.overlap",
@@ -4110,7 +4012,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "older_adult",
-      "outputValue": "adult",
+      "outputValue": "unknown",
       "reason": "Values differed"
     },
     {
@@ -4139,11 +4041,10 @@
     },
     {
       "path": "dialogue_segments[truth=16,output=16].traits.energy",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "steady",
-      "outputValue": "unknown",
-      "reason": "Values differed"
+      "outputValue": "steady"
     },
     {
       "path": "dialogue_segments[truth=16,output=16].traits.transmission_medium",
@@ -4178,7 +4079,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "serious",
-      "outputValue": "unknown",
+      "outputValue": "determined",
       "reason": "Values differed"
     },
     {
@@ -4207,17 +4108,18 @@
       "status": "fail",
       "rule": "fuzzy-string",
       "truthValue": "You were never cut out to be a Mason.",
-      "outputValue": "No more games. This ends now.",
+      "outputValue": "Get the Reznov challenge pack when you pre-order now.",
       "normalizedTruthValue": "you were never cut out to be a mason",
-      "normalizedOutputValue": "no more games this ends now",
+      "normalizedOutputValue": "get the reznov challenge pack when you pre order now",
       "reason": "Normalized strings differed"
     },
     {
       "path": "dialogue_segments[truth=17,output=17].traits.audibility",
-      "status": "pass",
+      "status": "fail",
       "rule": "exact",
       "truthValue": "partially_masked",
-      "outputValue": "partially_masked"
+      "outputValue": "clear",
+      "reason": "Values differed"
     },
     {
       "path": "dialogue_segments[truth=17,output=17].traits.overlap",
@@ -4256,7 +4158,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "mixed",
-      "outputValue": "unknown",
+      "outputValue": "clear",
       "reason": "Values differed"
     },
     {
@@ -4312,7 +4214,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "tense",
-      "outputValue": "determined",
+      "outputValue": "unknown",
       "reason": "Values differed"
     },
     {
@@ -4320,7 +4222,7 @@
       "status": "fail",
       "rule": "exact",
       "truthValue": "confrontational",
-      "outputValue": "neutral",
+      "outputValue": "performative",
       "reason": "Values differed"
     },
     {
@@ -4331,135 +4233,31 @@
       "outputValue": "none_apparent"
     },
     {
-      "path": "dialogue_segments[truth=18,output=18].index",
-      "status": "pass",
-      "rule": "exact",
-      "truthValue": 18,
-      "outputValue": 18
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].text",
+      "path": "dialogue_segments[truth=18]",
       "status": "fail",
-      "rule": "fuzzy-string",
-      "truthValue": "No more games! This ends now.",
-      "outputValue": "Get the Reznov Challenge Pack when you pre-order now.",
-      "normalizedTruthValue": "no more games this ends now",
-      "normalizedOutputValue": "get the reznov challenge pack when you pre order now",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.audibility",
-      "status": "pass",
-      "rule": "exact",
-      "truthValue": "clear",
-      "outputValue": "clear"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.overlap",
-      "status": "pass",
-      "rule": "exact",
-      "truthValue": "single_voice",
-      "outputValue": "single_voice"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.gender_presentation",
-      "status": "fail",
-      "rule": "exact",
-      "truthValue": "masculine",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.age_impression",
-      "status": "fail",
-      "rule": "exact",
-      "truthValue": "young_adult",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.pitch_band",
-      "status": "fail",
-      "rule": "exact",
-      "truthValue": "mid",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.phonation",
-      "status": "fail",
-      "rule": "exact",
-      "truthValue": "strained",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.pace",
-      "status": "fail",
-      "rule": "exact",
-      "truthValue": "fast",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.energy",
-      "status": "fail",
-      "rule": "exact",
-      "truthValue": "intense",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.transmission_medium",
-      "status": "pass",
-      "rule": "exact",
-      "truthValue": "direct",
-      "outputValue": "direct"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.spatial_texture",
-      "status": "skip",
-      "rule": "exact",
-      "truthValue": "unknown",
-      "outputValue": "room",
-      "reason": "Explicit truth sentinel"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.accent_strength",
-      "status": "pass",
-      "rule": "exact",
-      "truthValue": "none_apparent",
-      "outputValue": "none_apparent"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.accent_family",
-      "status": "pass",
-      "rule": "exact",
-      "truthValue": "neutral_or_unmarked",
-      "outputValue": "neutral_or_unmarked"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.affect",
-      "status": "fail",
-      "rule": "exact",
-      "truthValue": "angry",
-      "outputValue": "unknown",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.interpersonal_stance",
-      "status": "fail",
-      "rule": "exact",
-      "truthValue": "confrontational",
-      "outputValue": "directive",
-      "reason": "Values differed"
-    },
-    {
-      "path": "dialogue_segments[truth=18,output=18].traits.delivery_overlay",
-      "status": "pass",
-      "rule": "exact",
-      "truthValue": "none_apparent",
-      "outputValue": "none_apparent"
+      "rule": "structural",
+      "truthValue": {
+        "index": 18,
+        "text": "No more games! This ends now.",
+        "traits": {
+          "audibility": "clear",
+          "overlap": "single_voice",
+          "gender_presentation": "masculine",
+          "age_impression": "young_adult",
+          "pitch_band": "mid",
+          "phonation": "strained",
+          "pace": "fast",
+          "energy": "intense",
+          "transmission_medium": "direct",
+          "spatial_texture": "unknown",
+          "accent_strength": "none_apparent",
+          "accent_family": "neutral_or_unmarked",
+          "affect": "angry",
+          "interpersonal_stance": "confrontational",
+          "delivery_overlay": "none_apparent"
+        }
+      },
+      "reason": "Unmatched truth segment: no plausible time-aware output match"
     },
     {
       "path": "dialogue_segments[truth=19]",
@@ -4489,7 +4287,7 @@
       "reason": "Unmatched truth segment: no plausible time-aware output match"
     }
   ],
-  "summary": "129/315 scoreable fields passed; 15/330 truth fields were skipped. dialogue_text_full_transcript_pct=95.0%; dialogue_text_windowed_pct=95.0%; dialogue_boundary_pct=0.0%.",
+  "summary": "132/300 scoreable fields passed; 14/314 truth fields were skipped. dialogue_text_full_transcript_pct=94.3%; dialogue_text_windowed_pct=94.3%; dialogue_boundary_pct=0.0%.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

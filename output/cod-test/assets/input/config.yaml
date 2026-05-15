@@ -1,65 +1,28 @@
-name: COD Test Phase 2 Chunk Benchmark Slice
-description: Dedicated chunk-contract restoration lane for cod.mp4 using the refreshed current Phase 1 packet
-  as upstream input while leaving the canonical cod-test whole-video config untouched
+name: COD Test Pipeline (Phase 3 only)
+description: Run only Phase 3 report scripts using existing Phase 1/2 artifacts in output/cod-test
 version: '1.0'
 asset:
   inputPath: examples/videos/emotion-tests/cod.mp4
   outputDir: output/cod-test
-  media:
-    refs:
-      source_video:
-        kind: video
-        source:
-          path: examples/videos/emotion-tests/cod.mp4
-        staged:
-          url: https://gambit-games-tests.s3.us-east-1.amazonaws.com/peanut-gallery/cod.mp4
-          urlType: public
-        delivery:
-          preferredMode: url
-          allowedModes:
-          - url
-          allowFallback: false
-        metadata:
-          mimeType: video/mp4
-benchmark:
-  enabled: true
-  path: ../benchmarks/fixtures/cod-test/benchmark.json
 gather_context: []
-process:
-- server/scripts/process/video-chunks.cjs
+process: []
 report:
-- server/scripts/report/metrics.cjs
-- server/scripts/report/recommendation.cjs
-- server/scripts/report/emotional-analysis.cjs
-- server/scripts/report/summary.cjs
-- server/scripts/report/final-report.cjs
+  - server/scripts/report/metrics.cjs
+  - server/scripts/report/recommendation.cjs
+  - server/scripts/report/emotional-analysis.cjs
+  - server/scripts/report/summary.cjs
+  - server/scripts/report/final-report.cjs
 settings:
   chunk_duration: 8
   max_chunks: 100
   api_request_delay: 500
-  phase1:
-    dialogue:
-      mode: whole_asset
-      timing_refinement: disabled
-      max_whole_asset_duration_seconds: 180
-      fallback_to_chunked: false
-      preserve_chunk_plan_metadata: true
-  retry_strategy:
-    type: exponential-backoff
-    config:
-      maxRetries: 4
-      initialDelayMs: 1000
-      maxDelayMs: 10000
-      exponentialBase: 2
-      jitter: true
   ffmpeg:
     audio:
       loglevel: error
-      codec: libmp3lame
-      bitrate: 192k
-      sample_rate_hz: 44100
-      channels: 2
-      container: mp3
+      codec: pcm_s16le
+      sample_rate_hz: 16000
+      channels: 1
+      container: wav
     video:
       compress:
         vcodec: libx264
@@ -91,94 +54,41 @@ recovery:
     adapter: openrouter
     model: google/gemini-3.1-pro-preview
     temperature: 0
-    timeoutMs: 987654
+    timeoutMs: 45000
     attempts:
       maxPerFailure: 1
       maxPerScriptRun: 1
       maxPerPipelineRun: 3
     budgets:
-      maxInputTokens: 131072
-      maxOutputTokens: 131072
-      maxTotalTokens: 262144
-      maxCostUsd: 2.0
-tool_variables:
-  soulPath: ../cast/impatient-teenager/SOUL.md
-  goalPath: ../goals/video-ad-evaluation.md
-  file_transfer: base64
-  maxFileSize: 10485760
-  chunk_strategy:
-    type: duration-based
-    config:
-      chunkDuration: 5
-    split:
-      enabled: true
-      max_splits: 3
-      split_factor: 2
-  variables:
-    lenses:
-    - patience
-    - boredom
-    - excitement
+      maxInputTokens: 12000
+      maxOutputTokens: 2000
+      maxTotalTokens: 14000
+      maxCostUsd: 0.25
 ai:
   dialogue:
     targets:
-    - adapter:
-        name: openrouter
-        model: xiaomi/mimo-v2-omni
-        params:
-          max_tokens: 232144
-          timeoutMs: 987654
-          thinking:
-            level: high
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-flash-lite-preview
   music:
     targets:
-    - adapter:
-        name: openrouter
-        model: xiaomi/mimo-v2-omni
-        params:
-          max_tokens: 232144
-          timeoutMs: 987654
-          thinking:
-            level: high
-  music_vocals:
-    targets:
-    - adapter:
-        name: openrouter
-        model: xiaomi/mimo-v2-omni
-        params:
-          max_tokens: 232144
-          timeoutMs: 987654
-          thinking:
-            level: high
-  dialogue_stitch:
-    targets:
-    - adapter:
-        name: openrouter
-        model: xiaomi/mimo-v2-omni
-        params:
-          max_tokens: 232144
-          timeoutMs: 987654
-          thinking:
-            level: high
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-flash-lite-preview
   video:
     targets:
-    - adapter:
-        name: openrouter
-        model: xiaomi/mimo-v2-omni
-        params:
-          max_tokens: 232144
-          timeoutMs: 987654
-          thinking:
-            level: high
-    inputRefs:
-    - source_video
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-pro-preview
   recommendation:
+    retry:
+      maxAttempts: 3
+      backoffMs: 0
     targets:
-    - adapter:
-        name: openrouter
-        model: xiaomi/mimo-v2-omni
-        params:
-          max_tokens: 232144
-          timeoutMs: 987654
-          thinking:
-            level: high
+      - adapter:
+          name: openrouter
+          model: google/gemini-3.1-pro-preview
+          params:
+            max_tokens: 25000
+            thinking:
+              level: low

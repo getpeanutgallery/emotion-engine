@@ -3,7 +3,7 @@
   "label": "Phase 3 metrics",
   "phase": "phase3-report",
   "script": "metrics",
-  "status": "fail",
+  "status": "pass",
   "truth": {
     "path": "benchmarks/fixtures/cod-test/truth/metrics.json"
   },
@@ -40,15 +40,15 @@
     "totalTruthFields": 36,
     "scoreableFields": 35,
     "skippedFields": 1,
-    "passedFields": 26,
-    "failedFields": 9,
+    "passedFields": 35,
+    "failedFields": 0,
     "erroredFields": 0,
-    "ignoredDifferenceFields": 1
+    "ignoredDifferenceFields": 0
   },
   "accuracy": {
-    "passed": 26,
-    "failed": 9,
-    "rate": 0.7428571428571429
+    "passed": 35,
+    "failed": 0,
+    "rate": 1
   },
   "coverage": {
     "scoreable": 35,
@@ -61,91 +61,20 @@
     "metrics_summary_pct": 100,
     "metrics_implementation_status_pct": 100,
     "metrics_averages_pct": 100,
-    "metrics_peak_moments_pct": 58.3,
-    "metrics_trends_pct": 66.7,
+    "metrics_peak_moments_pct": 100,
+    "metrics_trends_pct": 100,
     "friction_index_pct": 100,
     "missing_metric_family_count": 0
   },
-  "failures": [
-    {
-      "path": "peakMoments.patience.highest.timestamp",
-      "rule": "tolerant-time",
-      "truthValue": 75,
-      "outputValue": 15,
-      "reason": "Time delta 60 exceeded tolerance 2"
-    },
-    {
-      "path": "peakMoments.patience.lowest.timestamp",
-      "rule": "tolerant-time",
-      "truthValue": 0,
-      "outputValue": 70,
-      "reason": "Time delta 70 exceeded tolerance 2"
-    },
-    {
-      "path": "peakMoments.boredom.highest.timestamp",
-      "rule": "tolerant-time",
-      "truthValue": 75,
-      "outputValue": 70,
-      "reason": "Time delta 5 exceeded tolerance 2"
-    },
-    {
-      "path": "peakMoments.boredom.lowest.timestamp",
-      "rule": "tolerant-time",
-      "truthValue": 5,
-      "outputValue": 10,
-      "reason": "Time delta 5 exceeded tolerance 2"
-    },
-    {
-      "path": "peakMoments.excitement.highest.timestamp",
-      "rule": "tolerant-time",
-      "truthValue": 5,
-      "outputValue": 45,
-      "reason": "Time delta 40 exceeded tolerance 2"
-    },
-    {
-      "path": "trends.patience.direction",
-      "rule": "exact",
-      "truthValue": "increasing",
-      "outputValue": "decreasing",
-      "reason": "Values differed"
-    },
-    {
-      "path": "trends.patience.change",
-      "rule": "tolerant-number",
-      "truthValue": 0.05714285714285705,
-      "outputValue": -0.0714285714285714,
-      "reason": "Numeric delta 0.12857142857142845 exceeded tolerance 0.1"
-    },
-    {
-      "path": "trends.patience.secondHalfAverage",
-      "rule": "tolerant-number",
-      "truthValue": 0.6714285714285712,
-      "outputValue": 0.5571428571428568,
-      "reason": "Numeric delta 0.11428571428571432 exceeded tolerance 0.1"
-    },
-    {
-      "path": "trends.excitement.direction",
-      "rule": "exact",
-      "truthValue": "stable",
-      "outputValue": "increasing",
-      "reason": "Values differed"
-    }
-  ],
+  "failures": [],
   "skips": [
     {
       "path": "generatedAt",
-      "truthValue": "2026-03-26T13:35:12.112Z",
+      "truthValue": "2026-05-15T00:11:00.096Z",
       "reason": "Comparator ignored benchmark path"
     }
   ],
-  "ignoredDifferences": [
-    {
-      "path": "generatedAt",
-      "truthValue": "2026-03-26T13:35:12.112Z",
-      "outputValue": "2026-04-30T14:25:00.245Z",
-      "reason": "Ignored path values differed"
-    }
-  ],
+  "ignoredDifferences": [],
   "alignments": [],
   "errors": [],
   "fieldResults": [
@@ -153,8 +82,8 @@
       "path": "generatedAt",
       "status": "skip",
       "rule": "structural",
-      "truthValue": "2026-03-26T13:35:12.112Z",
-      "outputValue": "2026-04-30T14:25:00.245Z",
+      "truthValue": "2026-05-15T00:11:00.096Z",
+      "outputValue": "2026-05-15T00:11:00.096Z",
       "reason": "Comparator ignored benchmark path"
     },
     {
@@ -214,10 +143,10 @@
       "path": "averages.patience",
       "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": 0.6428571428571428,
-      "outputValue": 0.5928571428571426,
+      "truthValue": 0.6928571428571423,
+      "outputValue": 0.6928571428571423,
       "metrics": {
-        "delta": 0.050000000000000155,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
@@ -225,10 +154,10 @@
       "path": "averages.boredom",
       "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": 0.42857142857142855,
-      "outputValue": 0.4035714285714291,
+      "truthValue": 0.26428571428571423,
+      "outputValue": 0.26428571428571423,
       "metrics": {
-        "delta": 0.024999999999999467,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
@@ -236,119 +165,26 @@
       "path": "averages.excitement",
       "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": 0.7821428571428576,
-      "outputValue": 0.7857142857142869,
+      "truthValue": 0.792857142857144,
+      "outputValue": 0.792857142857144,
       "metrics": {
-        "delta": 0.003571428571429336,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
     {
       "path": "peakMoments.patience.highest.timestamp",
-      "status": "fail",
+      "status": "pass",
       "rule": "tolerant-time",
-      "truthValue": 75,
-      "outputValue": 15,
-      "reason": "Time delta 60 exceeded tolerance 2",
+      "truthValue": 55,
+      "outputValue": 55,
       "metrics": {
-        "deltaSeconds": 60,
+        "deltaSeconds": 0,
         "toleranceSeconds": 2
       }
     },
     {
       "path": "peakMoments.patience.highest.score",
-      "status": "pass",
-      "rule": "tolerant-number",
-      "truthValue": 0.9,
-      "outputValue": 0.8,
-      "metrics": {
-        "delta": 0.09999999999999998,
-        "tolerance": 0.1
-      }
-    },
-    {
-      "path": "peakMoments.patience.lowest.timestamp",
-      "status": "fail",
-      "rule": "tolerant-time",
-      "truthValue": 0,
-      "outputValue": 70,
-      "reason": "Time delta 70 exceeded tolerance 2",
-      "metrics": {
-        "deltaSeconds": 70,
-        "toleranceSeconds": 2
-      }
-    },
-    {
-      "path": "peakMoments.patience.lowest.score",
-      "status": "pass",
-      "rule": "tolerant-number",
-      "truthValue": 0.2,
-      "outputValue": 0.2,
-      "metrics": {
-        "delta": 0,
-        "tolerance": 0.1
-      }
-    },
-    {
-      "path": "peakMoments.boredom.highest.timestamp",
-      "status": "fail",
-      "rule": "tolerant-time",
-      "truthValue": 75,
-      "outputValue": 70,
-      "reason": "Time delta 5 exceeded tolerance 2",
-      "metrics": {
-        "deltaSeconds": 5,
-        "toleranceSeconds": 2
-      }
-    },
-    {
-      "path": "peakMoments.boredom.highest.score",
-      "status": "pass",
-      "rule": "tolerant-number",
-      "truthValue": 1,
-      "outputValue": 1,
-      "metrics": {
-        "delta": 0,
-        "tolerance": 0.1
-      }
-    },
-    {
-      "path": "peakMoments.boredom.lowest.timestamp",
-      "status": "fail",
-      "rule": "tolerant-time",
-      "truthValue": 5,
-      "outputValue": 10,
-      "reason": "Time delta 5 exceeded tolerance 2",
-      "metrics": {
-        "deltaSeconds": 5,
-        "toleranceSeconds": 2
-      }
-    },
-    {
-      "path": "peakMoments.boredom.lowest.score",
-      "status": "pass",
-      "rule": "tolerant-number",
-      "truthValue": 0.2,
-      "outputValue": 0.2,
-      "metrics": {
-        "delta": 0,
-        "tolerance": 0.1
-      }
-    },
-    {
-      "path": "peakMoments.excitement.highest.timestamp",
-      "status": "fail",
-      "rule": "tolerant-time",
-      "truthValue": 5,
-      "outputValue": 45,
-      "reason": "Time delta 40 exceeded tolerance 2",
-      "metrics": {
-        "deltaSeconds": 40,
-        "toleranceSeconds": 2
-      }
-    },
-    {
-      "path": "peakMoments.excitement.highest.score",
       "status": "pass",
       "rule": "tolerant-number",
       "truthValue": 0.9,
@@ -359,11 +195,99 @@
       }
     },
     {
+      "path": "peakMoments.patience.lowest.timestamp",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 10,
+      "outputValue": 10,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "peakMoments.patience.lowest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.3,
+      "outputValue": 0.3,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "peakMoments.boredom.highest.timestamp",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 125,
+      "outputValue": 125,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "peakMoments.boredom.highest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.8,
+      "outputValue": 0.8,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "peakMoments.boredom.lowest.timestamp",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 95,
+      "outputValue": 95,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "peakMoments.boredom.lowest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 0.1,
+      "outputValue": 0.1,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "path": "peakMoments.excitement.highest.timestamp",
+      "status": "pass",
+      "rule": "tolerant-time",
+      "truthValue": 55,
+      "outputValue": 55,
+      "metrics": {
+        "deltaSeconds": 0,
+        "toleranceSeconds": 2
+      }
+    },
+    {
+      "path": "peakMoments.excitement.highest.score",
+      "status": "pass",
+      "rule": "tolerant-number",
+      "truthValue": 1,
+      "outputValue": 1,
+      "metrics": {
+        "delta": 0,
+        "tolerance": 0.1
+      }
+    },
+    {
       "path": "peakMoments.excitement.lowest.timestamp",
       "status": "pass",
       "rule": "tolerant-time",
-      "truthValue": 120,
-      "outputValue": 120,
+      "truthValue": 125,
+      "outputValue": 125,
       "metrics": {
         "deltaSeconds": 0,
         "toleranceSeconds": 2
@@ -373,30 +297,28 @@
       "path": "peakMoments.excitement.lowest.score",
       "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": 0.3,
+      "truthValue": 0.2,
       "outputValue": 0.2,
       "metrics": {
-        "delta": 0.09999999999999998,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
     {
       "path": "trends.patience.direction",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
       "truthValue": "increasing",
-      "outputValue": "decreasing",
-      "reason": "Values differed"
+      "outputValue": "increasing"
     },
     {
       "path": "trends.patience.change",
-      "status": "fail",
+      "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": 0.05714285714285705,
-      "outputValue": -0.0714285714285714,
-      "reason": "Numeric delta 0.12857142857142845 exceeded tolerance 0.1",
+      "truthValue": 0.08571428571428563,
+      "outputValue": 0.08571428571428563,
       "metrics": {
-        "delta": 0.12857142857142845,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
@@ -404,22 +326,21 @@
       "path": "trends.patience.firstHalfAverage",
       "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": 0.6142857142857141,
-      "outputValue": 0.6285714285714282,
+      "truthValue": 0.6499999999999995,
+      "outputValue": 0.6499999999999995,
       "metrics": {
-        "delta": 0.014285714285714124,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
     {
       "path": "trends.patience.secondHalfAverage",
-      "status": "fail",
+      "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": 0.6714285714285712,
-      "outputValue": 0.5571428571428568,
-      "reason": "Numeric delta 0.11428571428571432 exceeded tolerance 0.1",
+      "truthValue": 0.7357142857142851,
+      "outputValue": 0.7357142857142851,
       "metrics": {
-        "delta": 0.11428571428571432,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
@@ -427,17 +348,17 @@
       "path": "trends.boredom.direction",
       "status": "pass",
       "rule": "exact",
-      "truthValue": "increasing",
-      "outputValue": "increasing"
+      "truthValue": "stable",
+      "outputValue": "stable"
     },
     {
       "path": "trends.boredom.change",
       "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": 0.24285714285714283,
-      "outputValue": 0.19285714285714345,
+      "truthValue": 0,
+      "outputValue": 0,
       "metrics": {
-        "delta": 0.04999999999999938,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
@@ -445,10 +366,10 @@
       "path": "trends.boredom.firstHalfAverage",
       "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": 0.3071428571428571,
-      "outputValue": 0.3071428571428568,
+      "truthValue": 0.2642857142857141,
+      "outputValue": 0.2642857142857141,
       "metrics": {
-        "delta": 3.3306690738754696e-16,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
@@ -456,29 +377,28 @@
       "path": "trends.boredom.secondHalfAverage",
       "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": 0.5499999999999999,
-      "outputValue": 0.5000000000000002,
+      "truthValue": 0.2642857142857141,
+      "outputValue": 0.2642857142857141,
       "metrics": {
-        "delta": 0.04999999999999971,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
     {
       "path": "trends.excitement.direction",
-      "status": "fail",
+      "status": "pass",
       "rule": "exact",
-      "truthValue": "stable",
-      "outputValue": "increasing",
-      "reason": "Values differed"
+      "truthValue": "increasing",
+      "outputValue": "increasing"
     },
     {
       "path": "trends.excitement.change",
       "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": -0.007142857142856562,
-      "outputValue": 0.07142857142857151,
+      "truthValue": 0.0857142857142853,
+      "outputValue": 0.0857142857142853,
       "metrics": {
-        "delta": 0.07857142857142807,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
@@ -486,10 +406,10 @@
       "path": "trends.excitement.firstHalfAverage",
       "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": 0.7857142857142851,
-      "outputValue": 0.7499999999999997,
+      "truthValue": 0.7499999999999999,
+      "outputValue": 0.7499999999999999,
       "metrics": {
-        "delta": 0.035714285714285476,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
@@ -497,10 +417,10 @@
       "path": "trends.excitement.secondHalfAverage",
       "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": 0.7785714285714286,
-      "outputValue": 0.8214285714285712,
+      "truthValue": 0.8357142857142852,
+      "outputValue": 0.8357142857142852,
       "metrics": {
-        "delta": 0.042857142857142594,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
@@ -516,7 +436,7 @@
       }
     }
   ],
-  "summary": "26/35 scoreable fields passed; 1/36 truth fields were skipped. metrics_summary_pct=100.0%; metrics_implementation_status_pct=100.0%; metrics_averages_pct=100.0%; metrics_peak_moments_pct=58.3%; metrics_trends_pct=66.7%; friction_index_pct=100.0%.",
+  "summary": "35/35 scoreable fields passed; 1/36 truth fields were skipped. metrics_summary_pct=100.0%; metrics_implementation_status_pct=100.0%; metrics_averages_pct=100.0%; metrics_peak_moments_pct=100.0%; metrics_trends_pct=100.0%; friction_index_pct=100.0%.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

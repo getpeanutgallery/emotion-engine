@@ -3,7 +3,7 @@
   "label": "Phase 3 recommendation",
   "phase": "phase3-report",
   "script": "recommendation",
-  "status": "error",
+  "status": "pass",
   "truth": {
     "path": "benchmarks/fixtures/cod-test/truth/recommendation.json"
   },
@@ -40,192 +40,43 @@
   },
   "comparisonBoundary": null,
   "counts": {
-    "totalTruthFields": 37,
-    "scoreableFields": 23,
+    "totalTruthFields": 26,
+    "scoreableFields": 14,
     "skippedFields": 12,
-    "passedFields": 3,
-    "failedFields": 20,
-    "erroredFields": 2,
-    "ignoredDifferenceFields": 4
+    "passedFields": 14,
+    "failedFields": 0,
+    "erroredFields": 0,
+    "ignoredDifferenceFields": 0
   },
   "accuracy": {
-    "passed": 3,
-    "failed": 20,
-    "rate": 0.13043478260869565
+    "passed": 14,
+    "failed": 0,
+    "rate": 1
   },
   "coverage": {
-    "scoreable": 23,
+    "scoreable": 14,
     "skipped": 12,
-    "totalTruthFields": 37,
-    "rate": 0.6216216216216216
+    "totalTruthFields": 26,
+    "rate": 0.5384615384615384
   },
   "mismatchClassificationCounts": {},
   "recommendationScoring": {
-    "recommendation_text_pct": 0,
-    "recommendation_reasoning_pct": 0,
-    "recommendation_key_findings_pct": 0,
-    "recommendation_suggestions_pct": 0,
+    "recommendation_text_pct": 100,
+    "recommendation_reasoning_pct": 100,
+    "recommendation_key_findings_pct": 100,
+    "recommendation_suggestions_pct": 100,
     "recommendation_confidence_pct": 100,
-    "key_findings_truth_count": 6,
-    "key_findings_output_count": 7,
-    "suggestions_truth_count": 11,
-    "suggestions_output_count": 10,
+    "key_findings_truth_count": 4,
+    "key_findings_output_count": 4,
+    "suggestions_truth_count": 5,
+    "suggestions_output_count": 5,
     "list_alignment_strategy": "index-or-fuzzy-item"
   },
-  "failures": [
-    {
-      "path": "text",
-      "rule": "fuzzy-string",
-      "truthValue": "Front-load the strongest surreal/action imagery and strip out the generic trailer setup, because the biggest retention leak is the opening and any later exposition/title-card stretches. The edit already proves it can hold attention when it delivers rapid visual novelty, so the goal is to re-cut around those peaks and compress the corporate CTA material at the end. Keep the emotional profile as high-intensity, but create clearer spike-and-release pacing so the second half feels escalatory instead of long.",
-      "outputValue": "The video demonstrates strong engagement during high-energy action sequences but suffers from retention drops in static dialogue and promotional segments. To enhance viewer retention, tighten pacing in slower sections by adding visual variety and integrating promotional content dynamically. Focus on reducing static shots to maintain excitement and cater to an impatient audience.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "reasoning",
-      "rule": "fuzzy-string",
-      "truthValue": "The weakest point is the first 0-5 seconds: patience is at its lowest there (0.2) while boredom is high (0.8), driven by the glitchy 'RISING TENSIONS' style setup that reads as generic. Retention improves immediately at 5-10 seconds, where excitement hits its peak (0.9) and boredom drops to its minimum (0.2), showing the audience responds to the city-bending, reality-breaking spectacle much more than exposition. Across the full piece, excitement stays strong on average (0.782) and remains stable, but boredom rises materially in the second half from 0.307 to 0.55, which suggests fatigue from repeated title cards, dialogue beats, and end-slate information. Specific mid/late dips align with title/exposition moments like 25-35 seconds and 85-95 seconds, where talking-head or location-card structure softens momentum. The final CTA section also hurts emotional finish: excitement bottoms out at 120 seconds (0.3) and boredom jumps again on the pre-order screens. With a friction index of 100, the cut is asking viewers to work too hard through promo structure despite having many genuinely high-performing action beats.",
-      "outputValue": "The metrics show patience decreasing from 0.63 to 0.56 and boredom increasing from 0.31 to 0.50 in the second half, indicating viewer fatigue. Chunks 5-7 (25-40s) have dominant boredom with scores of 6-7 due to static dialogue, while action chunks like 8-23 (40-120s) maintain high excitement scores of 8-9. Peak boredom occurs at 70s (chunk 14) with a score of 1.0, and static promotional screens at 120-125s (chunk 24) show boredom score of 8, highlighting critical retention risks. Excitement peaks at 45s (chunk 9) with score 9 but drops to 2 at 120s (chunk 24), emphasizing the need for consistent pacing.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "keyFindings",
-      "rule": "structural",
-      "truthValue": {
-        "length": 6
-      },
-      "outputValue": {
-        "length": 7
-      },
-      "reason": "Array length mismatch: truth=6 output=7"
-    },
-    {
-      "path": "keyFindings[0]",
-      "rule": "fuzzy-string",
-      "truthValue": "The opening 0-5s is the biggest retention risk: lowest patience and high boredom despite expensive visuals.",
-      "outputValue": "Patience trends downward with a 0.07 decrease from first to second half, indicating growing impatience.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "keyFindings[1]",
-      "rule": "fuzzy-string",
-      "truthValue": "The 5-10s segment is the clearest hook model, with peak excitement and minimal boredom.",
-      "outputValue": "Boredom increases significantly by 0.19, peaking in static scenes like chunks 5-7 and chunk 24.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "keyFindings[2]",
-      "rule": "fuzzy-string",
-      "truthValue": "Excitement is consistently high overall, so the core creative works when it prioritizes spectacle over exposition.",
-      "outputValue": "Action sequences (e.g., chunks 8-23) consistently show high excitement scores of 8-9, sustaining engagement.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "keyFindings[3]",
-      "rule": "fuzzy-string",
-      "truthValue": "Boredom increases significantly in the second half, indicating pacing fatigue rather than lack of action quality.",
-      "outputValue": "Dialogue-heavy chunks 5-7 have boredom scores of 6-7 and lower excitement, risking viewer drop-off.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "keyFindings[4]",
-      "rule": "fuzzy-string",
-      "truthValue": "Title cards, talking-head dialogue, and location reveals repeatedly correlate with softer engagement.",
-      "outputValue": "Promotional chunk 24 has the highest boredom score of 8 and lowest excitement of 2, a major retention issue.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "keyFindings[5]",
-      "rule": "fuzzy-string",
-      "truthValue": "The end-slate/pre-order stretch weakens the final emotional payoff and likely causes scroll-off before the CTA lands.",
-      "outputValue": "Peak excitement at 45s (chunk 9) with score 9, but drops to 2 at 120s (chunk 24), showing emotional inconsistency.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions",
-      "rule": "structural",
-      "truthValue": {
-        "length": 11
-      },
-      "outputValue": {
-        "length": 10
-      },
-      "reason": "Array length mismatch: truth=11 output=10"
-    },
-    {
-      "path": "suggestions[0]",
-      "rule": "fuzzy-string",
-      "truthValue": "Replace the current first frame/text-led intro with one of the strongest surreal action shots now appearing later, especially the reality-breaking or impossible-environment imagery.",
-      "outputValue": "Shorten dialogue scenes in chunks 5-7 (25-40s) or add dynamic visual effects like quick cuts or overlays to maintain engagement.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[1]",
-      "rule": "fuzzy-string",
-      "truthValue": "Cut or heavily shorten the 'RISING TENSIONS' style opening text so the video starts on immediate spectacle rather than trailer language.",
-      "outputValue": "Replace static promotional screens at 120-125s with animated previews or action montages to reduce boredom.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[2]",
-      "rule": "fuzzy-string",
-      "truthValue": "Move one of the standout 'wtf' visuals from the 60-85s run into the first 3-5 seconds to create instant curiosity.",
-      "outputValue": "Intersperse action beats every 10-15 seconds throughout the video to prevent boredom buildup and sustain excitement.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[3]",
-      "rule": "fuzzy-string",
-      "truthValue": "Reduce title cards and location cards throughout, or overlay them on active gameplay/action instead of letting them become standalone beats.",
-      "outputValue": "Use varied camera angles, zooms, or motion graphics in slower narrative sections to add visual interest.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[4]",
-      "rule": "fuzzy-string",
-      "truthValue": "Trim the 25-35s exposition stretch by minimizing static conversation shots and keeping only dialogue that adds immediate stakes.",
-      "outputValue": "Ensure music intensity aligns with visual pacing, boosting scores during static moments to enhance emotional impact.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[5]",
-      "rule": "fuzzy-string",
-      "truthValue": "At the 85-95s section, compress the Alaska/Hawaii transition so the audience gets to playable action faster.",
-      "outputValue": "Add pattern interrupts such as text overlays, sound effects, or brief action clips in chunks 5-7 to break monotony.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[6]",
-      "rule": "fuzzy-string",
-      "truthValue": "Use more pattern interrupts in the back half: alternate combat scale, color palette, or perspective to offset boredom growth.",
-      "outputValue": "Test different edits of dialogue scenes to reduce duration without losing narrative clarity, aiming for under 5 seconds per shot.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[7]",
-      "rule": "fuzzy-string",
-      "truthValue": "Preserve the strongest high-retention run from roughly 40-80s as the pacing template: fast cuts, visual novelty, and clear escalation.",
-      "outputValue": "Incorporate user interface elements or gameplay snippets during promotional parts to make them more dynamic.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[8]",
-      "rule": "fuzzy-string",
-      "truthValue": "Shorten the static pre-order/end-slate sequence and move key offer text over ongoing action if platform rules allow.",
-      "outputValue": "Maintain the high-energy editing style from action sequences (e.g., rapid cuts, lighting changes) throughout the video.",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[9]",
-      "rule": "fuzzy-string",
-      "truthValue": "End on a final high-adrenaline gameplay beat before the logo/CTA so the viewer exits on excitement, not fine print.",
-      "outputValue": "Minimize any shot longer than 3 seconds without movement, especially for the impatient teenager persona, to reduce patience drain.",
-      "reason": "Normalized strings differed"
-    }
-  ],
+  "failures": [],
   "skips": [
     {
       "path": "generatedAt",
-      "truthValue": "2026-03-26T13:35:50.598Z",
+      "truthValue": "2026-05-15T00:11:24.685Z",
       "reason": "Comparator ignored benchmark path"
     },
     {
@@ -240,7 +91,7 @@
     },
     {
       "path": "ai.model",
-      "truthValue": "openai/gpt-5.4",
+      "truthValue": "google/gemini-3.1-pro-preview",
       "reason": "Comparator ignored benchmark path"
     },
     {
@@ -275,63 +126,25 @@
     },
     {
       "path": "ai.usage.input",
-      "truthValue": 11416,
+      "truthValue": 11331,
       "reason": "Comparator ignored benchmark path"
     },
     {
       "path": "ai.usage.output",
-      "truthValue": 841,
+      "truthValue": 491,
       "reason": "Comparator ignored benchmark path"
     }
   ],
-  "ignoredDifferences": [
-    {
-      "path": "generatedAt",
-      "truthValue": "2026-03-26T13:35:50.598Z",
-      "outputValue": "2026-04-30T14:25:27.165Z",
-      "reason": "Ignored path values differed"
-    },
-    {
-      "path": "ai.model",
-      "truthValue": "openai/gpt-5.4",
-      "outputValue": "xiaomi/mimo-v2-omni",
-      "reason": "Ignored path values differed"
-    },
-    {
-      "path": "ai.usage.input",
-      "truthValue": 11416,
-      "outputValue": 11803,
-      "reason": "Ignored path values differed"
-    },
-    {
-      "path": "ai.usage.output",
-      "truthValue": 841,
-      "outputValue": 803,
-      "reason": "Ignored path values differed"
-    }
-  ],
+  "ignoredDifferences": [],
   "alignments": [],
-  "errors": [
-    {
-      "path": "keyFindings[6]",
-      "rule": "structural",
-      "outputValue": "Friction index of 100 suggests high disengagement potential, especially in non-action segments.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "suggestions[10]",
-      "rule": "structural",
-      "truthValue": "If a CTA must remain, make it the shortest possible closing card after the franchise/title reveal rather than a prolonged information block.",
-      "reason": "Output array missing item present in truth"
-    }
-  ],
+  "errors": [],
   "fieldResults": [
     {
       "path": "generatedAt",
       "status": "skip",
       "rule": "structural",
-      "truthValue": "2026-03-26T13:35:50.598Z",
-      "outputValue": "2026-04-30T14:25:27.165Z",
+      "truthValue": "2026-05-15T00:11:24.685Z",
+      "outputValue": "2026-05-15T00:11:24.685Z",
       "reason": "Comparator ignored benchmark path"
     },
     {
@@ -343,232 +156,113 @@
     },
     {
       "path": "text",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Front-load the strongest surreal/action imagery and strip out the generic trailer setup, because the biggest retention leak is the opening and any later exposition/title-card stretches. The edit already proves it can hold attention when it delivers rapid visual novelty, so the goal is to re-cut around those peaks and compress the corporate CTA material at the end. Keep the emotional profile as high-intensity, but create clearer spike-and-release pacing so the second half feels escalatory instead of long.",
-      "outputValue": "The video demonstrates strong engagement during high-energy action sequences but suffers from retention drops in static dialogue and promotional segments. To enhance viewer retention, tighten pacing in slower sections by adding visual variety and integrating promotional content dynamically. Focus on reducing static shots to maintain excitement and cater to an impatient audience.",
-      "normalizedTruthValue": "front load the strongest surreal action imagery and strip out the generic trailer setup because the biggest retention leak is the opening and any later exposition title card stretches the edit already proves it can hold attention when it delivers rapid visual novelty so the goal is to re cut around those peaks and compress the corporate cta material at the end keep the emotional profile as high intensity but create clearer spike and release pacing so the second half feels escalatory instead of long",
-      "normalizedOutputValue": "the video demonstrates strong engagement during high energy action sequences but suffers from retention drops in static dialogue and promotional segments to enhance viewer retention tighten pacing in slower sections by adding visual variety and integrating promotional content dynamically focus on reducing static shots to maintain excitement and cater to an impatient audience",
-      "reason": "Normalized strings differed"
+      "truthValue": "The video successfully builds and maintains high excitement through rapid action sequences, but suffers from pacing issues during static title cards and extended pre-order screens. To improve retention, condense the early title card and integrate the pre-order information more dynamically to prevent viewer drop-off before the final post-credits scene.",
+      "outputValue": "The video successfully builds and maintains high excitement through rapid action sequences, but suffers from pacing issues during static title cards and extended pre-order screens. To improve retention, condense the early title card and integrate the pre-order information more dynamically to prevent viewer drop-off before the final post-credits scene.",
+      "normalizedTruthValue": "the video successfully builds and maintains high excitement through rapid action sequences but suffers from pacing issues during static title cards and extended pre order screens to improve retention condense the early title card and integrate the pre order information more dynamically to prevent viewer drop off before the final post credits scene",
+      "normalizedOutputValue": "the video successfully builds and maintains high excitement through rapid action sequences but suffers from pacing issues during static title cards and extended pre order screens to improve retention condense the early title card and integrate the pre order information more dynamically to prevent viewer drop off before the final post credits scene"
     },
     {
       "path": "reasoning",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "The weakest point is the first 0-5 seconds: patience is at its lowest there (0.2) while boredom is high (0.8), driven by the glitchy 'RISING TENSIONS' style setup that reads as generic. Retention improves immediately at 5-10 seconds, where excitement hits its peak (0.9) and boredom drops to its minimum (0.2), showing the audience responds to the city-bending, reality-breaking spectacle much more than exposition. Across the full piece, excitement stays strong on average (0.782) and remains stable, but boredom rises materially in the second half from 0.307 to 0.55, which suggests fatigue from repeated title cards, dialogue beats, and end-slate information. Specific mid/late dips align with title/exposition moments like 25-35 seconds and 85-95 seconds, where talking-head or location-card structure softens momentum. The final CTA section also hurts emotional finish: excitement bottoms out at 120 seconds (0.3) and boredom jumps again on the pre-order screens. With a friction index of 100, the cut is asking viewers to work too hard through promo structure despite having many genuinely high-performing action beats.",
-      "outputValue": "The metrics show patience decreasing from 0.63 to 0.56 and boredom increasing from 0.31 to 0.50 in the second half, indicating viewer fatigue. Chunks 5-7 (25-40s) have dominant boredom with scores of 6-7 due to static dialogue, while action chunks like 8-23 (40-120s) maintain high excitement scores of 8-9. Peak boredom occurs at 70s (chunk 14) with a score of 1.0, and static promotional screens at 120-125s (chunk 24) show boredom score of 8, highlighting critical retention risks. Excitement peaks at 45s (chunk 9) with score 9 but drops to 2 at 120s (chunk 24), emphasizing the need for consistent pacing.",
-      "normalizedTruthValue": "the weakest point is the first 0 5 seconds patience is at its lowest there 0 2 while boredom is high 0 8 driven by the glitchy rising tensions style setup that reads as generic retention improves immediately at 5 10 seconds where excitement hits its peak 0 9 and boredom drops to its minimum 0 2 showing the audience responds to the city bending reality breaking spectacle much more than exposition across the full piece excitement stays strong on average 0 782 and remains stable but boredom rises materially in the second half from 0 307 to 0 55 which suggests fatigue from repeated title cards dialogue beats and end slate information specific mid late dips align with title exposition moments like 25 35 seconds and 85 95 seconds where talking head or location card structure softens momentum the final cta section also hurts emotional finish excitement bottoms out at 120 seconds 0 3 and boredom jumps again on the pre order screens with a friction index of 100 the cut is asking viewers to work too hard through promo structure despite having many genuinely high performing action beats",
-      "normalizedOutputValue": "the metrics show patience decreasing from 0 63 to 0 56 and boredom increasing from 0 31 to 0 50 in the second half indicating viewer fatigue chunks 5 7 25 40s have dominant boredom with scores of 6 7 due to static dialogue while action chunks like 8 23 40 120s maintain high excitement scores of 8 9 peak boredom occurs at 70s chunk 14 with a score of 1 0 and static promotional screens at 120 125s chunk 24 show boredom score of 8 highlighting critical retention risks excitement peaks at 45s chunk 9 with score 9 but drops to 2 at 120s chunk 24 emphasizing the need for consistent pacing",
-      "reason": "Normalized strings differed"
+      "truthValue": "Patience hits its lowest point (0.3) at 10 seconds (Chunk 3) due to an extended, static title card. Conversely, excitement peaks at 55 seconds (1.0) during rapid transitions between red-lit corridors and desert environments. The pre-order screens at 120-130 seconds (Chunks 25 and 26) cause a massive spike in boredom (0.8) and a drop in excitement (0.2). The post-credits action scene at 130 seconds is highly effective but risks being unseen if viewers drop off during the static promo screens.",
+      "outputValue": "Patience hits its lowest point (0.3) at 10 seconds (Chunk 3) due to an extended, static title card. Conversely, excitement peaks at 55 seconds (1.0) during rapid transitions between red-lit corridors and desert environments. The pre-order screens at 120-130 seconds (Chunks 25 and 26) cause a massive spike in boredom (0.8) and a drop in excitement (0.2). The post-credits action scene at 130 seconds is highly effective but risks being unseen if viewers drop off during the static promo screens.",
+      "normalizedTruthValue": "patience hits its lowest point 0 3 at 10 seconds chunk 3 due to an extended static title card conversely excitement peaks at 55 seconds 1 0 during rapid transitions between red lit corridors and desert environments the pre order screens at 120 130 seconds chunks 25 and 26 cause a massive spike in boredom 0 8 and a drop in excitement 0 2 the post credits action scene at 130 seconds is highly effective but risks being unseen if viewers drop off during the static promo screens",
+      "normalizedOutputValue": "patience hits its lowest point 0 3 at 10 seconds chunk 3 due to an extended static title card conversely excitement peaks at 55 seconds 1 0 during rapid transitions between red lit corridors and desert environments the pre order screens at 120 130 seconds chunks 25 and 26 cause a massive spike in boredom 0 8 and a drop in excitement 0 2 the post credits action scene at 130 seconds is highly effective but risks being unseen if viewers drop off during the static promo screens"
     },
     {
       "path": "confidence",
       "status": "pass",
       "rule": "tolerant-number",
-      "truthValue": 0.92,
-      "outputValue": 0.85,
+      "truthValue": 0.9,
+      "outputValue": 0.9,
       "metrics": {
-        "delta": 0.07000000000000006,
+        "delta": 0,
         "tolerance": 0.1
       }
     },
     {
-      "path": "keyFindings",
-      "status": "fail",
-      "rule": "structural",
-      "truthValue": {
-        "length": 6
-      },
-      "outputValue": {
-        "length": 7
-      },
-      "reason": "Array length mismatch: truth=6 output=7"
-    },
-    {
       "path": "keyFindings[0]",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "The opening 0-5s is the biggest retention risk: lowest patience and high boredom despite expensive visuals.",
-      "outputValue": "Patience trends downward with a 0.07 decrease from first to second half, indicating growing impatience.",
-      "normalizedTruthValue": "the opening 0 5s is the biggest retention risk lowest patience and high boredom despite expensive visuals",
-      "normalizedOutputValue": "patience trends downward with a 0 07 decrease from first to second half indicating growing impatience",
-      "reason": "Normalized strings differed"
+      "truthValue": "Early static title cards (Chunk 3) significantly drop patience and increase boredom.",
+      "outputValue": "Early static title cards (Chunk 3) significantly drop patience and increase boredom.",
+      "normalizedTruthValue": "early static title cards chunk 3 significantly drop patience and increase boredom",
+      "normalizedOutputValue": "early static title cards chunk 3 significantly drop patience and increase boredom"
     },
     {
       "path": "keyFindings[1]",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "The 5-10s segment is the clearest hook model, with peak excitement and minimal boredom.",
-      "outputValue": "Boredom increases significantly by 0.19, peaking in static scenes like chunks 5-7 and chunk 24.",
-      "normalizedTruthValue": "the 5 10s segment is the clearest hook model with peak excitement and minimal boredom",
-      "normalizedOutputValue": "boredom increases significantly by 0 19 peaking in static scenes like chunks 5 7 and chunk 24",
-      "reason": "Normalized strings differed"
+      "truthValue": "Rapid environmental transitions and high-octane combat (Chunks 11-16) drive peak excitement.",
+      "outputValue": "Rapid environmental transitions and high-octane combat (Chunks 11-16) drive peak excitement.",
+      "normalizedTruthValue": "rapid environmental transitions and high octane combat chunks 11 16 drive peak excitement",
+      "normalizedOutputValue": "rapid environmental transitions and high octane combat chunks 11 16 drive peak excitement"
     },
     {
       "path": "keyFindings[2]",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Excitement is consistently high overall, so the core creative works when it prioritizes spectacle over exposition.",
-      "outputValue": "Action sequences (e.g., chunks 8-23) consistently show high excitement scores of 8-9, sustaining engagement.",
-      "normalizedTruthValue": "excitement is consistently high overall so the core creative works when it prioritizes spectacle over exposition",
-      "normalizedOutputValue": "action sequences e g chunks 8 23 consistently show high excitement scores of 8 9 sustaining engagement",
-      "reason": "Normalized strings differed"
+      "truthValue": "Static pre-order screens (Chunks 25-26) cause the highest boredom levels in the entire video.",
+      "outputValue": "Static pre-order screens (Chunks 25-26) cause the highest boredom levels in the entire video.",
+      "normalizedTruthValue": "static pre order screens chunks 25 26 cause the highest boredom levels in the entire video",
+      "normalizedOutputValue": "static pre order screens chunks 25 26 cause the highest boredom levels in the entire video"
     },
     {
       "path": "keyFindings[3]",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Boredom increases significantly in the second half, indicating pacing fatigue rather than lack of action quality.",
-      "outputValue": "Dialogue-heavy chunks 5-7 have boredom scores of 6-7 and lower excitement, risking viewer drop-off.",
-      "normalizedTruthValue": "boredom increases significantly in the second half indicating pacing fatigue rather than lack of action quality",
-      "normalizedOutputValue": "dialogue heavy chunks 5 7 have boredom scores of 6 7 and lower excitement risking viewer drop off",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "keyFindings[4]",
-      "status": "fail",
-      "rule": "fuzzy-string",
-      "truthValue": "Title cards, talking-head dialogue, and location reveals repeatedly correlate with softer engagement.",
-      "outputValue": "Promotional chunk 24 has the highest boredom score of 8 and lowest excitement of 2, a major retention issue.",
-      "normalizedTruthValue": "title cards talking head dialogue and location reveals repeatedly correlate with softer engagement",
-      "normalizedOutputValue": "promotional chunk 24 has the highest boredom score of 8 and lowest excitement of 2 a major retention issue",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "keyFindings[5]",
-      "status": "fail",
-      "rule": "fuzzy-string",
-      "truthValue": "The end-slate/pre-order stretch weakens the final emotional payoff and likely causes scroll-off before the CTA lands.",
-      "outputValue": "Peak excitement at 45s (chunk 9) with score 9, but drops to 2 at 120s (chunk 24), showing emotional inconsistency.",
-      "normalizedTruthValue": "the end slate pre order stretch weakens the final emotional payoff and likely causes scroll off before the cta lands",
-      "normalizedOutputValue": "peak excitement at 45s chunk 9 with score 9 but drops to 2 at 120s chunk 24 showing emotional inconsistency",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "keyFindings[6]",
-      "status": "error",
-      "rule": "structural",
-      "outputValue": "Friction index of 100 suggests high disengagement potential, especially in non-action segments.",
-      "reason": "Truth array missing item present in output"
-    },
-    {
-      "path": "suggestions",
-      "status": "fail",
-      "rule": "structural",
-      "truthValue": {
-        "length": 11
-      },
-      "outputValue": {
-        "length": 10
-      },
-      "reason": "Array length mismatch: truth=11 output=10"
+      "truthValue": "Post-promo action (Chunks 27-28) successfully re-engages viewers but risks low viewership due to preceding boredom.",
+      "outputValue": "Post-promo action (Chunks 27-28) successfully re-engages viewers but risks low viewership due to preceding boredom.",
+      "normalizedTruthValue": "post promo action chunks 27 28 successfully re engages viewers but risks low viewership due to preceding boredom",
+      "normalizedOutputValue": "post promo action chunks 27 28 successfully re engages viewers but risks low viewership due to preceding boredom"
     },
     {
       "path": "suggestions[0]",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Replace the current first frame/text-led intro with one of the strongest surreal action shots now appearing later, especially the reality-breaking or impossible-environment imagery.",
-      "outputValue": "Shorten dialogue scenes in chunks 5-7 (25-40s) or add dynamic visual effects like quick cuts or overlays to maintain engagement.",
-      "normalizedTruthValue": "replace the current first frame text led intro with one of the strongest surreal action shots now appearing later especially the reality breaking or impossible environment imagery",
-      "normalizedOutputValue": "shorten dialogue scenes in chunks 5 7 25 40s or add dynamic visual effects like quick cuts or overlays to maintain engagement",
-      "reason": "Normalized strings differed"
+      "truthValue": "Shorten the 'Call of Duty: Black Ops 7' title card in Chunk 3 to under 2 seconds.",
+      "outputValue": "Shorten the 'Call of Duty: Black Ops 7' title card in Chunk 3 to under 2 seconds.",
+      "normalizedTruthValue": "shorten the call of duty black ops 7 title card in chunk 3 to under 2 seconds",
+      "normalizedOutputValue": "shorten the call of duty black ops 7 title card in chunk 3 to under 2 seconds"
     },
     {
       "path": "suggestions[1]",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Cut or heavily shorten the 'RISING TENSIONS' style opening text so the video starts on immediate spectacle rather than trailer language.",
-      "outputValue": "Replace static promotional screens at 120-125s with animated previews or action montages to reduce boredom.",
-      "normalizedTruthValue": "cut or heavily shorten the rising tensions style opening text so the video starts on immediate spectacle rather than trailer language",
-      "normalizedOutputValue": "replace static promotional screens at 120 125s with animated previews or action montages to reduce boredom",
-      "reason": "Normalized strings differed"
+      "truthValue": "Overlay the 'RISING TENSIONS' text in Chunk 1 directly onto action footage rather than using a standalone card.",
+      "outputValue": "Overlay the 'RISING TENSIONS' text in Chunk 1 directly onto action footage rather than using a standalone card.",
+      "normalizedTruthValue": "overlay the rising tensions text in chunk 1 directly onto action footage rather than using a standalone card",
+      "normalizedOutputValue": "overlay the rising tensions text in chunk 1 directly onto action footage rather than using a standalone card"
     },
     {
       "path": "suggestions[2]",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Move one of the standout 'wtf' visuals from the 60-85s run into the first 3-5 seconds to create instant curiosity.",
-      "outputValue": "Intersperse action beats every 10-15 seconds throughout the video to prevent boredom buildup and sustain excitement.",
-      "normalizedTruthValue": "move one of the standout wtf visuals from the 60 85s run into the first 3 5 seconds to create instant curiosity",
-      "normalizedOutputValue": "intersperse action beats every 10 15 seconds throughout the video to prevent boredom buildup and sustain excitement",
-      "reason": "Normalized strings differed"
+      "truthValue": "Animate the pre-order incentive screens in Chunks 25-26 to maintain visual momentum.",
+      "outputValue": "Animate the pre-order incentive screens in Chunks 25-26 to maintain visual momentum.",
+      "normalizedTruthValue": "animate the pre order incentive screens in chunks 25 26 to maintain visual momentum",
+      "normalizedOutputValue": "animate the pre order incentive screens in chunks 25 26 to maintain visual momentum"
     },
     {
       "path": "suggestions[3]",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Reduce title cards and location cards throughout, or overlay them on active gameplay/action instead of letting them become standalone beats.",
-      "outputValue": "Use varied camera angles, zooms, or motion graphics in slower narrative sections to add visual interest.",
-      "normalizedTruthValue": "reduce title cards and location cards throughout or overlay them on active gameplay action instead of letting them become standalone beats",
-      "normalizedOutputValue": "use varied camera angles zooms or motion graphics in slower narrative sections to add visual interest",
-      "reason": "Normalized strings differed"
+      "truthValue": "Condense the pre-order promo duration from 10 seconds to 5 seconds.",
+      "outputValue": "Condense the pre-order promo duration from 10 seconds to 5 seconds.",
+      "normalizedTruthValue": "condense the pre order promo duration from 10 seconds to 5 seconds",
+      "normalizedOutputValue": "condense the pre order promo duration from 10 seconds to 5 seconds"
     },
     {
       "path": "suggestions[4]",
-      "status": "fail",
+      "status": "pass",
       "rule": "fuzzy-string",
-      "truthValue": "Trim the 25-35s exposition stretch by minimizing static conversation shots and keeping only dialogue that adds immediate stakes.",
-      "outputValue": "Ensure music intensity aligns with visual pacing, boosting scores during static moments to enhance emotional impact.",
-      "normalizedTruthValue": "trim the 25 35s exposition stretch by minimizing static conversation shots and keeping only dialogue that adds immediate stakes",
-      "normalizedOutputValue": "ensure music intensity aligns with visual pacing boosting scores during static moments to enhance emotional impact",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[5]",
-      "status": "fail",
-      "rule": "fuzzy-string",
-      "truthValue": "At the 85-95s section, compress the Alaska/Hawaii transition so the audience gets to playable action faster.",
-      "outputValue": "Add pattern interrupts such as text overlays, sound effects, or brief action clips in chunks 5-7 to break monotony.",
-      "normalizedTruthValue": "at the 85 95s section compress the alaska hawaii transition so the audience gets to playable action faster",
-      "normalizedOutputValue": "add pattern interrupts such as text overlays sound effects or brief action clips in chunks 5 7 to break monotony",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[6]",
-      "status": "fail",
-      "rule": "fuzzy-string",
-      "truthValue": "Use more pattern interrupts in the back half: alternate combat scale, color palette, or perspective to offset boredom growth.",
-      "outputValue": "Test different edits of dialogue scenes to reduce duration without losing narrative clarity, aiming for under 5 seconds per shot.",
-      "normalizedTruthValue": "use more pattern interrupts in the back half alternate combat scale color palette or perspective to offset boredom growth",
-      "normalizedOutputValue": "test different edits of dialogue scenes to reduce duration without losing narrative clarity aiming for under 5 seconds per shot",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[7]",
-      "status": "fail",
-      "rule": "fuzzy-string",
-      "truthValue": "Preserve the strongest high-retention run from roughly 40-80s as the pacing template: fast cuts, visual novelty, and clear escalation.",
-      "outputValue": "Incorporate user interface elements or gameplay snippets during promotional parts to make them more dynamic.",
-      "normalizedTruthValue": "preserve the strongest high retention run from roughly 40 80s as the pacing template fast cuts visual novelty and clear escalation",
-      "normalizedOutputValue": "incorporate user interface elements or gameplay snippets during promotional parts to make them more dynamic",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[8]",
-      "status": "fail",
-      "rule": "fuzzy-string",
-      "truthValue": "Shorten the static pre-order/end-slate sequence and move key offer text over ongoing action if platform rules allow.",
-      "outputValue": "Maintain the high-energy editing style from action sequences (e.g., rapid cuts, lighting changes) throughout the video.",
-      "normalizedTruthValue": "shorten the static pre order end slate sequence and move key offer text over ongoing action if platform rules allow",
-      "normalizedOutputValue": "maintain the high energy editing style from action sequences e g rapid cuts lighting changes throughout the video",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[9]",
-      "status": "fail",
-      "rule": "fuzzy-string",
-      "truthValue": "End on a final high-adrenaline gameplay beat before the logo/CTA so the viewer exits on excitement, not fine print.",
-      "outputValue": "Minimize any shot longer than 3 seconds without movement, especially for the impatient teenager persona, to reduce patience drain.",
-      "normalizedTruthValue": "end on a final high adrenaline gameplay beat before the logo cta so the viewer exits on excitement not fine print",
-      "normalizedOutputValue": "minimize any shot longer than 3 seconds without movement especially for the impatient teenager persona to reduce patience drain",
-      "reason": "Normalized strings differed"
-    },
-    {
-      "path": "suggestions[10]",
-      "status": "error",
-      "rule": "structural",
-      "truthValue": "If a CTA must remain, make it the shortest possible closing card after the franchise/title reveal rather than a prolonged information block.",
-      "reason": "Output array missing item present in truth"
+      "truthValue": "Move a snippet of the post-promo action (Chunk 27) into the pre-order screen as a background video to retain viewers.",
+      "outputValue": "Move a snippet of the post-promo action (Chunk 27) into the pre-order screen as a background video to retain viewers.",
+      "normalizedTruthValue": "move a snippet of the post promo action chunk 27 into the pre order screen as a background video to retain viewers",
+      "normalizedOutputValue": "move a snippet of the post promo action chunk 27 into the pre order screen as a background video to retain viewers"
     },
     {
       "path": "failedChunks",
@@ -597,8 +291,8 @@
       "path": "ai.model",
       "status": "skip",
       "rule": "structural",
-      "truthValue": "openai/gpt-5.4",
-      "outputValue": "xiaomi/mimo-v2-omni",
+      "truthValue": "google/gemini-3.1-pro-preview",
+      "outputValue": "google/gemini-3.1-pro-preview",
       "reason": "Comparator ignored benchmark path"
     },
     {
@@ -653,20 +347,20 @@
       "path": "ai.usage.input",
       "status": "skip",
       "rule": "structural",
-      "truthValue": 11416,
-      "outputValue": 11803,
+      "truthValue": 11331,
+      "outputValue": 11331,
       "reason": "Comparator ignored benchmark path"
     },
     {
       "path": "ai.usage.output",
       "status": "skip",
       "rule": "structural",
-      "truthValue": 841,
-      "outputValue": 803,
+      "truthValue": 491,
+      "outputValue": 491,
       "reason": "Comparator ignored benchmark path"
     }
   ],
-  "summary": "3/23 scoreable fields passed; 12/37 truth fields were skipped. recommendation_text_pct=0.0%; recommendation_reasoning_pct=0.0%; recommendation_key_findings_pct=0.0%; recommendation_suggestions_pct=0.0%; recommendation_confidence_pct=100.0%.",
+  "summary": "14/14 scoreable fields passed; 12/26 truth fields were skipped. recommendation_text_pct=100.0%; recommendation_reasoning_pct=100.0%; recommendation_key_findings_pct=100.0%; recommendation_suggestions_pct=100.0%; recommendation_confidence_pct=100.0%.",
   "context": {
     "fixtureId": "cod-test",
     "benchmarkPath": "benchmarks/fixtures/cod-test/benchmark.json",

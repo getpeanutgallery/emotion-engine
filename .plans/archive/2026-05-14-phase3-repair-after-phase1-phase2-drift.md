@@ -1,7 +1,7 @@
 # Peanut Gallery Emotion Engine
 
 **Date:** 2026-05-14  
-**Status:** Draft  
+**Status:** Complete  
 **Agent:** Cookie 🍪
 
 ---
@@ -114,9 +114,9 @@ This plan treats Phase 3 as its own repair lane. First, do a forensic review of 
 - `.plans/artifacts/2026-05-14-phase3-repair-after-phase1-phase2-drift/rerun-summary.md`
 - refreshed output/report artifacts as produced by the chosen validation lane
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Ran the smallest honest post-repair validation lane instead of broadening back to a full 1→2→3 rerun, because this bead was only validating Phase 3 consumer repairs against the already-fresh repaired `cod-test` packet in `REF-05`. Exact rerun command: `node server/run-pipeline.cjs --config configs/archive/cod-test-phase3.yaml --verbose` ✅. Because the archived Phase 3-only config has no benchmark block, immediately refreshed the canonical benchmark against the regenerated `output/cod-test` artifacts with a one-off `runBenchmarkStage` invocation loaded from `configs/cod-test.yaml`, writing refreshed reports to `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/benchmarks/fixtures/cod-test/_reports/`. Durable handoff note written to `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-14-phase3-repair-after-phase1-phase2-drift/rerun-summary.md`. Runtime/product truth improved exactly where the forensic note predicted: `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json` now shows boredom average ≈ `0.2643`, boredom highest at `125s`, boredom lowest at `95s`, and boredom trend `stable`; `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json` no longer fabricates the old `95s` / `115s` boredom spikes and instead concentrates the real high-friction lane at `120-130s`; `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md` now labels aggregate averages honestly as normalized `0-1` values and uses human-facing chunk numbering in the recommendation prose. Canonical benchmark status stayed red and, for `metricsData` and `emotionalAnalysisData`, the refreshed benchmark percentages actually moved farther from green (`metricsData` accuracy `74.3% → 65.7%`, `emotionalAnalysisData` accuracy `74.0% → 69.8%`) because the repaired outputs are now more truthful to the current Phase 2 packet than to the stale benchmark truth. `recommendationData` remained `error` but improved slightly in accuracy (`15.0% → 18.8%`). Conclusion from the rerun: the repaired Phase 3 consumers are live and semantically improved on the fresh packet, while the remaining red is primarily benchmark-truth debt rather than fresh proof of Phase 3 consumer drift.
 
 ---
 
@@ -138,9 +138,9 @@ This plan treats Phase 3 as its own repair lane. First, do a forensic review of 
 - `.plans/2026-05-14-phase3-repair-after-phase1-phase2-drift.md`
 - `.plans/artifacts/2026-05-14-phase3-repair-after-phase1-phase2-drift/qa-summary.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Completed direct QA of the repaired Phase 3 product surfaces and wrote `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-14-phase3-repair-after-phase1-phase2-drift/qa-summary.md`. QA judgment: **GO for repaired Phase 3 usefulness and truthfulness**, with the important caveat that this is a go for the current human-facing product surface, not a claim that benchmark parity is repaired. The repaired packet now makes normal human sense against `REF-05`: `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json` correctly treats the late promo stretch (`120-130s`) as the real boredom/scroll-risk lane, `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json` no longer fabricates the old `95s` / `115s` boredom spikes, `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/recommendation/recommendation.json` now gives directionally honest retention advice (trim the early title card, animate/shorten the pre-order stretch, preserve the strong action core), and `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md` is materially more trustworthy after relabeling aggregate averages as normalized `0-1` values and humanizing the displayed chunk references. Remaining gaps were explicitly split in the QA artifact: (1) **benchmark parity debt** still dominates the red benchmark state and is not fresh proof of misleading Phase 3 behavior, (2) **report polish debt** remains around cross-surface chunk-numbering consistency and machine-ish labels, and (3) the only residual **actual misleading output** found was minor chunk-numbering inconsistency between raw recommendation JSON and the markdown report, not a deeper semantic lie. Net QA call: safe to use internally as the current truthful Phase 3 surface; not yet benchmark-clean or perfectly polished.
 
 ---
 
@@ -162,25 +162,25 @@ This plan treats Phase 3 as its own repair lane. First, do a forensic review of 
 - `.plans/2026-05-14-phase3-repair-after-phase1-phase2-drift.md`
 - `.plans/artifacts/2026-05-14-phase3-repair-after-phase1-phase2-drift/audit-summary.md`
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**Results:** Pending.
+**Results:** Completed an independent audit of the plan, forensic note, rerun evidence, QA findings, fresh Phase 2 packet, live Phase 3 artifacts, and refreshed benchmark report, and wrote `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/.plans/artifacts/2026-05-14-phase3-repair-after-phase1-phase2-drift/audit-summary.md`. Audit judgment: **Phase 3 is truthfully repaired for the current pipeline state**, because the real consumer bug identified in the forensic note is demonstrably gone in live outputs: `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/metrics/metrics.json` now treats exact upstream score `1` as `0.1`, shifts boredom peak to the real `125s` promo lane, and marks boredom trend `stable`; `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/emotional-analysis/emotional-data.json` no longer fabricates the old `95s` / `115s` boredom spikes; and `/home/derrick/.openclaw/workspace/projects/peanut-gallery/emotion-engine/output/cod-test/phase3-report/summary/FINAL-REPORT.md` now labels normalized averages honestly. Remaining red was judged **mostly benchmark parity debt**, not deeper live Phase 3 logic breakage: the refreshed benchmark still expects stale Phase 3 truth, including old critical moments and older recommendation structure. Minor residual product-surface debt remains around chunk-numbering consistency between raw recommendation JSON and markdown report, but that is polish debt, not a blocker to closing the repair/audit lane. Next benchmark lane explicitly defined in the audit artifact: refresh the `cod-test` Phase 3 benchmark truth fixtures for metrics, emotional-analysis, and recommendation against the current repaired packet instead of forcing live consumers back toward stale expectations.
 
 ---
 
 ## Final Results
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
-**What We Built:** Pending.
+**What We Built:** Repaired the truthful current-world Phase 3 consumer lane after Phase 1/2 drift, reran it on the fresh repaired `cod-test` packet, QA-validated the resulting recommendation/metrics/emotional-analysis/report surfaces, and independently audited the outcome. The repaired live outputs now correctly treat the late `120-130s` promo stretch as the real boredom/scroll-risk lane, no longer misread exact upstream emotion score `1` as normalized `1.0`, and present aggregate report metrics honestly.
 
-**Reference Check:** Pending.
+**Reference Check:** `REF-01` and `REF-02` were honored by building on the freshly repaired Phase 2 proof lane instead of reopening solved earlier blockers; `REF-05` was validated directly against the repaired Phase 3 outputs and audit evidence; `REF-06` was rechecked after rerun to confirm the human-facing report became more honest; `REF-03` and `REF-04` were satisfied in the narrow truthful sense that the loud remaining benchmark red was explicitly separated into live Phase 3 repairs already completed versus stale benchmark-truth debt still outstanding. Deliberate deviation from naive benchmark-chasing: we did **not** force live consumers back toward old red benchmark expectations once the audit confirmed those expectations still encode stale semantics.
 
 **Commits:**
-- Pending
+- `875906d` - Fix phase3 normalized score/report drift
 
-**Lessons Learned:** Pending.
+**Lessons Learned:** Benchmark-red is not the same thing as currently broken runtime logic. In this lane, the highest-value work was separating one real Phase 3 consumer bug from a much larger amount of stale benchmark truth. The next honest step is a dedicated benchmark-fixture refresh for Phase 3 `metrics`, `emotional-analysis`, and `recommendation`, with an optional small follow-up to unify chunk-numbering language between raw JSON and markdown surfaces.
 
 ---
 
-*Completed on Pending*
+*Completed on 2026-05-14*

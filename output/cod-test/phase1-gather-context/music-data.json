@@ -2,54 +2,62 @@
   "segments": [
     {
       "start": 0,
-      "end": 25,
+      "end": 35,
       "type": "music",
-      "description": "Tense dialogue over low, ominous score with ambient pulses and spoken overlay",
+      "description": "Tense atmospheric score with spoken dialogue overlay, establishing a foreboding mood",
       "mood": "tense",
-      "intensity": 4
-    },
-    {
-      "start": 25,
-      "end": 50,
-      "type": "music",
-      "description": "Building percussion and synth melodies with action sound effects, spoken overlay continues",
-      "mood": "anticipatory",
-      "intensity": 6
-    },
-    {
-      "start": 50,
-      "end": 75,
-      "type": "music",
-      "description": "Intensifying score with distorted guitars and heavy drum hits, dialogue overlay present",
-      "mood": "aggressive",
-      "intensity": 8
-    },
-    {
-      "start": 75,
-      "end": 110,
-      "type": "music",
-      "description": "Dominant heavy metal track with repeated vocal chants and high-energy instrumentation",
-      "mood": "energetic",
-      "intensity": 10
-    },
-    {
-      "start": 110,
-      "end": 130,
-      "type": "music",
-      "description": "Music fades to background, focused dialogue with residual tension and minimal score",
-      "mood": "resolved",
       "intensity": 5
     },
     {
-      "start": 130,
+      "start": 35,
+      "end": 58,
+      "type": "music",
+      "description": "Building percussion and rhythmic elements, increasing anticipation under dialogue",
+      "mood": "anticipatory",
+      "intensity": 7
+    },
+    {
+      "start": 58,
+      "end": 65,
+      "type": "music",
+      "description": "Transition with rock vocal entry and heightened energy, marking a shift in intensity",
+      "mood": "energetic",
+      "intensity": 8
+    },
+    {
+      "start": 65,
+      "end": 76,
+      "type": "music",
+      "description": "Intensifying build-up with heavy instrumental layers, leading to a climax",
+      "mood": "intense",
+      "intensity": 9
+    },
+    {
+      "start": 76,
+      "end": 98,
+      "type": "music",
+      "description": "Prominent thrash-metal hook with audible vocal chants, serving as the audio peak",
+      "mood": "aggressive",
+      "intensity": 10
+    },
+    {
+      "start": 98,
+      "end": 120,
+      "type": "music",
+      "description": "Music continues as a dramatic bed under dialogue, maintaining high energy but slightly receding",
+      "mood": "dramatic",
+      "intensity": 8
+    },
+    {
+      "start": 120,
       "end": 140,
       "type": "music",
-      "description": "Promotional voiceover over subtle ambient sound and minimal score bed",
-      "mood": "neutral",
-      "intensity": 3
+      "description": "Climactic drop and outro with fading score, concluding the asset",
+      "mood": "resolved",
+      "intensity": 6
     }
   ],
-  "summary": "A tense trailer audio with building intensity, featuring dialogue over ominous score, escalating to a heavy metal music peak with vocal chants, then resolving with dialogue and a promotional voiceover.",
+  "summary": "A dramatic trailer audio track featuring escalating tension through dialogue and score, building to a climactic thrash-metal music segment with recognizable vocal hooks, followed by a resolution and promotional outro.",
   "hasMusic": true,
   "analysisMode": "whole_asset",
   "timingMode": "full_timeline",
@@ -61,13 +69,23 @@
     "complete": true
   },
   "globalArc": {
-    "dominantMood": "energetic",
-    "energyCurve": "rising_then_plateau_then_drop",
+    "dominantMood": "intense",
+    "energyCurve": "rising_then_peak_then_drop",
     "notableTransitions": [
       {
-        "start": 75,
-        "end": 80,
-        "label": "heavy metal music entry"
+        "start": 58,
+        "end": 65,
+        "label": "rock vocal entry and intensity shift"
+      },
+      {
+        "start": 76,
+        "end": 98,
+        "label": "prominent music hook with vocal chants"
+      },
+      {
+        "start": 120,
+        "end": 140,
+        "label": "climactic drop and outro"
       }
     ]
   },
@@ -86,38 +104,39 @@
     "base64BudgetBytes": 9437184
   },
   "recognizedSong": {
-    "status": "recognized",
-    "confidence": 0.9,
+    "status": "possible",
+    "confidence": 0.64,
     "candidates": [
       {
         "title": "Master of Puppets",
         "artist": "Metallica",
-        "confidence": 0.9,
+        "confidence": 0.64,
         "evidence": [
-          "Distinctive heavy metal riff and repeated vocal chants of 'master' in the music lane."
+          "Distinctive thrash-metal instrumental hook and repeated vocal chants of 'Master, master' in the music lane."
         ],
         "matchedLyrics": [
-          "Obey your master",
           "Master, master"
         ],
         "timeRanges": [
           {
-            "start": 75,
-            "end": 110
+            "start": 76,
+            "end": 98
           }
         ],
-        "ambiguity": "Dialogue and action SFX partially mask the cue but lyrics remain clear."
+        "ambiguity": "Trailer dialogue and sound effects partially mask the music, reducing clarity."
       }
     ],
-    "primaryEvidence": "Iconic guitar riff and lyrical content are audibly present, confirming song identity.",
-    "ambiguity": "Minor masking from overlapping audio elements.",
+    "primaryEvidence": "A likely famous-song hook is present with audible lyrics matching a known track, but recognition remains evidence-gated due to masking.",
+    "ambiguity": "Partial masking by dialogue and SFX reduces certainty.",
     "multipleSongsDetected": false
   },
   "recognitionNotes": [
-    "Lyrics are identifiable despite spoken overlay and sound effects, supporting high confidence."
+    "Music is frequently overlaid with spoken dialogue, which may obscure lyrical and instrumental details.",
+    "The recognized song candidate is based on a specific vocal cue; instrumental resemblance alone is insufficient for higher confidence."
   ],
   "qualityNotes": [
     "Whole-asset music analysis preserved cross-asset continuity without chunk seams.",
-    "Confidence is high due to specific musical and lyrical cues; segment timings are estimated from audio flow."
+    "Segment timings are approximate and derived from coarse audio changes in the provided track.",
+    "Intensity scores are subjective and based on perceived energy and prominence in the mix."
   ]
 }
